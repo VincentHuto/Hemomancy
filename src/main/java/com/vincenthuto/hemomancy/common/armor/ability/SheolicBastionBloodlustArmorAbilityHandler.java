@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.armor.BodyIdiomArmorRules;
@@ -139,7 +140,7 @@ public final class SheolicBastionBloodlustArmorAbilityHandler {
 		player.setDeltaMovement(Vec3.ZERO);
 		player.fallDistance = 0.0F;
 		player.stopFallFlying();
-		player.getAbilities().flying = false;
+		FlightArbiter.ground(player);
 		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 255, false, false, false));
 	}
 

@@ -9,6 +9,7 @@ import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
@@ -280,7 +281,7 @@ public class PurityGainEvents {
      * Healing a tamed animal  owner gets +0.2 purity (compassion).
      * Healing yourself significantly (2+ hearts) with empty/inactive blood  +0.1 (restraint).
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH) // the requested heal, before the HealModifier stage
     public static void onLivingHeal(LivingHealEvent event) {
         LivingEntity entity = event.getEntity();
         if (entity.level().isClientSide) return;

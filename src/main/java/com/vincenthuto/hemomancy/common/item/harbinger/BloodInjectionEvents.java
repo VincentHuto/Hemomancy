@@ -37,10 +37,6 @@ public final class BloodInjectionEvents {
             || entity.hasEffect(EffectInit.explosion_resistance) && event.getSource().is(DamageTypeTags.IS_EXPLOSION))
             event.setAmount(event.getAmount() * BloodInjectionRules.RESISTANCE_MULTIPLIER);
     }
-    @SubscribeEvent public static void heal(LivingHealEvent event) {
-        if (event.getEntity().hasEffect(EffectInit.impaired_recovery))
-            event.setAmount(event.getAmount() * BloodInjectionRules.HEALING_MULTIPLIER);
-    }
     @SubscribeEvent public static void mining(PlayerEvent.BreakSpeed event) {
         if (event.getEntity().hasEffect(EffectInit.earthen_mining)
             && event.getState().is(EARTH_AND_STONE))

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.effect;
 
+import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -19,20 +20,11 @@ public class ElytraEffect extends MobEffect {
 	}
 
 	private static void setFlightEnabled(Player player, boolean enabled) {
-		if (player.getAbilities().mayfly == enabled) return;
+		if (FlightArbiter.mayFly(player) == enabled) return;
 		if (enabled) {
-			player.getAbilities().mayfly = true;
+			FlightArbiter.grant(player, FlightArbiter.Source.ELYTRA_EFFECT);
 		} else {
-			boolean creative = player.isCreative() || player.isSpectator();
-			player.getAbilities().mayfly = creative;
-			if (!creative) {
-				player.getAbilities().flying = false;
-			} else {
-				player.getAbilities().setFlyingSpeed(0.05F);
-			}
-		}
-		if (player instanceof ServerPlayer serverPlayer) {
-			serverPlayer.onUpdateAbilities();
+			FlightArbiter.revoke(player, FlightArbiter.Source.ELYTRA_EFFECT);
 		}
 	}
 

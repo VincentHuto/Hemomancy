@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -61,7 +62,6 @@ public final class SilentArchonArmorAbilityHandler {
 	private static final double SILENT_SLIPPING_SHARD_PULSE_RADIUS = 48.0D;
 	private static final double SILENT_SLIPPING_BLOOD_COST = 250.0D;
 	private static final int SAFE_EXIT_RADIUS = 6;
-	private static final float SILENT_SLIPPING_FLIGHT_SPEED = 0.035F;
 	private static final double SILENT_SEVERANCE_RADIUS = 6.0D;
 	private static final float SILENT_SEVERANCE_DAMAGE = 6.0F;
 	private static final int SILENT_SEVERANCE_EFFECT_TICKS = 100;
@@ -430,10 +430,7 @@ public final class SilentArchonArmorAbilityHandler {
 
 	private static void applySilentSlippingMovement(ServerPlayer player) {
 		applySilentSlippingNoClip(player);
-		player.getAbilities().mayfly = true;
-		player.getAbilities().flying = true;
-		player.getAbilities().setFlyingSpeed(SILENT_SLIPPING_FLIGHT_SPEED);
-		player.onUpdateAbilities();
+		FlightArbiter.grant(player, FlightArbiter.Source.SILENT_SLIPPING);
 		player.setDeltaMovement(player.getDeltaMovement().multiply(0.82D, 0.82D, 0.82D));
 	}
 
@@ -451,12 +448,7 @@ public final class SilentArchonArmorAbilityHandler {
 		if (!player.isSpectator()) {
 			player.noPhysics = false;
 		}
-		if (!player.isCreative() && !player.isSpectator()) {
-			player.getAbilities().mayfly = false;
-			player.getAbilities().flying = false;
-		}
-		player.getAbilities().setFlyingSpeed(0.05F);
-		player.onUpdateAbilities();
+		FlightArbiter.revoke(player, FlightArbiter.Source.SILENT_SLIPPING);
 		player.fallDistance = 0.0F;
 		player.resetFallDistance();
 		if (wasMarked) {

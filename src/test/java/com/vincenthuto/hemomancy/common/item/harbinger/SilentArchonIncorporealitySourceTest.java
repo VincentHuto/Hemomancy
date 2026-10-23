@@ -51,7 +51,7 @@ public final class SilentArchonIncorporealitySourceTest {
 		assertContains("blood manipulation projectile allowance", handler, "isHemomancyProjectile");
 		assertContains("no physics state", handler, "player.noPhysics = true");
 		assertContains("safe exit handling", handler, "findNearestSafePosition");
-		assertContains("flight granted during slipping", handler, "player.getAbilities().mayfly = true");
+		assertContains("flight granted during slipping", handler, "FlightArbiter.grant(player, FlightArbiter.Source.SILENT_SLIPPING)");
 
 		assertContains("docs mention incorporeality", docs, "incorporeal");
 		assertContains("docs mention silent slipping", docs, "Silent Slipping");

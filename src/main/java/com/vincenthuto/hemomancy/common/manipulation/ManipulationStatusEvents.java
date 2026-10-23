@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.effect.HealModifier;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -25,18 +26,17 @@ public final class ManipulationStatusEvents {
 	private ManipulationStatusEvents() {
 	}
 
+	/** The one heal-modifier stage: every {@link HealModifier} that applies scales the heal, in table order. */
 	@SubscribeEvent
 	public static void onLivingHeal(LivingHealEvent event) {
-		if (!event.getEntity().hasEffect(EffectInit.insatiable_hunger)
-                && !event.getEntity().hasEffect(EffectInit.hemophagy) && event.getEntity().hasEffect(EffectInit.necrosis)) {
-            event.setAmount(event.getAmount() * 0.75f);
-        }
-		if (event.getEntity().hasEffect(EffectInit.insatiable_hunger)) {
-			float requested=event.getAmount();
-            event.setAmount(requested * ManipulationStatusRules.INSATIABLE_HEAL_MULTIPLIER);
-            if(requested>event.getAmount() && event.getEntity().level() instanceof net.minecraft.server.level.ServerLevel level)
-                ManipulationVisuals.burst(level,ManipulationVisuals.Form.HUNGER_COLLAPSE,event.getEntity().position(),
-                        event.getEntity().position(),1,18);
+		for (HealModifier modifier : HealModifier.values()) {
+			if (!modifier.appliesTo(event.getEntity())) continue;
+			float requested = event.getAmount();
+			event.setAmount(requested * modifier.multiplier());
+			if (modifier == HealModifier.INSATIABLE_HUNGER && requested > event.getAmount()
+					&& event.getEntity().level() instanceof net.minecraft.server.level.ServerLevel level)
+				ManipulationVisuals.burst(level, ManipulationVisuals.Form.HUNGER_COLLAPSE, event.getEntity().position(),
+						event.getEntity().position(), 1, 18);
 		}
 	}
 

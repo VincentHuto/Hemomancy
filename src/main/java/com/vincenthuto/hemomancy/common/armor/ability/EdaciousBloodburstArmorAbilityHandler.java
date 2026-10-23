@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import net.minecraft.core.particles.ParticleTypes;
@@ -46,21 +47,12 @@ public final class EdaciousBloodburstArmorAbilityHandler {
 		boolean hasSet = ArmorSetAbilityRegistry.isAbilityAvailable(player, ArmorSetAbilityRegistry.EDACIOUS_BLOODBURST);
 		boolean marked = player.getPersistentData().getBoolean(EDACIOUS_FLIGHT_KEY);
 		if (hasSet) {
-			if (!player.getAbilities().mayfly || !marked) {
-				player.getAbilities().mayfly = true;
-				player.getPersistentData().putBoolean(EDACIOUS_FLIGHT_KEY, true);
-			}
-			player.getAbilities().setFlyingSpeed(0.025F);
-			player.onUpdateAbilities();
+			if (!marked) player.getPersistentData().putBoolean(EDACIOUS_FLIGHT_KEY, true);
+			FlightArbiter.grant(player, FlightArbiter.Source.EDACIOUS_SET);
 			player.fallDistance = 0.0F;
 		} else if (marked) {
 			player.getPersistentData().remove(EDACIOUS_FLIGHT_KEY);
-			if (!player.isCreative() && !player.isSpectator()) {
-				player.getAbilities().mayfly = false;
-				player.getAbilities().flying = false;
-			}
-			player.getAbilities().setFlyingSpeed(0.05F);
-			player.onUpdateAbilities();
+			FlightArbiter.revoke(player, FlightArbiter.Source.EDACIOUS_SET);
 		}
 	}
 

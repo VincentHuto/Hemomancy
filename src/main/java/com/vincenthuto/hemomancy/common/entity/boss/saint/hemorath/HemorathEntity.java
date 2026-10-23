@@ -1,11 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath;
 
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.goal.EmptyPulseGoal;
 import com.vincenthuto.hemomancy.common.entity.boss.goal.HematicCollapseGoal;
-import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
@@ -35,9 +33,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 
 /**
  * Hollow Vessel (Saint Hemorath) a body drained of blood but still animate.
@@ -52,7 +47,6 @@ import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
  * Phase 2 (50%0%): faster attacks, shorter Hematic Collapse cadence, and
  * bloodvolume spent is amplified by 1.25Ã— via {@link #onPlayerBloodSpend}.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class HemorathEntity extends Monster {
 
 	private static final EntityDataAccessor<Boolean> DATA_COLLAPSE_CHARGING =
@@ -75,7 +69,6 @@ public class HemorathEntity extends Monster {
 
 	private static final float PHASE_2_HEALTH_FRACTION = 0.5F;
 	private static final float SIPHON_HEAL_FRACTION = 0.35F;
-	private static final float HEMOPHAGY_HEAL_MULTIPLIER = 0.25F;
 	private static final double PHASE_2_BLOOD_SPEND_BONUS = 0.25D;
 	private static final double PHASE_2_DETECTION_RADIUS = 48.0D;
 	private static final float OVERLOAD_THRESHOLD = 3000.0F;
@@ -405,15 +398,5 @@ public class HemorathEntity extends Monster {
 		HemoCapabilityAccess.getBloodVolume(player).resetBloodDebt();
 	}
 
-	/**
-	 * Empty Pulse's Hemophagy debuff severely reduces incoming heals while active.
-	 */
-	@SubscribeEvent
-	public static void onLivingHeal(LivingHealEvent event) {
-		if (event.getEntity().hasEffect(EffectInit.hemophagy)
-                && !event.getEntity().hasEffect(EffectInit.insatiable_hunger)) {
-			event.setAmount(event.getAmount() * HEMOPHAGY_HEAL_MULTIPLIER);
-		}
-	}
 
 }
