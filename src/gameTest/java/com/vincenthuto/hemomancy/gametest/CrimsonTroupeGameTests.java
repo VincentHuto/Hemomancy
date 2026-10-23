@@ -21,7 +21,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -108,7 +107,7 @@ public final class CrimsonTroupeGameTests {
             for (int i = 0; i < player.getInventory().items.size(); i++) player.getInventory().items.set(i, new ItemStack(Items.STONE, 64));
             CircusSchoolQuests.guestReward(player);
             helper.assertTrue(CircusApprenticeshipProgress.state(player).getInt("guest.pending") == 4, "full inventory lost payment");
-            CircusPlayerProgress.onPlayerClone(new PlayerEvent.Clone(clone, player, true));
+            clone.restoreFrom(player, false);
             helper.assertTrue(CircusApprenticeshipProgress.state(clone).getInt("guest.pending") == 4 && !CircusSchoolQuests.guestEligible(clone), "clone lost escrow or daily lock");
             for (int i = 0; i < clone.getInventory().items.size(); i++) clone.getInventory().items.set(i, new ItemStack(Items.STONE, 64));
             clone.getInventory().items.set(0, ItemStack.EMPTY);

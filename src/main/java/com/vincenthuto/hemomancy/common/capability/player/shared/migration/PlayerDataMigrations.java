@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.FungalScarMigrationRules;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents;
+import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeMigration;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.EventPriority;
@@ -43,7 +44,9 @@ public final class PlayerDataMigrations {
 			// Field-note items and the Scar Practice entry earned before its advancement unlock existed.
 			new Migration(4, "liber_legacy_notes", "2027-04-23", LiberKnowledgeEvents::migrateLegacyNotes),
 			// The Archon choice once kept only as a root key.
-			new Migration(5, "archon_choice", "2027-04-23", InitiatoryDegreeEvents::migrateLegacyArchonChoice));
+			new Migration(5, "archon_choice", "2027-04-23", InitiatoryDegreeEvents::migrateLegacyArchonChoice),
+			// Circus discovery, acclimation, route, challenges, milestones and apprenticeship root keys (S-6c).
+			new Migration(6, "circus_progress", "2027-04-23", CircusPlayerProgress::migrateLegacyRootKeys));
 
 	public static final int LATEST = MIGRATIONS.getLast().version();
 

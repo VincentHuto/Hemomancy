@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.gametest.journey;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.circus.CircusProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree;
@@ -104,6 +106,8 @@ public final class HemoJourneySnapshot {
 	private static final String SPECIMEN_BESTIARY = "specimen_bestiary";
 	private static final String ADVANCED_BREWING = "station_upgrades";
 	private static final String PERSISTENT_DATA = "persistent_data";
+	/** The CircusProgress attachment, carried inside the persistent-data section (its circus prefix passes the schema). */
+	private static final String CIRCUS_PROGRESS = "hemomancy.circus_progress";
 	private static final String VASC_EQUIPMENT = "vasc_equipment";
 	private static final int VASC_SLOT = 5;
 	private static final List<String> JOURNEY_PERSISTENT_KEYS = List.of(
@@ -501,7 +505,7 @@ public final class HemoJourneySnapshot {
 		if (!validateSpecimenBestiarySchema(player, bestiaryTag)) return PreflightResult.fail("Specimen Bestiary restore failed: malformed schema.");
 		CompoundTag brewingTag = snapshot.getCompound(ADVANCED_BREWING);
 		if (!validateAdvancedBrewingSchema(player, brewingTag)) return PreflightResult.fail("Station upgrade restore failed: malformed schema.");
-		CompoundTag persistentDataTag = snapshot.getCompound(PERSISTENT_DATA);
+		CompoundTag persistentDataTag = withCircusProgress(player, snapshot.getCompound(PERSISTENT_DATA));
 		if (!validatePersistentDataSchema(persistentDataTag)) return PreflightResult.fail("Persistent journey data restore failed: malformed schema.");
 		ListTag inventoryTag = snapshot.getList(INVENTORY, Tag.TAG_COMPOUND);
 		if (inventoryTag.size() != player.getInventory().getContainerSize()) return PreflightResult.fail("Inventory restore failed: saved slot count does not match.");
@@ -627,8 +631,11 @@ public final class HemoJourneySnapshot {
 		for (String key : JOURNEY_PERSISTENT_KEYS) persistentData.remove(key);
 		for (String key : List.copyOf(persistentData.getAllKeys()))
 			if (key.startsWith("hemomancy.circus_")) persistentData.remove(key);
-		for (String key : target.persistentDataTag().getAllKeys()) {
-			persistentData.put(key, target.persistentDataTag().get(key).copy());
+		CompoundTag targetData = withCircusProgress(player, target.persistentDataTag());
+		HemoCapabilityAccess.circusProgress(player).deserializeNBT(player.registryAccess(),
+				targetData.getCompound(CIRCUS_PROGRESS));
+		for (String key : targetData.getAllKeys()) {
+			if (!key.equals(CIRCUS_PROGRESS)) persistentData.put(key, targetData.get(key).copy());
 		}
 		SkillPointGainEvents.syncSkills(player);
 		LiberKnowledgeEvents.sync(player);
@@ -701,7 +708,7 @@ public final class HemoJourneySnapshot {
 				.equals(target.bestiaryTag())) return ApplyResult.fail("Specimen Bestiary postcondition mismatch");
 		if (!HemoCapabilityAccess.stationUpgrades(player).serializeNBT(player.registryAccess())
 				.equals(target.brewingTag())) return ApplyResult.fail("Station upgrade postcondition mismatch");
-		if (!capturePersistentData(player).equals(target.persistentDataTag())) return ApplyResult.fail("Persistent journey data postcondition mismatch");
+		if (!capturePersistentData(player).equals(withCircusProgress(player, target.persistentDataTag()))) return ApplyResult.fail("Persistent journey data postcondition mismatch");
 		return ApplyResult.ok();
 	}
 
@@ -892,7 +899,21 @@ public final class HemoJourneySnapshot {
 		CompoundTag data = player.getPersistentData();
 		for (String key : JOURNEY_PERSISTENT_KEYS) if (data.contains(key)) captured.put(key, data.get(key).copy());
 		for (String key : data.getAllKeys()) if (key.startsWith("hemomancy.circus_")) captured.put(key, data.get(key).copy());
+		captured.put(CIRCUS_PROGRESS, HemoCapabilityAccess.circusProgress(player).serializeNBT(player.registryAccess()));
 		return captured;
+	}
+
+	/**
+	 * A snapshot taken before the CircusProgress attachment holds the old circus root keys, and a reset target holds
+	 * nothing: fold either into a CircusProgress entry.
+	 */
+	private static CompoundTag withCircusProgress(ServerPlayer player, CompoundTag tag) {
+		if (tag.contains(CIRCUS_PROGRESS, Tag.TAG_COMPOUND)) return tag;
+		CompoundTag upgraded = tag.copy();
+		CircusProgress progress = new CircusProgress();
+		CircusPlayerProgress.foldLegacyRootKeys(upgraded, progress);
+		upgraded.put(CIRCUS_PROGRESS, progress.serializeNBT(player.registryAccess()));
+		return upgraded;
 	}
 
 	private static boolean validatePersistentDataSchema(CompoundTag tag) {

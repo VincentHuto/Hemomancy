@@ -23,6 +23,8 @@ class PlayerDataMigrationGuardrailTest {
 
 	/** Each migration entry point and the file that defines it. */
 	private static final Map<String, String> ENTRY_POINTS = Map.of(
+			"CircusPlayerProgress::migrateLegacyRootKeys",
+			"src/main/java/com/vincenthuto/hemomancy/common/circus/CircusPlayerProgress.java",
 			"FungalScarMigrationRules::migrateCarried",
 			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/fungal/FungalScarMigrationRules.java",
 			"StationUpgradeMigration::migrate",

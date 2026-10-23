@@ -16,11 +16,10 @@
 1	src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/PhlegethonticIchorBlock.java	entity, item-entity or NPC marker data, not player state
 4	src/main/java/com/vincenthuto/hemomancy/common/brewing/AdvancedBrewEffects.java	player root keys not yet moved into an attachment (S-1)
 1	src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/MaxBloodLedger.java	player root keys not yet moved into an attachment (S-1)
-1	src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/degree/InitiatoryDegreeEvents.java	player root keys not yet moved into an attachment (S-1)
-1	src/main/java/com/vincenthuto/hemomancy/common/circus/CircusApprenticeshipProgress.java	player root keys not yet moved into an attachment (S-1)
+1	src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/degree/InitiatoryDegreeEvents.java	legacy Archon choice root key, read once by the archon_choice migration (sunset 2027-04-23)
 4	src/main/java/com/vincenthuto/hemomancy/common/circus/CircusDemonstrations.java	entity, item-entity or NPC marker data, not player state
 20	src/main/java/com/vincenthuto/hemomancy/common/circus/CircusPerformanceController.java	player root keys and entity markers
-12	src/main/java/com/vincenthuto/hemomancy/common/circus/CircusPlayerProgress.java	player root keys not yet moved into an attachment (S-1)
+1	src/main/java/com/vincenthuto/hemomancy/common/circus/CircusPlayerProgress.java	legacy circus root keys, read once by the circus_progress migration (sunset 2027-04-23)
 6	src/main/java/com/vincenthuto/hemomancy/common/circus/CircusPracticalController.java	player root keys and entity markers
 1	src/main/java/com/vincenthuto/hemomancy/common/command/QliphothSubcommand.java	player root keys not yet moved into an attachment (S-1)
 8	src/main/java/com/vincenthuto/hemomancy/common/damage/SchoolDamage.java	entity, item-entity or NPC marker data, not player state
@@ -93,13 +92,12 @@
 1	src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java	entity, item-entity or NPC marker data, not player state
 1	src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/SanguineDominionEvents.java	entity, item-entity or NPC marker data, not player state
 1	src/main/java/com/vincenthuto/hemomancy/common/rite/zone/RiteBoundEvents.java	entity, item-entity or NPC marker data, not player state
-1	src/main/java/com/vincenthuto/hemomancy/common/station/StationUpgradeMigration.java	player root keys not yet moved into an attachment (S-1)
+1	src/main/java/com/vincenthuto/hemomancy/common/station/StationUpgradeMigration.java	legacy Armature claim root keys, read once by the station_upgrade_claims migration (sunset 2027-04-23)
 1	src/main/java/com/vincenthuto/hemomancy/common/succession/MisbegottenBehavior.java	entity, item-entity or NPC marker data, not player state
 1	src/main/java/com/vincenthuto/hemomancy/common/succession/ProfessionalHarbingerEntity.java	entity, item-entity or NPC marker data, not player state
 1	src/main/java/com/vincenthuto/hemomancy/common/succession/SuccessionResidents.java	entity, item-entity or NPC marker data, not player state
 4	src/main/java/com/vincenthuto/hemomancy/common/summon/PuppetStrings.java	entity, item-entity or NPC marker data, not player state
 23	src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberVisitService.java	player root keys not yet moved into an attachment (S-1)
-2	src/main/java/com/vincenthuto/hemomancy/common/worldgen/CircusDiscoveryProgress.java	player root keys not yet moved into an attachment (S-1)
 10	src/main/java/com/vincenthuto/hemomancy/common/worldgen/FungalGardenTravelHelper.java	player root keys not yet moved into an attachment (S-1)
 22	src/main/java/com/vincenthuto/hemomancy/common/worldgen/MycophantEncounterManager.java	player encounter state (root keys and PlayerPersisted)
 19	src/main/java/com/vincenthuto/hemomancy/common/worldgen/VesperOrdealManager.java	player encounter state (root keys and PlayerPersisted)

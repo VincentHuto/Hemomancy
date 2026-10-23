@@ -69,6 +69,10 @@ public static com.vincenthuto.hemomancy.common.capability.player.shared.migratio
     return player.getData(HemoAttachmentTypes.DATA_VERSION);
 }
 
+public static com.vincenthuto.hemomancy.common.circus.CircusProgress circusProgress(Player player) {
+    return player.getData(HemoAttachmentTypes.CIRCUS_PROGRESS);
+}
+
 public static DialogueKnowledge dialogueKnowledge(Player player) {
     return player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE);
 }

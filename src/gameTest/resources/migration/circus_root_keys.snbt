@@ -1,0 +1,14 @@
+{
+	NeoForgeData: {
+		"hemomancy.circus_discovered": 1b,
+		"hemomancy.circus_acclimation": 240,
+		"hemomancy.circus_route": "succession",
+		"hemomancy.circus_route_repaired": 1b,
+		"hemomancy.circus_challenges": 5,
+		"hemomancy.circus_milestone.first_visit": 1b,
+		"hemomancy.circus_milestone.practical.scarlet_mummer": 1b,
+		"hemomancy.circus_apprenticeship": {"taught.scarlet_mummer": 1b, "guest.pending": 4, "guest.day": 12L},
+		"hemomancy.circus_active_challenge": 2
+	},
+	"neoforge:attachments": {"hemomancy:data_version": {Version: 5}}
+}

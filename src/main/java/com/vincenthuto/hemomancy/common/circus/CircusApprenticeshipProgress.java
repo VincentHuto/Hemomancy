@@ -6,15 +6,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-/** The CircusPlayerProgress clone handler preserves this prefix, including pending rewards. */
+/** The apprenticeship record lives in the CircusProgress attachment, so it survives death with pending rewards. */
 public final class CircusApprenticeshipProgress {
-    public static final String KEY = "hemomancy.circus_apprenticeship";
     private CircusApprenticeshipProgress() {}
 
     public static CompoundTag state(Player player) {
-        CompoundTag persistent = player.getPersistentData();
-        if (!persistent.contains(KEY, CompoundTag.TAG_COMPOUND)) persistent.put(KEY, new CompoundTag());
-        return persistent.getCompound(KEY);
+        return HemoCapabilityAccess.circusProgress(player).apprenticeship();
     }
 
     public static boolean knows(Player player, String summon) {

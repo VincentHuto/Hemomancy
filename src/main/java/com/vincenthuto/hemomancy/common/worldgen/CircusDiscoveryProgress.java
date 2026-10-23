@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.circus.CircusProgressRules;
 import net.minecraft.ChatFormatting;
@@ -17,7 +18,6 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CircusDiscoveryProgress {
-	private static final String DISCOVERED_KEY = "hemomancy.circus_discovered";
 	private static final ResourceKey<Structure> CIRCUS_PAVILION = ResourceKey.create(
 			Registries.STRUCTURE, Hemomancy.rloc("circus_pavilion"));
 
@@ -25,12 +25,12 @@ public final class CircusDiscoveryProgress {
 	}
 
 	public static boolean hasDiscovered(Player player) {
-		return player.getPersistentData().getBoolean(DISCOVERED_KEY);
+		return HemoCapabilityAccess.circusProgress(player).discovered();
 	}
 
 	public static boolean markDiscovered(ServerPlayer player) {
 		if (hasDiscovered(player)) return false;
-		player.getPersistentData().putBoolean(DISCOVERED_KEY, true);
+		HemoCapabilityAccess.circusProgress(player).setDiscovered(true);
 		return true;
 	}
 

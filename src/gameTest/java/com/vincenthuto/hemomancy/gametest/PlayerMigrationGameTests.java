@@ -3,9 +3,13 @@ package com.vincenthuto.hemomancy.gametest;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataMigrations;
+import com.vincenthuto.hemomancy.common.circus.CircusApprenticeshipProgress;
+import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.circus.CircusRouteRules;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -100,6 +104,41 @@ public final class PlayerMigrationGameTests {
 					== EnumArchonPath.SILENT_PENDING
 					&& !player.getPersistentData().contains(FungalGardenTravelHelper.ARCHON_CHOICE_KEY),
 					"The leftover root key changed the path or was not cleared");
+			assertSettled(helper, player);
+			helper.succeed();
+		}
+	}
+
+	/**
+	 * S-6c: the circus root keys fold into the CircusProgress attachment and are removed; the live act timer, which is
+	 * session state, stays a root key.
+	 */
+	@GameTest(template = "empty", batch = "player_migrations")
+	public static void circusRootKeysMoveIntoTheAttachment(GameTestHelper helper) {
+		try (CapturedPlayer captured = CapturedPlayer.create(helper)) {
+			ServerPlayer player = load(helper, captured, "circus_root_keys");
+			login(player);
+			helper.assertTrue(CircusDiscoveryProgress.hasDiscovered(player)
+					&& CircusPlayerProgress.acclimation(player) == 240
+					&& CircusPlayerProgress.route(player) == CircusRouteRules.Route.SUCCESSION
+					&& !CircusPlayerProgress.canRepairRoute(player)
+					&& CircusPlayerProgress.challenges(player) == 5,
+					"Circus discovery, acclimation, route, repair or challenges were not migrated");
+			helper.assertTrue(!CircusPlayerProgress.awardMilestone(player, "first_visit", 10)
+					&& !CircusPlayerProgress.awardMilestone(player, "practical.scarlet_mummer", 10)
+					&& CircusPlayerProgress.acclimation(player) == 240,
+					"Migrated milestones were awarded again");
+			var apprenticeship = CircusApprenticeshipProgress.state(player);
+			helper.assertTrue(apprenticeship.getBoolean("taught.scarlet_mummer")
+					&& apprenticeship.getInt("guest.pending") == 4 && apprenticeship.getLong("guest.day") == 12L,
+					"The apprenticeship record was not migrated: " + apprenticeship);
+			var data = player.getPersistentData();
+			for (String key : data.getAllKeys()) {
+				helper.assertTrue(!key.startsWith("hemomancy.circus_") || key.equals("hemomancy.circus_active_challenge"),
+						"A circus root key was left behind: " + key);
+			}
+			helper.assertTrue(data.getInt("hemomancy.circus_active_challenge") == 2,
+					"The live act timer is session state and must stay where it was");
 			assertSettled(helper, player);
 			helper.succeed();
 		}

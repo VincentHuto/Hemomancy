@@ -1916,6 +1916,7 @@ neoforge:attachment_types hemomancy:block_blood_volume
 neoforge:attachment_types hemomancy:block_white_humor_volume
 neoforge:attachment_types hemomancy:blood_tendency
 neoforge:attachment_types hemomancy:blood_volume
+neoforge:attachment_types hemomancy:circus_progress
 neoforge:attachment_types hemomancy:clinical_blood
 neoforge:attachment_types hemomancy:data_version
 neoforge:attachment_types hemomancy:dialogue_knowledge

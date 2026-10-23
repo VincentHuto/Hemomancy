@@ -164,6 +164,10 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("data_version",
                     () -> AttachmentType.serializable(PlayerDataVersion::new).copyOnDeath().build());
 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.circus.CircusProgress>> CIRCUS_PROGRESS =
+            ATTACHMENT_TYPES.register("circus_progress", () -> AttachmentType.serializable(
+                    com.vincenthuto.hemomancy.common.circus.CircusProgress::new).copyOnDeath().build());
+
     // ── Block-entity attachments (no copyOnDeath) ──
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOCK_BLOOD_VOLUME =
             ATTACHMENT_TYPES.register("block_blood_volume",
