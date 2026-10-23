@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.item.harbinger.EntityBloodProfile;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
@@ -40,13 +41,12 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
+public class VialCentrifugeBlockEntity extends HemoContainerBlockEntity
 		implements StackedContentsCompatible, IBloodReservoir, IBloodContainerSlotAccess, UpgradeableStation {
 
 	public static final int SLOT_BLOOD = 1;
@@ -568,11 +568,6 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
-
-	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		return saveWithoutMetadata(registries);
 	}
@@ -641,7 +636,8 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		// Old saves lack rolled output; leave their samples intact and allow a fresh startup.
 		if (!pendingBatch) spinningProgress = 0;
 		IBloodVolume vol = resolveVolume();
-		if (vol != null) {
+		// Saves before the attachment became the only store still carry their own copy.
+		if (vol != null && pTag.contains(TAG_BLOOD_LEVEL)) {
 			vol.setBloodVolume(pTag.getDouble(TAG_BLOOD_LEVEL));
 		}
 	}
@@ -702,10 +698,6 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 			batch.putInt("Stage", batchStage);
 			batch.putInt("Powder", batchPowder);
 			pTag.put("PendingBatch", batch);
-		}
-		IBloodVolume vol = resolveVolume();
-		if (vol != null) {
-			pTag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
 		}
 	}
 

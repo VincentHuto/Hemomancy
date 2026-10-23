@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
@@ -12,8 +13,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,12 +21,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 
-public class PuppeteersSpindleBlockEntity extends BaseContainerBlockEntity {
+public class PuppeteersSpindleBlockEntity extends HemoContainerBlockEntity {
 	public static final int SLOT_CROSSBAR = 0;
 	public static final int SLOT_THREAD = 1;
 	public static final int INVENTORY_SIZE = 2;
@@ -264,10 +262,6 @@ public class PuppeteersSpindleBlockEntity extends BaseContainerBlockEntity {
 	}
 
 	@Nullable
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt,

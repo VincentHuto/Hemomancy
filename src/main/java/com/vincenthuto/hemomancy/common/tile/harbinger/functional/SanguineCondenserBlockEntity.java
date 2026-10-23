@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -20,8 +21,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -46,7 +45,7 @@ import java.util.UUID;
  * Holds projected blood and crystallizes it into Sanguine Formations that wait in the vessel until a player
  * gathers them. Pace, pool and yield follow {@link SanguineCondenserRules} for the installed stage.
  */
-public class SanguineCondenserBlockEntity extends BlockEntity implements IBloodReservoir, UpgradeableStation {
+public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBloodReservoir, UpgradeableStation {
     private static final int MAX_CONTRIBUTORS = 16;
 
     private int formations;
@@ -251,7 +250,6 @@ public class SanguineCondenserBlockEntity extends BlockEntity implements IBloodR
         super.saveAdditional(tag, registries);
         tag.putInt("Formations", formations);
         tag.putInt("Progress", progress);
-        tag.putDouble("BloodVolume", getBloodVolume());
         if (owner != null) tag.putUUID("Owner", owner);
         tag.putInt("OwnerCrystallization", ownerCrystallization);
         tag.putBoolean("EverFilled", everFilled);
@@ -277,17 +275,14 @@ public class SanguineCondenserBlockEntity extends BlockEntity implements IBloodR
         if (tag.hasUUID("MachineIdentity")) machineIdentity = tag.getUUID("MachineIdentity");
         lastUpgradeRite = tag.hasUUID("LastUpgradeRite") ? tag.getUUID("LastUpgradeRite") : null;
         IBloodVolume volume = getBloodCapability();
-        volume.setBloodVolume(Math.clamp(tag.getDouble("BloodVolume"), 0.0D, volume.getMaxBloodVolume()));
+        // Saves before the attachment became the only store still carry their own copy.
+        if (tag.contains("BloodVolume"))
+            volume.setBloodVolume(Math.clamp(tag.getDouble("BloodVolume"), 0.0D, volume.getMaxBloodVolume()));
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return saveWithoutMetadata(registries);
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

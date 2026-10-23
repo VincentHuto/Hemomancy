@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -24,8 +25,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.ContainerHelper;
@@ -37,14 +36,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess {
+public class MorphlingIncubatorBlockEntity extends HemoContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess {
 
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	public static final int CRAFT_TIME = 200;
@@ -510,10 +508,6 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		tag.putInt("CraftTotalTime", this.craftingTotalTime);
 		tag.putInt("Mode", this.mode);
 		saveEnzymeState(tag);
-		IBloodVolume vol = resolveVolume();
-		if (vol != null) {
-			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
-		}
 	}
 
 	@Override
@@ -551,10 +545,6 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	}
 
 	@Nullable
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {

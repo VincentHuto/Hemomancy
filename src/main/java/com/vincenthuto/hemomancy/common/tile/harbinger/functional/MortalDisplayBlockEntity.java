@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 
@@ -11,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.UUID;
 
-public class MortalDisplayBlockEntity extends BlockEntity {
+public class MortalDisplayBlockEntity extends HemoBlockEntity {
 	private UUID linkedHermit;
 	private UUID claimant;
 	private boolean claimed;
@@ -44,9 +45,6 @@ public class MortalDisplayBlockEntity extends BlockEntity {
 	}
 
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) { return saveWithoutMetadata(registries); }
-    @Override public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
-    }
 
 	@Override
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {

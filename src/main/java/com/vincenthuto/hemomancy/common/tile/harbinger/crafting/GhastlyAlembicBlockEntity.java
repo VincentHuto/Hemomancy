@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.brewing.AlembicTier;
 import com.vincenthuto.hemomancy.common.station.StationTierProperty;
@@ -54,7 +55,6 @@ import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -73,7 +73,7 @@ import java.util.List;
  * Heat source: checks the block directly below for fire, soul fire, lit campfire,
  * lit soul campfire, lava, magma, or crimson flames.
  */
-public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
+public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 		implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, IBloodReservoir, IBloodContainerSlotAccess,
 		UpgradeableStation {
 
@@ -853,7 +853,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		}
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
-			vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			// Saves before the attachment became the only store still carry their own copy.
+			if (tag.contains(TAG_BLOOD_LEVEL)) vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
 			vol.setMaxBloodVolume(tier().bloodCapacity());
 		}
 	}
@@ -882,18 +883,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		CompoundTag recipesTag = new CompoundTag();
 		this.recipesUsed.forEach((key, val) -> recipesTag.putInt(key.toString(), val));
 		tag.put("RecipesUsed", recipesTag);
-		IBloodVolume vol = resolveVolume();
-		if (vol != null) {
-			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
-		}
 	}
 
 	// ---- Sync ----
-
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
 
 	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {

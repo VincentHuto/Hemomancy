@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
@@ -15,8 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -29,7 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class CardinalFocusBlockEntity extends BlockEntity {
+public class CardinalFocusBlockEntity extends HemoBlockEntity {
 	private static final String TAG_MEDIUM = "Medium";
 	private static final String TAG_FLOOR = "FormedFloor";
 	private static final String TAG_FLOOR_FORWARDS = "FormedFloorForwards";
@@ -296,11 +295,6 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 			// A fresh formation follows the server's timing.
 			clientFormStart = Float.NaN;
 		}
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ArmatureGeometry;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -29,8 +30,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,7 +42,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -53,7 +51,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class HematicArmatureBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess,
+public class HematicArmatureBlockEntity extends HemoContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess,
 		UpgradeableStation {
 	public static final int SLOT_HEAD_REAGENT = 0;
 	public static final int SLOT_CHEST_REAGENT = 1;
@@ -654,7 +652,8 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		if (volume != null) {
 			volume.setActive(true);
 			volume.setMaxBloodVolume(MAX_BLOOD);
-			volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
+			// Saves before the attachment became the only store still carry their own copy.
+			if (tag.contains(TAG_BLOOD_LEVEL)) volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
 		}
 	}
 
@@ -669,10 +668,6 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		tag.putBoolean(TAG_RITE_LOCKED, riteLocked);
 		tag.putUUID(TAG_MACHINE_IDENTITY, machineIdentity);
 		if (lastUpgradeRite != null) tag.putUUID(TAG_LAST_UPGRADE_RITE, lastUpgradeRite);
-		IBloodVolume volume = getBloodCapability();
-		if (volume != null) {
-			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
-		}
 	}
 
 	@Override
@@ -710,10 +705,6 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	}
 
 	@Nullable
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt,

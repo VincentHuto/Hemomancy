@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomFrame;
@@ -77,7 +78,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservoir, IMultiBlockEntity, UpgradeableStation {
+public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodReservoir, IMultiBlockEntity, UpgradeableStation {
 	private static final BloodAccounting.Source RITUAL_CHARGE = BloodAccounting.Source.of("somatic_loom", Category.STATION, false, false);
 	private static final BloodAccounting.Source BURNT_SPANS = BloodAccounting.Source.of("loom_burnt_spans", Category.STATION, false, false);
 
@@ -1273,18 +1274,16 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	@Override
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
+		// Loading replaces the attachment instance; keep the field on the live one.
+		volume = HemoCapabilityAccess.getBloodVolume(this).orElseThrow(IllegalStateException::new);
 		loadShared(tag, registries);
-	}
-
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override
 	public final CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
 		saveShared(tag, registries);
+		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		return tag;
 	}
 
@@ -1307,7 +1306,6 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	private void saveShared(CompoundTag tag, HolderLookup.Provider registries) {
 		tag.putInt(TAG_CONTENT_SIZE, contents.size());
 		ContainerHelper.saveAllItems(tag, contents, registries);
-		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		tag.putString(TAG_RECIPE, recipePath);
 		tag.putInt("weaveSaveVersion", SAVE_VERSION);
 		tag.putBoolean("RiteLocked", riteLocked);
@@ -1337,7 +1335,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		int size = Math.max(1, tag.getInt(TAG_CONTENT_SIZE));
 		contents = createMutableContents(size);
 		ContainerHelper.loadAllItems(tag, contents, registries);
-		volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
+		// Saves before the attachment became the only store still carry their own copy.
+		if (tag.contains(TAG_BLOOD_LEVEL)) volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
 		recipePath = tag.getString(TAG_RECIPE);
 		selectedRecipeId = tag.getString("selectedRecipeId");
 		committedRecipe = tag.getCompound("committedRecipe").copy();

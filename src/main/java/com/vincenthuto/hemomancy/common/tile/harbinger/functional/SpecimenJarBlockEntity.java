@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
@@ -7,13 +8,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class SpecimenJarBlockEntity extends BlockEntity {
+public class SpecimenJarBlockEntity extends HemoBlockEntity {
 	private CompoundTag specimen = new CompoundTag();
 	private boolean suppressNextRelease = false;
 
@@ -52,11 +50,6 @@ public class SpecimenJarBlockEntity extends BlockEntity {
 	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		return saveWithoutMetadata(registries);
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override

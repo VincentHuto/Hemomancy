@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -21,8 +22,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.ContainerHelper;
@@ -33,7 +32,6 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
@@ -64,7 +62,7 @@ import javax.annotation.Nullable;
  *
  * <p>Blood runs dry → cultivation pauses; progress is not lost.
  */
-public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess {
+public class MycelialCrucibleBlockEntity extends HemoContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess {
 
     // ── Constants ─────────────────────────────────────────────────────────────
 
@@ -532,8 +530,6 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         tag.putInt("CraftProgress",  craftingProgress);
         tag.putInt("CraftTotalTime", craftingTotalTime);
         tag.putInt("Mode",           mode);
-        IBloodVolume vol = resolveVolume();
-        if (vol != null) tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
     }
 
     @Override
@@ -556,11 +552,6 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         craftingProgress  = tag.getInt("CraftProgress");
         craftingTotalTime = tag.getInt("CraftTotalTime");
         mode              = tag.getInt("Mode");
-    }
-
-    @Nullable @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

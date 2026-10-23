@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.common.world.fold;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class NonEuclideanHallwayPlacementSourceTest {
-	private NonEuclideanHallwayPlacementSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+class NonEuclideanHallwayPlacementSourceTest {
+	@Test
+	void hallwayPlacementIsWired() throws IOException {
 		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/NonEuclideanHallwayBlock.java");
 		String blockEntity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/decoration/NonEuclideanHallwayBlockEntity.java");
 
@@ -19,7 +19,7 @@ public final class NonEuclideanHallwayPlacementSourceTest {
 		assertContains("fresh placement should notify neighbors for immediate client/server shape refresh",
 				block, "level.updateNeighborsAt(pos, state.getBlock())");
 		assertContains("hallway block entity should provide a client update packet",
-				blockEntity, "ClientboundBlockEntityDataPacket.create(this)");
+				blockEntity, "extends HemoBlockEntity");
 	}
 
 	private static String read(String path) throws IOException {

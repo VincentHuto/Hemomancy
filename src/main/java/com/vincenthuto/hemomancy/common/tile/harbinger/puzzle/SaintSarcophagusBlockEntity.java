@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.puzzle;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -19,7 +17,7 @@ import net.minecraft.world.phys.AABB;
  * Block entity for the Saint Sarcophagus — tracks the Preserved Corpus state,
  * which saint resides within, and how many times extraction has been attempted.
  */
-public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBlockEntity {
+public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMultiBlockEntity {
 
 	public static final int OFFERING_THRESHOLD = 3;
 
@@ -178,11 +176,6 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		tag.putString("CorpusState", corpusState.name());
 		tag.putBoolean("SampleYielded", sampleYielded);
 		return tag;
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override

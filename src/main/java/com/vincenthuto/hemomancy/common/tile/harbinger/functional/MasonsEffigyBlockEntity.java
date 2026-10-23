@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -25,9 +26,6 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -50,7 +48,7 @@ import java.util.Comparator;
 import java.util.List;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 
-public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider, ProjectedBloodSink {
+public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProvider, ProjectedBloodSink {
 	private static final BloodAccounting.Source MOTIF_CHARGE = BloodAccounting.Source.of("masons_effigy_motif", Category.SCAR, true, false);
 	private static final String TAG_STATE = "EffigyState";
 	private static final String TAG_SELECTED_SCARS = "SelectedScars";
@@ -335,8 +333,4 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 		return saveWithoutMetadata(registries);
 	}
 
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
 }

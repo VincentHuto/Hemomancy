@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
@@ -23,7 +24,7 @@ import java.util.UUID;
  * to the linked bloodline pool; these fields only mirror pool fullness to the
  * client so the fountain can animate.
  */
-public class ConsecratedBloodwellBlockEntity extends BlockEntity {
+public class ConsecratedBloodwellBlockEntity extends HemoBlockEntity {
 	private static final int POOL_SYNC_INTERVAL = 20;
 	private static final String TAG_POOL_BLOOD = "poolBlood";
 	private static final String TAG_POOL_MAX = "poolMax";
@@ -92,11 +93,6 @@ public class ConsecratedBloodwellBlockEntity extends BlockEntity {
 		super.loadAdditional(tag, registries);
 		syncedPoolBlood = tag.getDouble(TAG_POOL_BLOOD);
 		syncedPoolMax = tag.getDouble(TAG_POOL_MAX);
-	}
-
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override

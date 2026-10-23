@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -17,8 +18,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
@@ -29,13 +28,12 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
 
-public class MycelialLanternBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess, IMultiBlockEntity, WorldlyContainer {
+public class MycelialLanternBlockEntity extends HemoContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess, IMultiBlockEntity, WorldlyContainer {
 
     public static final String TAG_BLOOD_LEVEL = "bloodLevel";
     private static final float MAX_BLOOD = 4_000F;
@@ -349,8 +347,6 @@ public class MycelialLanternBlockEntity extends BaseContainerBlockEntity impleme
         ContainerHelper.saveAllItems(tag, inventory, registries);
         tag.putInt("CraftProgress", craftingProgress);
         tag.putInt("CraftTotalTime", craftingTotalTime);
-        IBloodVolume vol = resolveVolume();
-        if (vol != null) tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
     }
 
     @Override
@@ -378,10 +374,6 @@ public class MycelialLanternBlockEntity extends BaseContainerBlockEntity impleme
     }
 
     @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -17,9 +18,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -39,7 +37,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class MorphlingCradleBlockEntity extends BlockEntity {
+public class MorphlingCradleBlockEntity extends HemoBlockEntity {
 	private static final BloodAccounting.Source OWNER_DRAW = BloodAccounting.Source.of("morphling_cradle_draw", Category.STATION, false, false);
 
 	public enum State {
@@ -399,11 +397,6 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		return saveWithoutMetadata(registries);
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override

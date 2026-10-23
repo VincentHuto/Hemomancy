@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumBalance;
@@ -33,12 +34,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
+public class EnzymaticScriptoriumBlockEntity extends HemoContainerBlockEntity
         implements com.vincenthuto.hemomancy.common.tile.IBloodReservoir, UpgradeableStation {
     public static final double BLOOD_CAPACITY = 2000;
     public static final int ITEM = 8;
@@ -244,7 +244,9 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
         riteLocked = tag.getBoolean("RiteLocked");
         if (tag.hasUUID("MachineIdentity")) machineIdentity = tag.getUUID("MachineIdentity");
         lastUpgradeRite = tag.hasUUID("LastUpgradeRite") ? tag.getUUID("LastUpgradeRite") : null;
-        getBloodCapability().setBloodVolume(Math.clamp(tag.getDouble("BloodVolume"), 0, BLOOD_CAPACITY));
+        // Saves before the attachment became the only store still carry their own copy.
+        if (tag.contains("BloodVolume"))
+            getBloodCapability().setBloodVolume(Math.clamp(tag.getDouble("BloodVolume"), 0, BLOOD_CAPACITY));
     }
 
     @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
@@ -254,13 +256,9 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
         tag.putBoolean("RiteLocked", riteLocked);
         tag.putUUID("MachineIdentity", machineIdentity);
         if (lastUpgradeRite != null) tag.putUUID("LastUpgradeRite", lastUpgradeRite);
-        tag.putDouble("BloodVolume", getBloodVolume());
     }
 
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) { return saveWithoutMetadata(registries); }
-    @Override public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
     @Override public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket packet, HolderLookup.Provider registries) {
         if (packet.getTag() != null) loadAdditional(packet.getTag(), registries);
     }

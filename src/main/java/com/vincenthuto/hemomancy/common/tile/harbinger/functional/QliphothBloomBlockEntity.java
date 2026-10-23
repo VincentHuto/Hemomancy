@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
@@ -7,9 +8,6 @@ import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -23,7 +21,7 @@ import java.util.UUID;
  * Implements {@link IMultiBlockEntity} so the render bounding box covers
  * the full 1×1×8 multi-block, preventing frustum culling.
  */
-public class QliphothBloomBlockEntity extends BlockEntity implements IMultiBlockEntity {
+public class QliphothBloomBlockEntity extends HemoBlockEntity implements IMultiBlockEntity {
 
 	private UUID ownerUUID;
 	private int chunkRadius = 3;
@@ -75,8 +73,4 @@ public class QliphothBloomBlockEntity extends BlockEntity implements IMultiBlock
 		return tag;
 	}
 
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
 }

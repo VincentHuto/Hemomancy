@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hutoslib.client.particle.BoltRenderer;
 import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData;
@@ -9,7 +10,6 @@ import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData.SpawnFunct
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public class DendriticDistributorBlockEntity extends BlockEntity {
+public class DendriticDistributorBlockEntity extends HemoBlockEntity {
 	private static final int BOLT_CADENCE_TICKS = 4;
 	private static final int BOLTS_PER_PULSE = 7;
 	private static final double EFFECT_VIEW_DISTANCE = 48.0D;
@@ -93,11 +93,6 @@ public class DendriticDistributorBlockEntity extends BlockEntity {
 	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		return saveWithoutMetadata(registries);
-	}
-
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	public static void clientTick(Level level, BlockPos pos, BlockState state, DendriticDistributorBlockEntity te) {

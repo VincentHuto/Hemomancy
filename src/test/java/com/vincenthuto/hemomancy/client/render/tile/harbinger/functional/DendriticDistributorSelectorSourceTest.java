@@ -20,7 +20,7 @@ class DendriticDistributorSelectorSourceTest {
 		String block = read("src/main/resources/assets/hemomancy/models/block/dendritic_distributor.json");
 
 		assertTrue(entity.contains("tag.putInt(SELECTED_SLOT_TAG, selectedSlot)"), "selected slot persists");
-		assertTrue(entity.contains("ClientboundBlockEntityDataPacket.create(this)"), "selected slot reaches clients");
+		assertTrue(entity.contains("extends HemoBlockEntity"), "selected slot reaches clients");
 		assertTrue(entity.contains("te.tickSelector();"), "client tick animates the selector every tick");
 		assertTrue(packet.contains("if (apply(player, known, msg.slotIndex)) markSelected(player, msg);"),
 				"only a successful Apply moves the selector");

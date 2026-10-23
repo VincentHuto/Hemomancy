@@ -1,21 +1,19 @@
 package com.vincenthuto.hemomancy.common.tile.inscription;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.random.RandomGenerator;
 
-public class DiscoveryInscriptionBlockEntity extends BlockEntity {
+public class DiscoveryInscriptionBlockEntity extends HemoBlockEntity {
 	private static final String TAG_INSCRIPTION_ID = "InscriptionId";
 	private static final String TAG_ENGRAM_INDEX   = "EngramIndex";
 
@@ -75,8 +73,4 @@ public class DiscoveryInscriptionBlockEntity extends BlockEntity {
 		return tag;
 	}
 
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
 }

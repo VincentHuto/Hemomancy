@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.unstained.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.IWhiteHumorVolume;
@@ -39,7 +40,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -58,7 +58,7 @@ import java.util.List;
  * Heat source: checks the block directly below for fire, soul fire, lit campfire,
  * lit soul campfire, lava, magma, or crimson flames.
  */
-public class PallidRetortBlockEntity extends BaseContainerBlockEntity
+public class PallidRetortBlockEntity extends HemoContainerBlockEntity
         implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, IWhiteHumorTile {
 
     // Slot indices
@@ -524,7 +524,8 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
             this.recipesUsed.put(ResourceLocation.parse(s), recipesTag.getInt(s));
         }
         IWhiteHumorVolume vol = resolveVolume();
-        if (vol != null) {
+        // Saves before the attachment became the only store still carry their own copy.
+        if (vol != null && tag.contains(TAG_WHITE_HUMOR_LEVEL)) {
             vol.setWhiteHumorVolume(tag.getFloat(TAG_WHITE_HUMOR_LEVEL));
         }
     }
@@ -539,18 +540,9 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
         CompoundTag recipesTag = new CompoundTag();
         this.recipesUsed.forEach((key, val) -> recipesTag.putInt(key.toString(), val));
         tag.put("RecipesUsed", recipesTag);
-        IWhiteHumorVolume vol = resolveVolume();
-        if (vol != null) {
-            tag.putDouble(TAG_WHITE_HUMOR_LEVEL, vol.getWhiteHumorVolume());
-        }
     }
 
     // ---- Sync ----
-
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {

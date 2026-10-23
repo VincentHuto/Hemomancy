@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
 
@@ -7,9 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,7 +18,7 @@ import net.minecraft.world.phys.AABB;
  * provides a render bounding box that covers the full 1×2×1 structure.
  * Also drives the emergence-from-ground rise animation on first placement.
  */
-public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBlockEntity {
+public class SanguineMonolithBlockEntity extends HemoBlockEntity implements IMultiBlockEntity {
 
 	/** Duration of the placement rise animation in ticks (~1.5 s). */
 	public static final int RISE_DURATION_TICKS = 30;
@@ -119,11 +117,6 @@ public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBl
 		tag.putInt("ArchonInteractions", archonInteractions);
 		if (placedGameTime >= 0) tag.putLong("PlacedGameTime", placedGameTime);
 		return tag;
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override

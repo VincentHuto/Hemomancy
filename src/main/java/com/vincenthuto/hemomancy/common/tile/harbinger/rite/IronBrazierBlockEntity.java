@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.rite;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBloodInteractionRules;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierSpecialOfferingEffects;
@@ -9,8 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.UUID;
 
-public class IronBrazierBlockEntity extends BlockEntity {
+public class IronBrazierBlockEntity extends HemoBlockEntity {
 	private static final String TAG_OFFERING = "Offering";
 	private static final String TAG_POOLED_BLOOD = "PooledBlood";
 
@@ -265,11 +264,6 @@ public class IronBrazierBlockEntity extends BlockEntity {
 	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
 		super.handleUpdateTag(tag, provider);
 		loadAdditional(tag, provider);
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override

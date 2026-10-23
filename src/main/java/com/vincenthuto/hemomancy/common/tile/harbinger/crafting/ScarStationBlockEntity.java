@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
@@ -24,7 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -32,7 +32,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.Arrays;
 import java.util.List;
 
-public class ScarStationBlockEntity extends BaseContainerBlockEntity implements MenuProvider, IMultiBlockEntity {
+public class ScarStationBlockEntity extends HemoContainerBlockEntity implements MenuProvider, IMultiBlockEntity {
 	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
 
 	public int numPlayersUsing = 0;
@@ -50,7 +50,6 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	public AABB getRenderBoundingBox() {
 		return IMultiBlockEntity.computeMultiBlockAABB(this);
 	}
-
 
 	public void clearScarList() {
 		scarsList = ScarRecipe.blank();
@@ -201,11 +200,6 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
 		super.onDataPacket(net, pkt, registries);
 		if (pkt.getTag() != null) readScarList(pkt.getTag());
-	}
-
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override

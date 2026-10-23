@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.plant;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.GourdvineTapBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -12,8 +13,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -25,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 
-public class GourdvineTapBlockEntity extends BlockEntity implements IBloodReservoir, Container {
+public class GourdvineTapBlockEntity extends HemoBlockEntity implements IBloodReservoir, Container {
 
     public static final int SLOT_GOURD = 0;
     public static final int INVENTORY_SIZE = 1;
@@ -214,10 +213,6 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodReserv
     }
 
     @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
@@ -238,11 +233,6 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodReserv
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         ContainerHelper.saveAllItems(tag, items, provider);
-
-        IBloodVolume vol = resolveVolume();
-        if (vol != null) {
-            tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
-        }
     }
 
     @Override

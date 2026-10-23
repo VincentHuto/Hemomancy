@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.CovenantThroneBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
@@ -26,7 +27,7 @@ import java.util.UUID;
  * <p>{@link IBloodReservoir} is implemented only to satisfy internal capability
  * lookup conventions; no blood is stored in this block entity itself.</p>
  */
-public class CovenantThroneBlockEntity extends BlockEntity implements IBloodReservoir, IMultiBlockEntity {
+public class CovenantThroneBlockEntity extends HemoBlockEntity implements IBloodReservoir, IMultiBlockEntity {
 
     private static final String TAG_LAST_TRANCE = "lastTranceTime";
     private static final String TAG_SEATED_PLAYER = "seatedPlayer";
@@ -126,11 +127,6 @@ public class CovenantThroneBlockEntity extends BlockEntity implements IBloodRese
     }
 
     // ── Network sync ──────────────────────────────────────────────────────────
-
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {

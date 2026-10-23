@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -15,9 +16,6 @@ import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -45,7 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *       capability is updated.</li>
  * </ol>
  */
-public class VisceralMirrorBlockEntity extends BlockEntity {
+public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 	private static final BloodAccounting.Source EXTRACTION = BloodAccounting.Source.of("visceral_mirror_extraction", Category.STATION, false, false);
 
 	/** Minimum initiatory degree required to use the mirror. */
@@ -375,8 +373,4 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		return tag;
 	}
 
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
 }

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.mojang.logging.LogUtils;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.PhlebotomistsFieldCaseBlock;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -10,7 +11,6 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.*;
 import net.minecraft.util.Mth;
@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import java.util.*;
 
-public class PhlebotomistsFieldCaseBlockEntity extends BlockEntity implements MenuProvider, SpecimenContainer {
+public class PhlebotomistsFieldCaseBlockEntity extends HemoBlockEntity implements MenuProvider, SpecimenContainer {
     private final CabinetStorage storage = new CabinetStorage(16, true, this::contentsChanged);
     private final Set<Player> viewers = new HashSet<>();
     private final ItemStack[] display = new ItemStack[9];
@@ -218,7 +218,6 @@ public class PhlebotomistsFieldCaseBlockEntity extends BlockEntity implements Me
         tag.put("Display", entries);
         return tag;
     }
-    @Override public ClientboundBlockEntityDataPacket getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
     @Override public void saveToItem(ItemStack stack, HolderLookup.Provider provider) {
         // Creative pick-block is a template, never a second specimen inventory.
         stack.remove(DataComponentInit.FIELD_CASE_CONTENTS.get());

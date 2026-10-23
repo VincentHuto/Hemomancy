@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeTier;
 import com.vincenthuto.hemomancy.common.station.StationTierProperty;
@@ -25,7 +26,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -33,14 +33,13 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.core.Direction;
 
 import java.util.UUID;
 
-public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, WorldlyContainer,
+public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implements IBloodReservoir, WorldlyContainer,
         UpgradeableStation {
     private static final BloodAccounting.Source HAMMER_REPAIR = BloodAccounting.Source.of("resonant_forge_hammer", Category.STATION, false, false);
     private static final int[] NO_AUTOMATION_SLOTS = new int[0];
@@ -461,7 +460,9 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         if (tag.hasUUID("MachineIdentity")) machineIdentity = tag.getUUID("MachineIdentity");
         if (tag.hasUUID("LastUpgradeRite")) lastUpgradeRite = tag.getUUID("LastUpgradeRite");
         operator = tag.hasUUID("Operator") ? tag.getUUID("Operator") : null;
-        getBloodCapability().setBloodVolume(Math.clamp(tag.getDouble("BloodVolume"), 0, ResonantForgeRules.BLOOD_CAPACITY));
+        // Saves before the attachment became the only store still carry their own copy.
+        if (tag.contains("BloodVolume"))
+            getBloodCapability().setBloodVolume(Math.clamp(tag.getDouble("BloodVolume"), 0, ResonantForgeRules.BLOOD_CAPACITY));
     }
 
     @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
@@ -476,11 +477,9 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         tag.putBoolean("RiteLocked", riteLocked); tag.putUUID("MachineIdentity", machineIdentity);
         if (operator != null) tag.putUUID("Operator", operator);
         if (lastUpgradeRite != null) tag.putUUID("LastUpgradeRite", lastUpgradeRite);
-        tag.putDouble("BloodVolume", getBloodVolume());
     }
 
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) { return saveWithoutMetadata(registries); }
-    @Override public ClientboundBlockEntityDataPacket getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
 
     public enum Operation { NONE, APPLY, GRIND, STABILIZE }
     public enum Status {

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.antecedent;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import net.minecraft.core.*;
@@ -17,7 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.*;
 import static com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.*;
 
-public final class VigilArchiveBlockEntity extends BlockEntity {
+public final class VigilArchiveBlockEntity extends HemoBlockEntity {
     private record Response(long time,BlockPos pos,int kind) {}
     private final PriorityQueue<Response> responses=new PriorityQueue<>(Comparator.comparingLong(Response::time));
     private final Set<Long> retired=new HashSet<>();
@@ -156,9 +157,6 @@ public final class VigilArchiveBlockEntity extends BlockEntity {
         site.secondClicks.keySet().retainAll(present);
     }
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) { return saveWithoutMetadata(registries); }
-    @Override public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
-    }
     @Override protected void saveAdditional(CompoundTag tag,HolderLookup.Provider registries) {
         super.saveAdditional(tag,registries); tag.putInt("VigilLayout",layout.version()); tag.putLongArray("Retired",retired.stream().mapToLong(Long::longValue).toArray()); tag.putInt("GrowthBudget",growthBudget);tag.putBoolean("DemonstrationDropped",demonstrationDropped);
     }

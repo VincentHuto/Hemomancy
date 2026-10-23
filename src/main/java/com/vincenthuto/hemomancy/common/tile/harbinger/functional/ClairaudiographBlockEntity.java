@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
@@ -11,7 +12,6 @@ import com.vincenthuto.hemomancy.common.network.ClairaudiographSoundPacket;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.*;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.*;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvider {
+public class ClairaudiographBlockEntity extends HemoBlockEntity implements MenuProvider {
     private static long nextToken;
     private long startedAt;
     private final com.vincenthuto.hemomancy.common.antecedent.AntecedentPlayback observations = new com.vincenthuto.hemomancy.common.antecedent.AntecedentPlayback();
@@ -161,7 +161,6 @@ public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvi
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         var tag = saveWithoutMetadata(registries); tag.putInt("progress", progress); tag.putBoolean("playing", playing); tag.putLong("startedAt",startedAt); return tag;
     }
-    @Override public ClientboundBlockEntityDataPacket getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
     @Override public Component getDisplayName() { return Component.translatable("block.hemomancy.clairaudiograph"); }
     @Override public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) { return new ClairaudiographMenu(id, inventory, this); }
 }

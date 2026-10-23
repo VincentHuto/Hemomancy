@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineVigilBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -31,7 +32,7 @@ import java.util.List;
  * applies {@code blood_binding} to them, draining {@link #BLOOD_PER_APPLICATION}
  * from its store.  When blood runs out the ward goes dormant.</p>
  */
-public class SanguineVigilBlockEntity extends BlockEntity implements IBloodReservoir {
+public class SanguineVigilBlockEntity extends HemoBlockEntity implements IBloodReservoir {
 
     /** Maximum blood stored by the Vigil. */
     public static final double MAX_BLOOD = 5_000.0;
@@ -111,8 +112,6 @@ public class SanguineVigilBlockEntity extends BlockEntity implements IBloodReser
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        IBloodVolume vol = resolveVolume();
-        if (vol != null) tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
     }
 
     @Override
@@ -130,11 +129,6 @@ public class SanguineVigilBlockEntity extends BlockEntity implements IBloodReser
     }
 
     // ── Network sync ──────────────────────────────────────────────────────────
-
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {

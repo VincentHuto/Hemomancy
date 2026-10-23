@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.block.vein.EarthenVeinLoc;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -20,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.UUID;
 
-public class EarthenVeinBlockEntity extends BlockEntity {
+public class EarthenVeinBlockEntity extends HemoBlockEntity {
 
 	public final AnimationState idleAnimationState = new AnimationState();
 
@@ -134,11 +135,6 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 
 	public String getName() {
 		return name;
-	}
-
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override

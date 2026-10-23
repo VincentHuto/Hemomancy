@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.PhlebotomistsCabinetBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.PhlebotomistsCabinetMenu;
@@ -9,7 +10,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PhlebotomistsCabinetBlockEntity extends BlockEntity implements MenuProvider, SpecimenContainer {
+public class PhlebotomistsCabinetBlockEntity extends HemoBlockEntity implements MenuProvider, SpecimenContainer {
     private final CabinetStorage storage = new CabinetStorage(this::contentsChanged);
     private final Set<Player> viewers = new HashSet<>();
     private int closeDelay;
@@ -120,7 +120,6 @@ public class PhlebotomistsCabinetBlockEntity extends BlockEntity implements Menu
         tag.putIntArray("DisplayCounts", counts);
         return tag;
     }
-    @Override public ClientboundBlockEntityDataPacket getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
     @Override public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
         // Ctrl-pick must obey the same stationary-storage rule as normal drops.
         stack.remove(net.minecraft.core.component.DataComponents.BLOCK_ENTITY_DATA);
