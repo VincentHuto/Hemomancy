@@ -1,0 +1,13 @@
+package com.vincenthuto.hemomancy.common.encounter;
+
+public enum ChamberVisitMode {
+	DREAM,
+	TIMED_CHAIR,
+	ATTUNED,
+	ADMIN,
+	GUIDED;
+
+	public boolean timed() {
+		return this == DREAM || this == TIMED_CHAIR || this == GUIDED;
+	}
+}

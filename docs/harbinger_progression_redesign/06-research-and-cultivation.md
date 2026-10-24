@@ -46,7 +46,7 @@ Exploration connects the NPCs' interests to the world. Early discovery remains u
 
 ## Read before editing
 
-- [Overworld Fungal Gardens region](../../src/main/java/com/vincenthuto/hemomancy/common/worldgen/terrablender/FungalGardensOverworldRegion.java) and its registration in BiomeInit.
+- [Overworld Fungal Gardens region](../../src/main/java/com/vincenthuto/hemomancy/common/worldgen/biome/FungalGardensOverworldRegion.java) and its registration in BiomeInit.
 - [Fungal dimension definition](../../src/main/resources/data/hemomancy/dimension/fungal_gardens.json); distinguish it from the survey destination.
 - ClinicalBloodKnowledge, RedTaxonomyRewardRules, SpecimenBestiaryDefinitions/Progress/Events and SpecimenJarData.
 - Mycelial Lantern and Morphling Incubator recipes/block entities, enzyme_fruiting and incubator resources.

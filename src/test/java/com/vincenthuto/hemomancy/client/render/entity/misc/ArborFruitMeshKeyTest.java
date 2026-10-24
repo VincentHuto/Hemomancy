@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.entity.misc;
 
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillVisualRules;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -33,7 +33,7 @@ class ArborFruitMeshKeyTest {
     @Test
     void everyFamilyAndGrowthStateHasAStableTemplateSelection() {
         Set<ArborFruitMeshKey> keys = new HashSet<>();
-        for (String family : com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillLayout.orderedFamilies()) {
+        for (String family : com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillLayout.orderedFamilies()) {
             for (ArborOfWillVisualRules.GrowthState state : ArborOfWillVisualRules.GrowthState.values()) {
                 ArborFruitMeshKey first = ArborFruitMeshKey.create(family, state, 2, 3);
                 ArborFruitMeshKey second = ArborFruitMeshKey.create(family, state, 2, 3);

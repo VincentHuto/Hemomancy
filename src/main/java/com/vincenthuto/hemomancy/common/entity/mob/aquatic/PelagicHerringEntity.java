@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.*;

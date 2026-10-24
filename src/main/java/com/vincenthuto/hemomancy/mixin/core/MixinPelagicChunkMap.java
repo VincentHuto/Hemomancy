@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
 import com.mojang.datafixers.DataFixer;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicWorldgen;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicWorldgen;
 import net.minecraft.server.level.*;
 import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.util.thread.BlockableEventLoop;

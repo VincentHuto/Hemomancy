@@ -32,6 +32,17 @@ class PackageLayoutGuardrailTest {
 		assertEquals(CLIENT, packages("client"));
 	}
 
+	/** Worldgen is split by generation step; encounter rules and entity geometry live outside it. */
+	@Test
+	void worldgenIsSplitByGenerationStep() throws Exception {
+		assertEquals(List.of("biome", "carver", "feature", "structure", "terrain", "village"),
+				packages("common/worldgen"));
+		try (Stream<Path> files = Files.list(RepoPaths.mainJava("common/worldgen"))) {
+			assertEquals(List.of(), files.filter(path -> path.toString().endsWith(".java"))
+					.map(path -> path.getFileName().toString()).toList());
+		}
+	}
+
 	private static List<String> packages(String side) throws Exception {
 		try (Stream<Path> dirs = Files.list(RepoPaths.mainJava(side))) {
 			return dirs.filter(Files::isDirectory)

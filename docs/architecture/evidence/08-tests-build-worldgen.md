@@ -363,7 +363,7 @@ Difficulty M: each class has 15 or more importers.
 ### 4.6 TerraBlender and duplicated bootstrap [V]
 
 - All regions register in `BiomeInit.commonSetup` (`BiomeInit.java:434-473`): Pelagic or Erythrocoral, Phlegethontic (Nether), FungalGardens.
-- `TestSurfaceRuleData` is the *production* surface rule set despite its name (`:28,38`).
+- `FungalGardensSurfaceRuleData` is the *production* surface rule set despite its name (`:28,38`).
 - `BiomeInit.bootstrapBiomes` (`:58-70`), `PelagicBiomes.bootstrap`, `ConfiguredFeatureInit.bootstrap:103` and `PlacedFeatureInit.bootstrap:83` duplicate the JSON. Their only callers are the unreferenced `HemoFeatureUtils` and `HemoPlacementUtils`.
 - JSON is authoritative. The `ResourceKey` constants are still used.
 

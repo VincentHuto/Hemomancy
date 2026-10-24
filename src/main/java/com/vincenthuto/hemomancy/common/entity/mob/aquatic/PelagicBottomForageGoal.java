@@ -1,11 +1,12 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.*;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
 import java.util.EnumSet;
 import java.util.function.BooleanSupplier;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules;
 
 /** Existing crawlers choose nearby supported surfaces without being pinned to biome borders. */
 public final class PelagicBottomForageGoal extends Goal {

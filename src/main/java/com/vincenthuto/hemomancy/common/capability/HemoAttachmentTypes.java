@@ -41,9 +41,9 @@ public final class HemoAttachmentTypes {
                     .<java.util.List<net.minecraft.world.level.levelgen.structure.BoundingBox>>builder(() -> java.util.List.of())
                     .serialize(net.minecraft.world.level.levelgen.structure.BoundingBox.CODEC.listOf()).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.worldgen.PhlegethonticOreReservations>> PHLEGETHONTIC_ORE_RESERVATIONS =
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticOreReservations>> PHLEGETHONTIC_ORE_RESERVATIONS =
             ATTACHMENT_TYPES.register("phlegethontic_ore_reservations", () -> AttachmentType
-                    .serializable(com.vincenthuto.hemomancy.common.worldgen.PhlegethonticOreReservations::new).build());
+                    .serializable(com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticOreReservations::new).build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.damage.SchoolCombatState>> SCHOOL_COMBAT =
             ATTACHMENT_TYPES.register("school_combat",

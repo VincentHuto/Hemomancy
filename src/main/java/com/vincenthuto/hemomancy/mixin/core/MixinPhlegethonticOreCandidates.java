@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.common.worldgen.PhlegethonticOreReservations;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticOreReservations;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.worldgen.config.HyphaeConfig;
-import com.vincenthuto.hemomancy.common.worldgen.config.EscharianOvergrowthConfiguration;
-import com.vincenthuto.hemomancy.common.worldgen.config.SmallInfectedMushroomConfig;
+import com.vincenthuto.hemomancy.common.worldgen.feature.config.HyphaeConfig;
+import com.vincenthuto.hemomancy.common.worldgen.feature.config.EscharianOvergrowthConfiguration;
+import com.vincenthuto.hemomancy.common.worldgen.feature.config.SmallInfectedMushroomConfig;
 import com.vincenthuto.hemomancy.common.worldgen.feature.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;

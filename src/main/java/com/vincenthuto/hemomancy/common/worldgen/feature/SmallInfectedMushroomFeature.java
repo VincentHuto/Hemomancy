@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.mojang.serialization.Codec;
-import com.vincenthuto.hemomancy.common.worldgen.config.SmallInfectedMushroomConfig;
+import com.vincenthuto.hemomancy.common.worldgen.feature.config.SmallInfectedMushroomConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;

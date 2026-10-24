@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.block.harbinger.EscharianScyphusBlock;
-import com.vincenthuto.hemomancy.common.worldgen.EscharianOvergrowthLayout;
-import com.vincenthuto.hemomancy.common.worldgen.EscharianOvergrowthLayout.Cell;
+import com.vincenthuto.hemomancy.common.worldgen.feature.escharian.EscharianOvergrowthLayout;
+import com.vincenthuto.hemomancy.common.worldgen.feature.escharian.EscharianOvergrowthLayout.Cell;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,11 +39,11 @@ final class EscharianOvergrowthClientReview {
             Cell anchor=new Cell(1000+index*18,200,1020);
             var plan=EscharianOvergrowthLayout.pile(index,anchor,c -> c.y()<200,c -> c.y()>=200);
             for(int x=-8;x<=8;x++)for(int z=-8;z<=8;z++)level.setBlock(new BlockPos(anchor.x()+x,199,anchor.z()+z),BlockInit.blood_scorched_scab.get().defaultBlockState(),3);
-            var substrate=com.vincenthuto.hemomancy.common.worldgen.EscharianOvergrowthSubstrate.generate(index,plan,
-                    c -> level.getBlockState(new BlockPos(c.x(),c.y(),c.z())).is(com.vincenthuto.hemomancy.common.worldgen.PhlegethonticTags.OVERGROWTH_SUPPORT),
+            var substrate=com.vincenthuto.hemomancy.common.worldgen.feature.escharian.EscharianOvergrowthSubstrate.generate(index,plan,
+                    c -> level.getBlockState(new BlockPos(c.x(),c.y(),c.z())).is(com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticTags.OVERGROWTH_SUPPORT),
                     c -> level.isEmptyBlock(new BlockPos(c.x(),c.y(),c.z())));
             substrate.forEach((c,material) -> level.setBlock(new BlockPos(c.x(),c.y(),c.z()),
-                    (material==com.vincenthuto.hemomancy.common.worldgen.EscharianOvergrowthSubstrate.Material.INFESTED
+                    (material==com.vincenthuto.hemomancy.common.worldgen.feature.escharian.EscharianOvergrowthSubstrate.Material.INFESTED
                             ? BlockInit.infested_venous_stone.get():BlockInit.venous_stone.get()).defaultBlockState(),3));
             plan.backing().forEach((c,layer) -> level.setBlock(new BlockPos(c.x(),c.y(),c.z()),
                     (layer==EscharianOvergrowthLayout.Layer.RIM?BlockInit.escharian_overgrowth_rim.get():BlockInit.escharian_overgrowth.get()).defaultBlockState(),3));

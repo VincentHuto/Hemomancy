@@ -14,7 +14,7 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeS
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
-import com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusDiscoveryProgress;
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;

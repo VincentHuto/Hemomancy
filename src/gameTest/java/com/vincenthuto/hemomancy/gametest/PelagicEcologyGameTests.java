@@ -73,8 +73,8 @@ public final class PelagicEcologyGameTests {
             h.assertTrue(!((Mob)type.create(h.getLevel())).isPersistenceRequired(), "Natural benthos must despawn normally: " + id);
         }
         var biomes = h.getLevel().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME);
-        for (var layer : com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.values()) {
-            var biome = biomes.getHolderOrThrow(com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicBiomes.key(layer)).value();
+        for (var layer : com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer.values()) {
+            var biome = biomes.getHolderOrThrow(com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicBiomes.key(layer)).value();
             for (var mobCategory : net.minecraft.world.entity.MobCategory.values())
                 for (var entry : biome.getMobSettings().getMobs(mobCategory).unwrap())
                     h.assertTrue(entry.type.getCategory() == mobCategory, "Spawn table/category mismatch in " + layer + ": " + entry.type);
@@ -88,8 +88,8 @@ public final class PelagicEcologyGameTests {
         var origin = h.absolutePos(new BlockPos(4096, 0, 4096));
         var pos = new BlockPos((origin.getX() & ~15) + 8, 45, (origin.getZ() & ~15) + 8);
         var biome = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME)
-                .getHolderOrThrow(com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicBiomes.key(
-                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.OPEN));
+                .getHolderOrThrow(com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicBiomes.key(
+                        com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer.OPEN));
         var chunks = new java.util.ArrayList<net.minecraft.world.level.chunk.LevelChunk>();
         for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
             var chunk = level.getChunk((pos.getX() >> 4) + dx, (pos.getZ() >> 4) + dz);
@@ -153,17 +153,17 @@ public final class PelagicEcologyGameTests {
     public static void bottomAnimalsStayAttachedAndCuttlesDescendTowardTwilight(GameTestHelper h) {
         var level = h.getLevel(); var origin = h.absolutePos(new BlockPos(1024,0,1024));
         var mobs = new java.util.ArrayList<Mob>();
-        var layers = new com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer[]{
-                com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.REEF,
-                com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.CARRION,
-                com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.HYDROTHERMAL,
-                com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.TWILIGHT};
+        var layers = new com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer[]{
+                com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer.REEF,
+                com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer.CARRION,
+                com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer.HYDROTHERMAL,
+                com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer.TWILIGHT};
         var ids = new String[]{"barbed_urchin", "hagfish", "chalybeate_snail", "prism_cuttle"};
         var ys = new int[]{45, -20, -45, 42};
         for (int i=0; i<ids.length; i++) {
             var center = new BlockPos(origin.getX()+i*64,ys[i],origin.getZ());
             var biome = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME)
-                    .getHolderOrThrow(com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicBiomes.key(layers[i]));
+                    .getHolderOrThrow(com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicBiomes.key(layers[i]));
             for (int dx=-1;dx<=1;dx++) for(int dz=-1;dz<=1;dz++) {
                 level.setChunkForced((center.getX()>>4)+dx,(center.getZ()>>4)+dz,true);
                 level.getChunk((center.getX()>>4)+dx,(center.getZ()>>4)+dz).fillBiomesFromNoise((a,b,c,s) -> biome, level.getChunkSource().randomState().sampler());
@@ -191,18 +191,18 @@ public final class PelagicEcologyGameTests {
         fillWater(h,pos,10,5);
         for(var p:BlockPos.betweenClosed(pos.offset(-10,-1,-10),pos.offset(10,-1,10))) level.setBlock(p,Blocks.STONE.defaultBlockState(),2);
         var biome=level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME).getHolderOrThrow(
-                com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicBiomes.key(com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.TWILIGHT));
+                com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicBiomes.key(com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer.TWILIGHT));
         for(int dx=-1;dx<=1;dx++) for(int dz=-1;dz<=1;dz++) level.getChunk((pos.getX()>>4)+dx,(pos.getZ()>>4)+dz)
                 .fillBiomesFromNoise((a,b,c,s)->biome,level.getChunkSource().randomState().sampler());
         var animal=EntityInit.siphonophore.get().create(level); animal.moveTo(pos.getCenter()); animal.getRandom().setSeed(1337);
-        h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.waterClearance(level,pos.above(3),0,3,1),"Missing valid deeper-clearance alternative");
+        h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.waterClearance(level,pos.above(3),0,3,1),"Missing valid deeper-clearance alternative");
         int valid=0;
         for(int i=0;i<100;i++) {
-            var target=com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.target(animal,
-                    com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.SIPHONOPHORE,false);
+            var target=com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.target(animal,
+                    com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.SIPHONOPHORE,false);
             if(target!=null) {
                 valid++;
-                h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.waterClearance(level,BlockPos.containing(target),0,3,1),"Soft habitat fallback aimed filaments into stone at " + target);
+                h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.waterClearance(level,BlockPos.containing(target),0,3,1),"Soft habitat fallback aimed filaments into stone at " + target);
             }
         }
         h.assertTrue(valid>0,"All safe movement targets were rejected"); h.succeed();
@@ -225,10 +225,10 @@ public final class PelagicEcologyGameTests {
         var level = h.getLevel();
         var origin = h.absolutePos(new BlockPos(512, 0, 512));
         int column = 0;
-        for (var species : com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.values()) {
+        for (var species : com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.values()) {
             var x = origin.getX() + column++ * 32;
             var biome = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME)
-                    .getHolderOrThrow(com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicBiomes.key(species.home));
+                    .getHolderOrThrow(com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicBiomes.key(species.home));
             var chunk = level.getChunk(x >> 4, origin.getZ() >> 4);
             chunk.fillBiomesFromNoise((a,b,c,sampler) -> biome, level.getChunkSource().randomState().sampler());
             for (int y : new int[]{species.minY - 1, species.minY, species.maxY, species.maxY + 1}) {
@@ -241,27 +241,27 @@ public final class PelagicEcologyGameTests {
                 };
                 boolean bottom = switch (species) { case CHITON, HEMOLYMPHOPODA, URCHIN, HAGFISH, SNAIL -> true; default -> false; };
                 if (bottom) level.setBlock(pos.below(), floor.defaultBlockState(), 2);
-                h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos, species)
+                h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos, species)
                         == (y >= species.minY && y <= species.maxY), "Loaded habitat boundary " + species + " Y" + y);
                 if (y != species.minY) continue;
                 if (species.name().equals("HAGFISH") || species.name().equals("SNAIL")) {
                     level.setBlock(pos.below(), Blocks.STONE.defaultBlockState(), 2);
-                    h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos, species), "Missing required substrate accepted " + species);
+                    h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos, species), "Missing required substrate accepted " + species);
                 }
                 if (species.name().equals("WHALE") || species.name().equals("SIPHONOPHORE")) {
                     level.setBlock(pos.below(2), Blocks.STONE.defaultBlockState(), 2);
-                    h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos, species), "Insufficient body/filament clearance accepted " + species);
+                    h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos, species), "Insufficient body/filament clearance accepted " + species);
                 }
                 if (species.name().equals("HEMOLYMPHOPODA")) {
                     level.setBlock(pos.above(), Blocks.AIR.defaultBlockState(), 2);
-                    h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos, species), "Shallow pool rejected");
+                    h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos, species), "Shallow pool rejected");
                 }
             }
         }
         var edge = new BlockPos(29000000, -20, 29000000);
         h.assertTrue(!level.hasChunk(edge.getX() >> 4, edge.getZ() >> 4), "Edge control already loaded");
-        h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.waterClearance(level, edge, 2, 2, 2), "Unloaded clearance accepted");
-        h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.nearBlock(level, edge, 6, 4, s -> s.is(Blocks.BONE_BLOCK)), "Unloaded substrate accepted");
+        h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.waterClearance(level, edge, 2, 2, 2), "Unloaded clearance accepted");
+        h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.nearBlock(level, edge, 6, 4, s -> s.is(Blocks.BONE_BLOCK)), "Unloaded substrate accepted");
         h.assertTrue(!level.hasChunk(edge.getX() >> 4, edge.getZ() >> 4), "Habitat reads loaded a neighboring chunk");
         h.succeed();
     }

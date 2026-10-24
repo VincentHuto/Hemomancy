@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.server.level.ServerLevel;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;

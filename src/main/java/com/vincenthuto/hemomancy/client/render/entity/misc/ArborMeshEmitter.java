@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.entity.misc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.*;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import org.joml.Matrix3f;
@@ -12,6 +11,10 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborCanopyGeometry;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillLayout;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillVisualRules;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborSkeleton;
 
 /**
  * Pure mesh emission for the Arbor's cached layers. Closed solids (tubes, caps, ellipsoids) wind

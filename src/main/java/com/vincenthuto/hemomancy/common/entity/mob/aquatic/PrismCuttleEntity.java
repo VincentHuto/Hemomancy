@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
 import net.minecraft.core.BlockPos;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -223,7 +223,7 @@ public class PrismCuttleEntity extends WaterAnimal {
 
 	private double habitatDepthCorrection() {
 		var layer = PelagicHabitat.layer(level(), blockPosition());
-		return layer == null || layer == com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.REEF
+		return layer == null || layer == com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer.REEF
 				? PrismCuttleRules.verticalDepthCorrection(level().getSeaLevel(), getY())
 				: PelagicHabitat.depthCorrection(level(), blockPosition(), Species.CUTTLE);
 	}

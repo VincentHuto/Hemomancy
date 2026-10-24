@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;

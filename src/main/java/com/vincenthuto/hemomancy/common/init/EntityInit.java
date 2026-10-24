@@ -892,31 +892,31 @@ public class EntityInit {
         event.register(phlegethontic_bombardier.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 PhlegethonticBombardier::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(chiton.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
-                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.CHITON), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.CHITON), RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(pyrosome.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
-                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.PYROSOME), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.PYROSOME), RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(ice_fish.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 IceFishEntity::canSpawnHere, RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(pelagic_herring.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
-                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.HERRING), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.HERRING), RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(siphonophore.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
-                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.SIPHONOPHORE), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.SIPHONOPHORE), RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(bloody_belly_comb_jelly.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
-                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.COMB_JELLY), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.COMB_JELLY), RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(hagfish.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
-                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.HAGFISH), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.HAGFISH), RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(vampire_squid.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
-                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.VAMPIRE_SQUID), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.VAMPIRE_SQUID), RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(chalybeate_snail.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
-                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.SNAIL), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.SNAIL), RegisterSpawnPlacementsEvent.Operation.REPLACE);
         Hemomancy.LOGGER.info("[Hemomancy] Registering spawn placements...");
         event.register(EntityInit.chitinite.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChitiniteEntity::canSpawnInCave,

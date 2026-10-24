@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
-import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitMode;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitRules;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer;

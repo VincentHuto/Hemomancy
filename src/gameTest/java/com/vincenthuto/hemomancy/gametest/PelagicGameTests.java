@@ -1,8 +1,10 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.*;
 import com.vincenthuto.hemomancy.mixin.core.PelagicMonumentChildrenAccessor;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicBiomes;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicWorldgen;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.*;

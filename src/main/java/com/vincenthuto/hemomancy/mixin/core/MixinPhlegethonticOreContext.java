@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.common.worldgen.PhlegethonticOreReservations;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticOreReservations;
 import net.minecraft.world.level.levelgen.feature.*;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import org.spongepowered.asm.mixin.Mixin;

@@ -47,7 +47,7 @@ public final class PelagicClientReview {
                 server.execute(() -> {
                     var player = server.getPlayerList().getPlayer(uuid);
                     var source = player.createCommandSourceStack().withPermission(4);
-                    var terrain = com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicWorldgen.context(player.serverLevel().getChunkSource().randomState());
+                    var terrain = com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicWorldgen.context(player.serverLevel().getChunkSource().randomState());
                     double cameraX = x + .5, cameraZ = z + .5, height = cameraY;
                     float yaw = 135, pitch = 30;
                     if (site.has("shoreEdge")) {

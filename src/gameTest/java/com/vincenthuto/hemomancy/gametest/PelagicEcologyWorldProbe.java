@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.gametest;
 import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
 import com.mojang.logging.LogUtils;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -15,6 +14,9 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import java.nio.file.*;
 import java.util.*;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer;
 
 /** Native spawning in real seeded chunks, retaining cadence, mob caps and placement checks. */
 public final class PelagicEcologyWorldProbe {

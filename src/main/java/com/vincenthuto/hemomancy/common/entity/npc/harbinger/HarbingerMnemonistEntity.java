@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.shared.NoeticDiscoveryProgression;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
-import com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusDiscoveryProgress;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

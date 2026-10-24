@@ -12,7 +12,7 @@ The Chamber gradually becomes intelligible and controllable. The Anchorite remai
 
 ## Read before editing
 
-- [Chamber visit rules](../../src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberVisitRules.java), ChamberVisitService, ChamberVisitMode, ChamberVisitEvents.
+- [Chamber visit rules](../../src/main/java/com/vincenthuto/hemomancy/common/encounter/ChamberVisitRules.java), ChamberVisitService, ChamberVisitMode, ChamberVisitEvents.
 - [Seat interaction](../../src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/WarpChairBlock.java), WarpChairBlockEntity and its pairing/recovery behavior.
 - ChamberOfWillManager, ChamberProgressionRules, safety/boundary rules, Chamber client sync and overlay.
 - [Vein-Mason assignments](../../src/main/java/com/vincenthuto/hemomancy/common/mission/cicatrix_anchorite/VeinMasonAssignments.java), VeinMasonScarLesson, Anchorite/Vicar/Mnemonist dialogue, HarbingerAdvancementGranter.

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.entity.misc;
 
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillLayout;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillLayout;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillVisualRules;
 
 record ArborFruitMeshKey(String family, ArborOfWillVisualRules.GrowthState state, int level, int maxLevel) {
     static ArborFruitMeshKey create(String family, ArborOfWillVisualRules.GrowthState state,

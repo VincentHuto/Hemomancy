@@ -69,7 +69,7 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new RetractWhenThreatenedGoal(this));
 		this.goalSelector.addGoal(1, new PelagicBottomForageGoal(this,
-				com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.SNAIL, () -> !isRetracted()));
+				com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.SNAIL, () -> !isRetracted()));
 		this.goalSelector.addGoal(2, new SlowFloorCrawlGoal(this));
 		this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 5.0F));
 		this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));

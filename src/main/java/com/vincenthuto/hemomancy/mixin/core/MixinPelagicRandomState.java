@@ -1,8 +1,9 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.*;
 import net.minecraft.world.level.levelgen.*;
 import org.spongepowered.asm.mixin.*;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicContext;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicRandomStateAccess;
 
 @Mixin(value = RandomState.class, remap = false)
 public abstract class MixinPelagicRandomState implements PelagicRandomStateAccess {

@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFungalProjection;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
-import com.vincenthuto.hemomancy.common.worldgen.FungalProjectionRules;
+import com.vincenthuto.hemomancy.common.encounter.FungalProjectionRules;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

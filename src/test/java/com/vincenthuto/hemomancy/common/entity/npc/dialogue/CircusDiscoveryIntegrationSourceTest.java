@@ -13,7 +13,7 @@ public final class CircusDiscoveryIntegrationSourceTest {
 	public static void main(String[] args) throws IOException {
 		String dialogue = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerMnemonistDialogueTrees.java");
 		String handler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
-		String discovery = read("src/main/java/com/vincenthuto/hemomancy/common/worldgen/CircusDiscoveryProgress.java");
+		String discovery = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/circus/CircusDiscoveryProgress.java");
 		String waybill = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/CircusWaybillItem.java");
 
 		assertContains(dialogue, "EVENT_CIRCUS_WAYBILL");

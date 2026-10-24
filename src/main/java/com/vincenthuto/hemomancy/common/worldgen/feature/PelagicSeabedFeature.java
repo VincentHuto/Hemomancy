@@ -7,16 +7,16 @@ public final class PelagicSeabedFeature extends Feature<NoneFeatureConfiguration
     public PelagicSeabedFeature() { super(NoneFeatureConfiguration.CODEC); }
     @Override public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         var level = context.level();
-        var geology = com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicWorldgen.context(level.getLevel().getChunkSource().randomState());
+        var geology = com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicWorldgen.context(level.getLevel().getChunkSource().randomState());
         if (geology == null) return false;
         var chunk = new net.minecraft.world.level.ChunkPos(context.origin());
-        var plan = com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLandmarks.plan(geology.terrain(), chunk.x, chunk.z,
+        var plan = com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLandmarks.plan(geology.terrain(), chunk.x, chunk.z,
                 geology::column);
         boolean changed = false;
         for (var voxel : plan) {
             var pos = new net.minecraft.core.BlockPos(voxel.x(), voxel.y(), voxel.z());
             var existing = level.getBlockState(pos);
-            boolean dryStack = voxel.material() == com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLandmarks.Material.STONE
+            boolean dryStack = voxel.material() == com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLandmarks.Material.STONE
                     && existing.isAir();
             if (!dryStack && !existing.is(net.minecraft.world.level.block.Blocks.WATER)
                     && !existing.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD)

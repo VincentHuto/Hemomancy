@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryC
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerMnemonistEntity;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
-import com.vincenthuto.hemomancy.common.worldgen.structure.VagrantMindPiece;
+import com.vincenthuto.hemomancy.common.worldgen.structure.vagrantmind.VagrantMindPiece;
 import java.util.function.Predicate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;

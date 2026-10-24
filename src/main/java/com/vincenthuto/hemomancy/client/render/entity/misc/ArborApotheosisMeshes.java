@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.render.entity.misc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborCanopyGeometry;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborSkeleton;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborCanopyGeometry;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborSkeleton;
 import net.minecraft.client.renderer.LightTexture;
 
 import java.util.List;

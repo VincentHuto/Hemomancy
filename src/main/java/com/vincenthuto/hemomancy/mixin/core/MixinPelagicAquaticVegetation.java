@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicWorldgen;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicWorldgen;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.Heightmap;

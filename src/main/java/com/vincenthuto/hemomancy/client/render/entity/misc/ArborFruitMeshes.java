@@ -3,9 +3,9 @@ package com.vincenthuto.hemomancy.client.render.entity.misc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborCanopyGeometry;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborFruitGeometry;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborCanopyGeometry;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborFruitGeometry;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillVisualRules;
 import net.minecraft.client.renderer.LightTexture;
 
 import java.util.ArrayList;

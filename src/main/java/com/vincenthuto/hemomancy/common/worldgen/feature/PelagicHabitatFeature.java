@@ -4,7 +4,9 @@ import com.vincenthuto.hemomancy.common.block.harbinger.plant.BoneWormColonyBloc
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.GiantTubeWormColonyBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.PelagicColonyBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.*;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicWorldgen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;

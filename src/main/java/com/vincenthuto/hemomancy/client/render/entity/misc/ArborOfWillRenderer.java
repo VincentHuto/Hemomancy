@@ -11,7 +11,11 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProg
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.*;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborCanopyGeometry;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborFruitGeometry;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillLayout;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillVisualRules;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborSkillPresentation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.culling.Frustum;

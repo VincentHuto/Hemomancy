@@ -13,7 +13,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusDiscoveryProgress;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;

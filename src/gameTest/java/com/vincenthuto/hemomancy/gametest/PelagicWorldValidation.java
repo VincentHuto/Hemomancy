@@ -4,7 +4,13 @@ import com.google.gson.*;
 import com.mojang.logging.LogUtils;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.BoneWormColonyBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.GiantTubeWormColonyBlock;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.*;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicBiomes;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicContext;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicDensity;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLandmarks;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicTerrainSampler;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicWorldgen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.*;
@@ -48,7 +54,7 @@ public final class PelagicWorldValidation {
             var level = h.getLevel();
             h.assertTrue(PelagicWorldgen.context(level.getChunkSource().randomState()) != null,
                     "Locate probe needs the real seeded noise Overworld");
-            com.vincenthuto.hemomancy.common.worldgen.structure.TroupeFootprintGameTests.verifyNoiseColumns(h);
+            com.vincenthuto.hemomancy.common.worldgen.structure.circus.TroupeFootprintGameTests.verifyNoiseColumns(h);
             var origin = new BlockPos(Integer.getInteger("hemomancy.pelagic.locateX", 0), 70,
                     Integer.getInteger("hemomancy.pelagic.locateZ", 0));
             var structures = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE);

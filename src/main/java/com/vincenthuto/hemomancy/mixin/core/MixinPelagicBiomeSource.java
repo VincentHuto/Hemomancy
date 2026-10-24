@@ -2,10 +2,11 @@ package com.vincenthuto.hemomancy.mixin.core;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.*;
 import net.minecraft.core.*;
 import net.minecraft.world.level.biome.*;
 import org.spongepowered.asm.mixin.*;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicBiomeSourceAccess;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicContext;
 
 @Mixin(value = MultiNoiseBiomeSource.class, remap = false)
 public abstract class MixinPelagicBiomeSource implements PelagicBiomeSourceAccess {

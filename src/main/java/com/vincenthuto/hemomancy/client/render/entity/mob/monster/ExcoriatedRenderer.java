@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.ExcoriatedModel;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity;
-import com.vincenthuto.hemomancy.common.worldgen.PhlegethonticRules;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticRules;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;

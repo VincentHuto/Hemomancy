@@ -40,7 +40,7 @@ class AttachmentAccessTest {
 					"owns the block blood attachment for every reservoir"),
 			Map.entry("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/station/StationUpgradeMigration.java",
 					"one-shot migration out of the retired brewing and forge attachments"),
-			Map.entry("src/main/java/com/vincenthuto/hemomancy/common/worldgen/PhlegethonticOreReservations.java",
+			Map.entry("src/main/java/com/vincenthuto/hemomancy/common/worldgen/terrain/phlegethontic/PhlegethonticOreReservations.java",
 					"chunk attachment"),
 			Map.entry("src/main/java/com/vincenthuto/hemomancy/common/worldgen/feature/PhlegethonticWorldgenFeature.java",
 					"chunk attachment"),

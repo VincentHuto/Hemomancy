@@ -7,8 +7,13 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import java.util.OptionalInt;
+import com.vincenthuto.hemomancy.common.worldgen.structure.voyager.ActiveHarbingerVoyagerVesselPlacementRules;
+import com.vincenthuto.hemomancy.common.worldgen.structure.circus.CircusPavilionPlacementRules;
+import com.vincenthuto.hemomancy.common.worldgen.structure.voyager.HarbingerVoyagerWreckPlacementRules;
+import com.vincenthuto.hemomancy.common.worldgen.structure.circus.TroupeFootprintScan;
+import com.vincenthuto.hemomancy.common.worldgen.structure.circus.TroupeTerrainColumns;
 
-final class StructurePlacementChecks {
+public final class StructurePlacementChecks {
 	private static final int MAX_LAND_STRUCTURE_HEIGHT = 150;
 	private static final int MAX_ALLOWED_WATER_DEPTH = 2;
 	private static final int MAX_ALLOWED_SWAMP_WATER_DEPTH = 8;
@@ -24,16 +29,16 @@ final class StructurePlacementChecks {
 	private StructurePlacementChecks() {
 	}
 
-	static boolean canPlaceOverworldHemomancyStructure(Structure.GenerationContext context) {
+	public static boolean canPlaceOverworldHemomancyStructure(Structure.GenerationContext context) {
 		return !isVoidRefugeContext(context);
 	}
 
-	static boolean isSuitableLandChunk(Structure.GenerationContext context) {
+	public static boolean isSuitableLandChunk(Structure.GenerationContext context) {
 		return canPlaceOverworldHemomancyStructure(context)
 				&& isSuitableLandChunk(context, MAX_ALLOWED_WATER_DEPTH);
 	}
 
-	static boolean isSuitableSwampChunk(Structure.GenerationContext context) {
+	public static boolean isSuitableSwampChunk(Structure.GenerationContext context) {
 		return canPlaceOverworldHemomancyStructure(context)
 				&& isSuitableLandChunk(context, MAX_ALLOWED_SWAMP_WATER_DEPTH);
 	}
@@ -58,7 +63,7 @@ final class StructurePlacementChecks {
 		return true;
 	}
 
-	static boolean isSuitableBuriedMausoleumSite(Structure.GenerationContext context) {
+	public static boolean isSuitableBuriedMausoleumSite(Structure.GenerationContext context) {
 		if (!isSuitableLandChunk(context)) {
 			return false;
 		}
@@ -91,7 +96,7 @@ final class StructurePlacementChecks {
 	}
 
 	/** The complete courtyard and its four wings must fit on one modestly sloped site. */
-	static OptionalInt harbingerOutpostSurface(Structure.GenerationContext context) {
+	public static OptionalInt harbingerOutpostSurface(Structure.GenerationContext context) {
 		if (!canPlaceOverworldHemomancyStructure(context)) return OptionalInt.empty();
 		int centerX = context.chunkPos().getMiddleBlockX();
 		int centerZ = context.chunkPos().getMiddleBlockZ();
@@ -124,7 +129,7 @@ final class StructurePlacementChecks {
 		return high - low <= MAX_OUTPOST_SURFACE_VARIATION ? OptionalInt.of(high) : OptionalInt.empty();
 	}
 
-	static boolean isSuitableCircusPavilionSite(Structure.GenerationContext context) {
+	public static boolean isSuitableCircusPavilionSite(Structure.GenerationContext context) {
 		if (!canPlaceOverworldHemomancyStructure(context)) {
 			return false;
 		}
@@ -156,7 +161,7 @@ final class StructurePlacementChecks {
 	}
 
     // Validate the selected rotation and template, rather than a guessed radius around the chunk.
-    static boolean isSuitableTroupeFootprint(Structure.GenerationContext context,
+    public static boolean isSuitableTroupeFootprint(Structure.GenerationContext context,
             net.minecraft.world.level.levelgen.structure.BoundingBox box) {
         int[] range = {Integer.MAX_VALUE, Integer.MIN_VALUE};
         var shared = new TroupeTerrainColumns(context);
@@ -181,7 +186,7 @@ final class StructurePlacementChecks {
             return true;
     }
 
-    static OptionalInt troupeGround(net.minecraft.world.level.NoiseColumn column, int minY, int maxY) {
+    public static OptionalInt troupeGround(net.minecraft.world.level.NoiseColumn column, int minY, int maxY) {
         int surface = minY - 1, floor = minY - 1;
         boolean foundSurface = false;
         for (int y = maxY - 1; y >= minY; y--) {
@@ -199,7 +204,7 @@ final class StructurePlacementChecks {
         return surface == floor ? OptionalInt.of(floor) : OptionalInt.empty();
     }
 
-	static boolean isSuitableOceanWreckChunk(Structure.GenerationContext context) {
+	public static boolean isSuitableOceanWreckChunk(Structure.GenerationContext context) {
 		if (!canPlaceOverworldHemomancyStructure(context)) {
 			return false;
 		}
@@ -233,7 +238,7 @@ final class StructurePlacementChecks {
 				HarbingerVoyagerWreckPlacementRules.MIN_WATER_DEPTH, maxFloor - minFloor);
 	}
 
-	static boolean isSuitableActiveVoyagerVesselChunk(Structure.GenerationContext context) {
+	public static boolean isSuitableActiveVoyagerVesselChunk(Structure.GenerationContext context) {
 		if (!canPlaceOverworldHemomancyStructure(context)) {
 			return false;
 		}

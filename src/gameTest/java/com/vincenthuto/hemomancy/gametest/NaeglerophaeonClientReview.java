@@ -4,7 +4,7 @@ import com.google.gson.JsonParser;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.worldgen.structure.VagrantMindPiece;
+import com.vincenthuto.hemomancy.common.worldgen.structure.vagrantmind.VagrantMindPiece;
 import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;

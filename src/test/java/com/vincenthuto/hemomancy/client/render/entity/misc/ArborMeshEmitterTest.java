@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.render.entity.misc;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillLayout;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillLayout;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillVisualRules;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

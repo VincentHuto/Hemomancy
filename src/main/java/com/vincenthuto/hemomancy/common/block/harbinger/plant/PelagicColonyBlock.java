@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.plant;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.plant.PelagicColonyBlockEntity;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat;
 import net.minecraft.core.*;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.*;

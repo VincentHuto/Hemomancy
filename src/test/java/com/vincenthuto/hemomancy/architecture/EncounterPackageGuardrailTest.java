@@ -18,7 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class EncounterPackageGuardrailTest {
 	private static final List<String> ENCOUNTER_CLASSES = List.of("ChamberOfWillManager", "ChamberVisitService",
 			"ChamberAccess", "FungalGardenTravelHelper", "MycophantEncounterManager", "VesperOrdealManager",
-			"VesperOrdealRecoveryRules", "VagrantMindEncounterManager", "VagrantMindEncounterData");
+			"VesperOrdealRecoveryRules", "VagrantMindEncounterManager", "VagrantMindEncounterData",
+			"ChamberExpansionRules", "ChamberProgressionRules", "ChamberVisitMode", "ChamberVisitRules",
+			"MycophantEncounterRules", "MycophantNurseryLayout", "FungalProjectionRules");
 
 	@Test
 	void encounterManagersLiveInTheEncounterPackage() {
@@ -29,7 +31,7 @@ class EncounterPackageGuardrailTest {
 
 	@Test
 	void worldgenHoldsNoEncounterManager() throws Exception {
-		try (Stream<Path> files = Files.list(RepoPaths.mainJava("common/worldgen"))) {
+		try (Stream<Path> files = Files.walk(RepoPaths.mainJava("common/worldgen"))) {
 			List<String> managers = files.map(path -> path.getFileName().toString())
 					.filter(name -> name.endsWith("Manager.java") || name.endsWith("Service.java"))
 					.sorted()

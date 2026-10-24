@@ -56,7 +56,7 @@ sub-packages.
 | `common/block`, `common/item`, `common/entity` | Content classes | `entity` includes bosses, NPCs and dialogue (`entity/npc/dialogue`). |
 | `common/tile/harbinger/crafting/upgrade` | Shared station-upgrade catalog, tiers and rules (player progress is `capability/player/harbinger/station`) | The contract is `docs/STATION_UPGRADES.md`. All seven stations use it. |
 | `common/network` | Payloads and `PacketHandler` | It also contains gameplay that belongs elsewhere: blood-structure crafting and rite activation. |
-| `common/worldgen` | Structures, features and biomes, plus encounter managers | The Chamber of Will, Mycophant and Vesper managers live here although they are not worldgen. |
+| `common/worldgen` | Generation only: `biome` (TerraBlender regions, surface rules), `terrain/{pelagic,cortical,phlegethontic}`, `feature` (+ `config`), `carver`, `structure`, `village` | Encounter managers and their rules are in `common/encounter`; the Arbor of Will geometry is `entity/utility/arbor`. |
 | `common/event` | Cross-cutting event handlers | Includes `TransientServerStateEvents`, the intended home for server start and stop cleanup. |
 | `common/effect`, `damage`, `brewing`, `enchanting`, `loot` | Mob effects, damage attribution, and small station rule layers | `damage/SchoolDamage` is the damage-attribution context. Puppeteer summon rules are `entity/summon/puppeteer`. |
 | `common/mission` | Teacher assignments and quests, one sub-package per teacher (`alchemist`, `vicar`, `circus`, ...) | |

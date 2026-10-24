@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.client.render.entity.misc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborCanopyGeometry;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillLayout;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;
-import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborSkeleton;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborCanopyGeometry;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillLayout;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillVisualRules;
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborSkeleton;
 import net.minecraft.client.renderer.LightTexture;
 
 import java.util.ArrayList;

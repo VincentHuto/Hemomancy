@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.plant;
 
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -8,6 +7,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer;
 
 public class HematicAlgalCrustBlock extends ErythrocoralGrowthBlock {
     public HematicAlgalCrustBlock(Properties properties) { super(properties, Block.box(0, 0, 0, 16, 1, 16)); }

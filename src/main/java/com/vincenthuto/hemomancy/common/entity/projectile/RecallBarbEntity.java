@@ -6,7 +6,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.worldgen.*;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticRules;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;

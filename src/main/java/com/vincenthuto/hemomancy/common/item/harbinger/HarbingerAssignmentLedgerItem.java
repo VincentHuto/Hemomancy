@@ -103,7 +103,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					FirstDrawsAssignment.isBriefed(serverPlayer), firstDraws.samples(), firstDraws.species().size(),
 					com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.progress(serverPlayer),
 					com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.progress(serverPlayer),
-					com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(serverPlayer),
+					com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusDiscoveryProgress.hasDiscovered(serverPlayer),
 					firstSeparationProgress(serverPlayer),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							BodyAnswersAssignment.ADV_BRIEFED),

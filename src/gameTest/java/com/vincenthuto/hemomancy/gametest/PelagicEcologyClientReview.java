@@ -182,9 +182,9 @@ public final class PelagicEcologyClientReview {
         if (id.equals("comb_jelly")) id = "bloody_belly_comb_jelly";
         if (directionalSwimmer(scene)) {
             var layer = id.equals("vampire_squid")
-                    ? com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.CARRION
-                    : com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.MIDNIGHT;
-            String biome = com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicBiomes.key(layer).location().toString();
+                    ? com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer.CARRION
+                    : com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicLayer.MIDNIGHT;
+            String biome = com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicBiomes.key(layer).location().toString();
             server.getCommands().performPrefixedCommand(source, "fillbiome " + (center.getX()-12) + " " + (depth-6)
                     + " " + (center.getZ()-12) + " " + (center.getX()+12) + " " + (depth+7) + " " + (center.getZ()+12) + " " + biome);
         }

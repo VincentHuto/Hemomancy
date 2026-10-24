@@ -1,11 +1,12 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.*;
 import net.minecraft.world.level.levelgen.*;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicAquifer;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicWorldgen;
 
 @Mixin(value = NoiseChunk.class, remap = false)
 public abstract class MixinPelagicNoiseChunk {

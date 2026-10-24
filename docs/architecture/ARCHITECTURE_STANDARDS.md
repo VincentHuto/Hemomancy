@@ -189,7 +189,10 @@ models. Log through `Hemomancy.LOGGER` or a class logger, never `System.out`.
   the two systems large enough to own a top-level package; their blocks, items and payloads still live in the
   function packages. The top-level packages are pinned by `PackageLayoutGuardrailTest`.
 - `common/encounter/` holds boss and arena managers (the Chamber of Will, Chamber visits, Fungal Gardens travel,
-  Mycophant, Vesper and Vagrant Mind encounters); `common/worldgen/` holds terrain and structures.
+  Mycophant, Vesper and Vagrant Mind encounters) and their rules; `common/worldgen/` holds only generation, with
+  no loose top-level classes: `biome/` (TerraBlender regions and surface rules), `terrain/<region>/` (the Pelagic,
+  Cortical Drift and Phlegethontic terrain systems), `feature/` (with `config/` and per-feature helper folders),
+  `carver/`, `structure/` (with a folder for each multi-class structure) and `village/`.
 - `common/network/` holds payloads, `PacketHandler`, `ServerboundGuards` and three listed helpers.
 - `client/registry/` holds client registration, one class per concern; `client/network/` the client halves of
   payloads; `client/item/` the item client extensions.

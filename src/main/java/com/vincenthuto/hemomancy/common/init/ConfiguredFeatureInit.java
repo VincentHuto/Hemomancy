@@ -102,7 +102,7 @@ public class ConfiguredFeatureInit {
 
 	public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
 		context.register(ESCHARIAN_OVERGROWTH,new ConfiguredFeature<>(BaseFeatureInit.ESCHARIAN_OVERGROWTH,
-				com.vincenthuto.hemomancy.common.worldgen.config.EscharianOvergrowthConfiguration.DEFAULT));
+				com.vincenthuto.hemomancy.common.worldgen.feature.config.EscharianOvergrowthConfiguration.DEFAULT));
 		context.register(PHLEGETHONTIC_BASIN_TERRAIN,new ConfiguredFeature<>(BaseFeatureInit.PHLEGETHONTIC_BASIN_TERRAIN,NoneFeatureConfiguration.INSTANCE));
 		context.register(PHLEGETHONTIC_VEIN,new ConfiguredFeature<>(BaseFeatureInit.PHLEGETHONTIC_VEIN,NoneFeatureConfiguration.INSTANCE));
 		HolderGetter<ConfiguredFeature<?, ?>> features = context.lookup(Registries.CONFIGURED_FEATURE);

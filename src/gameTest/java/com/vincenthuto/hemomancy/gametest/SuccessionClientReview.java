@@ -169,7 +169,7 @@ public final class SuccessionClientReview {
         for (var participant : List.of(host, guest)) {
             if (!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(participant)
                     || com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.mode(participant)
-                    != com.vincenthuto.hemomancy.common.worldgen.ChamberVisitMode.GUIDED
+                    != com.vincenthuto.hemomancy.common.encounter.ChamberVisitMode.GUIDED
                     || !participant.level().dimension().equals(
                             com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL))
                 throw new IllegalStateException("Co-op checkpoint requires both active guided visits inside the Chamber");

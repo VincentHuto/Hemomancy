@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
 import com.vincenthuto.hemomancy.common.init.BiomeInit;
-import com.vincenthuto.hemomancy.common.worldgen.PhlegethonticTags;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;

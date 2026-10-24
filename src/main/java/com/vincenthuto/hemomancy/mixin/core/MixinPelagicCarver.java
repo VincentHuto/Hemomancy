@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicAquifer;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicAquifer;
 import net.minecraft.core.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.*;

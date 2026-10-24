@@ -227,7 +227,7 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
     private static DialogueTree withFieldResearch(DialogueTree tree, ServerPlayer player, int degree) {
         tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CircusReferralDialogue
                 .withVicarReferral(tree, degree,
-                        com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(player));
+                        com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusDiscoveryProgress.hasDiscovered(player));
         if (com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.eligible(player)) {
             tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.OverworldFungalSurveyDialogue
                     .withVicarReferral(tree, degree,

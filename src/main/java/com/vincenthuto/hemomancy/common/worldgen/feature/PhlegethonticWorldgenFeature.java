@@ -2,9 +2,15 @@ package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
-import com.vincenthuto.hemomancy.common.worldgen.*;
-import com.vincenthuto.hemomancy.common.worldgen.PhlegethonticTerrainPlan.*;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticTerrainPlan.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedSpawnRules;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticBasinLayout;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticFormationPlan;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticOreReservations;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticRules;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticTags;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticTerrainPlan;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.phlegethontic.PhlegethonticVeinPath;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.Difficulty;

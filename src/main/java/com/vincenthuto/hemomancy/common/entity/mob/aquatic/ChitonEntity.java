@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -20,7 +20,7 @@ public class ChitonEntity extends PelagicAnimal {
     public boolean isClamped() { return actionTicks() > 0; }
     public boolean isGrazing() {
         return !isClamped() && tickCount % 160 < 50 && onGround()
-                && com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.nearBlock(level(), blockPosition(), 1, 0,
+                && com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.nearBlock(level(), blockPosition(), 1, 0,
                         state -> state.is(com.vincenthuto.hemomancy.common.init.BlockInit.hematic_algal_crust.get()));
     }
     public void clamp() { actFor(80); navigation.stop(); setDeltaMovement(Vec3.ZERO); }

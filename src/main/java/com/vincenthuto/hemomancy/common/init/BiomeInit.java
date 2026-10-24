@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.worldgen.ErythrocoralReefTuning;
-import com.vincenthuto.hemomancy.common.worldgen.terrablender.CorticalDriftSurfaceRuleData;
-import com.vincenthuto.hemomancy.common.worldgen.terrablender.ErythrocoralReefRegion;
-import com.vincenthuto.hemomancy.common.worldgen.terrablender.FungalGardensOverworldRegion;
-import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestSurfaceRuleData;
+import com.vincenthuto.hemomancy.common.worldgen.feature.ErythrocoralReefTuning;
+import com.vincenthuto.hemomancy.common.worldgen.biome.CorticalDriftSurfaceRuleData;
+import com.vincenthuto.hemomancy.common.worldgen.biome.ErythrocoralReefRegion;
+import com.vincenthuto.hemomancy.common.worldgen.biome.FungalGardensOverworldRegion;
+import com.vincenthuto.hemomancy.common.worldgen.biome.FungalGardensSurfaceRuleData;
 import com.vincenthuto.hemomancy.config.HemoCommonConfig;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -65,7 +65,7 @@ public class BiomeInit {
 		register(context, HEMORRHAGIC_PLATEAU, hemorrhagicPlateau(placedFeatureGetter, carverGetter));
 		register(context, ERYTHROCORAL_REEF, erythrocoralReef(placedFeatureGetter, carverGetter));
 		register(context, CORTICAL_DRIFT, corticalDrift(placedFeatureGetter, carverGetter));
-        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicBiomes.bootstrap(context, placedFeatureGetter, carverGetter);
+        com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicBiomes.bootstrap(context, placedFeatureGetter, carverGetter);
 	}
 
 	private static Biome phlegethonticBasin(HolderGetter<PlacedFeature> placed,HolderGetter<ConfiguredWorldCarver<?>> carvers) {
@@ -435,17 +435,17 @@ public class BiomeInit {
 		event.enqueueWork(() -> {
 
             if (HemoCommonConfig.enablePelagicWorldgen()) {
-                Regions.register(new com.vincenthuto.hemomancy.common.worldgen.terrablender.PelagicOverworldRegion(
+                Regions.register(new com.vincenthuto.hemomancy.common.worldgen.biome.PelagicOverworldRegion(
                         Hemomancy.rloc("pelagic_overworld"), HemoCommonConfig.PELAGIC_REGION_WEIGHT.get()));
             } else {
                 Regions.register(new ErythrocoralReefRegion(Hemomancy.rloc("erythrocoral_reef_overworld"), 1));
             }
 			if(HemoCommonConfig.ENABLE_PHLEGETHONTIC_NETHER_REGION.get()) {
-				Regions.register(new com.vincenthuto.hemomancy.common.worldgen.terrablender.PhlegethonticNetherRegion(
+				Regions.register(new com.vincenthuto.hemomancy.common.worldgen.biome.PhlegethonticNetherRegion(
 						Hemomancy.rloc("phlegethontic_nether"),HemoCommonConfig.PHLEGETHONTIC_NETHER_REGION_WEIGHT.get()));
 			}
 			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.NETHER,Hemomancy.MOD_ID,
-					com.vincenthuto.hemomancy.common.worldgen.terrablender.PhlegethonticSurfaceRuleData.makeRules());
+					com.vincenthuto.hemomancy.common.worldgen.biome.PhlegethonticSurfaceRuleData.makeRules());
 			if (HemoCommonConfig.enableOverworldFungalGardensRegion()) {
 				Regions.register(new FungalGardensOverworldRegion(
 						Hemomancy.rloc(FungalGardensOverworldRegion.REGION_PATH), 2));
@@ -454,8 +454,8 @@ public class BiomeInit {
 			// Register our surface rules
 			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, Hemomancy.MOD_ID,
                     net.minecraft.world.level.levelgen.SurfaceRules.sequence(
-                            com.vincenthuto.hemomancy.common.worldgen.terrablender.PelagicSurfaceRules.makeRules(),
-                            TestSurfaceRuleData.makeRules()));
+                            com.vincenthuto.hemomancy.common.worldgen.biome.PelagicSurfaceRules.makeRules(),
+                            FungalGardensSurfaceRuleData.makeRules()));
 
 			if (HemoCommonConfig.ENABLE_CORTICAL_DRIFT_END_REGION.get()) {
 				int endWeight = HemoCommonConfig.CORTICAL_DRIFT_END_REGION_WEIGHT.get();

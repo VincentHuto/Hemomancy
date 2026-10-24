@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.Circu
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgressRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusRouteRules;
-import com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusDiscoveryProgress;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;

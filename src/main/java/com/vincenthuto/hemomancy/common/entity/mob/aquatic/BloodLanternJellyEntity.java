@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat;
-import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
