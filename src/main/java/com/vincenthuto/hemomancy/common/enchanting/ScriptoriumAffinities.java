@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 /** Each enchantment's tendencies for the Enzymatic Scriptorium, from {@code enchantment_affinity/<ns>/<path>.json}. */
 public final class ScriptoriumAffinities extends JsonResourceReloadListener<ScriptoriumAffinities.AffinityFile> {
@@ -43,7 +44,8 @@ public final class ScriptoriumAffinities extends JsonResourceReloadListener<Scri
 
     private static void publish(Map<ResourceLocation, AffinityFile> loaded) {
         Map<ResourceLocation, Affinity> byEnchantment = new HashMap<>();
-        loaded.values().forEach(file -> byEnchantment.put(file.enchantment(), new Affinity(tendency(file.primary()),
+        // Sorted by file id, as listResources was: the last of two files for one enchantment wins, every reload.
+        new TreeMap<>(loaded).values().forEach(file -> byEnchantment.put(file.enchantment(), new Affinity(tendency(file.primary()),
                 file.secondary().map(ScriptoriumAffinities::tendency).orElse(null))));
         current = Map.copyOf(byEnchantment);
     }

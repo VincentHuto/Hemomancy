@@ -68,7 +68,7 @@ Use `{"operation":"reveal","duration":40,"radius":8}` for a pulse benefit. Root-
 
 Normal pack priority replaces a file with the same resource ID. Different files claiming the same origin are all discarded. Other valid definitions survive, and the complete valid snapshot swaps at apply time. Each bad resource is logged once per reload. The synchronized snapshot is bounded to 128 definitions, each at most 2048 JSON characters with resource IDs up to 256 characters. Even at maximum UTF-8 expansion this stays below the clientbound payload limit.
 
-`OnDatapackSyncEvent` sends the snapshot on login and reload through `PacketHandler`. Server/client snapshots are separate, and disconnect clears client definitions. Entity composition uses the separate `BloodProfileSyncPacket`; no local client datapack determines injection results. Identified tooltips resolve the same capped response list from received injection definitions and blood profiles.
+`OnDatapackSyncEvent` sends the snapshot on login and reload as the `blood_injection` channel of `DatapackSyncChannels` (a `DatapackSyncPacket`). Server/client snapshots are separate, and disconnect clears client definitions. Entity composition arrives separately, on the `blood_profiles` channel; no local client datapack determines injection results. Identified tooltips resolve the same capped response list from received injection definitions and blood profiles.
 
 ## Presentation and verification
 

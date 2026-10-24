@@ -440,6 +440,9 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 		tag.remove(TAG_RITE_LOCKED);
 		tag.remove(TAG_LAST_UPGRADE_RITE);
 		tag.remove("neoforge:attachments");
+		// Blood lives in the attachment; keep it in the snapshot under its old key so a mid-rite change still aborts.
+		IBloodVolume volume = getBloodCapability();
+		if (volume != null) tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		return tag;
 	}
 
@@ -703,8 +706,6 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 			volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
 		}
 	}
-
-	@Nullable
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt,

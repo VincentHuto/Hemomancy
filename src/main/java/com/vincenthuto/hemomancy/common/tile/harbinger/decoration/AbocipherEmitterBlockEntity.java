@@ -14,7 +14,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.Nullable;
 
 public class AbocipherEmitterBlockEntity extends HemoBlockEntity {
 	private static final String TAG_PROFILE = "Profile";
@@ -101,8 +100,6 @@ public class AbocipherEmitterBlockEntity extends HemoBlockEntity {
 		super.handleUpdateTag(tag, registries);
 		loadAdditional(tag, registries);
 	}
-
-	@Nullable
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {

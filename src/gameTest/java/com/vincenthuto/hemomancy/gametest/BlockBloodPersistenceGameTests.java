@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -70,6 +71,35 @@ public final class BlockBloodPersistenceGameTests {
 			helper.assertTrue(volume(second, store) == LEGACY_VOLUME, name + " lost its volume across a save");
 			helper.setBlock(new BlockPos(1, 2, 1), net.minecraft.world.level.block.Blocks.AIR);
 			helper.setBlock(new BlockPos(3, 2, 3), net.minecraft.world.level.block.Blocks.AIR);
+		}
+		helper.succeed();
+	}
+
+	/** A station upgrade rite aborts when the subject changes; blood in the attachment must still count as a change. */
+	@GameTest(template = "empty", timeoutTicks = 40)
+	public static void stationUpgradeSnapshotsStillCarryBlood(GameTestHelper helper) {
+		var registries = helper.getLevel().registryAccess();
+		List<Store> stations = List.of(
+				new Store(BlockInit.ghastly_alembic, "BloodLevel", false),
+				new Store(BlockInit.hematic_armature, "BloodLevel", false),
+				new Store(BlockInit.somatic_loom, "bloodLevel", false),
+				new Store(BlockInit.vial_centrifuge, "bloodLevel", false),
+				new Store(BlockInit.enzymatic_scriptorium, "BloodVolume", false),
+				new Store(BlockInit.resonant_forge, "BloodVolume", false),
+				new Store(BlockInit.sanguine_condenser, "BloodVolume", false));
+		BlockPos pos = new BlockPos(1, 2, 1);
+		for (Store store : stations) {
+			String name = store.block().get().getDescriptionId();
+			BlockEntity entity = place(helper, store, pos);
+			helper.assertTrue(entity instanceof UpgradeableStation, name + " is not an upgradeable station");
+			UpgradeableStation station = (UpgradeableStation) entity;
+			var blood = HemoCapabilityAccess.getBloodVolume(entity).orElseThrow();
+			blood.setBloodVolume(12.0D);
+			CompoundTag before = station.upgradeSnapshot(registries);
+			helper.assertTrue(before.getDouble(store.legacyKey()) == 12.0D, name + " snapshot lost its blood");
+			blood.setBloodVolume(25.0D);
+			helper.assertFalse(before.equals(station.upgradeSnapshot(registries)), name + " snapshot ignores a blood change");
+			helper.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR);
 		}
 		helper.succeed();
 	}

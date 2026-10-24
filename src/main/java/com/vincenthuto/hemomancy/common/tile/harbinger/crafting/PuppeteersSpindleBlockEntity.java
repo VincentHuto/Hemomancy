@@ -23,7 +23,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.Nullable;
 
 public class PuppeteersSpindleBlockEntity extends HemoContainerBlockEntity {
 	public static final int SLOT_CROSSBAR = 0;
@@ -260,8 +259,6 @@ public class PuppeteersSpindleBlockEntity extends HemoContainerBlockEntity {
 		ContainerHelper.loadAllItems(tag, inventory, registries);
 		threadBuffer = Math.max(0, Math.min(THREAD_BUFFER_CAPACITY, tag.getInt(TAG_THREAD_BUFFER)));
 	}
-
-	@Nullable
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt,

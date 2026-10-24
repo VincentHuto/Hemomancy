@@ -798,6 +798,9 @@ public class VialCentrifugeBlockEntity extends HemoContainerBlockEntity
 		tag.remove("RiteLocked");
 		tag.remove("LastUpgradeRite");
 		tag.remove("neoforge:attachments");
+		// Blood lives in the attachment; keep it in the snapshot under its old key so a mid-rite change still aborts.
+		IBloodVolume vol = resolveVolume();
+		if (vol != null) tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
 		return tag;
 	}
 	@Override public boolean wasUpgradedBy(UUID riteId) { return riteId != null && riteId.equals(lastUpgradeRite); }

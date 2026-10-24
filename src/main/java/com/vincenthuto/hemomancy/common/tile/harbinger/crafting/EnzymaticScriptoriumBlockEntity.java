@@ -189,6 +189,8 @@ public class EnzymaticScriptoriumBlockEntity extends HemoContainerBlockEntity
         tag.remove("LastUpgradeRite");
         tag.remove("Selected");
         tag.remove("neoforge:attachments");
+        // Blood lives in the attachment; keep it in the snapshot under its old key so a mid-rite change still aborts.
+        tag.putDouble("BloodVolume", getBloodVolume());
         return tag;
     }
 

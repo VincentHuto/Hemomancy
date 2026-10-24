@@ -19,7 +19,7 @@ Every consolidation session reads this file first and updates it last, following
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | DONE | `a53982248`..`e2597dc41` (items 1-9), review fixes and ledger in the commit after `e2597dc41` | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | DONE | `91bb77eba`, `b6c7bd846`, `866c0b990`, `3385bc323`, `ced99f334`, `0871dc5e6`, `8ba776eca`, `017d6f7dc`, `7028ada7d`, `44719064f`, item 5 in the commit after it | 2026-10-23 |
 | 12 | Phase 11: persistence authority migrations | DONE | `b205211d0`, `b314e8204`, `227a7edee`, `b22b8283f`, `9185e427e`, `b575b0593`, `64dd755d0`, ledger in the commit after `64dd755d0` | 2026-10-23 |
-| 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | IN PROGRESS | see the step 13 entry | 2026-10-23 |
+| 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | DONE | `fb819fe6a` … `3924a3a55` (22 commits), ledger and review fixes in the commit after `3924a3a55` | 2026-10-23 |
 
 Statuses: `NOT STARTED`, `IN PROGRESS`, `DONE`, `DONE (uncommitted)`, `BLOCKED`.
 
@@ -201,6 +201,26 @@ them green.
 | `common/capability/player/shared/migration/PlayerDataMigrationsTest` | 12 | S-9: migration versions strictly increase, ids are unique, every sunset is 2027-04-23 or later; the data version defaults to 0 and round-trips |
 | gameTest `PlayerMigrationGameTests` (suite `player_migration_validation`) | 12 | One old-format NBT snapshot per migration under `src/gameTest/resources/migration/`, merged over a fresh save and loaded: the migrated state, the old keys gone, then a second login, a reload and a death clone run nothing, and two full reruns from version 0 agree. Also the Silent Archon armour gate through the path, the whisper merge, the once-only Chamber advancement backfill, and the cooldown tier across reload, death and End return |
 | `architecture/HemoCommandStructureGuardrailTest` | 11 | `HemoCommand` is one root that only wires `<Name>Subcommand.build()`, each exactly once; subcommands register nothing themselves and stay under 300 lines; no other main class registers `/hemo` |
+| `architecture/DataFolderNamingGuardrailTest` | 13 | F-23: no data file under a plural 1.21 folder (`tags/items`, `recipes`, `loot_tables`, ...) apart from four listed files naming unregistered items |
+| gameTest `RegistrationConsistencyGameTests` (suite `registration_validation`) | 13 | F-23 / F-27: the moved tags load with their members; every Hemomancy effect is beneficial exactly when its category is |
+| `architecture/EntityTypeBuildNameGuardrailTest` | 13 | F-26: every entity type is built under its registry name |
+| `common/worldgen/StructureTemplateCoverageTest` | 13 | F-24: every pooled template exists, apart from the three listed template-less structures, the orphan circus pool and the empty mausoleum tag |
+| `architecture/GeneratedResourceShadowGuardrailTest` | 13 | D-5: no generated file has an authored twin; only the three kept providers are registered |
+| `architecture/RegistrationStyleGuardrailTest#gameTestsRegisterOnlyThroughTheAnnotationScan` | 13 | T-4: no `RegisterGameTestsEvent` listener; every GameTest class carries `@GameTestHolder` |
+| `architecture/BuildRunTableGuardrailTest` | 13 | T-6: `build.gradle` declares only the base runs; `gradle/review-clients.gradle` is applied after `game-tests.gradle` |
+| `architecture/BossFrameworkGuardrailTest` | 13 | O-1: only `BossBarBinding` builds a `ServerBossEvent`; the three trial Saints extend `SaintTrialEntity` |
+| `architecture/ContentBoilerplateGuardrailTest` | 13 | O-3: owner ids through `SyncedOwner`, menus on `HemoContainerMenu`, NPC damage through `ProtectedNpc`, rotation through `ModelShapes.rotate`, no redundant effect overrides |
+| `architecture/ContentFamilyGuardrailTest` | 13 | O-2: chitinite and chthonian mobs, tracking orbs and combat-weapon carriers share their bases |
+| `architecture/EncounterPackageGuardrailTest` | 13 | W-3: encounter managers live in `common/encounter`; only `CorticalArcManager` stays in worldgen |
+| `architecture/JigsawStructureGuardrailTest` | 13 | W-1: template-pool structures extend `HemoJigsawStructure`; one jigsaw codec, one `addPieces` call |
+| `architecture/ReloadListenerGuardrailTest` | 13 | R-6: server loaders extend `JsonResourceReloadListener` (three listed keep their own `prepare`), are registered in `Hemomancy.onAddReloadListeners`, and clients get data only through `DatapackSyncChannels` |
+| `architecture/BlockEntityBaseGuardrailTest` | 13 | L-7: only the two block-entity bases build an update packet |
+| gameTest `BlockBloodPersistenceGameTests` (suite `item_inventory_validation`) | 13 | L-7: block blood is saved only through the attachment (no own blood key in the saved tag) and an old save's own blood key still loads; each station's upgrade snapshot still carries its blood, so a mid-rite blood change aborts the upgrade |
+| `architecture/RecipeSerializerGuardrailTest` | 13 | L-8: one recipe JSON bridge; station recipes extend `StationRecipe`, not `CustomRecipe` |
+| `architecture/CommonClientIsolationTest#commonCodeNamesNoClientClass` | 13 | O-6: strict, no exception for item client extensions |
+| `architecture/HardCodedEnglishRatchetTest` | 13 | O-7: English `Component.literal` text at most 865, tooltip literals at most 28; every `tooltip.`/`message.hemomancy.*` key exists in `en_us` |
+| `architecture/ResourceLocationStyleRatchetTest` | 13 | D-8: at most 90 hand-built hemomancy resource locations outside `Hemomancy.java` |
+| `architecture/ArchitectureStandardsIndexTest` | 13 | Every architecture test is listed in the guardrail index of `ARCHITECTURE_STANDARDS.md` |
 
 ## Step entries
 
@@ -1521,11 +1541,11 @@ them green.
     the save's username or per-login reconciles act on a different UUID.
 
 ### Step 13: Phases 12 + 13, content, worldgen, data, tooling, standards
-- **Status / date / commits:** IN PROGRESS, 2026-10-23. Prefix `consolidation(step-13):`, one commit per item.
+- **Status / date / commits:** DONE, 2026-10-23. Prefix `consolidation(step-13):`, one commit per item.
 
   | Item | Status | Commit |
   |---|---|---|
-  | Approvals: F-23, F-26, F-27 APPROVED; F-24 keep and document; T-6b move only; D-5 delete dead providers; F-25 stays PENDING | DONE | recorded in `fb819fe6a` |
+  | Approvals: F-23, F-26, F-27 APPROVED; F-24 keep and document; T-6b move only; D-5 delete dead providers; R-6b payload swap APPROVED; F-25 stays PENDING | DONE | recorded in `fb819fe6a` and `19924890f` |
   | F-23 three live tag files moved to `tags/item` | DONE | `fb819fe6a` |
   | F-26 Chthonian Queen build name | DONE | `fc41ab3ab` |
   | F-27 Hemolysis registered BENEFICIAL (deviation: the proposal said NEUTRAL) | DONE | `e3b5d8fe0` |
@@ -1537,11 +1557,174 @@ them green.
   | O-1 `BossBarBinding`, `SaintTrialEntity` | DONE | `9ea28faef` |
   | O-3 `SyncedOwner`, `ProtectedNpc`, `HemoContainerMenu` / `ViewOnlyMenu`, effect overrides | DONE | `9bfa666ad` |
   | O-2 mob families, tracking orbs, combat-weapon carrier helpers | DONE | `526308466` |
-  | W-3, W-1, R-6, L-7, L-8, O-6, O-7 | NOT STARTED | |
-  | Standards doc, AGENTS pointers, D-8, final checks, closing section | NOT STARTED | |
-- **Test counts so far:** `test` 4,086 → 4,103, 0 failures. `alphaCheck` green after T-6b (1,083 GameTests) and after
-  O-3 (1,083).
-- **Handoff notes (interim):** the impact map for every remaining item is in the session scratchpad only; regenerate it
-  with one read-only agent if a new session continues. Pelagic generator probe (`runPelagicValidationServer
-  -PpelagicExpectDisabled=true`) proved the T-4 holder discovery; its one test fails on its own precondition (it needs
-  the expansion disabled in config).
+  | Interim ledger | DONE | `bc8d689dd` |
+  | W-3 encounter managers in `common/encounter` | DONE | `e0112d4fa` |
+  | W-1 `HemoJigsawStructure` for the 13 jigsaw clones | DONE | `7b2b8bb16` |
+  | R-6 codec reload listeners, one `DatapackSyncPacket` (`PROTOCOL_VERSION` 4) | DONE | `19924890f` |
+  | L-7 `HemoBlockEntity`, block blood only in its attachment | DONE | `82190b0dd` |
+  | L-8 one recipe JSON bridge, `StationRecipe` | DONE | `bf84a4844` |
+  | O-6 item client extensions from client code | DONE | `58c4b5883` |
+  | O-7 tooltips, effect names and Saint text translatable (partial, ratcheted) | DONE | `e9f6aee6f` |
+  | Outpost assembly test isolated (flake fix) | DONE | `e77a6bcf5` |
+  | D-8 doc drift, resource-location ratchet | DONE | `c95496421` |
+  | Standards doc, guardrail index, AGENTS pointers | DONE | `3924a3a55` |
+  | Final checks, review fixes, ledger and closing section | DONE | the commit after `3924a3a55` |
+  | F-25 MnA config read | NOT DONE: PENDING | |
+  | T-5 retire the `/hemo test` scenario catalog | NOT DONE (see deviations) | |
+- **Test counts before → after:** `test` 4,086 → 4,114, 0 failures. `alphaCheck` 1,081 → 1,085 GameTests, green:
+  twice in a row after the outpost fix, on `3924a3a55` (1,084), and after the review fixes (1,085). `runGameTestServer`
+  on `3924a3a55` and after the review fixes: all required tests passed (its one ERROR line is a test loading a
+  deliberately invalid item, allowed by `verifyGameTestResourceLog`). Adding the review's GameTest shifted the test grid
+  and made `completeexitcleansownedfixtureandoutput` fail twice in a row: it builds at (14, 10, 14), outside its
+  one-block template, in the shared default batch. It now runs alone (batch `journeyExitCleanup`), the same fix as the
+  outpost test. One later combined run then flaked once on `crossingdimensionsdeliberatelyunravelssummon` and passed
+  on rerun. Opt-in suites run for the items they cover: `recipe_codec` 11/11 (L-8), scriptorium 22/22 (L-7), advanced brewing 7/7, item inventory 9/9 (L-7),
+  registration three times in isolation (F-23 / F-27). The Succession suite has its two known failures
+  (`legacyvialsarerejectedbeforeconsumption`, `manufactureconsumespatternandtwohundredfiftyblood`), unchanged from
+  before the step. The Pelagic generator probe proved the T-4 holder discovery; its one test fails on its own config
+  precondition (it needs the expansion disabled).
+- **Client start:** `runClient`'s classpath from a scratch init script (throwaway game directory `build/step13-client`)
+  reached the title screen after O-6 and again on `3924a3a55`, 0 ERROR lines, and closed cleanly through its window.
+  The review fixes after it are server-side snapshot code, a sorted map, annotations and docs; the client was not
+  restarted for them.
+- **Content (O-1, O-2, O-3):**
+  - `BossBarBinding` (title key, colour, overlay; show, hide, health tracking, viewers) replaces the eleven bosses'
+    hand-built `ServerBossEvent`s. `SaintTrialEntity` holds the three trial Saints' visual state, trial goals, boss bar,
+    floor ring and broadcast; Hemorath keeps its overload state through `holdsVisualState`.
+  - `SyncedOwner` (key `Owner`, unchanged) serves six owned entities; `ProtectedNpc.admitsDamage` (generic kill or a
+    Creative player) eleven NPCs; every menu extends `HemoContainerMenu` (player inventory at the same offsets), five view
+    menus share `ViewOnlyMenu`. 24 redundant `isBeneficial`, 13 default `getDisplayName` and 5 `shouldApply` overrides
+    went.
+  - `AbstractChitiniteEntity` and `AbstractChthonianEntity` keep only each kind's differences;
+    `AbstractTrackingOrbEntity` gives the tracking orbs one flight loop with hooks; `CombatWeaponCarrierProjectile`
+    saves and copies a carried weapon under `CombatWeapon`.
+- **Worldgen (W-1, W-3):** 13 structures extend `HemoJigsawStructure`, whose one codec keeps the six field names; the
+  Vessel, Circus and Outpost keep their own start search. Nine encounter classes moved to `common/encounter` (only
+  `CorticalArcManager` stays in worldgen); allow-list paths and path-pinning tests followed.
+- **Data (R-6, L-7, L-8, D-5, F-23, F-24):**
+  - `JsonResourceReloadListener` takes a `Codec`; Scriptorium affinities, discovery inscriptions, item inquiries and
+    Succession professions moved onto it (counts unchanged: 42, 353, 30, 5). Succession professions are now registered
+    in `onAddReloadListeners` like the rest. `DatapackSyncChannels` (blood profiles, blood injection, rite floors) sends
+    one `DatapackSyncPacket` per channel on every datapack sync; the three raw-JSON payloads and
+    `CardinalRiteFloorSync` went.
+  - 39 block entities extend `HemoBlockEntity` / `HemoContainerBlockEntity`, which own the update packet. Thirteen
+    stopped writing their own blood key and read it only when present; the Somatic Loom writes its level only in its
+    update tag.
+  - `RecipeCodecJson.bridge` replaces seven anonymous MapCodecs; seven station recipes extend `StationRecipe` instead
+    of `CustomRecipe`.
+  - Eight never-registered datagen classes and `HemoLanguageProvider` deleted, with 46 generated files that `src/main`
+    shadowed; `runData` reproduces the remaining 58.
+- **Client and text (O-6, O-7):** `ItemClientExtensions` maps 43 item classes (superclasses included) and 14 renderer-only
+  block items by id; `HemoClientItemExtensionsProvider` and 14 renderer-only `BlockItem` classes went, so nothing under
+  `common/` names a client class any more. 179 new `en_us` keys cover item tooltips (61 files), effect names and the
+  Saint encounters.
+- **Tooling (T-4, T-6, T-6b) and standards:** GameTests register only through `@GameTestHolder`; 24 review, observer and
+  profile runs are rows in `gradle/review-clients.gradle` (generated run arguments byte-identical apart from property
+  order), and the launchers are tracked in `tools/review/`. Seven import-free dev mods moved to `localRuntime`.
+  `ARCHITECTURE_STANDARDS.md` holds the rules and the guardrail index; AGENTS.md and the agent guide point at it.
+- **Metrics (through `3924a3a55`):** 517 files, +5,920 / −9,243 lines; `src/main` 366 files, +3,596 / −6,902. Added
+  classes include `BossBarBinding`, `SaintTrialEntity`, `SyncedOwner`, `ProtectedNpc`, `HemoContainerMenu`,
+  `ViewOnlyMenu`, `AbstractChitiniteEntity`, `AbstractChthonianEntity`, `AbstractTrackingOrbEntity`,
+  `HemoJigsawStructure`, `DatapackSyncChannels`, `DatapackSyncPacket`, `HemoBlockEntity`, `HemoContainerBlockEntity`,
+  `StationRecipe`, `RecipeCodecJson`, `ItemClientExtensions`. Removed: `HemoClientItemExtensionsProvider`, 14
+  renderer-only block items, three sync payloads and `CardinalRiteFloorSync`, nine datagen classes, 46 generated files.
+  Hand-built boss bars 11 → 1 (the binding), `getUpdatePacket` copies 39 → 2, station recipes on `CustomRecipe` 7 → 0,
+  loaders on the shared base 2 → 6, legacy `main()` tests converted while touched: 17 (353 → 335 since the audit).
+- **Guardrails added:** see the step 13 rows of the guardrail table (21 rows) and the index in
+  `ARCHITECTURE_STANDARDS.md`.
+- **Frozen identifiers:** no registry id, resource path, NBT or attachment key, codec field name, structure codec or
+  command syntax changed. The payload change is the approved R-6b swap (`payload-registry.txt` rewritten,
+  `PROTOCOL_VERSION` 4). F-26 changes only the entity type's data-fixer build name, not its registry id.
+- **Docs:** `ARCHITECTURE_STANDARDS.md` (new), AGENTS.md, the agent guide, `HEMOMANCY_REFERENCE.md` (§3 common config,
+  §29 non-generating structures, datagen lines, Unstained weapon routing), `TESTING.md` (GameTest registration), wiki
+  World-Content and Getting-Started (F-24), Developer-Reference and Injectable-Blood-Vials (R-6), `tools/review/README.md`.
+- **Final review** (fresh Opus reviewer over `git diff 1f823dc70..HEAD`, read-only):
+  - **Confirmed, fixed:** L-7 had taken blood out of six stations' upgrade snapshots (Scriptorium, Armature, Forge,
+    Loom, Centrifuge, Condenser). The snapshot drops the attachments, and the stations no longer wrote their own blood
+    key, so a blood change mid-rite stopped aborting the upgrade, and a rite running across the update would have
+    failed its comparison and refunded. Each snapshot now writes the blood under its old key and type, as the Alembic
+    always did; `BlockBloodPersistenceGameTests#stationUpgradeSnapshotsStillCarryBlood` pins it for all seven stations.
+  - **Fixed:** stale references to removed classes (AGENTS.md's item exception to client isolation, the reference's
+    Unstained weapon routing, two wiki pages naming the old sync payloads); the dormant MnA grimoire no longer
+    implements the deleted provider interface; Scriptorium affinities publish in sorted file order again (two packs
+    defining one enchantment resolved the same way every reload before R-6); six stray `@Nullable`s that L-7 left on
+    `onDataPacket`.
+  - **Checked clean:** L-7 old-save loading and client sync for all 39 block entities; R-6 folders, ids, grouping,
+    limits and login versus reload delivery; W-1 codec fields and per-structure placement; O-6 renderer coverage
+    (no item gained or lost one); O-7 keys, argument counts and text; O-1, O-2, O-3 behaviour; L-8 JSON keys; F-23, T-4,
+    T-6b, D-5, F-26, F-27, W-3; every class the standards doc names.
+- **Deviations from the prompt and roadmap:**
+  - F-27 was done as both BENEFICIAL rather than the proposed NEUTRAL (see the decision row).
+  - Succession professions now log and skip a malformed file through the shared base instead of failing the reload.
+  - L-7 is one-way: a build from before this step reads 0 blood from a block saved by this one (the attachment is
+    new to it). Forward loading of old saves is covered by `BlockBloodPersistenceGameTests`.
+  - O-7 is partial: tooltips, effect names and Saint text are translated; operator command output, several screens and
+    rite messages keep 865 English literals behind `HardCodedEnglishRatchetTest`.
+  - D-2 (hand-built resource locations) became a ratchet (90) instead of a conversion: most of the rest are payload
+    `TYPE`s and generated model layers, which their generators would rewrite.
+  - T-5 (retire the `/hemo test` scenario catalog) was not done: the catalog still covers in-game checks no GameTest
+    replaces.
+  - Not every legacy `main()` test touched by text changes was converted; the 17 converted were those whose pins had
+    to be rewritten anyway.
+- **Not verified (needs in-game or visual check):** item and armour renderers beyond reaching the title screen (O-6);
+  translated tooltips and Saint messages in a real client (O-7); a datapack `/reload` with a connected client (R-6);
+  natural generation of the 13 converted structures in a fresh world (W-1, covered by codec identity and the assembly
+  GameTests only).
+- **Pending approvals:** F-25, plus every earlier PENDING item (see the closing section).
+- **Handoff notes:** the consolidation is finished; see the closing section for what remains. New guardrails go in the
+  index of `ARCHITECTURE_STANDARDS.md` (`ArchitectureStandardsIndexTest`). Lower a ratchet ceiling when you shrink its
+  count. Pitfalls: the Bash tool's heredocs drop backslashes (write regex-bearing files with Write or Edit); partial
+  generator runs must buffer their writes; the Somatic Loom file uses CR CR LF line endings.
+
+## Closing: the consolidation against the original audit
+
+Thirteen steps, 2026-10-21 to 2026-10-23, 97 commits from `3fae723d0`. `src/main` across the whole consolidation
+(through `3924a3a55`): 1,476 files, +27,891 / −35,283 lines. Every figure below is measured the same way at both commits (`src/main/java`
+for code); the audit's "about 4,900 files" counted more than that.
+
+| Measure | Audit baseline (`3fae723d0`) | Now |
+|---|---|---|
+| Main Java files / lines | 3,492 / 437,144 | 3,523 / 431,195 |
+| JUnit | 3,908 tests, 20 failing | 4,114 tests, 0 failing |
+| GameTests in `alphaCheck` | 999, never run (would fail at `test`) | 1,085, green |
+| Architecture guardrail tests | 0 | 55, indexed in `ARCHITECTURE_STANDARDS.md` |
+| Direct `.drain(` / `subtractBloodVolume(` calls | 98 in 81 files / 15 | 30 in 21 / 11, none on a player volume outside `BloodAccounting` (listed non-player exceptions) |
+| Raw `getPersistentData()` calls | 466 in 99 files | 426 in 95, each counted in an allow-list with a reason |
+| Direct attachment `.getData(` calls | 72 in 25 files | 60 in 6 (allow-listed) |
+| Hand-written login/respawn/dimension sync trios | 17 | 0 (`PlayerStateSync` table) |
+| `PacketDistributor` calls | 88 in 46 files | 8 in 2 (`PacketHandler`, `DialogueSender`) |
+| Payload registrations | 184, 18 never sent, protocol version unchecked | 158, all sent, `PROTOCOL_VERSION` 4 pinned to `payload-registry.txt` |
+| `Monster.class` target gathers | 70, about 25 without the ally/PvP gate | 45, each asking `canHarm` or listed |
+| Private `smoothstep` / `clamp` / `lerp` copies | 16 / 44 / 18 | 4 / 20 / 1: the smoothsteps are `HemoEasing` itself, the lerp is a path sample; the clamps are domain clamps (`clampTier`, `clampStage`, ...) plus seven three-argument copies of `Mth.clamp` |
+| Private `drawBorder` copies | 22 | 1 (`ScreenDrawUtils`) |
+| `RenderGuiEvent` handlers | 7 | 0 (GUI layers) |
+| Hand-built boss bars | 11 | 1 (`BossBarBinding`) |
+| Block-entity `getUpdatePacket` copies | 39 | 2 (the bases) |
+| Loaders on `JsonResourceReloadListener` | 2 | 6 (three listed keep their own `prepare`) |
+| `Component.literal` calls | 1,510 in 287 files | 1,315 in 254 (English text capped at 865) |
+| `ClientEvents` / `DialogueEventHandler` | 1,495 / 1,561 lines | split into `client/registry/*` / `DialogueEventRouter` (95) and per-NPC route classes |
+| `HemoCommand` | 1,982 lines | 40 (root wiring 16 subcommands) |
+| `HarbingerCardinalRiteEvents` / `ActiveCardinalRite` | 1,725 / 1,413 lines | 912 / 1,368 (kind behaviour in `RiteKind`) |
+| `BloodCraftingKeyPressPacket` | 802 lines, gameplay in a packet | 63 (decode, validate, one service call) |
+| Legacy `main()` tests | 353 | 335 |
+| Tests reading source or resource text | 494 tests, 380 reading 967 Java files (after step 2) | 538 tests, 413 reading 1,084 Java files: the rise is the guardrails, which read source by design |
+
+**What remains.**
+- **Decisions still PENDING** (the *Decisions* table has each one's exact change): M-2 and M-3 (dead mobs and other
+  unverified dead code), F-4, F-5, F-19, F-20, S-2b, S-5b (state and delivery), F-12 to F-17 and G-1 (blood and damage
+  balance), G-2b, G-2c, G-7b (targeting, boss definition, flight), A-4, A-1b, V-3b, V-3c, V-6b (animation and visuals),
+  F-11 (craft tick rate), O-5 (typed components), F-22 (creative tab) and F-25 (MnA config).
+- **Ratchets to lower over time:** 865 English literals and 28 tooltip literals (`HardCodedEnglishRatchetTest`), 90
+  hand-built resource locations (`ResourceLocationStyleRatchetTest`), 593 private test helpers
+  (`PrivateTestHelperRatchetTest`), 426 `getPersistentData()` calls (`persistent-data-allow-list.txt`).
+- **Not done:** T-5 (the `/hemo test` scenario catalog); 335 legacy `main()` tests; stream codecs are still written by
+  hand; the seven bridged recipes are not yet `RecordCodecBuilder` codecs; `ActiveCardinalRite` is still large (its
+  kinds' state moved out, its shared state did not); ten private `hash` helpers remain (seeded noise kept local), and seven private copies of `Mth.clamp` the easing
+  guardrail does not catch;
+  `ManipulationReactiveEvents`' Endless Hour clone handler is the last hand-written copy.
+- **Save compatibility to retire:** the step 12 migrations sunset on 2027-04-23; the L-7 block blood fallback read can go
+  with them.
+- **Known test noise:** the two Succession opt-in failures and the Pelagic probe's config precondition (both predate the
+  consolidation's last steps); `circussuccessionrunnercompletesatdegreefour` flaked once in step 12 and
+  `crossingdimensionsdeliberatelyunravelssummon` once in step 13. Other default-batch tests that build outside their
+  template may still be grid-sensitive; give any that flakes its own batch, as the outpost and journey-exit tests have.

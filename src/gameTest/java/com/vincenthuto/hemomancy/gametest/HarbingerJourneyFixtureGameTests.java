@@ -2427,7 +2427,9 @@ public final class HarbingerJourneyFixtureGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	// Builds at (14, 10, 14), outside its template: alone in its batch so neighbouring plots cannot reach its box.
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40,
+			batch = "journeyExitCleanup")
 	public static void completeExitCleansOwnedFixtureAndOutput(GameTestHelper helper) {
 		ServerPlayer player = detachedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 10, 14));

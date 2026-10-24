@@ -544,8 +544,6 @@ public class MorphlingIncubatorBlockEntity extends HemoContainerBlockEntity impl
 		for (int i = 0; i < enzymeContributions.length; i++) tag.putDouble("EnzymeContribution" + i, enzymeContributions[i]);
 	}
 
-	@Nullable
-
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
 		super.onDataPacket(net, pkt, registries);

@@ -1246,6 +1246,8 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		// Derived from the selection each refresh, not owned state.
 		tag.remove(TAG_RECIPE);
 		tag.remove(TAG_CRAFT_PHASE);
+		// Blood lives in the attachment; keep it in the snapshot under its old key so a mid-rite change still aborts.
+		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		return tag;
 	}
 

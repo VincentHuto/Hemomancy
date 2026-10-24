@@ -212,8 +212,6 @@ public class GourdvineTapBlockEntity extends HemoBlockEntity implements IBloodRe
         return saveWithoutMetadata(provider);
     }
 
-    @Nullable
-
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
         loadAdditional(tag, provider);
