@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 
 public class SynapticLoadoutScreen extends Screen {
 	private static final int PANEL = 128;
@@ -97,11 +98,11 @@ public class SynapticLoadoutScreen extends Screen {
 		nameField.setMaxLength(ManipulationLoadout.MAX_NAME_LENGTH);
 		addRenderableWidget(nameField);
 		applyButton = addRenderableWidget(new SynapticButton(controlX + (CONTROL_RAIL_W - CONTROL_BUTTON_W) / 2,
-				controlY + 50, CONTROL_BUTTON_W, 20, Component.literal("Apply"), button -> sendApply()));
+				controlY + 50, CONTROL_BUTTON_W, 20, Component.translatable("screen.hemomancy.synaptic_loadout.apply"), button -> sendApply()));
 		renameButton = addRenderableWidget(new SynapticButton(controlX + (CONTROL_RAIL_W - CONTROL_BUTTON_W) / 2,
-				controlY + 74, CONTROL_BUTTON_W, 20, Component.literal("Rename"), button -> sendRename()));
+				controlY + 74, CONTROL_BUTTON_W, 20, Component.translatable("screen.hemomancy.synaptic_loadout.rename"), button -> sendRename()));
 		saveButton = addRenderableWidget(new SynapticButton(controlX + (CONTROL_RAIL_W - CONTROL_BUTTON_W) / 2,
-				controlY + 98, CONTROL_BUTTON_W, 20, Component.literal("Save"), button -> sendSaveOrOverwrite()));
+				controlY + 98, CONTROL_BUTTON_W, 20, Component.translatable("screen.hemomancy.synaptic_loadout.save"), button -> sendSaveOrOverwrite()));
 		updateNameField();
 		updateButtons();
 	}
@@ -165,11 +166,12 @@ public class SynapticLoadoutScreen extends Screen {
 		}
 		Component title = Component.translatable("screen.hemomancy.synaptic_loadouts");
 		gfx.drawString(font, title, (width - font.width(title)) / 2, frameY + 12, NEURAL_TEXT, false);
-		String count = slots + " / " + SynapticLoadoutSlotHelper.MAX_LOADOUT_SLOTS + " Synaptic Patterns";
+		Component count = Component.translatable("screen.hemomancy.synaptic_loadout.synaptic_patterns_count",
+				slots, SynapticLoadoutSlotHelper.MAX_LOADOUT_SLOTS);
 		gfx.drawString(font, count, (width - font.width(count)) / 2, frameY + 25, NEURAL_TEXT_MUTED, false);
 
 		if (known == null) {
-			String waiting = "Reading vascular memory...";
+			Component waiting = Component.translatable("screen.hemomancy.synaptic_loadout.reading_vascular_memory");
 			gfx.drawString(font, waiting, (width - font.width(waiting)) / 2, height / 2, NEURAL_TEXT_MUTED, false);
 			return;
 		}
@@ -180,12 +182,12 @@ public class SynapticLoadoutScreen extends Screen {
 		int gap = sideGap(frameW);
 		ManipulationLoadout selectedLoadout = displayLoadout(known, selectedIndex);
 		if (slots > 1) {
-			drawLoadoutPanel(gfx, displayLoadout(known, previousIndex(slots)), leftSidePanelX(centerX, sidePanel, gap),
+			drawLoadoutPanel(gfx, displayLoadout(known, previousIndex(slots)), previousIndex(slots), leftSidePanelX(centerX, sidePanel, gap),
 					centerY - sidePanel / 2, sidePanel, false);
-			drawLoadoutPanel(gfx, displayLoadout(known, nextIndex(slots)), rightSidePanelX(centerX, gap),
+			drawLoadoutPanel(gfx, displayLoadout(known, nextIndex(slots)), nextIndex(slots), rightSidePanelX(centerX, gap),
 					centerY - sidePanel / 2, sidePanel, false);
 		}
-		drawLoadoutPanel(gfx, selectedLoadout, centerX - PANEL / 2, centerY - PANEL / 2,
+		drawLoadoutPanel(gfx, selectedLoadout, selectedIndex, centerX - PANEL / 2, centerY - PANEL / 2,
 				PANEL, true);
 		drawFooterText(gfx, selectedLoadout, frameX + CONTROL_RAIL_W + 26,
 				frameW - CONTROL_RAIL_W - 38, frameY + frameH - 54);
@@ -270,10 +272,10 @@ public class SynapticLoadoutScreen extends Screen {
 	private void drawControlRail(GuiGraphics gfx, int x, int y, int h) {
 		gfx.fill(x, y, x + CONTROL_RAIL_W, y + h, 0xB60D0903);
 		drawNeuralBorder(gfx, x, y, CONTROL_RAIL_W, h, false);
-		gfx.drawString(font, "Pattern", x + 8, y + 8, NEURAL_TEXT_MUTED, false);
+		gfx.drawString(font, Component.translatable("screen.hemomancy.synaptic_loadout.pattern"), x + 8, y + 8, NEURAL_TEXT_MUTED, false);
 	}
 
-	private void drawLoadoutPanel(GuiGraphics gfx, ManipulationLoadout loadout, int x, int y, int size, boolean focused) {
+	private void drawLoadoutPanel(GuiGraphics gfx, ManipulationLoadout loadout, int slotIndex, int x, int y, int size, boolean focused) {
 		int border = focused ? NEURAL_BORDER_INNER : NEURAL_BORDER_DIM;
 		int fill = focused ? 0xFF211706 : 0xFF100B04;
 		gfx.fill(x, y, x + size, y + size, border);
@@ -283,7 +285,7 @@ public class SynapticLoadoutScreen extends Screen {
 		} else {
 			drawRadialPreview(gfx, loadout, x + size / 2, y + size / 2,
 					focused ? focusedPreviewRadius(size) : sidePreviewRadius(size), focused);
-			String name = loadout.name();
+			String name = loadout.displayName(slotIndex).getString();
 			int color = focused ? NEURAL_TEXT : NEURAL_TEXT_MUTED;
 			gfx.drawString(font, trimToWidth(name, size - 10), x + (size - font.width(trimToWidth(name, size - 10))) / 2,
 					y + size - 16, color, false);
@@ -298,7 +300,7 @@ public class SynapticLoadoutScreen extends Screen {
 		gfx.fill(cx - arm, cy - 2, cx + arm, cy + 2, plusColor);
 		gfx.fill(cx - 2, cy - arm, cx + 2, cy + arm, plusColor);
 		if (focused) {
-			String text = "Save current loadout";
+			Component text = Component.translatable("screen.hemomancy.synaptic_loadout.save_current_loadout");
 			gfx.drawString(font, text, x + (size - font.width(text)) / 2, y + size - 28, NEURAL_TEXT_MUTED, false);
 		}
 	}
@@ -334,14 +336,16 @@ public class SynapticLoadoutScreen extends Screen {
 	private void drawFooterText(GuiGraphics gfx, ManipulationLoadout loadout, int x, int maxWidth, int y) {
 		List<Component> lines = new ArrayList<>();
 		if (loadout.isEmpty()) {
-			lines.add(Component.literal("Save current loadout").withStyle(ChatFormatting.GRAY));
-			lines.add(Component.literal("Cost: " + COST_BLOOD + " blood, " + COST_XP + " XP")
-					.withStyle(ChatFormatting.GOLD));
+			lines.add(Component.translatable("screen.hemomancy.synaptic_loadout.save_current_loadout").withStyle(ChatFormatting.GRAY));
+			lines.add(HemoText.translatable("screen.hemomancy.synaptic_loadout.cost_blood_xp",
+					COST_BLOOD,
+					COST_XP).withStyle(ChatFormatting.GOLD));
 		} else {
-			lines.add(Component.literal(loadout.manipNames().size() + " remembered powers")
-					.withStyle(ChatFormatting.GRAY));
-			lines.add(Component.literal("Apply and rename are free. Overwrite costs "
-					+ COST_BLOOD + " blood, " + COST_XP + " XP.").withStyle(ChatFormatting.GOLD));
+			lines.add(HemoText.translatable("screen.hemomancy.synaptic_loadout.remembered_powers",
+					loadout.manipNames().size()).withStyle(ChatFormatting.GRAY));
+			lines.add(HemoText.translatable("screen.hemomancy.synaptic_loadout.apply_and_rename_are_free_overwrite",
+					COST_BLOOD,
+					COST_XP).withStyle(ChatFormatting.GOLD));
 		}
 		int lineY = y;
 		for (Component line : lines) {
@@ -572,7 +576,7 @@ public class SynapticLoadoutScreen extends Screen {
 		boolean hasLoadout = loadout != null && !loadout.isEmpty();
 		applyButton.active = hasLoadout;
 		renameButton.active = hasLoadout;
-		saveButton.setMessage(Component.literal(hasLoadout ? (confirmOverwrite ? "Confirm" : "Overwrite") : "Save"));
+		saveButton.setMessage((hasLoadout ? (confirmOverwrite ? Component.translatable("screen.hemomancy.synaptic_loadout.confirm") : Component.translatable("screen.hemomancy.synaptic_loadout.overwrite")) : Component.translatable("screen.hemomancy.synaptic_loadout.save")));
 	}
 
 	private ManipulationLoadout currentLoadout() {
@@ -615,13 +619,14 @@ public class SynapticLoadoutScreen extends Screen {
 		ManipulationLoadout loadout = currentLoadout();
 		List<Component> tooltip = new ArrayList<>();
 		if (loadout == null || loadout.isEmpty()) {
-			tooltip.add(Component.literal("Save current loadout"));
-			tooltip.add(Component.literal("Cost: " + COST_BLOOD + " blood, " + COST_XP + " XP")
-					.withStyle(ChatFormatting.GOLD));
+			tooltip.add(Component.translatable("screen.hemomancy.synaptic_loadout.save_current_loadout"));
+			tooltip.add(HemoText.translatable("screen.hemomancy.synaptic_loadout.cost_blood_xp",
+					COST_BLOOD,
+					COST_XP).withStyle(ChatFormatting.GOLD));
 		} else {
-			tooltip.add(Component.literal(loadout.name()));
-			tooltip.add(Component.literal(loadout.manipNames().size() + " remembered powers")
-					.withStyle(ChatFormatting.GRAY));
+			tooltip.add(loadout.displayName(selectedIndex));
+			tooltip.add(HemoText.translatable("screen.hemomancy.synaptic_loadout.remembered_powers",
+					loadout.manipNames().size()).withStyle(ChatFormatting.GRAY));
 		}
 		gfx.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY);
 	}

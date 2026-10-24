@@ -50,7 +50,7 @@ public class BloodFormationKeyPressPacket implements CustomPacketPayload {
 			ServerLevel sLevel = (ServerLevel) ctx.player().level();
 			if (player.getMainHandItem().getItem() instanceof SwordItem) {
 				if (bloodVolume.getBloodVolume() > 100) {
-					player.displayClientMessage(Component.literal("Blood has been drawn for a greater cause"), true);
+					player.displayClientMessage(Component.translatable("message.hemomancy.blood_formation_key_press_packet.blood_has_been_drawn_for_a"), true);
 					BloodAccounting.pay(player, 100, FORMATION);
 					BlockPos pos = player.blockPosition();
 					RandomSource random = player.level().random;
@@ -62,7 +62,7 @@ public class BloodFormationKeyPressPacket implements CustomPacketPayload {
 					}
 					player.drop(new ItemStack(ItemInit.sanguine_formation.get(), random.nextInt(4)), false);
 				} else {
-					player.displayClientMessage(Component.literal("Not enough blood can be drawn for formation"), true);
+					player.displayClientMessage(Component.translatable("message.hemomancy.blood_formation_key_press_packet.not_enough_blood_can_be_drawn"), true);
 				}
 			}
 		});

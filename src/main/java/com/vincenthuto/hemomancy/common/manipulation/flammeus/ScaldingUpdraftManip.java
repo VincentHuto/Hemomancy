@@ -49,7 +49,7 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (!player.onGround() && !player.isInWater() && !player.onClimbable()) {
-			player.displayClientMessage(net.minecraft.network.chat.Component.literal("The updraft needs footing."), true);
+			player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.hemomancy.scalding_updraft_manip.the_updraft_needs_footing"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

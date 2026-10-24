@@ -26,9 +26,7 @@ import java.util.List;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class QliphothPomeInventoryEvents {
-	private static final Component RESISTS_REMOVAL_MESSAGE = Component.literal(
-			"The pome resists being taken away from you. Eat it; the next fruit will not grow until you do.")
-			.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC);
+	private static final Component RESISTS_REMOVAL_MESSAGE = Component.translatable("message.hemomancy.qliphoth_pome_inventory_events.the_pome_resists_being_taken_away").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC);
 
 	private QliphothPomeInventoryEvents() {
 	}
@@ -148,8 +146,7 @@ public final class QliphothPomeInventoryEvents {
 			}
 		}
 		if (stillWaiting && notify) {
-			player.displayClientMessage(Component.literal("The pome clings close, but your inventory has no room.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_pome_inventory_events.the_pome_clings_close_but_your").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 		}
 	}
 
@@ -162,8 +159,7 @@ public final class QliphothPomeInventoryEvents {
 		}
 		queueBoundPomeReturn(player, stack);
 		if (notifyWhenQueued) {
-			player.displayClientMessage(Component.literal("The pome clings close, but your inventory has no room.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_pome_inventory_events.the_pome_clings_close_but_your").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 		}
 		return false;
 	}

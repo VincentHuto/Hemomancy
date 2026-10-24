@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -57,9 +58,10 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 				int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 				if (playerDegree < skill.getRequiredDegree()) {
 					EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(skill.getRequiredDegree());
-					String degreeName = needed != null ? needed.getTitle() : ("Degree " + skill.getRequiredDegree());
-					player.displayClientMessage(Component.literal("Requires initiation: " + degreeName)
-							.withStyle(ChatFormatting.RED), true);
+					Component degreeName = needed != null ? needed.displayName()
+							: Component.translatable("message.hemomancy.recipe_degree_gates.degree", skill.getRequiredDegree());
+					player.displayClientMessage(Component.translatable("message.hemomancy.packet_unlock_skill.requires_initiation",
+							degreeName).withStyle(ChatFormatting.RED), true);
 					return;
 				}
 			}
@@ -67,8 +69,7 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 			EnumSkillStates state = progress.getState(skill);
 			if (state == EnumSkillStates.LOCKED) {
 				if (!hasUnlockedParents(skill, progress)) {
-					player.displayClientMessage(Component.literal("Prerequisite skill not yet unlocked!")
-							.withStyle(ChatFormatting.RED), true);
+					player.displayClientMessage(Component.translatable("message.hemomancy.packet_unlock_skill.prerequisite_skill_not_yet_unlocked").withStyle(ChatFormatting.RED), true);
 					return;
 				}
 				double bloodCost = progress.getLevelUpCost(skill);
@@ -80,16 +81,15 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 					return;
 				}
 				progress.setSkill(skill, EnumSkillStates.UNLOCKED, 1);
-				player.displayClientMessage(Component.literal("Unlocked: " + skill.getName().replace("_", " "))
-						.withStyle(ChatFormatting.DARK_RED), true);
+				player.displayClientMessage(HemoText.translatable("message.hemomancy.packet_unlock_skill.unlocked",
+						skill.getName().replace("_", " ")).withStyle(ChatFormatting.DARK_RED), true);
 				syncSkills(player);
 				return;
 			}
 
 			if (state == EnumSkillStates.UNLOCKED) {
 				if (progress.isMaxed(skill)) {
-					player.displayClientMessage(Component.literal("Skill already at max level!")
-							.withStyle(ChatFormatting.GRAY), true);
+					player.displayClientMessage(Component.translatable("message.hemomancy.packet_unlock_skill.skill_already_at_max_level").withStyle(ChatFormatting.GRAY), true);
 					return;
 				}
 				double bloodCost = progress.getLevelUpCost(skill);
@@ -101,9 +101,9 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 					return;
 				}
 				progress.unlockOrLevel(skill);
-				player.displayClientMessage(Component.literal(skill.getName().replace("_", " ")
-								+ " -> Level " + progress.getLevel(skill))
-						.withStyle(ChatFormatting.DARK_RED), true);
+				player.displayClientMessage(HemoText.translatable("message.hemomancy.packet_unlock_skill.level",
+						skill.getName().replace("_", " "),
+						progress.getLevel(skill)).withStyle(ChatFormatting.DARK_RED), true);
 				syncSkills(player);
 			}
 		});
@@ -112,9 +112,9 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 	private static boolean tryDrainSkillPoints(ServerPlayer player, SkillProgress progress, int cost) {
 		if (cost <= 0) return true;
 		if (progress.getSkillPoints() < cost) {
-			player.displayClientMessage(Component.literal("Not enough skill points! Need " + cost
-							+ " (have " + progress.getSkillPoints() + ")")
-					.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.packet_unlock_skill.not_enough_skill_points_need_have",
+					cost,
+					progress.getSkillPoints()).withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		progress.spendSkillPoints(cost);
@@ -133,13 +133,12 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 	private static boolean tryDrainBlood(ServerPlayer player, double cost) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
-			player.displayClientMessage(Component.literal("Blood system inactive!")
-					.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.packet_unlock_skill.blood_system_inactive").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		if (volume.getBloodVolume() < cost) {
-			player.displayClientMessage(Component.literal("Not enough blood! Need " + (int) cost + " mL")
-					.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.packet_unlock_skill.not_enough_blood_need_ml",
+					(int) cost).withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		BloodAccounting.pay(player, cost, UNLOCK);

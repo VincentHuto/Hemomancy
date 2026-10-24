@@ -298,13 +298,11 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 	}
 
 	private static Component riteOnlyPlacementMessage() {
-		return Component.literal("Consecrated Bloodwells may only be manifested by the Rite of the Founding Fane.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC);
+		return Component.translatable("message.hemomancy.consecrated_bloodwell_block.consecrated_bloodwells_may_only_be_manifested").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC);
 	}
 
 	private static Component invalidBloodwellMessage() {
-		return Component.literal("This bloodwell answers to no active Founding Fane.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC);
+		return Component.translatable("message.hemomancy.consecrated_bloodwell_block.this_bloodwell_answers_to_no_active").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC);
 	}
 
 	private static void syncLinkedPool(ServerPlayer player, BlockPos pos) {

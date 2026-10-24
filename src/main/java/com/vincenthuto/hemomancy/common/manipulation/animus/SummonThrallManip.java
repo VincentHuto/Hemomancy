@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -95,7 +96,7 @@ public class SummonThrallManip extends BloodManipulation {
 
 		if (hitResult.getType() == HitResult.Type.MISS) {
 			player.displayClientMessage(
-					Component.literal("§cLook at a block to select a position!"), true);
+					Component.translatable("message.hemomancy.summon_thrall_manip.look_at_a_block_to_select"), true);
 			return;
 		}
 
@@ -111,7 +112,7 @@ public class SummonThrallManip extends BloodManipulation {
 				// Don't allow source and dest to be the same
 				if (hitBlock.equals(thrall.getSourcePos())) {
 					player.displayClientMessage(
-							Component.literal("§cChoose different source and destination blocks!"), true);
+							Component.translatable("message.hemomancy.summon_thrall_manip.choose_different_source_and_destination_blocks"), true);
 					return;
 				}
 
@@ -119,7 +120,7 @@ public class SummonThrallManip extends BloodManipulation {
 				BlockEntity destBe = world.getBlockEntity(hitBlock);
 				if (destBe == null || !HemoCapabilityAccess.getBloodVolume(destBe).isPresent()) {
 					player.displayClientMessage(
-							Component.literal("§cDestination must be a block with a blood reservoir!"), true);
+							Component.translatable("message.hemomancy.summon_thrall_manip.destination_must_be_a_block_with"), true);
 					return;
 				}
 
@@ -128,13 +129,13 @@ public class SummonThrallManip extends BloodManipulation {
 				PENDING_THRALLS.remove(playerUUID);
 
 				player.displayClientMessage(
-						Component.literal("§9Thrall bound! §7Destination: §9" + hitBlock.toShortString()), true);
+						HemoText.translatable("message.hemomancy.summon_thrall_manip.thrall_bound_destination", hitBlock.toShortString()), true);
 				world.playSound(null, hitBlock, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.6f, 1.2f);
 			} else {
 				// Thrall is dead or invalid — clean up and fall through to spawn a new one
 				PENDING_THRALLS.remove(playerUUID);
 				player.displayClientMessage(
-						Component.literal("§cPrevious thrall was lost. Summoning a new one..."), true);
+						Component.translatable("message.hemomancy.summon_thrall_manip.previous_thrall_was_lost_summoning_a"), true);
 				spawnNewThrall(player, world, hitBlock);
 			}
 			return;
@@ -150,7 +151,7 @@ public class SummonThrallManip extends BloodManipulation {
 		BlockEntity srcBe = world.getBlockEntity(sourceBlock);
 		if (srcBe == null || !HemoCapabilityAccess.getBloodVolume(srcBe).isPresent()) {
 			player.displayClientMessage(
-					Component.literal("§cSource must be a block with a blood reservoir!"), true);
+					Component.translatable("message.hemomancy.summon_thrall_manip.source_must_be_a_block_with"), true);
 			return;
 		}
 
@@ -168,8 +169,8 @@ public class SummonThrallManip extends BloodManipulation {
 		PENDING_THRALLS.put(player.getUUID(), thrall.getId());
 
 		player.displayClientMessage(
-				Component.literal("§4Thrall summoned! §7Source: §c" + sourceBlock.toShortString()
-						+ " §7— Now select a destination block."), true);
+				HemoText.translatable("message.hemomancy.summon_thrall_manip.thrall_summoned_source_now_select_a",
+						sourceBlock.toShortString()), true);
 		world.playSound(null, spawnPos, SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 0.8f, 0.6f);
 	}
 }

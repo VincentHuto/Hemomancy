@@ -11,6 +11,8 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPhase;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
+import com.vincenthuto.hemomancy.support.EnglishText;
+import net.minecraft.network.chat.Component;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -24,6 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class UnstainedProgressLayoutTest {
 
+	private static final UnstainedProgressLayout.Text ENGLISH =
+			(key, args) -> EnglishText.render(Component.translatable(key, args));
+
 	private static final List<String> FULL_PATH = List.of(
 			"lethean_baptism",
 			"purity_corrupted", "purity_tainted", "purity_cleansing", "purity_absolved", "purity_purified",
@@ -34,7 +39,7 @@ final class UnstainedProgressLayoutTest {
 	private static UnstainedProgressLayout layout(UnstainedPhase phase, EnumPurityStage purity,
 			boolean prepared, boolean clarityUnlocked, EnumClarityStage clarity) {
 		boolean begun = phase != UnstainedPhase.OUTSIDER && phase != UnstainedPhase.NOVITIATE;
-		return UnstainedProgressLayout.build(new Progress(phase, purity, prepared, clarityUnlocked, clarity, begun));
+		return UnstainedProgressLayout.build(new Progress(phase, purity, prepared, clarityUnlocked, clarity, begun), ENGLISH);
 	}
 
 	private static UnstainedProgressLayout pledged(EnumClarityStage clarity) {
@@ -44,7 +49,7 @@ final class UnstainedProgressLayoutTest {
 	/** Pledged through the five service vows: Clarity Ascension without Baptism or purification. */
 	private static UnstainedProgressLayout vowPledged(EnumClarityStage clarity) {
 		return UnstainedProgressLayout.build(new Progress(UnstainedPhase.PLEDGED, EnumPurityStage.CORRUPTED,
-				true, true, clarity, false));
+				true, true, clarity, false), ENGLISH);
 	}
 
 	@Test

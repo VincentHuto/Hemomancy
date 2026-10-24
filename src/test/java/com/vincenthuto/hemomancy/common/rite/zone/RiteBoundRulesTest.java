@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.zone;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
+import com.vincenthuto.hemomancy.support.EnglishText;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumSet;
@@ -44,10 +45,10 @@ final class RiteBoundRulesTest {
 
 	@Test
 	void describesTheSpaceByItsFloor() {
-		assertEquals("a Dominion rite space", RiteBoundRules.describe(WORLD));
-		assertEquals("any rite space", RiteBoundRules.describe(ANY));
-		assertEquals("a Threshold or Working rite space", RiteBoundRules.describe(new RiteBoundRules.Requirement(
-				EnumSet.of(CardinalRitePurpose.SELF, CardinalRitePurpose.MAKING), false)));
+		assertEquals("a Dominion rite space", EnglishText.render(RiteBoundRules.describe(WORLD)));
+		assertEquals("any rite space", EnglishText.render(RiteBoundRules.describe(ANY)));
+		assertEquals("a Threshold or Working rite space", EnglishText.render(RiteBoundRules.describe(new RiteBoundRules.Requirement(
+				EnumSet.of(CardinalRitePurpose.SELF, CardinalRitePurpose.MAKING), false))));
 	}
 
 	@Test

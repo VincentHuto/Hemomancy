@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketToggleSkill;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketUnlockSkill;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -317,7 +317,7 @@ public class SkillsTabController implements IProgressTab {
 			boolean degreeVisible = degreeFilter == null
 					|| SkillTreeLayerRules.layerForDegree(degreeFilter) != layer || degreeFilter == degree;
 			int labelAlpha = degreeVisible ? (TRACE_DEGREE_LABEL >>> 24) & 0xFF : 0x30;
-            gfx.drawString(ctx.font(), "Degree " + degree, sx(ctx, view, labelPosition[0]), sy(ctx, view, labelPosition[1]),
+            gfx.drawString(ctx.font(), Component.translatable("message.hemomancy.recipe_degree_gates.degree", degree), sx(ctx, view, labelPosition[0]), sy(ctx, view, labelPosition[1]),
 					withAlpha(TRACE_DEGREE_LABEL, Math.round(labelAlpha * alpha)), false);
         }
     }
@@ -328,13 +328,16 @@ public class SkillsTabController implements IProgressTab {
 		RecipeMapControlsLayout.Result controls = RecipeMapControlsLayout.calculate(viewport);
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, 650);
-		ProgressFilterControlsView.draw(gfx, ctx, controls.degree(),
-				degreeFilter == null ? "Degree: All" : "Degree: " + degreeFilter, 0xFFCC3333, mouseX, mouseY);
+		ProgressFilterControlsView.draw(gfx, ctx, controls.degree(), (degreeFilter == null
+				? Component.translatable("screen.hemomancy.recipe_map_canvas.degree_all")
+				: Component.translatable("screen.hemomancy.recipe_map_canvas.degree_filter", degreeFilter)).getString(),
+				0xFFCC3333, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.family(),
-				FamilyFilterLabels.display(FamilyFilterLabels.nickname(familyFilter)),
+				FamilyFilterLabels.label(FamilyFilterLabels.nickname(familyFilter)).getString(),
 				0xFFCC3333, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.layer(),
-				"Layer: " + (diveState.isDeepActive() ? "5-8" : "0-4"), 0xFFCC3333, mouseX, mouseY);
+				Component.translatable("screen.hemomancy.recipe_map_canvas.layer",
+						diveState.isDeepActive() ? "5-8" : "0-4").getString(), 0xFFCC3333, mouseX, mouseY);
 		gfx.pose().popPose();
 	}
 
@@ -456,14 +459,15 @@ public class SkillsTabController implements IProgressTab {
             if (degreeLocked) {
                 tip.add(Component.literal("???").withStyle(s -> s.withColor(0x555555).withBold(true)));
                 EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(sp.getRequiredDegree());
-                String degreeName = needed != null ? needed.getTitle() : ("Degree " + sp.getRequiredDegree());
-                tip.add(Component.literal("Requires: " + degreeName).withStyle(s -> s.withColor(0xAA4444)));
+                Component degreeName = needed != null ? needed.displayName()
+                        : Component.translatable("message.hemomancy.recipe_degree_gates.degree", sp.getRequiredDegree());
+                tip.add(HemoText.translatable("screen.hemomancy.skills_tab_controller.requires", degreeName).withStyle(s -> s.withColor(0xAA4444)));
             } else {
-                String pretty = HLTextUtils.toProperCase(sp.getName().replace("skill_", "").replace("_", " "));
-                tip.add(Component.literal(pretty).withStyle(s -> s.withColor(0xCC3333).withBold(true)));
+                tip.add(Component.translatable("skill.hemomancy." + sp.getName()).withStyle(s -> s.withColor(0xCC3333).withBold(true)));
                 if (sp.getMaxLevels() > 0) {
-                    tip.add(Component.literal("Level: " + SkillProgressClientCache.current().getLevel(sp) + " / " + sp.getMaxLevels())
-                            .withStyle(s -> s.withColor(SkillProgressClientCache.current().isMaxed(sp) ? 0x44AA44 : 0x888888)));
+                    tip.add(HemoText.translatable("screen.hemomancy.skills_tab_controller.level",
+                    		SkillProgressClientCache.current().getLevel(sp),
+                    		sp.getMaxLevels()).withStyle(s -> s.withColor(SkillProgressClientCache.current().isMaxed(sp) ? 0x44AA44 : 0x888888)));
                 }
                 tip.add(Component.translatable("skill.hemomancy." + sp.getName() + ".desc")
                         .withStyle(s -> s.withColor(0x999999).withItalic(true)));
@@ -471,21 +475,19 @@ public class SkillsTabController implements IProgressTab {
                 if (state == EnumSkillStates.LOCKED) {
                     List<String> lockedParents = lockedParentNames(sp);
                     if (!lockedParents.isEmpty()) {
-                        tip.add(Component.literal("Requires: " + String.join(", ", lockedParents)).withStyle(s -> s.withColor(0xAA4444)));
+                        tip.add(HemoText.translatable("screen.hemomancy.skills_tab_controller.requires", String.join(", ", lockedParents)).withStyle(s -> s.withColor(0xAA4444)));
                     }
-					tip.add(SkillTooltipDetails.upgradeCost("unlock",
+					tip.add(SkillTooltipDetails.unlockCost(
 							(int) SkillProgressClientCache.current().getLevelUpCost(sp), sp.getSkillPointCost()));
                 } else if (state == EnumSkillStates.UNLOCKED) {
 					if (sp.isToggleable()) {
-						tip.add(Component.literal(SkillProgressClientCache.current().isEnabled(sp)
-								? "ENABLED - click to disable" : "DISABLED - click to enable")
-								.withStyle(s -> s.withColor(SkillProgressClientCache.current().isEnabled(sp)
+						tip.add((SkillProgressClientCache.current().isEnabled(sp) ? Component.translatable("screen.hemomancy.skills_tab_controller.enabled_click_to_disable") : Component.translatable("screen.hemomancy.skills_tab_controller.disabled_click_to_enable")).withStyle(s -> s.withColor(SkillProgressClientCache.current().isEnabled(sp)
 										? 0xCD7F32 : 0x777B80).withBold(true)));
 					}
                     if (SkillProgressClientCache.current().isMaxed(sp)) {
-                        tip.add(Component.literal("MAX LEVEL").withStyle(s -> s.withColor(0x44AA44).withBold(true)));
+                        tip.add(Component.translatable("screen.hemomancy.skills_tab_controller.max_level").withStyle(s -> s.withColor(0x44AA44).withBold(true)));
                     } else {
-						tip.add(SkillTooltipDetails.upgradeCost("level up",
+						tip.add(SkillTooltipDetails.levelUpCost(
 								(int) SkillProgressClientCache.current().getLevelUpCost(sp), sp.getSkillPointCost()));
                     }
                 }
@@ -507,7 +509,7 @@ public class SkillsTabController implements IProgressTab {
         List<String> locked = new ArrayList<>();
         for (SkillPoint parent : sp.getParents()) {
             if (SkillProgressClientCache.current().getState(parent) == EnumSkillStates.UNLOCKED) continue;
-            locked.add(HLTextUtils.toProperCase(parent.getName().replace("skill_", "").replace("_", " ")));
+            locked.add(Component.translatable("skill.hemomancy." + parent.getName()).getString());
         }
         return locked;
     }

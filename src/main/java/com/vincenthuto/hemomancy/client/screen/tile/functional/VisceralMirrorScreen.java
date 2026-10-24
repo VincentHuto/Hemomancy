@@ -78,7 +78,7 @@ public class VisceralMirrorScreen extends Screen {
 	private int ritualTicks = 0;
 	private int totalRitualTicks = 0;
 	private int ritualOrganOrdinal = -1;
-	private String statusMessage = "";
+	private Component statusMessage = Component.empty();
 
 	// Button bounds
 	private int extractBtnX, extractBtnY, extractBtnW, extractBtnH;
@@ -89,7 +89,7 @@ public class VisceralMirrorScreen extends Screen {
 
 	private VisceralMirrorScreen(BlockPos pos, int[] organLevels, boolean[] hasEcho,
 			double bloodVolume, double maxBloodVolume, int degree) {
-		super(Component.literal("Visceral Mirror"));
+		super(Component.translatable("screen.hemomancy.visceral_mirror.visceral_mirror"));
 		this.mirrorPos = pos;
 		this.organLevels = organLevels;
 		this.hasEcho = hasEcho;
@@ -125,7 +125,7 @@ public class VisceralMirrorScreen extends Screen {
 		// If ritual completed, auto-close after a brief delay
 		if (phase == VisceralMirrorBlockEntity.RitualPhase.COMPLETE
 				|| phase == VisceralMirrorBlockEntity.RitualPhase.IDLE) {
-			if (!statusMessage.isEmpty()) {
+			if (!statusMessage.getString().isEmpty()) {
 				// Keep showing message briefly — the screen will be closed by the player
 			}
 		}
@@ -183,7 +183,7 @@ public class VisceralMirrorScreen extends Screen {
 		ScreenDrawUtils.drawBorder(gfx, px, py, PANEL_W, PANEL_H, BORDER_OUTER, BORDER_INNER);
 
 		// ── Title ──
-		String title = "\u2666 Visceral Mirror \u2666";
+		Component title = Component.translatable("screen.hemomancy.visceral_mirror.title");
 		int titleW = font.width(title);
 		gfx.drawString(font, title, px + (PANEL_W - titleW) / 2, py + 6, 0xFFCC3344, false);
 
@@ -213,7 +213,7 @@ public class VisceralMirrorScreen extends Screen {
 		renderProgressBar(gfx, barX, barY, barW);
 
 		// ── Status message ──
-		if (!statusMessage.isEmpty()) {
+		if (!statusMessage.getString().isEmpty()) {
 			int msgW = font.width(statusMessage);
 			gfx.drawString(font, statusMessage, px + (PANEL_W - msgW) / 2, py + PANEL_H - 14, TEXT_DIM, false);
 		}
@@ -250,16 +250,16 @@ public class VisceralMirrorScreen extends Screen {
 			EnumOrgan organ = organs[i];
 			String tierSymbol = organ == EnumOrgan.HEART ? "\u2665 " : "\u25C6 "; // ♥ or ◆
 			int nameColor = getOrganNameColor(i);
-			gfx.drawString(font, tierSymbol + organ.getName(), rowX + 5, rowY + 4, nameColor, false);
+			gfx.drawString(font, tierSymbol + organ.getDisplayName().getString(), rowX + 5, rowY + 4, nameColor, false);
 
 			// Level indicator
 			int level = organLevels[i];
-			String levelStr = "Lv." + level + "/3";
+			Component levelStr = Component.translatable("screen.hemomancy.visceral_mirror.level", level);
 			int levelColor = level >= 3 ? STATUS_GOLD : TEXT_DIM;
 			gfx.drawString(font, levelStr, rowX + 5, rowY + 15, levelColor, false);
 
 			// Tier badge
-			String tierStr = "T" + organ.getTier();
+			Component tierStr = Component.translatable("screen.hemomancy.visceral_mirror.tier_badge", organ.getTier());
 			int tierW = font.width(tierStr);
 			gfx.drawString(font, tierStr, rowX + rowW - tierW - 4, rowY + 4, TEXT_DIM, false);
 		}
@@ -281,7 +281,7 @@ public class VisceralMirrorScreen extends Screen {
 			int mouseX, int mouseY) {
 		if (selectedOrgan < 0 || selectedOrgan >= EnumOrgan.values().length) {
 			// No organ selected — hint text
-			String hint = "Select an organ";
+			Component hint = Component.translatable("screen.hemomancy.visceral_mirror.select_an_organ");
 			int hintW = font.width(hint);
 			gfx.drawString(font, hint, dx + (dw - hintW) / 2, dy + dh / 2 - 4, TEXT_DIM, false);
 			return;
@@ -300,7 +300,7 @@ public class VisceralMirrorScreen extends Screen {
 
 		// Organ name (large)
 		String symbol = organ == EnumOrgan.HEART ? "\u2665 " : "\u25C6 ";
-		gfx.drawString(font, symbol + organ.getName(), textX, textY, 0xFFCC3344, false);
+		gfx.drawString(font, symbol + organ.getDisplayName().getString(), textX, textY, 0xFFCC3344, false);
 		textY += 14;
 
 		// Description
@@ -308,32 +308,32 @@ public class VisceralMirrorScreen extends Screen {
 		textY += 14;
 
 		// Tier and level
-		gfx.drawString(font, "Tier " + organ.getTier() + "  \u2014  Level " + level + "/3",
+		gfx.drawString(font, Component.translatable("screen.hemomancy.visceral_mirror.tier_and_level", organ.getTier(), level),
 				textX, textY, TEXT_BRIGHT, false);
 		textY += 14;
 
 		// Blood cost
 		int costColor = affordable ? STATUS_GREEN : STATUS_RED;
-		gfx.drawString(font, "Blood Cost: " + (int) cost, textX, textY, costColor, false);
+		gfx.drawString(font, Component.translatable("screen.hemomancy.visceral_mirror.blood_cost", (int) cost), textX, textY, costColor, false);
 		textY += 14;
 
 		// Status
-		String status;
+		Component status;
 		int statusColor;
 		if (maxed) {
-			status = "MAXIMUM MODIFICATION";
+			status = Component.translatable("screen.hemomancy.visceral_mirror.maximum_modification");
 			statusColor = STATUS_GOLD;
 		} else if (echoHeld) {
-			status = "Echo already in inventory";
+			status = Component.translatable("screen.hemomancy.visceral_mirror.echo_already_in_inventory");
 			statusColor = STATUS_GOLD;
 		} else if (!degreeOk) {
-			status = "Degree too low (need " + organ.getTier() + ")";
+			status = Component.translatable("screen.hemomancy.visceral_mirror.degree_too_low", organ.getTier());
 			statusColor = STATUS_RED;
 		} else if (!affordable) {
-			status = "Not enough blood";
+			status = Component.translatable("screen.hemomancy.visceral_mirror.not_enough_blood");
 			statusColor = STATUS_RED;
 		} else {
-			status = "Ready to extract";
+			status = Component.translatable("screen.hemomancy.visceral_mirror.ready_to_extract");
 			statusColor = STATUS_GREEN;
 		}
 		gfx.drawString(font, status, textX, textY, statusColor, false);
@@ -352,7 +352,7 @@ public class VisceralMirrorScreen extends Screen {
 			boolean cancelHover = mouseX >= cancelBtnX && mouseX < cancelBtnX + cancelBtnW
 					&& mouseY >= cancelBtnY && mouseY < cancelBtnY + cancelBtnH;
 			renderButton(gfx, cancelBtnX, cancelBtnY, cancelBtnW, cancelBtnH,
-					"Cancel Ritual", cancelHover, true);
+					Component.translatable("screen.hemomancy.visceral_mirror.cancel_ritual"), cancelHover, true);
 			// Clear extract button bounds
 			extractBtnX = extractBtnY = extractBtnW = extractBtnH = 0;
 		} else {
@@ -364,14 +364,14 @@ public class VisceralMirrorScreen extends Screen {
 			boolean extractHover = canExtract && mouseX >= extractBtnX && mouseX < extractBtnX + extractBtnW
 					&& mouseY >= extractBtnY && mouseY < extractBtnY + extractBtnH;
 			renderButton(gfx, extractBtnX, extractBtnY, extractBtnW, extractBtnH,
-					"Begin Extraction", extractHover, canExtract);
+					Component.translatable("screen.hemomancy.visceral_mirror.begin_extraction"), extractHover, canExtract);
 			// Clear cancel button bounds
 			cancelBtnX = cancelBtnY = cancelBtnW = cancelBtnH = 0;
 		}
 	}
 
 	private void renderButton(GuiGraphics gfx, int bx, int by, int bw, int bh,
-			String text, boolean hovered, boolean enabled) {
+			Component text, boolean hovered, boolean enabled) {
 		int bg = !enabled ? BUTTON_DISABLED : (hovered ? BUTTON_HOVER : BUTTON_BG);
 		int border = hovered ? BUTTON_BORDER_HOVER : BUTTON_BORDER;
 
@@ -394,10 +394,13 @@ public class VisceralMirrorScreen extends Screen {
 				float progress = totalRitualTicks > 0 ? (float) ritualTicks / totalRitualTicks : 0;
 
 		// Phase label
-		String phaseLabel = phase == VisceralMirrorBlockEntity.RitualPhase.CHANNELING
-				? "Channeling..." : "Extracting...";
+		boolean channeling = phase == VisceralMirrorBlockEntity.RitualPhase.CHANNELING;
+		Component phaseLabel = Component.translatable(channeling
+				? "screen.hemomancy.visceral_mirror.channeling" : "screen.hemomancy.visceral_mirror.extracting");
 		if (ritualOrganOrdinal >= 0 && ritualOrganOrdinal < EnumOrgan.values().length) {
-			phaseLabel += " " + EnumOrgan.values()[ritualOrganOrdinal].getName();
+			phaseLabel = Component.translatable(channeling
+					? "screen.hemomancy.visceral_mirror.channeling_organ" : "screen.hemomancy.visceral_mirror.extracting_organ",
+					EnumOrgan.values()[ritualOrganOrdinal].getDisplayName());
 		}
 		gfx.drawString(font, phaseLabel, bx, by - 11, TEXT_DIM, false);
 

@@ -56,7 +56,7 @@ public class UpdateSelectedStillArtPacket implements CustomPacketPayload {
 			}
 			known.setSelectedArt(art);
 			KnownStillArtEvents.sync(player, known);
-			player.displayClientMessage(Component.translatable("hemomancy.still_art.select.success", art.getProperName()), true);
+			player.displayClientMessage(Component.translatable("hemomancy.still_art.select.success", art.getDisplayName()), true);
 		});
 	}
 

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -12,9 +13,9 @@ final class MaterialAtlasFamilyNicknameTest {
 	@Test
 	void atlasCategoriesProvideCompactFamilyCardNicknames() {
 		Map<String, String> harbinger = MaterialAtlasSpec.buckets(MaterialAtlasPath.HARBINGER).stream()
-				.collect(Collectors.toMap(MaterialAtlasBucket::id, MaterialAtlasBucket::nickname));
+				.collect(Collectors.toMap(MaterialAtlasBucket::id, bucket -> EnglishText.render(bucket.nickname())));
 		Map<String, String> unstained = MaterialAtlasSpec.buckets(MaterialAtlasPath.UNSTAINED).stream()
-				.collect(Collectors.toMap(MaterialAtlasBucket::id, MaterialAtlasBucket::nickname));
+				.collect(Collectors.toMap(MaterialAtlasBucket::id, bucket -> EnglishText.render(bucket.nickname())));
 
 		assertEquals("Bloodcraft", harbinger.get("bloodcraft_core"));
 		assertEquals("Mycology", harbinger.get("fungal_ecology"));

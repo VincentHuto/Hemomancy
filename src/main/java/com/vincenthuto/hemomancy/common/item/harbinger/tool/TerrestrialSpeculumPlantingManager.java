@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketCardinalRiteStaffPlanting;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
@@ -67,8 +67,7 @@ public final class TerrestrialSpeculumPlantingManager {
 				&& TerrestrialSpeculumItem.canManifestAt(player, planting.origin);
 		if (!valid || !TerrestrialSpeculumItem.manifest(player, planting.origin, planting.facing)) {
 			cancel(player);
-			player.displayClientMessage(Component.literal("The Speculum loses its purchase in the earth.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.terrestrial_speculum_planting_manager.the_speculum_loses_its_purchase_in").withStyle(ChatFormatting.DARK_RED), true);
 			return;
 		}
 

@@ -36,16 +36,16 @@ public class DiscoveryInscriptionScreen extends Screen {
 	private int top;
 	private int scroll;
 
-	private DiscoveryInscriptionScreen(String title, List<String> lines, boolean revealed,
+	private DiscoveryInscriptionScreen(Component title, List<String> lines, boolean revealed,
 			@Nullable ResourceLocation riteId, boolean requiresAbocipherLiteracy) {
-		super(Component.literal(title));
+		super(title);
 		this.lines = List.copyOf(lines);
 		this.revealed = revealed;
 		this.riteId = riteId;
 		this.requiresAbocipherLiteracy = requiresAbocipherLiteracy;
 	}
 
-	public static void open(String title, List<String> lines, boolean revealed,
+	public static void open(Component title, List<String> lines, boolean revealed,
 			@Nullable ResourceLocation riteId, boolean requiresAbocipherLiteracy) {
 		Minecraft.getInstance().setScreen(new DiscoveryInscriptionScreen(title, lines, revealed, riteId,
 				requiresAbocipherLiteracy));

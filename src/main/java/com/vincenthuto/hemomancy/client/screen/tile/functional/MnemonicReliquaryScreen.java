@@ -33,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.*;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 
 public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicReliquaryMenu> {
 
@@ -534,9 +535,9 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 					.reserveTicks(memory) + 19L) / 20L;
 			List<Component> tooltip = List.of(
 					Component.translatable("item.hemomancy.tincture_" + memory.id()).withStyle(s -> s.withBold(true)),
-					Component.literal("Prepared Thelemic Memory"),
-					Component.literal(HLTextUtils.convertInitToLang(memory.section().name()) + " Vascular Section"),
-					Component.literal(String.format(Locale.ROOT, "Reserve %d:%02d", seconds / 60L, seconds % 60L)));
+					Component.translatable("screen.hemomancy.mnemonic_reliquary.prepared_thelemic_memory"),
+					HemoText.translatable("screen.hemomancy.mnemonic_reliquary.vascular_section", HLTextUtils.convertInitToLang(memory.section().name())),
+					HemoText.translatable("screen.hemomancy.mnemonic_reliquary.reserve", String.format(Locale.ROOT, "%d", seconds / 60L), String.format(Locale.ROOT, "%02d", seconds % 60L)));
 			graphics.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY);
 			return;
 		}
@@ -546,12 +547,12 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			MuscleMemory hoveredMemory = equippedMuscleMemories.stream()
 					.filter(memory -> memory.section() == hoveredSection).findFirst().orElse(null);
 			List<Component> tooltip = new ArrayList<>();
-			tooltip.add(Component.literal(HLTextUtils.convertInitToLang(hoveredSection.name()) + " Vascular Section")
-					.withStyle(s -> s.withBold(true)));
+			tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.vascular_section",
+					HLTextUtils.convertInitToLang(hoveredSection.name())).withStyle(s -> s.withBold(true)));
 			if (hoveredMemory != null) {
 				tooltip.add(Component.translatable("item.hemomancy.tincture_" + hoveredMemory.id()));
 			}
-			tooltip.add(Component.literal("Click to cycle learned Thelemic Memories"));
+			tooltip.add(Component.translatable("screen.hemomancy.mnemonic_reliquary.click_to_cycle_learned_thelemic_memories"));
 			graphics.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY);
 			return;
 		}
@@ -565,21 +566,21 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private void drawManipTooltip(GuiGraphics graphics, int mouseX, int mouseY, BloodManipulation hovered) {
 		List<Component> tooltip = new ArrayList<>();
 		tooltip.add(hovered.getDisplayName().withStyle(s -> s.withBold(true)));
-		tooltip.add(Component.literal("Noetic Memory"));
-		tooltip.add(Component.literal("Tendency: " + HLTextUtils.convertInitToLang(hovered.getTend().name())));
-		tooltip.add(Component.literal("Rank: " + HLTextUtils.convertInitToLang(hovered.getRank().name())));
-		tooltip.add(Component.literal("Type: " + HLTextUtils.convertInitToLang(hovered.getType().name())));
-		tooltip.add(Component.literal(String.format("Cost: %.1f", hovered.getCost())));
+		tooltip.add(Component.translatable("screen.hemomancy.mnemonic_reliquary.noetic_memory"));
+		tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.tendency", HLTextUtils.convertInitToLang(hovered.getTend().name())));
+		tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.rank", HLTextUtils.convertInitToLang(hovered.getRank().name())));
+		tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.type", HLTextUtils.convertInitToLang(hovered.getType().name())));
+		tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.cost", String.format("%.1f", hovered.getCost())));
 		if (hovered.getCooldownTicks() > 0) {
-			tooltip.add(Component.literal(String.format("Cooldown: %.1fs", hovered.getCooldownTicks() / 20.0)));
+			tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.cooldown_s", String.format("%.1f", hovered.getCooldownTicks() / 20.0)));
 		}
 		if (equippedNames.contains(hovered.getName())) {
-			tooltip.add(Component.literal("Equipped").withStyle(s -> s.withColor(0x55FF55)));
+			tooltip.add(Component.translatable("screen.hemomancy.mnemonic_reliquary.equipped").withStyle(s -> s.withColor(0x55FF55)));
 		}
 		boolean knownFamilyIcon = knownIcons.stream()
 				.anyMatch(icon -> icon.manip == hovered && contains(icon, mouseX, mouseY));
 		if (knownFamilyIcon && !unlockedFamilyForms(hovered).isEmpty()) {
-			tooltip.add(Component.literal("Hold to choose variation").withStyle(ChatFormatting.LIGHT_PURPLE));
+			tooltip.add(Component.translatable("screen.hemomancy.mnemonic_reliquary.hold_to_choose_variation").withStyle(ChatFormatting.LIGHT_PURPLE));
 		}
 
 		graphics.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY);
@@ -733,13 +734,11 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private void tryEquipManip(BloodManipulation manipulation) {
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (equippedNames.contains(manipulation.getName())) {
-			if (player != null) player.displayClientMessage(Component.literal("Already memorized")
-					.withStyle(ChatFormatting.YELLOW), true);
+			if (player != null) player.displayClientMessage(Component.translatable("screen.hemomancy.mnemonic_reliquary.already_memorized").withStyle(ChatFormatting.YELLOW), true);
 			return;
 		}
 		if (ManipulationEquipHelper.countNormalEquippedNames(new ArrayList<>(equippedNames)) >= maxSlots) {
-			if (player != null) player.displayClientMessage(Component.literal("No free memory slots")
-					.withStyle(ChatFormatting.RED), true);
+			if (player != null) player.displayClientMessage(Component.translatable("screen.hemomancy.mnemonic_reliquary.no_free_memory_slots").withStyle(ChatFormatting.RED), true);
 			return;
 		}
 		PacketHandler.sendToServer(new EquipManipulationPacket(manipulation.getName(), true));

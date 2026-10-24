@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenSSCScreenPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenSSCScreenPacket.DrudgeEntry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SemiSentientConstructBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
@@ -183,8 +184,8 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock, Si
 		int requiredDegree = HemoServerConfig.DRUDGE_REQUIRED_DEGREE.get();
 		int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		if (playerDegree < requiredDegree) {
-			player.displayClientMessage(Component.literal(
-					"§cThe Order has not entrusted you with this rite. (Degree " + requiredDegree + " required)"),
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.semi_sentient_construct_block.the_order_has_not_entrusted_you",
+					requiredDegree),
 					true);
 			return ItemInteractionResult.FAIL;
 		}
@@ -196,8 +197,9 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock, Si
 		int maxDrudges = HemoServerConfig.DRUDGE_MAX_PER_SSC.get();
 		int bound = ssc.countBoundDrudges();
 		if (bound >= maxDrudges) {
-			player.displayClientMessage(Component.literal(
-					"§4The construct's will is divided enough. §7(" + bound + "/" + maxDrudges + " bound)"),
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.semi_sentient_construct_block.the_construct_s_will_is_divided",
+					bound,
+					maxDrudges),
 					true);
 			return ItemInteractionResult.FAIL;
 		}
@@ -206,8 +208,8 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock, Si
 		double birthCost = HemoServerConfig.DRUDGE_BIRTH_COST.get();
 		IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player);
 		if (playerVol == null || !playerVol.isActive() || playerVol.getBloodVolume() < birthCost) {
-			player.displayClientMessage(Component.literal(
-					"§4Insufficient blood. §7(" + (int) birthCost + " mL required)"),
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.semi_sentient_construct_block.insufficient_blood_ml_required",
+					(int) birthCost),
 					true);
 			return ItemInteractionResult.FAIL;
 		}
@@ -228,8 +230,7 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock, Si
 		worldIn.addFreshEntity(drudge);
 		worldIn.playSound(null, pos, SoundEvents.ZOMBIE_AMBIENT, SoundSource.PLAYERS, 0.5f, 0.8f);
 
-		player.displayClientMessage(Component.literal(
-				"§7The construct stirs. A new drudge is bound to this station.").withStyle(ChatFormatting.DARK_RED),
+		player.displayClientMessage(Component.translatable("message.hemomancy.semi_sentient_construct_block.the_construct_stirs_a_new_drudge").withStyle(ChatFormatting.DARK_RED),
 				false);
 
 		return ItemInteractionResult.SUCCESS;

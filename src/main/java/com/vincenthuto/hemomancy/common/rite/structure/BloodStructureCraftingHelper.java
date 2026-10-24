@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAcc
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -140,30 +141,27 @@ public final class BloodStructureCraftingHelper {
 	public static Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {
 		boolean harbingerProgressBlocked = UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player));
 		if (!recipe.isUnstained() && harbingerProgressBlocked) {
-			return Component.literal("Purification bars access to the Hematic Order formations.")
-					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
+			return Component.translatable("message.hemomancy.blood_structure_crafting_helper.purification_bars_access_to_the_hematic").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
 		}
 		return null;
 	}
 
 	public static Component projectionHintMessage() {
-		return Component.literal("Use Blood Projection on this formation with its catalyst in your offhand.")
-				.withStyle(ChatFormatting.DARK_RED);
+		return Component.translatable("message.hemomancy.blood_structure_crafting_helper.use_blood_projection_on_this_formation").withStyle(ChatFormatting.DARK_RED);
 	}
 
 	private static Component missingOffhandCatalystMessage(BloodStructureRecipe recipe) {
-		return Component.literal("This formation needs Blood Projection and an offhand catalyst: ")
-				.withStyle(ChatFormatting.RED)
-				.append(recipe.getHeldItem().getHoverName().copy()
-						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+		return Component.translatable("message.hemomancy.blood_structure_crafting_helper.this_formation_needs_blood_projection_and",
+				recipe.getHeldItem().getHoverName().copy()
+						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)).withStyle(ChatFormatting.RED);
 	}
 
 	private static Component missingDegreeMessage(BloodStructureRecipe recipe, int requiredDegree) {
-		return Component.literal("This formation requires " + recipe.getId().getPath() + " and demands ")
-				.withStyle(ChatFormatting.RED)
-				.append(Component.literal(RecipeDegreeGates.requirementLabel(recipe))
-						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-				.append(Component.literal(".").withStyle(ChatFormatting.RED));
+		return HemoText.translatable("message.hemomancy.blood_structure_crafting_helper.this_formation_requires_and_demands",
+				recipe.getId().getPath(),
+				RecipeDegreeGates.requirementLabel(recipe)
+						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+				Component.literal(".").withStyle(ChatFormatting.RED)).withStyle(ChatFormatting.RED);
 	}
 
 	public record ProjectionCraftMatch(BloodStructureRecipe recipe, BlockPattern.BlockPatternMatch match,

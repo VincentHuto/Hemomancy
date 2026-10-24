@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.knowledge;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoDefinition;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hutoslib.common.book.knowledge.BookKnowledge;
@@ -138,8 +139,7 @@ public class LiberKnowledge extends BookKnowledge {
 	private static ResourceLocation migrateBookEntry(ResourceLocation entry) {
 		String legacyPrefix = "fanesanguinium/";
 		if ("hemomancy".equals(entry.getNamespace()) && entry.getPath().startsWith(legacyPrefix)) {
-			return ResourceLocation.fromNamespaceAndPath("hemomancy",
-					"libersanguinium/" + entry.getPath().substring(legacyPrefix.length()));
+			return Hemomancy.rloc("libersanguinium/" + entry.getPath().substring(legacyPrefix.length()));
 		}
 		return entry;
 	}

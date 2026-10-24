@@ -26,7 +26,7 @@ public class StructureSpawnerItem extends Item {
 		ItemStack stack = player.getItemInHand(hand);
 		if (!player.isCreative()) {
 			if (!level.isClientSide) {
-				player.sendSystemMessage(Component.literal("Structure Spawner requires creative mode!"));
+				player.sendSystemMessage(Component.translatable("message.hemomancy.structure_spawner_item.structure_spawner_requires_creative_mode"));
 			}
 			return InteractionResultHolder.fail(stack);
 		}

@@ -254,7 +254,7 @@ public final class MaterialsTabView {
 					path.accentColor(), HarbingerChromeRenderer.State.ACTIVE);
 		}
 		if (state.zoom >= 0.48F) {
-			gfx.drawCenteredString(font, Component.literal(path.hubLabel())
+			gfx.drawCenteredString(font, path.hubLabel()
 					.withStyle(s -> s.withColor(path.accentColor()).withBold(true)),
 					cx, cy - 4, 0);
 		}
@@ -304,8 +304,8 @@ public final class MaterialsTabView {
 		int panelY = guiTop + 30;
 		int maxW = panelW - 16;
 
-		List<String> descLines = ScreenDrawUtils.wrapText(font, mat.description(), maxW);
-		List<String> nameLines = ScreenDrawUtils.wrapText(font, mat.displayName(), maxW - 20);
+		List<String> descLines = ScreenDrawUtils.wrapText(font, mat.description().getString(), maxW);
+		List<String> nameLines = ScreenDrawUtils.wrapText(font, mat.displayName().getString(), maxW - 20);
 		int nameRowH = Math.max(22, nameLines.size() * 10 + 4);
 
 		RecipeLookup.FoundRecipe foundRecipe = mat.hasRecipe() && stack != null && !stack.isEmpty()
@@ -338,7 +338,7 @@ public final class MaterialsTabView {
 					nx, ty + 4 + li * 10, 0, false);
 		}
 		ty += nameRowH;
-		gfx.drawString(font, Component.literal(mat.category())
+		gfx.drawString(font, mat.category()
 						.withStyle(s -> s.withColor(0xFF888888).withItalic(true)),
 				tx, ty, 0, false);
 		ty += 12;
@@ -380,21 +380,19 @@ public final class MaterialsTabView {
 
 			var tip = new ArrayList<Component>();
 			if (node.visibility() == MaterialVisibility.NEXT_PREVIEW) {
-				tip.add(Component.literal("Unknown material")
-						.withStyle(s -> s.withColor(node.atlasEntry().bucket().color()).withBold(true)));
-				tip.add(Component.literal(node.atlasEntry().gate().requirementText())
+				tip.add(Component.translatable("screen.hemomancy.materials_tab_view.unknown_material").withStyle(s -> s.withColor(node.atlasEntry().bucket().color()).withBold(true)));
+				tip.add(node.atlasEntry().gate().requirementText()
 						.withStyle(s -> s.withColor(0xFFAA6666)));
 			} else {
 				MaterialEntry mat = node.entry();
-				tip.add(Component.literal(mat.displayName())
+				tip.add(mat.displayName()
 						.withStyle(s -> s.withColor(accentColor).withBold(true)));
-				tip.add(Component.literal(mat.category())
+				tip.add(mat.category()
 						.withStyle(s -> s.withColor(0xFF888888).withItalic(true)));
-				tip.add(Component.literal(mat.description())
+				tip.add(mat.description()
 						.withStyle(s -> s.withColor(0xFF999999)));
 				if (mat.hasRecipe()) {
-					tip.add(Component.literal("Click to view details")
-							.withStyle(s -> s.withColor(recipePrompt)));
+					tip.add(Component.translatable("screen.hemomancy.materials_tab_view.click_to_view_details").withStyle(s -> s.withColor(recipePrompt)));
 				}
 			}
 

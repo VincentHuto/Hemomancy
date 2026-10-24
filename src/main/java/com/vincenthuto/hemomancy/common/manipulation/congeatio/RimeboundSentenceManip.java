@@ -39,7 +39,7 @@ public class RimeboundSentenceManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (target(player) == null) {
-			player.displayClientMessage(net.minecraft.network.chat.Component.literal("No vessel in your sights to sentence."), true);
+			player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.hemomancy.rimebound_sentence_manip.no_vessel_in_your_sights_to"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

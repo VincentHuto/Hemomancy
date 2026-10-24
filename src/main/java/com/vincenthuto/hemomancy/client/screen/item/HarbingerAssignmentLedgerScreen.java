@@ -467,8 +467,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		super.render(gfx, mouseX, mouseY, partialTick);
 
 		if (MilestoneDrawerView.isOverToggle(ctx, milestoneState, mouseX, mouseY)) {
-			String tipText = milestoneState.open ? "Hide Milestones" : "Show Milestones";
-			renderRightAnchoredTooltip(gfx, font.split(Component.literal(tipText), TOOLTIP_TEXT_MAX_WIDTH),
+			String tipKey = milestoneState.open ? "screen.hemomancy.harbinger_assignment_ledger.hide_milestones"
+					: "screen.hemomancy.harbinger_assignment_ledger.show_milestones";
+			renderRightAnchoredTooltip(gfx, font.split(Component.translatable(tipKey), TOOLTIP_TEXT_MAX_WIDTH),
 					mouseX, mouseY);
 		}
 		renderAssignmentDescriptionTooltip(gfx, mouseX, mouseY);

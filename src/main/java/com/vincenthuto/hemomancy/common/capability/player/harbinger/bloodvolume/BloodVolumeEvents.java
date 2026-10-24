@@ -110,7 +110,7 @@ public class BloodVolumeEvents {
 			if (player.tickCount % interval == 0) {
 				double regenRate = HemoServerConfig.BLOOD_REGEN_RATE.get();
 				BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "base_regen",
-						"Base Regen", Category.BODY, regenRate, interval);
+						"message.hemomancy.blood_volume_events.base_regen", Category.BODY, regenRate, interval);
 			}
 		}
 
@@ -118,7 +118,7 @@ public class BloodVolumeEvents {
 		double surgeRegen = SkillPointHelper.getSanguineSurgeRegen(player);
 		if (surgeRegen > 0) {
 			BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "sanguine_surge",
-					"Sanguine Surge", Category.SKILL, surgeRegen, 1);
+					"message.hemomancy.blood_volume_events.sanguine_surge", Category.SKILL, surgeRegen, 1);
 		}
 
 		//  Skill: Last Wind emergency regen when blood is critically low 
@@ -126,7 +126,7 @@ public class BloodVolumeEvents {
 				player.hasEffect(EffectInit.mnemonic_candle_aura));
 		if (candleRegen > 0) {
 			BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "mnemonic_candle_aura",
-					"Mnemonic Candle Aura", Category.EFFECT, candleRegen, 1);
+					"message.hemomancy.blood_volume_events.mnemonic_candle_aura", Category.EFFECT, candleRegen, 1);
 		}
 
 		double lastWindRegen = SkillPointHelper.getLastWindRegenPerTick(player);
@@ -134,7 +134,7 @@ public class BloodVolumeEvents {
 			double threshold = volume.getMaxBloodVolume() * SkillPointHelper.getLastWindThreshold();
 			if (volume.getBloodVolume() < threshold && volume.getBloodVolume() > 0) {
 				BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "last_wind",
-						"Last Wind", Category.SKILL, lastWindRegen, 1);
+						"message.hemomancy.blood_volume_events.last_wind", Category.SKILL, lastWindRegen, 1);
 			}
 		}
 
@@ -177,8 +177,8 @@ public class BloodVolumeEvents {
 								volume.fill(drawn);
 								double accepted = Math.max(0.0D, volume.getBloodVolume() - before);
 								BloodFlowLedger.recordApplied((ServerPlayer) player, "bloodline_auto_draw",
-										"Bloodline Auto-Draw", Category.BLOODLINE, drawAmount, accepted,
-										poolInterval, false, accepted + 0.000001D < drawAmount ? "Pool limited" : "");
+										"message.hemomancy.blood_volume_events.bloodline_auto_draw", Category.BLOODLINE, drawAmount, accepted,
+										poolInterval, false, accepted + 0.000001D < drawAmount ? "message.hemomancy.blood_flow.pool_limited" : "");
 								savedData.setDirty();
 								syncVolume((ServerPlayer) player, volume);
 								syncBloodlinePool(overworld, globalLine);
@@ -299,8 +299,7 @@ public class BloodVolumeEvents {
 			// Warn the player when blood is critically low
 			if (volume.getBloodVolume() < volume.getMaxBloodVolume() * 0.1 && volume.getBloodVolume() > 0) {
 				player.displayClientMessage(
-						Component.literal("Your blood runs thin...")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+						Component.translatable("message.hemomancy.blood_volume_events.your_blood_runs_thin").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 			}
 
 			// ── Sanguine formation drop while mastery is still rough (degree 1–3) ──
@@ -316,8 +315,7 @@ public class BloodVolumeEvents {
 				drop.setDefaultPickUpDelay();
 				player.level().addFreshEntity(drop);
 				player.displayClientMessage(
-						Component.literal("Something crystalline falls from the wound.")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+						Component.translatable("message.hemomancy.blood_volume_events.something_crystalline_falls_from_the_wound").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 						false);
 			}
 		}
@@ -439,9 +437,9 @@ public class BloodVolumeEvents {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		player.displayClientMessage(
-				Component.literal(
-						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD
-								+ BloodGourdItem.formatBloodAmount(volume.getBloodVolume()) + " mL"),
+				Component.translatable("message.hemomancy.blood_volume_events.welcome_current_blood_volume_ml",
+						Component.translatable("message.hemomancy.blood_volume_events.blood_volume_ml",
+								BloodGourdItem.formatBloodAmount(volume.getBloodVolume())).withStyle(ChatFormatting.GOLD)),
 				false);
 	}
 

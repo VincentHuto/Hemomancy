@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.summon;
 
 public record PuppeteerSummonDefinition(
 		String name,
-		String role,
 		int requiredDegree,
 		double baseHealth,
 		double baseDamage,

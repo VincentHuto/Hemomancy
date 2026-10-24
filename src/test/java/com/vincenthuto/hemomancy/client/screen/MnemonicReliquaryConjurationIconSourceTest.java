@@ -1,17 +1,16 @@
 package com.vincenthuto.hemomancy.client.screen;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+import org.junit.jupiter.api.Test;
 
-public final class MnemonicReliquaryConjurationIconSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertShowsEnglish;
 
-	private MnemonicReliquaryConjurationIconSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
-		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MnemonicReliquaryScreen.java");
+class MnemonicReliquaryConjurationIconSourceTest {
+	@Test
+	void mnemonicReliquaryConjurationIconSourceContracts() {
+		String screen = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MnemonicReliquaryScreen.java");
 
 		assertContains("reliquary should import conjuration manip for non-memory icons",
 				screen, "import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;");
@@ -37,8 +36,8 @@ public final class MnemonicReliquaryConjurationIconSourceTest {
 				screen, "if (unlockedFamilyForms(icon.manip).isEmpty()) return;");
 		assertContains("the mode indicator should draw a compact plus badge",
 				screen, "graphics.fill(centerX, badgeY + 1, centerX + 1, badgeY + badgeSize - 1, FAMILY_MODE_MARKER);");
-		assertContains("family icons should explain the mode indicator on hover",
-				screen, "Component.literal(\"Hold to choose variation\")");
+		assertShowsEnglish("family icons should explain the mode indicator on hover",
+				screen, "Hold to choose variation");
 		assertContains("family variants should wrap beneath the baseline icon",
 				screen, "int y = heldFamilyIcon.y + (i / cols + 1) * (currentIconSize + gap);");
 		assertContains("the family dropdown should hide already memorized forms",
@@ -61,21 +60,5 @@ public final class MnemonicReliquaryConjurationIconSourceTest {
 				screen, "double angle = -Math.PI / 2.0D");
 		assertNotContains("known manipulation rendering should not only look in memory cache",
 				screen, "ItemStack stack = manipItemCache.get(icon.manip.getName());");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
-		}
 	}
 }

@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.QliphothBloomBlockEntity;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -164,23 +165,18 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		}
 		SeveredQliphothState bloomState = data.getState(bloom);
 		if (!bloom.ownerUUID().equals(player.getUUID())) {
-			player.displayClientMessage(Component.literal(bloomState == SeveredQliphothState.LIVING
-					? "The fruit tightens against another covenant."
-					: "The wound has no memory of you.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			player.displayClientMessage((bloomState == SeveredQliphothState.LIVING ? Component.translatable("message.hemomancy.qliphoth_bloom_block.the_fruit_tightens_against_another_covenant") : Component.translatable("message.hemomancy.qliphoth_bloom_block.the_wound_has_no_memory_of")).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			return InteractionResult.SUCCESS;
 		}
 		if (bloomState.isSealedTrophy()) {
-			player.displayClientMessage(Component.literal("The severed scar is still. Your refusal is already written here.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_bloom_block.the_severed_scar_is_still_your").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			return InteractionResult.SUCCESS;
 		}
 		if (bloomState.isPortalOpen()) {
 			if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
 					|| !(ProgressionGates.isDegree(player, 7)
 									&& HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENT_PENDING)) {
-				player.displayClientMessage(Component.literal("The wound rejects the path you carry.")
-						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_bloom_block.the_wound_rejects_the_path_you").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 				return InteractionResult.SUCCESS;
 			}
 			VesperOrdealManager.enter(serverPlayer, bloom);
@@ -195,8 +191,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 				&& player instanceof ServerPlayer serverPlayer
 				&& HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone()) {
 			if (player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0) {
-				player.displayClientMessage(Component.literal("Your Fungal Spine is already with you.")
-						.withStyle(ChatFormatting.DARK_PURPLE), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_bloom_block.your_fungal_spine_is_already_with").withStyle(ChatFormatting.DARK_PURPLE), true);
 			} else {
 				var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 				boolean delivered;
@@ -206,33 +201,28 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 					QliphothBloomEvents.deliverPendingFungalSpine(serverPlayer);
 					delivered = player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0;
 				}
-				player.displayClientMessage(Component.literal(delivered
-						? "The spent husks return your Fungal Spine."
-						: "Make room to reclaim your Fungal Spine.")
-						.withStyle(ChatFormatting.DARK_PURPLE), !delivered);
+				player.displayClientMessage((delivered ? Component.translatable("message.hemomancy.qliphoth_bloom_block.the_spent_husks_return_your_fungal") : Component.translatable("message.hemomancy.qliphoth_bloom_block.make_room_to_reclaim_your_fungal")).withStyle(ChatFormatting.DARK_PURPLE), !delivered);
 			}
 			return InteractionResult.SUCCESS;
 		}
 		if (bloomState == SeveredQliphothState.LIVING && claimed && huskIndex >= 0
 				&& consumedHere == huskIndex + 1) {
 			data.clearPendingPome(bloom);
-			player.displayClientMessage(Component.literal(
-					"Your covenant remembers eating this husk. The tree releases its old wait and resumes its course.")
-					.withStyle(ChatFormatting.DARK_PURPLE), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_bloom_block.your_covenant_remembers_eating_this_husk").withStyle(ChatFormatting.DARK_PURPLE), false);
 			return InteractionResult.SUCCESS;
 		}
 		if (!QliphothPomeRules.canPickPendingPome(huskIndex >= 0, claimed)) {
 			Component message = claimed
-					? Component.literal("The tree has already given you its pome. Eat it before the next can grow.")
-					: Component.literal("The next pome is growing. Return when it ripens; this tree has "
-							+ data.getRemainingPomes(bloom) + " pomes left to bear.");
+					? Component.translatable("message.hemomancy.qliphoth_bloom_block.the_tree_has_already_given_you")
+					: HemoText.translatable("message.hemomancy.qliphoth_bloom_block.the_next_pome_is_growing_return",
+							data.getRemainingPomes(bloom));
 			if (!claimed && data.getRemainingPomes(bloom) == 0) {
 				EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath();
-				message = Component.literal(switch (path) {
-					case NONE -> "Spine: visit the Gardens. Lost it? Sneak-use empty-handed.";
-					case SILENT_PENDING -> "Your refusal awaits its act. Sever this tree with your Living Arsenal to open the ordeal; ordinary pruning belongs to the Unstained path.";
-					case APOTHEOS_PENDING -> "The tree has fulfilled its nine husks. Your chosen Apotheosis now awaits its final rite.";
-					case SILENT_ARCHON, APOTHEOS -> "The nine-husk covenant is complete. This tree will not bear another pome.";
+				message = Component.translatable(switch (path) {
+					case NONE -> "message.hemomancy.qliphoth_bloom_block.spine_visit_the_gardens_lost_it";
+					case SILENT_PENDING -> "message.hemomancy.qliphoth_bloom_block.your_refusal_awaits_its_act_sever";
+					case APOTHEOS_PENDING -> "message.hemomancy.qliphoth_bloom_block.the_tree_has_fulfilled_its_nine";
+					case SILENT_ARCHON, APOTHEOS -> "message.hemomancy.qliphoth_bloom_block.the_nine_husk_covenant_is_complete";
 				});
 			}
 			player.displayClientMessage(message.copy()
@@ -242,14 +232,12 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 
 		ItemStack pome = QliphothPomeItem.createPickedPomeStack(bloom, huskIndex);
 		if (!player.getInventory().add(pome)) {
-			player.displayClientMessage(Component.literal("The ripe pome waits. Make room before you claim it.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_bloom_block.the_ripe_pome_waits_make_room").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			return InteractionResult.SUCCESS;
 		}
 
 		data.markPendingPomeClaimed(bloom);
-		player.displayClientMessage(Component.literal("The Qliphoth pome comes away warm. Eat it before the next can grow.")
-				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+		player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_bloom_block.the_qliphoth_pome_comes_away_warm").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 		return InteractionResult.SUCCESS;
 	}
 }

@@ -66,8 +66,7 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putLong("HemophageCovenantUntil", worldIn.getGameTime() + HEMOPHAGE_COVENANT_DURATION);
 		itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-		playerIn.displayClientMessage(Component.literal("Hemophage Covenant opens.")
-				.withStyle(net.minecraft.ChatFormatting.DARK_RED), true);
+		playerIn.displayClientMessage(Component.translatable("message.hemomancy.deadmans_purse_morphling_item.hemophage_covenant_opens").withStyle(net.minecraft.ChatFormatting.DARK_RED), true);
 		return true;
 
         }
@@ -163,10 +162,10 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Feed Banking (Store strike blood as borrowed reserve)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Blood Transfusion (Emergency heal using blood)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Overkill Banking (Kills store corpse blood for later casts)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Hemophage Covenant (Staff active shares damage into blood and healing)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.deadmans_purse_morphling_item.feed_banking_store_strike_blood_as"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.deadmans_purse_morphling_item.blood_transfusion_emergency_heal_using_blood"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.deadmans_purse_morphling_item.overkill_banking_kills_store_corpse_blood"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.deadmans_purse_morphling_item.hemophage_covenant_staff_active_shares_damage"), 5, currentMaturity));
 		return list;
 	}
 

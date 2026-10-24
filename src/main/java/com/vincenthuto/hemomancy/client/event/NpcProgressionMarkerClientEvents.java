@@ -20,10 +20,8 @@ import net.neoforged.neoforge.client.event.RenderLivingEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class NpcProgressionMarkerClientEvents {
-	private static final ResourceLocation HARBINGER_TEXTURE = ResourceLocation.fromNamespaceAndPath(
-			"hemomancy", "textures/entity/npc/progression_sigil.png");
-	private static final ResourceLocation UNSTAINED_TEXTURE = ResourceLocation.fromNamespaceAndPath(
-			"hemomancy", "textures/entity/npc/unstained_progression_sigil.png");
+	private static final ResourceLocation HARBINGER_TEXTURE = Hemomancy.rloc("textures/entity/npc/progression_sigil.png");
+	private static final ResourceLocation UNSTAINED_TEXTURE = Hemomancy.rloc("textures/entity/npc/unstained_progression_sigil.png");
 
 	private NpcProgressionMarkerClientEvents() {
 	}

@@ -57,8 +57,7 @@ public class StillwaterCondenserBlock extends BaseEntityBlock {
 				|| (progress.getClaimedObservances()
 						& UnstainedObservances.Observance.NOVITIATE_GENTLE_SEPARATION.mask()) != 0;
 		if (!eligible) {
-			player.displayClientMessage(Component.literal("The condenser remains still until Purity reaches 50.")
-					.withStyle(ChatFormatting.GRAY), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.stillwater_condenser_block.the_condenser_remains_still_until_purity").withStyle(ChatFormatting.GRAY), true);
 			return InteractionResult.FAIL;
 		}
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer

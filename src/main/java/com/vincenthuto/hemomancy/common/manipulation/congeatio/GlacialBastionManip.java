@@ -81,7 +81,7 @@ public class GlacialBastionManip extends BloodManipulation {
 						1, 0f, 0.05f, 0f, 0.01f);
 			}
 		} else {
-			player.displayClientMessage(Component.literal("No space for the bastion to rise."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.glacial_bastion_manip.no_space_for_the_bastion_to"), true);
 		}
 	        }
     }

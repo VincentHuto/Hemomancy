@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillCompositionR
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillOrigin;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -104,13 +105,13 @@ final class WillSubcommand {
 	private static int summonWillAmbushAnchor(CommandSourceStack source, ServerPlayer player,
 			EnumBloodTendency school, int tier, int brokenCount, boolean sentPresent) {
 		if (school == null) {
-			source.sendFailure(Component.literal("Unknown Will school. Valid: " + TendencySubcommand.getValidTendencyNames()));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.will.unknown_will_school_valid", TendencySubcommand.getValidTendencyNames()));
 			return 0;
 		}
 		ServerLevel level = source.getLevel();
 		WillAnchorEntity anchor = EntityInit.will_anchor.get().create(level);
 		if (anchor == null) {
-			source.sendFailure(Component.literal("Could not create Will anchor."));
+			source.sendFailure(Component.translatable("commands.hemomancy.will.could_not_create_will_anchor"));
 			return 0;
 		}
 		Vec3 pos = source.getPosition();
@@ -119,11 +120,12 @@ final class WillSubcommand {
 		anchor.moveTo(pos.x, pos.y, pos.z, player.getYRot(), 0.0F);
 		anchor.configure(school, composition, player);
 		level.addFreshEntity(anchor);
-		source.sendSuccess(() -> Component.literal("Summoned Will ambush anchor: ")
-				.append(Component.literal(school.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(" tier " + tier + ", broken " + brokenCount
-						+ ", sent " + sentPresent + ", target "))
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)),
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.will.summoned_will_ambush_anchor_tier_broken",
+				Component.literal(school.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED),
+				tier,
+				brokenCount,
+				sentPresent,
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)),
 				true);
 		return 1;
 	}
@@ -131,11 +133,11 @@ final class WillSubcommand {
 	private static int summonWillAmbushImmediate(CommandSourceStack source, ServerPlayer player,
 			EnumBloodTendency school, int tier, WillOrigin origin, int count) {
 		if (school == null) {
-			source.sendFailure(Component.literal("Unknown Will school. Valid: " + TendencySubcommand.getValidTendencyNames()));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.will.unknown_will_school_valid", TendencySubcommand.getValidTendencyNames()));
 			return 0;
 		}
 		if (origin == null) {
-			source.sendFailure(Component.literal("Unknown Will origin. Valid: broken, sent"));
+			source.sendFailure(Component.translatable("commands.hemomancy.will.unknown_will_origin_valid_broken_sent"));
 			return 0;
 		}
 		ServerLevel level = source.getLevel();
@@ -152,18 +154,16 @@ final class WillSubcommand {
 			spawned++;
 		}
 		if (spawned <= 0) {
-			source.sendFailure(Component.literal("Could not create any Wills."));
+			source.sendFailure(Component.translatable("commands.hemomancy.will.could_not_create_any_wills"));
 			return 0;
 		}
 		final int spawnedCount = spawned;
-		source.sendSuccess(() -> Component.literal("Summoned ")
-				.append(Component.literal(String.valueOf(spawnedCount)).withStyle(ChatFormatting.AQUA))
-				.append(Component.literal(" immediate "))
-				.append(Component.literal(origin.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY))
-				.append(Component.literal(" Will(s): "))
-				.append(Component.literal(school.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(" tier " + tier + ", target "))
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)),
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.will.summoned_immediate_will_s_tier_target",
+				Component.literal(String.valueOf(spawnedCount)).withStyle(ChatFormatting.AQUA),
+				Component.literal(origin.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY),
+				Component.literal(school.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED),
+				tier,
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)),
 				true);
 		return 1;
 	}

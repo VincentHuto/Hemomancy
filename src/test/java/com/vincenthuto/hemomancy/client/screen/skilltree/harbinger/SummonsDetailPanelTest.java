@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.support.EnglishText;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,9 +36,9 @@ final class SummonsDetailPanelTest {
 
 	@Test
 	void ringmasterPatternNamesTheCircusSuccessionFinale() {
-		assertEquals("Circus Succession finale", SummonsTabView.unlockHint(
-				PuppeteerSummonDefinitions.byName(PuppeteerSummonDefinitions.RINGMASTER_PATTERN).orElseThrow()));
-		assertEquals("Puppetry Cardinal Ordeal", SummonsTabView.unlockHint(
-				PuppeteerSummonDefinitions.byName(PuppeteerSummonDefinitions.GOREBOUND_HULK).orElseThrow()));
+		assertEquals("Circus Succession finale", EnglishText.render(SummonsTabView.unlockHint(
+				PuppeteerSummonDefinitions.byName(PuppeteerSummonDefinitions.RINGMASTER_PATTERN).orElseThrow())));
+		assertEquals("Puppetry Cardinal Ordeal", EnglishText.render(SummonsTabView.unlockHint(
+				PuppeteerSummonDefinitions.byName(PuppeteerSummonDefinitions.GOREBOUND_HULK).orElseThrow())));
 	}
 }

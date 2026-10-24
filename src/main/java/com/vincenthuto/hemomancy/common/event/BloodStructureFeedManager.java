@@ -81,8 +81,7 @@ public final class BloodStructureFeedManager {
 		double feedAmount = BloodStructureFeedRules.feedAmount(currentProgress, recipe.getBloodCost(),
 				bloodVolume.getBloodVolume(), Math.max(0.0D, feedRate));
 		if (feedAmount <= 0.0) {
-			sendHint(player, Component.literal("Not enough blood can be projected into the formation.")
-					.withStyle(ChatFormatting.DARK_RED));
+			sendHint(player, Component.translatable("message.hemomancy.blood_structure_feed_manager.not_enough_blood_can_be_projected").withStyle(ChatFormatting.DARK_RED));
 			if (progress != null) {
 				sendFeedSync(level, positions, (float) (progress.bloodFed / recipe.getBloodCost()), false);
 			}

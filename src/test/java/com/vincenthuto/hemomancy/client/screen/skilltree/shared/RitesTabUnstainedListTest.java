@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
@@ -38,16 +39,16 @@ final class RitesTabUnstainedListTest {
 	void unstainedTiersAreHeadedByStageNames() {
 		RitesTabState rites = new RitesTabState();
 		CraftingTabState crafting = new CraftingTabState();
-		assertEquals("Degree 5", rites.tierLabel(5));
-		assertEquals("No Degree", crafting.tierLabel(0));
+		assertEquals("Degree 5", EnglishText.render(rites.tierLabel(5)));
+		assertEquals("No Degree", EnglishText.render(crafting.tierLabel(0)));
 
 		rites.unstainedStages = true;
 		crafting.unstainedStages = true;
 
-		assertEquals("Purified", rites.tierLabel(5));
-		assertEquals("Unbegun", crafting.tierLabel(0));
-		assertEquals("Rites by Stage", rites.sidebarTitle());
-		assertEquals("Crafting by Stage", crafting.sidebarTitle());
+		assertEquals("Purified", EnglishText.render(rites.tierLabel(5)));
+		assertEquals("Unbegun", EnglishText.render(crafting.tierLabel(0)));
+		assertEquals("Rites by Stage", EnglishText.render(rites.sidebarTitle()));
+		assertEquals("Crafting by Stage", EnglishText.render(crafting.sidebarTitle()));
 	}
 
 	@Test

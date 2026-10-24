@@ -189,10 +189,10 @@ public class WinterShroudMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Cold-Blooded I + Cryptobiotic Hide (Slower freezing, environmental cold resistance)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Cold-Blooded II + Cold Cleanse (Powder-snow traversal and cleansing)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Cold-Blooded III + Tun Molt (Environmental freeze immunity, magical cold resistance)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Cryptobiosis (Primal Last Rite survival state)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.winter_shroud_morphling_item.cold_blooded_i_cryptobiotic_hide_slower"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.winter_shroud_morphling_item.cold_blooded_ii_cold_cleanse_powder"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.winter_shroud_morphling_item.cold_blooded_iii_tun_molt_environmental"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.winter_shroud_morphling_item.cryptobiosis_primal_last_rite_survival_state"), 5, currentMaturity));
 		return list;
 	}
 }

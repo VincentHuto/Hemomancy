@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.data;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFaneBoundaries;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,19 +41,19 @@ public final class FaneBoundaryClientData {
 	}
 
 	public enum ViewMode {
-		VEILED("Fane Sight: Veiled"),
-		MUNDANE("Fane Sight: Mundane"),
-		HIDDEN("Fane Sight: Hidden"),
-		REVEALED("Fane Sight: Revealed");
+		VEILED("screen.hemomancy.bloodline_pool.fane_sight.veiled"),
+		MUNDANE("screen.hemomancy.bloodline_pool.fane_sight.mundane"),
+		HIDDEN("screen.hemomancy.bloodline_pool.fane_sight.hidden"),
+		REVEALED("screen.hemomancy.bloodline_pool.fane_sight.revealed");
 
-		private final String label;
+		private final String labelKey;
 
-		ViewMode(String label) {
-			this.label = label;
+		ViewMode(String labelKey) {
+			this.labelKey = labelKey;
 		}
 
-		public String label() {
-			return label;
+		public Component label() {
+			return Component.translatable(labelKey);
 		}
 
 		private ViewMode next() {

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
@@ -40,8 +40,7 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 					BloodManipulation target = manips.get(msg.selected);
 					if (ManipulationRetirementRules.isRetiredManipulation(target)) {
 						player.displayClientMessage(
-								Component.literal("That manipulation has gone dormant.")
-										.withStyle(net.minecraft.ChatFormatting.DARK_GRAY), true);
+								Component.translatable("message.hemomancy.update_current_manip_packet.that_manipulation_has_gone_dormant").withStyle(net.minecraft.ChatFormatting.DARK_GRAY), true);
 						ManipulationRetirementRules.sanitizeKnownManipulations(known);
 						KnownManipulationEvents.syncPlayerEvent(player);
 						return;
@@ -49,14 +48,13 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 					// Only allow selecting equipped manipulations
 					if (!known.isManipEquipped(target)) {
 						player.displayClientMessage(
-								Component.literal("That manipulation is unequipped!")
-										.withStyle(net.minecraft.ChatFormatting.RED), true);
+								Component.translatable("message.hemomancy.update_current_manip_packet.that_manipulation_is_unequipped").withStyle(net.minecraft.ChatFormatting.RED), true);
 						return;
 					}
 					known.setSelectedManip(target);
 					boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target)
 							&& CellHandFormHelper.applySelection(player, target);
-					if (applied) player.displayClientMessage(Component.literal("Selected: ").append(target.getDisplayName()), true);
+					if (applied) player.displayClientMessage(Component.translatable("message.hemomancy.update_current_manip_packet.selected", target.getDisplayName()), true);
 					KnownManipulationEvents.syncPlayerEvent(player);
 					ManipulationDiagnosticsSync.sync((ServerPlayer) player);
 					if (applied) UseManipKeyPacket.castOnSelect((ServerPlayer) player, target);

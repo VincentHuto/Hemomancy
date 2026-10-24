@@ -624,8 +624,7 @@ def main():
     JAVA.write_text(entity_java_source(rig, size, 'VesperTheCrownedRefusalEntity', 'vesper_mount.py',
                                        extra_methods=EXTRA_METHODS, extra_imports=EXTRA_IMPORTS,
                                        package='com.vincenthuto.hemomancy.client.model.entity.boss.endgame',
-                                       entity_package='com.vincenthuto.hemomancy.common.entity.boss.endgame',
-                                       plain_layer_location=True),
+                                       entity_package='com.vincenthuto.hemomancy.common.entity.boss.endgame'),
                     encoding='utf-8')
     print(f'vesper mount: {sum(len(p["cubes"]) for p in rig.parts)} cubes, atlas {size[0]}x{size[1]}')
     if args.preview:

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import com.vincenthuto.hemomancy.support.SourceAssertions;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,11 +51,11 @@ public final class ScryingPodiumDiagnosticsResourceTest {
 		assertContains("client should register the diagnostics screen", clientEvents,
 				"ScryingDiagnosticsScreen::new");
 
-		assertContains("diagnostics screen should expose blood volume", diagnosticsScreen, "Blood Volume");
-		assertContains("diagnostics screen should expose dominant tendency", diagnosticsScreen, "Dominant Tendency");
-		assertContains("diagnostics screen should expose vascular health", diagnosticsScreen, "Vascular Health");
-		assertContains("diagnostics screen should expose known memories", diagnosticsScreen, "Known Memories");
-		assertContains("diagnostics screen should expose rite readiness", diagnosticsScreen, "Rite Readiness");
+		SourceAssertions.assertShowsEnglish("diagnostics screen should expose blood volume", diagnosticsScreen, "Blood Volume");
+		SourceAssertions.assertShowsEnglish("diagnostics screen should expose dominant tendency", diagnosticsScreen, "Dominant Tendency");
+		SourceAssertions.assertShowsEnglish("diagnostics screen should expose vascular health", diagnosticsScreen, "Vascular Health");
+		SourceAssertions.assertShowsEnglish("diagnostics screen should expose known memories", diagnosticsScreen, "Known Memories");
+		SourceAssertions.assertShowsEnglish("diagnostics screen should expose rite readiness", diagnosticsScreen, "Rite Readiness");
 		assertContains("diagnostics screen should expose tabbed blood diagnostics", diagnosticsScreen,
 				"ScryingDiagnosticsTabs.Tab.BLOOD");
 		assertContains("diagnostics screen should expose tabbed manipulation diagnostics", diagnosticsScreen,

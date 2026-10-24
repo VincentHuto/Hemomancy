@@ -15,6 +15,7 @@ import net.minecraft.world.inventory.Slot;
 import java.util.List;
 import java.util.Random;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 
 /**
  * GUI for the Mycelial Crucible. Visual palette shifts from the Incubator's
@@ -92,7 +93,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
             double vol    = te.getBloodVolume();
             double maxVol = te.getMaxBloodVolume();
             gfx.renderTooltip(font, List.of(
-                    Component.literal(String.format("§6Blood: §e%.0f §6/ §e%.0f", vol, maxVol))
+                    HemoText.translatable("screen.hemomancy.mycelial_crucible.blood", String.format("%.0f", vol), String.format("%.0f", maxVol))
             ), java.util.Optional.empty(), mouseX, mouseY);
         }
     }

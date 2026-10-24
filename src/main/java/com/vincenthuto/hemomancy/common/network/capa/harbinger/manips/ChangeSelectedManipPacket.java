@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
@@ -52,7 +52,7 @@ public class ChangeSelectedManipPacket implements CustomPacketPayload {
 			}
 
 			if (equipped.isEmpty()) {
-				player.displayClientMessage(Component.literal("No equipped manipulations to select"), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.change_selected_manip_packet.no_equipped_manipulations_to_select"), true);
 				return;
 			}
 
@@ -70,7 +70,7 @@ public class ChangeSelectedManipPacket implements CustomPacketPayload {
 			known.setSelectedManip(target);
 			boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target)
 					&& CellHandFormHelper.applySelection(player, target);
-			if (applied) player.displayClientMessage(Component.literal("Selected: ").append(target.getDisplayName()), true);
+			if (applied) player.displayClientMessage(Component.translatable("message.hemomancy.change_selected_manip_packet.selected", target.getDisplayName()), true);
 			KnownManipulationEvents.syncPlayerEvent(player);
 			ManipulationDiagnosticsSync.sync((ServerPlayer) player);
 			if (applied) UseManipKeyPacket.castOnSelect((ServerPlayer) player, target);

@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -93,26 +95,26 @@ public final class RecipeDegreeGates {
 						&& progress.getClarity() >= requiredClarity);
 	}
 
-	public static String requirementLabel(BloodStructureRecipe recipe) {
+	public static MutableComponent requirementLabel(BloodStructureRecipe recipe) {
 		return requirementLabel(recipe.isUnstained(), recipe.getRequiredDegree(), recipe.getRequiredPurity(),
 				recipe.getRequiredClarity());
 	}
 
-	public static String requirementLabel(CardinalRiteRecipe recipe) {
+	public static MutableComponent requirementLabel(CardinalRiteRecipe recipe) {
 		if (needsReliquaryLesson(recipe.getId())) {
-			return "the Mnemonist's Reliquary lesson at Degree 3";
+			return Component.translatable("message.hemomancy.recipe_degree_gates.the_mnemonists_reliquary_lesson");
 		}
 		return requirementLabel(recipe.isUnstained(), recipe.getRequiredDegree(), recipe.getRequiredPurity(),
 				recipe.getRequiredClarity());
 	}
 
-	private static String requirementLabel(boolean unstained, int requiredDegree, float requiredPurity,
+	private static MutableComponent requirementLabel(boolean unstained, int requiredDegree, float requiredPurity,
 			float requiredClarity) {
 		if (unstained && requiredClarity >= 0) {
-			return "Clarity " + formatThreshold(requiredClarity);
+			return Component.translatable("message.hemomancy.recipe_degree_gates.clarity", formatThreshold(requiredClarity));
 		}
 		if (unstained && requiredPurity >= 0) {
-			return "Purity " + formatThreshold(requiredPurity);
+			return Component.translatable("message.hemomancy.recipe_degree_gates.purity", formatThreshold(requiredPurity));
 		}
 		return unstained ? unstainedStageLabel(requiredDegree) : degreeLabel(requiredDegree);
 	}
@@ -135,27 +137,29 @@ public final class RecipeDegreeGates {
 		return riteId == null ? null : RANKUP_RITE_TARGET_DEGREES.get(riteId.getPath());
 	}
 
-	public static String degreeLabel(int degree) {
+	public static MutableComponent degreeLabel(int degree) {
 		int clamped = clampLevel(degree);
 		if (clamped == 0) {
-			return "No Degree";
+			return Component.translatable("message.hemomancy.recipe_degree_gates.no_degree");
 		}
 		EnumInitiatoryDegree named = EnumInitiatoryDegree.byNumber(clamped);
-		return named != null ? "Degree " + clamped + " - " + named.getTitle() : "Degree " + clamped;
+		return named != null
+				? Component.translatable("message.hemomancy.recipe_degree_gates.degree_named", clamped, named.displayName())
+				: Component.translatable("message.hemomancy.recipe_degree_gates.degree", clamped);
 	}
 
-	public static String unstainedStageLabel(int level) {
-		return switch (clampLevel(level)) {
-			case 0 -> "Unbegun";
-			case 1 -> "Begun";
-			case 2 -> "Tainted";
-			case 3 -> "Cleansing";
-			case 4 -> "Absolved";
-			case 5 -> "Purified";
-			case 6 -> "Discerning";
-			case 7 -> "Vigilant";
-			case 8 -> "Enlightened";
-			default -> "Unknown";
-		};
+	public static MutableComponent unstainedStageLabel(int level) {
+		return Component.translatable(switch (clampLevel(level)) {
+			case 0 -> "message.hemomancy.recipe_degree_gates.stage_unbegun";
+			case 1 -> "message.hemomancy.recipe_degree_gates.stage_begun";
+			case 2 -> "hemomancy.purity.tainted";
+			case 3 -> "hemomancy.purity.cleansing";
+			case 4 -> "hemomancy.purity.absolved";
+			case 5 -> "hemomancy.purity.purified";
+			case 6 -> "hemomancy.clarity.discerning";
+			case 7 -> "hemomancy.clarity.vigilant";
+			case 8 -> "hemomancy.clarity.enlightened";
+			default -> "message.hemomancy.recipe_degree_gates.stage_unknown";
+		});
 	}
 }

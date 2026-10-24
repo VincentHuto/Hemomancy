@@ -140,10 +140,10 @@ public class BootlaceMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Wall Climbing (Spider-climb up walls)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Silk Tether (Spawn web to break falls)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Web Nest (Sneaking traps nearby hostiles)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Web of Red Thread (Staff active pulls, roots, or tethers movement)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.bootlace_morphling_item.wall_climbing_spider_climb_up_walls"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.bootlace_morphling_item.silk_tether_spawn_web_to_break"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.bootlace_morphling_item.web_nest_sneaking_traps_nearby_hostiles"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.bootlace_morphling_item.web_of_red_thread_staff_active"), 5, currentMaturity));
 		return list;
 	}
 }

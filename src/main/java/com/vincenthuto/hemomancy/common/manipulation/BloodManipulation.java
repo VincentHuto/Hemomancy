@@ -30,6 +30,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleReso
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipCooldownPacket;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -103,11 +104,11 @@ public class BloodManipulation implements EntityCastableManipulation {
 	int cooldownTicks;
 
 	/**
-	 * Transient — set at registration time via {@link #setDrudgeAction(DrudgeAction, String)}.
+	 * Transient — set at registration time via {@link #setDrudgeAction(DrudgeAction, Component)}.
 	 * Not serialized to NBT; must be resolved to the registry instance after loading.
 	 */
 	private transient DrudgeAction drudgeAction = null;
-	private transient String drudgeDescription = null;
+	private transient Component drudgeDescription = null;
 	/** What this does when an entity casts it, set at registration; transient like the Drudge action. */
 	private transient EntityCast entityCast = null;
 
@@ -152,18 +153,25 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return cost;
 	}
 
-	public String getBaseCostLabel() {
-		if (com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.isStaffWeaponFormManip(name)) return "Base switch";
-		if (type == EnumManipulationType.CONTINUOUS || name.startsWith("summon_avatar")) return "Base upkeep";
-		return type == EnumManipulationType.PASSIVE ? "Base trigger" : "Base cast";
+	public Component getBaseCostLabel() {
+		if (com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.isStaffWeaponFormManip(name)) return Component.translatable("manipulation.hemomancy.base_cost.switch");
+		if (type == EnumManipulationType.CONTINUOUS || name.startsWith("summon_avatar")) return Component.translatable("manipulation.hemomancy.base_cost.upkeep");
+		return Component.translatable(type == EnumManipulationType.PASSIVE ? "manipulation.hemomancy.base_cost.trigger" : "manipulation.hemomancy.base_cost.cast");
 	}
 
-	public String getBaseCostText() {
+	public Component getBaseCostText() {
 		if (com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.isStaffWeaponFormManip(name)) {
-			return (int) com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.BASE_HOT_SWAP_COST_ML + " mL";
+			return Component.translatable("manipulation.hemomancy.base_cost.ml",
+					(int) com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.BASE_HOT_SWAP_COST_ML);
 		}
-		return java.math.BigDecimal.valueOf(cost).stripTrailingZeros().toPlainString()
-				+ (type == EnumManipulationType.CONTINUOUS || name.startsWith("summon_avatar") ? " mL/s" : " mL");
+		return Component.translatable(type == EnumManipulationType.CONTINUOUS || name.startsWith("summon_avatar")
+						? "manipulation.hemomancy.base_cost.ml_per_second" : "manipulation.hemomancy.base_cost.ml",
+				java.math.BigDecimal.valueOf(cost).stripTrailingZeros().toPlainString());
+	}
+
+	/** "Base cast: 100 mL" and its siblings. */
+	public net.minecraft.network.chat.MutableComponent getBaseCostLine() {
+		return Component.translatable("manipulation.hemomancy.base_cost.line", getBaseCostLabel(), getBaseCostText());
 	}
 
 	public String getName() {
@@ -199,6 +207,22 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	public EnumManipulationRank getRank() {
 		return rank;
+	}
+
+	public Component getTypeName() {
+		return Component.translatable("manip.type.hemomancy." + type.name().toLowerCase(java.util.Locale.ROOT));
+	}
+
+	public Component getRankName() {
+		return Component.translatable("manipulation_rank.hemomancy." + rank.name().toLowerCase(java.util.Locale.ROOT));
+	}
+
+	public static Component tendencyName(EnumBloodTendency tendency) {
+		return Component.translatable("blood_tendency.hemomancy." + tendency.name().toLowerCase(java.util.Locale.ROOT));
+	}
+
+	public static Component sectionName(EnumVeinSections section) {
+		return Component.translatable("vein_section.hemomancy." + section.name().toLowerCase(java.util.Locale.ROOT));
 	}
 
 	public EnumVeinSections getSection() {
@@ -247,10 +271,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 	 *                    {@link DrudgeAction#DRUDGE_UNSUPPORTED} to mark the
 	 *                    manipulation as incompatible with Drudges
 	 * @param description a short player-facing description shown in the Memory
-	 *                    item tooltip (e.g. {@code "Slows all hostiles in area"})
+	 *                    item tooltip
 	 * @return {@code this} for fluent chaining
 	 */
-	public BloodManipulation setDrudgeAction(DrudgeAction action, String description) {
+	public BloodManipulation setDrudgeAction(DrudgeAction action, Component description) {
 		this.drudgeAction = action == null || action == DrudgeAction.DRUDGE_UNSUPPORTED ? action : (caster, world, position, radius) -> {
             if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(caster)) return false;
             try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, caster, 1)) {
@@ -280,10 +304,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 	}
 
 	/**
-	 * Returns the short drudge-behavior description string, or empty if none was
+	 * Returns the short drudge-behavior description, or empty if none was
 	 * set.
 	 */
-	public Optional<String> getDrudgeDescription() {
+	public Optional<Component> getDrudgeDescription() {
 		return Optional.ofNullable(drudgeDescription);
 	}
 
@@ -475,28 +499,25 @@ public class BloodManipulation implements EntityCastableManipulation {
 			if (!canPerformAction(player, heldItemMainhand, chargeTicks)) return false;
 			if (ManipulationFamilyRegistry.form(getName()).isPresent()
 					&& (!HemoCapabilityAccess.getKnownManipulations(player).isManipulationAvailable(this))) {
-				player.displayClientMessage(Component.literal("You have not absorbed this form's memory.")
-						.withStyle(ChatFormatting.DARK_RED), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.blood_manipulation.you_have_not_absorbed_this_form").withStyle(ChatFormatting.DARK_RED), true);
 				return false;
 			}
 			if (ManipulationRetirementRules.isRetiredManipulation(this)) {
-				player.displayClientMessage(Component.literal("That manipulation has gone dormant.")
-						.withStyle(ChatFormatting.DARK_GRAY), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.blood_manipulation.that_manipulation_has_gone_dormant").withStyle(ChatFormatting.DARK_GRAY), true);
 				return false;
 			}
 			if (enforceCooldown && isOnCooldown(player)) {
 				long remaining = getRemainingCooldownTicks(player);
 				double seconds = remaining / TICKS_PER_SECOND;
 				player.displayClientMessage(
-						Component.literal(String.format("Manipulation on cooldown! (%.1fs)", seconds))
-								.withStyle(ChatFormatting.RED),
+						HemoText.translatable("message.hemomancy.blood_manipulation.manipulation_on_cooldown_s", String.format("%.1f", seconds)).withStyle(ChatFormatting.RED),
 						true);
 				return false;
 			}
 			if (com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents
 					.isSectionDead(player, section)) {
-				player.displayClientMessage(Component.literal("Your " + section.name().toLowerCase(java.util.Locale.ROOT)
-						+ " veins are dead; nothing flows to shape.").withStyle(ChatFormatting.RED), true);
+				player.displayClientMessage(HemoText.translatable("message.hemomancy.blood_manipulation.your_veins_are_dead_nothing_flows",
+						section.name().toLowerCase(java.util.Locale.ROOT)).withStyle(ChatFormatting.RED), true);
 				return false;
 			}
 
@@ -515,8 +536,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 					degreeData.getTotalPomesConsumed(), degreeData.getArchonPath(), "conjure_staff".equals(getName()));
 			if (!permitted) {
 				player.displayClientMessage(
-						Component.literal("Your blood no longer answers to you. It belongs to the void now.")
-								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+						Component.translatable("message.hemomancy.blood_manipulation.your_blood_no_longer_answers_to").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 						true);
 				return false;
 			}
@@ -529,8 +549,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 					var charged = ManipulationCastingRules.chargedCost(effectiveCost, chargeTicks,
 							getRequiredChargeTicks());
 					if (charged.isEmpty()) {
-						player.displayClientMessage(Component.literal("Not enough charge")
-								.withStyle(ChatFormatting.RED), true);
+						player.displayClientMessage(Component.translatable("message.hemomancy.blood_manipulation.not_enough_charge").withStyle(ChatFormatting.RED), true);
 						return false;
 					}
 					effectiveCost = charged.getAsDouble();
@@ -538,9 +557,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 				boolean hasRequiredAlignment = tendency.getAlignmentByTendency(tend) >= alignLevel;
 				if (!hasRequiredAlignment) {
-					player.displayClientMessage(Component.literal("Requires " + (int) alignLevel + " " + tend.name()
-							+ " alignment; current " + (int) tendency.getAlignmentByTendency(tend) + ".")
-							.withStyle(ChatFormatting.RED), true);
+					player.displayClientMessage(HemoText.translatable("message.hemomancy.blood_manipulation.requires_alignment_current",
+							(int) alignLevel,
+							tend.name(),
+							(int) tendency.getAlignmentByTendency(tend)).withStyle(ChatFormatting.RED), true);
 					return false;
 				}
 
@@ -585,10 +605,10 @@ public class BloodManipulation implements EntityCastableManipulation {
 					return true;
 				} else {
 					player.displayClientMessage(
-							Component.translatable("Not Enough Blood to be Shed!").withStyle(ChatFormatting.RED), true);
+							Component.translatable("message.hemomancy.blood_manipulation.not_enough_blood_to_be_shed").withStyle(ChatFormatting.RED), true);
 				}
 			} else {
-				player.displayClientMessage(Component.translatable("You strain your body but nothing happens!")
+				player.displayClientMessage(Component.translatable("message.hemomancy.blood_manipulation.you_strain_your_body_but_nothing_happens")
 						.withStyle(ChatFormatting.RED), true);
 			}
 		}

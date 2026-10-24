@@ -169,10 +169,10 @@ public class TickMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Engorge (Resistance on kill from feeding)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Blood Fever (Speed near wounded hostiles)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Pandemic Burst (AoE Necrosis on heavy hit)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Hemorrhagic Season (Staff active spreads outbreak through wounded mobs)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.tick_morphling_item.engorge_resistance_on_kill_from_feeding"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.tick_morphling_item.blood_fever_speed_near_wounded_hostiles"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.tick_morphling_item.pandemic_burst_aoe_necrosis_on_heavy"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.tick_morphling_item.hemorrhagic_season_staff_active_spreads_outbreak"), 5, currentMaturity));
 		return list;
 	}
 

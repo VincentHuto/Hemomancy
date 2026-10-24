@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -75,8 +76,7 @@ public class StructureScannerItem extends Item {
 		}
 		if (!player.isCreative()) {
 			player.displayClientMessage(
-					Component.literal("Structure Scanner requires creative mode!")
-							.withStyle(ChatFormatting.RED),
+					Component.translatable("message.hemomancy.structure_scanner_item.structure_scanner_requires_creative_mode").withStyle(ChatFormatting.RED),
 					true);
 			return InteractionResult.FAIL;
 		}
@@ -91,7 +91,7 @@ public class StructureScannerItem extends Item {
 				tag.putBoolean(TAG_HAS_POS1, false);
 				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 				player.displayClientMessage(
-						Component.literal("Scanner reset.").withStyle(ChatFormatting.YELLOW), true);
+						Component.translatable("message.hemomancy.structure_scanner_item.scanner_reset").withStyle(ChatFormatting.YELLOW), true);
 			}
 			return InteractionResult.SUCCESS;
 		}
@@ -105,8 +105,8 @@ public class StructureScannerItem extends Item {
 			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
 			player.displayClientMessage(
-					Component.literal("Corner 1 set: " + clickedPos.toShortString())
-							.withStyle(ChatFormatting.GREEN),
+					HemoText.translatable("message.hemomancy.structure_scanner_item.corner_1_set",
+							clickedPos.toShortString()).withStyle(ChatFormatting.GREEN),
 					true);
 			return InteractionResult.SUCCESS;
 		}
@@ -137,8 +137,8 @@ public class StructureScannerItem extends Item {
 
 		if ((long) sizeX * sizeY * sizeZ > MAX_VOLUME) {
 			player.displayClientMessage(
-					Component.literal("Region too large! Max " + MAX_VOLUME + " blocks.")
-							.withStyle(ChatFormatting.RED),
+					HemoText.translatable("message.hemomancy.structure_scanner_item.region_too_large_max_blocks",
+							MAX_VOLUME).withStyle(ChatFormatting.RED),
 					true);
 			return InteractionResult.FAIL;
 		}
@@ -157,9 +157,8 @@ public class StructureScannerItem extends Item {
 					if (!blockToChar.containsKey(block)) {
 						if (charIdx >= CHAR_POOL.length()) {
 							player.displayClientMessage(
-									Component.literal(
-											"Too many unique block types (>" + CHAR_POOL.length() + ")!")
-											.withStyle(ChatFormatting.RED),
+									HemoText.translatable("message.hemomancy.structure_scanner_item.too_many_unique_block_types",
+											CHAR_POOL.length()).withStyle(ChatFormatting.RED),
 									true);
 							return InteractionResult.FAIL;
 						}
@@ -171,8 +170,7 @@ public class StructureScannerItem extends Item {
 
 		if (blockToChar.isEmpty()) {
 			player.displayClientMessage(
-					Component.literal("No non-air blocks in the selected region!")
-							.withStyle(ChatFormatting.RED),
+					Component.translatable("message.hemomancy.structure_scanner_item.no_non_air_blocks_in_the").withStyle(ChatFormatting.RED),
 					true);
 			return InteractionResult.FAIL;
 		}
@@ -213,8 +211,7 @@ public class StructureScannerItem extends Item {
 		File outDir = new File(baseDir, "hemomancy_scans");
 		if (!outDir.exists() && !outDir.mkdirs()) {
 			player.displayClientMessage(
-					Component.literal("Could not create hemomancy_scans output directory.")
-							.withStyle(ChatFormatting.RED),
+					Component.translatable("message.hemomancy.structure_scanner_item.could_not_create_hemomancy_scans_output").withStyle(ChatFormatting.RED),
 					false);
 			return InteractionResult.FAIL;
 		}
@@ -227,25 +224,28 @@ public class StructureScannerItem extends Item {
 			writeJson(new File(outDir, riteFile), riteJson);
 		} catch (IOException e) {
 			player.displayClientMessage(
-					Component.literal("Error writing files: " + e.getMessage()).withStyle(ChatFormatting.RED), false);
+					HemoText.translatable("message.hemomancy.structure_scanner_item.error_writing_files", e.getMessage()).withStyle(ChatFormatting.RED), false);
 			return InteractionResult.FAIL;
 		}
 
 		// Feedback
 		player.displayClientMessage(
-				Component.literal("Structure scanned! " + sizeX + "x" + sizeY + "x" + sizeZ + " ("
-						+ blockToChar.size() + " block types)").withStyle(ChatFormatting.GOLD),
+				HemoText.translatable("message.hemomancy.structure_scanner_item.structure_scanned_x_x_block_types",
+						sizeX,
+						sizeY,
+						sizeZ,
+						blockToChar.size()).withStyle(ChatFormatting.GOLD),
 				false);
 		player.displayClientMessage(
-				Component.literal("  Blood structure → hemomancy_scans/" + bloodFile)
-						.withStyle(ChatFormatting.GREEN),
+				HemoText.translatable("message.hemomancy.structure_scanner_item.blood_structure_hemomancy_scans",
+						bloodFile).withStyle(ChatFormatting.GREEN),
 				false);
 		player.displayClientMessage(
-				Component.literal("  Cardinal rite   → hemomancy_scans/" + riteFile)
-						.withStyle(ChatFormatting.GREEN),
+				HemoText.translatable("message.hemomancy.structure_scanner_item.cardinal_rite_hemomancy_scans",
+						riteFile).withStyle(ChatFormatting.GREEN),
 				false);
 		player.displayClientMessage(
-				Component.literal("Block key:").withStyle(ChatFormatting.AQUA), false);
+				Component.translatable("message.hemomancy.structure_scanner_item.block_key").withStyle(ChatFormatting.AQUA), false);
 		for (Map.Entry<Block, String> entry : blockToChar.entrySet()) {
 			ResourceLocation id = BuiltInRegistries.BLOCK.getKey(entry.getKey());
 			player.displayClientMessage(
@@ -334,8 +334,8 @@ public class StructureScannerItem extends Item {
 		CompoundTag tag = structureData.copyTag();
 		if (tag.getBoolean(TAG_HAS_POS1)) {
 			String pos = tag.getInt(TAG_POS1_X) + ", " + tag.getInt(TAG_POS1_Y) + ", " + tag.getInt(TAG_POS1_Z);
-			tooltip.add(Component.literal("Corner 1: " + pos).withStyle(ChatFormatting.GREEN));
-			tooltip.add(Component.literal("Click corner 2 to scan!").withStyle(ChatFormatting.YELLOW));
+			tooltip.add(HemoText.translatable("message.hemomancy.structure_scanner_item.corner_1", pos).withStyle(ChatFormatting.GREEN));
+			tooltip.add(Component.translatable("message.hemomancy.structure_scanner_item.click_corner_2_to_scan").withStyle(ChatFormatting.YELLOW));
 		}
 	}
 

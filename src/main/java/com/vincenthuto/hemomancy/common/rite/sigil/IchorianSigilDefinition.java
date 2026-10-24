@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.sigil;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -32,6 +34,20 @@ public record IchorianSigilDefinition(
 
 	public int bloodCostMl() {
 		return nodes.size() * 50;
+	}
+
+	/** {@code ichorian_sigil.<namespace>.<path>.name}; the definition's authored name is the fallback. */
+	public MutableComponent displayName() {
+		return Component.translatableWithFallback(keyPrefix() + ".name", name);
+	}
+
+	/** {@code ichorian_sigil.<namespace>.<path>.purpose}; the definition's authored purpose is the fallback. */
+	public MutableComponent displayPurpose() {
+		return Component.translatableWithFallback(keyPrefix() + ".purpose", purpose);
+	}
+
+	private String keyPrefix() {
+		return "ichorian_sigil." + id.getNamespace() + "." + id.getPath().replace('/', '.');
 	}
 
 	public enum Kind {

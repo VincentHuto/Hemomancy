@@ -48,8 +48,7 @@ public class PaleSilverBellItem extends Item {
 		if (!level.isClientSide) {
 			boolean onPath = HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification();
 			if (!onPath) {
-				player.displayClientMessage(Component.literal("The pale bell gives no answer to unstilled blood.")
-						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.pale_silver_bell_item.the_pale_bell_gives_no_answer").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
 				return InteractionResultHolder.fail(stack);
 			}
 

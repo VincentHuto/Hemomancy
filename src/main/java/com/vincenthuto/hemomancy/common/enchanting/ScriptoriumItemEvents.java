@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.enchanting;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -18,12 +19,12 @@ public final class ScriptoriumItemEvents {
     @SubscribeEvent public static void tooltip(ItemTooltipEvent event) {
         ScriptoriumProvenance provenance = event.getItemStack().get(DataComponentInit.SCRIPTORIUM_PROVENANCE.get());
         if (provenance == null) return;
-        event.getToolTip().add(Component.literal("Inscribed in blood").withStyle(ChatFormatting.DARK_RED));
+        event.getToolTip().add(Component.translatable("message.hemomancy.scriptorium_item_events.inscribed_in_blood").withStyle(ChatFormatting.DARK_RED));
         if (!provenance.curse().isBlank())
             event.getToolTip().add(Component.translatable("hemomancy.scriptorium.curse." + provenance.curse())
                     .append(" " + provenance.severity()).withStyle(ChatFormatting.RED));
         if (provenance.excessLoad() > 0)
-            event.getToolTip().add(Component.literal("Excess Load " + provenance.excessLoad()).withStyle(ChatFormatting.RED));
+            event.getToolTip().add(HemoText.translatable("message.hemomancy.scriptorium_item_events.excess_load", provenance.excessLoad()).withStyle(ChatFormatting.RED));
     }
 
     @SubscribeEvent public static void grindstone(GrindstoneEvent.OnPlaceItem event) {

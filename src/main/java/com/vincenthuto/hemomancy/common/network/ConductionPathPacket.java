@@ -15,7 +15,7 @@ import java.util.UUID;
 public record ConductionPathPacket(UUID networkId, List<BlockPos> nodes, long expiresAt)
         implements CustomPacketPayload {
     public static final Type<ConductionPathPacket> TYPE = new Type<>(
-            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,"conduction_path"));
+            Hemomancy.rloc("conduction_path"));
     public static final StreamCodec<FriendlyByteBuf,ConductionPathPacket> STREAM_CODEC =
             StreamCodec.of(ConductionPathPacket::encode, ConductionPathPacket::decode);
 

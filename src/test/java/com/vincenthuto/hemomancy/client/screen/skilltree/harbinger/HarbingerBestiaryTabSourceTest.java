@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,7 +19,10 @@ public final class HarbingerBestiaryTabSourceTest {
 				"src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
 
 		assertContains("bestiary tab is degree 2 gated", screen,
-				"BESTIARY(\"Bestiary\", 0xFF77AA66, 2, true)");
+				"BESTIARY(\"screen.hemomancy.harbinger_progress.tab.bestiary\", 0xFF77AA66, 2, true)");
+		if (!EnglishText.of("screen.hemomancy.harbinger_progress.tab.bestiary").equals("Bestiary")) {
+			throw new AssertionError("bestiary tab label: expected Bestiary");
+		}
 		assertContains("bestiary controllers are cached by the tab registry", screen,
 				"private final ProgressTabRegistry<Tab> tabs = new ProgressTabRegistry<>(Tab.class, this::createController);");
 		assertContains("bestiary creates its controller through the tab factory", screen,

@@ -1,31 +1,32 @@
 package com.vincenthuto.hemomancy.common.mission.shared;
 
+import java.util.Locale;
 import java.util.Set;
+
+import net.minecraft.network.chat.Component;
 
 /** The single defining chapter proof which certifies each public Harbinger rank. */
 public enum HarbingerChapterMilestone {
-	FIRST_BLOODCRAFT(2, "First Bloodcraft"),
-	FIRST_SEPARATION(-1, "The First Separation"),
-	FIRST_DISTILLATION(3, "The First Separation"),
-	WOVEN_VESSEL(4, "The Woven Vessel"),
-	VEIN_MASON(5, "The Vein-Mason"),
-	COVENANT_WRITTEN_IN_PLACE(6, "A Covenant Written in Place"),
-	LIVING_COVENANT(7, "The Living Covenant");
+	FIRST_BLOODCRAFT(2),
+	FIRST_SEPARATION(-1),
+	FIRST_DISTILLATION(3),
+	WOVEN_VESSEL(4),
+	VEIN_MASON(5),
+	COVENANT_WRITTEN_IN_PLACE(6),
+	LIVING_COVENANT(7);
 
 	private final int targetDegree;
-	private final String chapterName;
 
-	HarbingerChapterMilestone(int targetDegree, String chapterName) {
+	HarbingerChapterMilestone(int targetDegree) {
 		this.targetDegree = targetDegree;
-		this.chapterName = chapterName;
 	}
 
 	public int targetDegree() {
 		return targetDegree;
 	}
 
-	public String chapterName() {
-		return chapterName;
+	public Component chapterName() {
+		return Component.translatable("milestone.hemomancy.chapter." + name().toLowerCase(Locale.ROOT));
 	}
 
 	public static HarbingerChapterMilestone requiredForTargetDegree(int targetDegree) {

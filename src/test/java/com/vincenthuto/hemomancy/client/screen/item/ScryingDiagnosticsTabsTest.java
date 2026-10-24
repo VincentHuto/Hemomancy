@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
+
 import java.util.List;
 
 public final class ScryingDiagnosticsTabsTest {
@@ -16,15 +18,15 @@ public final class ScryingDiagnosticsTabsTest {
 
 		assertEquals(3, tabs.size(), "tab count");
 		assertEquals(ScryingDiagnosticsTabs.Tab.BLOOD, tabs.get(0), "first tab");
-		assertEquals("Blood", tabs.get(0).label(), "blood label");
+		assertEquals("Blood", EnglishText.render(tabs.get(0).label()), "blood label");
 		assertEquals(ScryingDiagnosticsTabs.Tab.MANIPULATIONS, tabs.get(1), "second tab");
-		assertEquals("Manipulations", tabs.get(1).label(), "manipulations label");
+		assertEquals("Manipulations", EnglishText.render(tabs.get(1).label()), "manipulations label");
 		assertEquals(ScryingDiagnosticsTabs.Tab.TENDENCY, tabs.get(2), "third tab");
-		assertEquals("Tendency", tabs.get(2).label(), "tendency label");
+		assertEquals("Tendency", EnglishText.render(tabs.get(2).label()), "tendency label");
 	}
 
 	private static void tabDescriptorsMarkOnlyTheActiveTab() {
-		var descs = ScryingDiagnosticsTabs.descriptors(ScryingDiagnosticsTabs.Tab.MANIPULATIONS);
+		var descs = ScryingDiagnosticsTabs.descriptors(ScryingDiagnosticsTabs.Tab.MANIPULATIONS, EnglishText::render);
 
 		assertEquals(3, descs.size(), "descriptor count");
 		assertEquals(false, descs.get(0).active(), "blood inactive");

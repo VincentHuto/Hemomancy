@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.util.RegistryLookup;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionSummonServ
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArtEnding;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
@@ -73,8 +74,7 @@ public class StillArtInit {
 					target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 1, false, true));
 					target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0, false, true));
 				});
-				player.displayClientMessage(Component.literal("The air forgets how to answer blood.")
-						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.still_art_init.the_air_forgets_how_to_answer").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
 				level.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.0f, 0.7f);
 				return true;
 			}));
@@ -105,8 +105,8 @@ public class StillArtInit {
 						marked++;
 					}
 				}
-				player.displayClientMessage(Component.literal("Pale Diagnosis marks " + marked + " suspect body(s).")
-						.withStyle(ChatFormatting.AQUA), true);
+				player.displayClientMessage(HemoText.translatable("message.hemomancy.still_art_init.pale_diagnosis_marks_suspect_body_s",
+						marked).withStyle(ChatFormatting.AQUA), true);
 				return true;
 			}));
 
@@ -115,8 +115,7 @@ public class StillArtInit {
 				Monster target = level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(10.0), candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER))
 						.stream().min(Comparator.comparingDouble(player::distanceToSqr)).orElse(null);
 				if (target == null) {
-					player.displayClientMessage(Component.literal("There is no hostile memory near enough to shear.")
-							.withStyle(ChatFormatting.GRAY), true);
+					player.displayClientMessage(Component.translatable("message.hemomancy.still_art_init.there_is_no_hostile_memory_near").withStyle(ChatFormatting.GRAY), true);
 					return false;
 				}
 				target.setTarget(null);
@@ -159,8 +158,7 @@ public class StillArtInit {
 					target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0, false, true));
 				});
 				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, false, true));
-				player.displayClientMessage(Component.literal("The immune will cuts outward.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.still_art_init.the_immune_will_cuts_outward").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), true);
 				level.sendParticles(HemoParticleData.glow(STILL_SILVER), player.getX(), player.getY() + 1.0, player.getZ(),
 						60, 2.2, 1.0, 2.2, 0.01);
 				return true;

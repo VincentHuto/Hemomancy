@@ -54,10 +54,10 @@ final class BloodSubcommand {
 				;
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" Blood: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.translatable("commands.hemomancy.blood.blood").withStyle(ChatFormatting.GRAY))
 				.append(Component.literal(String.format("%.1f / %.1f", blood.getBloodVolume(), blood.getMaxBloodVolume()))
 						.withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(" Active: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.translatable("commands.hemomancy.blood.active").withStyle(ChatFormatting.GRAY))
 				.append(Component.literal(String.valueOf(blood.isActive()))
 						.withStyle(blood.isActive() ? ChatFormatting.GREEN : ChatFormatting.RED)),
 				false);
@@ -69,10 +69,9 @@ final class BloodSubcommand {
 				;
 		blood.setBloodVolume(Math.min(amount, blood.getMaxBloodVolume()));
 		BloodVolumeEvents.syncVolume(player, blood);
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" blood volume to "))
-				.append(Component.literal(String.format("%.1f", blood.getBloodVolume())).withStyle(ChatFormatting.DARK_RED)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.blood.set_blood_volume_to",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(String.format("%.1f", blood.getBloodVolume())).withStyle(ChatFormatting.DARK_RED)),
 				true);
 		return 1;
 	}
@@ -85,10 +84,9 @@ final class BloodSubcommand {
 			blood.setBloodVolume(amount);
 		}
 		BloodVolumeEvents.syncVolume(player, blood);
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" max blood volume to "))
-				.append(Component.literal(String.format("%.1f", amount)).withStyle(ChatFormatting.DARK_RED)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.blood.set_max_blood_volume_to",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(String.format("%.1f", amount)).withStyle(ChatFormatting.DARK_RED)),
 				true);
 		return 1;
 	}
@@ -98,11 +96,9 @@ final class BloodSubcommand {
 				;
 		blood.setBloodVolume(blood.getMaxBloodVolume());
 		BloodVolumeEvents.syncVolume(player, blood);
-		source.sendSuccess(() -> Component.literal("Filled ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" blood to max ("))
-				.append(Component.literal(String.format("%.1f", blood.getMaxBloodVolume())).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(")")),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.blood.filled_blood_to_max",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(String.format("%.1f", blood.getMaxBloodVolume())).withStyle(ChatFormatting.DARK_RED)),
 				true);
 		return 1;
 	}
@@ -112,10 +108,9 @@ final class BloodSubcommand {
 				;
 		blood.toggleActive();
 		BloodVolumeEvents.syncVolume(player, blood);
-		source.sendSuccess(() -> Component.literal("Toggled ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" blood active: "))
-				.append(Component.literal(String.valueOf(blood.isActive()))
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.blood.toggled_blood_active",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(String.valueOf(blood.isActive()))
 						.withStyle(blood.isActive() ? ChatFormatting.GREEN : ChatFormatting.RED)),
 				true);
 		return 1;

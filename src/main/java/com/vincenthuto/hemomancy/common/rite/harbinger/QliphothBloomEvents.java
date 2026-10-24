@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
-import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -79,8 +79,7 @@ public class QliphothBloomEvents {
 
 		event.setCanceled(true);
 		if (event.getPlayer() instanceof ServerPlayer player) {
-			player.displayClientMessage(Component.literal("The Qliphoth will not yield to ordinary hands.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_bloom_events.the_qliphoth_will_not_yield_to").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 		}
 	}
 
@@ -106,7 +105,7 @@ public class QliphothBloomEvents {
 
 				var volume = HemoCapabilityAccess.getBloodVolume(player);
 				BloodFlowLedger.applyCirculationIncome(player, volume, "qliphoth_bloom",
-						"Qliphoth Bloom", Category.WORLD, BLOOD_REGEN_PER_TICK,
+						"blood_source.hemomancy.qliphoth_bloom", Category.WORLD, BLOOD_REGEN_PER_TICK,
 						EFFECT_APPLICATION_INTERVAL_TICKS, CirculationIncomeHelper.IncomeChannel.OTHER);
 			}
 

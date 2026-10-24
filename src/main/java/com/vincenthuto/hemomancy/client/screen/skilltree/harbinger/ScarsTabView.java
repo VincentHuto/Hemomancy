@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeS
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RecipeMapInspectorLayout;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -118,16 +119,15 @@ final class ScarsTabView {
 		List<Component> lines = new ArrayList<>();
 		if (locked) {
 			lines.add(Component.literal("???").withStyle(s -> s.withColor(0x555555).withBold(true)));
-			lines.add(Component.literal("Requires: Degree " + requiredDegree(entry.tier()))
-					.withStyle(s -> s.withColor(0xAA4444)));
+			lines.add(HemoText.translatable("screen.hemomancy.scars_tab_view.requires_degree",
+					requiredDegree(entry.tier())).withStyle(s -> s.withColor(0xAA4444)));
 		} else {
 			lines.add(entry.result().getHoverName().copy().withStyle(s -> s.withColor(color).withBold(true)));
-			lines.add(Component.literal(active ? "Active" : known ? "Known" : "Unlearned")
-					.withStyle(s -> s.withColor(active ? 0x55DD88 : known ? 0x66BB66 : 0xAA6666)));
-			lines.add(Component.literal("Tier " + roman(entry.tier())).withStyle(s -> s.withColor(0xAAAAAA)));
-			lines.add(Component.literal("Tendency: " + proper(entry.tendency().name())).withStyle(s -> s.withColor(color)));
-			lines.add(Component.literal("Deepen: " + deepenAmountLabel(entry.definition().getDeepenAmount()))
-					.withStyle(s -> s.withColor(dim(color, 0.85f))));
+			lines.add((active ? Component.translatable("screen.hemomancy.scars_tab_view.active") : (known ? Component.translatable("screen.hemomancy.scars_tab_view.known") : Component.translatable("screen.hemomancy.scars_tab_view.unlearned"))).withStyle(s -> s.withColor(active ? 0x55DD88 : known ? 0x66BB66 : 0xAA6666)));
+			lines.add(HemoText.translatable("screen.hemomancy.scars_tab_view.tier", roman(entry.tier())).withStyle(s -> s.withColor(0xAAAAAA)));
+			lines.add(HemoText.translatable("screen.hemomancy.scars_tab_view.tendency", proper(entry.tendency().name())).withStyle(s -> s.withColor(color)));
+			lines.add(HemoText.translatable("screen.hemomancy.scars_tab_view.deepen",
+					deepenAmountLabel(entry.definition().getDeepenAmount())).withStyle(s -> s.withColor(dim(color, 0.85f))));
 		}
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, TOOLTIP_Z);
@@ -153,8 +153,8 @@ final class ScarsTabView {
 		if (locked) {
 			gfx.drawString(ctx.font(), Component.literal("???").withStyle(s -> s.withColor(0x555555).withBold(true)),
 					panelX + 8, panelY + 8, 0, false);
-			gfx.drawString(ctx.font(), "Locked", panelX + 8, panelY + 26, 0xFF555555, false);
-			gfx.drawString(ctx.font(), "Requires: Degree " + requiredDegree(entry.tier()),
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.locked"), panelX + 8, panelY + 26, 0xFF555555, false);
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.requires_degree", requiredDegree(entry.tier())),
 					panelX + 8, panelY + 38, 0xFFAA4444, false);
 			gfx.pose().popPose();
 			return;
@@ -174,18 +174,19 @@ final class ScarsTabView {
 		y = Math.max(y + 8, panelY + 28);
 		gfx.fill(textX, y, panelX + panelW - 7, y + 1, dim(color, 0.5f));
 		y += 6;
-		String status = state.activeScarIds.contains(entry.id()) ? "Active"
-				: state.knownScarIds.contains(entry.id()) ? "Known" : "Unlearned";
-		gfx.drawString(ctx.font(), "Status: " + status, textX, y, 0xFF77BB88, false);
+		String status = state.activeScarIds.contains(entry.id()) ? "active"
+				: state.knownScarIds.contains(entry.id()) ? "known" : "unlearned";
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.status", Component.translatable("screen.hemomancy.scars_tab_view." + status)),
+				textX, y, 0xFF77BB88, false);
 		y += 11;
-		gfx.drawString(ctx.font(), "Tendency: " + proper(entry.tendency().name()), textX, y, color, false);
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.tendency", proper(entry.tendency().name())), textX, y, color, false);
 		y += 11;
-		gfx.drawString(ctx.font(), "Deepen: " + deepenAmountLabel(entry.definition().getDeepenAmount()),
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.deepen", deepenAmountLabel(entry.definition().getDeepenAmount())),
 				textX, y, dim(color, 0.85f), false);
 		y += 11;
-		gfx.drawString(ctx.font(), "Tier: " + roman(entry.tier()), textX, y, 0xFFBBBBBB, false);
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.tier_label", roman(entry.tier())), textX, y, 0xFFBBBBBB, false);
 		y += 14;
-		gfx.drawString(ctx.font(), "Ingredients:", textX, y, 0xFF888888, false);
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.ingredients"), textX, y, 0xFF888888, false);
 		y += 10;
 		y = drawIngredient(gfx, ctx, entry.recipe().getIngredient1(), textX, y, textW);
 		y = drawIngredient(gfx, ctx, entry.recipe().getIngredient2(), textX, y, textW);

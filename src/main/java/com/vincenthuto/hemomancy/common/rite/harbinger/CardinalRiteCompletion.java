@@ -22,6 +22,7 @@ import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEven
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedRitePreflight;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.ChatFormatting;
@@ -81,10 +82,9 @@ public final class CardinalRiteCompletion {
 		if (recipe.isUnstained()) {
 			if (!RecipeDegreeGates.playerMeets(caster, recipe)) {
 				caster.displayClientMessage(
-						Component.literal("The rite falls silent. It requires ")
-								.withStyle(ChatFormatting.GRAY)
-								.append(Component.literal(RecipeDegreeGates.requirementLabel(recipe))
-										.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD)),
+						Component.translatable("message.hemomancy.cardinal_rite_completion.the_rite_falls_silent_it_requires",
+								RecipeDegreeGates.requirementLabel(recipe)
+										.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD)).withStyle(ChatFormatting.GRAY),
 						false);
 				return false;
 			}
@@ -100,9 +100,8 @@ public final class CardinalRiteCompletion {
 				new CardinalRiteCompletionEffects.Context(level, caster, rite, recipe, rite.getCenterPos()),
 				CardinalRiteCompletionEffects.Stage.FINALE);
 		if (refusal != null) {
-			caster.displayClientMessage(Component.literal("The rite falls silent. ")
-					.withStyle(ChatFormatting.DARK_RED)
-					.append(refusal.copy().withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)), false);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_completion.the_rite_falls_silent",
+					refusal.copy().withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)).withStyle(ChatFormatting.DARK_RED), false);
 			return false;
 		}
 		return true;
@@ -155,8 +154,8 @@ public final class CardinalRiteCompletion {
 		}
 
 		caster.displayClientMessage(
-				Component.literal("The ").append(recipe.displayName()).append(" is complete!")
-						.withStyle(recipe.isUnstained() ? ChatFormatting.AQUA : ChatFormatting.GOLD,
+				Component.translatable("message.hemomancy.cardinal_rite_completion.the_is_complete",
+						recipe.displayName()).withStyle(recipe.isUnstained() ? ChatFormatting.AQUA : ChatFormatting.GOLD,
 								ChatFormatting.BOLD),
 				false);
 
@@ -218,9 +217,8 @@ public final class CardinalRiteCompletion {
 		var volume = HemoCapabilityAccess.getBloodVolume(caster);
 		volume.fill(refund);
 		BloodVolumeEvents.syncVolume(caster, volume);
-		caster.displayClientMessage(Component.literal("The rite closes cleanly. The Reservoir returns "
-				+ refund + " mL of anchor blood to you.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+		caster.displayClientMessage(HemoText.translatable("message.hemomancy.cardinal_rite_completion.the_rite_closes_cleanly_the_reservoir",
+				refund).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 	}
 
 	private static boolean consumeRiteMedium(ServerLevel level, ServerPlayer caster,
@@ -232,9 +230,9 @@ public final class CardinalRiteCompletion {
 			return true;
 		}
 		String failure = recipe.hasMedium()
-				? "The rite reaches culmination, but its required medium is no longer seated in the Cardinal Focus."
-				: "The rite reaches culmination, but an unexpected medium occupies the Cardinal Focus.";
-		caster.displayClientMessage(Component.literal(failure)
+				? "message.hemomancy.cardinal_rite_completion.required_medium_no_longer_seated"
+				: "message.hemomancy.cardinal_rite_completion.unexpected_medium_occupies_the_focus";
+		caster.displayClientMessage(Component.translatable(failure)
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
 		return false;
 	}

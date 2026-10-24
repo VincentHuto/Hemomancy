@@ -34,8 +34,8 @@ public class BloodLossEffect extends MobEffect {
 					double coagChance = SkillPointHelper.getCoagulationChance(playerIn);
 					if (coagChance > 0 && playerIn.level().random.nextDouble() < coagChance) {
 						BloodFlowLedger.recordApplied((ServerPlayer) playerIn, "blood_loss",
-								"Blood Loss", Category.EFFECT, -(0.5f * (amplifier + 1)), 0.0D, 1, false,
-								"Blocked by Coagulation");
+								"blood_source.hemomancy.blood_loss", Category.EFFECT, -(0.5f * (amplifier + 1)), 0.0D, 1, false,
+								"message.hemomancy.blood_flow.blocked_by_coagulation");
 						return true; // Blocked by Coagulation skill
 					}
 

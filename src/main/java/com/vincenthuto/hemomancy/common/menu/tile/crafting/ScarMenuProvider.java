@@ -30,7 +30,7 @@ public class ScarMenuProvider implements MenuProvider {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.literal("PlayerScarInv");
+		return Component.translatable("message.hemomancy.scar_menu_provider.playerscarinv");
 	}
 
 	@Override

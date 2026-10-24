@@ -1,16 +1,15 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+import org.junit.jupiter.api.Test;
 
-public final class RegistryBackedScarRefactorSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertShowsEnglish;
 
-	private RegistryBackedScarRefactorSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+class RegistryBackedScarRefactorSourceTest {
+	@Test
+	void registryBackedScarRefactorSourceContracts() {
 		scarRegistryOwnsDefinitions();
 		itemScarsPointAtDefinitions();
 		scarsCapabilityStoresCerebralIdsAndFungalItem();
@@ -22,8 +21,8 @@ public final class RegistryBackedScarRefactorSourceTest {
 		dynamicScarPatternReplacesPerScarPatternItems();
 	}
 
-	private static void scarRegistryOwnsDefinitions() throws IOException {
-		String source = read("src/main/java/com/vincenthuto/hemomancy/common/init/ScarInit.java");
+	private static void scarRegistryOwnsDefinitions() {
+		String source = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/init/ScarInit.java");
 
 		assertContains("scar registry key", source, "ResourceKey<Registry<ScarDefinition>>");
 		assertContains("scar deferred register", source, "DeferredRegister<ScarDefinition>");
@@ -33,22 +32,22 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("fungal scar definition", source, "rhizovitta_communis");
 	}
 
-	private static void itemScarsPointAtDefinitions() throws IOException {
-		String itemScar = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/ItemScar.java");
-		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
+	private static void itemScarsPointAtDefinitions() {
+		String itemScar = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/ItemScar.java");
+		String itemInit = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 
 		assertContains("item scar stores scar holder", itemScar, "DeferredHolder<ScarDefinition, ScarDefinition>");
 		assertContains("item scar exposes definition", itemScar, "getScarDefinition()");
-		assertDoesNotContain("item scar no local modifier builder", itemScar, "ItemScar withModifier");
-		assertDoesNotContain("item scar no local effect builder", itemScar, "ItemScar withEffect");
-		assertDoesNotContain("item init no constructor-built scar effects", itemInit, "new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency");
+		assertNotContains("item scar no local modifier builder", itemScar, "ItemScar withModifier");
+		assertNotContains("item scar no local effect builder", itemScar, "ItemScar withEffect");
+		assertNotContains("item init no constructor-built scar effects", itemInit, "new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency");
 		assertContains("item init uses scar registry", itemInit, "ScarInit.scar_heart");
 	}
 
-	private static void scarsCapabilityStoresCerebralIdsAndFungalItem() throws IOException {
-		String keys = read("src/main/java/com/vincenthuto/hemomancy/common/capability/HemoCapabilityKeys.java");
-		String attachments = read("src/main/java/com/vincenthuto/hemomancy/common/capability/HemoAttachmentTypes.java");
-		String scars = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/ScarsContainer.java");
+	private static void scarsCapabilityStoresCerebralIdsAndFungalItem() {
+		String keys = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/capability/HemoCapabilityKeys.java");
+		String attachments = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/capability/HemoAttachmentTypes.java");
+		String scars = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/ScarsContainer.java");
 
 		assertContains("SCARS key stays scar-domain", keys, "EntityCapability<IScars, Void> SCARS");
 		assertContains("ITEM_SCAR key stays scar-domain", keys, "ItemCapability<IScarItem, Void> ITEM_SCAR");
@@ -58,39 +57,39 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("fungal item stack is persisted", scars, "fungalScar");
 	}
 
-	private static void scarAndEquipmentTypesStaySeparate() throws IOException {
-		String scarType = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/ScarType.java");
-		String equipmentType = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/equipment/HarbingerEquipmentType.java");
+	private static void scarAndEquipmentTypesStaySeparate() {
+		String scarType = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/ScarType.java");
+		String equipmentType = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/equipment/HarbingerEquipmentType.java");
 
 		assertContains("scar type has cerebral domain", scarType, "CEREBRAL");
 		assertContains("scar type has fungal domain", scarType, "FUNGAL");
-		assertDoesNotContain("scar type does not mirror equipment override slots", scarType, "OVERRIDE");
-		assertDoesNotContain("equipment type does not contain normal scar slots", equipmentType, "OVERRIDE");
+		assertNotContains("scar type does not mirror equipment override slots", scarType, "OVERRIDE");
+		assertNotContains("equipment type does not contain normal scar slots", equipmentType, "OVERRIDE");
 	}
 
-	private static void fungalImplantationScreenUsesScarSlotCount() throws IOException {
-		String menu = read("src/main/java/com/vincenthuto/hemomancy/common/menu/tile/functional/SporeImplantMenu.java");
-		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SporeImplantScreen.java");
+	private static void fungalImplantationScreenUsesScarSlotCount() {
+		String menu = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/menu/tile/functional/SporeImplantMenu.java");
+		String screen = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SporeImplantScreen.java");
 
 		assertContains("spore implant menu declares scar slot count", menu, "public static final int SLOT_COUNT = 1");
 		assertContains("spore implant screen anchors inventory after scar slots", screen,
 				"this.menu.slots.get(SporeImplantMenu.SLOT_COUNT)");
 		assertContains("spore implant screen only draws scar slot backgrounds", screen,
 				"i < SporeImplantMenu.SLOT_COUNT");
-		assertDoesNotContain("spore implant screen does not use stale five-slot inventory anchor", screen,
+		assertNotContains("spore implant screen does not use stale five-slot inventory anchor", screen,
 				"this.menu.slots.get(5)");
 	}
 
-	private static void ironBrazierAndMasonsEffigyAreWired() throws IOException {
-		String blockInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java");
-		String blockEntityInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockEntityInit.java");
-		String containerInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ContainerInit.java");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/registry/MenuScreenRegistrar.java");
-		String pattern = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/ItemScarPattern.java");
-		String brazier = read("src/main/java/com/vincenthuto/hemomancy/common/rite/ScarBrazierRite.java");
-		String brazierBlock = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierBlock.java");
-		String menu = read("src/main/java/com/vincenthuto/hemomancy/common/menu/tile/functional/MasonsEffigyMenu.java");
-		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MasonsEffigyScreen.java");
+	private static void ironBrazierAndMasonsEffigyAreWired() {
+		String blockInit = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java");
+		String blockEntityInit = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockEntityInit.java");
+		String containerInit = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/init/ContainerInit.java");
+		String clientEvents = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/registry/MenuScreenRegistrar.java");
+		String pattern = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/ItemScarPattern.java");
+		String brazier = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/rite/ScarBrazierRite.java");
+		String brazierBlock = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierBlock.java");
+		String menu = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/menu/tile/functional/MasonsEffigyMenu.java");
+		String screen = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MasonsEffigyScreen.java");
 
 		assertContains("mason effigy block registered", blockInit, "mason_effigy");
 		assertContains("iron brazier block registered", blockInit, "iron_brazier");
@@ -103,7 +102,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("iron brazier routes scar offerings through absorption", brazierBlock,
 				"BrazierRites.absorb");
 		assertContains("brazier rites include the scar rite",
-				read("src/main/java/com/vincenthuto/hemomancy/common/rite/brazier/BrazierRites.java"),
+				SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/rite/brazier/BrazierRites.java"),
 				"ScarBrazierRite.INSTANCE");
 		assertContains("brazier learns from scar items", brazier, "tryLearnScar");
 		assertContains("brazier commits scar pattern loadouts", brazier, "tryCommitLoadout");
@@ -116,9 +115,9 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("effigy screen renders known scars", screen, "renderScarList");
 	}
 
-	private static void masonsEffigyScreenMatchesConceptLayout() throws IOException {
-		String menu = read("src/main/java/com/vincenthuto/hemomancy/common/menu/tile/functional/MasonsEffigyMenu.java");
-		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MasonsEffigyScreen.java");
+	private static void masonsEffigyScreenMatchesConceptLayout() {
+		String menu = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/menu/tile/functional/MasonsEffigyMenu.java");
+		String screen = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MasonsEffigyScreen.java");
 
 		assertContains("effigy menu exposes inventory origin x", menu, "PLAYER_INV_X = 32");
 		assertContains("effigy menu exposes inventory origin y", menu, "PLAYER_INV_Y = 150");
@@ -151,19 +150,19 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("effigy screen renders active socket strip", screen, "renderActiveScarSockets");
 		assertContains("effigy screen renders known scars heading", screen, "label.hemomancy.mason_effigy.known_scars");
 		assertContains("effigy screen keeps known scar list renderer", screen, "renderScarList");
-		assertDoesNotContain("effigy screen no longer draws noisy portrait overlay", screen, "renderVeinOverlay");
-		assertDoesNotContain("effigy screen no longer uses symbolic scar glyphs", screen, "drawScarGlyph");
-		assertDoesNotContain("effigy screen no longer uses vanilla button builder", screen, "Button.builder");
+		assertNotContains("effigy screen no longer draws noisy portrait overlay", screen, "renderVeinOverlay");
+		assertNotContains("effigy screen no longer uses symbolic scar glyphs", screen, "drawScarGlyph");
+		assertNotContains("effigy screen no longer uses vanilla button builder", screen, "Button.builder");
 	}
 
-	private static void masonEffigyMotifPaperPreparesDynamicPattern() throws IOException {
-		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/MasonsEffigyBlock.java");
-		String blockEntity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/MasonsEffigyBlockEntity.java");
-		String packet = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/scars/PacketPrepareScarPattern.java");
-		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/ScarPatternItemRenderer.java");
-		String effigyRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/MasonsEffigyRenderer.java");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
-		String projection = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
+	private static void masonEffigyMotifPaperPreparesDynamicPattern() {
+		String block = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/MasonsEffigyBlock.java");
+		String blockEntity = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/MasonsEffigyBlockEntity.java");
+		String packet = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/scars/PacketPrepareScarPattern.java");
+		String renderer = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/render/item/ScarPatternItemRenderer.java");
+		String effigyRenderer = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/MasonsEffigyRenderer.java");
+		String clientEvents = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
+		String projection = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 
 		assertContains("effigy stores selected scar ids", blockEntity, "selectedScarIds");
 		assertContains("effigy exposes selected scar ids", blockEntity, "getSelectedScarIds()");
@@ -182,7 +181,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("effigy stores pending motif", blockEntity, "pendingMotif");
 		assertContains("effigy requires five hundred blood per scar", blockEntity, "BLOOD_PER_SCAR = 500.0D");
 		assertContains("effigy charges with projected blood", blockEntity, "receiveProjectedBlood");
-		assertContains("effigy reports blood charge feedback", blockEntity, "Effigy blood charge:");
+		assertShowsEnglish("effigy reports blood charge feedback", blockEntity, "Effigy blood charge:");
 		assertContains("effigy completion creates scar pattern", blockEntity, "ItemScarPattern.createPreparedPattern");
 		assertContains("effigy completion ejects scar pattern", blockEntity, "level.addFreshEntity(patternEntity)");
 		assertContains("effigy completion bursts red particles", blockEntity, "PacketHandler.sendSanguineOmenEffect");
@@ -196,51 +195,35 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("effigy renderer registered", clientEvents,
 				"event.registerBlockEntityRenderer(BlockEntityInit.mason_effigy.get(), MasonsEffigyRenderer::new)");
 		assertContains("prepare packet writes selected scars to effigy", packet, "effigy.setSelectedScarIds(selected)");
-		assertDoesNotContain("prepare packet no longer gives free scar pattern", packet, "player.getInventory().add(pattern)");
-		assertDoesNotContain("right click no longer directly creates scar pattern", block, "ItemScarPattern.createPreparedPattern");
+		assertNotContains("prepare packet no longer gives free scar pattern", packet, "player.getInventory().add(pattern)");
+		assertNotContains("right click no longer directly creates scar pattern", block, "ItemScarPattern.createPreparedPattern");
 		assertContains("scar pattern renderer reads dynamic ids", renderer, "ItemScarPattern.getScarIds(stack)");
 		assertContains("scar pattern renderer lays out four quadrants", renderer, "QUADRANT_OFFSETS");
 		assertContains("scar pattern renderer renders actual scar item overlays", renderer, "scarStackFor");
 		assertContains("scar pattern renderer renders only overlay layer from scar item model", renderer, "quad.getTintIndex() == 1");
 		assertContains("scar pattern renderer rotates dynamic overlays around z", renderer, "Axis.ZP.rotationDegrees");
-		assertDoesNotContain("scar pattern renderer no longer renders whole scar items", renderer, "renderStatic(scarStack");
+		assertNotContains("scar pattern renderer no longer renders whole scar items", renderer, "renderStatic(scarStack");
 	}
 
-	private static void dynamicScarPatternReplacesPerScarPatternItems() throws IOException {
-		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
-		String pattern = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/ItemScarPattern.java");
-		String slot = read("src/main/java/com/vincenthuto/hemomancy/common/menu/slot/ScarPatternSlot.java");
-		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/crafting/scar/ScarStationScreen.java");
-		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/ScarPatternItemRenderer.java");
+	private static void dynamicScarPatternReplacesPerScarPatternItems() {
+		String itemInit = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
+		String pattern = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/ItemScarPattern.java");
+		String slot = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/menu/slot/ScarPatternSlot.java");
+		String screen = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/crafting/scar/ScarStationScreen.java");
+		String renderer = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/render/item/ScarPatternItemRenderer.java");
 
 		assertContains("single scar pattern item remains registered", itemInit, "BASEITEMS.register(\"scar_pattern\"");
-		assertDoesNotContain("old heart scar pattern item is removed", itemInit, "scar_pattern_heart");
-		assertDoesNotContain("old blood-honed scar pattern item is removed", itemInit, "scar_pattern_blood_honed");
+		assertNotContains("old heart scar pattern item is removed", itemInit, "scar_pattern_heart");
+		assertNotContains("old blood-honed scar pattern item is removed", itemInit, "scar_pattern_blood_honed");
 		assertContains("scar pattern can create single-template stacks", pattern, "createTemplatePattern");
 		assertContains("scar pattern exposes multiple station entries", pattern, "getTemplateEntries");
-		assertDoesNotContain("scar pattern no longer stores a fixed scar holder", pattern, "DeferredHolder<Item, Item>");
-		assertDoesNotContain("scar pattern no longer stores a fixed recipe path", pattern, "String path");
+		assertNotContains("scar pattern no longer stores a fixed scar holder", pattern, "DeferredHolder<Item, Item>");
+		assertNotContains("scar pattern no longer stores a fixed recipe path", pattern, "String path");
 		assertContains("scar pattern slot accepts scar patterns", slot, "stack.getItem() instanceof ItemScarPattern");
-		assertDoesNotContain("scar pattern slot rejects retired binders", slot, "ItemScarBinder");
+		assertNotContains("scar pattern slot rejects retired binders", slot, "ItemScarBinder");
 		assertContains("scar station rebuilds pattern entries from dynamic item", screen, "ItemScarPattern.getTemplateEntries");
-		assertDoesNotContain("scar station no longer scans binders for patterns", screen, "ScarBinderItemHandler");
+		assertNotContains("scar station no longer scans binders for patterns", screen, "ScarBinderItemHandler");
 		assertContains("scar pattern renderer resolves actual scar items", renderer, "BuiltInRegistries.ITEM.get(scarId)");
-		assertDoesNotContain("scar pattern renderer no old pattern item lookup", renderer, "scar_pattern_");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (unexpected '" + unexpected + "')");
-		}
+		assertNotContains("scar pattern renderer no old pattern item lookup", renderer, "scar_pattern_");
 	}
 }

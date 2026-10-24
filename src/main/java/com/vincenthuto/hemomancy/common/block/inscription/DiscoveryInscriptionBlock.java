@@ -201,7 +201,7 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 			HarbingerAdvancementGranter.grantIfNotDone(player, advancement);
 		}
 		PacketHandler.sendToPlayer(player, new OpenInscriptionPacket(
-				definition.title(), revealedText(definition), true, definition.riteId(), requiresAbocipherLiteracy));
+				Component.literal(definition.title()), revealedText(definition), true, definition.riteId(), requiresAbocipherLiteracy));
 	}
 
 	private static int levelFor(Player player, DiscoveryInscriptionDefinition.Path path) {
@@ -214,10 +214,10 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 		return definition.revealedText().isEmpty() ? definition.obscuredText() : definition.revealedText();
 	}
 
-	private static String obscuredTitle(DiscoveryInscriptionDefinition definition) {
-		return definition.kind() == DiscoveryInscriptionDefinition.Kind.BLOOD_ECHO
-				? "Obscured Blood Echo"
-				: "Obscured Rite Fragment";
+	private static Component obscuredTitle(DiscoveryInscriptionDefinition definition) {
+		return Component.translatable(definition.kind() == DiscoveryInscriptionDefinition.Kind.BLOOD_ECHO
+				? "screen.hemomancy.discovery_inscription.obscured_blood_echo"
+				: "screen.hemomancy.discovery_inscription.obscured_rite_fragment");
 	}
 
 	private static boolean requiresAbocipherLiteracy(DiscoveryInscriptionDefinition definition) {

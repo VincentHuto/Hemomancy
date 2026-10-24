@@ -32,7 +32,7 @@ public class UnstainedBookItem extends ItemGuideBook {
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, tooltip, flagIn);
-        tooltip.add(Component.literal(ChatFormatting.AQUA + "A guide to the Unstained and their ways."));
+        tooltip.add(Component.translatable("tooltip.hemomancy.unstained_book.a_guide_to_the_unstained_and").withStyle(ChatFormatting.AQUA));
     }
 
     public Rarity getRarity(ItemStack par1ItemStack) {

@@ -27,10 +27,10 @@ import java.util.UUID;
 
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)
-public final class MorphlingBodyIdiomGameTests {
+public final class MorphlingEnvironmentGameTests {
 	private static final String EMPTY_TEMPLATE = "bastion/mobs/empty";
 
-	private MorphlingBodyIdiomGameTests() {
+	private MorphlingEnvironmentGameTests() {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)

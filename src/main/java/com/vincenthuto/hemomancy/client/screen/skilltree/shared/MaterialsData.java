@@ -44,1490 +44,1490 @@ public final class MaterialsData {
 
     private static List<MaterialEntry> buildBloodEntries() {
         List<MaterialEntry> list = new ArrayList<>();
-        list.add(new MaterialEntry("hematic_microscope", "Hematic Microscope",
-                "Alchemist: main-hand microscope, offhand sample; hold Use for two seconds.",
-                "Clinical Tools", () -> new ItemStack(ItemInit.hematic_microscope.get())));
-        list.add(new MaterialEntry("phlebotomists_cabinet", "Phlebotomist's Cabinet",
-                "Alchemist: nine specimen identities, 64 component-identical full vials per cell.",
-                "Clinical Tools", () -> new ItemStack(BlockInit.phlebotomists_cabinet.get())));
-        list.add(new MaterialEntry("phlebotomists_field_case", "Phlebotomist's Field Case",
-                "Artificer: place to open; close before pickup. Nine identities, sixteen vials per cell.",
-                "Clinical Tools", () -> new ItemStack(BlockInit.phlebotomists_field_case.get())));
-        list.add(new MaterialEntry("clairaudiograph", "Clairaudiograph",
-                "Mnemonist: carve a creature call from a filled vial into a blank Wax Cylinder.",
-                "Clinical Tools", () -> new ItemStack(BlockInit.clairaudiograph.get())));
-        list.add(new MaterialEntry("wax_cylinder", "Wax Cylinder",
-                "Ordinary medium for creature calls and single-use Resonant Forge patterns.",
-                "Clinical Tools", () -> new ItemStack(ItemInit.wax_cylinder.get())));
-        list.add(new MaterialEntry("ambergris_cylinder", "Ambergris Cylinder",
-                "Whale-derived medium for ancient records and Masterwork Forge patterns; also accepts ordinary recordings.",
-                "Clinical Tools", () -> new ItemStack(ItemInit.ambergris_cylinder.get())));
+        list.add(new MaterialEntry("hematic_microscope", "item.hemomancy.hematic_microscope",
+                "material.hemomancy.hematic_microscope.desc",
+                "material.hemomancy.category.clinical_tools", () -> new ItemStack(ItemInit.hematic_microscope.get())));
+        list.add(new MaterialEntry("phlebotomists_cabinet", "block.hemomancy.phlebotomists_cabinet",
+                "material.hemomancy.phlebotomists_cabinet.desc",
+                "material.hemomancy.category.clinical_tools", () -> new ItemStack(BlockInit.phlebotomists_cabinet.get())));
+        list.add(new MaterialEntry("phlebotomists_field_case", "block.hemomancy.phlebotomists_field_case",
+                "material.hemomancy.phlebotomists_field_case.desc",
+                "material.hemomancy.category.clinical_tools", () -> new ItemStack(BlockInit.phlebotomists_field_case.get())));
+        list.add(new MaterialEntry("clairaudiograph", "block.hemomancy.clairaudiograph",
+                "material.hemomancy.clairaudiograph.desc",
+                "material.hemomancy.category.clinical_tools", () -> new ItemStack(BlockInit.clairaudiograph.get())));
+        list.add(new MaterialEntry("wax_cylinder", "item.hemomancy.wax_cylinder",
+                "material.hemomancy.wax_cylinder.desc",
+                "material.hemomancy.category.clinical_tools", () -> new ItemStack(ItemInit.wax_cylinder.get())));
+        list.add(new MaterialEntry("ambergris_cylinder", "item.hemomancy.ambergris_cylinder",
+                "material.hemomancy.ambergris_cylinder.desc",
+                "material.hemomancy.category.clinical_tools", () -> new ItemStack(ItemInit.ambergris_cylinder.get())));
 
 
         // ── Functional Blocks ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("dendritic_distributor", "Dendritic Distributor",
-                "Synaptic Loadout station for saving and applying remembered manipulation patterns.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.dendritic_distributor.get()),
+        list.add(new MaterialEntry("dendritic_distributor", "block.hemomancy.dendritic_distributor",
+                "material.hemomancy.dendritic_distributor.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.dendritic_distributor.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("somatic_loom", "Somatic Loom",
-                "Weaves blood memories into usable manipulation forms.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.somatic_loom.get()),
+        list.add(new MaterialEntry("somatic_loom", "block.hemomancy.somatic_loom",
+                "material.hemomancy.somatic_loom.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.somatic_loom.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("mnemonic_reliquary", "Mnemonic Reliquary",
-				"Loadout block for equipping and managing Muscle and manipulation memories.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.mnemonic_reliquary.get()),
-				true, UnlockPredicate.minDegree(3)));
+        list.add(new MaterialEntry("mnemonic_reliquary", "block.hemomancy.mnemonic_reliquary",
+                "material.hemomancy.mnemonic_reliquary.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.mnemonic_reliquary.get()),
+                true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("ghastly_alembic", "Ghastly Alembic",
-                "Processes organic materials into useful blood-craft reagents.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.ghastly_alembic.get()),
+        list.add(new MaterialEntry("ghastly_alembic", "block.hemomancy.ghastly_alembic",
+                "material.hemomancy.ghastly_alembic.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.ghastly_alembic.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("vial_centrifuge", "Vial Centrifuge",
-                "Separates blood samples into component enzymes.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.vial_centrifuge.get()),
+        list.add(new MaterialEntry("vial_centrifuge", "block.hemomancy.vial_centrifuge",
+                "material.hemomancy.vial_centrifuge.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.vial_centrifuge.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("earthen_vein", "Earthen Vein",
-                "A living conduit block that transports blood volume.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.earthen_vein.get()),
+        list.add(new MaterialEntry("earthen_vein", "block.hemomancy.earthen_vein",
+                "material.hemomancy.earthen_vein.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.earthen_vein.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("iron_brazier", "Iron Brazier",
-                "Ritual fire source for blood crafting and rites.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.iron_brazier.get()),
+        list.add(new MaterialEntry("iron_brazier", "block.hemomancy.iron_brazier",
+                "material.hemomancy.iron_brazier.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.iron_brazier.get()),
                 true, UnlockPredicate.minDegree(1)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("morphling_incubator", "Morphling Incubator",
-                "Incubates morphling polyps into specialised morphlings.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.morphling_incubator.get()),
+        list.add(new MaterialEntry("morphling_incubator", "block.hemomancy.morphling_incubator",
+                "material.hemomancy.morphling_incubator.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.morphling_incubator.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("scar_station", "Cerebral Scar Station",
-                "Carves Scar Patterns into blank scars.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.scar_station.get()),
+        list.add(new MaterialEntry("scar_station", "material.hemomancy.scar_station",
+                "material.hemomancy.scar_station.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.scar_station.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("scrying_podium", "Scrying Podium",
-                "Reveals hidden information about blood tendencies.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.scrying_podium.get()),
+        list.add(new MaterialEntry("scrying_podium", "block.hemomancy.scrying_podium",
+                "material.hemomancy.scrying_podium.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.scrying_podium.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("scarlet_vanity", "Scarlet Vanity",
-                "Degree-3 station, raised as a Working craft, for equipping charms, gourds, morphlings, and staff fittings.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.scarlet_vanity.get()),
+        list.add(new MaterialEntry("scarlet_vanity", "block.hemomancy.scarlet_vanity",
+                "material.hemomancy.scarlet_vanity.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.scarlet_vanity.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("fungal_podium", "Fungal Podium",
-                "Processes fungal spores for scar imprinting.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.fungal_podium.get()),
+        list.add(new MaterialEntry("fungal_podium", "block.hemomancy.fungal_podium",
+                "material.hemomancy.fungal_podium.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.fungal_podium.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("fungal_implantation_pylon", "Fungal Implantation Pylon",
-                "Degree-4 station, raised as a Working craft, for installing one cultivated fungal scar.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.fungal_implantation_pylon.get()),
+        list.add(new MaterialEntry("fungal_implantation_pylon", "block.hemomancy.fungal_implantation_pylon",
+                "material.hemomancy.fungal_implantation_pylon.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.fungal_implantation_pylon.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("mortal_display", "Mortal Display",
-                "Displays and manages visceral organ echoes.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.mortal_display.get()),
+        list.add(new MaterialEntry("mortal_display", "block.hemomancy.mortal_display",
+                "material.hemomancy.mortal_display.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.mortal_display.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("visceral_mirror", "Visceral Mirror",
-                "Reflects the player's internal organ state.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.visceral_mirror.get()),
+        list.add(new MaterialEntry("visceral_mirror", "block.hemomancy.visceral_mirror",
+                "material.hemomancy.visceral_mirror.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.visceral_mirror.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_crystal_block", "Blood Crystal",
-                "A crystallised concentration of sanguine energy.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.blood_crystal.get()),
+        list.add(new MaterialEntry("blood_crystal_block", "material.hemomancy.blood_crystal_block",
+                "material.hemomancy.blood_crystal_block.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.blood_crystal.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("suspended_vivianite", "Suspended Vivianite",
-                "A vivianite crystal frame grown from bog-body blood mineral deposits.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.suspended_vivianite.get()),
+        list.add(new MaterialEntry("suspended_vivianite", "block.hemomancy.suspended_vivianite",
+                "material.hemomancy.suspended_vivianite.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.suspended_vivianite.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_basin", "Blood Basin",
-                "Ritual basin used to pool sanguine energy for blood crafting.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.blood_basin.get()),
+        list.add(new MaterialEntry("blood_basin", "block.hemomancy.blood_basin",
+                "material.hemomancy.blood_basin.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.blood_basin.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_pylon", "Blood Pylon",
-                "Radiates blood energy outward; links to other blood structures.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.blood_pylon.get()),
+        list.add(new MaterialEntry("blood_pylon", "block.hemomancy.blood_pylon",
+                "material.hemomancy.blood_pylon.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.blood_pylon.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("consecrated_bloodwell", "Consecrated Bloodwell",
-                "A sanctified blood reservoir at the heart of the Founding Fane.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.consecrated_bloodwell.get()),
+        list.add(new MaterialEntry("consecrated_bloodwell", "block.hemomancy.consecrated_bloodwell",
+                "material.hemomancy.consecrated_bloodwell.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.consecrated_bloodwell.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("covenant_throne", "Covenant Throne",
-                "The seat of authority within a consecrated Fane.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.covenant_throne.get()),
+        list.add(new MaterialEntry("covenant_throne", "block.hemomancy.covenant_throne",
+                "material.hemomancy.covenant_throne.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.covenant_throne.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sanguine_vigil", "Sanguine Vigil",
-                "A watchful sentinel structure tied to the Founding Fane boundary.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.sanguine_vigil.get()),
+        list.add(new MaterialEntry("sanguine_vigil", "block.hemomancy.sanguine_vigil",
+                "material.hemomancy.sanguine_vigil.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.sanguine_vigil.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sanguine_monolith", "Sanguine Monolith",
-                "Tall obelisk that anchors blood energy in the surrounding area.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.sanguine_monolith.get()),
+        list.add(new MaterialEntry("sanguine_monolith", "block.hemomancy.sanguine_monolith",
+                "material.hemomancy.sanguine_monolith.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.sanguine_monolith.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("harbinger_escritoire", "Harbinger Escritoire",
-                "Holds a Liber for reading and dictates pending field notes using blood or experience.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.harbinger_escritoire.get()),
+        list.add(new MaterialEntry("harbinger_escritoire", "block.hemomancy.harbinger_escritoire",
+                "material.hemomancy.harbinger_escritoire.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.harbinger_escritoire.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("morphling_cradle", "Morphling Cradle",
-                "Nurtures developing morphling polyps before incubation.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.morphling_cradle.get()),
+        list.add(new MaterialEntry("morphling_cradle", "block.hemomancy.morphling_cradle",
+                "material.hemomancy.morphling_cradle.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.morphling_cradle.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("mycelial_crucible", "Mycelial Crucible",
-                "Processes fungal and sanguine matter together for advanced reagents.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.mycelial_crucible.get()),
+        list.add(new MaterialEntry("mycelial_crucible", "block.hemomancy.mycelial_crucible",
+                "material.hemomancy.mycelial_crucible.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.mycelial_crucible.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_trial_altar", "Blood Trial Altar",
-                "Altar at which the trials of the Saints are conducted.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.blood_trial_altar.get()),
+        list.add(new MaterialEntry("blood_trial_altar", "block.hemomancy.blood_trial_altar",
+                "material.hemomancy.blood_trial_altar.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.blood_trial_altar.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("bog_body", "Bog Body",
-                "A preserved corpse saturated with sanguine minerals. Yields vivianite.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.bog_body.get()),
+        list.add(new MaterialEntry("bog_body", "block.hemomancy.bog_body",
+                "material.hemomancy.bog_body.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.bog_body.get()),
                 true, UnlockPredicate.minDegree(2)));
 
         // ── Building Blocks ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("venous_stone", "Venous Stone",
-                "Dark stone veined with sanguine minerals. Core building material.",
-                "Building Blocks", () -> new ItemStack(BlockInit.venous_stone.get()),
+        list.add(new MaterialEntry("venous_stone", "block.hemomancy.venous_stone",
+                "material.hemomancy.venous_stone.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.venous_stone.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hematic_iron_block", "Hematic Iron Block",
-                "Block of refined hematic iron. Sturdy and fire-resistant.",
-                "Building Blocks", () -> new ItemStack(BlockInit.hematic_iron_block.get()),
+        list.add(new MaterialEntry("hematic_iron_block", "block.hemomancy.hematic_iron_block",
+                "material.hemomancy.hematic_iron_block.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.hematic_iron_block.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sanguine_glass", "Sanguine Glass",
-                "Translucent glass infused with blood. Decorative building material.",
-                "Building Blocks", () -> new ItemStack(BlockInit.sanguine_glass.get()),
+        list.add(new MaterialEntry("sanguine_glass", "block.hemomancy.sanguine_glass",
+                "material.hemomancy.sanguine_glass.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.sanguine_glass.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("vivianite_glass", "Vivianite Glass",
-                "Translucent glass made from blood-aligned vivianite mineral.",
-                "Building Blocks", () -> new ItemStack(BlockInit.vivianite_glass.get()),
+        list.add(new MaterialEntry("vivianite_glass", "block.hemomancy.vivianite_glass",
+                "material.hemomancy.vivianite_glass.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.vivianite_glass.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("conscious_mass", "Conscious Mass",
-                "Pulsing organic block formed from concentrated blood energy.",
-                "Building Blocks", () -> new ItemStack(BlockInit.conscious_mass.get()),
+        list.add(new MaterialEntry("conscious_mass", "block.hemomancy.conscious_mass",
+                "material.hemomancy.conscious_mass.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.conscious_mass.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("erythrocytic_dirt", "Erythrocytic Dirt",
-                "Blood-rich soil that supports hemomantic flora.",
-                "Building Blocks", () -> new ItemStack(BlockInit.erythrocytic_dirt.get()),
+        list.add(new MaterialEntry("erythrocytic_dirt", "block.hemomancy.erythrocytic_dirt",
+                "material.hemomancy.erythrocytic_dirt.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.erythrocytic_dirt.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hematic_iron_ore", "Hematic Iron Ore",
-                "Ore vein containing raw hematic iron deposits.",
-                "Building Blocks", () -> new ItemStack(BlockInit.hematic_iron_ore.get()),
+        list.add(new MaterialEntry("hematic_iron_ore", "block.hemomancy.hematic_iron_ore",
+                "material.hemomancy.hematic_iron_ore.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.hematic_iron_ore.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hematic_iron_pillar", "Hematic Iron Pillar",
-                "Decorative column of refined hematic iron.",
-                "Building Blocks", () -> new ItemStack(BlockInit.hematic_iron_pillar.get()),
+        list.add(new MaterialEntry("hematic_iron_pillar", "block.hemomancy.hematic_iron_pillar",
+                "material.hemomancy.hematic_iron_pillar.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.hematic_iron_pillar.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("chiseled_hematic_iron_block", "Chiseled Hematic Iron",
-                "Hematic iron block carved with sanguine motifs.",
-                "Building Blocks", () -> new ItemStack(BlockInit.chiseled_hematic_iron_block.get()),
+        list.add(new MaterialEntry("chiseled_hematic_iron_block", "material.hemomancy.chiseled_hematic_iron_block",
+                "material.hemomancy.chiseled_hematic_iron_block.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.chiseled_hematic_iron_block.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("gilded_venous_stone", "Gilded Venous Stone",
-                "Venous stone accented with blood-gilt veining.",
-                "Building Blocks", () -> new ItemStack(BlockInit.gilded_venous_stone.get()),
+        list.add(new MaterialEntry("gilded_venous_stone", "block.hemomancy.gilded_venous_stone",
+                "material.hemomancy.gilded_venous_stone.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.gilded_venous_stone.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("polished_venous_stone", "Polished Venous Stone",
-                "Smooth-ground venous stone. Refined building material.",
-                "Building Blocks", () -> new ItemStack(BlockInit.polished_venous_stone.get()),
+        list.add(new MaterialEntry("polished_venous_stone", "block.hemomancy.polished_venous_stone",
+                "material.hemomancy.polished_venous_stone.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.polished_venous_stone.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("polished_venous_stone_bricks", "Polished Venous Stone Bricks",
-                "Polished venous stone cut into precise brick shapes.",
-                "Building Blocks", () -> new ItemStack(BlockInit.polished_venous_stone_bricks.get()),
+        list.add(new MaterialEntry("polished_venous_stone_bricks", "block.hemomancy.polished_venous_stone_bricks",
+                "material.hemomancy.polished_venous_stone_bricks.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.polished_venous_stone_bricks.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("infested_venous_stone", "Infested Venous Stone",
-                "Venous stone colonised by fungal hyphae.",
-                "Building Blocks", () -> new ItemStack(BlockInit.infested_venous_stone.get()),
+        list.add(new MaterialEntry("infested_venous_stone", "block.hemomancy.infested_venous_stone",
+                "material.hemomancy.infested_venous_stone.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.infested_venous_stone.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_wood_log", "Blood Wood Log",
-                "Dense crimson-barked log from the fungal tree of the Sporecrown biome.",
-                "Building Blocks", () -> new ItemStack(BlockInit.blood_wood_log.get()),
+        list.add(new MaterialEntry("blood_wood_log", "block.hemomancy.blood_wood_log",
+                "material.hemomancy.blood_wood_log.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.blood_wood_log.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_wood_planks", "Blood Wood Planks",
-                "Planks milled from blood wood logs. Richly red grain.",
-                "Building Blocks", () -> new ItemStack(BlockInit.blood_wood_planks.get()),
+        list.add(new MaterialEntry("blood_wood_planks", "block.hemomancy.blood_wood_planks",
+                "material.hemomancy.blood_wood_planks.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.blood_wood_planks.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("erythrocytic_mycelium", "Erythrocytic Mycelium",
-                "Blood-rich mycelium spread. The hyphae web pulses faintly.",
-                "Building Blocks", () -> new ItemStack(BlockInit.erythrocytic_mycelium.get()),
+        list.add(new MaterialEntry("erythrocytic_mycelium", "block.hemomancy.erythrocytic_mycelium",
+                "material.hemomancy.erythrocytic_mycelium.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.erythrocytic_mycelium.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("infected_stem", "Infected Stem",
-                "Woody stem of the infected fungal tree, riddled with spore channels.",
-                "Building Blocks", () -> new ItemStack(BlockInit.infected_stem.get()),
+        list.add(new MaterialEntry("infected_stem", "block.hemomancy.infected_stem",
+                "material.hemomancy.infected_stem.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.infected_stem.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hyphae_block", "Hyphae Block",
-                "Compressed hyphae. Springy and slightly warm to the touch.",
-                "Building Blocks", () -> new ItemStack(BlockInit.hyphae_block.get()),
+        list.add(new MaterialEntry("hyphae_block", "block.hemomancy.hyphae_block",
+                "material.hemomancy.hyphae_block.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.hyphae_block.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("infected_cap", "Infected Cap",
-                "The cap layer of the infected fungal tree. Sporulates gently.",
-                "Building Blocks", () -> new ItemStack(BlockInit.infected_cap.get()),
+        list.add(new MaterialEntry("infected_cap", "block.hemomancy.infected_cap",
+                "material.hemomancy.infected_cap.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.infected_cap.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("fruiting_infected_cap", "Fruiting Infected Cap",
-                "An infected cap in active fruiting phase. Denser with spores.",
-                "Building Blocks", () -> new ItemStack(BlockInit.fruiting_infected_cap.get()),
+        list.add(new MaterialEntry("fruiting_infected_cap", "block.hemomancy.fruiting_infected_cap",
+                "material.hemomancy.fruiting_infected_cap.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.fruiting_infected_cap.get()),
                 true, UnlockPredicate.minDegree(5)));
 
         // ── Raw Materials ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sanguine_formation", "Sanguine Formation",
-                "Raw blood crystal; basic crafting ingredient. Condensed in a cauldron filled by Blood Projection.",
-                "Materials", () -> new ItemStack(ItemInit.sanguine_formation.get()),
+        list.add(new MaterialEntry("sanguine_formation", "item.hemomancy.sanguine_formation",
+                "material.hemomancy.sanguine_formation.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.sanguine_formation.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sanguine_condenser", "Sanguine Condenser",
-                "An empty cauldron that has taken projected blood. It sets Sanguine Formations; Working rites grow it into a Latticed and then a Druse Condenser.",
-                "Materials", () -> new ItemStack(BlockInit.sanguine_condenser.get()),
+        list.add(new MaterialEntry("sanguine_condenser", "block.hemomancy.sanguine_condenser",
+                "material.hemomancy.sanguine_condenser.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(BlockInit.sanguine_condenser.get()),
                 true, UnlockPredicate.minDegree(1)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hematic_iron_scrap", "Hematic Iron Scrap",
-                "Scrap metal infused with blood iron. Smelt into ingots.",
-                "Materials", () -> new ItemStack(ItemInit.hematic_iron_scrap.get()),
+        list.add(new MaterialEntry("hematic_iron_scrap", "item.hemomancy.hematic_iron_scrap",
+                "material.hemomancy.hematic_iron_scrap.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.hematic_iron_scrap.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_crystal_shard", "Blood Crystal Shard",
-                "A shard of crystallised blood energy.",
-                "Materials", () -> new ItemStack(ItemInit.blood_crystal_shard.get()),
+        list.add(new MaterialEntry("blood_crystal_shard", "item.hemomancy.blood_crystal_shard",
+                "material.hemomancy.blood_crystal_shard.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.blood_crystal_shard.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_rock", "Blood Rock",
-                "Dense stone saturated with sanguine energy.",
-                "Materials", () -> new ItemStack(ItemInit.blood_rock.get()),
+        list.add(new MaterialEntry("blood_rock", "item.hemomancy.blood_rock",
+                "material.hemomancy.blood_rock.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.blood_rock.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("foul_paste", "Foul Paste",
-                "A vile mixture used in blood crafting recipes.",
-                "Materials", () -> new ItemStack(ItemInit.foul_paste.get()),
+        list.add(new MaterialEntry("foul_paste", "item.hemomancy.foul_paste",
+                "material.hemomancy.foul_paste.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.foul_paste.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sanguine_conduit", "Sanguine Conduit",
-                "Channels blood energy between devices and structures.",
-                "Materials", () -> new ItemStack(ItemInit.sanguine_conduit.get()),
+        list.add(new MaterialEntry("sanguine_conduit", "item.hemomancy.sanguine_conduit",
+                "material.hemomancy.sanguine_conduit.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.sanguine_conduit.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("puppeteering_thread", "Enthralling Filament",
-                "Restraint fibre from Peacock Spiders, surface Hemojellies and Blood Drunk Puppeteers; used in memory weaving and stored Crossbar tension.",
-                "Materials", () -> new ItemStack(ItemInit.puppeteering_thread.get()),
+        list.add(new MaterialEntry("puppeteering_thread", "item.hemomancy.puppeteering_thread",
+                "material.hemomancy.puppeteering_thread.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.puppeteering_thread.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("bleeding_bulb", "Bleeding Bulb",
-                "Primary bleeding-heart flora reagent for hemomantic recipes.",
-                "Plants", () -> new ItemStack(ItemInit.bleeding_bulb.get()),
+        list.add(new MaterialEntry("bleeding_bulb", "item.hemomancy.bleeding_bulb",
+                "material.hemomancy.bleeding_bulb.desc",
+                "material.hemomancy.category.plants", () -> new ItemStack(ItemInit.bleeding_bulb.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_chum", "Blood Chum",
-                "Bloody bait mass that briefly chums nearby fishing waters without improving treasure quality.",
-                "Materials", () -> new ItemStack(ItemInit.blood_chum.get()),
+        list.add(new MaterialEntry("blood_chum", "item.hemomancy.blood_chum",
+                "material.hemomancy.blood_chum.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.blood_chum.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("vivianite_cluster", "Vivianite Cluster",
-                "A mineral cluster with faint sanguine resonance.",
-                "Materials", () -> new ItemStack(ItemInit.vivianite_cluster.get()),
+        list.add(new MaterialEntry("vivianite_cluster", "item.hemomancy.vivianite_cluster",
+                "material.hemomancy.vivianite_cluster.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.vivianite_cluster.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("spore_sac", "Spore Sac",
-                "Collected fungal spores for various applications.",
-                "Materials", () -> new ItemStack(ItemInit.spore_sac.get()),
+        list.add(new MaterialEntry("spore_sac", "item.hemomancy.spore_sac",
+                "material.hemomancy.spore_sac.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.spore_sac.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("chitinous_husk", "Chitinous Husk",
-                "Hardened exoskeletal material from blood creatures.",
-                "Materials", () -> new ItemStack(ItemInit.chitinous_husk.get()),
+        list.add(new MaterialEntry("chitinous_husk", "item.hemomancy.chitinous_husk",
+                "material.hemomancy.chitinous_husk.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.chitinous_husk.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("serpent_scale", "Serpent Scale",
-                "Scale from a blood serpent. Used in advanced crafting.",
-                "Materials", () -> new ItemStack(ItemInit.serpent_scale.get()),
+        list.add(new MaterialEntry("serpent_scale", "item.hemomancy.serpent_scale",
+                "material.hemomancy.serpent_scale.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.serpent_scale.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("toxicognath", "Toxicognath",
-                "Venom-bearing mouthpart taken from a Venom-Rib Centipede.",
-                "Materials", () -> new ItemStack(ItemInit.toxicognath.get()),
+        list.add(new MaterialEntry("toxicognath", "item.hemomancy.toxicognath",
+                "material.hemomancy.toxicognath.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.toxicognath.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("fargone_proboscis", "Fargone Proboscis",
-                "A blood-drinking proboscis cut from a Fargone.",
-                "Materials", () -> new ItemStack(ItemInit.fargone_proboscis.get()),
+        list.add(new MaterialEntry("fargone_proboscis", "item.hemomancy.fargone_proboscis",
+                "material.hemomancy.fargone_proboscis.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.fargone_proboscis.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("telson", "Telson",
-                "A desiccant scorpion stinger and venom bulb prepared for corrosive armor baths.",
-                "Materials", () -> new ItemStack(ItemInit.telson.get()),
+        list.add(new MaterialEntry("telson", "item.hemomancy.telson",
+                "material.hemomancy.telson.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.telson.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("queens_physogastrism", "Queen's Physogastrism",
-                "Distended royal brood tissue used in hardening armor oleums.",
-                "Materials", () -> new ItemStack(ItemInit.queens_physogastrism.get()),
+        list.add(new MaterialEntry("queens_physogastrism", "item.hemomancy.queens_physogastrism",
+                "material.hemomancy.queens_physogastrism.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.queens_physogastrism.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("cuttlefish_chromatophores", "Chromatophores",
-                "Color and light cells shared by Prism Cuttles, Bloody-Belly Comb Jellies and Luminal Cicadas.",
-                "Materials", () -> new ItemStack(ItemInit.cuttlefish_chromatophores.get()),
+        list.add(new MaterialEntry("cuttlefish_chromatophores", "item.hemomancy.cuttlefish_chromatophores",
+                "material.hemomancy.cuttlefish_chromatophores.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.cuttlefish_chromatophores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sclerotic_oleum", "Sclerotic Oleum",
-                "Armor-hardening quench oil for Chitinite sidegrades.",
-                "Materials", () -> new ItemStack(ItemInit.sclerotic_oleum.get()),
+        list.add(new MaterialEntry("sclerotic_oleum", "item.hemomancy.sclerotic_oleum",
+                "material.hemomancy.sclerotic_oleum.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.sclerotic_oleum.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("aculeate_vitriol", "Aculeate Vitriol",
-                "Biting corrosive infusion for Barbed sidegrades.",
-                "Materials", () -> new ItemStack(ItemInit.aculeate_vitriol.get()),
+        list.add(new MaterialEntry("aculeate_vitriol", "item.hemomancy.aculeate_vitriol",
+                "material.hemomancy.aculeate_vitriol.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.aculeate_vitriol.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("chromatic_sublimate", "Chromatic Sublimate",
-                "Prismatic control-sheen coating for Prismatic sidegrades.",
-                "Materials", () -> new ItemStack(ItemInit.chromatic_sublimate.get()),
+        list.add(new MaterialEntry("chromatic_sublimate", "item.hemomancy.chromatic_sublimate",
+                "material.hemomancy.chromatic_sublimate.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.chromatic_sublimate.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("venous_pinion", "Venous Pinion",
-                "Rare balancing feather from a Venous Strider, used for emergency-fall sabatons.",
-                "Materials", () -> new ItemStack(ItemInit.venous_pinion.get()),
+        list.add(new MaterialEntry("venous_pinion", "item.hemomancy.venous_pinion",
+                "material.hemomancy.venous_pinion.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.venous_pinion.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hematic_iron_powder", "Hematic Iron Powder",
-                "Ground hematic iron. Intermediate step before smelting into ingots.",
-                "Materials", () -> new ItemStack(ItemInit.hematic_iron_powder.get()),
+        list.add(new MaterialEntry("hematic_iron_powder", "item.hemomancy.hematic_iron_powder",
+                "material.hemomancy.hematic_iron_powder.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.hematic_iron_powder.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sanguine_quintessence", "Sanguine Quintessence",
-                "The purest distillate of blood energy. Required for high-tier workings.",
-                "Materials", () -> new ItemStack(ItemInit.sanguine_quintessence.get()),
+        list.add(new MaterialEntry("sanguine_quintessence", "item.hemomancy.sanguine_quintessence",
+                "material.hemomancy.sanguine_quintessence.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.sanguine_quintessence.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_stained_stone", "Blood-Stained Stone",
-                "Craft each from one Venous Stone, one Sanguine Formation, and redstone, or find it in a Hermitage Remnant. A blank Hematic Memory needs four.",
-                "Materials", () -> new ItemStack(ItemInit.blood_stained_stone.get()),
+        list.add(new MaterialEntry("blood_stained_stone", "material.hemomancy.blood_stained_stone",
+                "material.hemomancy.blood_stained_stone.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.blood_stained_stone.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("fungal_spine", "Fungal Spine",
-                "The ninth owner-bound Pome from one Bloom completes Communion and grants this Spine. Its first use projects your consciousness for two minutes, then forces return.",
-                "Materials", () -> new ItemStack(ItemInit.fungal_spine.get()),
+        list.add(new MaterialEntry("fungal_spine", "item.hemomancy.fungal_spine",
+                "material.hemomancy.fungal_spine.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.fungal_spine.get()),
                 true, UnlockPredicate.minDegree(7)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("curved_horn", "Curved Horn",
-                "A curved horn from a blood-aligned creature. Sturdy and resonant.",
-                "Materials", () -> new ItemStack(ItemInit.curved_horn.get()),
+        list.add(new MaterialEntry("curved_horn", "item.hemomancy.curved_horn",
+                "material.hemomancy.curved_horn.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.curved_horn.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("fervent_husk", "Fervent Husk",
-                "The shed exoskeleton of a Flammeus-aligned creature.",
-                "Materials", () -> new ItemStack(ItemInit.fervent_husk.get()),
+        list.add(new MaterialEntry("fervent_husk", "item.hemomancy.fervent_husk",
+                "material.hemomancy.fervent_husk.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.fervent_husk.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("vivianite_scalpel", "Vivianite Scalpel",
-                "A precision blade of vivianite crystal. Required to begin organ extraction at the Visceral Mirror. Also doubles vivianite yield when harvesting Bog Bodies.",
-                "Materials", () -> new ItemStack(ItemInit.vivianite_scalpel.get()),
+        list.add(new MaterialEntry("vivianite_scalpel", "item.hemomancy.vivianite_scalpel",
+                "material.hemomancy.vivianite_scalpel.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.vivianite_scalpel.get()),
                 true, UnlockPredicate.minDegree(4)));
 
         // ── Enzymes ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("vivacious_enzyme", "Vivacious Enzyme",
-                "Animus-aligned enzyme. Boosts vitality effects.",
-                "Enzymes", () -> new ItemStack(ItemInit.vivacious_enzyme.get()),
+        list.add(new MaterialEntry("vivacious_enzyme", "item.hemomancy.vivacious_enzyme",
+                "material.hemomancy.vivacious_enzyme.desc",
+                "material.hemomancy.category.enzymes", () -> new ItemStack(ItemInit.vivacious_enzyme.get()),
                 true, UnlockPredicate.minDegree(1)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("ruinous_enzyme", "Ruinous Enzyme",
-                "Mortem-aligned enzyme. Enhances destructive abilities.",
-                "Enzymes", () -> new ItemStack(ItemInit.ruinous_enzyme.get()),
+        list.add(new MaterialEntry("ruinous_enzyme", "item.hemomancy.ruinous_enzyme",
+                "material.hemomancy.ruinous_enzyme.desc",
+                "material.hemomancy.category.enzymes", () -> new ItemStack(ItemInit.ruinous_enzyme.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("neurotic_enzyme", "Neurotic Enzyme",
-                "Ductilis enzyme for impulse and motion. Chicken blood can yield this enzyme in a Vial Centrifuge; some spins yield Vivacious instead. One is needed for a blank Hematic Memory.",
-                "Enzymes", () -> new ItemStack(ItemInit.neurotic_enzyme.get()),
+        list.add(new MaterialEntry("neurotic_enzyme", "item.hemomancy.neurotic_enzyme",
+                "material.hemomancy.neurotic_enzyme.desc",
+                "material.hemomancy.category.enzymes", () -> new ItemStack(ItemInit.neurotic_enzyme.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("ferric_enzyme", "Ferric Enzyme",
-                "Ferric-aligned enzyme. Strengthens metallic transmutation.",
-                "Enzymes", () -> new ItemStack(ItemInit.ferric_enzyme.get()),
+        list.add(new MaterialEntry("ferric_enzyme", "item.hemomancy.ferric_enzyme",
+                "material.hemomancy.ferric_enzyme.desc",
+                "material.hemomancy.category.enzymes", () -> new ItemStack(ItemInit.ferric_enzyme.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("fervent_enzyme", "Fervent Enzyme",
-                "Flammeus-aligned enzyme. Amplifies heat and combustion effects.",
-                "Enzymes", () -> new ItemStack(ItemInit.fervent_enzyme.get()),
+        list.add(new MaterialEntry("fervent_enzyme", "item.hemomancy.fervent_enzyme",
+                "material.hemomancy.fervent_enzyme.desc",
+                "material.hemomancy.category.enzymes", () -> new ItemStack(ItemInit.fervent_enzyme.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("frigid_enzyme", "Frigid Enzyme",
-                "Congeatio-aligned enzyme. Channels cold and crystallisation.",
-                "Enzymes", () -> new ItemStack(ItemInit.frigid_enzyme.get()),
+        list.add(new MaterialEntry("frigid_enzyme", "item.hemomancy.frigid_enzyme",
+                "material.hemomancy.frigid_enzyme.desc",
+                "material.hemomancy.category.enzymes", () -> new ItemStack(ItemInit.frigid_enzyme.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("incandescent_enzyme", "Incandescent Enzyme",
-                "Lux-aligned enzyme. Focuses radiant and illuminating properties.",
-                "Enzymes", () -> new ItemStack(ItemInit.incandescent_enzyme.get()),
+        list.add(new MaterialEntry("incandescent_enzyme", "item.hemomancy.incandescent_enzyme",
+                "material.hemomancy.incandescent_enzyme.desc",
+                "material.hemomancy.category.enzymes", () -> new ItemStack(ItemInit.incandescent_enzyme.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("umbral_enzyme", "Umbral Enzyme",
-                "Tenebris-aligned enzyme. Enhances shadow and concealment workings.",
-                "Enzymes", () -> new ItemStack(ItemInit.umbral_enzyme.get()),
+        list.add(new MaterialEntry("umbral_enzyme", "item.hemomancy.umbral_enzyme",
+                "material.hemomancy.umbral_enzyme.desc",
+                "material.hemomancy.category.enzymes", () -> new ItemStack(ItemInit.umbral_enzyme.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("recycled_enzyme", "Recycled Enzyme",
-                "Reclaimed enzyme matter. Weak but versatile across tendency types.",
-                "Enzymes", () -> new ItemStack(ItemInit.recycled_enzyme.get()),
+        list.add(new MaterialEntry("recycled_enzyme", "item.hemomancy.recycled_enzyme",
+                "material.hemomancy.recycled_enzyme.desc",
+                "material.hemomancy.category.enzymes", () -> new ItemStack(ItemInit.recycled_enzyme.get()),
                 true, UnlockPredicate.minDegree(2)));
 
         // ── Equipment ──
-                                                                                                                list.add(new MaterialEntry("hematic_iron_helm", "Hematic Iron Armor",
-                "Fire-resistant armor forged from blood-infused iron.",
-                "Equipment", () -> new ItemStack(ItemInit.hematic_iron_helm.get()),
+        list.add(new MaterialEntry("hematic_iron_helm", "material.hemomancy.hematic_iron_helm",
+                "material.hemomancy.hematic_iron_helm.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.hematic_iron_helm.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_lust_helm", "Blood Lust Armor",
-                "Savage armor that empowers bloodthirsty combat.",
-                "Equipment", () -> new ItemStack(ItemInit.blood_lust_helm.get()),
+        list.add(new MaterialEntry("blood_lust_helm", "material.hemomancy.blood_lust_helm",
+                "material.hemomancy.blood_lust_helm.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.blood_lust_helm.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("barbed_blade", "Barbed Blade",
-                "Cruel living weapon lined with blood-drawing barbs.",
-                "Equipment", () -> new ItemStack(ItemInit.barbed_blade.get()),
+        list.add(new MaterialEntry("barbed_blade", "item.hemomancy.barbed_blade",
+                "material.hemomancy.barbed_blade.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.barbed_blade.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("chitinite_mace", "Chitinite Mace",
-                "Heavy mace crafted from hardened chitinite.",
-                "Equipment", () -> new ItemStack(ItemInit.chitinite_mace.get()),
+        list.add(new MaterialEntry("chitinite_mace", "item.hemomancy.chitinite_mace",
+                "material.hemomancy.chitinite_mace.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.chitinite_mace.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sanguis_lancea", "Sanguis Lancea",
-                "A living lance that drains blood on hit.",
-                "Equipment", () -> new ItemStack(ItemInit.sanguis_lancea.get()),
+        list.add(new MaterialEntry("sanguis_lancea", "item.hemomancy.sanguis_lancea",
+                "material.hemomancy.sanguis_lancea.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.sanguis_lancea.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("living_syringe", "Living Syringe",
-                "Collects creature blood into the loaded eight-vial rack. Learn microscopy and vial injection from the Alchemist.",
-                "Equipment", () -> new ItemStack(ItemInit.living_syringe.get()),
+        list.add(new MaterialEntry("living_syringe", "item.hemomancy.living_syringe",
+                "material.hemomancy.living_syringe.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.living_syringe.get()),
                 true, UnlockPredicate.minDegree(1)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hematic_iron_sword", "Hematic Iron Sword",
-                "A sword forged from hematic iron. Bleeds the target on a clean strike.",
-                "Equipment", () -> new ItemStack(ItemInit.hematic_iron_sword.get()),
+        list.add(new MaterialEntry("hematic_iron_sword", "item.hemomancy.hematic_iron_sword",
+                "material.hemomancy.hematic_iron_sword.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.hematic_iron_sword.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hematic_iron_knapper", "Hematic Iron Knapper",
-                "A knapping tool for shaping hematic iron into finer components.",
-                "Equipment", () -> new ItemStack(ItemInit.hematic_iron_knapper.get()),
+        list.add(new MaterialEntry("hematic_iron_knapper", "item.hemomancy.hematic_iron_knapper",
+                "material.hemomancy.hematic_iron_knapper.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.hematic_iron_knapper.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-        list.add(new MaterialEntry("living_blade", "Living Blade", "A blade of animate sanguine tissue. Grows sharper as blood is drawn.", "Equipment", () -> new ItemStack(ItemInit.living_blade.get()), true, UnlockPredicate.minDegree(3)));
+        list.add(new MaterialEntry("living_blade", "item.hemomancy.living_blade", "material.hemomancy.living_blade.desc", "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.living_blade.get()), true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("living_axe", "Living Axe", "An axe formed from living blood-iron. Severs and drinks in one motion.", "Equipment", () -> new ItemStack(ItemInit.living_axe.get()), true, UnlockPredicate.minDegree(3)));
+        list.add(new MaterialEntry("living_axe", "item.hemomancy.living_axe", "material.hemomancy.living_axe.desc", "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.living_axe.get()), true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("living_spear", "Living Spear", "A spear that remembers every wound it has dealt.", "Equipment", () -> new ItemStack(ItemInit.living_spear.get()), true, UnlockPredicate.minDegree(3)));
+        list.add(new MaterialEntry("living_spear", "item.hemomancy.living_spear", "material.hemomancy.living_spear.desc", "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.living_spear.get()), true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("living_staff", "Living Staff",
-                "A staff of animate sanguine matter. Channels manipulation cost.",
-                "Equipment", () -> new ItemStack(ItemInit.living_staff.get()),
+        list.add(new MaterialEntry("living_staff", "item.hemomancy.living_staff",
+                "material.hemomancy.living_staff.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.living_staff.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("living_baghnakh", "Living Baghnakh", "Clawed gauntlet of living tissue. Hold attack to rake again whenever the strike cooldown readies.", "Equipment", () -> new ItemStack(ItemInit.living_baghnakh.get()), true, UnlockPredicate.minDegree(4)));
+        list.add(new MaterialEntry("living_baghnakh", "item.hemomancy.living_baghnakh", "material.hemomancy.living_baghnakh.desc", "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.living_baghnakh.get()), true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("living_crossbow", "Living Crossbow", "A crossbow grown from blood-iron sinew. Fires bolts of coagulated blood.", "Equipment", () -> new ItemStack(ItemInit.living_crossbow.get()), true, UnlockPredicate.minDegree(4)));
+        list.add(new MaterialEntry("living_crossbow", "item.hemomancy.living_crossbow", "material.hemomancy.living_crossbow.desc", "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.living_crossbow.get()), true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("living_torch", "Living Torch", "A living brand that keeps fervent blood burning at its crown.", "Equipment", () -> new ItemStack(ItemInit.living_torch.get()), true, UnlockPredicate.minDegree(5)));
+        list.add(new MaterialEntry("living_torch", "item.hemomancy.living_torch", "material.hemomancy.living_torch.desc", "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.living_torch.get()), true, UnlockPredicate.minDegree(5)));
 
-        list.add(new MaterialEntry("living_flail", "Living Flail", "A cold chained head of living tissue that drags heat from whatever it strikes.", "Equipment", () -> new ItemStack(ItemInit.living_flail.get()), true, UnlockPredicate.minDegree(4)));
+        list.add(new MaterialEntry("living_flail", "item.hemomancy.living_flail", "material.hemomancy.living_flail.desc", "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.living_flail.get()), true, UnlockPredicate.minDegree(4)));
 
         // ── Containers ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("bloody_flask", "Bloody Flask",
-                "Portable blood container. Holds 250 mL.",
-                "Containers", () -> new ItemStack(ItemInit.bloody_flask.get()),
+        list.add(new MaterialEntry("bloody_flask", "item.hemomancy.bloody_flask",
+                "material.hemomancy.bloody_flask.desc",
+                "material.hemomancy.category.containers", () -> new ItemStack(ItemInit.bloody_flask.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("bloody_vial", "Bloody Vial",
-                "Small vial for blood samples and centrifuging.",
-                "Containers", () -> new ItemStack(ItemInit.bloody_vial.get()),
+        list.add(new MaterialEntry("bloody_vial", "item.hemomancy.bloody_vial",
+                "material.hemomancy.bloody_vial.desc",
+                "material.hemomancy.category.containers", () -> new ItemStack(ItemInit.bloody_vial.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("blood_gourd_white", "Blood Gourd",
-                "Organic gourd cultivated to store blood naturally.",
-                "Containers", () -> new ItemStack(ItemInit.blood_gourd_white.get()),
+        list.add(new MaterialEntry("blood_gourd_white", "material.hemomancy.blood_gourd_white",
+                "material.hemomancy.blood_gourd_white.desc",
+                "material.hemomancy.category.containers", () -> new ItemStack(ItemInit.blood_gourd_white.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("bloody_jug", "Bloody Jug",
-                "Larger blood storage vessel. Holds 1000 mL.",
-                "Containers", () -> new ItemStack(ItemInit.bloody_jug.get()),
+        list.add(new MaterialEntry("bloody_jug", "item.hemomancy.bloody_jug",
+                "material.hemomancy.bloody_jug.desc",
+                "material.hemomancy.category.containers", () -> new ItemStack(ItemInit.bloody_jug.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("morphling_jar", "Morphling Jar",
-                "Captures and stores a living morphling.",
-                "Containers", () -> new ItemStack(ItemInit.morphling_jar.get()),
+        list.add(new MaterialEntry("morphling_jar", "item.hemomancy.morphling_jar",
+                "material.hemomancy.morphling_jar.desc",
+                "material.hemomancy.category.containers", () -> new ItemStack(ItemInit.morphling_jar.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("vial_rack", "Vial Rack",
-                "Holds multiple bloody vials in organised storage.",
-                "Containers", () -> new ItemStack(ItemInit.vial_rack.get()),
+        list.add(new MaterialEntry("vial_rack", "item.hemomancy.vial_rack",
+                "material.hemomancy.vial_rack.desc",
+                "material.hemomancy.category.containers", () -> new ItemStack(ItemInit.vial_rack.get()),
                 true, UnlockPredicate.minDegree(1)));
 
         // ── Plants ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("bleeding_heart", "Bleeding Heart",
-                "Crimson flower that bleeds on harvesting. Brews into blood-positive potions.",
-                "Plants", () -> new ItemStack(BlockInit.bleeding_heart.get()),
+        list.add(new MaterialEntry("bleeding_heart", "block.hemomancy.bleeding_heart",
+                "material.hemomancy.bleeding_heart.desc",
+                "material.hemomancy.category.plants", () -> new ItemStack(BlockInit.bleeding_heart.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("infected_fungus", "Infected Fungus",
-                "A fungus colonised by the Fungal Entity's influence. Key brewing reagent.",
-                "Plants", () -> new ItemStack(BlockInit.infected_fungus.get()),
+        list.add(new MaterialEntry("infected_fungus", "block.hemomancy.infected_fungus",
+                "material.hemomancy.infected_fungus.desc",
+                "material.hemomancy.category.plants", () -> new ItemStack(BlockInit.infected_fungus.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("stinkhorn_fungus", "Stinkhorn Fungus",
-                "Pungent fruiting body. Its spores carry a subtle sanguine resonance.",
-                "Plants", () -> new ItemStack(BlockInit.stinkhorn_fungus.get()),
+        list.add(new MaterialEntry("stinkhorn_fungus", "block.hemomancy.stinkhorn_fungus",
+                "material.hemomancy.stinkhorn_fungus.desc",
+                "material.hemomancy.category.plants", () -> new ItemStack(BlockInit.stinkhorn_fungus.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("rafflesia", "Rafflesia",
-                "A rare bloom found on particularly pure calcified hypae",
-                "Plants", () -> new ItemStack(BlockInit.rafflesia.get()),
+        list.add(new MaterialEntry("rafflesia", "block.hemomancy.rafflesia",
+                "material.hemomancy.rafflesia.desc",
+                "material.hemomancy.category.plants", () -> new ItemStack(BlockInit.rafflesia.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sarcodes", "Sarcodes",
-                "A crimson snow plant that grows where blood has soaked the earth.",
-                "Plants", () -> new ItemStack(BlockInit.sarcodes.get()),
+        list.add(new MaterialEntry("sarcodes", "block.hemomancy.sarcodes",
+                "material.hemomancy.sarcodes.desc",
+                "material.hemomancy.category.plants", () -> new ItemStack(BlockInit.sarcodes.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("devils_tooth", "Devil's Tooth",
-                "Tooth-shaped fungus dripping with a reddish fluid. Caustic on contact.",
-                "Plants", () -> new ItemStack(BlockInit.devils_tooth.get()),
+        list.add(new MaterialEntry("devils_tooth", "block.hemomancy.devils_tooth",
+                "material.hemomancy.devils_tooth.desc",
+                "material.hemomancy.category.plants", () -> new ItemStack(BlockInit.devils_tooth.get()),
                 true, UnlockPredicate.always()));
 
         // ── Morphlings ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("morphling_polyp", "Morphling Polyp",
-                "The base larval form of a morphling. Place in the Morphling Incubator to develop.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_polyp.get()),
+        list.add(new MaterialEntry("morphling_polyp", "item.hemomancy.morphling_polyp",
+                "material.hemomancy.morphling_polyp.desc",
+                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_polyp.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                        list.add(new MaterialEntry("morphling_deadmans_purse", "Morphling: Deadman's Purse",
-                "A fungal strain that preserves the blood-siphon role of the old leech cluster.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_deadmans_purse.get()),
+        list.add(new MaterialEntry("morphling_deadmans_purse", "material.hemomancy.morphling_deadmans_purse",
+                "material.hemomancy.morphling_deadmans_purse.desc",
+                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_deadmans_purse.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                        list.add(new MaterialEntry("morphling_gravecap", "Morphling: Gravecap",
-                "A fungal strain shaped around decay, spore healing, and corpse-bloom pressure.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_gravecap.get()),
+        list.add(new MaterialEntry("morphling_gravecap", "material.hemomancy.morphling_gravecap",
+                "material.hemomancy.morphling_gravecap.desc",
+                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_gravecap.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                        list.add(new MaterialEntry("morphling_witchs_ear", "Morphling: Witch's Ear",
-                "A fungal strain that keeps the old nocturnal sensing and glide profile.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_witchs_ear.get()),
+        list.add(new MaterialEntry("morphling_witchs_ear", "material.hemomancy.morphling_witchs_ear",
+                "material.hemomancy.morphling_witchs_ear.desc",
+                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_witchs_ear.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                        list.add(new MaterialEntry("morphling_lumenlace", "Morphling: Lumenlace",
-                "A luminous neural-fungal strain that flashes, blinds, and masks a still host in low light.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_lumenlace.get()),
+        list.add(new MaterialEntry("morphling_lumenlace", "material.hemomancy.morphling_lumenlace",
+                "material.hemomancy.morphling_lumenlace.desc",
+                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_lumenlace.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                        list.add(new MaterialEntry("morphling_bootlace", "Morphling: Bootlace",
-                "A threadlike fungal strain retaining the former web, climb, and tether profile.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_bootlace.get()),
+        list.add(new MaterialEntry("morphling_bootlace", "material.hemomancy.morphling_bootlace",
+                "material.hemomancy.morphling_bootlace.desc",
+                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_bootlace.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                        list.add(new MaterialEntry("morphling_irontooth", "Morphling: Irontooth",
-                "A dense fungal strain that preserves the old burrowing and tremor-sense profile.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_irontooth.get()),
+        list.add(new MaterialEntry("morphling_irontooth", "material.hemomancy.morphling_irontooth",
+                "material.hemomancy.morphling_irontooth.desc",
+                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_irontooth.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                        list.add(new MaterialEntry("morphling_emberfang", "Morphling: Emberfang",
-                "A heated fungal strain that keeps the venom-strike profile of the old serpent form.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_emberfang.get()),
+        list.add(new MaterialEntry("morphling_emberfang", "material.hemomancy.morphling_emberfang",
+                "material.hemomancy.morphling_emberfang.desc",
+                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_emberfang.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                        list.add(new MaterialEntry("morphling_winter_shroud", "Morphling: Winter Shroud",
-                "A cold fungal strain that preserves the old segmented resilience profile.",
-                "Morphlings", () -> new ItemStack(ItemInit.morphling_winter_shroud.get()),
+        list.add(new MaterialEntry("morphling_winter_shroud", "material.hemomancy.morphling_winter_shroud",
+                "material.hemomancy.morphling_winter_shroud.desc",
+                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_winter_shroud.get()),
                 true, UnlockPredicate.minDegree(3)));
 
         // ── Scars & Patterns ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("scar_blank", "Blank Scar",
-                "An uncarved scar tablet. Base material for all scar inscriptions. Requires Adept rank.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_blank.get()),
+        list.add(new MaterialEntry("scar_blank", "item.hemomancy.scar_blank",
+                "material.hemomancy.scar_blank.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_blank.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_transcendence", "Scar of Transcendence",
-                "Lux-aligned scar (Tier III). The light becomes a weight; stillness becomes its price.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_transcendence.get()),
+        list.add(new MaterialEntry("scar_transcendence", "item.hemomancy.scar_transcendence",
+                "material.hemomancy.scar_transcendence.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_transcendence.get()),
                 true, UnlockPredicate.minDegree(6)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_sol", "Scar of Sol",
-                "Flammeus-aligned scar (Tier II). The inner fire burns brighter — and burns away the armour.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_sol.get()),
+        list.add(new MaterialEntry("scar_sol", "item.hemomancy.scar_sol",
+                "material.hemomancy.scar_sol.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_sol.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_heart", "Scar of the Heart",
-                "Animus-aligned scar (Tier I). More life in the veins, less blood to spare.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_heart.get()),
+        list.add(new MaterialEntry("scar_heart", "item.hemomancy.scar_heart",
+                "material.hemomancy.scar_heart.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_heart.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_descendence", "Scar of Descendence",
-                "Congeatio-aligned scar (Tier III). The fastest practitioner is the one who never swings.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_descendence.get()),
+        list.add(new MaterialEntry("scar_descendence", "item.hemomancy.scar_descendence",
+                "material.hemomancy.scar_descendence.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_descendence.get()),
                 true, UnlockPredicate.minDegree(6)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_moon", "Scar of the Moon",
-                "Tenebris-aligned scar (Tier II). Shadow-swift, but the strike grows lighter.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_moon.get()),
+        list.add(new MaterialEntry("scar_moon", "item.hemomancy.scar_moon",
+                "material.hemomancy.scar_moon.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_moon.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_eye", "Scar of the Eye",
-                "Tenebris-aligned scar (Tier III). The eyes never close. They never stop drinking.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_eye.get()),
+        list.add(new MaterialEntry("scar_eye", "item.hemomancy.scar_eye",
+                "material.hemomancy.scar_eye.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_eye.get()),
                 true, UnlockPredicate.minDegree(6)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_feral", "Scar of the Feral",
-                "Ductilis-aligned scar (Tier I). Awakens primal nervous pathways — but the skin thins.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_feral.get()),
+        list.add(new MaterialEntry("scar_feral", "item.hemomancy.scar_feral",
+                "material.hemomancy.scar_feral.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_feral.get()),
                 true, UnlockPredicate.minDegree(4)));
 
         // ── Tier 1 Scars ──
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_thorn", "Scar of the Thorn",
-                "Ferric-aligned scar (Tier I). Iron hardens the blood; iron slows the feet.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_thorn.get()),
+        list.add(new MaterialEntry("scar_thorn", "item.hemomancy.scar_thorn",
+                "material.hemomancy.scar_thorn.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_thorn.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_shade", "Scar of the Shade",
-                "Tenebris-aligned scar (Tier I). The shadow quickens; the fist quiets.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_shade.get()),
+        list.add(new MaterialEntry("scar_shade", "item.hemomancy.scar_shade",
+                "material.hemomancy.scar_shade.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_shade.get()),
                 true, UnlockPredicate.minDegree(4)));
 
         // ── Tier 2 Scars ──
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_pyre", "Scar of the Pyre",
-                "Flammeus-aligned scar (Tier I). Conviction sharpens the edge — and strips away the guard.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_pyre.get()),
+        list.add(new MaterialEntry("scar_pyre", "item.hemomancy.scar_pyre",
+                "material.hemomancy.scar_pyre.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_pyre.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_marrow", "Scar of Marrow",
-                "Animus-aligned scar (Tier II). Deep reserves of life, at the cost of blood and speed.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_marrow.get()),
+        list.add(new MaterialEntry("scar_marrow", "item.hemomancy.scar_marrow",
+                "material.hemomancy.scar_marrow.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_marrow.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_blight", "Scar of Blight",
-                "Mortem-aligned scar (Tier I). Channels rot outward — but the toxin does not always obey.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_blight.get()),
+        list.add(new MaterialEntry("scar_blight", "item.hemomancy.scar_blight",
+                "material.hemomancy.scar_blight.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_blight.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_rime", "Scar of Rime",
-                "Congeatio-aligned scar (Tier I). Frost in the legs, frost in the hands.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_rime.get()),
+        list.add(new MaterialEntry("scar_rime", "item.hemomancy.scar_rime",
+                "material.hemomancy.scar_rime.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_rime.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_flux", "Scar of Flux",
-                "Ductilis-aligned scar (Tier II). The strike accelerates; the skin thins further.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_flux.get()),
+        list.add(new MaterialEntry("scar_flux", "item.hemomancy.scar_flux",
+                "material.hemomancy.scar_flux.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_flux.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_halo", "Scar of the Halo",
-                "Lux-aligned scar (Tier I). Radiance hardens the body; it weighs upon the step.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_halo.get()),
+        list.add(new MaterialEntry("scar_halo", "item.hemomancy.scar_halo",
+                "material.hemomancy.scar_halo.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_halo.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_anvil", "Scar of the Anvil",
-                "Ferric-aligned scar (Tier II). The blood's iron thickens the shell — and the pace.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_anvil.get()),
+        list.add(new MaterialEntry("scar_anvil", "item.hemomancy.scar_anvil",
+                "material.hemomancy.scar_anvil.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_anvil.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_veil", "Scar of the Veil",
-                "Lux-aligned scar (Tier II). Light-forged toughness, purchased with sluggish feet.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_veil.get()),
+        list.add(new MaterialEntry("scar_veil", "item.hemomancy.scar_veil",
+                "material.hemomancy.scar_veil.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_veil.get()),
                 true, UnlockPredicate.minDegree(5)));
 
         // ── Tier 3 Scars ──
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_phoenix", "Scar of the Phoenix",
-                "Animus-aligned scar (Tier III). Immolation and rebirth — the blood pays the fare.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_phoenix.get()),
+        list.add(new MaterialEntry("scar_phoenix", "item.hemomancy.scar_phoenix",
+                "material.hemomancy.scar_phoenix.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_phoenix.get()),
                 true, UnlockPredicate.minDegree(6)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_wither", "Scar of Withering",
-                "Mortem-aligned scar (Tier II). Entropy flows outward at the cost of the vessel's own vitality.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_wither.get()),
+        list.add(new MaterialEntry("scar_wither", "item.hemomancy.scar_wither",
+                "material.hemomancy.scar_wither.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_wither.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_glacier", "Scar of the Glacier",
-                "Congeatio-aligned scar (Tier II). Commanding the ice is slow work.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_glacier.get()),
+        list.add(new MaterialEntry("scar_glacier", "item.hemomancy.scar_glacier",
+                "material.hemomancy.scar_glacier.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_glacier.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_chimera", "Scar of the Chimera",
-                "Ductilis-aligned scar (Tier III). Protean speed and lethal chains — but flesh and HP bleed away.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_chimera.get()),
+        list.add(new MaterialEntry("scar_chimera", "item.hemomancy.scar_chimera",
+                "material.hemomancy.scar_chimera.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_chimera.get()),
                 true, UnlockPredicate.minDegree(6)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_corona", "Scar of the Corona",
-                "Flammeus-aligned scar (Tier III). The blood runs so hot the armour blisters off.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_corona.get()),
+        list.add(new MaterialEntry("scar_corona", "item.hemomancy.scar_corona",
+                "material.hemomancy.scar_corona.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_corona.get()),
                 true, UnlockPredicate.minDegree(6)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_crucible", "Scar of the Crucible",
-                "Ferric-aligned scar (Tier III). The ultimate forge-trial leaves the body immovable.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_crucible.get()),
+        list.add(new MaterialEntry("scar_crucible", "item.hemomancy.scar_crucible",
+                "material.hemomancy.scar_crucible.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_crucible.get()),
                 true, UnlockPredicate.minDegree(6)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("scar_oblivion", "Scar of Oblivion",
-                "Mortem-aligned scar (Tier III). The void consumes both enemies and the practitioner's own blood.",
-                "Scars & Patterns", () -> new ItemStack(ItemInit.scar_oblivion.get()),
+        list.add(new MaterialEntry("scar_oblivion", "item.hemomancy.scar_oblivion",
+                "material.hemomancy.scar_oblivion.desc",
+                "material.hemomancy.category.scars_patterns", () -> new ItemStack(ItemInit.scar_oblivion.get()),
                 true, UnlockPredicate.minDegree(6)));
 
-        list.add(new MaterialEntry("living_axe", "Living Axe",
+        list.add(new MaterialEntry("living_axe", "item.hemomancy.living_axe",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.living_axe.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.living_axe.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("living_blade", "Living Blade",
+        list.add(new MaterialEntry("living_blade", "item.hemomancy.living_blade",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.living_blade.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.living_blade.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("living_spear", "Living Spear",
+        list.add(new MaterialEntry("living_spear", "item.hemomancy.living_spear",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.living_spear.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.living_spear.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("living_baghnakh", "Living Baghnakh",
+        list.add(new MaterialEntry("living_baghnakh", "item.hemomancy.living_baghnakh",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.living_baghnakh.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.living_baghnakh.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("living_crossbow", "Living Crossbow",
+        list.add(new MaterialEntry("living_crossbow", "item.hemomancy.living_crossbow",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.living_crossbow.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.living_crossbow.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("living_flail", "Living Flail",
+        list.add(new MaterialEntry("living_flail", "item.hemomancy.living_flail",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.living_flail.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.living_flail.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("living_torch", "Living Torch",
+        list.add(new MaterialEntry("living_torch", "item.hemomancy.living_torch",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.living_torch.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.living_torch.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                                        list.add(new MaterialEntry("mnemonic_ambergris", "Mnemonic Ambergris",
+        list.add(new MaterialEntry("mnemonic_ambergris", "item.hemomancy.mnemonic_ambergris",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.mnemonic_ambergris.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.mnemonic_ambergris.get()),
                 true, UnlockPredicate.minDegree(1)));
 
-                                                                                                                                                                                                                                list.add(new MaterialEntry("calcified_blood_spine", "Calcified Blood Spine",
+        list.add(new MaterialEntry("calcified_blood_spine", "material.hemomancy.calcified_blood_spine",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.calcified_blood_spine.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.calcified_blood_spine.get()),
                 true, UnlockPredicate.minDegree(1)));
 
-                                                                                                                                                                                                                                list.add(new MaterialEntry("chalybeate_sclerite", "Chalybeate Sclerite",
+        list.add(new MaterialEntry("chalybeate_sclerite", "item.hemomancy.chalybeate_sclerite",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.chalybeate_sclerite.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.chalybeate_sclerite.get()),
                 true, UnlockPredicate.minDegree(1)));
 
         // Generated registry gap-fill catalogue entries
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("active_befouling_ash", "Active Befouling Ash",
-                "A catalogued reagent used in blood alchemy and enzyme work.",
-                "Alchemy & Enzymes", () -> new ItemStack(ItemInit.active_befouling_ash.get()),
+        list.add(new MaterialEntry("active_befouling_ash", "item.hemomancy.active_befouling_ash",
+                "material.hemomancy.shared.a_catalogued_reagent_used_in_blood",
+                "material.hemomancy.category.alchemy_enzymes", () -> new ItemStack(ItemInit.active_befouling_ash.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("active_smouldering_ash", "Active Smouldering Ash",
-                "A catalogued reagent used in blood alchemy and enzyme work.",
-                "Alchemy & Enzymes", () -> new ItemStack(ItemInit.active_smouldering_ash.get()),
+        list.add(new MaterialEntry("active_smouldering_ash", "item.hemomancy.active_smouldering_ash",
+                "material.hemomancy.shared.a_catalogued_reagent_used_in_blood",
+                "material.hemomancy.category.alchemy_enzymes", () -> new ItemStack(ItemInit.active_smouldering_ash.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("crimson_lacquer", "Crimson Lacquer",
-                "A catalogued reagent used in blood alchemy and enzyme work.",
-                "Alchemy & Enzymes", () -> new ItemStack(ItemInit.crimson_lacquer.get()),
+        list.add(new MaterialEntry("crimson_lacquer", "item.hemomancy.crimson_lacquer",
+                "material.hemomancy.shared.a_catalogued_reagent_used_in_blood",
+                "material.hemomancy.category.alchemy_enzymes", () -> new ItemStack(ItemInit.crimson_lacquer.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("engram_block", "Engram Block",
-                "A catalogued reagent used in blood alchemy and enzyme work.",
-                "Alchemy & Enzymes", () -> new ItemStack(ItemInit.engram_stamp.get()),
+        list.add(new MaterialEntry("engram_block", "block.hemomancy.engram_block",
+                "material.hemomancy.shared.a_catalogued_reagent_used_in_blood",
+                "material.hemomancy.category.alchemy_enzymes", () -> new ItemStack(ItemInit.engram_stamp.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("enzyme_primer", "Enzyme Primer",
-                "A catalogued reagent used in blood alchemy and enzyme work.",
-                "Alchemy & Enzymes", () -> new ItemStack(ItemInit.enzyme_primer.get()),
+        list.add(new MaterialEntry("enzyme_primer", "item.hemomancy.enzyme_primer",
+                "material.hemomancy.shared.a_catalogued_reagent_used_in_blood",
+                "material.hemomancy.category.alchemy_enzymes", () -> new ItemStack(ItemInit.enzyme_primer.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("ferric_binder", "Ferric Binder",
-                "A catalogued reagent used in blood alchemy and enzyme work.",
-                "Alchemy & Enzymes", () -> new ItemStack(ItemInit.ferric_binder.get()),
+        list.add(new MaterialEntry("ferric_binder", "item.hemomancy.ferric_binder",
+                "material.hemomancy.shared.a_catalogued_reagent_used_in_blood",
+                "material.hemomancy.category.alchemy_enzymes", () -> new ItemStack(ItemInit.ferric_binder.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("qliphoth_bloom", "Qliphoth Bloom",
-                "The Bloom of the Qliphoth rite plants your Seed. Pick and consume all nine sequential owner-bound Pomes from this one Bloom to complete Communion.",
-                "Qliphoth Reagents", () -> new ItemStack(ItemInit.qliphoth_pome.get()),
+        list.add(new MaterialEntry("qliphoth_bloom", "block.hemomancy.qliphoth_bloom",
+                "material.hemomancy.qliphoth_bloom.desc",
+                "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.qliphoth_pome.get()),
                 false, UnlockPredicate.minDegree(7)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("humoral_barometer", "Humoral Barometer",
-                "A structural or decorative bloodcraft block.",
-                "Architecture", () -> new ItemStack(BlockInit.humoral_barometer.get()),
+        list.add(new MaterialEntry("humoral_barometer", "block.hemomancy.humoral_barometer",
+                "material.hemomancy.shared.a_structural_or_decorative_bloodcraft_block",
+                "material.hemomancy.category.architecture", () -> new ItemStack(BlockInit.humoral_barometer.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("ossuary_clock", "Ossuary Clock",
-                "A structural or decorative bloodcraft block.",
-                "Architecture", () -> new ItemStack(BlockInit.ossuary_clock.get()),
+        list.add(new MaterialEntry("ossuary_clock", "block.hemomancy.ossuary_clock",
+                "material.hemomancy.shared.a_structural_or_decorative_bloodcraft_block",
+                "material.hemomancy.category.architecture", () -> new ItemStack(BlockInit.ossuary_clock.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                        list.add(new MaterialEntry("sanguine_pane", "Sanguine Pane",
-                "A structural or decorative bloodcraft block.",
-                "Architecture", () -> new ItemStack(BlockInit.sanguine_pane.get()),
+        list.add(new MaterialEntry("sanguine_pane", "block.hemomancy.sanguine_pane",
+                "material.hemomancy.shared.a_structural_or_decorative_bloodcraft_block",
+                "material.hemomancy.category.architecture", () -> new ItemStack(BlockInit.sanguine_pane.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("venous_stone_slab", "Venous Stone Slab",
-                "A structural or decorative bloodcraft block.",
-                "Architecture", () -> new ItemStack(BlockInit.venous_stone_slab.get()),
+        list.add(new MaterialEntry("venous_stone_slab", "block.hemomancy.venous_stone_slab",
+                "material.hemomancy.shared.a_structural_or_decorative_bloodcraft_block",
+                "material.hemomancy.category.architecture", () -> new ItemStack(BlockInit.venous_stone_slab.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("venous_stone_wall", "Venous Stone Wall",
-                "A structural or decorative bloodcraft block.",
-                "Architecture", () -> new ItemStack(BlockInit.venous_stone_wall.get()),
+        list.add(new MaterialEntry("venous_stone_wall", "block.hemomancy.venous_stone_wall",
+                "material.hemomancy.shared.a_structural_or_decorative_bloodcraft_block",
+                "material.hemomancy.category.architecture", () -> new ItemStack(BlockInit.venous_stone_wall.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                        list.add(new MaterialEntry("vivianite_pane", "Vivianite Pane",
-                "A structural or decorative bloodcraft block.",
-                "Architecture", () -> new ItemStack(BlockInit.vivianite_pane.get()),
+        list.add(new MaterialEntry("vivianite_pane", "block.hemomancy.vivianite_pane",
+                "material.hemomancy.shared.a_structural_or_decorative_bloodcraft_block",
+                "material.hemomancy.category.architecture", () -> new ItemStack(BlockInit.vivianite_pane.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("liber_sanguinum", "Liber Sanguinium",
-                "A catalogued material entry for Liber Sanguinium.",
-                "Materials", () -> new ItemStack(ItemInit.liber_sanguinum.get()),
+        list.add(new MaterialEntry("liber_sanguinum", "item.hemomancy.liber_sanguinum",
+                "material.hemomancy.liber_sanguinum.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.liber_sanguinum.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("blood_gourd_black", "Blood Gourd Black",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.blood_gourd_black.get()),
+        list.add(new MaterialEntry("blood_gourd_black", "material.hemomancy.blood_gourd_black",
+                "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.blood_gourd_black.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("blood_gourd_red", "Blood Gourd Red",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.blood_gourd_red.get()),
+        list.add(new MaterialEntry("blood_gourd_red", "material.hemomancy.blood_gourd_red",
+                "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.blood_gourd_red.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("dried_gourd", "Dried Gourd",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.dried_gourd.get()),
+        list.add(new MaterialEntry("dried_gourd", "item.hemomancy.dried_gourd",
+                "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.dried_gourd.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("gourd", "Gourd",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(BlockInit.gourd.get()),
+        list.add(new MaterialEntry("gourd", "block.hemomancy.gourd",
+                "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(BlockInit.gourd.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("gourd_seeds", "Gourd Seeds",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.gourd_seeds.get()),
+        list.add(new MaterialEntry("gourd_seeds", "item.hemomancy.gourd_seeds",
+                "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.gourd_seeds.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("gourd_slice", "Gourd Slice",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.gourd_slice.get()),
+        list.add(new MaterialEntry("gourd_slice", "item.hemomancy.gourd_slice",
+                "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.gourd_slice.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("gourd_stew", "Gourd Stew",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.gourd_stew.get()),
+        list.add(new MaterialEntry("gourd_stew", "item.hemomancy.gourd_stew",
+                "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.gourd_stew.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("gourdvine_tap", "Gourdvine Tap",
-                "A living Degree-2 reservoir. It passively grows blood, fills an inserted Blood Gourd, and matures with Foul Paste, Spore Sacs, or enzymes.",
-                "Gourds & Vessels", () -> new ItemStack(BlockInit.gourdvine_tap.get()),
+        list.add(new MaterialEntry("gourdvine_tap", "block.hemomancy.gourdvine_tap",
+                "material.hemomancy.gourdvine_tap.desc",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(BlockInit.gourdvine_tap.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hemorath_rib", "Hemorath Rib",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.hemorath_rib.get()),
+        list.add(new MaterialEntry("hemorath_rib", "material.hemomancy.hemorath_rib",
+                "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.hemorath_rib.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("sanguine_salve", "Sanguine Salve",
-                "A concentrated Bleeding Bulb remedy that restores 25 health to the single most damaged vein section.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.sanguine_salve.get()),
+        list.add(new MaterialEntry("sanguine_salve", "item.hemomancy.sanguine_salve",
+                "material.hemomancy.sanguine_salve.desc",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.sanguine_salve.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("scrying_dish", "Scrying Dish",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.scrying_dish.get()),
+        list.add(new MaterialEntry("scrying_dish", "item.hemomancy.scrying_dish",
+                "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.scrying_dish.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("vascular_poultice", "Vascular Poultice",
-                "An enzyme-set field dressing that restores 12 health to each of the two most damaged vein sections.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.vascular_poultice.get()),
+        list.add(new MaterialEntry("vascular_poultice", "item.hemomancy.vascular_poultice",
+                "material.hemomancy.vascular_poultice.desc",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.vascular_poultice.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("vitality_chalice", "Vitality Chalice",
-                "A bloodcraft vessel or gourd-family component used in sanguine storage, rites, or remedies.",
-                "Gourds & Vessels", () -> new ItemStack(ItemInit.vitality_chalice.get()),
+        list.add(new MaterialEntry("vitality_chalice", "item.hemomancy.vitality_chalice",
+                "material.hemomancy.shared.a_bloodcraft_vessel_or_gourd_family",
+                "material.hemomancy.category.gourds_vessels", () -> new ItemStack(ItemInit.vitality_chalice.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hematic_armature", "Hematic Armature",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.hematic_armature.get()),
+        list.add(new MaterialEntry("hematic_armature", "block.hemomancy.hematic_armature",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.hematic_armature.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hematic_iron_chain", "Hematic Iron Chain",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.hematic_iron_chain.get()),
+        list.add(new MaterialEntry("hematic_iron_chain", "block.hemomancy.hematic_iron_chain",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.hematic_iron_chain.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hematic_stake", "Hematic Stake",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.hematic_stake.get()),
+        list.add(new MaterialEntry("hematic_stake", "block.hemomancy.hematic_stake",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.hematic_stake.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("humane_idol", "Humane Idol",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.humane_idol.get()),
+        list.add(new MaterialEntry("humane_idol", "block.hemomancy.humane_idol",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.humane_idol.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("mason_effigy", "Mason Effigy",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.mason_effigy.get()),
+        list.add(new MaterialEntry("mason_effigy", "material.hemomancy.mason_effigy",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.mason_effigy.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("mnemonic_candle", "Mnemonic Candle",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.mnemonic_candle.get()),
+        list.add(new MaterialEntry("mnemonic_candle", "block.hemomancy.mnemonic_candle",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.mnemonic_candle.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("mycelial_lantern", "Mycelial Lantern",
-                "A Degree-3 living workshop. A persistent tendency culture fruits one matching enzyme in 2,400 ticks for 600 blood.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.mycelial_lantern.get()),
+        list.add(new MaterialEntry("mycelial_lantern", "block.hemomancy.mycelial_lantern",
+                "material.hemomancy.mycelial_lantern.desc",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.mycelial_lantern.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("puppeteers_spindle", "Puppeteers Spindle",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.puppeteers_spindle.get()),
+        list.add(new MaterialEntry("puppeteers_spindle", "material.hemomancy.puppeteers_spindle",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.puppeteers_spindle.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                        list.add(new MaterialEntry("sanguine_omen", "Sanguine Omen",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.sanguine_omen.get()),
+        list.add(new MaterialEntry("sanguine_omen", "block.hemomancy.sanguine_omen",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.sanguine_omen.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("serpentine_idol", "Serpentine Idol",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.serpentine_idol.get()),
+        list.add(new MaterialEntry("serpentine_idol", "block.hemomancy.serpentine_idol",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.serpentine_idol.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("specimen_jar", "Specimen Jar",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.specimen_jar.get()),
+        list.add(new MaterialEntry("specimen_jar", "block.hemomancy.specimen_jar",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.specimen_jar.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("witness_organ", "Witness Organ",
-                "A ritual fixture or idol used to anchor advanced bloodcraft structures.",
-                "Idols & Fixtures", () -> new ItemStack(BlockInit.witness_organ.get()),
+        list.add(new MaterialEntry("witness_organ", "item.hemomancy.witness_organ",
+                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
+                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.witness_organ.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("annettas_sanguis_lancea", "Annetta's Sanguis Lancea",
-                "A living Harbinger implement grown for field use.",
-                "Living Implements", () -> new ItemStack(ItemInit.annettas_sanguis_lancea.get()),
+        list.add(new MaterialEntry("annettas_sanguis_lancea", "item.hemomancy.annettas_sanguis_lancea",
+                "material.hemomancy.shared.a_living_harbinger_implement_grown_for",
+                "material.hemomancy.category.living_implements", () -> new ItemStack(ItemInit.annettas_sanguis_lancea.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("sporitic_thurible", "Sporitic Thurible",
-                "A living Harbinger implement grown for field use.",
-                "Living Implements", () -> new ItemStack(ItemInit.sporitic_thurible.get()),
+        list.add(new MaterialEntry("sporitic_thurible", "item.hemomancy.sporitic_thurible",
+                "material.hemomancy.shared.a_living_harbinger_implement_grown_for",
+                "material.hemomancy.category.living_implements", () -> new ItemStack(ItemInit.sporitic_thurible.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("barbed_boots", "Barbed Boots",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.barbed_boots.get()),
+        list.add(new MaterialEntry("barbed_boots", "item.hemomancy.barbed_boots",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.barbed_boots.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("barbed_chestplate", "Barbed Chestplate",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.barbed_chestplate.get()),
+        list.add(new MaterialEntry("barbed_chestplate", "item.hemomancy.barbed_chestplate",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.barbed_chestplate.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("barbed_helm", "Barbed Helm",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.barbed_helm.get()),
+        list.add(new MaterialEntry("barbed_helm", "item.hemomancy.barbed_helm",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.barbed_helm.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("barbed_leggings", "Barbed Leggings",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.barbed_leggings.get()),
+        list.add(new MaterialEntry("barbed_leggings", "item.hemomancy.barbed_leggings",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.barbed_leggings.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("barbed_shield", "Barbed Shield",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.barbed_shield.get()),
+        list.add(new MaterialEntry("barbed_shield", "item.hemomancy.barbed_shield",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.barbed_shield.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("chitinite_boots", "Chitinite Boots",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.chitinite_boots.get()),
+        list.add(new MaterialEntry("chitinite_boots", "item.hemomancy.chitinite_boots",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.chitinite_boots.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("chitinite_chestplate", "Chitinite Chestplate",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.chitinite_chestplate.get()),
+        list.add(new MaterialEntry("chitinite_chestplate", "item.hemomancy.chitinite_chestplate",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.chitinite_chestplate.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("chitinite_helm", "Chitinite Helm",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.chitinite_helm.get()),
+        list.add(new MaterialEntry("chitinite_helm", "item.hemomancy.chitinite_helm",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.chitinite_helm.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("chitinite_leggings", "Chitinite Leggings",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.chitinite_leggings.get()),
+        list.add(new MaterialEntry("chitinite_leggings", "item.hemomancy.chitinite_leggings",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.chitinite_leggings.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("chitinite_shield", "Chitinite Shield",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.chitinite_shield.get()),
+        list.add(new MaterialEntry("chitinite_shield", "item.hemomancy.chitinite_shield",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.chitinite_shield.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("prismatic_boots", "Prismatic Boots",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.prismatic_boots.get()),
+        list.add(new MaterialEntry("prismatic_boots", "item.hemomancy.prismatic_boots",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.prismatic_boots.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("prismatic_chestplate", "Prismatic Chestplate",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.prismatic_chestplate.get()),
+        list.add(new MaterialEntry("prismatic_chestplate", "item.hemomancy.prismatic_chestplate",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.prismatic_chestplate.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("prismatic_helm", "Prismatic Helm",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.prismatic_helm.get()),
+        list.add(new MaterialEntry("prismatic_helm", "item.hemomancy.prismatic_helm",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.prismatic_helm.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("prismatic_leggings", "Prismatic Leggings",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.prismatic_leggings.get()),
+        list.add(new MaterialEntry("prismatic_leggings", "item.hemomancy.prismatic_leggings",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.prismatic_leggings.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("silent_archon_boots", "Silent Archon Boots",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.silent_archon_boots.get()),
+        list.add(new MaterialEntry("silent_archon_boots", "material.hemomancy.silent_archon_boots",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.silent_archon_boots.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("silent_archon_chestplate", "Silent Archon Chestplate",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.silent_archon_chestplate.get()),
+        list.add(new MaterialEntry("silent_archon_chestplate", "material.hemomancy.silent_archon_chestplate",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.silent_archon_chestplate.get()),
                 true, UnlockPredicate.minDegree(7)));
 
-        list.add(new MaterialEntry("silent_archon_helm", "Silent Archon Helm",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.silent_archon_helm.get()),
+        list.add(new MaterialEntry("silent_archon_helm", "material.hemomancy.silent_archon_helm",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.silent_archon_helm.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-        list.add(new MaterialEntry("silent_archon_leggings", "Silent Archon Leggings",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Armor & Vestments", () -> new ItemStack(ItemInit.silent_archon_leggings.get()),
+        list.add(new MaterialEntry("silent_archon_leggings", "material.hemomancy.silent_archon_leggings",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.armor_vestments", () -> new ItemStack(ItemInit.silent_archon_leggings.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-        list.add(new MaterialEntry("blood_lust_boots", "Blood Lust Boots",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.blood_lust_boots.get()),
+        list.add(new MaterialEntry("blood_lust_boots", "item.hemomancy.blood_lust_boots",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.blood_lust_boots.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-        list.add(new MaterialEntry("blood_lust_chest", "Blood Lust Chest",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.blood_lust_chest.get()),
+        list.add(new MaterialEntry("blood_lust_chest", "item.hemomancy.blood_lust_chest",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.blood_lust_chest.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("blood_lust_helm_grinning", "Blood Lust Helm Grinning",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.blood_lust_helm_grinning.get()),
+        list.add(new MaterialEntry("blood_lust_helm_grinning", "material.hemomancy.blood_lust_helm_grinning",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.blood_lust_helm_grinning.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("blood_lust_helm_lodestone", "Blood Lust Helm Lodestone",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.blood_lust_helm_lodestone.get()),
+        list.add(new MaterialEntry("blood_lust_helm_lodestone", "material.hemomancy.blood_lust_helm_lodestone",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.blood_lust_helm_lodestone.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("blood_lust_helm_tengu", "Blood Lust Helm Tengu",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.blood_lust_helm_tengu.get()),
+        list.add(new MaterialEntry("blood_lust_helm_tengu", "item.hemomancy.blood_lust_helm_tengu",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.blood_lust_helm_tengu.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("blood_lust_helm_velorum", "Blood Lust Helm Velorum",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.blood_lust_helm_velorum.get()),
+        list.add(new MaterialEntry("blood_lust_helm_velorum", "material.hemomancy.blood_lust_helm_velorum",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.blood_lust_helm_velorum.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-        list.add(new MaterialEntry("blood_lust_legs", "Blood Lust Legs",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.blood_lust_legs.get()),
+        list.add(new MaterialEntry("blood_lust_legs", "item.hemomancy.blood_lust_legs",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.blood_lust_legs.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                list.add(new MaterialEntry("edacious_blood_lust_boots", "Edacious Blood Lust Boots",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.edacious_blood_lust_boots.get()),
+        list.add(new MaterialEntry("edacious_blood_lust_boots", "material.hemomancy.edacious_blood_lust_boots",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.edacious_blood_lust_boots.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("edacious_blood_lust_chest", "Edacious Blood Lust Chest",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.edacious_blood_lust_chest.get()),
+        list.add(new MaterialEntry("edacious_blood_lust_chest", "material.hemomancy.edacious_blood_lust_chest",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.edacious_blood_lust_chest.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                list.add(new MaterialEntry("edacious_blood_lust_helm", "Edacious Blood Lust Helm",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.edacious_blood_lust_helm.get()),
+        list.add(new MaterialEntry("edacious_blood_lust_helm", "material.hemomancy.edacious_blood_lust_helm",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.edacious_blood_lust_helm.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                list.add(new MaterialEntry("edacious_blood_lust_legs", "Edacious Blood Lust Legs",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.edacious_blood_lust_legs.get()),
+        list.add(new MaterialEntry("edacious_blood_lust_legs", "material.hemomancy.edacious_blood_lust_legs",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.edacious_blood_lust_legs.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("grinning_mask", "Grinning Mask",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.grinning_mask.get()),
+        list.add(new MaterialEntry("grinning_mask", "item.hemomancy.grinning_mask",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.grinning_mask.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("lodestone_faceplate", "Lodestone Faceplate",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.lodestone_faceplate.get()),
+        list.add(new MaterialEntry("lodestone_faceplate", "item.hemomancy.lodestone_faceplate",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.lodestone_faceplate.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                list.add(new MaterialEntry("phantasmal_blood_lust_boots", "Phantasmal Blood Lust Boots",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.phantasmal_blood_lust_boots.get()),
+        list.add(new MaterialEntry("phantasmal_blood_lust_boots", "material.hemomancy.phantasmal_blood_lust_boots",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.phantasmal_blood_lust_boots.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("phantasmal_blood_lust_chest", "Phantasmal Blood Lust Chest",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.phantasmal_blood_lust_chest.get()),
+        list.add(new MaterialEntry("phantasmal_blood_lust_chest", "material.hemomancy.phantasmal_blood_lust_chest",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.phantasmal_blood_lust_chest.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                list.add(new MaterialEntry("phantasmal_blood_lust_helm", "Phantasmal Blood Lust Helm",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.phantasmal_blood_lust_helm.get()),
+        list.add(new MaterialEntry("phantasmal_blood_lust_helm", "material.hemomancy.phantasmal_blood_lust_helm",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.phantasmal_blood_lust_helm.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                list.add(new MaterialEntry("phantasmal_blood_lust_legs", "Phantasmal Blood Lust Legs",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.phantasmal_blood_lust_legs.get()),
+        list.add(new MaterialEntry("phantasmal_blood_lust_legs", "material.hemomancy.phantasmal_blood_lust_legs",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.phantasmal_blood_lust_legs.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                list.add(new MaterialEntry("sheolic_blood_lust_boots", "Sheolic Blood Lust Boots",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.sheolic_blood_lust_boots.get()),
+        list.add(new MaterialEntry("sheolic_blood_lust_boots", "material.hemomancy.sheolic_blood_lust_boots",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.sheolic_blood_lust_boots.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("sheolic_blood_lust_chest", "Sheolic Blood Lust Chest",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.sheolic_blood_lust_chest.get()),
+        list.add(new MaterialEntry("sheolic_blood_lust_chest", "material.hemomancy.sheolic_blood_lust_chest",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.sheolic_blood_lust_chest.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                list.add(new MaterialEntry("sheolic_blood_lust_helm", "Sheolic Blood Lust Helm",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.sheolic_blood_lust_helm.get()),
+        list.add(new MaterialEntry("sheolic_blood_lust_helm", "material.hemomancy.sheolic_blood_lust_helm",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.sheolic_blood_lust_helm.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                list.add(new MaterialEntry("sheolic_blood_lust_legs", "Sheolic Blood Lust Legs",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.sheolic_blood_lust_legs.get()),
+        list.add(new MaterialEntry("sheolic_blood_lust_legs", "material.hemomancy.sheolic_blood_lust_legs",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.sheolic_blood_lust_legs.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("tengu_mask", "Tengu Mask",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.tengu_mask.get()),
+        list.add(new MaterialEntry("tengu_mask", "item.hemomancy.tengu_mask",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.tengu_mask.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("velorum_mask", "Velorum Mask",
-                "A wearable Harbinger implement tied to blood rites, masks, or vestments.",
-                "Masks & Vestments", () -> new ItemStack(ItemInit.velorum_mask.get()),
+        list.add(new MaterialEntry("velorum_mask", "item.hemomancy.velorum_mask",
+                "material.hemomancy.shared.a_wearable_harbinger_implement_tied_to",
+                "material.hemomancy.category.masks_vestments", () -> new ItemStack(ItemInit.velorum_mask.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("blood_wood_leaves", "Blood Wood Leaves",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.blood_wood_leaves.get()),
+        list.add(new MaterialEntry("blood_wood_leaves", "block.hemomancy.blood_wood_leaves",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.blood_wood_leaves.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("calcified_erythrocoral", "Calcified Erythrocoral",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.calcified_erythrocoral.get()),
+        list.add(new MaterialEntry("calcified_erythrocoral", "block.hemomancy.calcified_erythrocoral",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.calcified_erythrocoral.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("calcified_hyphae", "Calcified Hyphae",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.calcified_hyphae.get()),
+        list.add(new MaterialEntry("calcified_hyphae", "block.hemomancy.calcified_hyphae",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.calcified_hyphae.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("erythrocoral_block", "Erythrocoral Block",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.erythrocoral_block.get()),
+        list.add(new MaterialEntry("erythrocoral_block", "block.hemomancy.erythrocoral_block",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.erythrocoral_block.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("erythrocoral_fan", "Erythrocoral Fan",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.erythrocoral_fan.get()),
+        list.add(new MaterialEntry("erythrocoral_fan", "block.hemomancy.erythrocoral_fan",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.erythrocoral_fan.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("erythrocoral_tendril", "Erythrocoral Tendril",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.erythrocoral_tendril.get()),
+        list.add(new MaterialEntry("erythrocoral_tendril", "block.hemomancy.erythrocoral_tendril",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.erythrocoral_tendril.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hematic_iron_bars", "Hematic Iron Bars",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.hematic_iron_bars.get()),
+        list.add(new MaterialEntry("hematic_iron_bars", "block.hemomancy.hematic_iron_bars",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.hematic_iron_bars.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hematic_iron_door", "Hematic Iron Door",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.hematic_iron_door.get()),
+        list.add(new MaterialEntry("hematic_iron_door", "block.hemomancy.hematic_iron_door",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.hematic_iron_door.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hematic_iron_trapdoor", "Hematic Iron Trapdoor",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.hematic_iron_trapdoor.get()),
+        list.add(new MaterialEntry("hematic_iron_trapdoor", "block.hemomancy.hematic_iron_trapdoor",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.hematic_iron_trapdoor.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hemorrhagic_crust", "Hemorrhagic Crust",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.hemorrhagic_crust.get()),
+        list.add(new MaterialEntry("hemorrhagic_crust", "block.hemomancy.hemorrhagic_crust",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.hemorrhagic_crust.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hyphae", "Hyphae",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.hyphae.get()),
+        list.add(new MaterialEntry("hyphae", "block.hemomancy.hyphae",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.hyphae.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("infested_wood", "Infested Wood",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.infested_wood.get()),
+        list.add(new MaterialEntry("infested_wood", "block.hemomancy.infested_wood",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.infested_wood.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("mycelium_erythrocytic_dirt", "Mycelium Erythrocytic Dirt",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.mycelium_erythrocytic_dirt.get()),
+        list.add(new MaterialEntry("mycelium_erythrocytic_dirt", "block.hemomancy.mycelium_erythrocytic_dirt",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.mycelium_erythrocytic_dirt.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("sporite_crystal", "Sporite Crystal",
-                "A block or growth from blood-rich fungal ecologies.",
-                "Myco-Realm Blocks", () -> new ItemStack(BlockInit.sporite_crystal.get()),
+        list.add(new MaterialEntry("sporite_crystal", "block.hemomancy.sporite_crystal",
+                "material.hemomancy.shared.a_block_or_growth_from_blood",
+                "material.hemomancy.category.myco_realm_blocks", () -> new ItemStack(BlockInit.sporite_crystal.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("constrictor_cord", "Constrictor Cord",
-                "An organic component used in advanced Harbinger crafting and creature-derived recipes.",
-                "Biomaterials", () -> new ItemStack(ItemInit.constrictor_cord.get()),
+        list.add(new MaterialEntry("constrictor_cord", "item.hemomancy.constrictor_cord",
+                "material.hemomancy.shared.an_organic_component_used_in_advanced",
+                "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.constrictor_cord.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("dried_leech", "Dried Leech",
-                "An organic component used in advanced Harbinger crafting and creature-derived recipes.",
-                "Biomaterials", () -> new ItemStack(ItemInit.dried_leech.get()),
+        list.add(new MaterialEntry("dried_leech", "item.hemomancy.dried_leech",
+                "material.hemomancy.shared.an_organic_component_used_in_advanced",
+                "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.dried_leech.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("erythrocoral_fragment", "Erythrocoral Fragment",
-                "An organic component used in advanced Harbinger crafting and creature-derived recipes.",
-                "Biomaterials", () -> new ItemStack(ItemInit.erythrocoral_fragment.get()),
+        list.add(new MaterialEntry("erythrocoral_fragment", "item.hemomancy.erythrocoral_fragment",
+                "material.hemomancy.shared.an_organic_component_used_in_advanced",
+                "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.erythrocoral_fragment.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("scale_grip", "Scale Grip",
-                "An organic component used in advanced Harbinger crafting and creature-derived recipes.",
-                "Biomaterials", () -> new ItemStack(ItemInit.scale_grip.get()),
+        list.add(new MaterialEntry("scale_grip", "item.hemomancy.scale_grip",
+                "material.hemomancy.shared.an_organic_component_used_in_advanced",
+                "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.scale_grip.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("swollen_leech", "Swollen Leech",
-                "An organic component used in advanced Harbinger crafting and creature-derived recipes.",
-                "Biomaterials", () -> new ItemStack(ItemInit.swollen_leech.get()),
+        list.add(new MaterialEntry("swollen_leech", "item.hemomancy.swollen_leech",
+                "material.hemomancy.shared.an_organic_component_used_in_advanced",
+                "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.swollen_leech.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("tendon_line", "Tendon Line",
-                "An organic component used in advanced Harbinger crafting and creature-derived recipes.",
-                "Biomaterials", () -> new ItemStack(ItemInit.tendon_line.get()),
+        list.add(new MaterialEntry("tendon_line", "item.hemomancy.tendon_line",
+                "material.hemomancy.shared.an_organic_component_used_in_advanced",
+                "material.hemomancy.category.biomaterials", () -> new ItemStack(ItemInit.tendon_line.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hallowed_residuum_hemorath", "Hallowed Residuum Hemorath",
-                "A hallowed saint-reagent extracted for advanced consecration work.",
-                "Hallowed Reagents", () -> new ItemStack(ItemInit.hallowed_residuum_hemorath.get()),
+        list.add(new MaterialEntry("hallowed_residuum_hemorath", "material.hemomancy.hallowed_residuum_hemorath",
+                "material.hemomancy.shared.a_hallowed_saint_reagent_extracted_for",
+                "material.hemomancy.category.hallowed_reagents", () -> new ItemStack(ItemInit.hallowed_residuum_hemorath.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hallowed_residuum_putriciel", "Hallowed Residuum Putriciel",
-                "A hallowed saint-reagent extracted for advanced consecration work.",
-                "Hallowed Reagents", () -> new ItemStack(ItemInit.hallowed_residuum_putriciel.get()),
+        list.add(new MaterialEntry("hallowed_residuum_putriciel", "material.hemomancy.hallowed_residuum_putriciel",
+                "material.hemomancy.shared.a_hallowed_saint_reagent_extracted_for",
+                "material.hemomancy.category.hallowed_reagents", () -> new ItemStack(ItemInit.hallowed_residuum_putriciel.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hallowed_residuum_seraphae", "Hallowed Residuum Seraphae",
-                "A hallowed saint-reagent extracted for advanced consecration work.",
-                "Hallowed Reagents", () -> new ItemStack(ItemInit.hallowed_residuum_seraphae.get()),
+        list.add(new MaterialEntry("hallowed_residuum_seraphae", "material.hemomancy.hallowed_residuum_seraphae",
+                "material.hemomancy.shared.a_hallowed_saint_reagent_extracted_for",
+                "material.hemomancy.category.hallowed_reagents", () -> new ItemStack(ItemInit.hallowed_residuum_seraphae.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("hallowed_residuum_velorum", "Hallowed Residuum Velorum",
-                "A hallowed saint-reagent extracted for advanced consecration work.",
-                "Hallowed Reagents", () -> new ItemStack(ItemInit.hallowed_residuum_velorum.get()),
+        list.add(new MaterialEntry("hallowed_residuum_velorum", "material.hemomancy.hallowed_residuum_velorum",
+                "material.hemomancy.shared.a_hallowed_saint_reagent_extracted_for",
+                "material.hemomancy.category.hallowed_reagents", () -> new ItemStack(ItemInit.hallowed_residuum_velorum.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("memory_of_vesper", "Memory of Vesper",
-                "Earned once by defeating both faces of Vesper through your owned Qliphoth wound. Teach it to your Living Staff through an Iron Brazier and Blood Absorption.",
-                "Qliphoth Reagents", () -> new ItemStack(ItemInit.memory_of_vesper.get()),
+        list.add(new MaterialEntry("memory_of_vesper", "item.hemomancy.memory_of_vesper",
+                "material.hemomancy.memory_of_vesper.desc",
+                "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.memory_of_vesper.get()),
                 true, UnlockPredicate.minDegree(7).and(player -> HemoCapabilityAccess.getInitiatoryDegree(player).hasWitnessedFungalRevelation())));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("monolith_fragment", "Monolith Fragment",
-                "A late-stage qliphoth reagent used in monolith and consecration work.",
-                "Qliphoth Reagents", () -> new ItemStack(ItemInit.monolith_fragment.get()),
+        list.add(new MaterialEntry("monolith_fragment", "item.hemomancy.monolith_fragment",
+                "material.hemomancy.shared.a_late_stage_qliphoth_reagent_used",
+                "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.monolith_fragment.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("monolith_imbued_cloth", "Monolith Imbued Cloth",
-                "A late-stage qliphoth reagent used in monolith and consecration work.",
-                "Qliphoth Reagents", () -> new ItemStack(ItemInit.monolith_imbued_cloth.get()),
+        list.add(new MaterialEntry("monolith_imbued_cloth", "item.hemomancy.monolith_imbued_cloth",
+                "material.hemomancy.shared.a_late_stage_qliphoth_reagent_used",
+                "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.monolith_imbued_cloth.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("monolithic_cornerstone", "Monolithic Cornerstone",
-                "A late-stage qliphoth reagent used in monolith and consecration work.",
-                "Qliphoth Reagents", () -> new ItemStack(ItemInit.monolithic_cornerstone.get()),
+        list.add(new MaterialEntry("monolithic_cornerstone", "item.hemomancy.monolithic_cornerstone",
+                "material.hemomancy.shared.a_late_stage_qliphoth_reagent_used",
+                "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.monolithic_cornerstone.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("qliphoth_pome", "Qliphoth Pome",
-                "Consume nine sequential owner-bound Pomes from one Bloom to complete Communion. Unbound fruit feeds you but cannot replace that proof.",
-                "Qliphoth Reagents", () -> new ItemStack(ItemInit.qliphoth_pome.get()),
+        list.add(new MaterialEntry("qliphoth_pome", "item.hemomancy.qliphoth_pome",
+                "material.hemomancy.qliphoth_pome.desc",
+                "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.qliphoth_pome.get()),
                 true, UnlockPredicate.minDegree(7)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("qliphoth_seed", "Qliphoth Seed",
-                "At D7, press further in your Sanguine Monolith conversation to shatter it and recover this Seed. Seat it as the medium for the Bloom of the Qliphoth rite.",
-                "Qliphoth Reagents", () -> new ItemStack(ItemInit.qliphoth_seed.get()),
+        list.add(new MaterialEntry("qliphoth_seed", "item.hemomancy.qliphoth_seed",
+                "material.hemomancy.qliphoth_seed.desc",
+                "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.qliphoth_seed.get()),
                 true, UnlockPredicate.minDegree(7)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("vicars_consecration_kit", "Armature Consecration Kit",
-                "The Artificer's D5 offering for the Rite of Armature Consecration.",
-                "Qliphoth Reagents", () -> new ItemStack(ItemInit.vicars_consecration_kit.get()),
+        list.add(new MaterialEntry("vicars_consecration_kit", "item.hemomancy.vicars_consecration_kit",
+                "material.hemomancy.vicars_consecration_kit.desc",
+                "material.hemomancy.category.qliphoth_reagents", () -> new ItemStack(ItemInit.vicars_consecration_kit.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                list.add(new MaterialEntry("rhizovitta_communis", "Rhizovitta Communis",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.rhizovitta_communis.get()),
+        list.add(new MaterialEntry("rhizovitta_communis", "item.hemomancy.rhizovitta_communis",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.rhizovitta_communis.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("antiphonomyces_resonans", "Antiphonomyces Resonans",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.antiphonomyces_resonans.get()),
+        list.add(new MaterialEntry("antiphonomyces_resonans", "material.hemomancy.antiphonomyces_resonans",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.antiphonomyces_resonans.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("ferric_spores", "Ferric Spores",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.ferric_spores.get()),
+        list.add(new MaterialEntry("ferric_spores", "item.hemomancy.ferric_spores",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.ferric_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("fervent_spores", "Fervent Spores",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.fervent_spores.get()),
+        list.add(new MaterialEntry("fervent_spores", "item.hemomancy.fervent_spores",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.fervent_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("frigid_spores", "Frigid Spores",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.frigid_spores.get()),
+        list.add(new MaterialEntry("frigid_spores", "item.hemomancy.frigid_spores",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.frigid_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("incandescent_spores", "Incandescent Spores",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.incandescent_spores.get()),
+        list.add(new MaterialEntry("incandescent_spores", "item.hemomancy.incandescent_spores",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.incandescent_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                list.add(new MaterialEntry("oculiflora_reticularis", "Oculiflora Reticularis",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.oculiflora_reticularis.get()),
+        list.add(new MaterialEntry("oculiflora_reticularis", "item.hemomancy.oculiflora_reticularis",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.oculiflora_reticularis.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("neurotic_spores", "Neurotic Spores",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.neurotic_spores.get()),
+        list.add(new MaterialEntry("neurotic_spores", "item.hemomancy.neurotic_spores",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.neurotic_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("noctifly_agaric", "Noctifly Agaric",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.noctifly_agaric.get()),
+        list.add(new MaterialEntry("noctifly_agaric", "item.hemomancy.noctifly_agaric",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.noctifly_agaric.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("ruinous_spores", "Ruinous Spores",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.ruinous_spores.get()),
+        list.add(new MaterialEntry("ruinous_spores", "item.hemomancy.ruinous_spores",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.ruinous_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                list.add(new MaterialEntry("putrivora_resolvens", "Putrivora Resolvens",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.putrivora_resolvens.get()),
+        list.add(new MaterialEntry("putrivora_resolvens", "item.hemomancy.putrivora_resolvens",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.putrivora_resolvens.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("saprovitta_vestigium", "Saprovitta Vestigium",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.saprovitta_vestigium.get()),
+        list.add(new MaterialEntry("saprovitta_vestigium", "material.hemomancy.saprovitta_vestigium",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.saprovitta_vestigium.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("talaromyces_minus", "Talaromyces Minus",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.talaromyces_minus.get()),
+        list.add(new MaterialEntry("talaromyces_minus", "item.hemomancy.talaromyces_minus",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.talaromyces_minus.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                list.add(new MaterialEntry("cryostroma_perdurans", "Cryostroma Perdurans",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.cryostroma_perdurans.get()),
+        list.add(new MaterialEntry("cryostroma_perdurans", "item.hemomancy.cryostroma_perdurans",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.cryostroma_perdurans.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("umbral_spores", "Umbral Spores",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.umbral_spores.get()),
+        list.add(new MaterialEntry("umbral_spores", "item.hemomancy.umbral_spores",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.umbral_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("vivacious_spores", "Vivacious Spores",
-                "A fungal culture or spore sample used in mycological bloodcraft.",
-                "Spores & Cultures", () -> new ItemStack(ItemInit.vivacious_spores.get()),
+        list.add(new MaterialEntry("vivacious_spores", "item.hemomancy.vivacious_spores",
+                "material.hemomancy.shared.a_fungal_culture_or_spore_sample",
+                "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.vivacious_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("echo_of_heart", "Echo of Heart",
-                "A visceral echo reflected through the Mortal Display and Visceral Mirror systems.",
-                "Organ Echoes", () -> new ItemStack(ItemInit.echo_of_heart.get()),
+        list.add(new MaterialEntry("echo_of_heart", "item.hemomancy.echo_of_heart",
+                "material.hemomancy.shared.a_visceral_echo_reflected_through_the",
+                "material.hemomancy.category.organ_echoes", () -> new ItemStack(ItemInit.echo_of_heart.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("echo_of_kidneys", "Echo of Kidneys",
-                "A visceral echo reflected through the Mortal Display and Visceral Mirror systems.",
-                "Organ Echoes", () -> new ItemStack(ItemInit.echo_of_kidneys.get()),
+        list.add(new MaterialEntry("echo_of_kidneys", "item.hemomancy.echo_of_kidneys",
+                "material.hemomancy.shared.a_visceral_echo_reflected_through_the",
+                "material.hemomancy.category.organ_echoes", () -> new ItemStack(ItemInit.echo_of_kidneys.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("echo_of_liver", "Echo of Liver",
-                "A visceral echo reflected through the Mortal Display and Visceral Mirror systems.",
-                "Organ Echoes", () -> new ItemStack(ItemInit.echo_of_liver.get()),
+        list.add(new MaterialEntry("echo_of_liver", "item.hemomancy.echo_of_liver",
+                "material.hemomancy.shared.a_visceral_echo_reflected_through_the",
+                "material.hemomancy.category.organ_echoes", () -> new ItemStack(ItemInit.echo_of_liver.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("echo_of_lungs", "Echo of Lungs",
-                "A visceral echo reflected through the Mortal Display and Visceral Mirror systems.",
-                "Organ Echoes", () -> new ItemStack(ItemInit.echo_of_lungs.get()),
+        list.add(new MaterialEntry("echo_of_lungs", "item.hemomancy.echo_of_lungs",
+                "material.hemomancy.shared.a_visceral_echo_reflected_through_the",
+                "material.hemomancy.category.organ_echoes", () -> new ItemStack(ItemInit.echo_of_lungs.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("echo_of_spleen", "Echo of Spleen",
-                "A visceral echo reflected through the Mortal Display and Visceral Mirror systems.",
-                "Organ Echoes", () -> new ItemStack(ItemInit.echo_of_spleen.get()),
+        list.add(new MaterialEntry("echo_of_spleen", "item.hemomancy.echo_of_spleen",
+                "material.hemomancy.shared.a_visceral_echo_reflected_through_the",
+                "material.hemomancy.category.organ_echoes", () -> new ItemStack(ItemInit.echo_of_spleen.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-                                                                                                                                                                                list.add(new MaterialEntry("hematic_iron_chestplate", "Hematic Iron Chestplate",
+        list.add(new MaterialEntry("hematic_iron_chestplate", "item.hemomancy.hematic_iron_chestplate",
                 "",
-                "Materials", () -> new ItemStack(ItemInit.hematic_iron_chestplate.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.hematic_iron_chestplate.get()),
                 true, UnlockPredicate.minDegree(1)));
 
         return Collections.unmodifiableList(list);
@@ -1544,241 +1544,241 @@ public final class MaterialsData {
         List<MaterialEntry> list = new ArrayList<>();
 
         // ── Functional Blocks ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("altar_of_cleansing", "Altar of Cleansing",
-                "Sacred altar devoted to Our Lady of Still Waters. Grants purity boosts through offerings.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.altar_of_cleansing.get()),
+        list.add(new MaterialEntry("altar_of_cleansing", "block.hemomancy.altar_of_cleansing",
+                "material.hemomancy.altar_of_cleansing.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.altar_of_cleansing.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("unstained_podium", "Unstained Podium",
-                "Podium used in Unstained rituals and ceremonies.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.unstained_podium.get()),
+        list.add(new MaterialEntry("unstained_podium", "block.hemomancy.unstained_podium",
+                "material.hemomancy.unstained_podium.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.unstained_podium.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("suspended_cleansed_blood_crystal", "Cleansed Blood Crystal",
-                "A blood crystal purified through Unstained rites. Radiates cleansing energy.",
-                "Functional Blocks", () -> new ItemStack(BlockInit.suspended_cleansed_blood_crystal.get()),
+        list.add(new MaterialEntry("suspended_cleansed_blood_crystal", "material.hemomancy.suspended_cleansed_blood_crystal",
+                "material.hemomancy.suspended_cleansed_blood_crystal.desc",
+                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.suspended_cleansed_blood_crystal.get()),
                 true, UnlockPredicate.minPurity(25.0f)));
 
         // ── Building Blocks ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("cleansed_stone", "Cleansed Stone",
-                "Stone purified of all sanguine taint. Foundation for Unstained structures.",
-                "Building Blocks", () -> new ItemStack(BlockInit.cleansed_stone.get()),
+        list.add(new MaterialEntry("cleansed_stone", "block.hemomancy.cleansed_stone",
+                "material.hemomancy.cleansed_stone.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.cleansed_stone.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("pallid_lantern", "Pallid Lantern",
-                "A soft-glowing lantern consecrated in the name of the Pallid Matron.",
-                "Building Blocks", () -> new ItemStack(BlockInit.pallid_lantern.get()),
+        list.add(new MaterialEntry("pallid_lantern", "block.hemomancy.pallid_lantern",
+                "material.hemomancy.pallid_lantern.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.pallid_lantern.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("cleansed_sanguine_glass", "Cleansed Sanguine Glass",
-                "Purified glass that blocks blood resonance.",
-                "Building Blocks", () -> new ItemStack(BlockInit.cleansed_sanguine_glass.get()),
+        list.add(new MaterialEntry("cleansed_sanguine_glass", "block.hemomancy.cleansed_sanguine_glass",
+                "material.hemomancy.cleansed_sanguine_glass.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.cleansed_sanguine_glass.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("pale_silver_block", "Pale Silver Block",
-                "A block of compressed pale silver. Used in Unstained rite structures.",
-                "Building Blocks", () -> new ItemStack(BlockInit.pale_silver_block.get()),
+        list.add(new MaterialEntry("pale_silver_block", "block.hemomancy.pale_silver_block",
+                "material.hemomancy.pale_silver_block.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.pale_silver_block.get()),
                 true, UnlockPredicate.minPurity(25.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("pale_silver_bells", "Pale Silver Bells",
-                "Decorative chime block cast from pale silver. Rings faintly in still air.",
-                "Building Blocks", () -> new ItemStack(BlockInit.pale_silver_bells.get()),
+        list.add(new MaterialEntry("pale_silver_bells", "block.hemomancy.pale_silver_bells",
+                "material.hemomancy.pale_silver_bells.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.pale_silver_bells.get()),
                 true, UnlockPredicate.minPurity(25.0f)));
 
         // ── Plants ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("lethean_poppy", "Lethean Poppy",
-                "Sacred flower of the Pale Lady. Source of pale distillate and poppy wreaths.",
-                "Plants", () -> new ItemStack(BlockInit.lethean_poppy.get()),
+        list.add(new MaterialEntry("lethean_poppy", "block.hemomancy.lethean_poppy",
+                "material.hemomancy.lethean_poppy.desc",
+                "material.hemomancy.category.plants", () -> new ItemStack(BlockInit.lethean_poppy.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("ghost_pipe", "Ghost Pipe",
-                "A pale, leafless plant that grows only where the ground is truly still.",
-                "Plants", () -> new ItemStack(BlockInit.ghost_pipe.get()),
+        list.add(new MaterialEntry("ghost_pipe", "block.hemomancy.ghost_pipe",
+                "material.hemomancy.ghost_pipe.desc",
+                "material.hemomancy.category.plants", () -> new ItemStack(BlockInit.ghost_pipe.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("puffball_fungus", "Puffball Fungus",
-                "A soft white fungus. Bursts when touched, releasing a cloud of cleansing spores.",
-                "Plants", () -> new ItemStack(BlockInit.puffball_fungus.get()),
+        list.add(new MaterialEntry("puffball_fungus", "block.hemomancy.puffball_fungus",
+                "material.hemomancy.puffball_fungus.desc",
+                "material.hemomancy.category.plants", () -> new ItemStack(BlockInit.puffball_fungus.get()),
                 true, UnlockPredicate.always()));
 
         // ── Materials ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("tears_of_silthmere", "Tears of Silthmere",
-                "Rare tears shed in devotion. Grants a powerful one-time purity boost at the Altar.",
-                "Materials", () -> new ItemStack(ItemInit.tears_of_silthmere.get()),
+        list.add(new MaterialEntry("tears_of_silthmere", "item.hemomancy.tears_of_silthmere",
+                "material.hemomancy.tears_of_silthmere.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.tears_of_silthmere.get()),
                 true, UnlockPredicate.minPurity(50.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("lethean_poppy_wreath", "Lethean Poppy Wreath",
-                "Woven from lethean poppies. Offer at the Altar for +5 purity.",
-                "Materials", () -> new ItemStack(ItemInit.lethean_poppy_wreath.get()),
+        list.add(new MaterialEntry("lethean_poppy_wreath", "item.hemomancy.lethean_poppy_wreath",
+                "material.hemomancy.lethean_poppy_wreath.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.lethean_poppy_wreath.get()),
                 true, UnlockPredicate.minPurity(10.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("silver_chalice", "Silver Chalice",
-                "Vessel of purification. Offer at the Altar for +5 clarity.",
-                "Materials", () -> new ItemStack(ItemInit.silver_chalice.get()),
+        list.add(new MaterialEntry("silver_chalice", "item.hemomancy.silver_chalice",
+                "material.hemomancy.silver_chalice.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.silver_chalice.get()),
                 true, UnlockPredicate.minClarity(10.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("pale_silver_ingot", "Pale Silver Ingot",
-                "Purified silver free of sanguine taint. Base material for Unstained equipment.",
-                "Materials", () -> new ItemStack(ItemInit.pale_silver_ingot.get()),
+        list.add(new MaterialEntry("pale_silver_ingot", "item.hemomancy.pale_silver_ingot",
+                "material.hemomancy.pale_silver_ingot.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.pale_silver_ingot.get()),
                 true, UnlockPredicate.minPurity(15.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("pale_distillate", "The Pale Distillate",
-                "Concentrated essence distilled from lethean poppies.",
-                "Materials", () -> new ItemStack(ItemInit.pale_distillate.get()),
+        list.add(new MaterialEntry("pale_distillate", "item.hemomancy.pale_distillate",
+                "material.hemomancy.pale_distillate.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.pale_distillate.get()),
                 true, UnlockPredicate.minPurity(25.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("cleansed_blood_crystal_shard", "Cleansed Blood Crystal Shard",
-                "A purified blood crystal shard radiating calm energy.",
-                "Materials", () -> new ItemStack(ItemInit.cleansed_blood_crystal_shard.get()),
+        list.add(new MaterialEntry("cleansed_blood_crystal_shard", "item.hemomancy.cleansed_blood_crystal_shard",
+                "material.hemomancy.cleansed_blood_crystal_shard.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.cleansed_blood_crystal_shard.get()),
                 true, UnlockPredicate.minPurity(25.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("pallid_icon", "Pallid Icon",
-                "Holy icon depicting Our Lady of Still Waters.",
-                "Materials", () -> new ItemStack(ItemInit.pallid_icon.get()),
+        list.add(new MaterialEntry("pallid_icon", "material.hemomancy.pallid_icon",
+                "material.hemomancy.pallid_icon.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.pallid_icon.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("consecrated_copper_ingot", "Consecrated Copper Ingot",
-                "Copper blessed through Unstained rites.",
-                "Materials", () -> new ItemStack(ItemInit.consecrated_copper_ingot.get()),
+        list.add(new MaterialEntry("consecrated_copper_ingot", "item.hemomancy.consecrated_copper_ingot",
+                "material.hemomancy.consecrated_copper_ingot.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.consecrated_copper_ingot.get()),
                 true, UnlockPredicate.minPurity(10.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hemolytic_vial", "Hemolytic Vial",
-                "A vial of hemolytic solution. Dissolves sanguine formations on contact.",
-                "Materials", () -> new ItemStack(ItemInit.hemolytic_vial.get()),
+        list.add(new MaterialEntry("hemolytic_vial", "item.hemomancy.hemolytic_vial",
+                "material.hemomancy.hemolytic_vial.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.hemolytic_vial.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("pale_humor_flask", "Pale Humor Flask",
-                "A flask of purified pale humor. Restores purity in small measure, or pours into a pool for item purification.",
-                "Materials", () -> new ItemStack(ItemInit.pale_humor_flask.get()),
+        list.add(new MaterialEntry("pale_humor_flask", "item.hemomancy.pale_humor_flask",
+                "material.hemomancy.pale_humor_flask.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.pale_humor_flask.get()),
                 true, UnlockPredicate.minPurity(15.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("draught_of_still_waters", "Draught of Still Waters",
-                "A sacred draught blessed by Our Lady. Soothes blood corruption.",
-                "Materials", () -> new ItemStack(ItemInit.draught_of_still_waters.get()),
+        list.add(new MaterialEntry("draught_of_still_waters", "item.hemomancy.draught_of_still_waters",
+                "material.hemomancy.draught_of_still_waters.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.draught_of_still_waters.get()),
                 true, UnlockPredicate.minPurity(50.0f)));
 
         // ── Anti-Blood Materials ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hemolytic_solution", "Hemolytic Solution",
-                "Solution that dissolves sanguine formations. Core anti-blood reagent.",
-                "Anti-Blood", () -> new ItemStack(ItemInit.hemolytic_solution.get()),
+        list.add(new MaterialEntry("hemolytic_solution", "item.hemomancy.hemolytic_solution",
+                "material.hemomancy.hemolytic_solution.desc",
+                "material.hemomancy.category.anti_blood", () -> new ItemStack(ItemInit.hemolytic_solution.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hemolytic_plating", "Hemolytic Plating",
-                "Plating treated with hemolytic solution. Resists blood magic.",
-                "Anti-Blood", () -> new ItemStack(ItemInit.hemolytic_plating.get()),
+        list.add(new MaterialEntry("hemolytic_plating", "item.hemomancy.hemolytic_plating",
+                "material.hemomancy.hemolytic_plating.desc",
+                "material.hemomancy.category.anti_blood", () -> new ItemStack(ItemInit.hemolytic_plating.get()),
                 true, UnlockPredicate.minPurity(15.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("neutralizing_gasket", "Neutralizing Gasket",
-                "Gasket that neutralizes blood-based energy transfer.",
-                "Anti-Blood", () -> new ItemStack(ItemInit.neutralizing_gasket.get()),
+        list.add(new MaterialEntry("neutralizing_gasket", "item.hemomancy.neutralizing_gasket",
+                "material.hemomancy.neutralizing_gasket.desc",
+                "material.hemomancy.category.anti_blood", () -> new ItemStack(ItemInit.neutralizing_gasket.get()),
                 true, UnlockPredicate.minPurity(25.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("hemolytic_plating_block", "Hemolytic Plating Block",
-                "Structural block made of hemolytic plating. Blood-proof construction.",
-                "Anti-Blood", () -> new ItemStack(BlockInit.hemolytic_plating_block.get()),
+        list.add(new MaterialEntry("hemolytic_plating_block", "block.hemomancy.hemolytic_plating_block",
+                "material.hemomancy.hemolytic_plating_block.desc",
+                "material.hemomancy.category.anti_blood", () -> new ItemStack(BlockInit.hemolytic_plating_block.get()),
                 true, UnlockPredicate.minPurity(25.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("cleansing_hemolymph", "Cleansing Hemolymph",
-                "Purified hemolymph used to cleanse blood corruption.",
-                "Anti-Blood", () -> new ItemStack(ItemInit.cleansing_hemolymph.get()),
+        list.add(new MaterialEntry("cleansing_hemolymph", "item.hemomancy.cleansing_hemolymph",
+                "material.hemomancy.cleansing_hemolymph.desc",
+                "material.hemomancy.category.anti_blood", () -> new ItemStack(ItemInit.cleansing_hemolymph.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("lethean_dew", "Lethean Dew",
-                "Dew collected from lethean flowers. Erases blood memories.",
-                "Anti-Blood", () -> new ItemStack(ItemInit.lethean_dew.get()),
+        list.add(new MaterialEntry("lethean_dew", "item.hemomancy.lethean_dew",
+                "material.hemomancy.lethean_dew.desc",
+                "material.hemomancy.category.anti_blood", () -> new ItemStack(ItemInit.lethean_dew.get()),
                 true, UnlockPredicate.minPurity(25.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("lethean_brew", "Lethean Brew",
-                "Potent brew of lethean essence. Powerful memory erasure.",
-                "Anti-Blood", () -> new ItemStack(ItemInit.lethean_brew.get()),
+        list.add(new MaterialEntry("lethean_brew", "item.hemomancy.lethean_brew",
+                "material.hemomancy.lethean_brew.desc",
+                "material.hemomancy.category.anti_blood", () -> new ItemStack(ItemInit.lethean_brew.get()),
                 true, UnlockPredicate.minPurity(50.0f)));
 
         // ── Equipment ──
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("unstained_helm", "Unstained Armor",
-                "Armor forged with pale silver, blessed against blood corruption.",
-                "Equipment", () -> new ItemStack(ItemInit.unstained_helm.get()),
+        list.add(new MaterialEntry("unstained_helm", "material.hemomancy.unstained_helm",
+                "material.hemomancy.unstained_helm.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.unstained_helm.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("unstained_warhammer", "Unstained Warhammer",
-                "Heavy warhammer consecrated by the Unstained. Devastates blood creatures.",
-                "Equipment", () -> new ItemStack(ItemInit.unstained_warhammer.get()),
+        list.add(new MaterialEntry("unstained_warhammer", "item.hemomancy.unstained_warhammer",
+                "material.hemomancy.unstained_warhammer.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.unstained_warhammer.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("unstained_shield", "Unstained Shield",
-                "Shield blessed by the Pallid Matron. Wards off blood magic attacks.",
-                "Equipment", () -> new ItemStack(ItemInit.unstained_shield.get()),
+        list.add(new MaterialEntry("unstained_shield", "item.hemomancy.unstained_shield",
+                "material.hemomancy.unstained_shield.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.unstained_shield.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("self_reflection_mirror", "Self-Reflection Mirror",
-                "Opens the Unstained Progress screen to view purification status.",
-                "Equipment", () -> new ItemStack(ItemInit.self_reflection_mirror.get()),
+        list.add(new MaterialEntry("self_reflection_mirror", "material.hemomancy.self_reflection_mirror",
+                "material.hemomancy.self_reflection_mirror.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.self_reflection_mirror.get()),
                 true, UnlockPredicate.always()));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("absolution_dagger", "Absolution Dagger",
-                "A pale-silver dagger consecrated for extraction rites. The Unstained carry it for mercy cuts, not combat.",
-                "Equipment", () -> new ItemStack(ItemInit.absolution_dagger.get()),
+        list.add(new MaterialEntry("absolution_dagger", "item.hemomancy.absolution_dagger",
+                "material.hemomancy.absolution_dagger.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.absolution_dagger.get()),
                 true, UnlockPredicate.minPurity(50.0f)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("liber_immaculatus", "Liber Immaculatus",
-                "The sacred text of the Unstained path. Records the stages of purification and the Lady's teachings.",
-                "Equipment", () -> new ItemStack(ItemInit.liber_immaculatus.get()),
+        list.add(new MaterialEntry("liber_immaculatus", "item.hemomancy.liber_immaculatus",
+                "material.hemomancy.liber_immaculatus.desc",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.liber_immaculatus.get()),
                 true, UnlockPredicate.always()));
 
         // Generated registry gap-fill catalogue entries
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("pale_silver_bars", "Pale Silver Bars",
-                "An Unstained fixture used in cleansing, still-water rites, or pale-silver construction.",
-                "Cleansing Fixtures", () -> new ItemStack(BlockInit.pale_silver_bars.get()),
+        list.add(new MaterialEntry("pale_silver_bars", "block.hemomancy.pale_silver_bars",
+                "material.hemomancy.shared.an_unstained_fixture_used_in_cleansing",
+                "material.hemomancy.category.cleansing_fixtures", () -> new ItemStack(BlockInit.pale_silver_bars.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("pallid_retort", "Pallid Retort",
-                "An Unstained fixture used in cleansing, still-water rites, or pale-silver construction.",
-                "Cleansing Fixtures", () -> new ItemStack(BlockInit.pallid_retort.get()),
+        list.add(new MaterialEntry("pallid_retort", "block.hemomancy.pallid_retort",
+                "material.hemomancy.shared.an_unstained_fixture_used_in_cleansing",
+                "material.hemomancy.category.cleansing_fixtures", () -> new ItemStack(BlockInit.pallid_retort.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("pallid_silver_chain", "Pallid Silver Chain",
-                "An Unstained fixture used in cleansing, still-water rites, or pale-silver construction.",
-                "Cleansing Fixtures", () -> new ItemStack(BlockInit.pallid_silver_chain.get()),
+        list.add(new MaterialEntry("pallid_silver_chain", "block.hemomancy.pallid_silver_chain",
+                "material.hemomancy.shared.an_unstained_fixture_used_in_cleansing",
+                "material.hemomancy.category.cleansing_fixtures", () -> new ItemStack(BlockInit.pallid_silver_chain.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("saint_sarcophagus", "Saint Sarcophagus",
-                "An Unstained fixture used in cleansing, still-water rites, or pale-silver construction.",
-                "Cleansing Fixtures", () -> new ItemStack(BlockInit.saint_sarcophagus.get()),
+        list.add(new MaterialEntry("saint_sarcophagus", "block.hemomancy.saint_sarcophagus",
+                "material.hemomancy.shared.an_unstained_fixture_used_in_cleansing",
+                "material.hemomancy.category.cleansing_fixtures", () -> new ItemStack(BlockInit.saint_sarcophagus.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("cleansed_sanguine_pane", "Cleansed Sanguine Pane",
-                "A purified building material for Unstained structures.",
-                "Pale Architecture", () -> new ItemStack(BlockInit.cleansed_sanguine_pane.get()),
+        list.add(new MaterialEntry("cleansed_sanguine_pane", "block.hemomancy.cleansed_sanguine_pane",
+                "material.hemomancy.cleansed_sanguine_pane.desc",
+                "material.hemomancy.category.pale_architecture", () -> new ItemStack(BlockInit.cleansed_sanguine_pane.get()),
                 true, UnlockPredicate.minPurity(25.0f)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("annettas_absolution_dagger", "Annetta's Absolution Dagger",
-                "An Unstained tool, weapon, or vestment forged for cleansing rites.",
-                "Equipment", () -> new ItemStack(ItemInit.annettas_absolution_dagger.get()),
+        list.add(new MaterialEntry("annettas_absolution_dagger", "item.hemomancy.annettas_absolution_dagger",
+                "material.hemomancy.shared.an_unstained_tool_weapon_or_vestment",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.annettas_absolution_dagger.get()),
                 true, UnlockPredicate.minPurity(50.0f)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("pale_silver_bell", "Pale Silver Bell",
-                "An Unstained tool, weapon, or vestment forged for cleansing rites.",
-                "Equipment", () -> new ItemStack(ItemInit.pale_silver_bell.get()),
+        list.add(new MaterialEntry("pale_silver_bell", "item.hemomancy.pale_silver_bell",
+                "material.hemomancy.shared.an_unstained_tool_weapon_or_vestment",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.pale_silver_bell.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("silthmere_glaive", "Silthmere Glaive",
-                "An Unstained tool, weapon, or vestment forged for cleansing rites.",
-                "Equipment", () -> new ItemStack(ItemInit.silthmere_glaive.get()),
+        list.add(new MaterialEntry("silthmere_glaive", "item.hemomancy.silthmere_glaive",
+                "material.hemomancy.shared.an_unstained_tool_weapon_or_vestment",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.silthmere_glaive.get()),
                 true, UnlockPredicate.minPurity(50.0f)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("unstained_boots", "Unstained Boots",
-                "An Unstained tool, weapon, or vestment forged for cleansing rites.",
-                "Equipment", () -> new ItemStack(ItemInit.unstained_boots.get()),
+        list.add(new MaterialEntry("unstained_boots", "item.hemomancy.unstained_boots",
+                "material.hemomancy.shared.an_unstained_tool_weapon_or_vestment",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.unstained_boots.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("unstained_chestplate", "Unstained Chestplate",
-                "An Unstained tool, weapon, or vestment forged for cleansing rites.",
-                "Equipment", () -> new ItemStack(ItemInit.unstained_chestplate.get()),
+        list.add(new MaterialEntry("unstained_chestplate", "item.hemomancy.unstained_chestplate",
+                "material.hemomancy.shared.an_unstained_tool_weapon_or_vestment",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.unstained_chestplate.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("unstained_leggings", "Unstained Leggings",
-                "An Unstained tool, weapon, or vestment forged for cleansing rites.",
-                "Equipment", () -> new ItemStack(ItemInit.unstained_leggings.get()),
+        list.add(new MaterialEntry("unstained_leggings", "item.hemomancy.unstained_leggings",
+                "material.hemomancy.shared.an_unstained_tool_weapon_or_vestment",
+                "material.hemomancy.category.equipment", () -> new ItemStack(ItemInit.unstained_leggings.get()),
                 true, UnlockPredicate.minPurity(35.0f)));
 
         return Collections.unmodifiableList(list);

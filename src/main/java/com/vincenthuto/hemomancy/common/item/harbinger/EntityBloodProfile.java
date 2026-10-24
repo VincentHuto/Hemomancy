@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import net.minecraft.resources.ResourceLocation;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.Locale;
 public record EntityBloodProfile(List<EnumBloodTendency> tendencies, List<ResourceLocation> properties,
                                  boolean requiresLivingSyringe) {
     public static final EntityBloodProfile EMPTY = new EntityBloodProfile(List.of(), List.of(), false);
-    public static final ResourceLocation FUNGAL = ResourceLocation.parse("hemomancy:fungal");
+    public static final ResourceLocation FUNGAL = Hemomancy.rloc("fungal");
 
     public EntityBloodProfile {
         tendencies = tendencies.stream().distinct().sorted().toList();

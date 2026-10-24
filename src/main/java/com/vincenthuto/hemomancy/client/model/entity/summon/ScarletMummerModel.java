@@ -8,12 +8,11 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
 
 // Authored by tools/circus/build_scarlet_mummer.py; regenerate the model, atlas and BBModel together.
 public class ScarletMummerModel extends HumanoidModel<ScarletMummerEntity> {
 	public static final ModelLayerLocation LAYER_LOCATION =
-			new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "scarlet_mummer"), "main");
+			new ModelLayerLocation(Hemomancy.rloc("scarlet_mummer"), "main");
 
 	private final ModelPart leftGorget;
 	private final ModelPart rightGorget;

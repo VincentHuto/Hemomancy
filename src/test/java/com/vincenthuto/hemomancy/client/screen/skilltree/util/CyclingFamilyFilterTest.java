@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -9,19 +10,19 @@ import static org.junit.jupiter.api.Assertions.*;
 final class CyclingFamilyFilterTest {
 	@Test
 	void selectedFamiliesUseTheNicknameWithoutTheLongFamilyPrefix() {
-		assertEquals("Family: All", FamilyFilterLabels.display(null));
+		assertEquals("Family: All", EnglishText.render(FamilyFilterLabels.label(null)));
 		assertEquals("Animus", FamilyFilterLabels.display("Animus"));
 	}
 
 	@Test
 	void recipeAndSkillFamiliesHaveCompactAuthoredNicknames() {
-		assertEquals("Staff", FamilyFilterLabels.nickname("living_staff"));
-		assertEquals("Bloodline", FamilyFilterLabels.nickname("Bloodline/Fane"));
-		assertEquals("Qliphoth", FamilyFilterLabels.nickname("Qliphoth/Forbidden"));
-		assertEquals("Floors", FamilyFilterLabels.nickname("Ritual Floors"));
-		assertEquals("Ritual", FamilyFilterLabels.nickname("Ritual Infrastructure"));
-		assertEquals("Constructs", FamilyFilterLabels.nickname("Constructs/Effigies"));
-		assertEquals("Order", FamilyFilterLabels.nickname("Order"));
+		assertEquals("Staff", EnglishText.render(FamilyFilterLabels.nickname("living_staff")));
+		assertEquals("Bloodline", EnglishText.render(FamilyFilterLabels.nickname("Bloodline/Fane")));
+		assertEquals("Qliphoth", EnglishText.render(FamilyFilterLabels.nickname("Qliphoth/Forbidden")));
+		assertEquals("Floors", EnglishText.render(FamilyFilterLabels.nickname("Ritual Floors")));
+		assertEquals("Ritual", EnglishText.render(FamilyFilterLabels.nickname("Ritual Infrastructure")));
+		assertEquals("Constructs", EnglishText.render(FamilyFilterLabels.nickname("Constructs/Effigies")));
+		assertEquals("Order", EnglishText.render(FamilyFilterLabels.nickname("Order")));
 	}
 
 	@Test

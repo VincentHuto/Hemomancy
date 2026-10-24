@@ -7,10 +7,11 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -84,7 +85,7 @@ public final class ScarsTabController implements IProgressTab {
 	public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, float partial) {
 		tickKnowledgeCache();
 		if (state.entries.isEmpty()) {
-			gfx.drawCenteredString(ctx.font(), "No cerebral scar recipes found",
+			gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_controller.no_cerebral_scar_recipes_found"),
 					ctx.guiLeft() + ctx.guiWidth() / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF666666);
 			return;
 		}
@@ -157,7 +158,7 @@ public final class ScarsTabController implements IProgressTab {
 	private String familyLabel() {
 		EnumBloodTendency selected = familyFilter.selected();
 		return FamilyFilterLabels.display(selected == null ? null
-				: HLTextUtils.toProperCase(selected.name().replace('_', ' ')));
+				: BloodManipulation.tendencyName(selected).getString());
 	}
 
 	public ScarsTabState getState() { return state; }

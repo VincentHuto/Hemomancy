@@ -117,10 +117,10 @@ public class WitchsEarMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Echoic Perception (Reveal nearby signals)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Lighthearted - Membrane Glide (Slow falling and reduced fall damage)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Night-State Pursuit (Strength in darkness)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Echothesis (Staff active reveals blood signatures and empowers night raids)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.witchs_ear_morphling_item.echoic_perception_reveal_nearby_signals"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.witchs_ear_morphling_item.lighthearted_membrane_glide_slow_falling_and"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.witchs_ear_morphling_item.night_state_pursuit_strength_in_darkness"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.witchs_ear_morphling_item.echothesis_staff_active_reveals_blood_signatures"), 5, currentMaturity));
 		return list;
 	}
 }

@@ -1,15 +1,15 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 
 /** Server-authored cue for the daemon's brief player impact feedback. */
 public record CardinalRiteImpactPacket(int durationTicks, float peakAlpha, int seed)
 		implements CustomPacketPayload {
 	public static final Type<CardinalRiteImpactPacket> TYPE = new Type<>(
-			ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite_impact"));
+			Hemomancy.rloc("cardinal_rite_impact"));
 	public static final StreamCodec<FriendlyByteBuf, CardinalRiteImpactPacket> STREAM_CODEC =
 			StreamCodec.of(CardinalRiteImpactPacket::encode, CardinalRiteImpactPacket::decode);
 

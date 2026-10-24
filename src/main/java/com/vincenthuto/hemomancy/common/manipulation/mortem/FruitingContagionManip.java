@@ -45,7 +45,7 @@ public class FruitingContagionManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (carriers(player, player.level()).isEmpty()) {
-			player.displayClientMessage(Component.literal("No rot has taken root nearby."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.fruiting_contagion_manip.no_rot_has_taken_root_nearby"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

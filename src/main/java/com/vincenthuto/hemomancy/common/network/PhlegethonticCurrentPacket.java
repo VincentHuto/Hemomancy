@@ -5,12 +5,11 @@ import com.vincenthuto.hemomancy.common.init.FluidInit;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record PhlegethonticCurrentPacket(double x, double z) implements CustomPacketPayload {
-    public static final Type<PhlegethonticCurrentPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,"phlegethontic_current"));
+    public static final Type<PhlegethonticCurrentPacket> TYPE = new Type<>(Hemomancy.rloc("phlegethontic_current"));
     public static final StreamCodec<FriendlyByteBuf, PhlegethonticCurrentPacket> STREAM_CODEC = StreamCodec.of(
             (buf, packet) -> { buf.writeDouble(packet.x); buf.writeDouble(packet.z); },
             buf -> new PhlegethonticCurrentPacket(buf.readDouble(), buf.readDouble()));

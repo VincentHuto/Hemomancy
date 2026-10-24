@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenCont
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -52,7 +53,7 @@ public final class MilestoneDrawerView {
         int y = drawerY + 6 - state.scrollOffset;
         int centerX = drawerX + drawerW / 2;
 
-        gfx.drawCenteredString(ctx.font(), Component.literal("Milestones"), centerX, y, 0xFFCC3333);
+        gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.milestone_drawer_view.milestones"), centerX, y, 0xFFCC3333);
         y += 12;
 
         int completed = SkillProgressClientCache.current().getCompletedMilestoneCount();
@@ -61,7 +62,7 @@ public final class MilestoneDrawerView {
             if (m.getRequiredDegree() <= ctx.playerDegree()) visible++;
         }
         gfx.drawCenteredString(ctx.font(),
-                Component.literal(completed + "/" + visible + " completed").withStyle(s -> s.withColor(0xFF888888)),
+                HemoText.translatable("screen.hemomancy.milestone_drawer_view.completed", completed, visible).withStyle(s -> s.withColor(0xFF888888)),
                 centerX, y, 0);
         y += 12;
 
@@ -77,7 +78,7 @@ public final class MilestoneDrawerView {
                 final HemoMilestone.Category cat = lastCategory;
                 y += 3;
                 gfx.drawString(ctx.font(),
-                        Component.literal("\u25B8 " + cat.getLabel()).withStyle(s -> s.withColor(cat.getColor()).withBold(true)),
+                        Component.literal("\u25B8 ").append(cat.label()).withStyle(s -> s.withColor(cat.getColor()).withBold(true)),
                         x, y, 0, false);
                 y += 11;
             }

@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -104,7 +105,7 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 
 		// Send progress updates to the player's screen every 5 ticks
 		if (te.ritualTicks % 5 == 0 && player instanceof ServerPlayer sp) {
-			te.sendProgressUpdate(sp, "");
+			te.sendProgressUpdate(sp, Component.empty());
 		}
 	}
 
@@ -123,26 +124,26 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 
 		int degree = HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber();
 		if (degree < REQUIRED_DEGREE) {
-			sendStatusToPlayer(player, "You lack the initiatory degree to peer into the visceral mirror.");
+			sendStatusToPlayer(player, Component.translatable("message.hemomancy.visceral_mirror.degree_too_low"));
 			return false;
 		}
 
 		boolean hasScalpel = player.getItemInHand(InteractionHand.MAIN_HAND).is(ItemInit.vivianite_scalpel.get())
 				|| player.getItemInHand(InteractionHand.OFF_HAND).is(ItemInit.vivianite_scalpel.get());
 		if (!hasScalpel) {
-			sendStatusToPlayer(player, "A vivianite scalpel is required to perform organ extraction.");
+			sendStatusToPlayer(player, Component.translatable("message.hemomancy.visceral_mirror.scalpel_required"));
 			return false;
 		}
 
 		if (organ.getTier() > degree) {
-			sendStatusToPlayer(player, "Your degree is insufficient for an organ of this tier.");
+			sendStatusToPlayer(player, Component.translatable("message.hemomancy.visceral_mirror.tier_too_high"));
 			return false;
 		}
 
 		IVisceralOrgans organs = HemoCapabilityAccess.getVisceralOrgans(player)
 				;
 		if (organs != null && organs.getOrganLevel(organ) >= 3) {
-			sendStatusToPlayer(player, "This organ has already reached its maximum modification.");
+			sendStatusToPlayer(player, Component.translatable("message.hemomancy.visceral_mirror.organ_maxed"));
 			return false;
 		}
 
@@ -151,7 +152,7 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 			if (!invStack.isEmpty()
 					&& invStack.getItem() instanceof OrganEchoItem echoItem
 					&& echoItem.getOrgan() == organ) {
-				sendStatusToPlayer(player, "An echo of this organ already lingers on your person.");
+				sendStatusToPlayer(player, Component.translatable("message.hemomancy.visceral_mirror.echo_already_held"));
 				return false;
 			}
 		}
@@ -159,7 +160,7 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 		double cost = organ.getTier() * BLOOD_COST_PER_TIER;
 		IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(player);
 		if (vol == null || vol.getBloodVolume() < cost) {
-			sendStatusToPlayer(player, "Insufficient blood to sustain the extraction ritual.");
+			sendStatusToPlayer(player, Component.translatable("message.hemomancy.visceral_mirror.insufficient_blood"));
 			return false;
 		}
 
@@ -172,7 +173,7 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 		BlockEntitySync.markAndSync(this);
 
 		if (player instanceof ServerPlayer sp) {
-			sendProgressUpdate(sp, "The echo stirs within your reflection...");
+			sendProgressUpdate(sp, Component.translatable("message.hemomancy.visceral_mirror.echo_stirs"));
 		}
 		return true;
 	}
@@ -186,7 +187,7 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 			totalRitualTicks = 0;
 			selectedOrganIndex = -1;
 			if (player instanceof ServerPlayer sp) {
-				sendProgressUpdate(sp, "The ritual collapses.");
+				sendProgressUpdate(sp, Component.translatable("message.hemomancy.visceral_mirror.ritual_collapses"));
 			}
 			BlockEntitySync.markAndSync(this);
 		}
@@ -198,7 +199,7 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 		double drainPerTick = (targetOrgan.getTier() * BLOOD_COST_PER_TIER) / totalRitualTicks;
 		if (!BloodAccounting.pay(player, drainPerTick, EXTRACTION).satisfied()) {
 			if (player instanceof ServerPlayer sp) {
-				sendProgressUpdate(sp, "Your blood runs dry. The ritual fails.");
+				sendProgressUpdate(sp, Component.translatable("message.hemomancy.visceral_mirror.blood_runs_dry"));
 			}
 			cancelRitual(player);
 		}
@@ -210,7 +211,7 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 			ritualTicks = 0;
 			BlockEntitySync.markAndSync(this);
 			if (player instanceof ServerPlayer sp) {
-				sendProgressUpdate(sp, "The echo takes shape...");
+				sendProgressUpdate(sp, Component.translatable("message.hemomancy.visceral_mirror.echo_takes_shape"));
 			}
 		}
 	}
@@ -246,7 +247,7 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 
 		if (alreadyHasEcho) {
 			if (player instanceof ServerPlayer sp) {
-				sendProgressUpdate(sp, "An echo of this organ already lingers on your person.");
+				sendProgressUpdate(sp, Component.translatable("message.hemomancy.visceral_mirror.echo_already_held"));
 			}
 			phase = RitualPhase.IDLE;
 			targetOrgan = null;
@@ -268,8 +269,8 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 			level.addFreshEntity(entity);
 		}
 
-		String completionMsg = "Echo of " + targetOrgan.getName().toLowerCase()
-				+ " coalesced. Offer it to sanguine flames.";
+		Component completionMsg = Component.translatable("message.hemomancy.visceral_mirror.echo_coalesced."
+				+ targetOrgan.name().toLowerCase());
 
 		phase = RitualPhase.COMPLETE;
 		BlockEntitySync.markAndSync(this);
@@ -312,7 +313,7 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 	 * Sends a VisceralMirrorUpdatePacket to the given player with the current
 	 * ritual state and an optional status message.
 	 */
-	private void sendProgressUpdate(ServerPlayer player, String message) {
+	private void sendProgressUpdate(ServerPlayer player, Component message) {
 		PacketHandler.sendToPlayer(player, new VisceralMirrorUpdatePacket(worldPosition, phase, ritualTicks,
 						totalRitualTicks, targetOrgan, message));
 	}
@@ -321,7 +322,7 @@ public class VisceralMirrorBlockEntity extends HemoBlockEntity {
 	 * Sends a status-only update (idle phase) to reject an extraction attempt
 	 * with a message the screen can display.
 	 */
-	private void sendStatusToPlayer(Player player, String message) {
+	private void sendStatusToPlayer(Player player, Component message) {
 		if (player instanceof ServerPlayer sp) {
 			PacketHandler.sendToPlayer(sp, new VisceralMirrorUpdatePacket(worldPosition, RitualPhase.IDLE,
 							0, 0, null, message));

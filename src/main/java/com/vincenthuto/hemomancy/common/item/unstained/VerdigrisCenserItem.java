@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -48,8 +49,7 @@ public class VerdigrisCenserItem extends Item {
 		if (!level.isClientSide) {
 			boolean onPath = HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification();
 			if (!onPath) {
-				player.displayClientMessage(Component.literal("The censer smoke curls away from you.")
-						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.verdigris_censer_item.the_censer_smoke_curls_away_from").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
 				return InteractionResultHolder.fail(stack);
 			}
 
@@ -67,8 +67,8 @@ public class VerdigrisCenserItem extends Item {
 				}
 			}
 
-			player.displayClientMessage(Component.literal("Verdigris smoke marks " + marked + " suspect bodies.")
-					.withStyle(ChatFormatting.AQUA), true);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.verdigris_censer_item.verdigris_smoke_marks_suspect_bodies",
+					marked).withStyle(ChatFormatting.AQUA), true);
 			level.playSound(null, player.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.9f, 1.6f);
 			if (level instanceof ServerLevel serverLevel) {
 				serverLevel.sendParticles(ParticleTypes.SCRAPE, player.getX(), player.getY() + 0.8, player.getZ(),

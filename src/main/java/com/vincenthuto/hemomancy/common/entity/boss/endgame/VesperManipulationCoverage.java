@@ -85,7 +85,7 @@ public final class VesperManipulationCoverage {
 		excluded("vascular_dowsing", "a detection utility");
 		excluded("ferric_resonance", "a detection utility");
 		castable("iron_retort", FERRIC);
-		excluded("ironhearted", "a body idiom of extra hearts; would pad his health bar");
+		excluded("ironhearted", "grants extra Iron Hearts; would pad his health bar");
 		castable("sanguine_magnetism", FERRIC);
 		variant("ferric_rampart", DUCTILIS, Kind.WALL, Form.FERRIC_CONJURE, 0.0F);
 		variant("ferric_spikes", DUCTILIS, Kind.SPIKES, Form.FERRIC_IMPACT, 0.0F);
@@ -122,7 +122,7 @@ public final class VesperManipulationCoverage {
 		castable("exsanguinate", MORTEM);
 		castable("insatiable_hunger", MORTEM);
 		castable("grave_debt", MORTEM);
-		excluded("blackhearted", "a body idiom that converts hearts; would pad his health bar");
+		excluded("blackhearted", "converts wither harm into healing; would pad his health bar");
 		variant("crimson_coronation", ANIMUS, Kind.SELF_BUFF, Form.CROWN, 0.0F);
 		variant("sovereign_instinct", DUCTILIS, Kind.LINE, Form.SOVEREIGN_LASH, 8.0F);
 		excluded("axonal_transduction", "routes the player's own nerves; no entity version");

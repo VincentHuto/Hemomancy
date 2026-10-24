@@ -260,7 +260,7 @@ public class MaterialsTabController implements IProgressTab {
 		String selected = familyFilter.selected();
 		String nickname = MaterialAtlasSpec.buckets(path).stream()
 				.filter(bucket -> bucket.id().equals(selected))
-				.map(MaterialAtlasBucket::nickname)
+				.map(bucket -> bucket.nickname().getString())
 				.findFirst().orElse(selected);
 		return FamilyFilterLabels.display(nickname);
 	}

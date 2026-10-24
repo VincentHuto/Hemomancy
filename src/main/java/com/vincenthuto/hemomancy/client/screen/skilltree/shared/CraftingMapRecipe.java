@@ -129,10 +129,12 @@ public final class CraftingMapRecipe {
 	}
 
 	/** "greater Working floor", from the minimum floor's tier. */
-	public String floorLabel() {
+	public Component floorLabel() {
 		String path = floorId == null ? "" : floorId.getPath();
 		String tier = path.substring(path.lastIndexOf('_') + 1);
-		return tier.isEmpty() ? "Working floor" : tier + " Working floor";
+		return tier.isEmpty() ? Component.translatable("screen.hemomancy.crafting_map_recipe.working_floor")
+				: Component.translatable("screen.hemomancy.crafting_map_recipe.tier_working_floor",
+						Component.translatableWithFallback("cardinal_rite_floor.hemomancy.tier." + tier, tier));
 	}
 
 	public boolean isWorking() {

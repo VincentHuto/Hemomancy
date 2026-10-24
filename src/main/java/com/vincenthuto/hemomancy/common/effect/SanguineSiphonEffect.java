@@ -39,7 +39,7 @@ public class SanguineSiphonEffect extends MobEffect {
 		if (player instanceof ServerPlayer serverPlayer) {
 			double fillAmount = 1.0 + amplifier * 0.5;
 			BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "sanguine_siphon",
-					"Sanguine Siphon", Category.EFFECT, fillAmount, 40,
+					"blood_source.hemomancy.sanguine_siphon", Category.EFFECT, fillAmount, 40,
 					CirculationIncomeHelper.IncomeChannel.MORPHLING);
 		}
 		return true;

@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.DendriticDistributorBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -82,21 +83,21 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 			if (known == null || volume == null || !volume.isActive()) {
-				fail(player, "Blood system is not active.");
+				fail(player, Component.translatable("message.hemomancy.synaptic_loadout_action_packet.blood_system_is_not_active"));
 				return;
 			}
 			if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < REQUIRED_DEGREE) {
-				fail(player, "Requires the Fifth Degree.");
+				fail(player, Component.translatable("message.hemomancy.synaptic_loadout_action_packet.requires_the_fifth_degree"));
 				return;
 			}
 			if (!isValidDistributor(player, msg.pos)) {
-				fail(player, "No Dendritic Distributor is listening nearby.");
+				fail(player, Component.translatable("message.hemomancy.synaptic_loadout_action_packet.no_dendritic_distributor_is_listening_nearby"));
 				return;
 			}
 			int skillLevel = SynapticLoadoutSlotHelper.getUnlockedSlots(player)
 					- SynapticLoadoutSlotHelper.BASE_LOADOUT_SLOTS;
 			if (!SynapticLoadoutSlotHelper.isSlotUnlocked(msg.slotIndex, skillLevel)) {
-				fail(player, "That synaptic pattern slot is not unlocked.");
+				fail(player, Component.translatable("message.hemomancy.synaptic_loadout_action_packet.that_synaptic_pattern_slot_is_not"));
 				return;
 			}
 
@@ -123,15 +124,15 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 			int slotIndex, String requestedName) {
 		List<String> memorizedNames = memorizedEquippedNames(player, known);
 		if (memorizedNames.isEmpty()) {
-			fail(player, "No memorized manipulations are equipped to remember.");
+			fail(player, Component.translatable("message.hemomancy.synaptic_loadout_action_packet.no_memorized_manipulations_are_equipped_to"));
 			return false;
 		}
 		if (volume.getBloodVolume() < SAVE_BLOOD_COST) {
-			fail(player, "Not enough blood. Need 100 mL.");
+			fail(player, Component.translatable("message.hemomancy.synaptic_loadout_action_packet.not_enough_blood_need_100_ml"));
 			return false;
 		}
 		if (currentRawExperience(player) < SAVE_RAW_XP_COST) {
-			fail(player, "Not enough experience. Need 25 XP.");
+			fail(player, Component.translatable("message.hemomancy.synaptic_loadout_action_packet.not_enough_experience_need_25_xp"));
 			return false;
 		}
 
@@ -141,22 +142,22 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		player.giveExperiencePoints(-SAVE_RAW_XP_COST);
 		known.setLoadout(slotIndex, loadout);
 		syncKnown(player, known);
-		player.displayClientMessage(Component.literal("Synaptic pattern saved: " + loadout.name())
-				.withStyle(ChatFormatting.DARK_RED), true);
+		player.displayClientMessage(HemoText.translatable("message.hemomancy.synaptic_loadout_action_packet.synaptic_pattern_saved",
+				loadout.displayName(slotIndex)).withStyle(ChatFormatting.DARK_RED), true);
 		return true;
 	}
 
 	private static void rename(ServerPlayer player, IKnownManipulations known, int slotIndex, String requestedName) {
 		ManipulationLoadout existing = known.getLoadout(slotIndex);
 		if (existing.isEmpty()) {
-			fail(player, "No synaptic pattern is saved in that slot.");
+			fail(player, Component.translatable("message.hemomancy.synaptic_loadout_action_packet.no_synaptic_pattern_is_saved_in"));
 			return;
 		}
 		ManipulationLoadout renamed = existing.renamed(requestedName, slotIndex);
 		known.setLoadout(slotIndex, renamed);
 		syncKnown(player, known);
-		player.displayClientMessage(Component.literal("Synaptic pattern renamed: " + renamed.name())
-				.withStyle(ChatFormatting.GRAY), true);
+		player.displayClientMessage(HemoText.translatable("message.hemomancy.synaptic_loadout_action_packet.synaptic_pattern_renamed",
+				renamed.displayName(slotIndex)).withStyle(ChatFormatting.GRAY), true);
 	}
 
 	/**
@@ -175,23 +176,22 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 	private static boolean apply(ServerPlayer player, IKnownManipulations known, int slotIndex) {
 		long lockout = applyLockoutRemaining(player);
 		if (lockout > 0L) {
-			fail(player, String.format(java.util.Locale.ROOT, "Synaptic patterns are still settling (%.1fs).",
-					lockout / 20.0D));
+			fail(player, HemoText.translatable("message.hemomancy.synaptic_loadout_action_packet.synaptic_patterns_are_still_settling_s", String.format(java.util.Locale.ROOT, "%.1f", lockout / 20.0D)));
 			return false;
 		}
 		ManipulationLoadout loadout = known.getLoadout(slotIndex);
 		if (loadout.isEmpty()) {
-			fail(player, "No synaptic pattern is saved in that slot.");
+			fail(player, Component.translatable("message.hemomancy.synaptic_loadout_action_packet.no_synaptic_pattern_is_saved_in"));
 			return false;
 		}
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		if (ManipulationEquipHelper.countNormalEquippedNames(loadout.manipNames()) > maxSlots) {
-			fail(player, "That pattern exceeds your current manipulation capacity.");
+			fail(player, Component.translatable("message.hemomancy.synaptic_loadout_action_packet.that_pattern_exceeds_your_current_manipulation"));
 			return false;
 		}
 		for (String memoryName : loadout.manipNames()) {
 			if (!isKnownMemory(player, known, memoryName)) {
-				fail(player, "A saved memory has atrophied: " + memoryName);
+				fail(player, HemoText.translatable("message.hemomancy.synaptic_loadout_action_packet.a_saved_memory_has_atrophied", memoryName));
 				return false;
 			}
 		}
@@ -224,8 +224,8 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		}
 		known.setSelectedMemoryRef(selected);
 		syncKnown(player, known);
-		player.displayClientMessage(Component.literal("Synaptic pattern applied: " + loadout.name())
-				.withStyle(ChatFormatting.DARK_RED), true);
+		player.displayClientMessage(HemoText.translatable("message.hemomancy.synaptic_loadout_action_packet.synaptic_pattern_applied",
+				loadout.displayName(slotIndex)).withStyle(ChatFormatting.DARK_RED), true);
 		return true;
 	}
 
@@ -307,8 +307,8 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		ManipulationDiagnosticsSync.sync(player);
 	}
 
-	private static void fail(ServerPlayer player, String message) {
-		player.displayClientMessage(Component.literal(message).withStyle(ChatFormatting.RED), true);
+	private static void fail(ServerPlayer player, Component message) {
+		player.displayClientMessage(message.copy().withStyle(ChatFormatting.RED), true);
 	}
 
 	@Override

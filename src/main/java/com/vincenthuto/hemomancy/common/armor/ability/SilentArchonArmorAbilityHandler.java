@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
@@ -77,22 +77,19 @@ public final class SilentArchonArmorAbilityHandler {
 			return true;
 		}
 		if (!hasFullSilentArchonSet(player)) {
-			player.displayClientMessage(Component.literal("The Silent Archon vestments are incomplete.")
-					.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.silent_archon_armor_ability_handler.the_silent_archon_vestments_are_incomplete").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		long now = player.level().getGameTime();
 		long cooldownUntil = PlayerCooldowns.of(player).until(PlayerCooldowns.SILENT_SLIPPING);
 		if (cooldownUntil > now) {
-			player.displayClientMessage(Component.literal("Silent Slipping is re-forming.")
-					.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.silent_archon_armor_ability_handler.silent_slipping_is_re_forming").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive() || volume.getBloodVolume() < SILENT_SLIPPING_BLOOD_COST
 				|| !BloodAccounting.pay(player, SILENT_SLIPPING_BLOOD_COST, SILENT_SLIPPING).satisfied()) {
-			player.displayClientMessage(Component.literal("Not enough blood.")
-					.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.silent_archon_armor_ability_handler.not_enough_blood").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		PlayerCooldowns.of(player).setUntil(PlayerCooldowns.SILENT_SLIPPING, now + SILENT_SLIPPING_COOLDOWN_TICKS);
@@ -103,7 +100,7 @@ public final class SilentArchonArmorAbilityHandler {
 	public static void activateSilentSlipping(ServerPlayer player) {
 		if (isSilentSlippingActive(player)) {
 			stopSilentSlipping(player, true, true);
-			player.displayClientMessage(Component.literal("Silent Slipping released.").withStyle(ChatFormatting.GRAY), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.silent_archon_armor_ability_handler.silent_slipping_released").withStyle(ChatFormatting.GRAY), true);
 			return;
 		}
 
@@ -116,7 +113,7 @@ public final class SilentArchonArmorAbilityHandler {
 		sendSilentSlippingShardPulse(player);
 		player.level().playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
 				SoundSource.PLAYERS, 0.6F, 0.55F);
-		player.displayClientMessage(Component.literal("Silent Slipping.").withStyle(ChatFormatting.GRAY), true);
+		player.displayClientMessage(Component.translatable("message.hemomancy.silent_archon_armor_ability_handler.silent_slipping").withStyle(ChatFormatting.GRAY), true);
 	}
 
 	public static void activateSilentArchonSeverance(ServerPlayer player) {
@@ -143,7 +140,7 @@ public final class SilentArchonArmorAbilityHandler {
 				target.hurtMarked = true;
 			}
 		}
-		player.displayClientMessage(Component.literal("Silent Severance.").withStyle(ChatFormatting.DARK_GRAY), true);
+		player.displayClientMessage(Component.translatable("message.hemomancy.silent_archon_armor_ability_handler.silent_severance").withStyle(ChatFormatting.DARK_GRAY), true);
 	}
 
 	public static boolean isSilentSlippingActive(ServerPlayer player) {

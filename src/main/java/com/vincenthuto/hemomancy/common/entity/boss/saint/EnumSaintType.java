@@ -1,42 +1,44 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+
+import java.util.Locale;
 
 public enum EnumSaintType {
 
-	HEMORATH("Hemorath",
+	HEMORATH(
 			EnumBloodTendency.FERRIC, EnumBloodTendency.MORTEM,
 			EnumDoctrineTag.JUDGMENT, EnumDoctrineTag.SILENCE),
 
-	SERAPHAE("Seraphae",
+	SERAPHAE(
 			EnumBloodTendency.ANIMUS, EnumBloodTendency.LUX,
 			EnumDoctrineTag.WITNESS, EnumDoctrineTag.ABSOLUTION),
 
-	PUTRICIEL("Putriciel",
+	PUTRICIEL(
 			EnumBloodTendency.MORTEM, EnumBloodTendency.FLAMMEUS,
 			EnumDoctrineTag.ABSOLUTION, EnumDoctrineTag.WITNESS),
 
-	VELORUM("Velorum",
+	VELORUM(
 			EnumBloodTendency.CONGEATIO, EnumBloodTendency.TENEBRIS,
 			EnumDoctrineTag.MARTYRDOM, EnumDoctrineTag.SILENCE);
 
-	private final String displayName;
 	private final EnumBloodTendency primaryTendency;
 	private final EnumBloodTendency secondaryTendency;
 	private final EnumDoctrineTag primaryDoctrine;
 	private final EnumDoctrineTag secondaryDoctrine;
 
-	EnumSaintType(String displayName, EnumBloodTendency primaryTendency, EnumBloodTendency secondaryTendency,
+	EnumSaintType(EnumBloodTendency primaryTendency, EnumBloodTendency secondaryTendency,
 			EnumDoctrineTag primaryDoctrine, EnumDoctrineTag secondaryDoctrine) {
-		this.displayName = displayName;
 		this.primaryTendency = primaryTendency;
 		this.secondaryTendency = secondaryTendency;
 		this.primaryDoctrine = primaryDoctrine;
 		this.secondaryDoctrine = secondaryDoctrine;
 	}
 
-	public String getDisplayName() {
-		return displayName;
+	public MutableComponent getDisplayName() {
+		return Component.translatable("saint.hemomancy." + name().toLowerCase(Locale.ROOT));
 	}
 
 	public EnumBloodTendency getPrimaryTendency() {

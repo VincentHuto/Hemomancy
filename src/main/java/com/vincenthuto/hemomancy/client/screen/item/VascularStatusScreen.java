@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 
 /**
  * A standalone screen that displays the player's Vascular System status.
@@ -75,7 +76,7 @@ public class VascularStatusScreen extends Screen {
 	private float animationTicks = 0f;
 
 	public VascularStatusScreen() {
-		super(Component.literal("Vascular Status"));
+		super(Component.translatable("screen.hemomancy.vascular_status.vascular_status"));
 	}
 
 	public static void openScreen() {
@@ -166,7 +167,7 @@ public class VascularStatusScreen extends Screen {
 
 		// Title
 		graphics.drawCenteredString(this.font, this.title, centerX, guiTop + 6, 0xFFCC3344);
-		graphics.drawCenteredString(this.font, "Drag to rotate • Hover for details", centerX, guiTop + 18, 0xFF553333);
+		graphics.drawCenteredString(this.font, Component.translatable("screen.hemomancy.vascular_status.drag_to_rotate_hover_for_details"), centerX, guiTop + 18, 0xFF553333);
 
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
@@ -181,7 +182,7 @@ public class VascularStatusScreen extends Screen {
 		graphics.disableScissor();
 
 		// Footer
-		graphics.drawCenteredString(this.font, "§4§l— §c§oVenous Network §4§l—",
+		graphics.drawCenteredString(this.font, Component.translatable("screen.hemomancy.vascular_status.venous_network_footer"),
 				centerX, guiTop + guiHeight - 14, 0xFF882222);
 	}
 
@@ -394,17 +395,17 @@ public class VascularStatusScreen extends Screen {
 		if (hoveredSection != null) {
 			float health = Mth.clamp(vascular.getHealthBySection(hoveredSection), 0f, 100f);
 			EnumBloodFlow flow = vascular.getBloodFlowBySection(hoveredSection);
-			String name = HLTextUtils.toProperCase(hoveredSection.toString());
-			String flowName = HLTextUtils.toProperCase(flow.toString());
+			Component name = BloodManipulation.sectionName(hoveredSection);
+			Component flowName = Component.translatable("blood_flow_state.hemomancy." + flow.name().toLowerCase(java.util.Locale.ROOT));
 			int nameColor = getTextColorForHealth(health);
 			int flowColor = getFlowColor(flow);
 
 			List<Component> tooltip = new ArrayList<>();
-			tooltip.add(Component.literal("§l" + name).withStyle(s -> s.withColor(nameColor)));
-			tooltip.add(Component.literal("Health: " + String.format("%.1f", health) + " / 100.0")
-					.withStyle(s -> s.withColor(0xAAAAAA)));
-			tooltip.add(Component.literal("Flow: " + flowName)
-					.withStyle(s -> s.withColor(flowColor)));
+			tooltip.add(Component.translatable("screen.hemomancy.vascular_status.section_name", name).withStyle(s -> s.withColor(nameColor)));
+			tooltip.add(HemoText.translatable("screen.hemomancy.vascular_status.health_100_0",
+					String.format("%.1f", health)).withStyle(s -> s.withColor(0xAAAAAA)));
+			tooltip.add(HemoText.translatable("screen.hemomancy.vascular_status.flow",
+					flowName).withStyle(s -> s.withColor(flowColor)));
 			LocalPlayer player = Minecraft.getInstance().player;
 			if (player != null) {
 				EnumVeinSections selectedSection = hoveredSection;
@@ -413,7 +414,7 @@ public class VascularStatusScreen extends Screen {
 					long seconds = (memoryState.remainingTicks(selectedSection,
 							player.level().getGameTime()) + 19L) / 20L;
 					tooltip.add(Component.translatable("muscle_memory.hemomancy." + memory.id())
-							.append(Component.literal(" • " + seconds + "s"))
+							.append(HemoText.translatable("screen.hemomancy.vascular_status.s", seconds))
 							.withStyle(s -> s.withColor(0xCC3344)));
 				});
 			}

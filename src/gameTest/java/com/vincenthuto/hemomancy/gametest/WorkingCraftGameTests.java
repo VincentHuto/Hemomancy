@@ -226,7 +226,7 @@ public final class WorkingCraftGameTests {
 		helper.assertTrue(reliquary != null && reliquary.isWorkingCraft(), "The Mnemonic Reliquary craft must load");
 		helper.assertTrue(!RecipeDegreeGates.playerMayAttempt(player, reliquary),
 				"A Degree 3 Harbinger must not raise the Reliquary before the Mnemonist teaches it");
-		helper.assertTrue(RecipeDegreeGates.requirementLabel(reliquary).contains("Reliquary lesson"),
+		helper.assertTrue(RecipeDegreeGates.requirementLabel(reliquary).getString().contains("Reliquary lesson"),
 				"The refusal must name the Mnemonist's lesson");
 		MnemonicReliquaryProgression.teach(player);
 		helper.assertTrue(RecipeDegreeGates.playerMayAttempt(player, reliquary), "The lesson opens the craft");

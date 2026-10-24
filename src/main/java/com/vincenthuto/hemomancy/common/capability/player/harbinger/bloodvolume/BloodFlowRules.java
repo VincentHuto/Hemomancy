@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class BloodFlowRules {
+	public static final String CIRCULATION_LIMITED = "message.hemomancy.blood_flow.circulation_limited";
+
 	private BloodFlowRules() {
 	}
 
@@ -27,7 +29,7 @@ public final class BloodFlowRules {
 					used += grantedWindow;
 					String condition = contribution.condition();
 					if (grantedWindow + 0.000001D < requestedWindow) {
-						condition = "Circulation limited";
+						condition = CIRCULATION_LIMITED;
 					}
 					next = contribution.withAppliedPerTick(grantedWindow / windowTicks, condition);
 				} else {

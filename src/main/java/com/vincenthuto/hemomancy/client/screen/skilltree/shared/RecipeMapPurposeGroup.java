@@ -8,25 +8,19 @@ import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
  * rite purpose, then reference families. A purpose group takes the glow of its floor style.
  */
 public enum RecipeMapPurposeGroup {
-	FLOORLESS("Floorless", null, 0xFFC0303A),
-	SELF("Self", CardinalRitePurpose.SELF, 0),
-	WORLD("World", CardinalRitePurpose.WORLD, 0),
-	MAKING("Making", CardinalRitePurpose.MAKING, 0),
-	BOND("Bond", CardinalRitePurpose.BOND, 0),
-	REFERENCE("Reference", null, 0xFF8A7A88);
+	FLOORLESS(null, 0xFFC0303A),
+	SELF(CardinalRitePurpose.SELF, 0),
+	WORLD(CardinalRitePurpose.WORLD, 0),
+	MAKING(CardinalRitePurpose.MAKING, 0),
+	BOND(CardinalRitePurpose.BOND, 0),
+	REFERENCE(null, 0xFF8A7A88);
 
-	private final String label;
 	private final CardinalRitePurpose purpose;
 	private final int fixedColor;
 
-	RecipeMapPurposeGroup(String label, CardinalRitePurpose purpose, int fixedColor) {
-		this.label = label;
+	RecipeMapPurposeGroup(CardinalRitePurpose purpose, int fixedColor) {
 		this.purpose = purpose;
 		this.fixedColor = fixedColor;
-	}
-
-	public String label() {
-		return label;
 	}
 
 	/** The rite purpose this group gathers, or null for the floorless and reference groups. */

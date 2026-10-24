@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 
 /**
 	 * The Ancestral Ledger screen provides GUI buttons for bloodline fane actions:
@@ -37,7 +38,7 @@ public class LedgerScreen extends Screen {
 	private Button disbandButton;
 
 	public LedgerScreen() {
-		super(Component.literal("Ancestral Ledger"));
+		super(Component.translatable("screen.hemomancy.ledger.ancestral_ledger"));
 	}
 
 	public static void openScreen() {
@@ -58,7 +59,7 @@ public class LedgerScreen extends Screen {
 
 		// ── Summon NPCs Button ──
 		addRenderableWidget(Button.builder(
-				Component.literal("\u2720 Summon Harbingers"),
+				Component.translatable("screen.hemomancy.ledger.summon_harbingers"),
 				btn -> {
 					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_SUMMON_NPCS));
@@ -69,7 +70,7 @@ public class LedgerScreen extends Screen {
 
 		// ── Recall to Fane Button ──
 		addRenderableWidget(Button.builder(
-				Component.literal("\u2302 Recall to Fane"),
+				Component.translatable("screen.hemomancy.ledger.recall_to_fane"),
 				btn -> {
 					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_RECALL_TO_LODGE));
@@ -80,7 +81,7 @@ public class LedgerScreen extends Screen {
 
 		// ── Set Fane Recall Point Button (leader only) ──
 		setRecallButton = addRenderableWidget(Button.builder(
-				Component.literal("\u2691 Set Fane Recall"),
+				Component.translatable("screen.hemomancy.ledger.set_fane_recall"),
 				btn -> {
 					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_SET_RECALL_POINT));
@@ -91,7 +92,7 @@ public class LedgerScreen extends Screen {
 
 		// ── Disband Bloodline Button (leader only) ──
 		disbandButton = addRenderableWidget(Button.builder(
-				Component.literal("\u2620 Disband Bloodline"),
+				Component.translatable("screen.hemomancy.ledger.disband_bloodline"),
 				btn -> {
 					PacketHandler.sendToServer(
 							new PacketLedgerAction(PacketLedgerAction.ACTION_DISBAND_BLOODLINE));
@@ -156,17 +157,17 @@ public class LedgerScreen extends Screen {
 				int npcCount = bloodline.getNpcMemberCount();
 				int memberCount = bloodline.getPlayerUUIDS().size();
 				graphics.drawCenteredString(this.font,
-						Component.literal("Members: " + memberCount + "  |  Recruits: " + npcCount),
+						HemoText.translatable("screen.hemomancy.ledger.members_recruits", memberCount, npcCount),
 						centerX, guiTop + 38, 0xFFAAAAAA);
 
 				boolean isLeader = bloodline.getLeaderUUID().equals(player.getUUID());
 				String role = isLeader ? "Leader" : "Member";
 				graphics.drawCenteredString(this.font,
-						Component.literal("Role: " + role),
+						HemoText.translatable("screen.hemomancy.ledger.role", role),
 						centerX, guiTop + 52, 0xFF888888);
 			} else {
 				graphics.drawCenteredString(this.font,
-						Component.literal("No bloodline — sign the ledger first."),
+						Component.translatable("screen.hemomancy.ledger.no_bloodline_sign_the_ledger_first"),
 						centerX, guiTop + 40, 0xFFAA4444);
 			}
 		}

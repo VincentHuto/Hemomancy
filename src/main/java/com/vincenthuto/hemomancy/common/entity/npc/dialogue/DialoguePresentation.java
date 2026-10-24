@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
@@ -16,8 +17,8 @@ public record DialoguePresentation(ResourceLocation dialogueId, ResourceLocation
 	}
 
 	public static DialoguePresentation focused() {
-		return new DialoguePresentation(ResourceLocation.fromNamespaceAndPath("hemomancy", "focused"),
-				ResourceLocation.fromNamespaceAndPath("hemomancy", "default"),
+		return new DialoguePresentation(Hemomancy.rloc("focused"),
+				Hemomancy.rloc("default"),
 				DialogueScreenMode.FOCUSED, List.of());
 	}
 

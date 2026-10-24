@@ -43,11 +43,12 @@ final class DegreeSubcommand {
 				;
 		int num = degree.getDegreeNumber();
 		EnumInitiatoryDegree enumDeg = EnumInitiatoryDegree.byNumber(num);
-		String title = (enumDeg != null) ? enumDeg.getTitle() : "Uninitiated";
+		Component title = enumDeg != null ? enumDeg.displayName() : Component.translatable("hemomancy.degree.0");
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" Degree: ").withStyle(ChatFormatting.GRAY))
-				.append(Component.literal(num + " — " + title).withStyle(ChatFormatting.LIGHT_PURPLE)),
+				.append(Component.translatable("commands.hemomancy.degree.degree").withStyle(ChatFormatting.GRAY))
+				.append(Component.translatable("commands.hemomancy.degree.number_title", num, title)
+						.withStyle(ChatFormatting.LIGHT_PURPLE)),
 				false);
 		return 1;
 	}
@@ -59,13 +60,13 @@ final class DegreeSubcommand {
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		boolean resetUnstained = degreeNum > 0 && PathMutualExclusionHelper.resetUnstainedProgress(player);
 		EnumInitiatoryDegree enumDeg = EnumInitiatoryDegree.byNumber(degreeNum);
-		String title = (enumDeg != null) ? enumDeg.getTitle() : "Uninitiated";
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" degree to "))
-				.append(Component.literal(degreeNum + " — " + title).withStyle(ChatFormatting.LIGHT_PURPLE))
-				.append(resetUnstained
-						? Component.literal("; unstained progress reset.").withStyle(ChatFormatting.GRAY)
+		Component title = enumDeg != null ? enumDeg.displayName() : Component.translatable("hemomancy.degree.0");
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.degree.set_degree_to",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.translatable("commands.hemomancy.degree.number_title", degreeNum, title)
+						.withStyle(ChatFormatting.LIGHT_PURPLE),
+				resetUnstained
+						? Component.translatable("commands.hemomancy.degree.unstained_progress_reset").withStyle(ChatFormatting.GRAY)
 						: Component.empty()),
 				true);
 		return 1;

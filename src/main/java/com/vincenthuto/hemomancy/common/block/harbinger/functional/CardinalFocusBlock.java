@@ -62,8 +62,7 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 		CardinalRiteSavedData rites = CardinalRiteSavedData.get((ServerLevel) level);
 		if (player.isShiftKeyDown() && focus.hasMedium()) {
 			if (rites.hasRiteAt(pos)) {
-				player.displayClientMessage(Component.literal("The active rite holds its medium fast.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+				player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_focus_block.the_active_rite_holds_its_medium").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 				return ItemInteractionResult.SUCCESS;
 			}
 			ItemStack extracted = focus.extractMedium();
@@ -71,18 +70,15 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 			return ItemInteractionResult.SUCCESS;
 		}
 		if (rites.hasRiteAt(pos)) {
-			player.displayClientMessage(Component.literal("The active rite will not accept another medium.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_focus_block.the_active_rite_will_not_accept").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 			return ItemInteractionResult.SUCCESS;
 		}
 		if (focus.hasMedium()) {
-			player.displayClientMessage(Component.literal("The Cardinal Focus already holds a medium.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_focus_block.the_cardinal_focus_already_holds_a").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 			return ItemInteractionResult.SUCCESS;
 		}
 		if (!focus.insertMedium(player, stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-		player.displayClientMessage(Component.literal("The item seats in the Cardinal Focus as a rite medium.")
-				.withStyle(ChatFormatting.DARK_RED), false);
+		player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_focus_block.the_item_seats_in_the_cardinal").withStyle(ChatFormatting.DARK_RED), false);
 
 
 		return ItemInteractionResult.SUCCESS;

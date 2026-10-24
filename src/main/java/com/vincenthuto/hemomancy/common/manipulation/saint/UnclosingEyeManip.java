@@ -65,10 +65,10 @@ public class UnclosingEyeManip extends BloodManipulation {
                 com.vincenthuto.hemomancy.common.damage.SchoolState.ILLUMINATED, GLOWING_DURATION);
 		player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, NIGHT_VISION_DURATION, 0, false, false, true));
 
-		String msg = stripped > 0
-				? "Seraphae's eye opens. Nothing is hidden. " + stripped + " concealment(s) exposed."
-				: "Seraphae's eye opens. All is laid bare — including yourself.";
-		player.displayClientMessage(Component.literal(msg).withStyle(ChatFormatting.YELLOW, ChatFormatting.ITALIC), true);
+		Component msg = stripped > 0
+				? Component.translatable("message.hemomancy.unclosing_eye_manip.nothing_is_hidden_concealments_exposed", stripped)
+				: Component.translatable("message.hemomancy.unclosing_eye_manip.all_is_laid_bare_including_yourself");
+		player.displayClientMessage(msg.copy().withStyle(ChatFormatting.YELLOW, ChatFormatting.ITALIC), true);
 
 		world.playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.5f);
 

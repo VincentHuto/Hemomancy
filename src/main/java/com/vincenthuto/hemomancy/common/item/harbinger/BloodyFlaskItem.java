@@ -45,7 +45,7 @@ public class BloodyFlaskItem extends Item {
 					;
 
 			if (volume.isFull()) {
-				playerIn.displayClientMessage(Component.literal("Blood volume is full."), true);
+				playerIn.displayClientMessage(Component.translatable("message.hemomancy.bloody_flask_item.blood_volume_is_full"), true);
 			} else {
 				volume.fill(amount);
 				for (int i = 0; i < 30; i++) {

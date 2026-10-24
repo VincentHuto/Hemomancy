@@ -27,6 +27,7 @@ import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.rite.zone.RiteZone;
 import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSavedData;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -44,6 +45,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -217,25 +219,9 @@ public class UnstainedCardinalRiteEvents {
 	}
 
 	public static void announceFailure(ServerPlayer caster, UnstainedRitePreflight.Failure failure) {
-		String message = switch (failure) {
-			case FOUNDER_CANNOT_ENTER -> "A bloodline founder cannot enter Lethe by the ordinary rite.";
-			case INFECTION_NOT_SUPPRESSED -> "The infection must first be suppressed at an Unstained Podium.";
-			case BAPTISM_ALREADY_COMPLETE -> "Lethean Baptism has already named your path.";
-			case NOT_READY_TO_PLEDGE -> "Complete the cleansing or all five service vows before pledging.";
-			case BLOOD_STILL_ACTIVE -> "Active blood must be fully relinquished before the pledge.";
-			case CLARITY_ALREADY_UNLOCKED -> "Clarity has already been unlocked within you.";
-			case CLARITY_NOT_PREPARED -> "Consecrated Copper must prepare your clarity at an Unstained Podium first.";
-			case CURE_NOT_READY -> "Closed Vein can restore your baseline only at full Purity.";
-			case CLOSED_VEIN_MEMBER_ONLY -> "Only a pledged Unstained may repeat the Closed Vein.";
-			case SEVERANCE_NOT_READY -> "The exceptional severance has not been earned from the unleashed infection.";
-			case NO_FOUNDERS_COVENANT -> "No founder's covenant answers the rite.";
-			case VEIL_PURITY_TOO_LOW -> "Your soul needs more Purity to bear the Silver Veil.";
-			case TIDE_PURITY_TOO_LOW -> "The tide will not answer: your purity is insufficient.";
-			case NO_BLOOD_MOON -> "There is no Blood Moon to cleanse.";
-			case CLARITY_REQUIRED -> "You must have unlocked Clarity to perform the Rite of the Silver Dawn.";
-			case NONE -> "The rite is ready.";
-		};
-		caster.displayClientMessage(Component.literal(message)
+		Component message = Component.translatable("message.hemomancy.unstained_cardinal_rite_events.failure."
+				+ failure.name().toLowerCase(Locale.ROOT));
+		caster.displayClientMessage(message.copy()
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 	}
 
@@ -251,13 +237,10 @@ public class UnstainedCardinalRiteEvents {
 		}
 		BloodlineDisbandHelper.removeOwnedFanes(level.getServer(), disbanded);
 		BloodlineDisbandHelper.resetOnlineMembers(level.getServer(), disbanded,
-				member -> Component.literal("The founder's covenant has been severed.")
-						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+				member -> Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_founder_s_covenant_has_been").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		degree.setFounderIntegrationSevered(true);
 		InitiatoryDegreeEvents.syncDegree(caster, degree);
-		caster.displayClientMessage(Component.literal(
-				"The bloodline is gone. The infection's collapse taught your own infection how to release you.")
-				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		caster.displayClientMessage(Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_bloodline_is_gone_the_infection").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		return true;
 	}
 	// 
@@ -306,8 +289,7 @@ public class UnstainedCardinalRiteEvents {
 		UnstainedProgressEvents.syncProgress(caster, unstained);
 
 		caster.displayClientMessage(
-				Component.literal("The still waters wash over you. The Unstained path has begun.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_still_waters_wash_over_you").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
 		sLevel.sendParticles(ParticleTypes.END_ROD,
 				caster.getX(), caster.getY() + 1.0, caster.getZ(),
@@ -330,8 +312,7 @@ public class UnstainedCardinalRiteEvents {
 				EffectInit.verdigris_aura, SILVER_VEIL_DURATION_TICKS, 1, false, true, true));
 
 		caster.displayClientMessage(
-				Component.literal("Verdigris smoke gathers into the first ward against awakened blood.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.verdigris_smoke_gathers_into_the_first").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
 		sLevel.sendParticles(ParticleTypes.END_ROD,
 				caster.getX(), caster.getY() + 1.0, caster.getZ(),
@@ -356,8 +337,7 @@ public class UnstainedCardinalRiteEvents {
 		if (charmStack.is(ItemInit.charm_of_vascularium.get())) {
 			scars.setStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX, ItemStack.EMPTY);
 			caster.displayClientMessage(
-					Component.literal("You feel the parasitic necklace burn away, starved of nutrients from your now silvery vital humor.")
-							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.unstained_cardinal_rite_events.you_feel_the_parasitic_necklace_burn").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 					false);
 		}
 		if (caster.getInventory().countItem(ItemInit.absolution_dagger.get()) == 0) {
@@ -366,12 +346,10 @@ public class UnstainedCardinalRiteEvents {
 		}
 
 		caster.displayClientMessage(
-				Component.literal("The veil parts. True sight is yours clarity has been unlocked.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_veil_parts_true_sight_is").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
 				false);
 		caster.displayClientMessage(
-				Component.literal("Blood magic is no longer your domain. Walk the path of enlightenment.")
-						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.blood_magic_is_no_longer_your").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 				false);
 		sLevel.sendParticles(ParticleTypes.END_ROD,
 				caster.getX(), caster.getY() + 1.0, caster.getZ(),
@@ -385,8 +363,7 @@ public class UnstainedCardinalRiteEvents {
 		var casterProgress = HemoCapabilityAccess.getUnstainedProgress(caster);
 		if (casterProgress != null && !casterProgress.isBaselineRestored()) {
 			PathMutualExclusionHelper.completeUnstainedCure(caster, casterProgress);
-			caster.displayClientMessage(Component.literal("The last current stills. Your blood returns to a mortal baseline.")
-					.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), false);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_last_current_stills_your_blood").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), false);
 			return;
 		}
 		int blessed = blessNearby(sLevel, center, CLOSED_VEIN_RADIUS, IUnstainedProgress::hasBegunPurification,
@@ -397,8 +374,7 @@ public class UnstainedCardinalRiteEvents {
 						progress.addClarity(2.0f);
 						UnstainedProgressEvents.syncProgress(target, progress);
 					}
-					target.displayClientMessage(Component.literal("The vein closes. The old leak is denied.")
-							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), true);
+					target.displayClientMessage(Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_vein_closes_the_old_leak").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), true);
 				});
 
 		AABB area = new AABB(center).inflate(CLOSED_VEIN_RADIUS);
@@ -407,8 +383,8 @@ public class UnstainedCardinalRiteEvents {
 			monster.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 180, 0, false, true, true));
 		}
 
-		caster.displayClientMessage(Component.literal("The Rite of the Closed Vein blesses " + blessed + " Unstained soul(s).")
-				.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
+		caster.displayClientMessage(HemoText.translatable("message.hemomancy.unstained_cardinal_rite_events.the_rite_of_the_closed_vein",
+				blessed).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 1.2f, 0.8f);
 		sLevel.sendParticles(ParticleTypes.END_ROD, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
 				120, CLOSED_VEIN_RADIUS * 0.25, 2.0, CLOSED_VEIN_RADIUS * 0.25, 0.015);
@@ -419,8 +395,7 @@ public class UnstainedCardinalRiteEvents {
 				ANTISEPTIC_GROUND_RADIUS, ANTISEPTIC_GROUND_DURATION_TICKS);
 
 		caster.addEffect(new MobEffectInstance(EffectInit.verdigris_aura, 12000, 1, false, true, true));
-		caster.displayClientMessage(Component.literal("Antiseptic ground takes hold for 15 minutes.")
-				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		caster.displayClientMessage(Component.translatable("message.hemomancy.unstained_cardinal_rite_events.antiseptic_ground_takes_hold_for_15").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 1.0f, 1.4f);
 		sLevel.sendParticles(ParticleTypes.SCRAPE, center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
 				120, ANTISEPTIC_GROUND_RADIUS * 0.35, 0.5, ANTISEPTIC_GROUND_RADIUS * 0.35, 0.01);
@@ -441,8 +416,8 @@ public class UnstainedCardinalRiteEvents {
 					}
 				});
 
-		caster.displayClientMessage(Component.literal("Glass lungs open in " + blessed + " Unstained body(s).")
-				.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
+		caster.displayClientMessage(HemoText.translatable("message.hemomancy.unstained_cardinal_rite_events.glass_lungs_open_in_unstained_body",
+				blessed).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS, 1.0f, 1.2f);
 		sLevel.sendParticles(ParticleTypes.SNOWFLAKE, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
 				140, GLASS_LUNGS_RADIUS * 0.25, 2.5, GLASS_LUNGS_RADIUS * 0.25, 0.015);
@@ -459,9 +434,10 @@ public class UnstainedCardinalRiteEvents {
 					target.addEffect(new MobEffectInstance(EffectInit.silver_ward, MOON_WASHED_COPPER_EFFECT_TICKS, 1, false, true, true));
 				});
 
-		String moonText = isNight ? "under the moon" : "without moonlight";
-		caster.displayClientMessage(Component.literal("Moon-washed copper blesses " + blessed + " clarity-bearer(s) " + moonText + ".")
-				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		Component moonText = Component.translatable(isNight ? "message.hemomancy.unstained_cardinal_rite_events.under_the_moon" : "message.hemomancy.unstained_cardinal_rite_events.without_moonlight");
+		caster.displayClientMessage(HemoText.translatable("message.hemomancy.unstained_cardinal_rite_events.moon_washed_copper_blesses_clarity_bearer",
+				blessed,
+				moonText).withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.4f, isNight ? 1.7f : 1.25f);
 		sLevel.sendParticles(ParticleTypes.WAX_OFF, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
 				200, MOON_WASHED_COPPER_RADIUS * 0.22, 3.5, MOON_WASHED_COPPER_RADIUS * 0.22, 0.018);
@@ -496,18 +472,17 @@ public class UnstainedCardinalRiteEvents {
 				VascularSystemEvents.syncVascular(target, vascular);
 
 				target.displayClientMessage(
-						Component.literal("A wave of silver light burns through your veins!")
-								.withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
+						Component.translatable("message.hemomancy.unstained_cardinal_rite_events.a_wave_of_silver_light_burns").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
 						false);
 				affected[0]++;
 			}
 		}
 
-		String msg = affected[0] > 0
-				? "Lethean judgment descends. " + affected[0] + " hemomancer(s) have been purged."
-				: "Lethean judgment descends, but no blood-wielders were found nearby.";
+		Component msg = affected[0] > 0
+				? Component.translatable("message.hemomancy.unstained_cardinal_rite_events.lethean_judgment_purged", affected[0])
+				: Component.translatable("message.hemomancy.unstained_cardinal_rite_events.lethean_judgment_none_found");
 		caster.displayClientMessage(
-				Component.literal(msg).withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				msg.copy().withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
 		sLevel.sendParticles(ParticleTypes.END_ROD,
 				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
@@ -578,11 +553,11 @@ public class UnstainedCardinalRiteEvents {
 		progress.addClarity(5.0f);
 		UnstainedProgressEvents.syncProgress(caster, progress);
 
-		String msg = converted > 0
-				? "Silver dawn breaks. " + converted + " block(s) have been cleansed."
-				: "Silver dawn breaks, but no blood-stained blocks were found nearby.";
+		Component msg = converted > 0
+				? Component.translatable("message.hemomancy.unstained_cardinal_rite_events.silver_dawn_cleansed", converted)
+				: Component.translatable("message.hemomancy.unstained_cardinal_rite_events.silver_dawn_none_found");
 		caster.displayClientMessage(
-				Component.literal(msg).withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				msg.copy().withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
 
 		// Visual burst
@@ -615,9 +590,9 @@ public class UnstainedCardinalRiteEvents {
 
 		long durationMinutes = STILL_WATERS_DURATION_TICKS / 1200;
 		caster.displayClientMessage(
-				Component.literal("The waters grow still. Magic damage is reduced by 30% within "
-						+ STILL_WATERS_RADIUS + " blocks for " + durationMinutes + " minutes.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				HemoText.translatable("message.hemomancy.unstained_cardinal_rite_events.the_waters_grow_still_magic_damage",
+						STILL_WATERS_RADIUS,
+						durationMinutes).withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
 
 		sLevel.sendParticles(ParticleTypes.END_ROD,
@@ -646,9 +621,9 @@ public class UnstainedCardinalRiteEvents {
 
 		long durationMinutes = PALE_CONSECRATION_DURATION_TICKS / 1200;
 		caster.displayClientMessage(
-				Component.literal("The ground is consecrated. Hostile creatures will be seared within "
-						+ PALE_CONSECRATION_RADIUS + " blocks for " + durationMinutes + " minutes.")
-						.withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
+				HemoText.translatable("message.hemomancy.unstained_cardinal_rite_events.the_ground_is_consecrated_hostile_creatures",
+						PALE_CONSECRATION_RADIUS,
+						durationMinutes).withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
 				false);
 
 		sLevel.sendParticles(ParticleTypes.END_ROD,
@@ -696,16 +671,15 @@ public class UnstainedCardinalRiteEvents {
 							false, true, true));
 
 					target.displayClientMessage(
-							Component.literal("Still water answers the title Silthmere. Purity blooms within.")
-									.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+							Component.translatable("message.hemomancy.unstained_cardinal_rite_events.still_water_answers_the_title_silthmere").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 							false);
 				});
 
-		String msg = affected > 0
-				? "The title Silthmere is answered. " + affected + " Unstained soul(s) have been blessed."
-				: "Silthmere's invocation echoes, but no Unstained walk near enough to hear it.";
+		Component msg = affected > 0
+				? Component.translatable("message.hemomancy.unstained_cardinal_rite_events.silthmere_blessed", affected)
+				: Component.translatable("message.hemomancy.unstained_cardinal_rite_events.silthmere_none_near");
 		caster.displayClientMessage(
-				Component.literal(msg).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+				msg.copy().withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
 				false);
 
 		sLevel.sendParticles(ParticleTypes.END_ROD,
@@ -735,13 +709,12 @@ public class UnstainedCardinalRiteEvents {
 
 		long durationMinutes = LETHE_COVENANT_DURATION_TICKS / 1200;
 		caster.displayClientMessage(
-				Component.literal("The Lethe Covenant is sealed! A domain of stillness spreads "
-						+ blockRadius + " blocks in every direction for " + durationMinutes + " minutes.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+				HemoText.translatable("message.hemomancy.unstained_cardinal_rite_events.the_lethe_covenant_is_sealed_a",
+						blockRadius,
+						durationMinutes).withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
 				false);
 		caster.displayClientMessage(
-				Component.literal("Spawns are halved. Silver wards keep Bleed away. Purity grows.")
-						.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.spawns_are_halved_silver_wards_keep").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
 				false);
 
 		sLevel.sendParticles(ParticleTypes.END_ROD,
@@ -771,8 +744,7 @@ public class UnstainedCardinalRiteEvents {
 				caster.getX(), caster.getY() + 1.0, caster.getZ(),
 				120, 7.0, 5.0, 7.0, 0.04);
 		caster.displayClientMessage(
-				Component.literal("The Lethean Tide rises the Blood Moon is washed from the sky.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_lethean_tide_rises_the_blood").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
 	}
 
@@ -798,16 +770,15 @@ public class UnstainedCardinalRiteEvents {
 							EffectInit.verdigris_aura, PALE_VIGIL_EFFECT_TICKS, 2, false, true, true));
 
 					target.displayClientMessage(
-							Component.literal("The Pale Vigil watches. Clarity deepens within you.")
-									.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+							Component.translatable("message.hemomancy.unstained_cardinal_rite_events.the_pale_vigil_watches_clarity_deepens").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
 							false);
 				});
 
-		String msg = affected > 0
-				? "The Pale Vigil holds. " + affected + " soul(s) draw clarity from its light."
-				: "The Pale Vigil shines, but no clarity-bearers stand near enough to receive it.";
+		Component msg = affected > 0
+				? Component.translatable("message.hemomancy.unstained_cardinal_rite_events.pale_vigil_holds", affected)
+				: Component.translatable("message.hemomancy.unstained_cardinal_rite_events.pale_vigil_none_near");
 		caster.displayClientMessage(
-				Component.literal(msg).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
+				msg.copy().withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
 
 		com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
 				caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_VIGILANT);
@@ -848,21 +819,20 @@ public class UnstainedCardinalRiteEvents {
 							EffectInit.verdigris_aura, LETHEAN_FONT_EFFECT_TICKS, 3, false, true, true));
 
 					target.displayClientMessage(
-							Component.literal("Lethe's source flows through you. The font of all clarity is open.")
-									.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+							Component.translatable("message.hemomancy.unstained_cardinal_rite_events.lethe_s_source_flows_through_you").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
 							false);
 				});
 
 		long durationMinutes = LETHEAN_FONT_DOMAIN_TICKS / 1200;
 		caster.displayClientMessage(
-				Component.literal("The Lethean Font is open! A domain of ultimate stillness spreads "
-						+ blockRadius + " blocks for " + durationMinutes + " minutes.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+				HemoText.translatable("message.hemomancy.unstained_cardinal_rite_events.the_lethean_font_is_open_a",
+						blockRadius,
+						durationMinutes).withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
 				false);
 		if (affected > 0) {
 			caster.displayClientMessage(
-					Component.literal(affected + " soul(s) have been blessed by the Font.")
-							.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+					HemoText.translatable("message.hemomancy.unstained_cardinal_rite_events.soul_s_have_been_blessed_by",
+							affected).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
 					false);
 		}
 

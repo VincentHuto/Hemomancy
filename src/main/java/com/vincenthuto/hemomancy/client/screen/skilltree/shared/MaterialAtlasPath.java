@@ -1,25 +1,28 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
-public enum MaterialAtlasPath {
-	HARBINGER("Harbinger", "Blood Atlas", 0xFFCC6644),
-	UNSTAINED("Unstained", "Still Atlas", 0xFF80B0A0);
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
-	private final String displayName;
-	private final String hubLabel;
+public enum MaterialAtlasPath {
+	HARBINGER("screen.hemomancy.material_atlas.harbinger", "screen.hemomancy.material_atlas.harbinger.hub", 0xFFCC6644),
+	UNSTAINED("screen.hemomancy.material_atlas.unstained", "screen.hemomancy.material_atlas.unstained.hub", 0xFF80B0A0);
+
+	private final String displayNameKey;
+	private final String hubLabelKey;
 	private final int accentColor;
 
-	MaterialAtlasPath(String displayName, String hubLabel, int accentColor) {
-		this.displayName = displayName;
-		this.hubLabel = hubLabel;
+	MaterialAtlasPath(String displayNameKey, String hubLabelKey, int accentColor) {
+		this.displayNameKey = displayNameKey;
+		this.hubLabelKey = hubLabelKey;
 		this.accentColor = accentColor;
 	}
 
-	public String displayName() {
-		return displayName;
+	public MutableComponent displayName() {
+		return Component.translatable(displayNameKey);
 	}
 
-	public String hubLabel() {
-		return hubLabel;
+	public MutableComponent hubLabel() {
+		return Component.translatable(hubLabelKey);
 	}
 
 	public int accentColor() {

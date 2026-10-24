@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.model.entity.mob.arthropod;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.BombardierState;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.PhlegethonticBombardier;
 import net.minecraft.client.animation.AnimationDefinition;
@@ -15,7 +16,6 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 
@@ -24,7 +24,7 @@ import java.util.WeakHashMap;
 
 public final class PhlegethonticBombardierModel extends HierarchicalModel<PhlegethonticBombardier> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath("hemomancy", "phlegethontic_bombardier"), "main");
+            Hemomancy.rloc("phlegethontic_bombardier"), "main");
     private final ModelPart whole;
     private final ModelPart nozzle;
     private final Map<PhlegethonticBombardier, ClipTransition> transitions = new WeakHashMap<>();

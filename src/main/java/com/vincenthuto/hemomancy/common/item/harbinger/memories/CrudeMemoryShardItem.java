@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipS
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -55,9 +56,7 @@ public class CrudeMemoryShardItem extends Item {
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context,
 			List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
-		tooltip.add(Component.literal(
-				"An echo scraped from the wall of a Harbinger chamber. The pattern is rough but legible\u2014someone has done this before.")
-				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		tooltip.add(Component.translatable("tooltip.hemomancy.crude_memory_shard.an_echo_scraped_from_the_wall").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		if (getManip() != null) {
 			tooltip.add(getManip().getDisplayName()
 					.withStyle(ChatFormatting.DARK_RED));
@@ -66,14 +65,15 @@ public class CrudeMemoryShardItem extends Item {
 						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 				return;
 			}
-			tooltip.add(Component.literal("Blood cost to absorb: " + (int) BLOOD_COST + " mL")
-					.withStyle(ChatFormatting.DARK_RED));
-			tooltip.add(Component.literal("Right-click with active blood. Learning requires Degree "
-					+ ManipulationRankGates.minDegreeForRank(getManip().getRank()) + "; no loom or brazier needed.")
-					.withStyle(ChatFormatting.GRAY));
-			tooltip.add(Component.literal("Casting requires " + (int) getManip().getAlignLevel() + " "
-					+ getManip().getTend().name() + " alignment. " + getManip().getBaseCostLabel() + ": " + getManip().getBaseCostText())
-					.withStyle(ChatFormatting.GRAY));
+			tooltip.add(HemoText.translatable("tooltip.hemomancy.crude_memory_shard.blood_cost_to_absorb_ml",
+					(int) BLOOD_COST).withStyle(ChatFormatting.DARK_RED));
+			tooltip.add(HemoText.translatable("tooltip.hemomancy.crude_memory_shard.right_click_with_active_blood_learning",
+					ManipulationRankGates.minDegreeForRank(getManip().getRank())).withStyle(ChatFormatting.GRAY));
+			tooltip.add(HemoText.translatable("tooltip.hemomancy.crude_memory_shard.casting_requires_alignment",
+					(int) getManip().getAlignLevel(),
+					BloodManipulation.tendencyName(getManip().getTend()),
+					getManip().getBaseCostLabel(),
+					getManip().getBaseCostText()).withStyle(ChatFormatting.GRAY));
 		}
 	}
 
@@ -87,8 +87,7 @@ public class CrudeMemoryShardItem extends Item {
 				;
 		if (volume == null || !volume.isActive()) {
 			player.displayClientMessage(
-					Component.literal("You don't understand what you're holding yet.")
-							.withStyle(ChatFormatting.DARK_RED),
+					Component.translatable("message.hemomancy.crude_memory_shard_item.you_don_t_understand_what_you").withStyle(ChatFormatting.DARK_RED),
 					true);
 			return InteractionResultHolder.fail(stack);
 		}
@@ -96,24 +95,21 @@ public class CrudeMemoryShardItem extends Item {
 		BloodManipulation manipulation = getManip();
 		if (ManipulationRetirementRules.isRetiredMemoryItem(this, manipulation)) {
 			player.displayClientMessage(
-					Component.literal("This echo has gone dormant.")
-							.withStyle(ChatFormatting.DARK_GRAY),
+					Component.translatable("message.hemomancy.crude_memory_shard_item.this_echo_has_gone_dormant").withStyle(ChatFormatting.DARK_GRAY),
 					true);
 			return InteractionResultHolder.fail(stack);
 		}
 		if (manipulation == null) {
 			player.displayClientMessage(
-					Component.literal("This memory is too complex to absorb raw.")
-							.withStyle(ChatFormatting.DARK_RED),
+					Component.translatable("message.hemomancy.crude_memory_shard_item.this_memory_is_too_complex_to").withStyle(ChatFormatting.DARK_RED),
 					true);
 			return InteractionResultHolder.fail(stack);
 		}
 		int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		if (!ManipulationRankGates.playerMeetsRank(playerDegree, manipulation.getRank())) {
 			player.displayClientMessage(
-					Component.literal("This memory requires Degree "
-									+ ManipulationRankGates.minDegreeForRank(manipulation.getRank()) + ".")
-							.withStyle(ChatFormatting.DARK_RED),
+					HemoText.translatable("message.hemomancy.crude_memory_shard_item.this_memory_requires_degree",
+							ManipulationRankGates.minDegreeForRank(manipulation.getRank())).withStyle(ChatFormatting.DARK_RED),
 					true);
 			return InteractionResultHolder.fail(stack);
 		}
@@ -124,16 +120,14 @@ public class CrudeMemoryShardItem extends Item {
 
 		if (known.doesListContainName(known.getKnownManips(), manipulation)) {
 			player.displayClientMessage(
-					Component.literal("You already carry this memory.")
-							.withStyle(ChatFormatting.DARK_RED),
+					Component.translatable("message.hemomancy.crude_memory_shard_item.you_already_carry_this_memory").withStyle(ChatFormatting.DARK_RED),
 					true);
 			return InteractionResultHolder.fail(stack);
 		}
 
 		if (volume.wouldOverstrain(BLOOD_COST)) {
 			player.displayClientMessage(
-					Component.literal("You don't have enough blood to absorb this.")
-							.withStyle(ChatFormatting.DARK_RED),
+					Component.translatable("message.hemomancy.crude_memory_shard_item.you_don_t_have_enough_blood").withStyle(ChatFormatting.DARK_RED),
 					true);
 			return InteractionResultHolder.fail(stack);
 		}
@@ -145,8 +139,7 @@ public class CrudeMemoryShardItem extends Item {
 		stack.shrink(1);
 
 		player.displayClientMessage(
-				Component.literal("The echo settles into your bloodstream.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.crude_memory_shard_item.the_echo_settles_into_your_bloodstream").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 
 		return InteractionResultHolder.sidedSuccess(stack, false);

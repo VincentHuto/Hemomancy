@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
@@ -119,7 +120,7 @@ public class BloodStructureHintScreen extends Screen {
 
 		if (structure == null) {
 			gfx.drawCenteredString(font,
-					Component.literal("Unknown Structure").withStyle(s -> s.withColor(0xFF666666)),
+					Component.translatable("screen.hemomancy.blood_structure_hint.unknown_structure").withStyle(s -> s.withColor(0xFF666666)),
 					guiLeft + GUI_WIDTH / 2, guiTop + GUI_HEIGHT / 2 - 4, 0);
 			super.render(gfx, mouseX, mouseY, partial);
 			return;
@@ -141,7 +142,7 @@ public class BloodStructureHintScreen extends Screen {
 
 		drawLayerButtons(gfx, mouseX, mouseY, modelX + modelAreaW - LAYER_BTN_SIZE - 8, guiTop + GUI_HEIGHT / 2);
 
-		gfx.drawCenteredString(font, "Drag to rotate",
+		gfx.drawCenteredString(font, Component.translatable("screen.hemomancy.crafting_tab_view.drag_to_rotate"),
 				modelX + modelAreaW / 2, guiTop + GUI_HEIGHT - 14, 0x44888888);
 
 		drawInfoPanel(gfx, infoX, contentTop, infoW, contentH, mouseX, mouseY);
@@ -267,15 +268,15 @@ public class BloodStructureHintScreen extends Screen {
 		y += 6;
 
 		// ── Blood cost ──
-		gfx.drawString(font, Component.literal("Blood Cost: ").withStyle(s -> s.withColor(LABEL_COLOR))
-				.append(Component.literal((int) structure.getBloodCost() + " mL").withStyle(s -> s.withColor(COST_COLOR))),
+		gfx.drawString(font, Component.translatable("screen.hemomancy.blood_structure_hint.blood_cost",
+				HemoText.translatable("screen.hemomancy.blood_structure_hint.ml", (int) structure.getBloodCost()).withStyle(s -> s.withColor(COST_COLOR))).withStyle(s -> s.withColor(LABEL_COLOR)),
 				panelX, y, 0);
 		y += lineH;
 
 		// ── Held item ──
 		ItemStack heldItem = structure.getHeldItem();
 		if (heldItem != null && !heldItem.isEmpty()) {
-			gfx.drawString(font, Component.literal("Hold in Hand:").withStyle(s -> s.withColor(LABEL_COLOR)),
+			gfx.drawString(font, Component.translatable("screen.hemomancy.blood_structure_hint.hold_in_hand").withStyle(s -> s.withColor(LABEL_COLOR)),
 					panelX, y, 0);
 			y += lineH;
 			gfx.renderItem(heldItem, panelX, y);
@@ -292,7 +293,7 @@ public class BloodStructureHintScreen extends Screen {
 		// ── Hit block ──
 		Block hitBlock = structure.getHitBlock();
 		if (hitBlock != null && hitBlock != Blocks.AIR) {
-			gfx.drawString(font, Component.literal("Activate Block:").withStyle(s -> s.withColor(LABEL_COLOR)),
+			gfx.drawString(font, Component.translatable("screen.hemomancy.blood_structure_hint.activate_block").withStyle(s -> s.withColor(LABEL_COLOR)),
 					panelX, y, 0);
 			y += lineH;
 			ItemStack hitStack = new ItemStack(hitBlock);
@@ -309,16 +310,12 @@ public class BloodStructureHintScreen extends Screen {
 
 		// ── Instructions ──
 		y += 4;
-		gfx.drawString(font, Component.literal("How to Perform:").withStyle(s -> s.withColor(TITLE_COLOR)),
+		gfx.drawString(font, Component.translatable("screen.hemomancy.blood_structure_hint.how_to_perform").withStyle(s -> s.withColor(TITLE_COLOR)),
 				panelX, y, 0);
 		y += lineH;
-		String instructions = structure.isUnstained()
-				? "Build the structure shown on the left. "
-						+ "Hold the required item, look at the activate block in the pattern, "
-						+ "then press the Blood Craft keybind (default: V)."
-				: "Build the structure shown on the left. "
-						+ "Equip Blood Projection, hold the required catalyst in your offhand, "
-						+ "then project into the activate block until the formation is filled.";
+		String instructions = Component.translatable(structure.isUnstained()
+				? "screen.hemomancy.blood_structure_hint.instructions_unstained"
+				: "screen.hemomancy.blood_structure_hint.instructions_harbinger").getString();
 		for (String line : ScreenDrawUtils.wrapText(font, instructions, panelW)) {
 			gfx.drawString(font, Component.literal(line)
 					.withStyle(s -> s.withColor(DESC_COLOR)), panelX, y, 0);
@@ -329,7 +326,7 @@ public class BloodStructureHintScreen extends Screen {
 		// ── Result item ──
 		ItemStack result = structure.getResult();
 		if (result != null && !result.isEmpty()) {
-			gfx.drawString(font, Component.literal("Result:").withStyle(s -> s.withColor(LABEL_COLOR)),
+			gfx.drawString(font, Component.translatable("screen.hemomancy.blood_structure_hint.result").withStyle(s -> s.withColor(LABEL_COLOR)),
 					panelX, y, 0);
 			y += lineH;
 			gfx.renderItem(result, panelX, y);
@@ -349,7 +346,7 @@ public class BloodStructureHintScreen extends Screen {
 		if (structure.getPattern() != null) {
 			List<MultiblockPattern.MaterialCount> materials = structure.getPattern().getMaterialCounts(false);
 			if (!materials.isEmpty()) {
-				gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(LABEL_COLOR)),
+				gfx.drawString(font, Component.translatable("screen.hemomancy.blood_structure_hint.materials").withStyle(s -> s.withColor(LABEL_COLOR)),
 						panelX, y, 0);
 				y += lineH;
 
@@ -416,13 +413,9 @@ public class BloodStructureHintScreen extends Screen {
 
 		// Instructions
 		y += 4 + lineH;
-		String instructions = structure.isUnstained()
-				? "Build the structure shown on the left. "
-						+ "Hold the required item, look at the activate block in the pattern, "
-						+ "then press the Blood Craft keybind (default: V)."
-				: "Build the structure shown on the left. "
-						+ "Equip Blood Projection, hold the required catalyst in your offhand, "
-						+ "then project into the activate block until the formation is filled.";
+		String instructions = Component.translatable(structure.isUnstained()
+				? "screen.hemomancy.blood_structure_hint.instructions_unstained"
+				: "screen.hemomancy.blood_structure_hint.instructions_harbinger").getString();
 		y += ScreenDrawUtils.wrapText(font, instructions, panelW).size() * lineH + 6;
 
 		// Result
@@ -485,7 +478,8 @@ public class BloodStructureHintScreen extends Screen {
 		boolean downHov = mouseX >= bx && mouseX <= bx + bs && mouseY >= downY && mouseY <= downY + bs;
 		drawNavButton(gfx, bx, downY, bs, bs, "\u25BC", downHov);
 
-		String label = visibleLayer < 0 ? "All" : "Y:" + (visibleLayer + 1);
+		String label = visibleLayer < 0 ? Component.translatable("screen.hemomancy.blood_structure_hint.all_layers").getString()
+				: "Y:" + (visibleLayer + 1);
 		gfx.drawCenteredString(font, label, bx + bs / 2, cy - 4, 0xFFAAAAAA);
 	}
 

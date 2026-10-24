@@ -1,0 +1,43 @@
+# Files in src/main/java that keep sentence-like English string literals: count, file, reason.
+# Player-facing English lives in en_us.json (O-7); what stays here is text no player reads: validation and decode
+# errors, debug tooling, config comments, model labels, ids that look like words, saved default names.
+# EnglishLiteralAllowListTest needs each count to match exactly: lower it when English leaves a file, and never add a
+# file or raise a count for text a player can see.
+15	src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/endgame/NaeglerophaeonBlockModel.java	model cube labels, never drawn
+15	src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/HarbingerRecipeMapDefinitions.java	recipe-map family ids (shown through familyName keys)
+1	src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialAtlasSpec.java	static-init consistency error
+3	src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/util/FamilyFilterLabels.java	recipe-map family ids matched to nickname keys
+1	src/main/java/com/vincenthuto/hemomancy/client/sound/ClairaudiographAnalysis.java	analysis thread name
+2	src/main/java/com/vincenthuto/hemomancy/common/capability/block/vein/VeinLocation.java	debug toString
+1	src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/Bloodline.java	saved default bloodline name; the hemo command fingerprints record it
+1	src/main/java/com/vincenthuto/hemomancy/common/data/gen/CircusPavilionStructureProvider.java	datagen block states and provider names
+1	src/main/java/com/vincenthuto/hemomancy/common/data/gen/DynastyCastlePieceProvider.java	datagen block states and provider names
+4	src/main/java/com/vincenthuto/hemomancy/common/data/gen/DynastyCastlePieces.java	datagen block states and provider names
+1	src/main/java/com/vincenthuto/hemomancy/common/data/gen/HemoItemModelProvider.java	datagen block states and provider names
+28	src/main/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperManipulationCoverage.java	design notes on why Vesper skips a manipulation; read by its coverage test only
+16	src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/DebugShowcaseItem.java	creative debug tool section labels, never applied to anything shown
+2	src/main/java/com/vincenthuto/hemomancy/common/item/shared/StructureScannerItem.java	placeholder structure id written into exported templates
+1	src/main/java/com/vincenthuto/hemomancy/common/manipulation/BloodManipulation.java	saved id of the blank manipulation slot; the hemo command fingerprints record it
+1	src/main/java/com/vincenthuto/hemomancy/common/recipe/BloodStructureRecipe.java	recipe toString
+1	src/main/java/com/vincenthuto/hemomancy/common/recipe/CardinalRiteRecipe.java	recipe toString
+1	src/main/java/com/vincenthuto/hemomancy/common/recipe/MemoryWeavingRecipe.java	recipe toString
+1	src/main/java/com/vincenthuto/hemomancy/common/recipe/serializer/BloodStructureRecipeSerializer.java	recipe JSON decode errors
+8	src/main/java/com/vincenthuto/hemomancy/common/recipe/serializer/CardinalRiteRecipeSerializer.java	recipe JSON decode errors
+3	src/main/java/com/vincenthuto/hemomancy/common/rite/CardinalRiteDaemonFinale.java	rite recipe validation reasons, logged at load
+11	src/main/java/com/vincenthuto/hemomancy/common/rite/CardinalRiteProgressionPolicy.java	rite recipe validation reasons, logged at load
+3	src/main/java/com/vincenthuto/hemomancy/common/rite/CardinalRitePurpose.java	rite recipe validation reasons, logged at load
+2	src/main/java/com/vincenthuto/hemomancy/common/rite/floor/CardinalRiteFloorLoader.java	floor datapack validation, logged
+1	src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java	bloodline name saved into world data at founding
+16	src/main/java/com/vincenthuto/hemomancy/common/rite/sigil/IchorianSigilAnatomyValidator.java	datapack validation errors, logged by the loader
+9	src/main/java/com/vincenthuto/hemomancy/common/rite/WorkingCraftRecipeRules.java	Working craft recipe validation reasons, logged at load
+1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/EarthenVeinBlockEntity.java	internal name of a temporary vein, never a destination
+3	src/main/java/com/vincenthuto/hemomancy/common/worldgen/feature/EscharianOvergrowthFeature.java	worldgen phase names, logged only
+1	src/main/java/com/vincenthuto/hemomancy/config/HemoClientConfig.java	config file comments
+7	src/main/java/com/vincenthuto/hemomancy/config/HemoMnAConfig.java	config file comments
+5	src/main/java/com/vincenthuto/hemomancy/config/HemoServerConfig.java	config file comments
+1	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinCommandedCreeper.java	mixin target descriptors
+2	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinCommandedPotion.java	mixin target descriptors
+2	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinEntityRenderDispatcher.java	mixin target descriptors
+6	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinLivingEntityRenderer.java	mixin target descriptors
+1	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinPelagicAquaticVegetation.java	mixin target descriptors
+1	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinVigilTerrain.java	mixin target descriptors

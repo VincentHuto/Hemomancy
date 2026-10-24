@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.structure.BloodCraftingPatternBlockRules;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -72,11 +73,8 @@ public final class CardinalRiteActivation {
 						.toList());
 		if (layeredResolution.status() == CardinalRiteStationMatcher.Status.AMBIGUOUS_FLOOR
 				|| layeredResolution.status() == CardinalRiteStationMatcher.Status.AMBIGUOUS_RITE) {
-			player.displayClientMessage(Component.literal(layeredResolution.status()
-							== CardinalRiteStationMatcher.Status.AMBIGUOUS_FLOOR
-							? "The Cardinal Focus answers to more than one floor."
-							: "The offerings answer to more than one rite.")
-					.withStyle(ChatFormatting.RED, ChatFormatting.BOLD), false);
+			player.displayClientMessage((layeredResolution.status()
+							== CardinalRiteStationMatcher.Status.AMBIGUOUS_FLOOR ? Component.translatable("message.hemomancy.cardinal_rite_activation.the_cardinal_focus_answers_to_more") : Component.translatable("message.hemomancy.cardinal_rite_activation.the_offerings_answer_to_more_than")).withStyle(ChatFormatting.RED, ChatFormatting.BOLD), false);
 			return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 		}
 		CardinalRiteStationMatcher.ResolvedRecipe layeredResolved =
@@ -111,30 +109,30 @@ public final class CardinalRiteActivation {
 					BlockPos activationPos = match.getBlock(
 							activation.x(), activation.y(), activation.z()).getPos();
 					if (!activationPos.equals(hitPos)) {
-						String activator = trigger == CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE
-								? "The living staff points" : "The sanguine formation draws";
+						Component activator = Component.translatable(
+								trigger == CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE
+										? "message.hemomancy.cardinal_rite_activation.the_living_staff_points"
+										: "message.hemomancy.cardinal_rite_activation.the_sanguine_formation_draws");
 						player.displayClientMessage(
-								Component.literal(activator + " toward the rite's central ")
-										.withStyle(ChatFormatting.DARK_RED)
-										.append(sLevel.getBlockState(activationPos).getBlock().getName()
-												.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-										.append(Component.literal(".").withStyle(ChatFormatting.DARK_RED)),
+								HemoText.translatable("message.hemomancy.cardinal_rite_activation.toward_the_rite_s_central",
+										activator,
+										sLevel.getBlockState(activationPos).getBlock().getName()
+												.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+										Component.literal(".").withStyle(ChatFormatting.DARK_RED)).withStyle(ChatFormatting.DARK_RED),
 								true);
 						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
 				}
 				if (CardinalRiteSavedData.hasActiveRiteAnywhere(sLevel.getServer(), player.getUUID())) {
 					player.displayClientMessage(
-							Component.literal("A rite is already in progress...")
-									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+							Component.translatable("message.hemomancy.cardinal_rite_activation.a_rite_is_already_in_progress").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 							true);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 				// Explicit recipe degree / stage progression check.
 				if (!recipe.isUnstained()) {
 					if (RecipeDegreeGates.getRequiredDegree(recipe) > 0 && !bloodVolume.isActive()) {
-						player.displayClientMessage(Component.literal("Your blood must be active to begin this rite.")
-								.withStyle(ChatFormatting.DARK_RED), false);
+						player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_activation.your_blood_must_be_active_to").withStyle(ChatFormatting.DARK_RED), false);
 						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
 					// Harbinger: check Hematic Order degree
@@ -142,10 +140,9 @@ public final class CardinalRiteActivation {
 					int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
 					if (playerDegree < requiredDegree) {
 						player.displayClientMessage(
-								Component.literal("This rite requires ")
-										.withStyle(ChatFormatting.RED)
-										.append(Component.literal(RecipeDegreeGates.degreeLabel(requiredDegree))
-												.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD)),
+								Component.translatable("message.hemomancy.cardinal_rite_activation.this_rite_requires",
+										RecipeDegreeGates.degreeLabel(requiredDegree)
+												.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD)).withStyle(ChatFormatting.RED),
 								false);
 						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
@@ -153,14 +150,13 @@ public final class CardinalRiteActivation {
 						Integer targetDegree = RecipeDegreeGates.getRankupTargetDegree(recipe);
 						if (targetDegree != null && playerDegree >= targetDegree) {
 							EnumInitiatoryDegree current = EnumInitiatoryDegree.byNumber(playerDegree);
-							String currentName = current != null ? current.getTitle() : "Degree " + playerDegree;
+							Component currentName = current != null ? current.displayName()
+									: Component.translatable("message.hemomancy.recipe_degree_gates.degree", playerDegree);
 							player.displayClientMessage(
-									Component.literal("You have already attained ")
-											.withStyle(ChatFormatting.DARK_RED)
-											.append(Component.literal(currentName)
-													.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-											.append(Component.literal(". This rank rite has no further hold on you.")
-													.withStyle(ChatFormatting.DARK_RED)),
+									Component.translatable("message.hemomancy.cardinal_rite_activation.you_have_already_attained",
+											currentName.copy()
+													.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+											Component.translatable("message.hemomancy.cardinal_rite_activation.this_rank_rite_has_no_further").withStyle(ChatFormatting.DARK_RED)).withStyle(ChatFormatting.DARK_RED),
 									false);
 							return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 						}
@@ -168,11 +164,10 @@ public final class CardinalRiteActivation {
 							HarbingerChapterMilestone unmet =
 									HarbingerChapterProgression.unmetChapterForTargetDegree(serverPlayer, targetDegree);
 							if (unmet != null) {
-								player.displayClientMessage(Component.literal("The rank rite remains sealed. Complete ")
-										.withStyle(ChatFormatting.DARK_RED)
-										.append(Component.literal(unmet.chapterName())
-												.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-										.append(Component.literal(" first.").withStyle(ChatFormatting.DARK_RED)), false);
+								player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_activation.the_rank_rite_remains_sealed_complete",
+										unmet.chapterName().copy()
+												.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+										Component.translatable("message.hemomancy.cardinal_rite_activation.first").withStyle(ChatFormatting.DARK_RED)).withStyle(ChatFormatting.DARK_RED), false);
 								return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 							}
 						}
@@ -182,14 +177,12 @@ public final class CardinalRiteActivation {
 					int requiredLevel = RecipeDegreeGates.getRequiredDegree(recipe);
 					if (!RecipeDegreeGates.playerMeets(player, recipe)
 							&& !UnstainedAccessRules.bypassesUnstainedLevelGate(recipe.getId().getPath(), HemoCapabilityAccess.getUnstainedProgress(player))) {
-						String stageName = RecipeDegreeGates.requirementLabel(recipe);
+						var stageName = RecipeDegreeGates.requirementLabel(recipe);
 						player.displayClientMessage(
-								Component.literal("This rite demands ")
-										.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
-										.append(Component.literal(stageName)
-												.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD))
-								.append(Component.literal(" (Unstained requirement)")
-												.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)),
+								Component.translatable("message.hemomancy.cardinal_rite_activation.this_rite_demands",
+										stageName
+												.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+										Component.translatable("message.hemomancy.cardinal_rite_activation.unstained_requirement").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 								false);
 						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
@@ -207,8 +200,7 @@ public final class CardinalRiteActivation {
 				boolean harbingerProgressBlocked = UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player));
 				if (!recipe.isUnstained() && harbingerProgressBlocked) {
 					player.displayClientMessage(
-							Component.literal("Purification bars access to the Hematic Order rites.")
-									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+							Component.translatable("message.hemomancy.cardinal_rite_activation.purification_bars_access_to_the_hematic").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 							false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
@@ -217,8 +209,7 @@ public final class CardinalRiteActivation {
 				if (APOTHEOS_RITE_ID.equals(recipe.getId())
 						&& !HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone()) {
 					player.displayClientMessage(
-							Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
-									.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+							Component.translatable("message.hemomancy.cardinal_rite_activation.the_eighth_degree_remains_sealed_consume").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 							false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
@@ -226,8 +217,8 @@ public final class CardinalRiteActivation {
 				//  Blood cost check 
 				if (!recipe.hasInteractiveCeremony() && bloodVolume.getBloodVolume() < recipe.getBloodCost()) {
 					player.displayClientMessage(
-							Component.literal("Not enough blood to begin the ").append(recipe.displayName())
-									.withStyle(ChatFormatting.DARK_RED),
+							Component.translatable("message.hemomancy.cardinal_rite_activation.not_enough_blood_to_begin_the",
+									recipe.displayName()).withStyle(ChatFormatting.DARK_RED),
 							true);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
@@ -235,8 +226,7 @@ public final class CardinalRiteActivation {
 				boolean pathPermitsRite = HarbingerPathPermissions.canPerformRite(HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed(),
 								HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath(), APOTHEOS_RITE_ID.equals(recipe.getId()));
 				if (!recipe.isUnstained() && !pathPermitsRite) {
-					player.displayClientMessage(Component.literal(
-							"This rite cannot answer your current path. Resolve the ninth husk's choice first."), false);
+					player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_activation.this_rite_cannot_answer_your_current"), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
@@ -252,17 +242,13 @@ public final class CardinalRiteActivation {
 				}
 				if (savedData.hasRiteAt(centerPos)) {
 					player.displayClientMessage(
-							Component.literal("This cardinal station is already carrying a rite.")
-									.withStyle(ChatFormatting.DARK_RED),
+							Component.translatable("message.hemomancy.cardinal_rite_activation.this_cardinal_station_is_already_carrying").withStyle(ChatFormatting.DARK_RED),
 							true);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
 				if (recipe.hasLayeredStation() && !focusMediumMatches(sLevel, centerPos, recipe)) {
-					player.displayClientMessage(Component.literal(recipe.hasMedium()
-								? "Seat the rite's required medium in the Cardinal Focus."
-								: "Remove the unexpected medium from the Cardinal Focus.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+					player.displayClientMessage((recipe.hasMedium() ? Component.translatable("message.hemomancy.cardinal_rite_activation.seat_the_rite_s_required_medium") : Component.translatable("message.hemomancy.cardinal_rite_activation.remove_the_unexpected_medium_from_the")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 				if (recipe.isPuppeteerTrial()) {
@@ -344,8 +330,7 @@ public final class CardinalRiteActivation {
 					if (staff.isEmpty()) {
                         com.vincenthuto.hemomancy.common.succession.SuccessionRites.cleanup(sLevel, rite);
 						player.displayClientMessage(
-								Component.literal("A Living Staff must be planted in the Cardinal Focus.")
-										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+								Component.translatable("message.hemomancy.cardinal_rite_activation.a_living_staff_must_be_planted").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 								false);
 						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
@@ -365,16 +350,12 @@ public final class CardinalRiteActivation {
 				if (recipe.isWorkingCraft() && !WorkingCraftRites.prepare(
 						sLevel, rite, stationMatch == null ? null : stationMatch.subject())) {
 					CardinalRiteStaffEscrow.restore(serverPlayer, rite);
-					player.displayClientMessage(Component.literal(
-							"The Working floor cannot take hold: keep the structure on its bed and each offering in its lit brazier.")
-							.withStyle(ChatFormatting.DARK_RED), false);
+					player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_activation.the_working_floor_cannot_take_hold").withStyle(ChatFormatting.DARK_RED), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 				if (!StationUpgradeRites.prepare(sLevel, rite)) {
 					CardinalRiteStaffEscrow.restore(serverPlayer, rite);
-					player.displayClientMessage(Component.literal(
-							"Seat an idle station of the required tier behind the Focus, facing it, with its upgrade item and five offerings on lit braziers.")
-							.withStyle(ChatFormatting.DARK_RED), false);
+					player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_activation.seat_an_idle_station_of_the").withStyle(ChatFormatting.DARK_RED), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 				savedData.startRite(rite);
@@ -392,27 +373,25 @@ public final class CardinalRiteActivation {
 
 				// Notify the player
 				player.displayClientMessage(
-						Component.literal("The ").append(recipe.displayName()).append(recipe.isWorkingCraft()
-								? " begins. Project blood into the structure until the floor climbs it."
+						Component.translatable(recipe.isWorkingCraft()
+								? "message.hemomancy.cardinal_rite_activation.rite_begins_working"
 								: recipe.hasInteractiveCeremony()
                                 && !com.vincenthuto.hemomancy.common.succession.SuccessionRites.is(rite)
-								? " awaits consecration. Fill the crimson anchors."
-								: " begins... (" + castingDuration / 20 + "s)")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+								? "message.hemomancy.cardinal_rite_activation.rite_awaits_consecration"
+								: "message.hemomancy.cardinal_rite_activation.rite_begins_timed",
+								recipe.displayName(), castingDuration / 20).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 						false);
 				player.displayClientMessage(
-						Component.literal("Stay inside the ritual circle!")
-								.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
+						Component.translatable("message.hemomancy.cardinal_rite_activation.stay_inside_the_ritual_circle").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
 						false);
 				return CardinalRiteActivationRules.ActivationAttempt.STARTED;
 			}
 		}
 		if (hitState.is(BlockInit.cardinal_focus.get())) {
-			player.displayClientMessage(Component.literal(switch (layeredResolution.status()) {
-						case NO_FLOOR -> "The Cardinal Focus cannot find a complete rite floor.";
-						case NO_SUBJECT -> "The Working floor cannot find its subject: raise the structure on the floor"
-								+ " against one side of the Focus, inside that side's bed.";
-						default -> "The floor answers, but no structure, lit-brazier signature and Working subject names a valid rite.";
+			player.displayClientMessage(Component.translatable(switch (layeredResolution.status()) {
+						case NO_FLOOR -> "message.hemomancy.cardinal_rite_activation.the_cardinal_focus_cannot_find_a";
+						case NO_SUBJECT -> "message.hemomancy.cardinal_rite_activation.the_working_floor_cannot_find_its";
+						default -> "message.hemomancy.cardinal_rite_activation.the_floor_answers_but_no_structure";
 					})
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 			return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
@@ -429,15 +408,13 @@ public final class CardinalRiteActivation {
 				.getBloodLine();
 		if (bloodline == null || !bloodline.isValid()) {
 			player.displayClientMessage(
-					Component.literal("The Founding Fane requires an established bloodline.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_activation.the_founding_fane_requires_an_established").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return false;
 		}
 		if (!bloodline.getLeaderUUID().equals(player.getUUID())) {
 			player.displayClientMessage(
-					Component.literal("Only the bloodline Progenitor may consecrate a Founding Fane.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_activation.only_the_bloodline_progenitor_may_consecrate").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return false;
 		}
@@ -462,9 +439,7 @@ public final class CardinalRiteActivation {
 			data.putLong(pendingUntilKey, player.level().getGameTime()
 					+ RiteRelocationConfirmationRules.CONFIRMATION_TICKS);
 			player.displayClientMessage(
-					Component.literal("Your bloodline already has a Founding Fane. Activate this exact formation "
-									+ "again within thirty seconds to abandon its old heart and relocate it here.")
-							.withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
+					Component.translatable("message.hemomancy.cardinal_rite_activation.your_bloodline_already_has_a_founding").withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
 					false);
 			return false;
 		}

@@ -801,8 +801,7 @@ public class StainedPriestessEntity extends Monster {
             var progress = HemoCapabilityAccess.getUnstainedProgress(player);
             progress.setAnnettaSeveranceUnlocked(true);
             UnstainedProgressEvents.syncProgress(player, progress);
-            player.displayClientMessage(Component.literal(
-                    "The infection's collapse reveals where a founder's covenant-root can be cut."), false);
+            player.displayClientMessage(Component.translatable("message.hemomancy.stained_priestess_entity.the_infection_s_collapse_reveals_where"), false);
         }
         super.die(source);
     }

@@ -7,9 +7,11 @@ import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.StillArtCooldownPacket;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -50,6 +52,11 @@ public class StillArt {
 
 	public String getProperName() {
 		return HLTextUtils.convertInitToLang(name);
+	}
+
+	/** Player-facing name from {@code hemomancy.still_art.<name>}, or the proper-cased id for an art without one. */
+	public MutableComponent getDisplayName() {
+		return Component.translatableWithFallback("hemomancy.still_art." + name, getProperName());
 	}
 
 	public EnumClarityStage getRequiredStage() {
@@ -111,25 +118,21 @@ public class StillArt {
 		}
         if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)) return;
 		if (this == BLANK || "no_selected".equals(name)) {
-			serverPlayer.displayClientMessage(Component.literal("No Still Art selected.")
-					.withStyle(ChatFormatting.GRAY), true);
+			serverPlayer.displayClientMessage(Component.translatable("message.hemomancy.still_art.no_still_art_selected").withStyle(ChatFormatting.GRAY), true);
 			return;
 		}
 		if (!HemoCapabilityAccess.getKnownStillArts(serverPlayer).isKnown(this)) {
-			serverPlayer.displayClientMessage(Component.literal("The Lady has not granted you this Still Art.")
-					.withStyle(ChatFormatting.GRAY), true);
+			serverPlayer.displayClientMessage(Component.translatable("message.hemomancy.still_art.the_lady_has_not_granted_you").withStyle(ChatFormatting.GRAY), true);
 			return;
 		}
 		if (!isUnlockedFor(serverPlayer)) {
-			serverPlayer.displayClientMessage(Component.literal("Your clarity is too weak for that stillness yet.")
-					.withStyle(ChatFormatting.GRAY), true);
+			serverPlayer.displayClientMessage(Component.translatable("message.hemomancy.still_art.your_clarity_is_too_weak_for").withStyle(ChatFormatting.GRAY), true);
 			return;
 		}
 		if (isOnCooldown(serverPlayer)) {
 			double seconds = getRemainingCooldownTicks(serverPlayer) / TICKS_PER_SECOND;
 			serverPlayer.displayClientMessage(
-					Component.literal(String.format("Still Arts are settling. (%.1fs)", seconds))
-							.withStyle(ChatFormatting.AQUA),
+					HemoText.translatable("message.hemomancy.still_art.still_arts_are_settling_s", String.format("%.1f", seconds)).withStyle(ChatFormatting.AQUA),
 					true);
 			return;
 		}

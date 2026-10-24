@@ -179,8 +179,7 @@ def camel(name):
 def entity_java_source(rig, size, entity_class, script, armed=False, extra_fields='', extra_ctor='',
                        extra_methods='', extra_imports='',
                        package='com.vincenthuto.hemomancy.client.model.entity.boss.annetta',
-                       entity_package='com.vincenthuto.hemomancy.common.entity.boss.annetta',
-                       plain_layer_location=False):
+                       entity_package='com.vincenthuto.hemomancy.common.entity.boss.annetta'):
     """HierarchicalModel source: every rig part becomes a camelCase field resolved through its parent."""
     lines = []
     for part in rig.parts:
@@ -207,11 +206,7 @@ def entity_java_source(rig, size, entity_class, script, armed=False, extra_field
         f'\t\tthis.{camel(p["name"])} = '
         + ('root.getChild("root")' if p['parent'] is None else f'this.{camel(p["parent"])}.getChild("{p["name"]}")')
         + ';' for p in rig.parts)
-    # Unit tests bake some models without a mod bootstrap; those use a plain ResourceLocation for their layer.
-    layer_location = (f'ResourceLocation.fromNamespaceAndPath("hemomancy", "{rig.layer}")' if plain_layer_location
-                      else f'Hemomancy.rloc("{rig.layer}")')
-    if plain_layer_location:
-        extra_imports = 'import net.minecraft.resources.ResourceLocation;\n' + extra_imports
+    layer_location = f'Hemomancy.rloc("{rig.layer}")'
     implements = ' implements ArmedModel' if armed else ''
     armed_import = 'import net.minecraft.client.model.ArmedModel;\n' if armed else ''
     return f'''package {package};

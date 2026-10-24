@@ -1,20 +1,21 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+import org.junit.jupiter.api.Test;
 
-public final class BloodlineFoundingCanonSourceTest {
-	private BloodlineFoundingCanonSourceTest() {}
-	public static void main(String[] args) throws IOException {
-		String ledger = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/bloodline/UnsignedLedgerItem.java");
-		String rites = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java")
-				+ read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java");
-		assertNotContains(ledger, "new Bloodline(bloodLineName");
-		assertContains(ledger, "Only the Bloodline Founding rite can write the first name");
-		assertContains(rites, "degree.setHasFoundedBloodline(true)");
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertShowsEnglish;
+
+class BloodlineFoundingCanonSourceTest {
+	@Test
+	void onlyTheFoundingRiteNamesABloodline() {
+		String ledger = SourceAssertions.readMainJava("common/item/harbinger/bloodline/UnsignedLedgerItem.java");
+		String rites = SourceAssertions.readMainJava("common/rite/harbinger/HarbingerCardinalRiteEvents.java")
+				+ SourceAssertions.readMainJava("common/rite/harbinger/CardinalRiteCompletionEffects.java");
+		assertNotContains("the ledger does not found a bloodline", ledger, "new Bloodline(bloodLineName");
+		assertShowsEnglish("the ledger points to the founding rite", ledger,
+				"Only the Bloodline Founding rite can write the first name");
+		assertContains("the founding rite records the founding", rites, "degree.setHasFoundedBloodline(true)");
 	}
-	private static String read(String path) throws IOException { return Files.readString(Path.of(path)); }
-	private static void assertContains(String source, String expected) { if (!source.contains(expected)) throw new AssertionError("missing " + expected); }
-	private static void assertNotContains(String source, String forbidden) { if (source.contains(forbidden)) throw new AssertionError("still contains " + forbidden); }
 }

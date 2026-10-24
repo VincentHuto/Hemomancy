@@ -37,7 +37,7 @@ public class HematicCommandManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (target(player) == null) {
-			player.displayClientMessage(Component.literal("No commandable enemy in sight."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.hematic_command_manip.no_commandable_enemy_in_sight"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);
@@ -54,7 +54,7 @@ public class HematicCommandManip extends BloodManipulation {
 				? HematicCommandManager.impress(serverPlayer, target)
 				: HematicCommandManager.rebuke(serverPlayer, target);
 		if (!applied) {
-			player.displayClientMessage(Component.literal("That body will not submit to hematic command."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.hematic_command_manip.that_body_will_not_submit_to"), true);
 		}
 	        }
     }

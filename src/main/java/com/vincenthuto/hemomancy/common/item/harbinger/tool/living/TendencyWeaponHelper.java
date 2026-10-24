@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -149,22 +150,21 @@ public final class TendencyWeaponHelper {
 		}
 		String opposingTagName = getEntityTagDisplayName(opposingTendency);
 		String opposingTendencyName = getTendencyDisplayName(opposingTendency);
-		tooltip.add(Component.literal("Aligned Tendency: " + getTendencyDisplayName(weaponTendency))
-				.withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(HemoText.translatable("message.hemomancy.tendency_weapon_helper.aligned_tendency",
+				getTendencyDisplayName(weaponTendency)).withStyle(ChatFormatting.DARK_RED));
 		getWeaponSecondaryTendency(stack).ifPresent(secondaryTendency ->
-				tooltip.add(Component.literal("Secondary Tendency: " + getTendencyDisplayName(secondaryTendency))
-						.withStyle(ChatFormatting.DARK_PURPLE)));
-		tooltip.add(Component.literal("Opposes: " + opposingTagName + " / " + opposingTendencyName + " entities")
-				.withStyle(ChatFormatting.GRAY));
-		tooltip.add(Component.literal(String.format(Locale.ROOT, "Opposing damage: x%.2f - x%.2f",
-				BASE_DAMAGE_MULTIPLIER, MAX_DAMAGE_MULTIPLIER)).withStyle(ChatFormatting.GRAY));
+				tooltip.add(HemoText.translatable("message.hemomancy.tendency_weapon_helper.secondary_tendency",
+						getTendencyDisplayName(secondaryTendency)).withStyle(ChatFormatting.DARK_PURPLE)));
+		tooltip.add(HemoText.translatable("message.hemomancy.tendency_weapon_helper.opposes_entities",
+				opposingTagName,
+				opposingTendencyName).withStyle(ChatFormatting.GRAY));
+		tooltip.add(HemoText.translatable("message.hemomancy.tendency_weapon_helper.opposing_damage_x_x", String.format(Locale.ROOT, "%.2f", BASE_DAMAGE_MULTIPLIER), String.format(Locale.ROOT, "%.2f", MAX_DAMAGE_MULTIPLIER)).withStyle(ChatFormatting.GRAY));
 
 		Player player = ClientBridge.get().localPlayer();
 		if (player != null) {
 			float alignment = getAlignmentValue(player, weaponTendency);
 			float multiplier = getDamageMultiplier(player, weaponTendency);
-			tooltip.add(Component.literal(String.format(Locale.ROOT, "Current multiplier: x%.2f (%s %.1f)",
-					multiplier, getTendencyDisplayName(weaponTendency), alignment)).withStyle(ChatFormatting.AQUA));
+			tooltip.add(HemoText.translatable("message.hemomancy.tendency_weapon_helper.current_multiplier_x", String.format(Locale.ROOT, "%.2f", multiplier), getTendencyDisplayName(weaponTendency), String.format(Locale.ROOT, "%.1f", alignment)).withStyle(ChatFormatting.AQUA));
 		}
 	}
 }

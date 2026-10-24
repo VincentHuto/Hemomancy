@@ -48,8 +48,7 @@ public class PacketBloodlineMessage implements CustomPacketPayload {
 			String trimmed = msg.message.trim();
 			if (trimmed.isEmpty() || trimmed.length() > MAX_LENGTH) return;
 			if (!BloodlineChatRateLimit.tryAcquire(sender.getUUID(), sender.server.getTickCount())) {
-				sender.displayClientMessage(Component.literal("The blood will not carry words so quickly.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+				sender.displayClientMessage(Component.translatable("message.hemomancy.packet_bloodline_message.the_blood_will_not_carry_words").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 				return;
 			}
 
@@ -57,7 +56,7 @@ public class PacketBloodlineMessage implements CustomPacketPayload {
 			Bloodline bloodline = volume.getBloodLine();
 			if (!bloodline.isValid()) {
 				sender.sendSystemMessage(
-						Component.literal("No bloodline claims you!").withStyle(ChatFormatting.RED));
+						Component.translatable("message.hemomancy.packet_bloodline_message.no_bloodline_claims_you").withStyle(ChatFormatting.RED));
 				return;
 			}
 
@@ -66,9 +65,7 @@ public class PacketBloodlineMessage implements CustomPacketPayload {
 			Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
 			if (globalLine == null) return;
 
-			Component prefix = Component.literal(
-					"You begin to hear faint whispers as a message seems to manifest in your vision")
-					.withStyle(ChatFormatting.DARK_RED);
+			Component prefix = Component.translatable("message.hemomancy.packet_bloodline_message.you_begin_to_hear_faint_whispers").withStyle(ChatFormatting.DARK_RED);
 			Component body = Component.literal("[" + sender.getName().getString() + "]: " + trimmed)
 					.withStyle(ChatFormatting.DARK_RED);
 

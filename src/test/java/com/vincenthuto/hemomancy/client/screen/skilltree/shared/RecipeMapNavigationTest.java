@@ -126,7 +126,7 @@ final class RecipeMapNavigationTest {
 
 		assertTrue(craftingView.contains("preview.width() - 18"),
 				"The structure model should leave the right-side layer controls their own lane");
-		assertTrue(inspectorView.contains("ctx.font().split(Component.literal(PREVIEW_HINT), preview.width())"),
+		assertTrue(inspectorView.contains("ctx.font().split(Component.translatable(PREVIEW_HINT), preview.width())"),
 				"The preview hint should wrap to the available preview width");
 		assertTrue(inspectorView.contains("int hintY = layout.preview().bottom() + 4"),
 				"The preview hint should sit below the down-layer control");

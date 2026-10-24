@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -70,7 +71,7 @@ public class DrudgeElectrodeItem extends Item {
 				}
 			}
 			if (signalled > 0) {
-				player.displayClientMessage(Component.literal("§7Signal sent to " + signalled + " construct(s)."), true);
+				player.displayClientMessage(HemoText.translatable("message.hemomancy.drudge_electrode_item.signal_sent_to_construct_s", signalled), true);
 			}
 		}
 		return true;

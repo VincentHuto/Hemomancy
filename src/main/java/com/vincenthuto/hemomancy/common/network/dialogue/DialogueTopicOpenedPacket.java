@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 
@@ -12,7 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record DialogueTopicOpenedPacket(ResourceLocation topicId, int entityId) implements CustomPacketPayload {
 	public static final Type<DialogueTopicOpenedPacket> TYPE =
-			new Type<>(ResourceLocation.fromNamespaceAndPath("hemomancy", "dialogue_topic_opened_packet"));
+			new Type<>(Hemomancy.rloc("dialogue_topic_opened_packet"));
 	public static final StreamCodec<FriendlyByteBuf, DialogueTopicOpenedPacket> STREAM_CODEC =
 			StreamCodec.of(DialogueTopicOpenedPacket::encode, DialogueTopicOpenedPacket::decode);
 

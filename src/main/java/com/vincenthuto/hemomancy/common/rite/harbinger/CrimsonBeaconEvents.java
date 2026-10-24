@@ -38,8 +38,7 @@ public class CrimsonBeaconEvents {
 			// Beacon is in a different dimension still consume it but warn
 			data.removeBeacon(player.getUUID());
 			player.displayClientMessage(
-					Component.literal("The Crimson Beacon was too distant to reach...")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.crimson_beacon_events.the_crimson_beacon_was_too_distant").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
@@ -54,8 +53,7 @@ public class CrimsonBeaconEvents {
 		data.removeBeacon(player.getUUID());
 
 		player.displayClientMessage(
-				Component.literal("The Crimson Beacon pulls your dying body home...")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				Component.translatable("message.hemomancy.crimson_beacon_events.the_crimson_beacon_pulls_your_dying").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 	}
 }

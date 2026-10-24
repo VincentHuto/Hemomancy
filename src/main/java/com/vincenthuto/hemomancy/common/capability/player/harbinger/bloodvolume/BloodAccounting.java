@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.Locale;
 
 /**
  * The one way a player pays blood. Every payment names its {@link Source}, settles through {@link BloodPaymentRules},
@@ -23,19 +22,9 @@ public final class BloodAccounting {
 	 * blood debt; {@code reserveProtected} keeps Sanguine Reserve's floor out of reach.
 	 */
 	public record Source(String id, String label, Category category, boolean countsAsSpend, boolean reserveProtected) {
-		/** A source labelled from its id: {@code living_axe} shows as "Living Axe". */
+		/** A source labelled by the key {@code blood_source.hemomancy.<id>}. */
 		public static Source of(String id, Category category, boolean countsAsSpend, boolean reserveProtected) {
-			return new Source(id, label(id), category, countsAsSpend, reserveProtected);
-		}
-
-		private static String label(String id) {
-			StringBuilder label = new StringBuilder();
-			for (String word : id.split("_")) {
-				if (word.isEmpty()) continue;
-				if (!label.isEmpty()) label.append(' ');
-				label.append(word.substring(0, 1).toUpperCase(Locale.ROOT)).append(word.substring(1));
-			}
-			return label.toString();
+			return new Source(id, "blood_source.hemomancy." + id, category, countsAsSpend, reserveProtected);
 		}
 	}
 

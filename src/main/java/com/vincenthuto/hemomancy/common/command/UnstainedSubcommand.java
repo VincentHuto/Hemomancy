@@ -77,29 +77,29 @@ final class UnstainedSubcommand {
 
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" Unstained Progress:").withStyle(ChatFormatting.WHITE)), false);
-		source.sendSuccess(() -> Component.literal("  Phase: ")
-				.append(Component.literal(UnstainedAccessRules.phase(cap).name()).withStyle(ChatFormatting.AQUA)), false);
-		source.sendSuccess(() -> Component.literal("  Novitiate vows: ")
-				.append(Component.literal(UnstainedAccessRules.completedNovitiateVows(cap.getClaimedObservances()) + "/5")
+				.append(Component.translatable("commands.hemomancy.unstained.unstained_progress").withStyle(ChatFormatting.WHITE)), false);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.phase",
+				Component.literal(UnstainedAccessRules.phase(cap).name()).withStyle(ChatFormatting.AQUA)), false);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.novitiate_vows",
+				Component.literal(UnstainedAccessRules.completedNovitiateVows(cap.getClaimedObservances()) + "/5")
 						.withStyle(ChatFormatting.WHITE)), false);
-		source.sendSuccess(() -> Component.literal("  Begun: ")
-				.append(Component.literal(String.valueOf(cap.hasBegunPurification()))
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.begun",
+				Component.literal(String.valueOf(cap.hasBegunPurification()))
 						.withStyle(cap.hasBegunPurification() ? ChatFormatting.GREEN : ChatFormatting.RED)), false);
-		source.sendSuccess(() -> Component.literal("  Purity: ")
-				.append(Component.literal(String.format("%.1f", cap.getPurity())).withStyle(ChatFormatting.WHITE))
-				.append(Component.literal(" (" + pStage.getTitle() + ")").withStyle(ChatFormatting.GRAY)), false);
-		source.sendSuccess(() -> Component.literal("  Clarity Unlocked: ")
-				.append(Component.literal(String.valueOf(cap.hasClarityUnlocked()))
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.purity",
+				Component.literal(String.format("%.1f", cap.getPurity())).withStyle(ChatFormatting.WHITE),
+				Component.translatable("commands.hemomancy.unstained.stage_suffix", pStage.getDisplayName()).withStyle(ChatFormatting.GRAY)), false);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.clarity_unlocked",
+				Component.literal(String.valueOf(cap.hasClarityUnlocked()))
 						.withStyle(cap.hasClarityUnlocked() ? ChatFormatting.GREEN : ChatFormatting.RED)), false);
-		source.sendSuccess(() -> Component.literal("  Clarity: ")
-				.append(Component.literal(String.format("%.1f", cap.getClarity())).withStyle(ChatFormatting.AQUA))
-				.append(Component.literal(" (" + cStage.getTitle() + ")").withStyle(ChatFormatting.GRAY)), false);
-		source.sendSuccess(() -> Component.literal("  Silver Ward: ")
-				.append(Component.literal(String.format("%.0f%%", cap.getSilverWardStrength() * 100))
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.clarity",
+				Component.literal(String.format("%.1f", cap.getClarity())).withStyle(ChatFormatting.AQUA),
+				Component.translatable("commands.hemomancy.unstained.stage_suffix", cStage.getDisplayName()).withStyle(ChatFormatting.GRAY)), false);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.silver_ward",
+				Component.literal(String.format("%.0f%%", cap.getSilverWardStrength() * 100))
 						.withStyle(ChatFormatting.YELLOW)), false);
-		source.sendSuccess(() -> Component.literal("  Verdigris Aura: ")
-				.append(Component.literal(String.format("%.0f%%", cap.getVerdigrisAura() * 100))
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.verdigris_aura",
+				Component.literal(String.format("%.0f%%", cap.getVerdigrisAura() * 100))
 						.withStyle(ChatFormatting.DARK_AQUA)), false);
 		return 1;
 	}
@@ -110,10 +110,9 @@ final class UnstainedSubcommand {
 		cap.setBegunPurification(!cap.hasBegunPurification());
 		UnstainedProgressEvents.syncProgress(player, cap);
 		KnownStillArtEvents.grantEligibleArts(player, cap);
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" begunPurification: "))
-				.append(Component.literal(String.valueOf(cap.hasBegunPurification()))
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.set_begunpurification",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(String.valueOf(cap.hasBegunPurification()))
 						.withStyle(cap.hasBegunPurification() ? ChatFormatting.GREEN : ChatFormatting.RED)),
 				true);
 		return 1;
@@ -125,9 +124,9 @@ final class UnstainedSubcommand {
 		EnumPurityStage stage = EnumPurityStage.byPurity(cap.getPurity());
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" Purity: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.translatable("commands.hemomancy.unstained.purity_2").withStyle(ChatFormatting.GRAY))
 				.append(Component.literal(String.format("%.1f", cap.getPurity())).withStyle(ChatFormatting.WHITE))
-				.append(Component.literal(" (" + stage.getTitle() + ")").withStyle(ChatFormatting.GRAY)),
+				.append(Component.translatable("commands.hemomancy.unstained.stage_suffix", stage.getDisplayName()).withStyle(ChatFormatting.GRAY)),
 				false);
 		return 1;
 	}
@@ -138,11 +137,10 @@ final class UnstainedSubcommand {
 		cap.setPurity(value);
 		UnstainedProgressEvents.syncProgress(player, cap);
 		EnumPurityStage stage = EnumPurityStage.byPurity(cap.getPurity());
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" purity to "))
-				.append(Component.literal(String.format("%.1f", cap.getPurity())).withStyle(ChatFormatting.WHITE))
-				.append(Component.literal(" (" + stage.getTitle() + ")").withStyle(ChatFormatting.GRAY)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.set_purity_to",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(String.format("%.1f", cap.getPurity())).withStyle(ChatFormatting.WHITE),
+				Component.translatable("commands.hemomancy.unstained.stage_suffix", stage.getDisplayName()).withStyle(ChatFormatting.GRAY)),
 				true);
 		return 1;
 	}
@@ -153,13 +151,12 @@ final class UnstainedSubcommand {
 		cap.setClarityUnlocked(!cap.hasClarityUnlocked());
 		boolean resetHarbinger = PathMutualExclusionHelper.enforceHarbingerResetOnClarity(player, cap);
 		UnstainedProgressEvents.syncProgress(player, cap);
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" clarityUnlocked: "))
-				.append(Component.literal(String.valueOf(cap.hasClarityUnlocked()))
-						.withStyle(cap.hasClarityUnlocked() ? ChatFormatting.GREEN : ChatFormatting.RED))
-				.append(resetHarbinger
-						? Component.literal("; Harbinger progress reset.").withStyle(ChatFormatting.GRAY)
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.set_clarityunlocked",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(String.valueOf(cap.hasClarityUnlocked()))
+						.withStyle(cap.hasClarityUnlocked() ? ChatFormatting.GREEN : ChatFormatting.RED),
+				resetHarbinger
+						? Component.translatable("commands.hemomancy.unstained.harbinger_progress_reset").withStyle(ChatFormatting.GRAY)
 						: Component.empty()),
 				true);
 		return 1;
@@ -171,9 +168,9 @@ final class UnstainedSubcommand {
 		EnumClarityStage stage = EnumClarityStage.byClarity(cap.getClarity());
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" Clarity: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.translatable("commands.hemomancy.unstained.clarity_2").withStyle(ChatFormatting.GRAY))
 				.append(Component.literal(String.format("%.1f", cap.getClarity())).withStyle(ChatFormatting.AQUA))
-				.append(Component.literal(" (" + stage.getTitle() + ")").withStyle(ChatFormatting.GRAY)),
+				.append(Component.translatable("commands.hemomancy.unstained.stage_suffix", stage.getDisplayName()).withStyle(ChatFormatting.GRAY)),
 				false);
 		return 1;
 	}
@@ -189,16 +186,15 @@ final class UnstainedSubcommand {
 		boolean resetHarbinger = PathMutualExclusionHelper.enforceHarbingerResetOnClarity(player, cap);
 		UnstainedProgressEvents.syncProgress(player, cap);
 		EnumClarityStage stage = EnumClarityStage.byClarity(cap.getClarity());
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" clarity to "))
-				.append(Component.literal(String.format("%.1f", cap.getClarity())).withStyle(ChatFormatting.AQUA))
-				.append(Component.literal(" (" + stage.getTitle() + ")").withStyle(ChatFormatting.GRAY))
-				.append(unlockedBySet
-						? Component.literal("; clarity unlocked.").withStyle(ChatFormatting.GRAY)
-						: Component.empty())
-				.append(resetHarbinger
-						? Component.literal("; Harbinger progress reset.").withStyle(ChatFormatting.GRAY)
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.set_clarity_to",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(String.format("%.1f", cap.getClarity())).withStyle(ChatFormatting.AQUA),
+				Component.translatable("commands.hemomancy.unstained.stage_suffix", stage.getDisplayName()).withStyle(ChatFormatting.GRAY),
+				unlockedBySet
+						? Component.translatable("commands.hemomancy.unstained.clarity_unlocked_2").withStyle(ChatFormatting.GRAY)
+						: Component.empty(),
+				resetHarbinger
+						? Component.translatable("commands.hemomancy.unstained.harbinger_progress_reset").withStyle(ChatFormatting.GRAY)
 						: Component.empty()),
 				true);
 		return 1;
@@ -222,11 +218,11 @@ final class UnstainedSubcommand {
 		cap.setNovitiateProtectionComplete(true);
 		boolean resetHarbinger = PathMutualExclusionHelper.enforceHarbingerResetOnClarity(player, cap);
 		UnstainedProgressEvents.syncProgress(player, cap);
-		source.sendSuccess(() -> Component.literal("Maxed ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" unstained progress (Purified + Enlightened)").withStyle(ChatFormatting.GREEN))
-				.append(resetHarbinger
-						? Component.literal("; Harbinger progress reset.").withStyle(ChatFormatting.GRAY)
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.maxed",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.translatable("commands.hemomancy.unstained.unstained_progress_purified_enlightened").withStyle(ChatFormatting.GREEN),
+				resetHarbinger
+						? Component.translatable("commands.hemomancy.unstained.harbinger_progress_reset").withStyle(ChatFormatting.GRAY)
 						: Component.empty()),
 				true);
 		return 1;
@@ -234,9 +230,9 @@ final class UnstainedSubcommand {
 
 	private static int resetUnstained(CommandSourceStack source, ServerPlayer player) {
 		PathMutualExclusionHelper.resetUnstainedProgress(player);
-		source.sendSuccess(() -> Component.literal("Reset ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" unstained progress to zero").withStyle(ChatFormatting.YELLOW)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.unstained.reset",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.translatable("commands.hemomancy.unstained.unstained_progress_to_zero").withStyle(ChatFormatting.YELLOW)),
 				true);
 		return 1;
 	}

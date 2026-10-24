@@ -22,8 +22,9 @@ because of one, it says so.
 
 - One `DeferredRegister` per registry type in `common/init/<Thing>Init.java`; holder fields are named after the
   registry path. New registers use the typed registers (`DeferredRegister.Items`, `.Blocks`, `.DataComponents`).
-- Resource locations come from `Hemomancy.rloc("path")`. The 90 hand-built ones left (payload types, effect modifier ids,
-  generated model layers) may only fall (`ResourceLocationStyleRatchetTest`).
+- Hemomancy resource locations come from `Hemomancy.rloc("path")`, never `fromNamespaceAndPath("hemomancy", ...)` or
+  `parse("hemomancy:...")`, including payload types, modifier ids and generated model layers
+  (`ResourceLocationStyleGuardrailTest`).
 - Look up a custom registry entry with `RegistryLookup.byName`; register data components with
   `registerComponentType`; creative-tab entries live in `CreativeTabInit`, whose one WIP list fills the WIP tab.
 - An entity type is built under its own registry name (`EntityTypeBuildNameGuardrailTest`).
@@ -151,8 +152,25 @@ priorities and each site keeps its named preset.
   NBT; procedural geometry stays code. Every pooled template is committed, apart from the listed planned ones.
 - Datagen runs only the blockstate, item-model and Circus pavilion providers; language, recipes, tags and loot are
   authored. A generated file with an authored twin is deleted.
-- Player-facing English lives in `en_us.json`. Tooltips, effect names and Saint text use keys; the remaining literal
-  English may only shrink.
+- Player-facing English lives in `en_us.json`: no `Component.literal` shows English text, whether a plain string, a
+  concatenated piece, a ternary branch or a `String.format` pattern (`HardCodedEnglishGuardrailTest`). Text with
+  arguments is one key with `%s` placeholders, `Component.translatable(key, args)`, or `HemoText.translatable` when an
+  argument is not a component, number, boolean or string (those cannot be sent to the client). Keep a message whole
+  rather than appending fragments; an argument keeps its own style. Keys follow the class that shows them:
+  `screen.hemomancy.<screen>.*`, `gui.hemomancy.<class>.*`, `tooltip.hemomancy.<item>.*`, `message.hemomancy.<class>.*`,
+  `commands.hemomancy.<branch>.*`. A helper that shows text takes a `Component`, never a `String` it wraps in a
+  literal, and an optional phrase is a key or `Component.empty()`, not an English string argument.
+  `TranslatableContents` rejects any other argument type in its constructor, so a `BlockPos`, `UUID` or enum argument
+  throws where the component is built. Tests read English through `support/EnglishText` and
+  `SourceAssertions.assertShowsEnglish` (or `assertNotShowsEnglish` for English that must be gone).
+- The same holds for English that never reaches a literal call: names and descriptions in data tables, enum display
+  names and the reasons rule methods return are keys too (an id-keyed table derives them, such as
+  `material.hemomancy.<id>` or `blood_source.hemomancy.<id>`, or reuses the item, block or entity name). A row label
+  the client resolves is a key, never English. Text from datapack JSON (rite names, sigil names) is shown with
+  `Component.translatableWithFallback(key, jsonText)`, so a language file can override it while datapacks keep working.
+  English that no player reads (validation and decode errors, debug tooling, config comments, model labels, saved
+  default names) is counted per file in `architecture/english-literal-allow-list.txt`
+  (`EnglishLiteralAllowListTest`).
 - JSON folder names never change.
 
 ## 9. Naming
@@ -202,7 +220,7 @@ test under `src/test/java/.../architecture/` is listed here.
 |---|---|---|---|
 | Registration | `RegistrationStyleGuardrailTest` | 8, 13 | Two subscriber forms, lifecycle-only constructor listeners, event-API client registration, registry lookups, typed components, one WIP list; GameTests registered only by annotation scan |
 | Registration | `EntityTypeBuildNameGuardrailTest` | 13 | Entity types built under their registry names (F-26) |
-| Registration | `ResourceLocationStyleRatchetTest` | 13 | Hand-built hemomancy resource locations only fall |
+| Registration | `ResourceLocationStyleGuardrailTest` | 13 | Every hemomancy resource location comes from `Hemomancy.rloc` |
 | Networking | `ClientBoundPayloadRegistrationTest` | 1 | Client-handled payloads registered once, client-bound |
 | Networking | `PayloadDirectionTest` | 4 | Sends match registered directions; one bidirectional payload |
 | Networking | `PayloadProtocolVersionTest` | 4 | Payload set pinned to `PROTOCOL_VERSION` |
@@ -236,7 +254,8 @@ test under `src/test/java/.../architecture/` is listed here.
 | Content | `BossFrameworkGuardrailTest` | 13 | Boss bars through `BossBarBinding`; trial Saints share `SaintTrialEntity` |
 | Content | `ContentBoilerplateGuardrailTest` | 13 | `SyncedOwner`, `HemoContainerMenu`, `ProtectedNpc`, `ModelShapes.rotate`, effect categories |
 | Content | `ContentFamilyGuardrailTest` | 13 | Mob families, tracking orbs and combat-weapon storage share their base |
-| Content | `HardCodedEnglishRatchetTest` | 13 | Literal English only shrinks; tooltip and message keys exist |
+| Content | `HardCodedEnglishGuardrailTest` | 13 | No literal shows English; every key the code names is in `en_us` |
+| Content | `EnglishLiteralAllowListTest` | 13 | Exact counts of the English literals no player reads, per file |
 | State | `AttachmentAccessTest` | 5 | Attachments through `HemoCapabilityAccess` |
 | State | `SessionStateRegistryTest` | 5 | Session maps registered with `TransientServerStateEvents` |
 | State | `PlayerStateSyncTest` | 5 | Lifecycle resends only from `HemoCapabilityRegistrar` |

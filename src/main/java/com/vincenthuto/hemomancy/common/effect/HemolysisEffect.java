@@ -38,8 +38,8 @@ public class HemolysisEffect extends MobEffect {
 				float drainAmount = 5.0f * (amplifier + 1);
 				if (coagChance > 0 && player.level().random.nextDouble() < coagChance) {
 					BloodFlowLedger.recordApplied((ServerPlayer) player, "hemolysis",
-							"Hemolysis", Category.EFFECT, -drainAmount, 0.0D, 1, false,
-							"Blocked by Coagulation");
+							"blood_source.hemomancy.hemolysis", Category.EFFECT, -drainAmount, 0.0D, 1, false,
+							"message.hemomancy.blood_flow.blocked_by_coagulation");
 					return true; // Blocked by Coagulation skill
 				}
 				var volume = HemoCapabilityAccess.getBloodVolume(player);

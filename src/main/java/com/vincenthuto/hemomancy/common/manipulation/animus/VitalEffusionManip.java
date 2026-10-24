@@ -64,7 +64,7 @@ public class VitalEffusionManip extends BloodManipulation {
 		if (player.level() instanceof ServerLevel level) {
 			BlockPos center = center(player, level);
 			if (center == null || !hasGrowth(level, center)) {
-				player.displayClientMessage(Component.literal("Nothing here can be made to grow."), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.vital_effusion_manip.nothing_here_can_be_made_to"), true);
 				return false;
 			}
 		}

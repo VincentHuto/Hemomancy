@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.station;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -10,8 +11,8 @@ public record StationUpgradeTier(UpgradeStation station, int tier, int requiredD
         requiredUsage = List.copyOf(requiredUsage);
     }
 
-    public ResourceLocation upgradeItem() { return ResourceLocation.fromNamespaceAndPath("hemomancy", upgradeItemPath); }
-    public ResourceLocation rite() { return ResourceLocation.fromNamespaceAndPath("hemomancy", ritePath); }
+    public ResourceLocation upgradeItem() { return Hemomancy.rloc(upgradeItemPath); }
+    public ResourceLocation rite() { return Hemomancy.rloc(ritePath); }
     /** Repeat-craft recipes share the upgrade item's id. */
     public ResourceLocation craftingRecipe() { return upgradeItem(); }
     public boolean lesser() { return tier == 1 && station.lesserFirstTier(); }

@@ -498,10 +498,10 @@ public final class ScreenDrawUtils {
 
 		if (upHov) {
 			gfx.renderTooltip(font,
-					net.minecraft.network.chat.Component.literal("Layer Up"), mouseX, mouseY);
+					net.minecraft.network.chat.Component.translatable("screen.hemomancy.screen_draw_utils.layer_up"), mouseX, mouseY);
 		} else if (downHov) {
 			gfx.renderTooltip(font,
-					net.minecraft.network.chat.Component.literal("Layer Down"), mouseX, mouseY);
+					net.minecraft.network.chat.Component.translatable("screen.hemomancy.screen_draw_utils.layer_down"), mouseX, mouseY);
 		}
 	}
 

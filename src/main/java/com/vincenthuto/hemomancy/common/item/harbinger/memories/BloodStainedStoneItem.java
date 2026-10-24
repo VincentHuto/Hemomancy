@@ -77,7 +77,7 @@ public class BloodStainedStoneItem extends Item {
 			//	ClientEvents.openManipGui();
 			}
 		} else {
-			playerIn.displayClientMessage(Component.literal("The stone feels warm in your hands..."), true);
+			playerIn.displayClientMessage(Component.translatable("message.hemomancy.blood_stained_stone_item.the_stone_feels_warm_in_your"), true);
 		}
 		return InteractionResultHolder.consume(stack);
 

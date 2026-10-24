@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.item.unstained.CleansingHemolymphItem;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
@@ -92,7 +93,7 @@ public final class BloodSampleData {
         if (saint != null) return new Profile(sourceId(stack),
                 List.of(saint.getPrimaryTendency(), saint.getSecondaryTendency()), List.of(), identified(stack));
         if (stack.getItem() instanceof CleansingHemolymphItem) return new Profile(sourceId(stack), List.of(),
-                List.of(ResourceLocation.fromNamespaceAndPath("hemomancy", "blood_properties/aquatic")), identified(stack));
+                List.of(Hemomancy.rloc("blood_properties/aquatic")), identified(stack));
         var definition = BloodProfileData.profile(entityType(stack), clientSide);
         return new Profile(sourceId(stack), definition.tendencies(), definition.properties(), identified(stack));
     }

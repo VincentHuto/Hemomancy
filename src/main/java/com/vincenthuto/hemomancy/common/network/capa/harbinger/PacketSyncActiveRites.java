@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +22,7 @@ import java.util.List;
 public class PacketSyncActiveRites implements CustomPacketPayload {
 
 	public static final Type<PacketSyncActiveRites> TYPE = new Type<>(
-			ResourceLocation.fromNamespaceAndPath("hemomancy", "packet_sync_active_rites"));
+			Hemomancy.rloc("packet_sync_active_rites"));
 	public static final StreamCodec<FriendlyByteBuf, PacketSyncActiveRites> STREAM_CODEC = StreamCodec.of(PacketSyncActiveRites::encode, PacketSyncActiveRites::decode);
 
 	private final List<ActiveRiteData.RiteEntry> entries;
@@ -62,7 +65,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			buf.writeBoolean(entry.hasFogLightning());
 			buf.writeBoolean(entry.hasBoundaryDome());
 			buf.writeVarInt(entry.getChecklist().size());
-			for (String line : entry.getChecklist()) buf.writeUtf(line);
+			for (Component line : entry.getChecklist()) ComponentSerialization.TRUSTED_CONTEXT_FREE_STREAM_CODEC.encode(buf, line);
 			buf.writeVarInt(entry.getBoundarySegments().size());
 			for (CardinalRiteBoundaryProgress.Segment segment : entry.getBoundarySegments()) {
 				buf.writeVarInt(segment.ring());
@@ -154,8 +157,10 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			boolean fogLightning = buf.readBoolean();
 			boolean boundaryDome = buf.readBoolean();
 			int checklistCount = buf.readVarInt();
-			List<String> checklist = new ArrayList<>(checklistCount);
-			for (int lineIndex = 0; lineIndex < checklistCount; lineIndex++) checklist.add(buf.readUtf());
+			List<Component> checklist = new ArrayList<>(checklistCount);
+			for (int lineIndex = 0; lineIndex < checklistCount; lineIndex++) {
+				checklist.add(ComponentSerialization.TRUSTED_CONTEXT_FREE_STREAM_CODEC.decode(buf));
+			}
 			int segmentCount = buf.readVarInt();
 			List<CardinalRiteBoundaryProgress.Segment> boundarySegments = new ArrayList<>(segmentCount);
 			for (int segmentIndex = 0; segmentIndex < segmentCount; segmentIndex++) {

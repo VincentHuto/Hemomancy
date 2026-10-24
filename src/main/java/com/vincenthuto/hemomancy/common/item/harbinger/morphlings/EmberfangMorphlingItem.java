@@ -78,7 +78,7 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 
 		LivingEntity target = MorphlingItem.findLookTarget(playerIn, 24.0);
 		if (target == null) {
-			playerIn.displayClientMessage(Component.literal("No blood-warm target answers the venom."), true);
+			playerIn.displayClientMessage(Component.translatable("message.hemomancy.emberfang_morphling_item.no_blood_warm_target_answers_the"), true);
 			return false;
 		}
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "SovereignVenom",
@@ -251,10 +251,10 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Hotheaded + Venom Strike (Heat drives speed, damage, hunger, and risk)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Constrict (Repeated strikes sustain Searing)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Ambush Predator (Sneak 3s for lethal first strike)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Sovereign Venom (Mark one target for heat and an earned burst)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.emberfang_morphling_item.hotheaded_venom_strike_heat_drives_speed"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.emberfang_morphling_item.constrict_repeated_strikes_sustain_searing"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.emberfang_morphling_item.ambush_predator_sneak_3s_for_lethal"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.emberfang_morphling_item.sovereign_venom_mark_one_target_for"), 5, currentMaturity));
 		return list;
 	}
 

@@ -20,7 +20,7 @@ public record CastingAnimationPacket(int entityId, UUID playerId, String manipul
         CastLane lane, EnumClarityStage stage, StillArtEnding ending) implements CustomPacketPayload {
     // MOD_ID is a constant, so this never initialises the mod class (keeps the codec usable in JVM tests).
     public static final Type<CastingAnimationPacket> TYPE = new Type<>(
-            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,"casting_animation"));
+            Hemomancy.rloc("casting_animation"));
     public static final StreamCodec<FriendlyByteBuf,CastingAnimationPacket> STREAM_CODEC =
             StreamCodec.of(CastingAnimationPacket::encode,CastingAnimationPacket::decode);
     public static CastingAnimationPacket harbinger(int entityId,UUID playerId,String manipulation,long sequence,

@@ -1,21 +1,21 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
-import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
+import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.EnzymaticScriptoriumMenu;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.ArrayList;
@@ -47,7 +47,8 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
         inventoryLabelY = 126;
     }
 
-    @Override protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+    @Override
+    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         int x = leftPos, y = topPos;
         veins.render(g, x, y, imageWidth, 126);
         g.renderOutline(x, y, imageWidth, 126, OUTER);
@@ -115,7 +116,8 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
         }
     }
 
-    @Override protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
+    @Override
+    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
         smallText(g, title, 8, 7, 0xFFE8A6A6, 0.75F);
         smallText(g, Component.literal("D" + menu.tier()), 176, 8, 0xFFCC7777, 0.65F);
         label(g, "screen.hemomancy.scriptorium.tendencies", 10, 18);
@@ -182,7 +184,8 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
 
-    @Override public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             for (int i = 0; i < 8; i++) {
                 var slot = menu.slots.get(i);
@@ -214,7 +217,8 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, button);
     }
 
-    @Override public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    @Override
+    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         renderBackground(g, mouseX, mouseY, partialTick);
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
@@ -225,7 +229,8 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
         }
         for (int i = 0; i < 11; i++) {
             var slot = menu.slots.get(i);
-            if (!slot.getItem().isEmpty() || !inside(mouseX, mouseY, leftPos + slot.x, topPos + slot.y, 16, 16)) continue;
+            if (!slot.getItem().isEmpty() || !inside(mouseX, mouseY, leftPos + slot.x, topPos + slot.y, 16, 16))
+                continue;
             Component hint = i < 8 ? EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[i]).getDescription()
                     : Component.translatable("screen.hemomancy.scriptorium." + (i == 8 ? "item" : i == 9 ? "lapis" : "shard"));
             g.renderTooltip(font, hint, mouseX, mouseY);
@@ -255,7 +260,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
                     if (required == 0) continue;
                     int stored = menu.slots.get(tendency).getItem().getCount();
                     tooltip.add(Component.translatable("screen.hemomancy.scriptorium.enzyme_cost",
-                            required, EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[tendency]).getDescription(), stored)
+                                    required, EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[tendency]).getDescription(), stored)
                             .withStyle(stored >= required ? net.minecraft.ChatFormatting.GRAY : net.minecraft.ChatFormatting.RED));
                 }
             }

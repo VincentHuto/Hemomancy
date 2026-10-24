@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.BlockPos;
@@ -64,14 +65,14 @@ public class DebugShowcaseItem extends Item {
 		ItemStack stack = player.getItemInHand(hand);
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
 			if (!serverPlayer.isCreative()) {
-				serverPlayer.sendSystemMessage(Component.literal("§cDebug Showcase requires creative mode!"));
+				serverPlayer.sendSystemMessage(Component.translatable("message.hemomancy.debug_showcase_item.debug_showcase_requires_creative_mode"));
 				return InteractionResultHolder.fail(stack);
 			}
 
 			ServerLevel serverLevel = serverPlayer.serverLevel();
 			BlockPos origin = serverPlayer.blockPosition().offset(3, 0, 3);
 
-			serverPlayer.sendSystemMessage(Component.literal("§6[Debug Showcase] §eGenerating showcase area..."));
+			serverPlayer.sendSystemMessage(Component.translatable("message.hemomancy.debug_showcase_item.debug_showcase_generating_showcase_area"));
 
 			int currentZ = 0;
 
@@ -90,9 +91,10 @@ public class DebugShowcaseItem extends Item {
 			// Section 4: Structures
 			spawnStructureShowcase(serverLevel, serverPlayer, origin, currentZ);
 
-			serverPlayer.sendSystemMessage(Component.literal(
-					"§6[Debug Showcase] §aComplete! Showcase generated at " +
-					origin.getX() + ", " + origin.getY() + ", " + origin.getZ()));
+			serverPlayer.sendSystemMessage(HemoText.translatable("message.hemomancy.debug_showcase_item.debug_showcase_complete_showcase_generated_at",
+					origin.getX(),
+					origin.getY(),
+					origin.getZ()));
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
 	}
@@ -409,9 +411,9 @@ public class DebugShowcaseItem extends Item {
 			}
 		}
 
-		player.sendSystemMessage(Component.literal(
-				"§6[Debug Showcase] §7Structures: §f" + structures.size() +
-				" §7| Rites: §f" + rites.size()));
+		player.sendSystemMessage(HemoText.translatable("message.hemomancy.debug_showcase_item.debug_showcase_structures_rites",
+				structures.size(),
+				rites.size()));
 	}
 
 	/**

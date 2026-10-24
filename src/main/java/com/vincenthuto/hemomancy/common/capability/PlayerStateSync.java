@@ -19,7 +19,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.HematicMemoryToolEvents;
-import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomEvents;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge;
 import com.vincenthuto.hemomancy.common.network.PacketAntecedentResearch;
 import com.vincenthuto.hemomancy.common.network.PacketSyncClinicalBlood;
@@ -27,7 +27,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTendencyServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.LivingStaffProgressServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBodyIdiomState;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncManipulationHearts;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncDegree;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncIchorianKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncLastDeathMemory;
@@ -117,8 +117,8 @@ public final class PlayerStateSync {
 				ClinicalBloodKnowledge::sync),
 		LAST_DEATH_MEMORY(HemoAttachmentTypes.LAST_DEATH_MEMORY, PacketSyncLastDeathMemory.class, ALWAYS,
 				HematicMemoryToolEvents::syncLastDeathMemory),
-		POWER_GUARDRAILS(HemoAttachmentTypes.POWER_GUARDRAILS, PacketSyncBodyIdiomState.class, ALWAYS,
-				BodyIdiomEvents::sync);
+		POWER_GUARDRAILS(HemoAttachmentTypes.POWER_GUARDRAILS, PacketSyncManipulationHearts.class, ALWAYS,
+				ManipulationReactiveEvents::syncHearts);
 
 		private final DeferredHolder<AttachmentType<?>, ? extends AttachmentType<?>> attachment;
 		private final Class<? extends CustomPacketPayload> payload;

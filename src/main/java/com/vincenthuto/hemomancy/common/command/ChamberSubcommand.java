@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
 import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -97,11 +98,9 @@ final class ChamberSubcommand {
 
 	private static int cycleChamberTheme(CommandSourceStack source, ServerPlayer player, int direction) {
 		ResourceLocation theme = ChamberOfWillManager.get(source.getServer()).cycleSkyThemeOverride(player, direction);
-		source.sendSuccess(() -> Component.literal("Chamber sky theme override for ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" cycled to "))
-				.append(Component.literal(theme.toString()).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(".")),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.chamber.chamber_sky_theme_override_for_cycled",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(theme.toString()).withStyle(ChatFormatting.DARK_RED)),
 				true);
 		return 1;
 	}
@@ -109,50 +108,45 @@ final class ChamberSubcommand {
 	private static int setChamberTheme(CommandSourceStack source, ServerPlayer player, String themeName) {
 		ResourceLocation theme = parseChamberTheme(themeName);
 		if (theme == null || !ChamberOfWillManager.isKnownSkyTheme(theme)) {
-			source.sendFailure(Component.literal("Unknown chamber sky theme '" + themeName
-					+ "'. Valid: " + chamberThemeList()));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.chamber.unknown_chamber_sky_theme_valid",
+					themeName,
+					chamberThemeList()));
 			return 0;
 		}
 
 		ChamberOfWillManager.get(source.getServer()).setSkyThemeOverride(player, theme);
-		source.sendSuccess(() -> Component.literal("Chamber sky theme override for ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" set to "))
-				.append(Component.literal(theme.toString()).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(". Use /hemo chamber theme reset to return to progression.")),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.chamber.chamber_sky_theme_override_for_set",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(theme.toString()).withStyle(ChatFormatting.DARK_RED)),
 				true);
 		return 1;
 	}
 
 	private static int resetChamberTheme(CommandSourceStack source, ServerPlayer player) {
 		ResourceLocation theme = ChamberOfWillManager.get(source.getServer()).clearSkyThemeOverride(player);
-		source.sendSuccess(() -> Component.literal("Chamber sky theme override for ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" reset to progression theme "))
-				.append(Component.literal(theme.toString()).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(".")),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.chamber.chamber_sky_theme_override_for_reset",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(theme.toString()).withStyle(ChatFormatting.DARK_RED)),
 				true);
 		return 1;
 	}
 
 	private static int setChamberSize(CommandSourceStack source, ServerPlayer player, int radius) {
 		int size = ChamberOfWillManager.get(source.getServer()).setChamberRadiusOverride(player, radius);
-		source.sendSuccess(() -> Component.literal("Chamber size override for ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" set to radius "))
-				.append(Component.literal(Integer.toString(size)).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(" (" + (size * 2 + 1) + "x" + (size * 2 + 1) + " platform).")),
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.chamber.chamber_size_override_for_set_to",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(Integer.toString(size)).withStyle(ChatFormatting.DARK_RED),
+				(size * 2 + 1),
+				(size * 2 + 1)),
 				true);
 		return 1;
 	}
 
 	private static int resetChamberSize(CommandSourceStack source, ServerPlayer player) {
 		int radius = ChamberOfWillManager.get(source.getServer()).clearChamberRadiusOverride(player);
-		source.sendSuccess(() -> Component.literal("Chamber size override for ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" reset to progression radius "))
-				.append(Component.literal(Integer.toString(radius)).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(".")),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.chamber.chamber_size_override_for_reset_to",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(Integer.toString(radius)).withStyle(ChatFormatting.DARK_RED)),
 				true);
 		return 1;
 	}

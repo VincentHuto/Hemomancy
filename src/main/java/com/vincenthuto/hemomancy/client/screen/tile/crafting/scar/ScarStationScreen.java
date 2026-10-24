@@ -134,22 +134,22 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		this.renderTooltip(graphics, mouseX, mouseY);
 
 		List<Component> cat1 = new ArrayList<Component>();
-		cat1.add(Component.literal("Clear Scars"));
+		cat1.add(Component.translatable("screen.hemomancy.scar_station.clear_scars"));
 		if (clearButton.isHovered()) {
 			graphics.renderComponentTooltip(font, cat1, mouseX, mouseY);
 		}
 		List<Component> cat9 = new ArrayList<Component>();
-		cat9.add(Component.literal("Carve scar"));
+		cat9.add(Component.translatable("screen.hemomancy.scar_station.carve_scar"));
 		Component failure = te.craftingFailure();
-		cat9.add(failure == null ? Component.literal("Ready: carve the traced scar.") : failure);
+		cat9.add(failure == null ? Component.translatable("screen.hemomancy.scar_station.ready_carve_the_traced_scar") : failure);
 		if (ScarButton.isHovered()) {
 			graphics.renderComponentTooltip(font, cat9, mouseX, mouseY);
 		}
 		List<Component> cat10 = new ArrayList<Component>();
-		cat10.add(Component.literal("Load stencil"));
-		cat10.add(Component.literal("Click or drag purple cells to trace them in red."));
-		cat10.add(Component.literal("Learn: 100 ml at a brazier. Effigy: 500 ml per scar."));
-		cat10.add(Component.literal("Fit the prepared motif at a brazier: 50 ml."));
+		cat10.add(Component.translatable("screen.hemomancy.scar_station.load_stencil"));
+		cat10.add(Component.translatable("screen.hemomancy.scar_station.click_or_drag_purple_cells_to"));
+		cat10.add(Component.translatable("screen.hemomancy.scar_station.learn_100_ml_at_a_brazier"));
+		cat10.add(Component.translatable("screen.hemomancy.scar_station.fit_the_prepared_motif_at_a"));
 		List<ItemScarPattern.TemplateEntry> templates = ItemScarPattern.getTemplateEntries(te.getItem(4), minecraft.level);
 		int selectedEntry = binderSelectedEntry >= 0 ? binderSelectedEntry : 0;
 		if (selectedEntry < templates.size() && templates.get(selectedEntry).resultIcon().getItem()
@@ -206,7 +206,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	@Override
 	protected void renderLabels(GuiGraphics graphics, int x, int y) {
 		// Title with blood-red color, centered with drop shadow
-		String titleText = "Scar Station";
+		Component titleText = Component.translatable("screen.hemomancy.scar_station.title");
 		graphics.drawString(font, titleText,
 				(this.imageWidth - font.width(titleText)) / 2, 4, 0xFFAA2222, true);
 
@@ -419,8 +419,9 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		graphics.fill(px + PANEL_WIDTH - 1, py, px + PANEL_WIDTH, py + panelHeight, 0xAA8B6914);
 
 		// Header
-		String header = ChatFormatting.GOLD + "Patterns" + ChatFormatting.DARK_GRAY
-				+ " (" + binderEntries.size() + ")";
+		Component header = Component.translatable("screen.hemomancy.scar_station.patterns").withStyle(ChatFormatting.GOLD)
+				.append(Component.translatable("screen.hemomancy.scar_station.pattern_count", binderEntries.size())
+						.withStyle(ChatFormatting.DARK_GRAY));
 		graphics.drawString(font, header, px + PANEL_PADDING, py + PANEL_PADDING, 0xFFFFFF, true);
 
 		// Entry list area
@@ -463,13 +464,13 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 			BinderPatternEntry entry = binderEntries.get(binderHoveredEntry);
 			List<Component> tips = new ArrayList<>();
 			tips.add(Component.literal(ChatFormatting.GOLD + entry.displayName()));
-			tips.add(Component.literal(ChatFormatting.GRAY + "Click to load pattern"));
+			tips.add(Component.translatable("screen.hemomancy.scar_station.click_to_load_pattern").withStyle(ChatFormatting.GRAY));
 			graphics.renderComponentTooltip(font, tips, mouseX, mouseY);
 		}
 
 		// Empty state
 		if (binderEntries.isEmpty()) {
-			graphics.drawString(font, "No patterns", px + PANEL_PADDING, listY + 4, 0x888888, false);
+			graphics.drawString(font, Component.translatable("screen.hemomancy.scar_station.no_patterns"), px + PANEL_PADDING, listY + 4, 0x888888, false);
 		}
 	}
 

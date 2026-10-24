@@ -549,8 +549,8 @@ public final class ManipulationBalancePass2TargetingGameTests {
             h.getLevel().addFreshEntity(bystander);
             try {
                 var potential = ManipulationInit.activation_potential.get();
-                h.assertTrue("Shocks hostiles near the Drudge".equals(potential.getDrudgeDescription().orElse("")),
-                        "Drudge description: " + potential.getDrudgeDescription().orElse(""));
+                h.assertTrue("Shocks hostiles near the Drudge".equals(potential.getDrudgeDescription().map(net.minecraft.network.chat.Component::getString).orElse("")),
+                        "Drudge description: " + potential.getDrudgeDescription().map(net.minecraft.network.chat.Component::getString).orElse(""));
                 h.assertTrue(potential.getDrudgeAction().orElseThrow().execute(drudge, h.getLevel(), drudge.blockPosition(), 10),
                         "Drudge shock found no hostile");
                 h.assertTrue(SchoolStates.has(close, SchoolState.DISRUPTED), "Nearby hostile was not Disrupted");

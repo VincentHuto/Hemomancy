@@ -74,8 +74,7 @@ public class HematicCollapseGoal extends Goal {
 		}
 		if (boss.getTarget() instanceof Player player) {
 			player.displayClientMessage(
-					Component.literal("The Hollow Vessel draws in your debt...")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+					Component.translatable("message.hemomancy.hematic_collapse_goal.the_hollow_vessel_draws_in_your").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 					true);
 		}
 	}

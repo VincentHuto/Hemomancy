@@ -51,7 +51,7 @@ public class HemorrhageManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (target(player).isEmpty()) {
-			player.displayClientMessage(Component.literal("No living vessel within reach."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.hemorrhage_manip.no_living_vessel_within_reach"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.item.component.TinctureDoseData;
 import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 import com.vincenthuto.hemomancy.common.mission.shared.MnemonicRecipeKnowledge;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
@@ -53,8 +54,9 @@ public class MuscleMemoryTinctureItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.hemomancy.tincture_" + memory.id()));
         tooltip.add(Component.translatable("tooltip.hemomancy.muscle_memory_tincture.thelemic_memory_s_5_00_reserve", sectionName()));
-        tooltip.add(Component.literal(trimCost(memory.bloodCost()) + " blood • "
-                + trimCost(memory.vascularStrain()) + " vascular strain per trigger"));
+        tooltip.add(HemoText.translatable("tooltip.hemomancy.muscle_memory_tincture.blood_vascular_strain_per_trigger",
+        		trimCost(memory.bloodCost()),
+        		trimCost(memory.vascularStrain())));
         tooltip.add(Component.translatable("tooltip.hemomancy.tincture_doses",
                 remainingDoses(stack), maximumDoses).withStyle(ChatFormatting.GRAY));
     }

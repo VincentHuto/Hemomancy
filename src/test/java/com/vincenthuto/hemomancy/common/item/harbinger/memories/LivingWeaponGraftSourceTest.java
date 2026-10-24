@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +45,10 @@ public final class LivingWeaponGraftSourceTest {
 		assertContains("graft item dynamic name", item, "getName(ItemStack stack)");
 		assertContains("graft item tooltip", item, "appendHoverText");
 		assertContains("graft item exposes creative variants", item, "creativeStacks()");
-		assertContains("form display names produce graft names", form, "return displayName + \" Graft\";");
+		assertContains("form display names produce graft names", form, "Component.translatable(langKey() + \".graft\")");
+		if (!"Blade Graft".equals(EnglishText.of("living_weapon_form.hemomancy.blade.graft"))) {
+			throw new AssertionError("blade graft keeps its English name");
+		}
 		assertNotContains("graft item does not expose Vesper Graft", item, "Vesper Graft");
 
 		assertContains("creative tab expands graft variants", hemomancy, "LivingWeaponGraftItem.creativeStacks()");

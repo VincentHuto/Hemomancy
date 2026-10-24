@@ -5,19 +5,19 @@ import com.mojang.serialization.DataResult;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import java.util.Locale;
-
 public enum LivingWeaponForm {
-	BLADE("blade", "Blade", "edge-pattern", "conjure_blade"),
-	AXE("axe", "Axe", "cleaving-pattern", "conjure_axe"),
-	SPEAR("spear", "Spear", "reach-pattern", "conjure_spear"),
-	CLAWS("claws", "Claw", "grasping-pattern", "conjure_claws"),
-	CROSSBOW("crossbow", "Crossbow", "tension-pattern", "conjure_crossbow"),
-	TORCH("torch", "Torch", "burning-pattern", "conjure_torch"),
-	FLAIL("flail", "Flail", "chained-cold pattern", "conjure_flail");
+	BLADE("blade", "conjure_blade"),
+	AXE("axe", "conjure_axe"),
+	SPEAR("spear", "conjure_spear"),
+	CLAWS("claws", "conjure_claws"),
+	CROSSBOW("crossbow", "conjure_crossbow"),
+	TORCH("torch", "conjure_torch"),
+	FLAIL("flail", "conjure_flail");
 
 	public static final Codec<LivingWeaponForm> CODEC = Codec.STRING.comapFlatMap(
 			value -> fromSerializedName(value)
@@ -29,14 +29,10 @@ public enum LivingWeaponForm {
 			buf -> bySerializedName(buf.readUtf()));
 
 	private final String serializedName;
-	private final String displayName;
-	private final String patternName;
 	private final String manipulationName;
 
-	LivingWeaponForm(String serializedName, String displayName, String patternName, String manipulationName) {
+	LivingWeaponForm(String serializedName, String manipulationName) {
 		this.serializedName = serializedName;
-		this.displayName = displayName;
-		this.patternName = patternName;
 		this.manipulationName = manipulationName;
 	}
 
@@ -44,26 +40,28 @@ public enum LivingWeaponForm {
 		return serializedName;
 	}
 
-	public String displayName() {
-		return displayName;
+	public MutableComponent displayName() {
+		return Component.translatable(langKey());
 	}
 
-	public String graftName() {
-		return displayName + " Graft";
+	public MutableComponent graftName() {
+		return Component.translatable(langKey() + ".graft");
 	}
 
-	public String patternName() {
-		return patternName;
+	public MutableComponent patternName() {
+		return Component.translatable(langKey() + ".pattern");
 	}
 
 	public String manipulationName() {
 		return manipulationName;
 	}
 
-	public String manipulationDisplayName() {
-		String base = manipulationName.startsWith("conjure_") ? manipulationName.substring("conjure_".length())
-				: manipulationName;
-		return "Conjure " + base.substring(0, 1).toUpperCase(Locale.ROOT) + base.substring(1);
+	public MutableComponent manipulationDisplayName() {
+		return Component.translatable(langKey() + ".manipulation");
+	}
+
+	private String langKey() {
+		return "living_weapon_form.hemomancy." + serializedName;
 	}
 
 	public DeferredHolder<BloodManipulation, BloodManipulation> manipulationHolder() {

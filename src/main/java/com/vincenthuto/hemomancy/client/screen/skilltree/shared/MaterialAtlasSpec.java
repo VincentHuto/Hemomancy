@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import net.minecraft.network.chat.Component;
+
 import java.util.*;
 
 public final class MaterialAtlasSpec {
@@ -45,7 +47,9 @@ public final class MaterialAtlasSpec {
 			return entry;
 		}
 		MaterialAtlasBucket fallback = BUCKETS.get(path).isEmpty()
-				? new MaterialAtlasBucket(path, "unknown", "Unknown", "Unknown",
+				? new MaterialAtlasBucket(path, "unknown",
+						Component.translatable("screen.hemomancy.material_atlas.bucket.unknown"),
+						Component.translatable("screen.hemomancy.material_atlas.bucket.unknown"),
 						path.accentColor(), hubX(path), hubY(path), hubX(path), hubY(path))
 				: BUCKETS.get(path).getFirst();
 		return new MaterialAtlasEntry(path, material.name(), fallback, MaterialGate.always(), Integer.MAX_VALUE, List.of(),
@@ -69,27 +73,27 @@ public final class MaterialAtlasSpec {
 	}
 
 	private static void registerBuckets() {
-		bucket(MaterialAtlasPath.HARBINGER, "bloodcraft_core", "Bloodcraft Core", "Bloodcraft", 0xFFD04436, 615, 500, 237, 446);
-		bucket(MaterialAtlasPath.HARBINGER, "vascular_craft", "Vascular Craft", "Vascular", 0xFFB64044, 660, 220, 623, 10);
-		bucket(MaterialAtlasPath.HARBINGER, "alchemy_enzymes", "Alchemy & Enzymes", "Alchemy", 0xFFD99B2D, 360, 350, 869, 856);
-		bucket(MaterialAtlasPath.HARBINGER, "fungal_ecology", "Botany and Mycology", "Mycology", 0xFF714D41, 850, 610, 868, 530);
-		bucket(MaterialAtlasPath.HARBINGER, "morphlings", "Morphlings", "Morphlings", 0xFFB45BA5, 760, 875, 984, 1074);
-		bucket(MaterialAtlasPath.HARBINGER, "scars_patterns", "Scars & Patterns", "Scars", 0xFF6FC2D8, 660, 1260, 368, 189);
-		bucket(MaterialAtlasPath.HARBINGER, "living_implements", "Living Implements", "Implements", 0xFFC58B35, 280, 850, 211, 945);
-		bucket(MaterialAtlasPath.HARBINGER, "architecture", "Architecture", "Building", 0xFF9A6A45, 470, 615, 338, 659);
-		bucket(MaterialAtlasPath.HARBINGER, "new_category", "Biomaterials", "Biomats", 0xFF19711A, 1050, 390, 1076, 189);
-		bucket(MaterialAtlasPath.HARBINGER, "gourds_vessels", "Gourds", "Gourds", 0xFFC78539, 240, 590, 696, 262);
-		bucket(MaterialAtlasPath.HARBINGER, "spores_cultures", "Spores & Cultures", "Cultures", 0xFF8EA441, 1065, 805, 1310, 816);
-		bucket(MaterialAtlasPath.HARBINGER, "myco_realm_blocks", "Myco-Realm Blocks", "Myco-Realm", 0xFF7B8F4D, 1045, 590, 1097, 535);
-		bucket(MaterialAtlasPath.HARBINGER, "masks_vestments", "Masks & Vestments", "Vestments", 0xFFC15872, 560, 930, 482, 952);
-		bucket(MaterialAtlasPath.HARBINGER, "idols_fixtures", "Idols & Fixtures", "Fixtures", 0xFF9E7A58, 815, 365, 642, 788);
-		bucket(MaterialAtlasPath.HARBINGER, "qliphoth_reagents", "Qliphoth Reagents", "Qliphoth", 0xFF7F4FA2, 925, 150, 916, 14);
-		bucket(MaterialAtlasPath.UNSTAINED, "still_waters_core", "Still Waters Core", "Still Waters", 0xFF80B0A0, 520, 230, 520, 161);
-		bucket(MaterialAtlasPath.UNSTAINED, "cleansing_facilities", "Cleansing Facilities", "Cleansing", 0xFF8FB8D8, 790, 360, 870, 321);
-		bucket(MaterialAtlasPath.UNSTAINED, "lethean_flora", "Lethean Flora", "Lethean", 0xFFA6C58A, 760, 720, 840, 751);
-		bucket(MaterialAtlasPath.UNSTAINED, "pale_architecture", "Pale Architecture", "Pale Builds", 0xFFD5D0B6, 520, 850, 520, 931);
-		bucket(MaterialAtlasPath.UNSTAINED, "anti_blood_warding", "Anti-Blood Warding", "Warding", 0xFFB7C6CE, 250, 720, 145, 751);
-		bucket(MaterialAtlasPath.UNSTAINED, "vestments_instruments", "Vestments & Instruments", "Instruments", 0xFFB09AC8, 250, 360, 120, 321);
+		bucket(MaterialAtlasPath.HARBINGER, "bloodcraft_core", 0xFFD04436, 615, 500, 237, 446);
+		bucket(MaterialAtlasPath.HARBINGER, "vascular_craft", 0xFFB64044, 660, 220, 623, 10);
+		bucket(MaterialAtlasPath.HARBINGER, "alchemy_enzymes", 0xFFD99B2D, 360, 350, 869, 856);
+		bucket(MaterialAtlasPath.HARBINGER, "fungal_ecology", 0xFF714D41, 850, 610, 868, 530);
+		bucket(MaterialAtlasPath.HARBINGER, "morphlings", 0xFFB45BA5, 760, 875, 984, 1074);
+		bucket(MaterialAtlasPath.HARBINGER, "scars_patterns", 0xFF6FC2D8, 660, 1260, 368, 189);
+		bucket(MaterialAtlasPath.HARBINGER, "living_implements", 0xFFC58B35, 280, 850, 211, 945);
+		bucket(MaterialAtlasPath.HARBINGER, "architecture", 0xFF9A6A45, 470, 615, 338, 659);
+		bucket(MaterialAtlasPath.HARBINGER, "new_category", 0xFF19711A, 1050, 390, 1076, 189);
+		bucket(MaterialAtlasPath.HARBINGER, "gourds_vessels", 0xFFC78539, 240, 590, 696, 262);
+		bucket(MaterialAtlasPath.HARBINGER, "spores_cultures", 0xFF8EA441, 1065, 805, 1310, 816);
+		bucket(MaterialAtlasPath.HARBINGER, "myco_realm_blocks", 0xFF7B8F4D, 1045, 590, 1097, 535);
+		bucket(MaterialAtlasPath.HARBINGER, "masks_vestments", 0xFFC15872, 560, 930, 482, 952);
+		bucket(MaterialAtlasPath.HARBINGER, "idols_fixtures", 0xFF9E7A58, 815, 365, 642, 788);
+		bucket(MaterialAtlasPath.HARBINGER, "qliphoth_reagents", 0xFF7F4FA2, 925, 150, 916, 14);
+		bucket(MaterialAtlasPath.UNSTAINED, "still_waters_core", 0xFF80B0A0, 520, 230, 520, 161);
+		bucket(MaterialAtlasPath.UNSTAINED, "cleansing_facilities", 0xFF8FB8D8, 790, 360, 870, 321);
+		bucket(MaterialAtlasPath.UNSTAINED, "lethean_flora", 0xFFA6C58A, 760, 720, 840, 751);
+		bucket(MaterialAtlasPath.UNSTAINED, "pale_architecture", 0xFFD5D0B6, 520, 850, 520, 931);
+		bucket(MaterialAtlasPath.UNSTAINED, "anti_blood_warding", 0xFFB7C6CE, 250, 720, 145, 751);
+		bucket(MaterialAtlasPath.UNSTAINED, "vestments_instruments", 0xFFB09AC8, 250, 360, 120, 321);
 	}
 
 	private static void registerHarbingerEntries() {
@@ -455,10 +459,11 @@ public final class MaterialAtlasSpec {
 		return MaterialGate.clarity(clarity);
 	}
 
-	private static void bucket(MaterialAtlasPath path, String id, String label, String nickname, int color,
+	private static void bucket(MaterialAtlasPath path, String id, int color,
 			int centerX, int centerY, int plaqueX, int plaqueY) {
-		BUCKETS.get(path).add(new MaterialAtlasBucket(path, id, label, nickname,
-				color, centerX, centerY, plaqueX, plaqueY));
+		String key = "screen.hemomancy.material_atlas.bucket." + id;
+		BUCKETS.get(path).add(new MaterialAtlasBucket(path, id, Component.translatable(key),
+				Component.translatable(key + ".short"), color, centerX, centerY, plaqueX, plaqueY));
 	}
 
 	private static void entry(String materialId, MaterialAtlasPath path, String bucketId, MaterialGate gate,

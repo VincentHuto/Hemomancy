@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -52,14 +53,14 @@ public class PacketLumpDonate implements CustomPacketPayload {
 			Bloodline bloodline = volume.getBloodLine();
 			if (!bloodline.isValid()) {
 				player.displayClientMessage(
-						Component.literal("No bloodline claims you!").withStyle(ChatFormatting.RED), true);
+						Component.translatable("message.hemomancy.packet_lump_donate.no_bloodline_claims_you").withStyle(ChatFormatting.RED), true);
 				return;
 			}
 
 			double donateAmount = BloodVolumeTransferRules.donationAmount(msg.amount, volume.getBloodVolume());
 			if (donateAmount <= 0) {
 				player.displayClientMessage(
-						Component.literal("Not enough blood to donate!").withStyle(ChatFormatting.RED), true);
+						Component.translatable("message.hemomancy.packet_lump_donate.not_enough_blood_to_donate").withStyle(ChatFormatting.RED), true);
 				return;
 			}
 
@@ -76,8 +77,8 @@ public class PacketLumpDonate implements CustomPacketPayload {
 									globalLine.getPlayerUUIDS().size()));
 
 					player.displayClientMessage(
-							Component.literal("Donated " + String.format("%.0f", donateAmount) + "ml to the bloodline pool!")
-									.withStyle(ChatFormatting.DARK_RED), true);
+							HemoText.translatable("message.hemomancy.packet_lump_donate.donated_ml_to_the_bloodline_pool",
+									String.format("%.0f", donateAmount)).withStyle(ChatFormatting.DARK_RED), true);
 			}
 		});
 	}

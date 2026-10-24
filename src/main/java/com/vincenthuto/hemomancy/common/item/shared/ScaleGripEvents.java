@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -49,9 +50,9 @@ public final class ScaleGripEvents {
 		}
 		if (!savedStacks.isEmpty()) {
 			PENDING_RETURNS.put(player.getUUID(), savedStacks);
-			player.displayClientMessage(Component.literal("Scale Grip coils around "
-					+ savedStacks.size() + " bound item" + (savedStacks.size() == 1 ? "" : "s") + ".")
-					.withStyle(ChatFormatting.DARK_GREEN), true);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.scale_grip_events.scale_grip_coils_around_bound_item",
+					savedStacks.size(),
+					(savedStacks.size() == 1 ? "" : "s")).withStyle(ChatFormatting.DARK_GREEN), true);
 		}
 	}
 
@@ -74,8 +75,7 @@ public final class ScaleGripEvents {
 	@SubscribeEvent
 	public static void onItemTooltip(ItemTooltipEvent event) {
 		if (isProtected(event.getItemStack())) {
-			event.getToolTip().add(Component.literal("Scale Grip: prevents death loss once")
-					.withStyle(ChatFormatting.DARK_GREEN));
+			event.getToolTip().add(Component.translatable("message.hemomancy.scale_grip_events.scale_grip_prevents_death_loss_once").withStyle(ChatFormatting.DARK_GREEN));
 		}
 	}
 

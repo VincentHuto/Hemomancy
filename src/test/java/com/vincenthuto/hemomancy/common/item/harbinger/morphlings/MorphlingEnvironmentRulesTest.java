@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-final class MorphlingBodyIdiomRulesTest {
+final class MorphlingEnvironmentRulesTest {
 	@Test
 	void coldBloodedProgressesFromSlowerFreezingToEnvironmentalImmunity() {
 		assertEquals(0, WinterShroudResilienceRules.coldBloodedTier(1));

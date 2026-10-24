@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,17 +25,17 @@ public final class MaterialsAtlasMetadataSourceTest {
 		String view = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsTabView.java");
 		String controller = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsTabController.java");
 
-		assertContains("atlas teaches repeatable stained stone acquisition", data,
+		SourceAssertions.assertShowsEnglish("atlas teaches repeatable stained stone acquisition", data,
 				"Venous Stone, one Sanguine Formation, and redstone");
-		assertContains("atlas teaches accessible Neurotic collection", data,
+		SourceAssertions.assertShowsEnglish("atlas teaches accessible Neurotic collection", data,
 				"Chicken blood can yield this enzyme in a Vial Centrifuge");
-		assertContains("atlas warns that chicken spins may yield the other tendency", data,
+		SourceAssertions.assertShowsEnglish("atlas warns that chicken spins may yield the other tendency", data,
 				"some spins yield Vivacious instead");
-		assertNotContains("Ductilis is impulse and motion, not generic mental manipulation", data,
+		SourceAssertions.assertNotShowsEnglish("Ductilis is impulse and motion, not generic mental manipulation", data,
 				"Ductilis-aligned enzyme. Sharpens mental manipulation.");
-		assertContains("atlas teaches the Communion Spine instead of creature loot", data,
+		SourceAssertions.assertShowsEnglish("atlas teaches the Communion Spine instead of creature loot", data,
 				"The ninth owner-bound Pome from one Bloom completes Communion and grants this Spine.");
-		assertNotContains("Spine is not an ordinary crafting drop", data,
+		SourceAssertions.assertNotShowsEnglish("Spine is not an ordinary crafting drop", data,
 				"Hardened spine from a fungal blood creature. Used in crafting.");
 		for (String id : new String[] {"fungal_spine", "qliphoth_seed", "qliphoth_bloom", "qliphoth_pome", "memory_of_vesper"}) {
 			String entry = data.substring(data.indexOf("new MaterialEntry(\"" + id + "\""));

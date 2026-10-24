@@ -200,10 +200,10 @@ public class GravecapMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Sporulation (AoE toxic spores when hit)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Mycorrhizal Network (Heal nearby allies)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Cordyceps Burst (Kills spread Necrosis + bonus loot)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Primal Mycorrhiza (Elite kills seed a healing fungal patch)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.gravecap_morphling_item.sporulation_aoe_toxic_spores_when_hit"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.gravecap_morphling_item.mycorrhizal_network_heal_nearby_allies"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.gravecap_morphling_item.cordyceps_burst_kills_spread_necrosis_bonus"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.gravecap_morphling_item.primal_mycorrhiza_elite_kills_seed_a"), 5, currentMaturity));
 		return list;
 	}
 

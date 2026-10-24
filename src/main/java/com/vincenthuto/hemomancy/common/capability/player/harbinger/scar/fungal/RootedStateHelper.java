@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
@@ -9,7 +10,6 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class RootedStateHelper {
 	public static final TagKey<Block> FUNGAL_NETWORK_GROUND =
-			TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("hemomancy", "fungal_network_ground"));
+			TagKey.create(Registries.BLOCK, Hemomancy.rloc("fungal_network_ground"));
 
 	private static final double ROOTED_REFUND_FRACTION = 0.15D;
 	private static final double ROOTED_REGEN_PER_SECOND = 4.0D;
@@ -56,7 +56,7 @@ public final class RootedStateHelper {
 		}
 		var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
 		BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "rhizovitta_rooted",
-				"Rhizovitta Rooted", Category.SCAR, regenPerSecond(true), 20,
+				"blood_source.hemomancy.rhizovitta_rooted", Category.SCAR, regenPerSecond(true), 20,
 				CirculationIncomeHelper.IncomeChannel.SCAR);
 	}
 

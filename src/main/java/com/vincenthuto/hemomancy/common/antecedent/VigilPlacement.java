@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.antecedent;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.mixin.core.SinglePoolElementAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -127,7 +128,7 @@ public final class VigilPlacement {
             var bounds = element.getBoundingBox(templates,position,rotation);
             if (bounds.minY() < height.getMinBuildHeight()+5 || bounds.maxY() >= height.getMaxBuildHeight()
                     || protection.unknown().stream().anyMatch(piece -> piece.getBoundingBox().intersects(bounds))) return List.of();
-            var template=templates.getOrCreate(net.minecraft.resources.ResourceLocation.parse("hemomancy:antecedent/"+part.name()));
+            var template=templates.getOrCreate(Hemomancy.rloc("antecedent/"+part.name()));
             for(var palette:((VigilTemplateAccessor)template).hemomancy$palettes()) for(var block:palette.blocks()) {
                 var at=position.offset(block.pos().rotate(rotation));
                 if(protection.blocks().contains(at) || !block.state().isAir() && protection.headroom().contains(at)) return List.of();

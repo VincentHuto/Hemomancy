@@ -21,9 +21,11 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 @OnlyIn(Dist.CLIENT)
 public final class DialogueScreen extends Screen {
@@ -121,6 +123,11 @@ public final class DialogueScreen extends Screen {
 	}
 
 	private static Component resolveDialogueLine(String value) {
+		if (value.startsWith(DialogueNode.TRANSLATE_PREFIX)) {
+			String[] parts = value.substring(DialogueNode.TRANSLATE_PREFIX.length())
+					.split(Pattern.quote(DialogueNode.ARGUMENT_SEPARATOR), -1);
+			return Component.translatable(parts[0], (Object[]) Arrays.copyOfRange(parts, 1, parts.length));
+		}
 		return value.startsWith(DialogueNode.LITERAL_PREFIX)
 				? Component.literal(value.substring(DialogueNode.LITERAL_PREFIX.length()))
 				: Component.translatable(value);

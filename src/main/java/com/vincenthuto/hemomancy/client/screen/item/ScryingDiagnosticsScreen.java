@@ -129,7 +129,8 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		manipulationCostModsRegion = HoverRegion.EMPTY;
 		manipulationSlotModsRegion = HoverRegion.EMPTY;
 		graphics.drawCenteredString(this.font, this.title, x + PANEL_WIDTH / 2, y + 8, HEADER);
-		graphics.drawCenteredString(this.font, "The podium reads what the blood is already saying.",
+		graphics.drawCenteredString(this.font,
+				Component.translatable("screen.hemomancy.scrying_diagnostics.the_podium_reads_what_the_blood_is"),
 				x + PANEL_WIDTH / 2, y + 21, MUTED);
 		drawTabs(graphics, mouseX, mouseY);
 
@@ -167,59 +168,69 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 	}
 
 	private void drawBloodVolume(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, "Blood Volume", x, y);
+		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.blood_volume"), x, y);
 		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		MaxBloodSnapshot maxBlood = MaxBloodDiagnosticsClientData.get();
 		double totalMax = volume.isActive() ? maxBlood.totalMax() : volume.getMaxBloodVolume();
 		String reserve = format(volume.getBloodVolume()) + " / " + format(totalMax);
-		drawValue(graphics, "Reserve", reserve, x, y + 13, colorForBlood(volume, totalMax));
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.reserve"),
+				Component.literal(reserve), x, y + 13, colorForBlood(volume, totalMax));
 		if (volume.isActive()) {
-			drawValue(graphics, "Max", format(totalMax) + " (" + signedWhole(maxBlood.netBonus()) + ")",
+			drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.max"),
+					Component.literal(format(totalMax) + " (" + signedWhole(maxBlood.netBonus()) + ")"),
 					x, y + 25, colorForMaxBonus(maxBlood.netBonus()));
-			drawValue(graphics, "Mods", signedWhole(maxBlood.positiveBonus()) + " / "
-					+ signedWhole(-maxBlood.negativePenalty()), x, y + 37,
+			drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.mods"),
+					Component.literal(signedWhole(maxBlood.positiveBonus()) + " / "
+							+ signedWhole(-maxBlood.negativePenalty())), x, y + 37,
 					colorForMaxBonus(maxBlood.netBonus()));
 			maxBloodModsRegion = new HoverRegion(x, y + 37, 142, 10);
 		} else {
-			drawValue(graphics, "State", "Dormant", x, y + 25, WARN);
+			drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.state"),
+					Component.translatable("screen.hemomancy.scrying_diagnostics.dormant"), x, y + 25, WARN);
 		}
 	}
 
 	private void drawTendency(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, "Dominant Tendency", x, y);
+		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.dominant_tendency"), x, y);
 		var tendency = HemoCapabilityAccess.getBloodTendency(player);
 		EnumBloodTendency dominant = strongest(tendency);
 		EnumBloodTendency latent = weakest(tendency);
-		drawValue(graphics, "Dominant", tendencyLabel(tendency, dominant), x, y + 13, tendencyColor(dominant));
-		drawValue(graphics, "Latent", tendencyLabel(tendency, latent), x, y + 25, MUTED);
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.dominant"),
+				tendencyLabel(tendency, dominant), x, y + 13, tendencyColor(dominant));
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.latent"),
+				tendencyLabel(tendency, latent), x, y + 25, MUTED);
 	}
 
 	private void drawKnownMemories(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, "Known Memories", x, y);
+		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.known_memories"), x, y);
 		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		int knownCount = known.getKnownManips().size();
 		int equippedCount = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
 		ManipulationSlotSnapshot slots = ManipulationSlotDiagnosticsClientData.get();
 		ManipulationCostSnapshot cost = ManipulationCostDiagnosticsClientData.get();
-		String equipped = slots.maxSlots() > 0
-				? equippedCount + " / " + slots.appliedSlots()
-				: equippedCount + " slotted";
-		String costText = isEmptyCost(cost)
-				? "No selected cost"
-				: amount(cost.baseCost()) + " -> " + amount(cost.effectiveCost()) + " mL";
-		drawValue(graphics, "Carried", knownCount + " memories", x, y + 13, TEXT);
-		drawValue(graphics, "Equipped", equipped, x, y + 25,
+		Component equipped = slots.maxSlots() > 0
+				? Component.literal(equippedCount + " / " + slots.appliedSlots())
+				: Component.translatable("screen.hemomancy.scrying_diagnostics.slotted", equippedCount);
+		Component costText = isEmptyCost(cost)
+				? Component.translatable("screen.hemomancy.scrying_diagnostics.no_selected_cost")
+				: Component.translatable("screen.hemomancy.scrying_diagnostics.cost_change_ml",
+						amount(cost.baseCost()), amount(cost.effectiveCost()));
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.carried"),
+				Component.translatable("screen.hemomancy.scrying_diagnostics.memories", knownCount), x, y + 13, TEXT);
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.equipped"), equipped, x, y + 25,
 				slots.cappedOffSlots() > 0 ? WARN : TEXT);
-		drawValue(graphics, "Selected", trimToWidth(selectedManipName(known), PANEL_WIDTH - 106),
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.selected"),
+				Component.literal(trimToWidth(selectedManipName(known).getString(), PANEL_WIDTH - 106)),
 				x, y + 37, TEXT);
-		drawValue(graphics, "Cost", trimToWidth(costText, PANEL_WIDTH - 106), x, y + 49,
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.cost"),
+				Component.literal(trimToWidth(costText.getString(), PANEL_WIDTH - 106)), x, y + 49,
 				colorForCost(cost));
 		manipulationSlotModsRegion = new HoverRegion(x, y + 25, 142, 10);
 		manipulationCostModsRegion = new HoverRegion(x, y + 49, 220, 10);
 	}
 
 	private void drawTendencyProfile(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, "Tendency Profile", x, y);
+		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.tendency_profile"), x, y);
 		var tendency = HemoCapabilityAccess.getBloodTendency(player);
 		EnumBloodTendency[] values = EnumBloodTendency.values();
 		for (int i = 0; i < values.length; i++) {
@@ -228,7 +239,7 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 			int row = i % 4;
 			int rowX = x + col * 150;
 			int rowY = y + 14 + row * 14;
-			String label = trimToWidth(titleCase(value.name()), 70);
+			String label = trimToWidth(BloodManipulation.tendencyName(value).getString(), 70);
 			String amount = String.format(Locale.ROOT, "%.2f", tendency.getAlignmentByTendency(value));
 			graphics.drawString(this.font, label, rowX, rowY, tendencyColor(value));
 			graphics.drawString(this.font, amount, rowX + 78, rowY, TEXT);
@@ -236,77 +247,87 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 	}
 
 	private void drawVascularHealth(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, "Vascular Health", x, y);
+		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.vascular_health"), x, y);
 		var vascular = HemoCapabilityAccess.getVascularSystem(player);
 		float average = averageHealth(vascular);
 		EnumVeinSections worst = weakestSection(vascular);
-		drawValue(graphics, "Average", String.format(Locale.ROOT, "%.0f%%", average), x, y + 13,
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.average"),
+				Component.literal(String.format(Locale.ROOT, "%.0f%%", average)), x, y + 13,
 				colorForHealth(average));
-		drawValue(graphics, "Weakest", titleCase(worst.name()) + " "
-				+ String.format(Locale.ROOT, "%.0f%%", vascular.getHealthBySection(worst)), x, y + 25,
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.weakest"),
+				Component.translatable("screen.hemomancy.scrying_diagnostics.section_health",
+						BloodManipulation.sectionName(worst),
+						String.format(Locale.ROOT, "%.0f", vascular.getHealthBySection(worst))), x, y + 25,
 				colorForHealth(vascular.getHealthBySection(worst)));
-		drawValue(graphics, "Flow", titleCase(vascular.getBloodFlowBySection(worst).name()), x, y + 37, MUTED);
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.flow"),
+				Component.translatable("blood_flow_state.hemomancy."
+						+ vascular.getBloodFlowBySection(worst).name().toLowerCase(Locale.ROOT)), x, y + 37, MUTED);
 	}
 
 	private void drawRiteReadiness(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, "Rite Readiness", x, y);
+		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.rite_readiness"), x, y);
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null) {
-			drawLine(graphics, "Unreadable: no blood record.", x, y + 13, BAD);
+			drawLine(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.unreadable_no_blood_record"), x, y + 13, BAD);
 			return;
 		}
 		if (!volume.isActive()) {
-			drawLine(graphics, "Dormant: blood magic is inactive.", x, y + 13, WARN);
+			drawLine(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.dormant_blood_magic_is_inactive"), x, y + 13, WARN);
 		} else if (degree <= 0) {
-			drawLine(graphics, "Uninitiated: no rite standing.", x, y + 13, WARN);
+			drawLine(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.uninitiated_no_rite_standing"), x, y + 13, WARN);
 		} else if (volume.getBloodVolume() < volume.getMaxBloodVolume() * 0.25D) {
-			drawLine(graphics, "Strained: restore blood first.", x, y + 13, BAD);
+			drawLine(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.strained_restore_blood_first"), x, y + 13, BAD);
 		} else {
-			drawLine(graphics, "Stable: ordinary rites are supported.", x, y + 13, GOOD);
+			drawLine(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.stable_ordinary_rites_are_supported"), x, y + 13, GOOD);
 		}
-		drawValue(graphics, "Degree", String.valueOf(degree), x, y + 29, TEXT);
+		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.degree"),
+				Component.literal(String.valueOf(degree)), x, y + 29, TEXT);
 	}
 
 	private void drawBloodFlow(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, "Blood Flow", x, y);
+		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.blood_flow"), x, y);
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null) {
-			drawLine(graphics, "Unreadable: no blood record.", x, y + 13, BAD);
+			drawLine(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.unreadable_no_blood_record"), x, y + 13, BAD);
 			return;
 		}
 		if (!volume.isActive()) {
-			drawLine(graphics, "Dormant: no blood magic flow.", x, y + 13, MUTED);
+			drawLine(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.dormant_no_blood_magic_flow"), x, y + 13, MUTED);
 			return;
 		}
 
 		BloodFlowSnapshot snapshot = BloodFlowDiagnosticsClientData.get();
 		bloodFlowModsRegion = new HoverRegion(x, y + 13, PANEL_WIDTH - 32, 62);
-		String positive = "Positive " + signed(snapshot.positivePerTick()) + " mL/t";
-		String negative = "Negative " + signed(-snapshot.negativePerTick()) + " mL/t";
-		String net = "Net " + signed(snapshot.netPerTick()) + " mL/t";
+		Component positive = Component.translatable("screen.hemomancy.scrying_diagnostics.positive_ml_per_tick",
+				signed(snapshot.positivePerTick()));
+		Component negative = Component.translatable("screen.hemomancy.scrying_diagnostics.negative_ml_per_tick",
+				signed(-snapshot.negativePerTick()));
+		Component net = Component.translatable("screen.hemomancy.scrying_diagnostics.net_ml_per_tick",
+				signed(snapshot.netPerTick()));
 		graphics.drawString(this.font, positive, x, y + 13, GOOD);
 		graphics.drawString(this.font, negative, x + 104, y + 13, BAD);
 		graphics.drawString(this.font, net, x + 210, y + 13, colorForRate(snapshot.netPerTick()));
 
-		String bandwidth = snapshot.circulationEnabled()
-				? "Bandwidth " + amount(snapshot.circulationUsedInWindow()) + " used / "
-				+ amount(snapshot.circulationBandwidthPerWindow()) + " cap / "
-				+ amount(snapshot.circulationRemainingInWindow()) + " available"
-				: "Bandwidth disabled: capped sources pass through";
-		drawLine(graphics, trimToWidth(bandwidth, PANEL_WIDTH - 32), x, y + 25, MUTED);
+		Component bandwidth = snapshot.circulationEnabled()
+				? Component.translatable("screen.hemomancy.scrying_diagnostics.bandwidth_used_cap_available",
+						amount(snapshot.circulationUsedInWindow()),
+						amount(snapshot.circulationBandwidthPerWindow()),
+						amount(snapshot.circulationRemainingInWindow()))
+				: Component.translatable("screen.hemomancy.scrying_diagnostics.bandwidth_disabled_capped_sources_pass");
+		drawLine(graphics, Component.literal(trimToWidth(bandwidth.getString(), PANEL_WIDTH - 32)), x, y + 25, MUTED);
 
 		int rowCount = snapshot.contributions().size();
 		int maxOffset = Math.max(0, rowCount - FLOW_VISIBLE_ROWS);
 		flowScrollOffset = Mth.clamp(flowScrollOffset, 0, maxOffset);
 		if (rowCount == 0) {
-			drawLine(graphics, "No active blood-flow rows.", x, y + 39, MUTED);
+			drawLine(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.no_active_blood_flow_rows"), x, y + 39, MUTED);
 			return;
 		}
 		for (int i = 0; i < FLOW_VISIBLE_ROWS && flowScrollOffset + i < rowCount; i++) {
 			BloodFlowContribution contribution = snapshot.contributions().get(flowScrollOffset + i);
 			int rowY = y + 39 + i * 12;
-			String label = trimToWidth(sourceLabel(contribution), 205);
+			String label = trimToWidth(sourceLabel(contribution).getString(), 205);
 			String rate = rowRate(contribution);
 			graphics.drawString(this.font, label, x, rowY, rowColor(contribution));
 			graphics.drawString(this.font, rate, x + 218, rowY, rowColor(contribution));
@@ -315,28 +336,26 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 
 	private void renderDiagnosticsTooltips(GuiGraphics graphics, int mouseX, int mouseY) {
 		if (maxBloodModsRegion.contains(mouseX, mouseY)) {
-			renderStringTooltip(graphics, "Max Blood Modifiers",
+			renderStringTooltip(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.max_blood_modifiers"),
 					ScryingDiagnosticsTooltipLines.maxBloodMods(MaxBloodDiagnosticsClientData.get()), mouseX, mouseY);
 		} else if (bloodFlowModsRegion.contains(mouseX, mouseY)) {
-			renderStringTooltip(graphics, "Blood Flow Modifiers",
+			renderStringTooltip(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.blood_flow_modifiers"),
 					ScryingDiagnosticsTooltipLines.bloodFlowMods(BloodFlowDiagnosticsClientData.get()), mouseX, mouseY);
 		} else if (manipulationSlotModsRegion.contains(mouseX, mouseY)) {
-			renderStringTooltip(graphics, "Manipulation Slot Modifiers",
+			renderStringTooltip(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.manipulation_slot_modifiers"),
 					ScryingDiagnosticsTooltipLines.manipulationSlotMods(ManipulationSlotDiagnosticsClientData.get()),
 					mouseX, mouseY);
 		} else if (manipulationCostModsRegion.contains(mouseX, mouseY)) {
-			renderStringTooltip(graphics, "Selected Manipulation Cost",
+			renderStringTooltip(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.selected_manipulation_cost"),
 					ScryingDiagnosticsTooltipLines.manipulationCostMods(ManipulationCostDiagnosticsClientData.get()),
 					mouseX, mouseY);
 		}
 	}
 
-	private void renderStringTooltip(GuiGraphics graphics, String title, List<String> lines, int mouseX, int mouseY) {
+	private void renderStringTooltip(GuiGraphics graphics, Component title, List<Component> lines, int mouseX, int mouseY) {
 		List<Component> tooltip = new ArrayList<>();
-		tooltip.add(Component.literal(title));
-		for (String line : lines) {
-			tooltip.add(Component.literal(line));
-		}
+		tooltip.add(title);
+		tooltip.addAll(lines);
 		graphics.renderTooltip(this.font, tooltip, Optional.empty(), mouseX, mouseY);
 	}
 
@@ -355,16 +374,17 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
-	private void drawSection(GuiGraphics graphics, String text, int x, int y) {
+	private void drawSection(GuiGraphics graphics, Component text, int x, int y) {
 		graphics.drawString(this.font, text, x, y, SECTION);
 	}
 
-	private void drawValue(GuiGraphics graphics, String label, String value, int x, int y, int color) {
-		graphics.drawString(this.font, label + ": ", x, y, MUTED);
+	private void drawValue(GuiGraphics graphics, Component label, Component value, int x, int y, int color) {
+		graphics.drawString(this.font, Component.translatable("screen.hemomancy.scrying_diagnostics.value_label", label),
+				x, y, MUTED);
 		graphics.drawString(this.font, value, x + 58, y, color);
 	}
 
-	private void drawLine(GuiGraphics graphics, String text, int x, int y, int color) {
+	private void drawLine(GuiGraphics graphics, Component text, int x, int y, int color) {
 		graphics.drawString(this.font, text, x, y, color);
 	}
 
@@ -425,9 +445,10 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		return weakest;
 	}
 
-	private static String tendencyLabel(IBloodTendency tendency, EnumBloodTendency value) {
-		return titleCase(value.name()) + " " + String.format(Locale.ROOT, "%.2f",
-				tendency.getAlignmentByTendency(value));
+	private static Component tendencyLabel(IBloodTendency tendency, EnumBloodTendency value) {
+		return Component.translatable("screen.hemomancy.scrying_diagnostics.tendency_alignment",
+				BloodManipulation.tendencyName(value),
+				String.format(Locale.ROOT, "%.2f", tendency.getAlignmentByTendency(value)));
 	}
 
 	private static int tendencyColor(EnumBloodTendency tendency) {
@@ -462,12 +483,12 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		return BAD;
 	}
 
-	private static String selectedManipName(IKnownManipulations known) {
+	private static Component selectedManipName(IKnownManipulations known) {
 		BloodManipulation selected = known.getSelectedManip();
 		if (selected == null || selected == BloodManipulation.BLANK) {
-			return "None selected";
+			return Component.translatable("screen.hemomancy.scrying_diagnostics.none_selected");
 		}
-		return selected.getDisplayName().getString();
+		return selected.getDisplayName();
 	}
 
 	private static String format(double value) {
@@ -539,27 +560,9 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		return signed(contribution.appliedPerTick());
 	}
 
-	private static String sourceLabel(BloodFlowContribution contribution) {
-		String label = titleCase(contribution.category().name()) + " - " + contribution.label();
-		if (!contribution.condition().isEmpty()) {
-			label += " [" + contribution.condition() + "]";
-		}
-		return label;
-	}
-
-	private static String titleCase(String value) {
-		String[] parts = value.toLowerCase(Locale.ROOT).split("_");
-		StringBuilder builder = new StringBuilder();
-		for (String part : parts) {
-			if (part.isEmpty()) {
-				continue;
-			}
-			if (!builder.isEmpty()) {
-				builder.append(' ');
-			}
-			builder.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
-		}
-		return builder.toString();
+	private static Component sourceLabel(BloodFlowContribution contribution) {
+		return ScryingDiagnosticsTooltipLines.sourceLabel(contribution.category(), contribution.label(),
+				contribution.condition());
 	}
 
 	private record HoverRegion(int x, int y, int width, int height) {

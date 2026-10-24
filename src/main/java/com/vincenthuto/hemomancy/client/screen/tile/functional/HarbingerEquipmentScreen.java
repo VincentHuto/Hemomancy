@@ -137,7 +137,7 @@ public class HarbingerEquipmentScreen extends EffectRenderingInventoryScreen<Har
 	}
 
 	private Component getScreenTitle() {
-		return this.menu.isOpenedFromScarletVanity() ? Component.literal("Scarlet Vanity") : this.title;
+		return this.menu.isOpenedFromScarletVanity() ? Component.translatable("screen.hemomancy.harbinger_equipment.scarlet_vanity") : this.title;
 	}
 
 	private void renderMirrorPanel(GuiGraphics gfx, int gx, int gy) {

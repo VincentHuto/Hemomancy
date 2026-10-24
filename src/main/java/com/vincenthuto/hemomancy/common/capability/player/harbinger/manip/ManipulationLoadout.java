@@ -5,6 +5,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -88,6 +89,13 @@ public record ManipulationLoadout(String name, String selectedManipName, List<St
 
 	public static String defaultName(int slotIndex) {
 		return "Loadout " + (slotIndex + 1);
+	}
+
+	/** The name to show: a player-typed name as written, the stored default through its key. */
+	public Component displayName(int slotIndex) {
+		return name.equals(defaultName(slotIndex))
+				? Component.translatable("message.hemomancy.manipulation_loadout.default_name", slotIndex + 1)
+				: Component.literal(name);
 	}
 
 	public static String sanitizeName(String name, int slotIndex) {

@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.animation.*;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArtEnding;
 import com.vincenthuto.hemomancy.common.network.CastingAnimationPacket;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -100,12 +101,18 @@ public final class CastingPreviewCommands {
             CastingAnimationClientState.preview(CastingAnimationPacket.harbinger(mc.player.getId(),mc.player.getUUID(),
                     type==EnumManipulationType.PASSIVE?PASSIVE_ID:section==null?"preview":OutpouringRules.previewId(section),0,school,null,rank,purpose,style,phase,now,now,
                     held,required,InteractionHand.MAIN_HAND));
-            mc.player.displayClientMessage(Component.literal("Casting preview: "+school+" / "+rank+" / "+purpose+" / "+phase
-                    +(style==CastStyle.SCHOOL?"":" / style "+style)+(type==null?"":" / "+type)
-                    +(uncharged?"":" / charge "+held+"/"+required)+(section==null?"":" / "+section)),false);
+            mc.player.displayClientMessage(HemoText.translatable("gui.hemomancy.casting_preview_commands.casting_preview",
+            		school,
+            		rank,
+            		purpose,
+            		phase,
+            		(style==CastStyle.SCHOOL?Component.empty():HemoText.translatable("gui.hemomancy.casting_preview_commands.style", style)),
+            		(type==null?"":" / "+type),
+            		(uncharged?Component.empty():HemoText.translatable("gui.hemomancy.casting_preview_commands.charge", held, required)),
+            		(section==null?"":" / "+section)),false);
             return 1;
         } catch(IllegalArgumentException invalid) {
-            c.getSource().sendFailure(Component.literal("Use the suggested school, rank, purpose, phase, style, type and section names."));
+            c.getSource().sendFailure(Component.translatable("gui.hemomancy.casting_preview_commands.use_the_suggested_school_rank_purpose"));
             return 0;
         }
     }
@@ -120,10 +127,10 @@ public final class CastingPreviewCommands {
             long now=mc.level.getGameTime();
             CastingAnimationClientState.preview(CastingAnimationPacket.stillArt(mc.player.getId(),mc.player.getUUID(),
                     "preview",0,stage,ending,phase,now,now,InteractionHand.MAIN_HAND));
-            mc.player.displayClientMessage(Component.literal("Still Art preview: "+stage+" / "+ending+" / "+phase),false);
+            mc.player.displayClientMessage(HemoText.translatable("gui.hemomancy.casting_preview_commands.still_art_preview", stage, ending, phase),false);
             return 1;
         } catch(IllegalArgumentException invalid) {
-            c.getSource().sendFailure(Component.literal("Use the suggested stage, ending and phase names."));
+            c.getSource().sendFailure(Component.translatable("gui.hemomancy.casting_preview_commands.use_the_suggested_stage_ending_and"));
             return 0;
         }
     }

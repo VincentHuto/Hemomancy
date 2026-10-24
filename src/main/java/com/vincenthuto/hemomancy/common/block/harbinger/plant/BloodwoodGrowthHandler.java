@@ -39,15 +39,13 @@ public final class BloodwoodGrowthHandler {
 			return 0.0D;
 		}
 		if (!hasClearance(level, deadBushPos)) {
-			player.displayClientMessage(Component.literal("The dead bush needs more space to become bloodwood.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.bloodwood_growth_handler.the_dead_bush_needs_more_space").withStyle(ChatFormatting.DARK_RED), true);
 			return 0.0D;
 		}
 
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive() || volume.getBloodVolume() <= 0.0D) {
-			player.displayClientMessage(Component.literal("No active blood answers the dead bush.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.bloodwood_growth_handler.no_active_blood_answers_the_dead").withStyle(ChatFormatting.DARK_RED), true);
 			return 0.0D;
 		}
 
@@ -72,8 +70,7 @@ public final class BloodwoodGrowthHandler {
 		PROGRESS.remove(key);
 		growTree(level, deadBushPos);
 		level.playSound(null, deadBushPos, SoundEvents.AZALEA_PLACE, SoundSource.BLOCKS, 1.0F, 0.55F);
-		player.displayClientMessage(Component.literal("The dead bush drinks deeply and becomes bloodwood.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+		player.displayClientMessage(Component.translatable("message.hemomancy.bloodwood_growth_handler.the_dead_bush_drinks_deeply_and").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 		return transfer;
 	}
 

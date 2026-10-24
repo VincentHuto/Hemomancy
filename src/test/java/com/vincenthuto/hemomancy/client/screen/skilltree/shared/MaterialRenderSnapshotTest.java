@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ class MaterialRenderSnapshotTest {
 
 	private static MaterialAtlasNode node(String id, String family) {
 		MaterialAtlasBucket bucket = new MaterialAtlasBucket(
-				MaterialAtlasPath.HARBINGER, family, family, family, 0, 0, 0, 0, 0);
+				MaterialAtlasPath.HARBINGER, family, Component.literal(family), Component.literal(family), 0, 0, 0, 0, 0);
 		MaterialAtlasEntry atlasEntry = new MaterialAtlasEntry(MaterialAtlasPath.HARBINGER,
 				id, bucket, MaterialGate.always(), 0, List.of(), 0, 0);
 		MaterialEntry entry = new MaterialEntry(id, id, "", family, () -> ItemStack.EMPTY);

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
@@ -79,13 +80,16 @@ public class VascularDowsingManip extends BloodManipulation {
 
 		if (!found.isEmpty()) {
 			BlockPos nearest = found.stream().min(java.util.Comparator.comparingDouble(origin::distSqr)).orElseThrow();
-			player.displayClientMessage(net.minecraft.network.chat.Component.literal("Dowsing: " + found.size()
-					+ " ore blocks; nearest " + world.getBlockState(nearest).getBlock().getName().getString()
-					+ " at " + nearest.getX() + ", " + nearest.getY() + ", " + nearest.getZ() + "."), true);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.vascular_dowsing_manip.dowsing_ore_blocks_nearest_at",
+					found.size(),
+					world.getBlockState(nearest).getBlock().getName().getString(),
+					nearest.getX(),
+					nearest.getY(),
+					nearest.getZ()), true);
 			world.playSound(null, origin, SoundEvents.AMETHYST_BLOCK_CHIME,
 					SoundSource.PLAYERS, 0.6f, 1.2f);
 		} else {
-			player.displayClientMessage(net.minecraft.network.chat.Component.literal("Dowsing: no ore within 8 blocks."), true);
+			player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.hemomancy.vascular_dowsing_manip.dowsing_no_ore_within_8_blocks"), true);
 			world.playSound(null, origin, SoundEvents.IRON_GOLEM_DAMAGE,
 					SoundSource.PLAYERS, 0.4f, 2.0f);
 		}

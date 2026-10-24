@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
@@ -148,9 +148,7 @@ public class HarbingerCardinalRiteEvents {
 					rite.setDisconnectTicks(rite.getDisconnectTicks() + 1);
 					if (rite.getDisconnectTicks() > CardinalRiteCeremonyRules.DISCONNECT_GRACE_TICKS) {
 						CardinalRiteTermination.end(sLevel, usable(caster), rite, Outcome.ABANDONED);
-						if (caster != null) caster.displayClientMessage(Component.literal(
-								"Your unattended rite gutters out. The planted staff awaits your return.")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+						if (caster != null) caster.displayClientMessage(Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.your_unattended_rite_gutters_out_the").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 						toRemove.add(playerUUID);
 					}
 					savedData.setDirty();
@@ -168,8 +166,7 @@ public class HarbingerCardinalRiteEvents {
 						rite.getRecipeId(), center);
 				CardinalRiteTermination.end(sLevel, caster, rite, Outcome.RETIRED);
 				caster.displayClientMessage(
-						Component.literal("The rite dissolves harmlessly because its pattern is no longer known.")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+						Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_rite_dissolves_harmlessly_because_its").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 						false);
 				toRemove.add(playerUUID);
 				savedData.setDirty();
@@ -242,14 +239,12 @@ public class HarbingerCardinalRiteEvents {
 				// === Caster boundary enforcement ===
 				// Only the caster is bound; the rite does not advance while they are outside.
 				if (unstained) {
-					caster.displayClientMessage(Component.literal("The stillness breaks. Return to the circle.")
-							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
+					caster.displayClientMessage(Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_stillness_breaks_return_to_the").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
 				} else {
 					caster.hurt(caster.damageSources().generic(), CASTER_BOUNDARY_DAMAGE_PER_TICK);
 					BloodAccounting.pay(caster, CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK, BOUNDARY);
 					caster.displayClientMessage(
-							Component.literal("The rite binds you! Return to the circle!")
-									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+							Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_rite_binds_you_return_to").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 							true);
 				}
 				continue;
@@ -380,9 +375,8 @@ public class HarbingerCardinalRiteEvents {
 			Component refusal = CardinalRiteCompletionEffects.refusal(new CardinalRiteCompletionEffects.Context(
 					level, caster, rite, recipe, rite.getCenterPos()), CardinalRiteCompletionEffects.Stage.FINALE);
 			if (refusal != null && rite.holdBeforeFinale(FINALE_HOLD_TICKS)) {
-				caster.displayClientMessage(Component.literal("The rite waits before its finale. ")
-						.withStyle(ChatFormatting.DARK_RED)
-						.append(refusal.copy().withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)), true);
+				caster.displayClientMessage(Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_rite_waits_before_its_finale",
+						refusal.copy().withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)).withStyle(ChatFormatting.DARK_RED), true);
 				return;
 			}
 		}
@@ -502,8 +496,7 @@ public class HarbingerCardinalRiteEvents {
 			ANCHOR_BEAT_STATE.remove(player.getUUID());
 			STATION_VALIDITY.remove(player.getUUID());
 			player.displayClientMessage(
-					Component.literal("The rite has been broken by your death...")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_rite_has_been_broken_by").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 
 			// Sync updated rite list to clients so boundary circle is removed
@@ -664,9 +657,7 @@ public class HarbingerCardinalRiteEvents {
 		daemon.faceDirection(caster.getX() - staff.x, caster.getZ() - staff.z);
 
 		if (rite.getCancellationTicks() == 1) {
-			caster.displayClientMessage(Component.literal(
-					"Hold the absorption steady. Draw the rite back into your hand.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.hold_the_absorption_steady_draw_the").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 		}
 		if (rite.getCancellationTicks() % 10 == 0) {
 			CardinalRiteBeats.sound(level, center, SoundInit.RITE_CANCEL_DRAW, 1.0F,
@@ -699,9 +690,7 @@ public class HarbingerCardinalRiteEvents {
 		CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_CANCEL, 1.0F, 1.0F);
 		level.playSound(null, caster.blockPosition(), SoundEvents.BOTTLE_FILL,
 				SoundSource.PLAYERS, 0.8F, 0.75F);
-		caster.displayClientMessage(Component.literal(
-				"The daemon folds into the Living Staff, and the rite returns to your blood.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+		caster.displayClientMessage(Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_daemon_folds_into_the_living").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 	}
 
 	private static void spawnHumanityDispersal(ServerLevel level, ServerPlayer caster) {
@@ -760,10 +749,7 @@ public class HarbingerCardinalRiteEvents {
 		if (!gentle) CardinalRiteBeats.sound(sLevel, center, SoundInit.RITE_BACKLASH, 1.5F, 1.0F);
 
 		caster.displayClientMessage(
-				Component.literal(gentle
-						? "The rite's structure was disturbed. The boundary lets go of you."
-						: "The rite structure has been broken! The ritual backlashes!")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				(gentle ? Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_rite_s_structure_was_disturbed") : Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_rite_structure_has_been_broken")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 		CardinalRiteTermination.end(sLevel, caster, rite, Outcome.BROKEN);
 	}
@@ -852,8 +838,7 @@ public class HarbingerCardinalRiteEvents {
 		CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_COLLAPSE, 1.5F, 1.0F);
 		CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_BACKLASH, 1.0F, 1.1F);
 		spawnBrokenAnchorDispersal(level, rite, recipe);
-		caster.displayClientMessage(Component.literal("The cardinal boundary collapses into backlash.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+		caster.displayClientMessage(Component.translatable("message.hemomancy.harbinger_cardinal_rite_events.the_cardinal_boundary_collapses_into_backlash").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
 	}
 
 	//

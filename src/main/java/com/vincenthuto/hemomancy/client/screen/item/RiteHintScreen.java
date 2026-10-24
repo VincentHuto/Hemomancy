@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
@@ -127,7 +128,7 @@ public class RiteHintScreen extends Screen {
 		ScreenDrawUtils.drawBorder(gfx, guiLeft, guiTop, GUI_WIDTH, GUI_HEIGHT, BORDER_OUTER, BORDER_INNER);
 
 		if (rite == null && floor == null) {
-			gfx.drawCenteredString(font, Component.literal("Unknown Rite").withStyle(s -> s.withColor(0xFF666666)),
+			gfx.drawCenteredString(font, Component.translatable("screen.hemomancy.rite_hint.unknown_rite").withStyle(s -> s.withColor(0xFF666666)),
 					guiLeft + GUI_WIDTH / 2, guiTop + GUI_HEIGHT / 2 - 4, 0);
 			super.render(gfx, mouseX, mouseY, partial);
 			return;
@@ -152,7 +153,7 @@ public class RiteHintScreen extends Screen {
 		drawLayerButtons(gfx, mouseX, mouseY, modelX + modelAreaW - LAYER_BTN_SIZE - 8, guiTop + GUI_HEIGHT / 2);
 
 		// Drag hint
-		gfx.drawCenteredString(font, "Drag to rotate",
+		gfx.drawCenteredString(font, Component.translatable("screen.hemomancy.crafting_tab_view.drag_to_rotate"),
 				modelX + modelAreaW / 2, guiTop + GUI_HEIGHT - 14, 0x44888888);
 
 		// Info panel
@@ -309,14 +310,13 @@ public class RiteHintScreen extends Screen {
 
 		// ── Type ──
 		CardinalRiteType type = rite.getRiteType();
-		String typeStr = HLTextUtils.toProperCase(type.getSerializedName()) + " (" + type.getSize() + "x" + type.getSize() + ")";
-		gfx.drawString(font, Component.literal("Type: ").withStyle(s -> s.withColor(LABEL_COLOR))
-				.append(Component.literal(typeStr).withStyle(s -> s.withColor(ACCENT_COLOR))), panelX, y, 0);
+		gfx.drawString(font, Component.translatable("screen.hemomancy.rite_hint.type",
+				CardinalRiteFloorDefinition.tierWithSize(type).withStyle(s -> s.withColor(ACCENT_COLOR))).withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
 		y += lineH;
 
 		// ── Blood cost ──
-		gfx.drawString(font, Component.literal("Upfront Blood: ").withStyle(s -> s.withColor(LABEL_COLOR))
-				.append(Component.literal((int) rite.getBloodCost() + " mL").withStyle(s -> s.withColor(COST_COLOR))), panelX, y, 0);
+		gfx.drawString(font, Component.translatable("screen.hemomancy.rite_hint.upfront_blood",
+				HemoText.translatable("screen.hemomancy.rite_hint.ml", (int) rite.getBloodCost()).withStyle(s -> s.withColor(COST_COLOR))).withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
 		y += lineH;
 
 		// ── Cast time ──
@@ -324,12 +324,12 @@ public class RiteHintScreen extends Screen {
 				? type.getCastingDurationTicks()
 				: rite.getCeremony().targetDurationTicks();
 		float seconds = ticks / 20f;
-		gfx.drawString(font, Component.literal("Ceremony Time: ").withStyle(s -> s.withColor(LABEL_COLOR))
-				.append(Component.literal(String.format("%.1fs", seconds)).withStyle(s -> s.withColor(VALUE_COLOR))), panelX, y, 0);
+		gfx.drawString(font, Component.translatable("screen.hemomancy.rite_hint.ceremony_time",
+				HemoText.translatable("screen.hemomancy.rite_hint.seconds", String.format("%.1f", seconds)).withStyle(s -> s.withColor(VALUE_COLOR))).withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
 		y += lineH + 6;
 
 		// ── How to perform ──
-		gfx.drawString(font, Component.literal("How to Perform:").withStyle(s -> s.withColor(TITLE_COLOR)), panelX, y, 0);
+		gfx.drawString(font, Component.translatable("screen.hemomancy.rite_hint.how_to_perform").withStyle(s -> s.withColor(TITLE_COLOR)), panelX, y, 0);
 		y += lineH;
 		String instructions = performanceInstructions();
 		for (String line : ScreenDrawUtils.wrapText(font, instructions, panelW)) {
@@ -342,7 +342,7 @@ public class RiteHintScreen extends Screen {
 		// ── Result item ──
 		ItemStack result = rite.getResult();
 		if (result != null && !result.isEmpty()) {
-			gfx.drawString(font, Component.literal("Result:").withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
+			gfx.drawString(font, Component.translatable("screen.hemomancy.rite_hint.result").withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
 			y += lineH;
 
 			gfx.renderItem(result, panelX, y);
@@ -362,7 +362,7 @@ public class RiteHintScreen extends Screen {
 		{
 			List<MnemonicBlueprintPattern.MaterialCount> materials = previewPattern().materialCounts(false);
 			if (!materials.isEmpty()) {
-				gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
+				gfx.drawString(font, Component.translatable("screen.hemomancy.rite_hint.materials").withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
 				y += lineH;
 
 				long cycleIndex = materialCycleIndex();
@@ -477,9 +477,9 @@ public class RiteHintScreen extends Screen {
 		gfx.enableScissor(panelX - 2, panelY, panelX + panelW + 2, panelY + panelH);
 		int y = panelY - infoScroll;
 		int lineH = 12;
-		String style = HLTextUtils.toProperCase(floor.style().replace('_', ' '));
-		String tier = HLTextUtils.toProperCase(floor.tier().getSerializedName());
-		String title = tier + " " + style + " Ritual Floor";
+		Component style = CardinalRiteFloorDefinition.styleName(floor.style());
+		Component tier = CardinalRiteFloorDefinition.tierName(floor.tier());
+		String title = text("screen.hemomancy.rite_hint.ritual_floor", tier, style);
 		for (String line : ScreenDrawUtils.wrapText(font, title, panelW)) {
 			gfx.drawString(font, Component.literal(line).withStyle(s -> s.withColor(TITLE_COLOR).withBold(true)),
 					panelX, y, 0);
@@ -489,7 +489,7 @@ public class RiteHintScreen extends Screen {
 		gfx.fill(panelX, y, panelX + panelW, y + 1, BORDER_INNER);
 		y += 6;
 		for (String line : ScreenDrawUtils.wrapText(font,
-				"A reusable ritual foundation centered on its Cardinal Focus.", panelW)) {
+				text("screen.hemomancy.rite_hint.a_reusable_ritual_foundation"), panelW)) {
 			gfx.drawString(font, Component.literal(line).withStyle(s -> s.withColor(DESC_COLOR).withItalic(true)),
 					panelX, y, 0);
 			y += lineH;
@@ -498,17 +498,17 @@ public class RiteHintScreen extends Screen {
 		int width = floor.pattern().getBlockPattern().getWidth();
 		int height = floor.pattern().getBlockPattern().getHeight();
 		int depth = floor.pattern().getBlockPattern().getDepth();
-		y = drawFloorValue(gfx, panelX, y, "Style: ", style);
-		y = drawFloorValue(gfx, panelX, y, "Tier: ", tier);
-		y = drawFloorValue(gfx, panelX, y, "Dimensions: ", width + "x" + height + "x" + depth);
+		y = drawFloorValue(gfx, panelX, y, Component.translatable("screen.hemomancy.rite_hint.style"), style);
+		y = drawFloorValue(gfx, panelX, y, Component.translatable("screen.hemomancy.rite_hint.tier"), tier);
+		y = drawFloorValue(gfx, panelX, y, Component.translatable("screen.hemomancy.rite_hint.dimensions"), HemoText.translatable("screen.hemomancy.rite_hint.x_x", width, height, depth));
 		int space = 2 * floor.half() + 1;
-		y = drawFloorValue(gfx, panelX, y, "Braziers count anywhere in: ",
-				"the " + space + "x" + space + "x" + space + " cube the floor is the base of");
+		y = drawFloorValue(gfx, panelX, y, Component.translatable("screen.hemomancy.rite_hint.braziers_count_anywhere_in"),
+				HemoText.translatable("screen.hemomancy.rite_hint.the_x_x_cube_the_floor", space, space, space));
 		y += 6;
-		gfx.drawString(font, Component.literal("How to Build:").withStyle(s -> s.withColor(TITLE_COLOR)), panelX, y, 0);
+		gfx.drawString(font, Component.translatable("screen.hemomancy.rite_hint.how_to_build").withStyle(s -> s.withColor(TITLE_COLOR)), panelX, y, 0);
 		y += lineH;
 		for (String line : ScreenDrawUtils.wrapText(font,
-				"Build the displayed floor with its Cardinal Focus at the center. Higher-tier floors of the same style can satisfy lower-tier rites.",
+				text("screen.hemomancy.rite_hint.build_the_displayed_floor"),
 				panelW)) {
 			gfx.drawString(font, Component.literal(line).withStyle(s -> s.withColor(DESC_COLOR)), panelX, y, 0);
 			y += lineH;
@@ -516,7 +516,7 @@ public class RiteHintScreen extends Screen {
 		y += 6;
 		List<MnemonicBlueprintPattern.MaterialCount> materials = previewPattern().materialCounts(false);
 		if (!materials.isEmpty()) {
-			gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
+			gfx.drawString(font, Component.translatable("screen.hemomancy.rite_hint.materials").withStyle(s -> s.withColor(LABEL_COLOR)), panelX, y, 0);
 			y += lineH;
 			long cycleIndex = materialCycleIndex();
 			for (MnemonicBlueprintPattern.MaterialCount material : materials) {
@@ -542,22 +542,22 @@ public class RiteHintScreen extends Screen {
 		}
 	}
 
-	private int drawFloorValue(GuiGraphics gfx, int x, int y, String label, String value) {
-		gfx.drawString(font, Component.literal(label).withStyle(s -> s.withColor(LABEL_COLOR))
-				.append(Component.literal(value).withStyle(s -> s.withColor(ACCENT_COLOR))), x, y, 0);
+	private int drawFloorValue(GuiGraphics gfx, int x, int y, Component label, Component value) {
+		gfx.drawString(font, label.copy().withStyle(s -> s.withColor(LABEL_COLOR))
+				.append(value.copy().withStyle(s -> s.withColor(ACCENT_COLOR))), x, y, 0);
 		return y + 12;
 	}
 
 	private int measureFloorInfoPanelHeight(int panelW) {
-		String style = HLTextUtils.toProperCase(floor.style().replace('_', ' '));
-		String tier = HLTextUtils.toProperCase(floor.tier().getSerializedName());
-		int height = ScreenDrawUtils.wrapText(font, tier + " " + style + " Ritual Floor", panelW).size() * 12;
+		Component style = CardinalRiteFloorDefinition.styleName(floor.style());
+		Component tier = CardinalRiteFloorDefinition.tierName(floor.tier());
+		int height = ScreenDrawUtils.wrapText(font, text("screen.hemomancy.rite_hint.ritual_floor", tier, style), panelW).size() * 12;
 		height += 4 + 1 + 6;
 		height += ScreenDrawUtils.wrapText(font,
-				"A reusable ritual foundation centered on its Cardinal Focus.", panelW).size() * 12 + 4;
+				text("screen.hemomancy.rite_hint.a_reusable_ritual_foundation"), panelW).size() * 12 + 4;
 		height += 4 * 12 + 6 + 12;
 		height += ScreenDrawUtils.wrapText(font,
-				"Build the displayed floor with its Cardinal Focus at the center. Higher-tier floors of the same style can satisfy lower-tier rites.",
+				text("screen.hemomancy.rite_hint.build_the_displayed_floor"),
 				panelW).size() * 12 + 6;
 		List<MnemonicBlueprintPattern.MaterialCount> materials = previewPattern().materialCounts(false);
 		if (!materials.isEmpty()) {
@@ -579,76 +579,71 @@ public class RiteHintScreen extends Screen {
 
 	private String performanceInstructions() {
 		if (rite.isUnstained()) {
-			return "Build the structure shown on the left using the required materials. "
-					+ "Stand at the center and press the Blood Craft keybind (default: C) "
-					+ "while looking at any block in the pattern.";
+			return text("screen.hemomancy.rite_hint.unstained_instructions");
 		}
 		String focusMode = rite.getCeremony() == null ? "" : rite.getCeremony().focusMode();
 		if ("living_staff".equals(focusMode)) {
 			return layeredInstructions()
-					+ "Shove the Living Staff into the Cardinal Focus to begin; it remains planted until the rite ends. "
+					+ text("screen.hemomancy.rite_hint.shove_the_living_staff")
 					+ ceremonyInstructions();
 		}
 		if (rite.getRequiredDegree() < 1) {
 			return layeredInstructions()
-					+ "Right-click the central ground-level activation block with a Sanguine Formation. "
-					+ "The formation is consumed only when the rite successfully begins. "
+					+ text("screen.hemomancy.rite_hint.right_click_with_a_sanguine_formation")
 					+ ceremonyInstructions();
 		}
 		return layeredInstructions()
-				+ "Use the rite's declared focus to begin. " + ceremonyInstructions();
+				+ text("screen.hemomancy.rite_hint.use_the_declared_focus") + ceremonyInstructions();
+	}
+
+	private Component minimumFloorName() {
+		return CardinalRiteFloorRegistry.get(rite.getFloorId()).<Component>map(CardinalRiteFloorDefinition::styleAndTier)
+				.orElseGet(() -> Component.literal(rite.getFloorId().getPath().replace('_', ' ')));
 	}
 
 	private String layeredInstructions() {
 		if (!rite.hasLayeredStation()) {
-			return "Build the structure shown on the left using the required materials. ";
+			return text("screen.hemomancy.rite_hint.build_the_structure_shown");
 		}
 		if (rite.isWorkingCraft()) {
-			return "Build at least the " + rite.getFloorId().getPath().replace('_', ' ')
-					+ " floor; higher tiers of the same style also work. Raise the shown structure on the floor "
-					+ "anywhere that leaves the Cardinal Focus clear, in any rotation; the Working floor swallows it. "
-					+ (rite.getBrazierSignature().isEmpty() ? ""
-							: "Place the exact offerings in lit braziers anywhere in the space above the floor: "
-									+ "standing, on a wall or hanging. ");
+			return text("screen.hemomancy.rite_hint.working_floor_instructions", minimumFloorName())
+					+ (rite.getBrazierSignature().isEmpty() ? "" : text("screen.hemomancy.rite_hint.place_the_exact_offerings"));
 		}
-		String structure = rite.getRequiredStructure() == null ? "No upper structure is required. "
+		String structure = rite.getRequiredStructure() == null ? text("screen.hemomancy.rite_hint.no_upper_structure")
 				: rite.shouldConsumeRequiredStructure()
-						? "Build the shown upper structure; it is consumed only on success. "
-						: "Build the shown reusable upper structure. ";
+						? text("screen.hemomancy.rite_hint.build_the_shown_upper_structure")
+						: text("screen.hemomancy.rite_hint.build_the_shown_reusable_upper_structure");
 		String offerings = rite.getBrazierSignature().isEmpty()
 				? ""
-				: "Place the exact offerings in lit braziers anywhere in the space above the floor: "
-						+ "standing, on a wall or hanging. ";
-		return "Build at least the " + rite.getFloorId().getPath().replace('_', ' ')
-				+ " floor; higher tiers of the same style also work. " + structure + offerings;
+				: text("screen.hemomancy.rite_hint.place_the_exact_offerings");
+		return text("screen.hemomancy.rite_hint.build_at_least_the_floor", minimumFloorName()) + structure + offerings;
 	}
 
 	private String ceremonyInstructions() {
 		if (rite.getCeremony() == null) return "";
 		if (rite.isWorkingCraft()) {
-			return "Seat the medium in the Focus and plant your Living Staff. Then project "
-					+ rite.getSubjectFeedMl() + " mL of blood into the structure; the floor climbs it, "
-					+ "draws in the offerings and forges the result on the Focus. Recalling the rite returns "
-					+ "the offerings and staff; blood already fed is spent.";
+			return text("screen.hemomancy.rite_hint.working_craft_ceremony", rite.getSubjectFeedMl());
 		}
 		int anchors = rite.getCeremony().anchors().size();
 		long requiredSigils = rite.getCeremony().supportSockets().stream()
 				.filter(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.SupportSocket::required)
 				.count();
 		String anchorText = anchors == 0 ? ""
-				: "Once the boundary appears, feed its " + anchors
-						+ " anchors with Blood Projection. ";
+				: text("screen.hemomancy.rite_hint.feed_its_anchors", anchors);
 		String sigilText = rite.getCeremony().supportSockets().isEmpty() ? ""
 				: requiredSigils == 0
-						? "Its support sigils are optional preparations. "
-						: "Awaken all " + requiredSigils + " required support "
-								+ (requiredSigils == 1 ? "sigil" : "sigils")
-								+ " before sealing the daemon. ";
+						? text("screen.hemomancy.rite_hint.support_sigils_are_optional")
+						: requiredSigils == 1 ? text("screen.hemomancy.rite_hint.awaken_the_required_support_sigil", requiredSigils)
+						: text("screen.hemomancy.rite_hint.awaken_all_required_support_sigils", requiredSigils);
 		String ordealText = rite.getCeremony().waves().isEmpty()
 				&& rite.getCeremony().guaranteedWaves().isEmpty()
-						? "No ordeal follows the seal."
-						: "Seal the daemon with Blood Projection, then endure the authored ordeal.";
+						? text("screen.hemomancy.rite_hint.no_ordeal_follows_the_seal")
+						: text("screen.hemomancy.rite_hint.seal_the_daemon_then_endure");
 		return anchorText + sigilText + ordealText;
+	}
+
+	private static String text(String key, Object... args) {
+		return Component.translatable(key, args).getString();
 	}
 
 	// ── Layer Buttons ──
@@ -669,7 +664,7 @@ public class RiteHintScreen extends Screen {
 		drawNavButton(gfx, bx, downY, bs, bs, "\u25BC", downHov);
 
 		// Layer indicator
-		String label = visibleLayer < 0 ? "All" : "Y:" + (visibleLayer + 1);
+		String label = visibleLayer < 0 ? text("screen.hemomancy.rite_hint.all_layers") : "Y:" + (visibleLayer + 1);
 		gfx.drawCenteredString(font, label, bx + bs / 2, cy - 4, 0xFFAAAAAA);
 	}
 

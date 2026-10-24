@@ -94,6 +94,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 
 /**
  * What each Harbinger Cardinal Rite does when it resolves, keyed by recipe path.
@@ -162,14 +163,14 @@ public final class CardinalRiteCompletionEffects {
 				ctx -> completeSanguineDominion(ctx.level(), ctx.caster(), ctx.center()));
 		register("cardinal_rite/eternal_covenant",
 				(ctx, stage) -> ctx.caster().getPersistentData().getBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG)
-						? Component.literal("The covenant is already sealed. Its boon has already been granted.")
+						? Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_covenant_is_already_sealed_its")
 						: null,
 				ctx -> {
 					completeEternalCovenant(ctx.caster());
 					return true;
 				});
 		effect("cardinal_rite/ancestral_communion", ctx -> completeAncestralCommunion(ctx.level(), ctx.caster()));
-		register("cardinal_rite/hematic_unbinding", (ctx, stage) -> leaderRefusal(ctx, "Hematic Unbinding"),
+		register("cardinal_rite/hematic_unbinding", (ctx, stage) -> leaderRefusal(ctx, Component.translatable("message.hemomancy.cardinal_rite_completion_effects.hematic_unbinding")),
 				ctx -> {
 					completeHematicUnbinding(ctx.level(), ctx.caster());
 					return true;
@@ -190,7 +191,7 @@ public final class CardinalRiteCompletionEffects {
 				HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED));
 		register("cardinal_rite/sanguine_eclipse",
 				(ctx, stage) -> BloodMoonSavedData.get(ctx.level().getServer().overworld()).isActive()
-						? Component.literal("A Blood Moon already reigns over this world.")
+						? Component.translatable("message.hemomancy.cardinal_rite_completion_effects.a_blood_moon_already_reigns_over")
 						: null,
 				ctx -> {
 					completeSanguineEclipse(ctx.level(), ctx.caster());
@@ -204,13 +205,12 @@ public final class CardinalRiteCompletionEffects {
 					Bloodline line = BloodlineSavedData.get(ctx.level().getServer().overworld())
 							.getBloodlineForPlayer(ctx.caster().getUUID());
 					return line == null || !line.isValid()
-							? Component.literal("The blood remembers nothing. You have no bloodline to recall.")
+							? Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_blood_remembers_nothing_you_have")
 							: null;
 				},
 				ctx -> true);
 		effect("cardinal_rite/exsanguination", ctx -> ctx.caster().displayClientMessage(
-				Component.literal("The lifeblood crystallizes... Sanguine Quintessence is born.")
-						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false));
+				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_lifeblood_crystallizes_sanguine_quintessence").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false));
 		effect("cardinal_rite/initiate_rite", ctx -> {
 			giveOrDropAtRite(ctx.level(), ctx.caster(), ctx.center(), new ItemStack(ItemInit.sanguine_blob.get()));
 			ctx.caster().displayClientMessage(
@@ -271,24 +271,22 @@ public final class CardinalRiteCompletionEffects {
 		ServerPlayer caster = ctx.caster();
 		CardinalRiteRecipe recipe = ctx.recipe();
 		if (!RecipeDegreeGates.playerMeets(caster, recipe)) {
-			return Component.literal("It requires " + RecipeDegreeGates.requirementLabel(recipe) + ".");
+			return HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.it_requires", RecipeDegreeGates.requirementLabel(recipe));
 		}
 		if (!CardinalRiteAllyService.hasRequiredHelpers(ctx.level(), ctx.rite())) {
-			return Component.literal("Required bloodline helpers must still hold their stations.");
+			return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.required_bloodline_helpers_must_still_hold");
 		}
 		boolean apotheos = isApotheos(recipe);
 		if (apotheos && !hasQliphothCommunion(caster)) {
-			return Component.literal(
-					"The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.");
+			return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_eighth_degree_remains_sealed_consume");
 		}
 		if (apotheos && (HemoCapabilityAccess.getInitiatoryDegree(caster).getArchonPath() != EnumArchonPath.APOTHEOS_PENDING)) {
-			return Component.literal("Apotheosis has not been chosen. "
-					+ "Witness the first projection and answer the truth it leaves behind.");
+			return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.apotheosis_has_not_been_chosen_witness");
 		}
 		boolean pathPermitsRite = HarbingerPathPermissions.canPerformRite(HemoCapabilityAccess.getInitiatoryDegree(caster).getTotalPomesConsumed(),
 						HemoCapabilityAccess.getInitiatoryDegree(caster).getArchonPath(), apotheos);
 		if (!pathPermitsRite) {
-			return Component.literal("The void has claimed your will — only one path remains, and one way back.");
+			return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_void_has_claimed_your_will");
 		}
 		return null;
 	}
@@ -301,20 +299,20 @@ public final class CardinalRiteCompletionEffects {
 		return HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone();
 	}
 
-	private static Component leaderRefusal(Context ctx, String riteName) {
+	private static Component leaderRefusal(Context ctx, Component riteName) {
 		Bloodline bloodline = BloodlineSavedData.get(ctx.level().getServer().overworld())
 				.getBloodlineForPlayer(ctx.caster().getUUID());
 		if (bloodline == null || !bloodline.isValid()) {
-			return Component.literal("The " + riteName + " needs a bloodline, and you have none.");
+			return HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_needs_a_bloodline_and_you", riteName);
 		}
 		if (!bloodline.getLeaderUUID().equals(ctx.caster().getUUID())) {
-			return Component.literal("Only the bloodline leader may perform the " + riteName + ".");
+			return HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.only_the_bloodline_leader_may_perform", riteName);
 		}
 		return null;
 	}
 
 	private static Component summonsRefusal(Context ctx, Stage stage) {
-		Component leader = leaderRefusal(ctx, "Scarlet Summons");
+		Component leader = leaderRefusal(ctx, Component.translatable("message.hemomancy.cardinal_rite_completion_effects.scarlet_summons"));
 		if (leader != null || stage == Stage.ACTIVATION) return leader;
 		Bloodline bloodline = BloodlineSavedData.get(ctx.level().getServer().overworld())
 				.getBloodlineForPlayer(ctx.caster().getUUID());
@@ -323,16 +321,16 @@ public final class CardinalRiteCompletionEffects {
 			if (!member.equals(ctx.caster().getUUID())
 					&& ctx.level().getServer().getPlayerList().getPlayer(member) != null) online++;
 		}
-		if (online == 0) return Component.literal("No bloodline members are online to answer the summons.");
+		if (online == 0) return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.no_bloodline_members_are_online_to");
 		if (bloodline.getBloodVolume() < online * SUMMONS_COST_PER_MEMBER * 0.5F) {
-			return Component.literal("The bloodline pool lacks the blood to carry " + online + " kin here.");
+			return HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_bloodline_pool_lacks_the_blood", online);
 		}
 		return null;
 	}
 
 	static Component rootedVeinRefusal(ServerLevel level, BlockPos center) {
 		return level.getBlockState(center.above()).canBeReplaced() ? null
-				: Component.literal("Keep the block above the Cardinal Focus clear for the Earthen Vein.");
+				: Component.translatable("message.hemomancy.cardinal_rite_completion_effects.keep_the_block_above_the_cardinal");
 	}
 
 	static void giveOrDropAtRite(ServerLevel level, ServerPlayer player, BlockPos center, ItemStack stack) {
@@ -352,9 +350,9 @@ public final class CardinalRiteCompletionEffects {
 		QliphothBloomSavedData.BloomEntry overlapping = data.getOverlappingBloom(
 				center.above(2), dimension, QLIPHOTH_BLOOM_CHUNK_RADIUS);
 		if (overlapping != null) {
-			return Component.literal("A Qliphoth Bloom already exists within " + QLIPHOTH_BLOOM_CHUNK_RADIUS
-							+ " chunks of here. Only one bloom may exist per " + QLIPHOTH_BLOOM_CHUNK_RADIUS
-							+ "-chunk radius.");
+			return HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.a_qliphoth_bloom_already_exists_within",
+					QLIPHOTH_BLOOM_CHUNK_RADIUS,
+					QLIPHOTH_BLOOM_CHUNK_RADIUS);
 		}
 
 		// The shared multiblock check covers fillers, not the root itself.
@@ -364,7 +362,7 @@ public final class CardinalRiteCompletionEffects {
 		BlockPos bloomPos = center.above(2);
 		if (!sLevel.getBlockState(bloomPos).canBeReplaced()
 				|| !multiBlock.canPlaceMultiBlock(sLevel, bloomPos)) {
-			return Component.literal("The Qliphoth needs more room to bloom here.");
+			return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_qliphoth_needs_more_room_to");
 		}
 		return null;
 	}
@@ -374,29 +372,29 @@ public final class CardinalRiteCompletionEffects {
 		if (!heartState.is(BlockInit.consecrated_bloodwell.get())
 				&& !heartState.isAir()
 				&& !heartState.canBeReplaced()) {
-			return Component.literal("The rite's heart was obstructed before the Consecrated Bloodwell could be manifested.");
+			return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_rite_s_heart_was_obstructed");
 		}
 		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(caster).getBloodLine();
 		if (bloodline == null || !bloodline.isValid()) {
-			return Component.literal("The Founding Fane requires an established bloodline.");
+			return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_founding_fane_requires_an_established");
 		}
 		if (!bloodline.getLeaderUUID().equals(caster.getUUID())) {
-			return Component.literal("Only the bloodline Progenitor may consecrate a Founding Fane.");
+			return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.only_the_bloodline_progenitor_may_consecrate");
 		}
 		Bloodline registered = BloodlineSavedData.get(sLevel.getServer().overworld())
 				.getBloodline(bloodline.getBloodlineUUID());
 		if (registered == null || !registered.getLeaderUUID().equals(caster.getUUID())) {
-			return Component.literal("The Founding Fane requires a founded bloodline in this world.");
+			return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_founding_fane_requires_a_founded");
 		}
 		FoundingFaneSavedData data = FoundingFaneSavedData.get(sLevel);
 		UUID heartOwner = data.findOwnerForHeart(heartPos);
 		if (heartState.is(BlockInit.consecrated_bloodwell.get())
 				&& !caster.getUUID().equals(heartOwner)) {
-			return Component.literal("This Consecrated Bloodwell belongs to another Fane.");
+			return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.this_consecrated_bloodwell_belongs_to_another");
 		}
 		for (var entry : data.getAllFootprints().entrySet()) {
 			if (!entry.getKey().equals(caster.getUUID()) && entry.getValue().contains(heartPos)) {
-				return Component.literal("Another Fane already claims this ground.");
+				return Component.translatable("message.hemomancy.cardinal_rite_completion_effects.another_fane_already_claims_this_ground");
 			}
 		}
 		return null;
@@ -418,8 +416,7 @@ public final class CardinalRiteCompletionEffects {
 		}
 		BloodTendencyEvents.syncTendency(caster, tendency);
 		caster.displayClientMessage(
-				Component.literal("Your blood tendencies have been purged. You are a blank slate once more.")
-						.withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.your_blood_tendencies_have_been_purged").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC),
 				false);
 	}
 
@@ -435,10 +432,7 @@ public final class CardinalRiteCompletionEffects {
 		data.setBeacon(caster.getUUID(), center, dimension);
 
 		caster.displayClientMessage(
-				Component.literal(previous == null
-						? "A Crimson Beacon is anchored here. Should you fall, your body will return."
-						: "Your Crimson Beacon tears free of its former anchor and settles here.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				(previous == null ? Component.translatable("message.hemomancy.cardinal_rite_completion_effects.a_crimson_beacon_is_anchored_here") : Component.translatable("message.hemomancy.cardinal_rite_completion_effects.your_crimson_beacon_tears_free_of")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}
 
@@ -455,8 +449,7 @@ public final class CardinalRiteCompletionEffects {
 		}
 		VascularSystemEvents.syncVascular(caster, vascular);
 		caster.displayClientMessage(
-				Component.literal("Purified blood surges through your veins. All vascular damage has been mended.")
-						.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.purified_blood_surges_through_your_veins").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
 				false);
 	}
 
@@ -500,8 +493,8 @@ public final class CardinalRiteCompletionEffects {
 		}
 
 		caster.displayClientMessage(
-				Component.literal("The earth hungers... " + converted + " blocks have been corrupted.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_earth_hungers_blocks_have_been",
+						converted).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}
 
@@ -539,8 +532,7 @@ public final class CardinalRiteCompletionEffects {
 
 		if (bloodline == null || !bloodline.isValid()) {
 			caster.displayClientMessage(
-					Component.literal("You have no bloodline to summon.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.you_have_no_bloodline_to_summon").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
@@ -548,8 +540,7 @@ public final class CardinalRiteCompletionEffects {
 		// Only the bloodline leader may perform the summons
 		if (!bloodline.getLeaderUUID().equals(caster.getUUID())) {
 			caster.displayClientMessage(
-					Component.literal("Only the bloodline leader may perform the Scarlet Summons.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.only_the_bloodline_leader_may_perform_2").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
@@ -565,8 +556,7 @@ public final class CardinalRiteCompletionEffects {
 
 		if (onlineMembers.isEmpty()) {
 			caster.displayClientMessage(
-					Component.literal("No bloodline members are online to summon.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.no_bloodline_members_are_online_to_2").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
@@ -576,8 +566,7 @@ public final class CardinalRiteCompletionEffects {
 		float drawn = bloodlineData.drawBlood(bloodline.getBloodlineUUID(), totalCost);
 		if (drawn < totalCost * 0.5f) {
 			caster.displayClientMessage(
-					Component.literal("The bloodline pool lacks sufficient blood for the summons.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_bloodline_pool_lacks_sufficient_blood").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
@@ -593,8 +582,8 @@ public final class CardinalRiteCompletionEffects {
 				member.teleportTo(center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5);
 			}
 			member.displayClientMessage(
-					Component.literal("The blood calls! You have been summoned by " + caster.getName().getString() + ".")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+					HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_blood_calls_you_have_been",
+							caster.getName().getString()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 					false);
 			sLevel.playSound(null, member.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
 					SoundSource.PLAYERS, 1.0f, 0.7f);
@@ -602,8 +591,8 @@ public final class CardinalRiteCompletionEffects {
 		}
 
 		caster.displayClientMessage(
-				Component.literal("The Scarlet Summons draws " + teleported + " blood-kin to your side.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_scarlet_summons_draws_blood_kin",
+						teleported).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}
 
@@ -624,10 +613,9 @@ public final class CardinalRiteCompletionEffects {
 
 		int blockRadius = DOMINION_CHUNK_RADIUS * 16;
 		caster.displayClientMessage(
-				Component.literal((previous == null
-						? "A Blood Domain has been established! "
-						: "Your Blood Domain abandons its former bounds and reforms here. ")
-						+ blockRadius + " blocks in every direction now bow to your crimson will.")
+				Component.translatable(previous == null
+						? "message.hemomancy.cardinal_rite_completion_effects.blood_domain_established"
+						: "message.hemomancy.cardinal_rite_completion_effects.blood_domain_reformed", blockRadius)
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 		HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_SANGUINE_DOMAIN);
@@ -642,8 +630,7 @@ public final class CardinalRiteCompletionEffects {
 		CompoundTag persistentData = caster.getPersistentData();
 		if (persistentData.getBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG)) {
 			caster.displayClientMessage(
-					Component.literal("The covenant is already sealed. Its boon has already been granted.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_covenant_is_already_sealed_its").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
@@ -652,9 +639,8 @@ public final class CardinalRiteCompletionEffects {
 		MaxBloodLedger.apply(caster, HemoCapabilityAccess.getBloodVolume(caster));
 
 		caster.displayClientMessage(
-				Component.literal("The Eternal Covenant is sealed! Your maximum blood volume has been permanently increased by "
-						+ (int) MaxBloodLedger.ETERNAL_COVENANT_BONUS + ".")
-						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_eternal_covenant_is_sealed_your",
+						(int) MaxBloodLedger.ETERNAL_COVENANT_BONUS).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
 				false);
 		HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_ETERNAL_COVENANT_SEALED);
 	}
@@ -674,8 +660,7 @@ public final class CardinalRiteCompletionEffects {
 		PacketHandler.sendToPlayer(caster, new OpenDialoguePacket(tree));
 
 		caster.displayClientMessage(
-				Component.literal("The ancient blood stirs... a voice rises from the depths.")
-						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_ancient_blood_stirs_a_voice").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 				false);
 		HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_VOICES_IN_THE_VEIN);
 	}
@@ -696,8 +681,7 @@ public final class CardinalRiteCompletionEffects {
 			caster.getPersistentData().remove(pendingLineKey);
 			caster.getPersistentData().remove(pendingUntilKey);
 			caster.displayClientMessage(
-					Component.literal("You have no bloodline to unbind.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.you_have_no_bloodline_to_unbind").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
@@ -705,8 +689,7 @@ public final class CardinalRiteCompletionEffects {
 		// Only the leader can dissolve the bloodline
 		if (!bloodline.getLeaderUUID().equals(caster.getUUID())) {
 			caster.displayClientMessage(
-					Component.literal("Only the bloodline leader may perform the Hematic Unbinding.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.only_the_bloodline_leader_may_perform_3").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
@@ -721,10 +704,8 @@ public final class CardinalRiteCompletionEffects {
 			playerData.putLong(pendingUntilKey,
 					sLevel.getGameTime() + HematicUnbindingRules.CONFIRMATION_TICKS);
 			caster.displayClientMessage(
-					Component.literal("The covenant loosens but holds. Performing Hematic Unbinding again "
-									+ "within ten minutes will permanently dissolve " + bloodline.getName()
-									+ ", remove its fanes, and free every member.")
-							.withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
+					HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_covenant_loosens_but_holds_performing",
+							bloodline.getName()).withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
 					false);
 			return;
 		}
@@ -753,8 +734,8 @@ public final class CardinalRiteCompletionEffects {
 				}
 
 				member.displayClientMessage(
-						Component.literal("The bloodline " + bloodlineName + " has been dissolved. You are unbound.")
-								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_bloodline_has_been_dissolved_you",
+								bloodlineName).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 						false);
 			}
 		}
@@ -764,8 +745,8 @@ public final class CardinalRiteCompletionEffects {
 		bloodlineData.disbandBloodline(bloodline.getBloodlineUUID());
 
 		caster.displayClientMessage(
-				Component.literal("The " + bloodlineName + " is dissolved. What was bound by blood is unbound.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_is_dissolved_what_was_bound",
+						bloodlineName).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 	}
 
@@ -790,8 +771,7 @@ public final class CardinalRiteCompletionEffects {
 
 		if (nearbyPlayers.isEmpty()) {
 			caster.displayClientMessage(
-					Component.literal("No target stands within the circle. The shadow dissipates.")
-							.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.no_target_stands_within_the_circle").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
@@ -813,19 +793,16 @@ public final class CardinalRiteCompletionEffects {
 
 		if (hadProgress) {
 			victim.displayClientMessage(
-					Component.literal("A shadow of crimson corruption washes over you... Your purification has been destroyed!")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.a_shadow_of_crimson_corruption_washes").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 					false);
 			caster.displayClientMessage(
-					Component.literal("The Pallid Shadow consumes " + victim.getName().getString()
-							+ "'s purity. Their purification is undone.")
-							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+					HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_pallid_shadow_consumes_s_purity",
+							victim.getName().getString()).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 					false);
 		} else {
 			caster.displayClientMessage(
-					Component.literal(victim.getName().getString()
-							+ " had no purification to destroy. The shadow finds nothing.")
-							.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+					HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.had_no_purification_to_destroy_the",
+							victim.getName().getString()).withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 					false);
 		}
 
@@ -860,9 +837,8 @@ public final class CardinalRiteCompletionEffects {
 
 		int blockRadius = QLIPHOTH_BLOOM_CHUNK_RADIUS * 16;
 		caster.displayClientMessage(
-				Component.literal("The Qliphoth blooms! A dark tree takes root, empowering blood within "
-						+ blockRadius + " blocks.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_qliphoth_blooms_a_dark_tree",
+						blockRadius).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 
 		// Fire the post-bloom Fungal Whisper so the Entity acknowledges the fruiting
@@ -877,8 +853,7 @@ public final class CardinalRiteCompletionEffects {
 		com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.onFortification(caster);
 		InitiatoryDegreeEvents.syncDegree(caster, degree);
 		caster.displayClientMessage(
-				Component.literal("Your vascular lattice hardens. Future strain is reduced by fifteen percent.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.your_vascular_lattice_hardens_future_strain").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}
 
@@ -901,8 +876,7 @@ public final class CardinalRiteCompletionEffects {
 			}
 		}
 		caster.displayClientMessage(
-				Component.literal("The vigil closes around every survivor. The covenant guards and restores you.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_vigil_closes_around_every_survivor").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}
 
@@ -919,8 +893,7 @@ public final class CardinalRiteCompletionEffects {
 				false, true, true));
 		if (participant instanceof ServerPlayer player) {
 			player.displayClientMessage(
-					Component.literal("Your shared vigil lingers: resistance and regeneration for ten minutes.")
-							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.your_shared_vigil_lingers_resistance_and").withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 					false);
 		}
 	}
@@ -946,9 +919,9 @@ public final class CardinalRiteCompletionEffects {
 		int blockRadius = SANGUINE_FERVOR_CHUNK_RADIUS * 16;
 		long durationMinutes = SANGUINE_FERVOR_DURATION_TICKS / 1200;
 		caster.displayClientMessage(
-				Component.literal("The blood heats the earth! Mobs will swarm within "
-						+ blockRadius + " blocks for " + durationMinutes + " minutes.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_blood_heats_the_earth_mobs",
+						blockRadius,
+						durationMinutes).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 	}
 
@@ -983,8 +956,8 @@ public final class CardinalRiteCompletionEffects {
 		ledgerStack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 
 		caster.displayClientMessage(
-				Component.literal("You have founded: " + playerLine.getName())
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.you_have_founded",
+						playerLine.getName()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 	}
 
@@ -1010,9 +983,8 @@ public final class CardinalRiteCompletionEffects {
 		ledgerStack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 
 		caster.displayClientMessage(
-				Component.literal("The covenant remembers. Your ledger for " + existingLine.getName()
-						+ " has been restored.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.the_covenant_remembers_your_ledger_for",
+						existingLine.getName()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 		return true;
 	}
@@ -1028,8 +1000,7 @@ public final class CardinalRiteCompletionEffects {
 		BloodMoonSavedData bloodMoonData = BloodMoonSavedData.get(overworld);
 		if (bloodMoonData.isActive()) {
 			caster.displayClientMessage(
-					Component.literal("A Blood Moon already reigns over this world...")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.a_blood_moon_already_reigns_over_2").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
@@ -1041,8 +1012,7 @@ public final class CardinalRiteCompletionEffects {
 		}
 		PacketHandler.sendToAll(new PacketSyncBloodMoon(true));
 		caster.displayClientMessage(
-				Component.literal("The ritual tears the veil the Blood Moon rises!")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_ritual_tears_the_veil_the").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}
 
@@ -1059,8 +1029,7 @@ public final class CardinalRiteCompletionEffects {
 		if (!sLevel.getBlockState(heartPos).is(BlockInit.consecrated_bloodwell.get())
 				&& !sLevel.setBlock(heartPos, BlockInit.consecrated_bloodwell.get().defaultBlockState(), 3)) {
 			caster.displayClientMessage(
-					Component.literal("The rite falters before the Consecrated Bloodwell can take form.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_rite_falters_before_the_consecrated").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 			return false;
 		}
@@ -1087,18 +1056,15 @@ public final class CardinalRiteCompletionEffects {
 				caster, BlockInit.consecrated_bloodwell.get());
 		if (isReconsecrating) {
 			caster.displayClientMessage(
-					Component.literal("Your Founding Fane has been moved to this location.")
-							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.your_founding_fane_has_been_moved").withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 					false);
 		} else {
 			for (ServerPlayer p : sLevel.getPlayers(ServerPlayer::isAlive)) {
-				p.sendSystemMessage(Component.literal(caster.getDisplayName().getString()
-						+ " has consecrated a Founding Fane.")
-						.withStyle(ChatFormatting.DARK_RED));
+				p.sendSystemMessage(HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.has_consecrated_a_founding_fane",
+						caster.getDisplayName().getString()).withStyle(ChatFormatting.DARK_RED));
 			}
 			caster.displayClientMessage(
-					Component.literal("This ground is now consecrated. All Harbingers within will feel its power.")
-							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.cardinal_rite_completion_effects.this_ground_is_now_consecrated_all").withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 					false);
 			HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_FOUNDING_FANE_ESTABLISHED);
 			HarbingerAdvancementGranter.grantIfNotDone(caster,

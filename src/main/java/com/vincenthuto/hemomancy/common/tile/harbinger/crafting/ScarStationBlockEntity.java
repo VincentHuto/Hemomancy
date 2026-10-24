@@ -239,11 +239,11 @@ public class ScarStationBlockEntity extends HemoContainerBlockEntity implements 
 
 	/** Null means the current server inventory and trace are ready to carve. */
 	public Component craftingFailure() {
-		if (!contents.get(2).isEmpty()) return Component.literal("Take the finished scar from the output first.");
-		if (!(contents.get(3).getItem() instanceof ItemKnapper)) return Component.literal("Place a knapper in the tool slot.");
+		if (!contents.get(2).isEmpty()) return Component.translatable("message.hemomancy.scar_station_block_entity.take_the_finished_scar_from_the");
+		if (!(contents.get(3).getItem() instanceof ItemKnapper)) return Component.translatable("message.hemomancy.scar_station_block_entity.place_a_knapper_in_the_tool");
 		ScarRecipe recipe = getCurrentRecipe();
-		if (recipe == null) return Component.literal("Place a scar blank and the pattern's catalyst in the ingredient slots.");
-		if (!Arrays.deepEquals(recipe.getPattern(), scarsList)) return Component.literal("Trace the purple stencil cells in red before carving. Remove any extra marks.");
+		if (recipe == null) return Component.translatable("message.hemomancy.scar_station_block_entity.place_a_scar_blank_and_the");
+		if (!Arrays.deepEquals(recipe.getPattern(), scarsList)) return Component.translatable("message.hemomancy.scar_station_block_entity.trace_the_purple_stencil_cells_in");
 		return null;
 	}
 

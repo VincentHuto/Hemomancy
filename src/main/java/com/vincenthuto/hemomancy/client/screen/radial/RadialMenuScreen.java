@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.radial;
 
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.google.common.collect.Lists;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.registry.KeyMappings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -42,7 +42,7 @@ public class RadialMenuScreen extends Screen {
 	private final GenericRadialMenu menu;
 
 	public RadialMenuScreen(ItemStack getter) {
-		super(Component.literal("RADIAL MENU"));
+		super(Component.translatable("screen.hemomancy.radial_menu.radial_menu"));
 
 		this.stackEquipped = getter;
 		inventory = stackEquipped.getCount() > 0
@@ -96,7 +96,7 @@ public class RadialMenuScreen extends Screen {
 			for (int i = 0; i < inventory.getSlots(); i++) {
 				ItemStack inSlot = inventory.getStackInSlot(i);
 				ItemStackRadialMenuItem item = new ItemStackRadialMenuItem(menu, i, inSlot,
-						Component.literal("text.toolbelt.empty")) {
+						Component.translatable("screen.hemomancy.radial_menu.text_toolbelt_empty")) {
 				};
 				cachedMenuItems.add(item);
 			}
@@ -113,7 +113,7 @@ public class RadialMenuScreen extends Screen {
 
 		if (cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
 			List<Component> textComponents = new ArrayList<>();
-			textComponents.add(Component.literal("text.toolbelt.empty"));
+			textComponents.add(Component.translatable("screen.hemomancy.radial_menu.text_toolbelt_empty"));
 		} else {
 			menu.setCentralText(null);
 		}

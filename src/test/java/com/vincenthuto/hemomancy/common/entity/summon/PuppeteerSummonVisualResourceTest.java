@@ -60,7 +60,7 @@ public final class PuppeteerSummonVisualResourceTest {
 
 		assertContains(className + " model exposes layer", model, "public static final ModelLayerLocation LAYER_LOCATION");
 		assertContains(className + " model uses entity id", model,
-				"ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, \"" + id + "\")");
+				"Hemomancy.rloc(\"" + id + "\")");
 		assertContains(className + " renderer uses MobRenderer", renderer, "extends MobRenderer<");
 		assertContains(className + " renderer uses custom texture path", renderer,
 				"textures/entity/puppeteer_summon/" + id + ".png");

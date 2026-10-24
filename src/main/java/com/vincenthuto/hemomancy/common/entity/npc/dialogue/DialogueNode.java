@@ -15,9 +15,18 @@ import java.util.List;
  */
 public record DialogueNode(String id, List<String> lines, List<DialogueOption> options) {
 	public static final String LITERAL_PREFIX = "@literal:";
+	public static final String TRANSLATE_PREFIX = "@translate:";
+	public static final String ARGUMENT_SEPARATOR = "\u001F";
 
 	public static String literal(String value) {
 		return LITERAL_PREFIX + value;
+	}
+
+	/** A line that the client translates with plain-text arguments: {@code key} and {@code args} joined for the wire. */
+	public static String translate(String key, String... args) {
+		StringBuilder line = new StringBuilder(TRANSLATE_PREFIX).append(key);
+		for (String arg : args) line.append(ARGUMENT_SEPARATOR).append(arg);
+		return line.toString();
 	}
 
 	public void toNetwork(FriendlyByteBuf buf) {

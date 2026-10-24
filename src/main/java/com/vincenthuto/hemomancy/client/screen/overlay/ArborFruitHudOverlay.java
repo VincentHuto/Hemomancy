@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
 import com.vincenthuto.hemomancy.client.event.ArborOfWillClientInteraction;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -18,8 +17,7 @@ public final class ArborFruitHudOverlay {
         ArborOfWillClientInteraction.Target target = ArborOfWillClientInteraction.findTarget(minecraft).orElse(null);
         if (target == null) return;
 
-        String rawName = target.skill().getName().replace("skill_", "").replace('_', ' ');
-        Component name = Component.literal(HLTextUtils.toProperCase(rawName));
+        Component name = Component.translatable("skill.hemomancy." + target.skill().getName());
         int width = minecraft.font.width(name);
         int x = (screenWidth - width) / 2;
         int y = screenHeight / 2 + 15;

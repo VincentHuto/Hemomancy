@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.item;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.menu.TendencyViewMenu;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -105,8 +105,8 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         ScreenDrawUtils.drawCornerAccents(graphics, centerX, centerY, this.guiWidth, this.guiHeight, 2, GAUGE_CORNER);
 
         // Title
-        graphics.drawCenteredString(font, "Blood Tendency", this.width / 2, centerY + 6, 0xFFCC3344);
-        graphics.drawCenteredString(font, "Alignment by kinship", this.width / 2, centerY + 18, 0xFF553333);
+        graphics.drawCenteredString(font, Component.translatable("screen.hemomancy.tendency_view.blood_tendency"), this.width / 2, centerY + 6, 0xFFCC3344);
+        graphics.drawCenteredString(font, Component.translatable("screen.hemomancy.tendency_view.alignment_by_kinship"), this.width / 2, centerY + 18, 0xFF553333);
 
         // Pass the true center of the GUI panel to drawCenter
         int starCenterX = this.width / 2;
@@ -114,7 +114,7 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         drawCenter(graphics, starCenterX, starCenterY);
 
         // Footer
-        graphics.drawCenteredString(font, "§4§l— §c§oSanguine Kinship §4§l—",
+        graphics.drawCenteredString(font, Component.translatable("screen.hemomancy.tendency_view.sanguine_kinship_footer"),
                 this.width / 2, centerY + this.guiHeight - 14, 0xFF882222);
     }
 
@@ -275,7 +275,7 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
             // Tendency name (centered above the value) — dimmer version of tendency color
             int dimColor = ((tendColor >> 1) & 0x7F7F7F) | 0xFF000000;
             graphics.drawCenteredString(font,
-                    HLTextUtils.toProperCase(tend.toString()), iconCenterX, iconCenterY - halfItem - 20,
+                    BloodManipulation.tendencyName(tend), iconCenterX, iconCenterY - halfItem - 20,
                     dimColor);
 
             rotAngle += 45;

@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -49,8 +50,8 @@ public class UnsignedLedgerItem extends Item {
 					Bloodline line = Bloodline.deserialize(tag.getCompound(TAG_BLOODLINE));
 					tooltip.add(Component.translatable("tooltip.hemomancy.unsigned_ledger.signed_with_s", line.getName())
 							.withStyle(ChatFormatting.RED));
-					tooltip.add(Component.literal("Members: " + line.getPlayerUUIDS().size())
-							.withStyle(ChatFormatting.DARK_RED));
+					tooltip.add(HemoText.translatable("tooltip.hemomancy.unsigned_ledger.members",
+							line.getPlayerUUIDS().size()).withStyle(ChatFormatting.DARK_RED));
 				}
 			}
 		}
@@ -74,8 +75,7 @@ public class UnsignedLedgerItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (!worldIn.isClientSide && UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(playerIn))) {
-			playerIn.displayClientMessage(Component.literal("Purification bars new bloodline bonds.")
-					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
+			playerIn.displayClientMessage(Component.translatable("message.hemomancy.unsigned_ledger_item.purification_bars_new_bloodline_bonds").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
 			return InteractionResultHolder.fail(stack);
 		}
 		if (stack.getItem() instanceof UnsignedLedgerItem) {
@@ -85,9 +85,7 @@ public class UnsignedLedgerItem extends Item {
 
 			if (!compound.getBoolean(TAG_STATE)) {
 				if (!worldIn.isClientSide) {
-					playerIn.displayClientMessage(Component.literal(
-							"Only the Bloodline Founding rite can write the first name into this ledger.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+					playerIn.displayClientMessage(Component.translatable("message.hemomancy.unsigned_ledger_item.only_the_bloodline_founding_rite_can").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 				}
 			} else {
 				// Signed ledger: open the ledger GUI for lodge actions,
@@ -106,8 +104,7 @@ public class UnsignedLedgerItem extends Item {
 					Bloodline savedLine = Bloodline.deserialize(compound.getCompound(TAG_BLOODLINE));
 					if (!savedLine.isValid()) {
 						playerIn.displayClientMessage(
-								Component.literal("This ledger's bloodline is corrupted")
-										.withStyle(ChatFormatting.RED),
+								Component.translatable("message.hemomancy.unsigned_ledger_item.this_ledger_s_bloodline_is_corrupted").withStyle(ChatFormatting.RED),
 								true);
 						return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
 					}
@@ -130,8 +127,8 @@ public class UnsignedLedgerItem extends Item {
 							playerIn.playSound(SoundEvents.BOOK_PUT, 0.40f, 1F);
 							BloodVolumeEvents.syncVolume((ServerPlayer) playerIn, volume);
 							playerIn.displayClientMessage(
-									Component.literal("You have joined: " + globalLine.getName())
-											.withStyle(ChatFormatting.DARK_RED),
+									HemoText.translatable("message.hemomancy.unsigned_ledger_item.you_have_joined",
+											globalLine.getName()).withStyle(ChatFormatting.DARK_RED),
 									true);
 
 							// Award bloodline milestone
@@ -141,16 +138,14 @@ public class UnsignedLedgerItem extends Item {
 							for (Player member : globalLine.getPlayers(worldIn)) {
 								if (!member.getUUID().equals(playerIn.getUUID())) {
 									member.displayClientMessage(
-											Component.literal(playerIn.getName().getString()
-													+ " has joined your bloodline!")
-													.withStyle(ChatFormatting.DARK_RED),
+											HemoText.translatable("message.hemomancy.unsigned_ledger_item.has_joined_your_bloodline",
+													playerIn.getName().getString()).withStyle(ChatFormatting.DARK_RED),
 											false);
 								}
 							}
 						} else {
 							playerIn.displayClientMessage(
-									Component.literal("Bloodline not found in world data")
-											.withStyle(ChatFormatting.RED),
+									Component.translatable("message.hemomancy.unsigned_ledger_item.bloodline_not_found_in_world_data").withStyle(ChatFormatting.RED),
 									true);
 						}
 					}

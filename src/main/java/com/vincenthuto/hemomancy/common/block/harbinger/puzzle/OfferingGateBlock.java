@@ -80,8 +80,7 @@ public class OfferingGateBlock extends Block {
 
         // No altar found — gate is just locked
         player.displayClientMessage(
-                Component.literal("The gate won't budge.")
-                        .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+                Component.translatable("message.hemomancy.offering_gate_block.the_gate_won_t_budge").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
                 true);
         return InteractionResult.CONSUME;
     }

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.armor;
 
-public final class BodyIdiomArmorRules {
+public final class ArmorSetBonusRules {
 	public static final int SEARING_CONTACT_FIRE_TICKS = 80;
 
-	private BodyIdiomArmorRules() {
+	private ArmorSetBonusRules() {
 	}
 
 	public static boolean nextSearingContactState(boolean enabled) {

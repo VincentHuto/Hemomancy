@@ -100,11 +100,11 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 		if (!(stack.getItem() instanceof com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar scar)) return;
 		List<Component> tooltip = new ArrayList<>();
 		tooltip.add(stack.getHoverName());
-		tooltip.add(Component.literal(menu.getActiveScarIds().contains(id) ? "Learned and active" : "Learned; not currently active"));
-		tooltip.add(Component.literal(selected.contains(id) ? "Selected for the next motif" : "Not selected for the next motif"));
+		tooltip.add((menu.getActiveScarIds().contains(id) ? Component.translatable("screen.hemomancy.masons_effigy.learned_and_active") : Component.translatable("screen.hemomancy.masons_effigy.learned_not_currently_active")));
+		tooltip.add((selected.contains(id) ? Component.translatable("screen.hemomancy.masons_effigy.selected_for_the_next_motif") : Component.translatable("screen.hemomancy.masons_effigy.not_selected_for_the_next_motif")));
 		scar.getScarDefinition().appendHoverText(tooltip);
-		tooltip.add(Component.literal("Place motif paper, then project 500 ml per selected scar."));
-		tooltip.add(Component.literal("Fit the prepared motif at a brazier: 50 ml."));
+		tooltip.add(Component.translatable("screen.hemomancy.masons_effigy.place_motif_paper_then_project_500"));
+		tooltip.add(Component.translatable("screen.hemomancy.masons_effigy.fit_the_prepared_motif_at_a"));
 		gfx.renderComponentTooltip(font, tooltip, mouseX, mouseY);
 	}
 
@@ -270,8 +270,7 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 		}
 		syncSelection(true);
 		if (minecraft != null && minecraft.player != null) {
-			minecraft.player.displayClientMessage(Component.literal("Press motif paper to the Effigy to make a pattern.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			minecraft.player.displayClientMessage(Component.translatable("screen.hemomancy.masons_effigy.press_motif_paper_to_the_effigy").withStyle(ChatFormatting.DARK_RED), true);
 		}
 	}
 

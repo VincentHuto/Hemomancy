@@ -504,7 +504,7 @@ public class MycelialCrucibleBlockEntity extends HemoContainerBlockEntity implem
 
     @Override
     protected Component getDefaultName() {
-        return Component.literal("Mycelial Crucible");
+        return Component.translatable("message.hemomancy.mycelial_crucible_block_entity.mycelial_crucible");
     }
 
     // ── Serialization ─────────────────────────────────────────────────────────

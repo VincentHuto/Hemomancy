@@ -60,7 +60,8 @@ public final class MuscleMemoryActivationService {
                 Math.min(payment.bloodCost() * .5D, borrowedAvailable)) : 0D;
         double bloodCost = payment.bloodCost() - borrowed;
         boolean paid = bloodCost <= .000001D || BloodAccounting.payUpkeep(player, bloodCost,
-                new BloodAccounting.Source("muscle_memory_" + memory.id(), displayName(memory), Category.MUSCLE_MEMORY,
+                new BloodAccounting.Source("muscle_memory_" + memory.id(), "muscle_memory.hemomancy." + memory.id(),
+                        Category.MUSCLE_MEMORY,
                         false, true), 1, true).satisfied();
         if (!paid) {
             if (borrowed > 0D) BorrowedBloodReserve.deposit(player, borrowed);
@@ -120,15 +121,6 @@ public final class MuscleMemoryActivationService {
         };
     }
 
-    private static String displayName(MuscleMemory memory) {
-        String[] words = memory.id().split("_");
-        StringBuilder value = new StringBuilder();
-        for (String word : words) {
-            if (!value.isEmpty()) value.append(' ');
-            value.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
-        }
-        return value.toString();
-    }
 
     public record TriggerResult(boolean accepted, boolean overexerted, boolean fellBack) {
         public static final TriggerResult REJECTED = new TriggerResult(false, false, false);

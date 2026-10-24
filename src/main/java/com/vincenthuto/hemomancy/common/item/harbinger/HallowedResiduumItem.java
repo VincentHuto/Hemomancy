@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumDoctrineTag;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -32,13 +33,13 @@ public class HallowedResiduumItem extends Item {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.translatable("tooltip.hemomancy.hallowed_residuum.saint_s", saintType.getDisplayName())
 				.withStyle(ChatFormatting.GOLD));
-		tooltip.add(Component.literal("Primary: " + saintType.getPrimaryTendency().name())
-				.withStyle(ChatFormatting.DARK_RED));
-		tooltip.add(Component.literal("Secondary: " + saintType.getSecondaryTendency().name())
-				.withStyle(ChatFormatting.DARK_PURPLE));
-		tooltip.add(Component.literal("Doctrine: " + saintType.getPrimaryDoctrine().getDisplayName()
-				+ " / " + saintType.getSecondaryDoctrine().getDisplayName())
-				.withStyle(ChatFormatting.LIGHT_PURPLE));
+		tooltip.add(HemoText.translatable("tooltip.hemomancy.hallowed_residuum.primary",
+				saintType.getPrimaryTendency().name()).withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(HemoText.translatable("tooltip.hemomancy.hallowed_residuum.secondary",
+				saintType.getSecondaryTendency().name()).withStyle(ChatFormatting.DARK_PURPLE));
+		tooltip.add(HemoText.translatable("tooltip.hemomancy.hallowed_residuum.doctrine",
+				saintType.getPrimaryDoctrine().getDisplayName(),
+				saintType.getSecondaryDoctrine().getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE));
 		tooltip.add(Component.translatable("tooltip.hemomancy.hallowed_residuum.potency_s", amount)
 				.withStyle(ChatFormatting.AQUA));
 	}

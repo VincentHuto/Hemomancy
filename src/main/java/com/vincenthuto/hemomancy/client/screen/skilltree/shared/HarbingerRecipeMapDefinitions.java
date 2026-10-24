@@ -1,10 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.FamilyFilterLabels;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.LegacyBloodStructureIds;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
@@ -222,6 +224,10 @@ public final class HarbingerRecipeMapDefinitions {
 	public static RecipeMapPurposeGroup group(String family) {
 		return FAMILY_GROUPS.getOrDefault(family, RecipeMapPurposeGroup.REFERENCE);
 	}
+	/** A family's name as the map shows it; the family string itself stays the map's stable id. */
+	public static Component familyName(String family) {
+		return Component.translatableWithFallback(FamilyFilterLabels.familyKey(family), family);
+	}
 	/** The floors family of a purpose: where its standard and special floors are listed. */
 	public static String floorFamily(CardinalRitePurpose purpose) {
 		return purpose == null ? RecipeMapLayout.MISC_FAMILY : FLOOR_FAMILIES.get(purpose);
@@ -292,11 +298,11 @@ public final class HarbingerRecipeMapDefinitions {
 	private static RecipeMapKey riteKey(String path) {
 		String fullPath = path.startsWith("cardinal_rite/") ? path : "cardinal_rite/" + path;
 		return new RecipeMapKey(RecipeMapEntry.Kind.RITE,
-				ResourceLocation.fromNamespaceAndPath("hemomancy", fullPath));
+				Hemomancy.rloc(fullPath));
 	}
 
 	private static RecipeMapKey craftingKey(String path) {
 		return new RecipeMapKey(RecipeMapEntry.Kind.CRAFTING,
-				ResourceLocation.fromNamespaceAndPath("hemomancy", LegacyBloodStructureIds.remapPath(path)));
+				Hemomancy.rloc(LegacyBloodStructureIds.remapPath(path)));
 	}
 }

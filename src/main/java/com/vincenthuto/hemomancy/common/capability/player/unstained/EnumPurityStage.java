@@ -1,21 +1,22 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeShape;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 public enum EnumPurityStage {
-    CORRUPTED(0, "Corrupted", 0f, 0f, null),
-    TAINTED(1, "Tainted", 25f, 0.10f, null),
-    CLEANSING(2, "Cleansing", 50f, 0.25f, null),
-    ABSOLVED(3, "Absolved", 75f, 0.50f, null),
-    PURIFIED(4, "Purified", 100f, 1.0f, null);
+    CORRUPTED(0, 0f, 0f, null),
+    TAINTED(1, 25f, 0.10f, null),
+    CLEANSING(2, 50f, 0.25f, null),
+    ABSOLVED(3, 75f, 0.50f, null),
+    PURIFIED(4, 100f, 1.0f, null);
 
     private final int level;
-    private final String title;
     private final float minPurity;
     /** Multiplier reduction to blood manipulation effectiveness at this stage. */
     private final float bloodMagicPenalty;
@@ -25,10 +26,9 @@ public enum EnumPurityStage {
     private ResourceLocation iconTexture;
     private EnumNodeShape nodeShape = EnumNodeShape.DIAMOND;
 
-    EnumPurityStage(int level, String title, float minPurity, float bloodMagicPenalty,
+    EnumPurityStage(int level, float minPurity, float bloodMagicPenalty,
                     @Nullable Supplier<ItemStack> iconItem) {
         this.level = level;
-        this.title = title;
         this.minPurity = minPurity;
         this.bloodMagicPenalty = bloodMagicPenalty;
         this.iconItem = iconItem;
@@ -38,8 +38,12 @@ public enum EnumPurityStage {
         return level;
     }
 
-    public String getTitle() {
-        return title;
+    public String getTranslationKey() {
+        return "hemomancy.purity." + name().toLowerCase(Locale.ROOT);
+    }
+
+    public Component getDisplayName() {
+        return Component.translatable(getTranslationKey());
     }
 
     public float getMinPurity() {

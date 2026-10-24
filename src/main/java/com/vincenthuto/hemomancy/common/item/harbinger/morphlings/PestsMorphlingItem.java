@@ -69,7 +69,7 @@ public class PestsMorphlingItem extends MorphlingItem {
 		CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		int stored = tag.getInt("VerminCrownSwarm");
 		if (stored <= 0) {
-			playerIn.displayClientMessage(Component.literal("The Vermin Crown is quiet."), true);
+			playerIn.displayClientMessage(Component.translatable("message.hemomancy.pests_morphling_item.the_vermin_crown_is_quiet"), true);
 			return false;
 		}
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "VerminCrown",
@@ -196,10 +196,10 @@ public class PestsMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Swarm Retaliation (Pests hunt your attacker)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Infest (Kills spawn pests targeting nearby foes)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Plague Burst (AoE Searing at low health)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Vermin Crown (Kills store swarms; staff releases hunters)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.pests_morphling_item.swarm_retaliation_pests_hunt_your_attacker"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.pests_morphling_item.infest_kills_spawn_pests_targeting_nearby"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.pests_morphling_item.plague_burst_aoe_searing_at_low"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.pests_morphling_item.vermin_crown_kills_store_swarms_staff"), 5, currentMaturity));
 		return list;
 	}
 

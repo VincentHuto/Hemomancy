@@ -18,6 +18,6 @@ public class FungalImplantMenuProvider implements MenuProvider {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.literal("Fungal Implantation");
+		return Component.translatable("message.hemomancy.fungal_implant_menu_provider.fungal_implantation");
 	}
 }

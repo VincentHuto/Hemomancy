@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -121,12 +123,13 @@ public class ItemImmatureFungalScar extends Item {
         int threshold = getMatureThreshold(stack);
         EnumBloodTendency tendency = getTendency(stack);
         if (tendency != null) {
-            tooltip.add(Component.translatable("tooltip.hemomancy.item_immature_fungal_scar.tendency_s", tendency.name())
+            tooltip.add(Component.translatable("tooltip.hemomancy.item_immature_fungal_scar.tendency_s", BloodManipulation.tendencyName(tendency))
                     .withStyle(ChatFormatting.DARK_PURPLE));
         }
         if (threshold > 0) {
-            tooltip.add(Component.literal("Maturation: " + progress + " / " + threshold)
-                    .withStyle(progress >= threshold ? ChatFormatting.GREEN : ChatFormatting.GOLD));
+            tooltip.add(HemoText.translatable("tooltip.hemomancy.item_immature_fungal_scar.maturation",
+            		progress,
+            		threshold).withStyle(progress >= threshold ? ChatFormatting.GREEN : ChatFormatting.GOLD));
             if (progress < threshold) {
                 tooltip.add(Component.translatable("tooltip.hemomancy.item_immature_fungal_scar.feed_aligned_enzymes_in_the_mycelial")
                         .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));

@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -55,13 +56,15 @@ final class OrgansSubcommand {
 		source.sendSuccess(() -> {
 			MutableComponent msg = Component.literal(player.getName().getString())
 					.withStyle(ChatFormatting.GOLD)
-					.append(Component.literal(" Organs:").withStyle(ChatFormatting.GRAY));
+					.append(Component.translatable("commands.hemomancy.organs.organs").withStyle(ChatFormatting.GRAY));
 			for (EnumOrgan organ : EnumOrgan.values()) {
 				int level = organs.getOrganLevel(organ);
 				ChatFormatting color = level == 0 ? ChatFormatting.GRAY
 						: level >= 3 ? ChatFormatting.GOLD : ChatFormatting.RED;
-				msg = msg.append(Component.literal("\n  " + organ.getName() + " (T"
-						+ organ.getTier() + "): Lv." + level + "/3").withStyle(color));
+				msg = msg.append(HemoText.translatable("commands.hemomancy.organs.t_lv_3",
+						organ.getDisplayName(),
+						organ.getTier(),
+						level).withStyle(color));
 			}
 			return msg;
 		}, false);
@@ -74,16 +77,16 @@ final class OrgansSubcommand {
 			try {
 				organ = EnumOrgan.valueOf(organName.toUpperCase());
 			} catch (IllegalArgumentException e) {
-				source.sendFailure(Component.literal("Unknown organ: " + organName + ". Valid: spleen, liver, lungs, kidneys, heart"));
+				source.sendFailure(HemoText.translatable("commands.hemomancy.organs.unknown_organ_valid_spleen_liver_lungs", organName));
 				return 0;
 			}
 		}
 		IVisceralOrgans organs = HemoCapabilityAccess.getVisceralOrgans(player);
 		organs.setOrganLevel(organ, level);
-		final String name = organ.getName();
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" " + name + " to level " + level).withStyle(ChatFormatting.DARK_RED)),
+		final Component name = organ.getDisplayName();
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.organs.set",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				HemoText.translatable("commands.hemomancy.organs.to_level", name, level).withStyle(ChatFormatting.DARK_RED)),
 				true);
 		return 1;
 	}
@@ -91,9 +94,9 @@ final class OrgansSubcommand {
 	private static int resetOrgans(CommandSourceStack source, ServerPlayer player) {
 		IVisceralOrgans organs = HemoCapabilityAccess.getVisceralOrgans(player);
 		organs.resetAll();
-		source.sendSuccess(() -> Component.literal("Reset ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" all organs to level 0").withStyle(ChatFormatting.GREEN)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.organs.reset",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.translatable("commands.hemomancy.organs.all_organs_to_level_0").withStyle(ChatFormatting.GREEN)),
 				true);
 		return 1;
 	}

@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
@@ -53,7 +54,7 @@ public final class ActiveRiteData {
 		private final String fogProfile;
 		private final boolean fogLightning;
 		private final boolean boundaryDome;
-		private final List<String> checklist;
+		private final List<Component> checklist;
 		private final List<CardinalRiteBoundaryProgress.Segment> boundarySegments;
 		private final List<SigilSegment> sigilSegments;
 		private final List<SanguineBlob> sanguineBlobs;
@@ -101,7 +102,7 @@ public final class ActiveRiteData {
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
 				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
 				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
-				String cue, float footprintRadius, List<String> checklist,
+				String cue, float footprintRadius, List<Component> checklist,
 				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
 				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs) {
 			this(center, riteSize, progress, recipeId, unstained, phase, instability, currentWave, totalWaves,
@@ -113,7 +114,7 @@ public final class ActiveRiteData {
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
 				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
 				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
-				String cue, float footprintRadius, List<String> checklist,
+				String cue, float footprintRadius, List<Component> checklist,
 				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
 				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
 				UUID owner) {
@@ -126,7 +127,7 @@ public final class ActiveRiteData {
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
 				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
 				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
-				String cue, float footprintRadius, List<String> checklist,
+				String cue, float footprintRadius, List<Component> checklist,
 				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
 				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
 				UUID owner, int cancellationTicks) {
@@ -139,7 +140,7 @@ public final class ActiveRiteData {
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
 				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
 				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
-				String cue, float footprintRadius, List<String> checklist,
+				String cue, float footprintRadius, List<Component> checklist,
 				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
 				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
 				UUID owner, int cancellationTicks, int staffPlantingTicks) {
@@ -153,7 +154,7 @@ public final class ActiveRiteData {
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
 				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
 				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
-				String cue, float footprintRadius, List<String> checklist,
+				String cue, float footprintRadius, List<Component> checklist,
 				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
 				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
 				UUID owner, int cancellationTicks, int staffPlantingTicks,
@@ -168,7 +169,7 @@ public final class ActiveRiteData {
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained,
 				String phase, int instability, int currentWave, int totalWaves, int completedRings, int totalRings,
 				int committedBloodMl, int upfrontBloodMl, int carriedIchorMl, int allyCount, int sharedBloodMl,
-				String cue, float footprintRadius, List<String> checklist,
+				String cue, float footprintRadius, List<Component> checklist,
 				List<CardinalRiteBoundaryProgress.Segment> boundarySegments,
 				List<SigilSegment> sigilSegments, List<SanguineBlob> sanguineBlobs, boolean plantedStaff,
 				UUID owner, int cancellationTicks, int staffPlantingTicks,
@@ -269,7 +270,7 @@ public final class ActiveRiteData {
 		public boolean hasFog() { return !"none".equals(fogProfile); }
 		public boolean hasFogLightning() { return fogLightning; }
 		public boolean hasBoundaryDome() { return boundaryDome; }
-		public List<String> getChecklist() { return checklist; }
+		public List<Component> getChecklist() { return checklist; }
 		public List<CardinalRiteBoundaryProgress.Segment> getBoundarySegments() { return boundarySegments; }
 		public List<SigilSegment> getSigilSegments() { return sigilSegments; }
 		public List<SanguineBlob> getSanguineBlobs() { return sanguineBlobs; }

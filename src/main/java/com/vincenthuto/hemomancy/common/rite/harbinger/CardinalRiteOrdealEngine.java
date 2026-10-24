@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierMount;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -26,6 +27,7 @@ import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -145,9 +147,7 @@ public final class CardinalRiteOrdealEngine {
 		if (rite.isReturningFromOfferings()
 				&& CardinalRiteFinaleTiming.processionFinished(rite.getPhaseTicks(), total)
 				&& rite.finishOfferingProcession()) {
-			caster.displayClientMessage(Component.literal(
-					"The daemon swells with the offerings.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_daemon_swells_with_the_offerings").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 		}
 	}
 
@@ -197,9 +197,7 @@ public final class CardinalRiteOrdealEngine {
 		if (rite.isReturningFromOfferings()
 				&& WorkingCraftDaemonPath.processionFinished(ticks, total)
 				&& rite.finishOfferingProcession()) {
-			caster.displayClientMessage(Component.literal(
-					"The daemon has drunk the offerings. It turns toward the structure.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_daemon_has_drunk_the_offerings").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 		}
 	}
 
@@ -224,8 +222,7 @@ public final class CardinalRiteOrdealEngine {
 		BlockPos heartPos = BlockPos.containing(heart);
 		if (ticks == WorkingCraftDaemonPath.DIVE_TICKS) {
 			CardinalRiteBeats.sound(level, heartPos, SoundInit.RITE_SUBJECT_RISE, 1.0F, 0.5F);
-			caster.displayClientMessage(Component.literal("The daemon pours itself into the structure.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_daemon_pours_itself_into_the").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 		} else if (ticks > WorkingCraftDaemonPath.DIVE_TICKS && (ticks - WorkingCraftDaemonPath.DIVE_TICKS) % 16 == 0) {
 			// The possessed structure beats like a heart until the floor takes it.
 			CardinalRiteBeats.sound(level, heartPos, SoundInit.RITE_AMBIENT_HEARTBEAT, 0.9F, 0.7F);
@@ -355,8 +352,7 @@ public final class CardinalRiteOrdealEngine {
 		if (!StationUpgradeRites.isRite(rite.getRecipeId())) rite.incrementIdleTicks();
 		if (rite.getIdleTicks() >= CardinalRiteCeremonyRules.CONSECRATION_TIMEOUT_TICKS) {
 			rite.markCollapsed();
-			caster.displayClientMessage(Component.literal("The untouched consecration gutters out.")
-					.withStyle(ChatFormatting.DARK_RED), false);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_untouched_consecration_gutters_out").withStyle(ChatFormatting.DARK_RED), false);
 		}
 	}
 
@@ -400,24 +396,18 @@ public final class CardinalRiteOrdealEngine {
 				&& CardinalRiteWaveRules.missedRequiredObjective(currentWave(rite), traced, !rite.getRiteThreats().isEmpty())) {
 			clearThreats(level, rite);
 			rite.markCollapsed();
-			caster.displayClientMessage(Component.literal(sigilId != null
-					? "The demanded sigil went unanswered. The rite fails; prepare it again."
-					: "The puppeteers outlasted the calling. The rite fails; prepare it again.")
-					.withStyle(ChatFormatting.DARK_RED), false);
+			caster.displayClientMessage((sigilId != null ? Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_demanded_sigil_went_unanswered_the") : Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_puppeteers_outlasted_the_calling_the")).withStyle(ChatFormatting.DARK_RED), false);
 			return;
 		}
 		if (rite.getPhaseTicks() == WAVE_TIMEOUT_TICKS) {
 			if (!attendantCatchesMiss(level, rite)) {
 				rite.addInstability(12 + CardinalRiteCeremonyRules.formIndex(recipe.getRiteType()) * 3);
 				CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_ANCHOR_BREAK, 1.0F, 0.8F);
-				caster.displayClientMessage(Component.literal("The ordeal outlasts you and the boundary strains.")
-						.withStyle(ChatFormatting.DARK_RED), true);
+				caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_ordeal_outlasts_you_and_the").withStyle(ChatFormatting.DARK_RED), true);
 			}
 			clearThreats(level, rite);
 			if (rite.areAnchorsConsecrated()) clearWave(level, rite);
-			else caster.displayClientMessage(Component.literal(
-					"The ordeal cannot advance while the cardinal stations run dry.")
-					.withStyle(ChatFormatting.DARK_RED), false);
+			else caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_ordeal_cannot_advance_while_the").withStyle(ChatFormatting.DARK_RED), false);
 		}
 		if (rite.getPhaseTicks() % 20 == 0) {
 			rite.applyAnchorDeficitPressure();
@@ -448,8 +438,7 @@ public final class CardinalRiteOrdealEngine {
 			}
 		}
 		if (rite.getPhaseTicks() % 100 == 0) {
-			caster.displayClientMessage(Component.literal("The boundary ruptures. Repair the broken anchors.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_boundary_ruptures_repair_the_broken").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
 		}
 	}
 
@@ -461,8 +450,7 @@ public final class CardinalRiteOrdealEngine {
 	private static void tickStillInterval(ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
 		if (rite.getPhaseTicks() == 1 && !rite.isHeldBeforeFinale()) {
-			caster.displayClientMessage(Component.literal("A still interval: repair, reinforce, and breathe.")
-					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.a_still_interval_repair_reinforce_and").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 		}
 		drawSupportSockets(caster.serverLevel(), rite, recipe);
 		if (rite.isHeldBeforeFinale()) {
@@ -477,9 +465,7 @@ public final class CardinalRiteOrdealEngine {
 				rite.finishStillInterval();
 			} else {
 				if (rite.getPhaseTicks() == Math.max(1, duration)) {
-					caster.displayClientMessage(Component.literal(
-							"The rite waits: restore every cardinal station.")
-							.withStyle(ChatFormatting.DARK_RED), false);
+					caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ordeal_engine.the_rite_waits_restore_every_cardinal").withStyle(ChatFormatting.DARK_RED), false);
 				}
 				if (rite.getPhaseTicks() % 20 == 0) {
 					rite.applyStillIntervalPressure(duration);
@@ -491,18 +477,18 @@ public final class CardinalRiteOrdealEngine {
 	private static void beginWave(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite) {
 		String wave = currentWave(rite);
 		String cue = switch (wave) {
-			case "bloodlicker_siphon" -> "Bloodlickers crawl for the anchors.";
-			case "fargone_dive" -> "A Fargone stoops toward your living blood.";
-			case "rogue_will" -> "A rogue will claws at the boundary's intent.";
-			case "false_omens" -> "Counterfeit anchors bloom. Find the puppeteer.";
-			case "covenant_pressure" -> "The covenant presses on every anchor. Trace the Seal to bear it.";
+			case "bloodlicker_siphon" -> "message.hemomancy.cardinal_rite_ordeal_engine.bloodlickers_crawl_for_the_anchors";
+			case "fargone_dive" -> "message.hemomancy.cardinal_rite_ordeal_engine.a_fargone_stoops_toward_your_living_blood";
+			case "rogue_will" -> "message.hemomancy.cardinal_rite_ordeal_engine.a_rogue_will_claws_at_the_boundary";
+			case "false_omens" -> "message.hemomancy.cardinal_rite_ordeal_engine.counterfeit_anchors_bloom";
+			case "covenant_pressure" -> "message.hemomancy.cardinal_rite_ordeal_engine.the_covenant_presses_on_every_anchor";
 			default -> wave.startsWith("discover_")
-					? "An unknown Ichorian shape wakes. Read it before it reads you."
-					: "A response sigil is demanded.";
+					? "message.hemomancy.cardinal_rite_ordeal_engine.an_unknown_ichorian_shape_wakes"
+					: "message.hemomancy.cardinal_rite_ordeal_engine.a_response_sigil_is_demanded";
 		};
-		caster.displayClientMessage(Component.literal(cue).withStyle(ChatFormatting.DARK_RED), false);
-		caster.displayClientMessage(Component.literal(CardinalRiteWaveRules.deadlineHint(wave)
-				+ ". Restore every anchor before advancing.").withStyle(ChatFormatting.GRAY), false);
+		caster.displayClientMessage(Component.translatable(cue).withStyle(ChatFormatting.DARK_RED), false);
+		caster.displayClientMessage(HemoText.translatable("message.hemomancy.cardinal_rite_ordeal_engine.restore_every_anchor_before_advancing",
+				CardinalRiteWaveRules.deadlineHint(wave)).withStyle(ChatFormatting.GRAY), false);
 		List<Vec3> spawns = spawnsThreats(wave) ? threatSpawnPoints(rite, wave) : List.of();
 		CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.WAVE_START, rite.getCurrentWave(), wave,
 				spawns, ItemStack.EMPTY);
@@ -749,7 +735,7 @@ public final class CardinalRiteOrdealEngine {
 	}
 
 	private static boolean isComplete(ActiveCardinalRite rite, String path) {
-		ResourceLocation id = ResourceLocation.fromNamespaceAndPath("hemomancy", path);
+		ResourceLocation id = Hemomancy.rloc(path);
 		IchorianSigilDefinition definition = IchorianSigilRegistry.get(id);
 		return definition != null && rite.isSigilComplete(id.toString(), definition.nodes().size());
 	}

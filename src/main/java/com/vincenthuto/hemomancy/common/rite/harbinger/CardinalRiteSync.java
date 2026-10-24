@@ -91,7 +91,7 @@ final class CardinalRiteSync {
 		var sigilSegments = visibleSigilSegments(level, rite);
 		var sanguineBlobs = visibleSanguineBlobs(level, rite, recipe);
 		float footprintRadius = CardinalRiteFootprintResolver.radius(rite, recipe);
-		java.util.List<String> checklist = buildChecklist(level, rite, recipe);
+		java.util.List<Component> checklist = buildChecklist(level, rite, recipe);
 		int stillIntervalTicks = recipe == null || recipe.getCeremony() == null ? 0
 				: recipe.getCeremony().stillIntervalTicks();
 		var atmosphere = recipe == null || recipe.getCeremony() == null
@@ -103,7 +103,7 @@ final class CardinalRiteSync {
         int successionTicks = rite.succession().ticks();
         if (succession) {
             cue = "hemomancy.succession.phase." + Math.min(5, successionTicks / 200);
-            checklist = java.util.List.of(Component.translatable(cue).getString());
+            checklist = java.util.List.of(Component.translatable(cue));
             upfront = 0;
         }
 		return new ActiveRiteData.RiteEntry(
@@ -128,9 +128,10 @@ final class CardinalRiteSync {
 								: rite.isWorkingCraft() ? 1.0F : 0.0F);
 	}
 
-	private static String sacrificeLine(ActiveCardinalRite rite) {
-		return "Sacrifice: " + Math.min(rite.getSacrificeMl(), CardinalRiteThreatRules.SACRIFICE_REQUIRED_ML)
-				+ "/" + CardinalRiteThreatRules.SACRIFICE_REQUIRED_ML + " mL from a named creature";
+	private static Component sacrificeLine(ActiveCardinalRite rite) {
+		return Component.translatable("message.hemomancy.cardinal_rite_sync.sacrifice_ml_from_a_named_creature",
+				Math.min(rite.getSacrificeMl(), CardinalRiteThreatRules.SACRIFICE_REQUIRED_ML),
+				CardinalRiteThreatRules.SACRIFICE_REQUIRED_ML);
 	}
 
 	/** Each anchor's blood, flagged when instability has broken it, for the floor's sores and jets. */
@@ -146,17 +147,17 @@ final class CardinalRiteSync {
 	}
 
 
-    private static String nextAnchorRepair(ActiveCardinalRite rite) {
+    private static Component nextAnchorRepair(ActiveCardinalRite rite) {
         int[] blood = rite.getAnchorBloodMl();
         for (int index = 0; index < blood.length; index++) {
             int repair = rite.instabilityRepairBloodNeeded(index);
             if (repair > 0 || rite.bloodNeededForAnchor(index) > 0) {
-                return "Anchor " + (index + 1) + ": repair " + repair + "ml, blood "
-                        + Math.clamp(blood[index], 0, rite.anchorRequirementMl(index))
-                        + "/" + rite.anchorRequirementMl(index) + "ml";
+                return Component.translatable("message.hemomancy.cardinal_rite_sync.anchor_repair_blood", index + 1,
+                        repair, Math.clamp(blood[index], 0, rite.anchorRequirementMl(index)),
+                        rite.anchorRequirementMl(index));
             }
         }
-        return "All anchors restored";
+        return Component.translatable("message.hemomancy.cardinal_rite_sync.all_anchors_restored");
     }
 
 	private static CardinalRiteProblems.Facts problemFacts(ServerLevel level, ActiveCardinalRite rite,
@@ -184,13 +185,14 @@ final class CardinalRiteSync {
 				rite.hungryLaterRingAnchors());
 	}
 
-	private static java.util.List<String> buildChecklist(ServerLevel level, ActiveCardinalRite rite,
+	private static java.util.List<Component> buildChecklist(ServerLevel level, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
 		if (rite.getCancellationTicks() > 0) {
 			int remaining = CardinalRiteCancellationRules.TOTAL_TICKS - rite.getCancellationTicks();
 			return java.util.List.of(
-					"Absorbing the rite: " + Math.max(0, remaining + 19) / 20 + "s",
-					"Keep Blood Absorption trained on the planted staff");
+					Component.translatable("message.hemomancy.cardinal_rite_sync.absorbing_the_rite",
+							Math.max(0, remaining + 19) / 20),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.keep_blood_absorption_trained_on_the_planted_staff"));
 		}
 		if (rite.getPhase() == CardinalRitePhase.CONSECRATION) {
 			int missing = 0;
@@ -199,16 +201,18 @@ final class CardinalRiteSync {
 			}
 			if (CardinalRiteThreatRules.allowsPassiveSacrifice(rite.getRecipeId().getPath())) {
 				return java.util.List.of(
-						"Boundary rings: " + rite.completedRings() + "/" + rite.totalAnchorRings(),
-						"Anchors remaining: " + missing,
+						Component.translatable("message.hemomancy.cardinal_rite_sync.boundary_rings",
+								rite.completedRings(), rite.totalAnchorRings()),
+						Component.translatable("message.hemomancy.cardinal_rite_sync.anchors_remaining", missing),
 						sacrificeLine(rite),
-						"Bleed a named creature inside the circle, or project blood into the anchors");
+						Component.translatable("message.hemomancy.cardinal_rite_sync.bleed_a_named_creature_inside_the_circle"));
 			}
 			return java.util.List.of(
-					"Boundary rings: " + rite.completedRings() + "/" + rite.totalAnchorRings(),
-					"Anchors remaining: " + missing,
+					Component.translatable("message.hemomancy.cardinal_rite_sync.boundary_rings",
+							rite.completedRings(), rite.totalAnchorRings()),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.anchors_remaining", missing),
                     nextAnchorRepair(rite),
-					"Project blood into the glowing boundary anchors");
+					Component.translatable("message.hemomancy.cardinal_rite_sync.project_blood_into_the_glowing_boundary_anchors"));
 		}
 		if (rite.getPhase() == CardinalRitePhase.INSCRIPTION) {
             int required = 0, optional = 0, requiredComplete = 0, optionalComplete = 0;
@@ -229,7 +233,7 @@ final class CardinalRiteSync {
             int availableAllies = (int) rite.getAllyRoles().keySet().stream()
                     .filter(ally -> CardinalRiteAllyService.isAvailable(level, rite, ally)).count();
             int requiredAllies = recipe == null || recipe.getCeremony() == null ? 0 : recipe.getCeremony().requiredHelpers();
-            List<String> lines = new ArrayList<>(CardinalRiteChecklist.inscription(optional, optionalComplete,
+            List<Component> lines = new ArrayList<>(CardinalRiteChecklist.inscription(optional, optionalComplete,
                     required, requiredComplete, availableAllies, requiredAllies, mediumReady));
             if (CardinalRiteThreatRules.allowsPassiveSacrifice(rite.getRecipeId().getPath())) {
                 lines.add(0, sacrificeLine(rite));
@@ -239,16 +243,19 @@ final class CardinalRiteSync {
 		if (rite.getPhase() == CardinalRitePhase.SUBJECT_FEEDING) {
 			int required = rite.craft().feedRequired();
 			return java.util.List.of(
-					"Structure fed: " + (required - rite.subjectFeedNeeded()) + "/" + required + " mL",
-					"Project blood into the structure beside the Focus",
-					"The Working floor climbs it as it fills");
+					Component.translatable("message.hemomancy.cardinal_rite_sync.structure_fed",
+							required - rite.subjectFeedNeeded(), required),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.project_blood_into_the_structure_beside_the_focus"),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.the_working_floor_climbs_it_as_it_fills"));
 		}
 		if (rite.getPhase() == CardinalRitePhase.STATION_PROJECTION) {
 			int stage = rite.upgrade().stage();
 			int cost = StationUpgradeRites.bloodPerCircuit(rite.getRecipeId());
-			return java.util.List.of("Station circuits: " + stage + "/" + StationUpgradeRites.circuits(rite.getRecipeId()),
-					"Current circuit: " + (cost - rite.upgradeBloodNeeded()) + "/" + cost + " mL",
-					"Project blood into the next station circuit");
+			return java.util.List.of(Component.translatable("message.hemomancy.cardinal_rite_sync.station_circuits",
+							stage, StationUpgradeRites.circuits(rite.getRecipeId())),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.current_circuit",
+							cost - rite.upgradeBloodNeeded(), cost),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.project_blood_into_the_next_station_circuit"));
 		}
 		if (rite.getPhase() == CardinalRitePhase.ORDEAL) {
 			String wave = rite.getCurrentWave() < rite.getWaveDeck().size()
@@ -256,39 +263,43 @@ final class CardinalRiteSync {
 			long dry = java.util.stream.IntStream.range(0, rite.getAnchorBloodMl().length)
 					.filter(i -> rite.bloodNeededForAnchor(i) > 0).count();
 			return java.util.List.of(
-					"Wave " + Math.min(rite.getCurrentWave() + 1, rite.getTotalWaves())
-							+ "/" + rite.getTotalWaves(),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.wave",
+							Math.min(rite.getCurrentWave() + 1, rite.getTotalWaves()), rite.getTotalWaves()),
 					CardinalRiteChecklist.ordealObjective(wave),
-					"Damaged anchors: " + rite.getBrokenInstabilityAnchors().size(),
-					"Dry anchors: " + dry, nextAnchorRepair(rite));
+					Component.translatable("message.hemomancy.cardinal_rite_sync.damaged_anchors",
+							rite.getBrokenInstabilityAnchors().size()),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.dry_anchors", dry), nextAnchorRepair(rite));
 		}
 		if (rite.getPhase() == CardinalRitePhase.STILL_INTERVAL && rite.isHeldBeforeFinale()) {
 			return java.util.List.of(
-					"The rite waits before its finale",
-					"Resolve what it lacks, or recall it with Blood Absorption");
+					Component.translatable("message.hemomancy.cardinal_rite_sync.the_rite_waits_before_its_finale"),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.resolve_what_it_lacks_or_recall_it"));
 		}
 		if (rite.getPhase() == CardinalRitePhase.STILL_INTERVAL) {
 			int duration = recipe == null || recipe.getCeremony() == null ? 0
 					: recipe.getCeremony().stillIntervalTicks();
 			int seconds = Math.max(0, duration - rite.getPhaseTicks() + 19) / 20;
 			return java.util.List.of(
-					"Still interval: " + seconds + "s",
-					"Repair damaged anchors: " + rite.getBrokenInstabilityAnchors().size(),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.still_interval", seconds),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.repair_damaged_anchors",
+							rite.getBrokenInstabilityAnchors().size()),
 					nextAnchorRepair(rite),
-                    "Reservoir: " + rite.getReservoirBloodMl() + "ml (replaces siphoned blood only)");
+                    Component.translatable("message.hemomancy.cardinal_rite_sync.reservoir_replaces_siphoned_blood_only",
+                            rite.getReservoirBloodMl()));
 		}
 		if (rite.getPhase() == CardinalRitePhase.OFFERING_PROCESSION) {
 			int total = rite.getOfferingItinerary().size();
 			return java.util.List.of(
-					"Offerings drawn: " + Math.min(rite.getOfferingVisitIndex(), total) + "/" + total,
-					"The floor draws each burning offering into the daemon");
+					Component.translatable("message.hemomancy.cardinal_rite_sync.offerings_drawn",
+							Math.min(rite.getOfferingVisitIndex(), total), total),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.the_floor_draws_each_burning_offering"));
 		}
 		if (rite.getPhase() == CardinalRitePhase.CULMINATION) {
 			return java.util.List.of(
-					rite.getPhaseTicks() <= CardinalRiteFinaleTiming.GROWTH_TICKS
-							? "The daemon gathers as the offerings fade"
-							: "The daemon is returning to your blood",
-					"No further input is required");
+					Component.translatable(rite.getPhaseTicks() <= CardinalRiteFinaleTiming.GROWTH_TICKS
+							? "message.hemomancy.cardinal_rite_sync.the_daemon_gathers_as_the_offerings_fade"
+							: "message.hemomancy.cardinal_rite_sync.the_daemon_is_returning_to_your_blood"),
+					Component.translatable("message.hemomancy.cardinal_rite_sync.no_further_input_is_required"));
 		}
 		return java.util.List.of();
 	}

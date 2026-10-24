@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
-import com.vincenthuto.hemomancy.common.worldgen.FungalProjectionRules;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.worldgen.FungalProjectionRules;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
@@ -76,15 +76,12 @@ public final class FungalGardenTravelHelper {
 			performFungalGardensTravel(player);
 		} else if (inFungalGardens) {
 			if (isProjectionActive(player)) {
-				player.displayClientMessage(Component.literal(
-						"You have no hands here. The red pulse is your only road home.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.fungal_garden_travel_helper.you_have_no_hands_here_the").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 				return InteractionResult.SUCCESS;
 			}
 			if (!player.getPersistentData().contains(RETURN_X)) {
 				player.displayClientMessage(
-						Component.literal("The spine twitches, but finds no thread back to the surface world.")
-								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						Component.translatable("message.hemomancy.fungal_garden_travel_helper.the_spine_twitches_but_finds_no").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 						true);
 				return InteractionResult.SUCCESS;
 			}
@@ -98,22 +95,19 @@ public final class FungalGardenTravelHelper {
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 			if (degree < MIN_DEGREE) {
 				player.displayClientMessage(
-						Component.literal("The spine still needs the shape of your mind.")
-								.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+						Component.translatable("message.hemomancy.fungal_garden_travel_helper.the_spine_still_needs_the_shape").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 						true);
 				return InteractionResult.SUCCESS;
 			}
 			var degreeState = HemoCapabilityAccess.getInitiatoryDegree(player);
 			if (!degreeState.hasFungalSpineGranted()) {
-				player.displayClientMessage(Component.literal("You have found the wrong Spine. The ninth husk made another one yours.")
-						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.fungal_garden_travel_helper.you_have_found_the_wrong_spine").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), true);
 				return InteractionResult.SUCCESS;
 			}
 
 			if (!drainTravelBlood(player)) {
 				player.displayClientMessage(
-						Component.literal("Your veins run too thin to feed the rift.")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+						Component.translatable("message.hemomancy.fungal_garden_travel_helper.your_veins_run_too_thin_to").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 						true);
 				return InteractionResult.SUCCESS;
 			}
@@ -146,9 +140,7 @@ public final class FungalGardenTravelHelper {
 		performFungalGardensTravel(player);
 		PacketHandler.sendToPlayer(player, new PacketSyncFungalProjection(true,
 				FungalProjectionRules.FIRST_VISIT_TICKS, FungalProjectionRules.FIRST_VISIT_TICKS));
-		player.displayClientMessage(Component.literal(
-				"Your body remains behind. You have two minutes before it pulls you home.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+		player.displayClientMessage(Component.translatable("message.hemomancy.fungal_garden_travel_helper.your_body_remains_behind_you_have").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 	}
 
 	public static void performForcedProjectionReturn(ServerPlayer player) {
@@ -196,8 +188,7 @@ public final class FungalGardenTravelHelper {
 				targetPos.getZ() + 0.5, player.getYRot(), player.getXRot());
 
 		player.displayClientMessage(
-				Component.literal("The spine opens like a wound. You descend into the dreaming root.")
-						.withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.fungal_garden_travel_helper.the_spine_opens_like_a_wound").withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.ITALIC),
 				false);
 	}
 
@@ -229,8 +220,7 @@ public final class FungalGardenTravelHelper {
 		data.remove(RETURN_DIMENSION);
 
 		player.displayClientMessage(
-				Component.literal("The membrane closes behind you. You surface from the blood-dream.")
-						.withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.fungal_garden_travel_helper.the_membrane_closes_behind_you_you").withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.ITALIC),
 				false);
 	}
 

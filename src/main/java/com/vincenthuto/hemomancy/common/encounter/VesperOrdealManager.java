@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
-import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
@@ -76,8 +76,7 @@ public final class VesperOrdealManager {
 		}
 		ServerLevel arenaLevel = player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL);
 		if (arenaLevel == null) {
-			player.displayClientMessage(Component.literal("The refusal has no place to open. The wound remains.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.vesper_ordeal_manager.the_refusal_has_no_place_to").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
 			return false;
 		}
 		BlockPos center = arenaCenter(player);
@@ -92,18 +91,14 @@ public final class VesperOrdealManager {
 				180.0F, 0.0F, DimensionTransition.DO_NOTHING));
 		PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.activate(center));
 		spawnCrownedRefusal(arenaLevel, player, bloom.center().asLong(), bloom.bloomId(), center);
-		player.displayClientMessage(Component.literal(
-				"Strike the exposed throne anchors when Vesper leaves them vulnerable. After the Evening Star falls, use Blood Absorption on the downed body to finish the refusal. If you die, the unsealed wound remains your route back.")
-				.withStyle(ChatFormatting.DARK_PURPLE), false);
+		player.displayClientMessage(Component.translatable("message.hemomancy.vesper_ordeal_manager.strike_the_exposed_throne_anchors_when").withStyle(ChatFormatting.DARK_PURPLE), false);
 		return true;
 	}
 
 	public static boolean tickArenaPlayer(ServerPlayer player, ServerLevel level) {
 		if (!player.getPersistentData().contains(ACTIVE_BLOOM_KEY)) return false;
 		if (!hasValidActiveBloom(player)) {
-			player.displayClientMessage(Component.literal(
-					"The wound that opened this refusal is gone. Return to an open Qliphoth to try again.")
-					.withStyle(ChatFormatting.DARK_PURPLE), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.vesper_ordeal_manager.the_wound_that_opened_this_refusal").withStyle(ChatFormatting.DARK_PURPLE), false);
 			if (player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) {
 				ChamberOfWillManager.get(player.getServer()).exitChamber(player);
 			} else {
@@ -187,13 +182,11 @@ public final class VesperOrdealManager {
 		owner.getPersistentData().remove(ACTIVE_BLOOM_KEY);
 		owner.getPersistentData().remove(ACTIVE_BLOOM_ID_KEY);
 		HarbingerCardinalRiteEvents.syncQliphothBlooms(level.getServer());
-		owner.displayClientMessage(Component.literal(
-				"The Evening Star breaks. Your refusal holds, and the wound seals behind the name Silent Archon.")
-				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD), false);
+		owner.displayClientMessage(Component.translatable("message.hemomancy.vesper_ordeal_manager.the_evening_star_breaks_your_refusal").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD), false);
 		ChamberOfWillManager.get(level.getServer()).exitChamber(owner);
 		givePendingMemory(owner);
 		if (owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(PENDING_MEMORY_KEY)) {
-			owner.displayClientMessage(Component.literal("Make room in your inventory to receive the Memory of Vesper."), false);
+			owner.displayClientMessage(Component.translatable("message.hemomancy.vesper_ordeal_manager.make_room_in_your_inventory_to"), false);
 		}
 	}
 

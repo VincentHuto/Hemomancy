@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.projectile.RecallBarbEntity;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
@@ -28,7 +29,7 @@ public class ExcoriatedEntity extends Monster {
     private static final EntityDataAccessor<Integer> ATTACK=SynchedEntityData.defineId(ExcoriatedEntity.class,EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ATTACK_TIME=SynchedEntityData.defineId(ExcoriatedEntity.class,EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> CLOTTED=SynchedEntityData.defineId(ExcoriatedEntity.class,EntityDataSerializers.BOOLEAN);
-    private static final ResourceLocation CLOT_SPEED=ResourceLocation.fromNamespaceAndPath("hemomancy","excoriated_clotting");
+    private static final ResourceLocation CLOT_SPEED=Hemomancy.rloc("excoriated_clotting");
     private BlockPos home;
     private BlockPos river;
     private boolean sentinel;

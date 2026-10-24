@@ -43,7 +43,7 @@ public class UmbralReversalManip extends BloodManipulation {
 		BlockPos destination = destination(player);
 
 		if (destination == null) {
-			player.displayClientMessage(Component.literal("§5No dark reversal point answers."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.umbral_reversal_manip.no_dark_reversal_point_answers"), true);
 			return;
 		}
 
@@ -81,7 +81,7 @@ public class UmbralReversalManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (destination(player) == null) {
-			player.displayClientMessage(Component.literal("No safe dark reversal point answers."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.umbral_reversal_manip.no_safe_dark_reversal_point_answers"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

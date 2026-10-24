@@ -48,8 +48,7 @@ public final class PuppeteerTrialRiteController {
 						HemoCapabilityAccess.getInitiatoryDegree(caster).getTotalPomesConsumed(), HemoCapabilityAccess.getInitiatoryDegree(caster).getArchonPath());
 		if (unresolved) {
 			if (notify) caster.displayClientMessage(
-					Component.literal("The void has claimed your will — only one path remains, and one way back.")
-							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
+					Component.translatable("message.hemomancy.puppeteer_trial_rite_controller.the_void_has_claimed_your_will").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
 			return false;
 		}
 		PuppeteerTrialRiteRules.MediumStatus status = mediumStatus(caster, crossbar);

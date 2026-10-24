@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.effect.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -65,7 +64,7 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> fungal_elytra = EFFECTS.register("fungal_elytra",
             () -> new ElytraEffect()
-                    .addAttributeModifier(AttributeInit.getFlightAttribute(), ResourceLocation.fromNamespaceAndPath("hemomancy", "elytra_fall_flying"),
+                    .addAttributeModifier(AttributeInit.getFlightAttribute(), Hemomancy.rloc("elytra_fall_flying"),
                             1.0D, AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<MobEffect, MobEffect> blood_binding = EFFECTS.register("blood_binding",
@@ -76,7 +75,7 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> blood_loss = EFFECTS.register("blood_loss",
             () -> new BloodLossEffect(MobEffectCategory.HARMFUL, 11075587).addAttributeModifier(
-                    Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "blood_loss_movement_speed"), -0.15F,
+                    Attributes.MOVEMENT_SPEED, Hemomancy.rloc("blood_loss_movement_speed"), -0.15F,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final DeferredHolder<Potion, Potion> potion_of_blood_loss = POTION_TYPES.register("potion_of_blood_loss",
             () -> new Potion("potion_of_blood_loss", new MobEffectInstance(blood_loss, 1000, 3)));
@@ -86,11 +85,11 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> blood_rush = EFFECTS.register("blood_rush",
             () -> new BloodRushEffect(MobEffectCategory.BENEFICIAL, 16711680)
-                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "blood_rush_movement_speed"), 0.2F,
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, Hemomancy.rloc("blood_rush_movement_speed"), 0.2F,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
-                    .addAttributeModifier(Attributes.ATTACK_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "blood_rush_attack_speed"), 0.1F,
+                    .addAttributeModifier(Attributes.ATTACK_SPEED, Hemomancy.rloc("blood_rush_attack_speed"), 0.1F,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
-                    .addAttributeModifier(Attributes.ATTACK_DAMAGE, ResourceLocation.fromNamespaceAndPath("hemomancy", "blood_rush_attack_damage"), 0.0D,
+                    .addAttributeModifier(Attributes.ATTACK_DAMAGE, Hemomancy.rloc("blood_rush_attack_damage"), 0.0D,
                             AttributeModifier.Operation.ADD_VALUE));
     public static final DeferredHolder<Potion, Potion> potion_of_blood_rush = POTION_TYPES.register("potion_of_blood_rush",
             () -> new Potion("potion_of_blood_rush", new MobEffectInstance(blood_rush, 1000, 3)));
@@ -131,7 +130,7 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> chitinous_bulwark = EFFECTS.register("chitinous_bulwark",
             () -> new ChitinousBulwarkEffect(MobEffectCategory.BENEFICIAL, 0x556B2F)
-                    .addAttributeModifier(Attributes.ARMOR_TOUGHNESS, ResourceLocation.fromNamespaceAndPath("hemomancy", "chitinous_bulwark_armor_toughness"),
+                    .addAttributeModifier(Attributes.ARMOR_TOUGHNESS, Hemomancy.rloc("chitinous_bulwark_armor_toughness"),
                             4.0D, AttributeModifier.Operation.ADD_VALUE));
     public static final DeferredHolder<Potion, Potion> potion_of_chitinous_bulwark = POTION_TYPES.register(
             "potion_of_chitinous_bulwark",
@@ -140,9 +139,9 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> serpentine_guile = EFFECTS.register("serpentine_guile",
             () -> new SerpentineGuileEffect(MobEffectCategory.BENEFICIAL, 0x2E8B57)
-                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "serpentine_guile_movement_speed"),
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, Hemomancy.rloc("serpentine_guile_movement_speed"),
                             0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
-                    .addAttributeModifier(Attributes.ATTACK_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "serpentine_guile_attack_speed"),
+                    .addAttributeModifier(Attributes.ATTACK_SPEED, Hemomancy.rloc("serpentine_guile_attack_speed"),
                             0.1F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final DeferredHolder<Potion, Potion> potion_of_serpentine_guile = POTION_TYPES.register(
             "potion_of_serpentine_guile",
@@ -159,7 +158,7 @@ public class EffectInit {
     // New Morphling Effects
     public static final DeferredHolder<MobEffect, MobEffect> luminous_dissipation = EFFECTS.register("luminous_dissipation",
             () -> new LuminousDissipationEffect(MobEffectCategory.BENEFICIAL, 0xFFFFAA)
-                    .addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, ResourceLocation.fromNamespaceAndPath("hemomancy", "luminous_dissipation_knockback_resistance"),
+                    .addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, Hemomancy.rloc("luminous_dissipation_knockback_resistance"),
                             0.1D, AttributeModifier.Operation.ADD_VALUE));
     public static final DeferredHolder<Potion, Potion> potion_of_luminous_dissipation = POTION_TYPES.register(
             "potion_of_luminous_dissipation",
@@ -175,7 +174,7 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> venomous_resilience = EFFECTS.register("venomous_resilience",
             () -> new VenomousResilienceEffect(MobEffectCategory.BENEFICIAL, 0x336B87)
-                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "venomous_resilience_movement_speed"),
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, Hemomancy.rloc("venomous_resilience_movement_speed"),
                             0.05F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final DeferredHolder<Potion, Potion> potion_of_venomous_resilience = POTION_TYPES.register(
             "potion_of_venomous_resilience",
@@ -191,7 +190,7 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> spined_barricade = EFFECTS.register("spined_barricade",
             () -> new SpinedBarricadeEffect(MobEffectCategory.BENEFICIAL, 0x1A8A9F)
-                    .addAttributeModifier(Attributes.ARMOR, ResourceLocation.fromNamespaceAndPath("hemomancy", "spined_barricade_armor"),
+                    .addAttributeModifier(Attributes.ARMOR, Hemomancy.rloc("spined_barricade_armor"),
                             2.0D, AttributeModifier.Operation.ADD_VALUE));
     public static final DeferredHolder<Potion, Potion> potion_of_spined_barricade = POTION_TYPES.register(
             "potion_of_spined_barricade",
@@ -200,7 +199,7 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> burrowers_instinct = EFFECTS.register("burrowers_instinct",
             () -> new BurrowersInstinctEffect(MobEffectCategory.BENEFICIAL, 0x8B6914)
-                    .addAttributeModifier(Attributes.BLOCK_BREAK_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "burrowers_instinct_block_break_speed"),
+                    .addAttributeModifier(Attributes.BLOCK_BREAK_SPEED, Hemomancy.rloc("burrowers_instinct_block_break_speed"),
                             0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final DeferredHolder<Potion, Potion> potion_of_burrowers_instinct = POTION_TYPES.register(
             "potion_of_burrowers_instinct",
@@ -225,7 +224,7 @@ public class EffectInit {
             () -> new LuminousDissipationEffect(MobEffectCategory.BENEFICIAL, 0x2F79C7,
                     "effect.hemomancy.morphling_lumenlace")
                     .addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE,
-                            ResourceLocation.fromNamespaceAndPath("hemomancy", "morphling_lumenlace_knockback_resistance"),
+                            Hemomancy.rloc("morphling_lumenlace_knockback_resistance"),
                             0.1D, AttributeModifier.Operation.ADD_VALUE));
     public static final DeferredHolder<MobEffect, MobEffect> morphling_bootlace = EFFECTS.register(
             "morphling_bootlace",
@@ -236,7 +235,7 @@ public class EffectInit {
             () -> new BurrowersInstinctEffect(MobEffectCategory.BENEFICIAL, 0xA57A5A,
                     "effect.hemomancy.morphling_irontooth")
                     .addAttributeModifier(Attributes.BLOCK_BREAK_SPEED,
-                            ResourceLocation.fromNamespaceAndPath("hemomancy", "morphling_irontooth_block_break_speed"),
+                            Hemomancy.rloc("morphling_irontooth_block_break_speed"),
                             0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final DeferredHolder<MobEffect, MobEffect> morphling_emberfang = EFFECTS.register(
             "morphling_emberfang",
@@ -247,15 +246,15 @@ public class EffectInit {
             () -> new VenomousResilienceEffect(MobEffectCategory.BENEFICIAL, 0x76C9FF,
                     "effect.hemomancy.morphling_winter_shroud")
                     .addAttributeModifier(Attributes.MOVEMENT_SPEED,
-                            ResourceLocation.fromNamespaceAndPath("hemomancy", "morphling_winter_shroud_movement_speed"),
+                            Hemomancy.rloc("morphling_winter_shroud_movement_speed"),
                             0.05F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     // Unstained Path Effects
     public static final DeferredHolder<MobEffect, MobEffect> silver_ward = EFFECTS.register("silver_ward",
             () -> new SilverWardEffect(MobEffectCategory.BENEFICIAL, 0xC0C0C0)
-                    .addAttributeModifier(Attributes.ARMOR, ResourceLocation.fromNamespaceAndPath("hemomancy", "silver_ward_armor"),
+                    .addAttributeModifier(Attributes.ARMOR, Hemomancy.rloc("silver_ward_armor"),
                             4.0D, AttributeModifier.Operation.ADD_VALUE)
-                    .addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, ResourceLocation.fromNamespaceAndPath("hemomancy", "silver_ward_knockback_resistance"),
+                    .addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, Hemomancy.rloc("silver_ward_knockback_resistance"),
                             0.2D, AttributeModifier.Operation.ADD_VALUE));
 
     public static final DeferredHolder<MobEffect, MobEffect> verdigris_aura = EFFECTS.register("verdigris_aura",
@@ -274,7 +273,7 @@ public class EffectInit {
     // Neurotic Tendency Effect
     public static final DeferredHolder<MobEffect, MobEffect> neural_overload = EFFECTS.register("neural_overload",
             () -> new NeuralOverloadEffect(MobEffectCategory.HARMFUL, 0x7DF9FF)
-                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath("hemomancy", "neural_overload_movement_speed"),
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, Hemomancy.rloc("neural_overload_movement_speed"),
                             -0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     // Saintly Enzyme System Marked by Canon (persistent debuff from failed extraction)

@@ -1,10 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -53,22 +54,20 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 			if (ref.kind() == MemoryEntryKind.MUSCLE_MEMORY) {
 				var memory = ref.muscleMemory().orElse(null);
 				if (memory == null || !HemoCapabilityAccess.muscleMemory(player).knows(memory)) {
-					player.displayClientMessage(Component.literal("That Thelemic Memory is still unknown.")
-							.withStyle(ChatFormatting.RED), true);
+					player.displayClientMessage(Component.translatable("message.hemomancy.equip_manipulation_packet.that_thelemic_memory_is_still_unknown").withStyle(ChatFormatting.RED), true);
 					return;
 				}
 				int maxSlots = ManipSlotHelper.getMaxSlots(player);
 				boolean changed = msg.equip ? known.equipMemory(ref, maxSlots) : known.unequipMemory(ref);
 				if (!changed && msg.equip) {
-					player.displayClientMessage(Component.literal("No free shared memory slots for this equip ("
-							+ ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames())
-							+ "/" + maxSlots + ")").withStyle(ChatFormatting.RED), true);
+					player.displayClientMessage(HemoText.translatable("message.hemomancy.equip_manipulation_packet.no_free_shared_memory_slots_for",
+							ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames()),
+							maxSlots).withStyle(ChatFormatting.RED), true);
 				}
 			} else if (msg.equip) {
 				if (ManipulationRetirementRules.isRetiredManipulation(msg.manipName)) {
 					player.displayClientMessage(
-							Component.literal("That manipulation has gone dormant.")
-									.withStyle(ChatFormatting.DARK_GRAY), true);
+							Component.translatable("message.hemomancy.equip_manipulation_packet.that_manipulation_has_gone_dormant").withStyle(ChatFormatting.DARK_GRAY), true);
 					ManipulationRetirementRules.sanitizeKnownManipulations(known);
 					KnownManipulationEvents.syncPlayerEvent(player);
 					return;
@@ -76,27 +75,25 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 				boolean knownExact = known.getManipList().stream().anyMatch(manipulation -> manipulation != null
 						&& msg.manipName.equals(manipulation.getName()));
 				if (!knownExact) {
-					player.displayClientMessage(Component.literal("That manipulation is still unknown.")
-							.withStyle(ChatFormatting.RED), true);
+					player.displayClientMessage(Component.translatable("message.hemomancy.equip_manipulation_packet.that_manipulation_is_still_unknown").withStyle(ChatFormatting.RED), true);
 					return;
 				}
 				int maxSlots = ManipSlotHelper.getMaxSlots(player);
 				if (known.equipManip(msg.manipName, maxSlots)) {
 					player.displayClientMessage(
-							Component.literal("Manipulation equipped: " + msg.manipName)
-									.withStyle(ChatFormatting.GREEN), true);
+							HemoText.translatable("message.hemomancy.equip_manipulation_packet.manipulation_equipped",
+									msg.manipName).withStyle(ChatFormatting.GREEN), true);
 				} else {
 					player.displayClientMessage(
-							Component.literal("No free slots for this equip (" +
-									ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames())
-											+ "/" + maxSlots + ")")
-									.withStyle(ChatFormatting.RED), true);
+							HemoText.translatable("message.hemomancy.equip_manipulation_packet.no_free_slots_for_this_equip",
+									ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames()),
+									maxSlots).withStyle(ChatFormatting.RED), true);
 				}
 			} else {
 				if (known.unequipManip(msg.manipName)) {
 					player.displayClientMessage(
-							Component.literal("Manipulation unequipped: " + msg.manipName)
-									.withStyle(ChatFormatting.YELLOW), true);
+							HemoText.translatable("message.hemomancy.equip_manipulation_packet.manipulation_unequipped",
+									msg.manipName).withStyle(ChatFormatting.YELLOW), true);
 				}
 			}
 			MnemonicReliquaryProgression.onCapacityChanged(serverPlayer, known);

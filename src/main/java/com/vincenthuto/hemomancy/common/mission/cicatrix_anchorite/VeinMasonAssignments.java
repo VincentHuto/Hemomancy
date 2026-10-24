@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -78,8 +79,7 @@ public final class VeinMasonAssignments {
             durable.putString(FIRST_ROUTE_BUILD, build);
             player.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, durable);
             grant(player, D6_FIRST_ROUTE);
-            if (step != RoutingStep.FIRST) player.displayClientMessage(net.minecraft.network.chat.Component.literal(
-                    "Your current scar route is recorded. Fit a different build and make its matching cast."), false);
+            if (step != RoutingStep.FIRST) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.hemomancy.vein_mason_assignments.your_current_scar_route_is_recorded"), false);
             return;
         }
         if (step == RoutingStep.SECOND) {
@@ -110,7 +110,7 @@ public final class VeinMasonAssignments {
     }
 
     private static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath("hemomancy", "hemomancy/" + path);
+        return Hemomancy.rloc("hemomancy/" + path);
     }
 
     public enum RoutingStep { NONE, FIRST, SECOND }

@@ -17,8 +17,10 @@ import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.PacketToggleUnstainedBonus;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -53,14 +55,14 @@ public class UnstainedProgressScreen extends Screen {
 
 	// ── Tabs ──
 	private enum UTab {
-		PROGRESS("Progress", 0xFFB0C0E0),
-		RITES("Rites", 0xFF8090BB),
-		CRAFTING("Crafting", 0xFF80D0C0),
-		MATERIALS("Materials", 0xFF80B0A0);
+		PROGRESS("screen.hemomancy.unstained_progress.tab.progress", 0xFFB0C0E0),
+		RITES("screen.hemomancy.unstained_progress.tab.rites", 0xFF8090BB),
+		CRAFTING("screen.hemomancy.unstained_progress.tab.crafting", 0xFF80D0C0),
+		MATERIALS("screen.hemomancy.unstained_progress.tab.materials", 0xFF80B0A0);
 
-		final String label;
+		final String labelKey;
 		final int color;
-		UTab(String label, int color) { this.label = label; this.color = color; }
+		UTab(String labelKey, int color) { this.labelKey = labelKey; this.color = color; }
 	}
 
 	private UTab activeTab = UTab.PROGRESS;
@@ -234,7 +236,7 @@ public class UnstainedProgressScreen extends Screen {
 		UnstainedProgressLayout.Progress progress = new UnstainedProgressLayout.Progress(
 				phase, currentPurityStage, clarityPrepared, clarityUnlocked, currentClarityStage, begunPurification);
 		if (layout == null || !progress.equals(layoutProgress)) {
-			layout = UnstainedProgressLayout.build(progress);
+			layout = UnstainedProgressLayout.build(progress, I18n::get);
 			layoutProgress = progress;
 		}
 	}
@@ -565,8 +567,8 @@ public class UnstainedProgressScreen extends Screen {
 				drawBonusToggleTooltips(gfx, mouseX, mouseY);
 			}
 			if (sidebarAvailable() && isOverSidebarToggle(mouseX, mouseY)) {
-				String tipText = sidebarVisible ? "Hide Milestones" : "Show Milestones";
-				gfx.renderTooltip(font, Component.literal(tipText), mouseX, mouseY);
+				String tipKey = sidebarVisible ? "screen.hemomancy.unstained_progress.hide_milestones" : "screen.hemomancy.unstained_progress.show_milestones";
+				gfx.renderTooltip(font, Component.translatable(tipKey), mouseX, mouseY);
 			}
 		} else if (activeTab == UTab.MATERIALS) {
 			materialsTab.renderTooltip(gfx, makeContext(), mouseX, mouseY);
@@ -612,13 +614,13 @@ public class UnstainedProgressScreen extends Screen {
 		int centerY = guiTop + guiHeight / 2;
 
 		gfx.drawCenteredString(font,
-				Component.literal("The Unstained Path Awaits"),
+				Component.translatable("screen.hemomancy.unstained_progress.the_unstained_path_awaits"),
 				centerX, centerY - 16, 0xFF8098C0);
 		gfx.drawCenteredString(font,
-				Component.literal("Seek treatment for active blood, or take the five service vows."),
+				Component.translatable("screen.hemomancy.unstained_progress.seek_treatment_for_active_blood_or"),
 				centerX, centerY, 0xFF506080);
 		gfx.drawCenteredString(font,
-				Component.literal("Speak with an Unstained Zealot to begin."),
+				Component.translatable("screen.hemomancy.unstained_progress.speak_with_an_unstained_zealot_to"),
 				centerX, centerY + 16, 0xFF384860);
 	}
 
@@ -627,20 +629,20 @@ public class UnstainedProgressScreen extends Screen {
 		int y = guiTop + guiHeight / 2 - 12;
 		if (phase == UnstainedPhase.NOVITIATE) {
 			int vows = UnstainedAccessRules.completedNovitiateVows(claimedObservances);
-			gfx.drawCenteredString(font, Component.literal("Novitiate Service"), centerX, y, 0xFF80D0C0);
-			gfx.drawCenteredString(font, Component.literal("Vows fulfilled: " + vows + "/5"), centerX, y + 16, 0xFFB0C8E8);
+			gfx.drawCenteredString(font, Component.translatable("screen.hemomancy.unstained_progress.novitiate_service"), centerX, y, 0xFF80D0C0);
+			gfx.drawCenteredString(font, HemoText.translatable("screen.hemomancy.unstained_progress.vows_fulfilled_5", vows), centerX, y + 16, 0xFFB0C8E8);
 			if (UnstainedAccessRules.hasCompletedNovitiateVows(claimedObservances)) {
 				String next = clarityPrepared
-						? "Consecrated Copper has steadied the crossing. Perform Clarity Ascension with your blood wholly relinquished."
-						: "Your service is kept. Offer Consecrated Copper at an Unstained Podium, then perform Clarity Ascension. Both ask for blood wholly relinquished.";
-				drawCentredWrapped(gfx, Component.literal(next), centerX, y + 32, 0xFF8098C0);
+						? "screen.hemomancy.unstained_progress.vows_kept_prepared"
+						: "screen.hemomancy.unstained_progress.vows_kept_unprepared";
+				drawCentredWrapped(gfx, Component.translatable(next), centerX, y + 32, 0xFF8098C0);
 			}
 		} else {
-			gfx.drawCenteredString(font, Component.literal("Baseline Restored"), centerX, y, 0xFF80D0C0);
+			gfx.drawCenteredString(font, Component.translatable("screen.hemomancy.unstained_progress.baseline_restored"), centerX, y, 0xFF80D0C0);
 			String next = clarityPrepared
-					? "Consecrated Copper has steadied the crossing. Perform Clarity Ascension."
-					: "Offer Consecrated Copper, then complete Clarity Ascension.";
-			drawCentredWrapped(gfx, Component.literal(next), centerX, y + 16, 0xFFB0C8E8);
+					? "screen.hemomancy.unstained_progress.baseline_restored_prepared"
+					: "screen.hemomancy.unstained_progress.baseline_restored_unprepared";
+			drawCentredWrapped(gfx, Component.translatable(next), centerX, y + 16, 0xFFB0C8E8);
 		}
 	}
 
@@ -679,9 +681,9 @@ public class UnstainedProgressScreen extends Screen {
 			pose.pushPose();
 			pose.translate(guiLeft + (float) view.panX, guiTop + (float) view.panY, 0.0F);
 			pose.scale(view.zoom, view.zoom, 1.0F);
-			drawSegmentHeader(gfx, layout.purityHeader(), "— Purity —", purity, PURITY_COLOR, 0x7088C0, 0xFF8098B0);
+			drawSegmentHeader(gfx, layout.purityHeader(), Component.translatable("screen.hemomancy.unstained_progress.purity"), purity, PURITY_COLOR, 0x7088C0, 0xFF8098B0);
 			layout.clarityHeader().ifPresent(header ->
-					drawSegmentHeader(gfx, header, "— Clarity —", clarity, CLARITY_COLOR, 0x50B0A0, 0xFF70B0A0));
+					drawSegmentHeader(gfx, header, Component.translatable("screen.hemomancy.unstained_progress.clarity"), clarity, CLARITY_COLOR, 0x50B0A0, 0xFF70B0A0));
 			for (Node node : layout.nodes()) {
 				int color = labelColor(node);
 				int lineY = node.y() + UnstainedProgressLayout.LABEL_DY;
@@ -692,7 +694,7 @@ public class UnstainedProgressScreen extends Screen {
 			}
 			Rect penalty = layout.penaltyRect();
 			float penaltyValue = currentPurityStage.getBloodMagicPenalty();
-			gfx.drawCenteredString(font, Component.literal(String.format("Blood Magic Penalty: -%.0f%%", penaltyValue * 100)),
+			gfx.drawCenteredString(font, HemoText.translatable("screen.hemomancy.unstained_progress.blood_magic_penalty_2", String.format("%.0f", penaltyValue * 100)),
 					penalty.x() + penalty.w() / 2, penalty.y(), penaltyValue > 0 ? 0xFFCC8060 : 0xFF405060);
 			pose.popPose();
 		}
@@ -725,10 +727,10 @@ public class UnstainedProgressScreen extends Screen {
 		};
 	}
 
-	private void drawSegmentHeader(GuiGraphics gfx, Rect header, String title, float value,
+	private void drawSegmentHeader(GuiGraphics gfx, Rect header, Component title, float value,
 								   int titleColor, int barRGB, int percentColor) {
 		int centreX = header.x() + header.w() / 2;
-		gfx.drawCenteredString(font, Component.literal(title), centreX, header.y(), titleColor);
+		gfx.drawCenteredString(font, title, centreX, header.y(), titleColor);
 		ScreenDrawUtils.drawProgressBar(gfx, header.x(), header.y() + UnstainedProgressLayout.HEADER_BAR_DY,
 				header.w(), UnstainedProgressLayout.HEADER_BAR_H, value, 100f, barRGB);
 		gfx.drawCenteredString(font, String.format("%.1f%%", value),
@@ -740,7 +742,7 @@ public class UnstainedProgressScreen extends Screen {
 		EnumNodeShape shape = claritySide ? node.clarityStage().getNodeShape() : node.purityStage().getNodeShape();
 		ResourceLocation texture = claritySide ? node.clarityStage().getIconTexture() : node.purityStage().getIconTexture();
 		ItemStack icon = claritySide ? node.clarityStage().getIconItem() : node.purityStage().getIconItem();
-		drawShapedNode(gfx, sx(node.x()), sy(node.y()), screenHalf(node), node.title(), node.status(),
+		drawShapedNode(gfx, sx(node.x()), sy(node.y()), screenHalf(node), node.title().getString(), node.status(),
 				claritySide ? CLARITY_GLOW : PURITY_GLOW, shape, texture, icon);
 	}
 
@@ -889,24 +891,16 @@ public class UnstainedProgressScreen extends Screen {
 		if (mouseX >= sx(penalty.x()) && mouseX <= sx(penalty.right())
 				&& mouseY >= sy(penalty.y()) - 1 && mouseY <= sy(penalty.bottom()) + 1) {
 			List<Component> tip = new ArrayList<>();
-			tip.add(Component.literal("Blood Magic Penalty")
-					.withStyle(s -> s.withColor(0xCC8060).withBold(true)));
-			tip.add(Component.literal("Pursuing the Unstained path weakens your")
-					.withStyle(s -> s.withColor(0xA08070)));
-			tip.add(Component.literal("blood manipulations. Higher purity stages")
-					.withStyle(s -> s.withColor(0xA08070)));
-			tip.add(Component.literal("inflict a greater cost and damage reduction")
-					.withStyle(s -> s.withColor(0xA08070)));
-			tip.add(Component.literal("to all hemomancy abilities.")
-					.withStyle(s -> s.withColor(0xA08070)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.blood_magic_penalty").withStyle(s -> s.withColor(0xCC8060).withBold(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.pursuing_the_unstained_path_weakens_your").withStyle(s -> s.withColor(0xA08070)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.blood_manipulations_higher_purity_stages").withStyle(s -> s.withColor(0xA08070)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.inflict_a_greater_cost_and_damage").withStyle(s -> s.withColor(0xA08070)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.to_all_hemomancy_abilities").withStyle(s -> s.withColor(0xA08070)));
 			tip.add(Component.literal("")); // spacer
-			tip.add(Component.literal("Tainted: -10%  •  Cleansing: -25%")
-					.withStyle(s -> s.withColor(0x807060).withItalic(true)));
-			tip.add(Component.literal("Absolved: -50%  •  Purified: -100%")
-					.withStyle(s -> s.withColor(0x807060).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.tainted_10_cleansing_25").withStyle(s -> s.withColor(0x807060).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.absolved_50_purified_100").withStyle(s -> s.withColor(0x807060).withItalic(true)));
 			float penaltyValue = currentPurityStage.getBloodMagicPenalty() * 100;
-			tip.add(Component.literal(String.format("Current: -%.0f%%", penaltyValue))
-					.withStyle(s -> s.withColor(penaltyValue > 0 ? 0xCC6644 : 0x607060).withItalic(true)));
+			tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.current", String.format("%.0f", penaltyValue)).withStyle(s -> s.withColor(penaltyValue > 0 ? 0xCC6644 : 0x607060).withItalic(true)));
 			gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
 		}
 	}
@@ -1048,47 +1042,35 @@ public class UnstainedProgressScreen extends Screen {
 		if (hovered == 0) {
 			// Verdigris Aura tooltip (purity path — always first button)
 			boolean unlocked = purity > 0;
-			tip.add(Component.literal("Verdigris Aura")
-					.withStyle(s -> s.withColor(0x80D0C0).withBold(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.verdigris_aura").withStyle(s -> s.withColor(0x80D0C0).withBold(true)));
 			if (!unlocked) {
-				tip.add(Component.literal("Locked — increase Purity to unlock.")
-						.withStyle(s -> s.withColor(0x606870).withItalic(true)));
+				tip.add(Component.translatable("screen.hemomancy.unstained_progress.locked_increase_purity_to_unlock").withStyle(s -> s.withColor(0x606870).withItalic(true)));
 			} else {
-				tip.add(Component.literal("A copper-based anti-blood field that")
-						.withStyle(s -> s.withColor(0x70A898)));
-				tip.add(Component.literal("weakens nearby blood magic entities and effects.")
-						.withStyle(s -> s.withColor(0x70A898)));
+				tip.add(Component.translatable("screen.hemomancy.unstained_progress.a_copper_based_anti_blood_field").withStyle(s -> s.withColor(0x70A898)));
+				tip.add(Component.translatable("screen.hemomancy.unstained_progress.weakens_nearby_blood_magic_entities_and").withStyle(s -> s.withColor(0x70A898)));
 				tip.add(Component.literal(""));
-				tip.add(Component.literal("Scales with Purity (purity ÷ 100).")
-						.withStyle(s -> s.withColor(0x508878).withItalic(true)));
-				tip.add(Component.literal(String.format("Current: %.0f%%", verdigrisAura * 100))
-						.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
+				tip.add(Component.translatable("screen.hemomancy.unstained_progress.scales_with_purity_purity_100").withStyle(s -> s.withColor(0x508878).withItalic(true)));
+				tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.current_2", String.format("%.0f", verdigrisAura * 100)).withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
 				tip.add(Component.literal(""));
-				String state = verdigrisAuraEnabled ? "✔ Enabled" : "✖ Disabled";
+				Component state = Component.translatable(verdigrisAuraEnabled ? "screen.hemomancy.unstained_progress.toggle_enabled" : "screen.hemomancy.unstained_progress.toggle_disabled");
 				int stateCol = verdigrisAuraEnabled ? 0x60CC60 : 0xCC6060;
-				tip.add(Component.literal(state + " — click to toggle")
-						.withStyle(s -> s.withColor(stateCol)));
+				tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.click_to_toggle",
+						state).withStyle(s -> s.withColor(stateCol)));
 			}
 		} else if (hovered == 1) {
 			// Silver Ward tooltip (clarity path — second button)
-			tip.add(Component.literal("Silver Ward")
-					.withStyle(s -> s.withColor(0xB0C0E0).withBold(true)));
-			tip.add(Component.literal("Passive resistance to blood magic effects.")
-					.withStyle(s -> s.withColor(0x8898B0)));
-			tip.add(Component.literal("Grants +4 Armor and +0.2 Knockback Resistance")
-					.withStyle(s -> s.withColor(0x8898B0)));
-			tip.add(Component.literal("while the Silver Ward effect is active.")
-					.withStyle(s -> s.withColor(0x8898B0)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.silver_ward").withStyle(s -> s.withColor(0xB0C0E0).withBold(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.passive_resistance_to_blood_magic_effects").withStyle(s -> s.withColor(0x8898B0)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.grants_4_armor_and_0_2").withStyle(s -> s.withColor(0x8898B0)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.while_the_silver_ward_effect_is").withStyle(s -> s.withColor(0x8898B0)));
 			tip.add(Component.literal(""));
-			tip.add(Component.literal("Scales with Clarity (clarity ÷ 100).")
-					.withStyle(s -> s.withColor(0x607090).withItalic(true)));
-			tip.add(Component.literal(String.format("Current: %.0f%%", silverWardStrength * 100))
-					.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.scales_with_clarity_clarity_100").withStyle(s -> s.withColor(0x607090).withItalic(true)));
+			tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.current_2", String.format("%.0f", silverWardStrength * 100)).withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
 			tip.add(Component.literal(""));
-			String state = silverWardEnabled ? "✔ Enabled" : "✖ Disabled";
+			Component state = Component.translatable(silverWardEnabled ? "screen.hemomancy.unstained_progress.toggle_enabled" : "screen.hemomancy.unstained_progress.toggle_disabled");
 			int stateCol = silverWardEnabled ? 0x60CC60 : 0xCC6060;
-			tip.add(Component.literal(state + " — click to toggle")
-					.withStyle(s -> s.withColor(stateCol)));
+			tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.click_to_toggle",
+					state).withStyle(s -> s.withColor(stateCol)));
 		}
 
 		if (!tip.isEmpty()) {
@@ -1151,14 +1133,14 @@ public class UnstainedProgressScreen extends Screen {
 		int centerX = sideX + sideW / 2;
 
 		// Section title
-		gfx.drawCenteredString(font, Component.literal("Book of Observances"), centerX, y, 0xFFB0C0E0);
+		gfx.drawCenteredString(font, Component.translatable("screen.hemomancy.unstained_progress.book_of_observances"), centerX, y, 0xFFB0C0E0);
 		y += 14;
 
 		// Thin divider
 		gfx.fill(sideX + 8, y, sideX + sideW - 8, y + 1, 0x33607890);
 		y += 5;
 
-		y = drawWrapped(gfx, Component.literal("Next rite: " + nextRiteLabel()), x, y, textW, 0xFF80D0C0);
+		y = drawWrapped(gfx, HemoText.translatable("screen.hemomancy.unstained_progress.next_rite", nextRiteLabel()), x, y, textW, 0xFF80D0C0);
 		y += 2;
 		for (Observance observance : UnstainedProgressLayout.earnOrder()) {
 			if (!observanceShown(observance)) continue;
@@ -1171,17 +1153,17 @@ public class UnstainedProgressScreen extends Screen {
 		y += 5;
 
 		// ── One-time checklist ──
-		y = drawCheckItem(gfx, x, y, textW, "First Hemo Kill", mFirstHemoKill);
-		y = drawCheckItem(gfx, x, y, textW, "Slept w/ Hemolysis", mSleptHemolysis);
-		y = drawCheckItem(gfx, x, y, textW, "5-min Abstinence", mReachedAbstinence);
-		y = drawCheckItem(gfx, x, y, textW, "Emptied Blood", mEmptiedBlood);
-		y = drawCheckItem(gfx, x, y, textW, "Earned Advancement", mEarnedAdvancement);
+		y = drawCheckItem(gfx, x, y, textW, Component.translatable("screen.hemomancy.unstained_progress.first_hemo_kill"), mFirstHemoKill);
+		y = drawCheckItem(gfx, x, y, textW, Component.translatable("screen.hemomancy.unstained_progress.slept_w_hemolysis"), mSleptHemolysis);
+		y = drawCheckItem(gfx, x, y, textW, Component.translatable("screen.hemomancy.unstained_progress.5_min_abstinence"), mReachedAbstinence);
+		y = drawCheckItem(gfx, x, y, textW, Component.translatable("screen.hemomancy.unstained_progress.emptied_blood"), mEmptiedBlood);
+		y = drawCheckItem(gfx, x, y, textW, Component.translatable("screen.hemomancy.unstained_progress.earned_advancement"), mEarnedAdvancement);
 
 		y += 4;
 		gfx.fill(sideX + 8, y, sideX + sideW - 8, y + 1, 0x33607890);
 		y += 6;
 
-		y = drawWrapped(gfx, Component.literal("Counters are records only; observances award progression."),
+		y = drawWrapped(gfx, Component.translatable("screen.hemomancy.unstained_progress.counters_are_records_only_observances_award"),
 				x, y, textW, 0xFF687890);
 
 		sidebarContentH = y + sidebarScroll - top + 6;
@@ -1209,20 +1191,26 @@ public class UnstainedProgressScreen extends Screen {
 		return y;
 	}
 
-	private String nextRiteLabel() {
+	private Component nextRiteLabel() {
+		return Component.translatable(nextRiteKey());
+	}
+
+	private String nextRiteKey() {
 		if (phase == UnstainedPhase.NOVITIATE) {
-			if (!UnstainedAccessRules.hasCompletedNovitiateVows(claimedObservances)) return "Complete the five service vows";
-			return clarityPrepared ? "Clarity Ascension" : "Consecrated Copper offering, then Clarity Ascension";
+			if (!UnstainedAccessRules.hasCompletedNovitiateVows(claimedObservances)) return "screen.hemomancy.unstained_progress.next_rite.complete_service_vows";
+			return clarityPrepared ? "screen.hemomancy.unstained_progress.next_rite.clarity_ascension"
+					: "screen.hemomancy.unstained_progress.next_rite.copper_then_clarity_ascension";
 		}
-		if (phase == UnstainedPhase.CURE_READY) return "Closed Vein";
+		if (phase == UnstainedPhase.CURE_READY) return "screen.hemomancy.unstained_progress.next_rite.closed_vein";
 		if (phase == UnstainedPhase.CLEANSED_UNPLEDGED) {
-			return clarityPrepared ? "Clarity Ascension pledge" : "Consecrated Copper offering, then the Clarity Ascension pledge";
+			return clarityPrepared ? "screen.hemomancy.unstained_progress.next_rite.clarity_ascension_pledge"
+					: "screen.hemomancy.unstained_progress.next_rite.copper_then_clarity_ascension_pledge";
 		}
 		return switch (UnstainedPathGuidance.nextRequiredRite(begunPurification, purity >= 100f, clarityUnlocked)) {
-			case "lethean_baptism" -> "Lethean Baptism";
-			case "patient_purification" -> "No rite: complete observances";
-			case "clarity_ascension" -> "Clarity Ascension";
-			default -> "No rite: Still Arts follow Clarity";
+			case "lethean_baptism" -> "screen.hemomancy.unstained_progress.next_rite.lethean_baptism";
+			case "patient_purification" -> "screen.hemomancy.unstained_progress.next_rite.patient_purification";
+			case "clarity_ascension" -> "screen.hemomancy.unstained_progress.next_rite.clarity_ascension";
+			default -> "screen.hemomancy.unstained_progress.next_rite.still_arts";
 		};
 	}
 
@@ -1264,13 +1252,13 @@ public class UnstainedProgressScreen extends Screen {
 	}
 
 	/** Draws a single checklist item with a check/cross icon. Returns the next Y. */
-	private int drawCheckItem(GuiGraphics gfx, int x, int y, int width, String label, boolean complete) {
+	private int drawCheckItem(GuiGraphics gfx, int x, int y, int width, Component label, boolean complete) {
 		String icon = complete ? "✓" : "✗";
 		int iconCol = complete ? 0xFF60CC60 : 0xFF605060;
 		int labelCol = complete ? 0xFFA0C0D0 : 0xFF506070;
 
 		gfx.drawString(font, icon, x, y, iconCol, false);
-		int end = drawWrapped(gfx, Component.literal(label), x + 14, y, width - 14, labelCol);
+		int end = drawWrapped(gfx, label, x + 14, y, width - 14, labelCol);
 		return Math.max(y + 12, end + 2);
 	}
 
@@ -1316,27 +1304,21 @@ public class UnstainedProgressScreen extends Screen {
 		boolean reached = !bypassed && currentPurityStage.getLevel() >= stage.getLevel();
 		boolean isCurrent = !bypassed && currentPurityStage == stage;
 
-		tip.add(Component.literal(stage.getTitle())
+		tip.add(Component.translatable(UnstainedProgressLayout.stageKey(stage))
 				.withStyle(s -> s.withColor(isCurrent ? 0xB0C0E0 : (reached ? 0x7090B0 : 0x404858)).withBold(true)));
-		tip.add(Component.literal(String.format("Requires: %.0f%% Purity", stage.getMinPurity()))
-				.withStyle(s -> s.withColor(0x888888)));
+		tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.requires_purity", String.format("%.0f", stage.getMinPurity())).withStyle(s -> s.withColor(0x888888)));
 		if (stage.getBloodMagicPenalty() > 0) {
-			tip.add(Component.literal(String.format("Blood Magic Penalty: -%.0f%%", stage.getBloodMagicPenalty() * 100))
-					.withStyle(s -> s.withColor(0xAA6644)));
+			tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.blood_magic_penalty_2", String.format("%.0f", stage.getBloodMagicPenalty() * 100)).withStyle(s -> s.withColor(0xAA6644)));
 		}
 		if (bypassed) {
-			tip.add(Component.literal("✓ Passed over: the five service vows answered for it")
-					.withStyle(s -> s.withColor(0x7088A0).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.passed_over_the_five_service_vows").withStyle(s -> s.withColor(0x7088A0).withItalic(true)));
 		} else if (isCurrent) {
-			tip.add(Component.literal("▸ Current Stage")
-					.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.current_stage").withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
 		} else if (reached) {
-			tip.add(Component.literal("✓ Achieved")
-					.withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.achieved").withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
 		} else {
 			float needed = stage.getMinPurity() - purity;
-			tip.add(Component.literal(String.format("%.1f%% more purity needed", needed))
-					.withStyle(s -> s.withColor(0xAA4444).withItalic(true)));
+			tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.more_purity_needed", String.format("%.1f", needed)).withStyle(s -> s.withColor(0xAA4444).withItalic(true)));
 		}
 		tip.add(Component.translatable("unstained.hemomancy.purity." + stage.name().toLowerCase() + ".desc")
 				.withStyle(s -> s.withColor(0x6878A0).withItalic(true)));
@@ -1348,20 +1330,16 @@ public class UnstainedProgressScreen extends Screen {
 		boolean reached = currentClarityStage.getLevel() >= stage.getLevel();
 		boolean isCurrent = currentClarityStage == stage;
 
-		tip.add(Component.literal(stage.getTitle())
+		tip.add(Component.translatable(UnstainedProgressLayout.stageKey(stage))
 				.withStyle(s -> s.withColor(isCurrent ? 0x80D0C0 : (reached ? 0x508878 : 0x384848)).withBold(true)));
-		tip.add(Component.literal(String.format("Requires: %.0f%% Clarity", stage.getMinClarity()))
-				.withStyle(s -> s.withColor(0x888888)));
+		tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.requires_clarity", String.format("%.0f", stage.getMinClarity())).withStyle(s -> s.withColor(0x888888)));
 		if (isCurrent) {
-			tip.add(Component.literal("▸ Current Stage")
-					.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.current_stage").withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
 		} else if (reached) {
-			tip.add(Component.literal("✓ Achieved")
-					.withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.achieved").withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
 		} else {
 			float needed = stage.getMinClarity() - clarity;
-			tip.add(Component.literal(String.format("%.1f%% more clarity needed", needed))
-					.withStyle(s -> s.withColor(0xAA4444).withItalic(true)));
+			tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.more_clarity_needed", String.format("%.1f", needed)).withStyle(s -> s.withColor(0xAA4444).withItalic(true)));
 		}
 		tip.add(Component.translatable("unstained.hemomancy.clarity." + stage.name().toLowerCase() + ".desc")
 				.withStyle(s -> s.withColor(0x508878).withItalic(true)));
@@ -1371,50 +1349,51 @@ public class UnstainedProgressScreen extends Screen {
 	private List<Component> riteTooltip(Node node) {
 		List<Component> tip = new ArrayList<>();
 		if (node.veiled()) {
-			tip.add(Component.literal("Veiled Rite").withStyle(s -> s.withColor(0x606C80).withBold(true)));
-			tip.add(Component.literal("A later rite rests beneath still water. It surfaces when you reach Purified.")
-					.withStyle(s -> s.withColor(0x6878A0).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.veiled_rite").withStyle(s -> s.withColor(0x606C80).withBold(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.a_later_rite_rests_beneath_still").withStyle(s -> s.withColor(0x6878A0).withItalic(true)));
 			return tip;
 		}
 		Rite rite = node.rite();
 		int titleColor = node.done() ? 0x7090B0 : (node.status() == Status.NEXT ? 0xB0C0E0 : 0x505868);
-		tip.add(Component.literal(rite.title()).withStyle(s -> s.withColor(titleColor).withBold(true)));
+		tip.add(rite.title().copy().withStyle(s -> s.withColor(titleColor).withBold(true)));
 		String description = switch (rite) {
-			case LETHEAN_BAPTISM -> "Still water takes the blood's first claim, and purification begins.";
-			case CLOSED_VEIN -> "At full Purity the last current stills, and the blood returns to a mortal baseline.";
-			case CONSECRATED_COPPER -> "Consecrated Copper offered at an Unstained Podium steadies the crossing into Clarity.";
-			case CLARITY_ASCENSION -> "The pledge. Clarity opens, and blood magic is set down for good.";
+			case LETHEAN_BAPTISM -> "screen.hemomancy.unstained_progress.rite.lethean_baptism.description";
+			case CLOSED_VEIN -> "screen.hemomancy.unstained_progress.rite.closed_vein.description";
+			case CONSECRATED_COPPER -> "screen.hemomancy.unstained_progress.rite.consecrated_copper.description";
+			case CLARITY_ASCENSION -> "screen.hemomancy.unstained_progress.rite.clarity_ascension.description";
 		};
-		tip.add(Component.literal(description).withStyle(s -> s.withColor(0x8898B0)));
+		tip.add(Component.translatable(description).withStyle(s -> s.withColor(0x8898B0)));
 		String state;
 		int stateColor;
 		if (node.done()) {
 			state = switch (rite) {
-				case LETHEAN_BAPTISM -> begunPurification ? "✓ Performed" : "✓ Answered by the five service vows";
+				case LETHEAN_BAPTISM -> begunPurification ? "screen.hemomancy.unstained_progress.rite_state.performed"
+						: "screen.hemomancy.unstained_progress.rite_state.answered_by_vows";
 				case CLOSED_VEIN -> node.status() == Status.BYPASSED
-						? "✓ Passed over: the five service vows answered for it" : "✓ Baseline restored";
-				case CONSECRATED_COPPER -> "✓ Offered";
-				case CLARITY_ASCENSION -> "✓ Pledged";
+						? "screen.hemomancy.unstained_progress.rite_state.passed_over"
+						: "screen.hemomancy.unstained_progress.rite_state.baseline_restored";
+				case CONSECRATED_COPPER -> "screen.hemomancy.unstained_progress.rite_state.offered";
+				case CLARITY_ASCENSION -> "screen.hemomancy.unstained_progress.rite_state.pledged";
 			};
 			stateColor = 0x44AA44;
 		} else if (node.status() == Status.NEXT) {
 			state = switch (rite) {
-				case LETHEAN_BAPTISM -> "▸ Next: quiet the infection at an Unstained Podium, then enter the rite";
-				case CLOSED_VEIN -> "▸ Next: perform the rite at full Purity";
-				case CONSECRATED_COPPER -> "▸ Next: offer it at a Podium with your blood wholly relinquished";
-				case CLARITY_ASCENSION -> "▸ Next: perform the rite with your blood wholly relinquished";
+				case LETHEAN_BAPTISM -> "screen.hemomancy.unstained_progress.rite_state.next.lethean_baptism";
+				case CLOSED_VEIN -> "screen.hemomancy.unstained_progress.rite_state.next.closed_vein";
+				case CONSECRATED_COPPER -> "screen.hemomancy.unstained_progress.rite_state.next.consecrated_copper";
+				case CLARITY_ASCENSION -> "screen.hemomancy.unstained_progress.rite_state.next.clarity_ascension";
 			};
 			stateColor = 0x60A0CC;
 		} else {
 			state = switch (rite) {
-				case LETHEAN_BAPTISM -> "Not yet begun";
-				case CLOSED_VEIN -> "Requires Purified";
-				case CONSECRATED_COPPER -> "Follows the Closed Vein";
-				case CLARITY_ASCENSION -> "Follows the Consecrated Copper offering";
+				case LETHEAN_BAPTISM -> "screen.hemomancy.unstained_progress.rite_state.locked.lethean_baptism";
+				case CLOSED_VEIN -> "screen.hemomancy.unstained_progress.rite_state.locked.closed_vein";
+				case CONSECRATED_COPPER -> "screen.hemomancy.unstained_progress.rite_state.locked.consecrated_copper";
+				case CLARITY_ASCENSION -> "screen.hemomancy.unstained_progress.rite_state.locked.clarity_ascension";
 			};
 			stateColor = 0xAA4444;
 		}
-		tip.add(Component.literal(state).withStyle(s -> s.withColor(stateColor).withItalic(true)));
+		tip.add(Component.translatable(state).withStyle(s -> s.withColor(stateColor).withItalic(true)));
 		return tip;
 	}
 
@@ -1424,13 +1403,12 @@ public class UnstainedProgressScreen extends Screen {
 		tip.add(Component.translatable(observance.translation("title"))
 				.withStyle(s -> s.withColor(color & 0x00FFFFFF).withBold(true)));
 		if (isClaimed(observance)) {
-			tip.add(Component.literal("✓ Fulfilled").withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.fulfilled").withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
 		} else if (isAccepted(observance)) {
-			tip.add(Component.literal("• Accepted: bring the offering to its guide")
-					.withStyle(s -> s.withColor(0xB0C0E0).withItalic(true)));
+			tip.add(Component.translatable("screen.hemomancy.unstained_progress.accepted_bring_the_offering_to_its").withStyle(s -> s.withColor(0xB0C0E0).withItalic(true)));
 		} else if (isAvailable(observance)) {
-			tip.add(Component.literal("+ Available from " + issuerName(observance))
-					.withStyle(s -> s.withColor(0x80D0C0).withItalic(true)));
+			tip.add(HemoText.translatable("screen.hemomancy.unstained_progress.available_from",
+					issuerName(observance)).withStyle(s -> s.withColor(0x80D0C0).withItalic(true)));
 		} else {
 			tip.add(Component.translatable(observance.translation("unlock"))
 					.withStyle(s -> s.withColor(0x687080).withItalic(true)));
@@ -1441,12 +1419,12 @@ public class UnstainedProgressScreen extends Screen {
 		return tip;
 	}
 
-	private static String issuerName(Observance observance) {
-		return switch (observance.issuer()) {
-			case ACOLYTE -> "an Acolyte";
-			case ZEALOT -> "a Zealot";
-			case GUARDIAN -> "a Guardian";
-		};
+	private static Component issuerName(Observance observance) {
+		return Component.translatable(switch (observance.issuer()) {
+			case ACOLYTE -> "screen.hemomancy.unstained_progress.issuer.acolyte";
+			case ZEALOT -> "screen.hemomancy.unstained_progress.issuer.zealot";
+			case GUARDIAN -> "screen.hemomancy.unstained_progress.issuer.guardian";
+		});
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -1464,7 +1442,7 @@ public class UnstainedProgressScreen extends Screen {
 				0xFFB0C0E0, 0xFF506888);  // hoverText, idleText
 
 		if (hovered) {
-			gfx.renderTooltip(font, Component.literal("Return to Center"), mouseX, mouseY);
+			gfx.renderTooltip(font, Component.translatable("screen.hemomancy.unstained_progress.return_to_center"), mouseX, mouseY);
 		}
 	}
 
@@ -1486,7 +1464,7 @@ public class UnstainedProgressScreen extends Screen {
 	private List<ScreenDrawUtils.TabDesc> buildTabDescs() {
 		List<ScreenDrawUtils.TabDesc> descs = new ArrayList<>();
 		for (UTab tab : UTab.values()) {
-			descs.add(new ScreenDrawUtils.TabDesc(tab.label, tab.color, tab == activeTab));
+			descs.add(new ScreenDrawUtils.TabDesc(Component.translatable(tab.labelKey).getString(), tab.color, tab == activeTab));
 		}
 		return descs;
 	}

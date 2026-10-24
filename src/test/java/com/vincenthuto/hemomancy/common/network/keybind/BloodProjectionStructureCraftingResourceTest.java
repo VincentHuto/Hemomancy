@@ -1,62 +1,65 @@
 package com.vincenthuto.hemomancy.common.network.keybind;
 
-import java.io.IOException;
-import java.nio.file.Files;
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+import org.junit.jupiter.api.Test;
+
 import java.nio.file.Path;
 
-public final class BloodProjectionStructureCraftingResourceTest {
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertShowsEnglish;
+
+class BloodProjectionStructureCraftingResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
-	private BloodProjectionStructureCraftingResourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
-		String projectionItem = read(SOURCE_ROOT.resolve(
+	@Test
+	void bloodProjectionStructureCraftingSourceContracts() {
+		String projectionItem = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java"));
 		// The key packet delegates: Blood Structure crafting and rite activation live in their own classes.
-		String keyPacket = read(SOURCE_ROOT.resolve(
+		String keyPacket = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java"))
-				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/rite/structure/BloodStructureCrafting.java"))
-				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteActivation.java"));
-		String livingStaff = read(SOURCE_ROOT.resolve(
+				+ SourceAssertions.read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/rite/structure/BloodStructureCrafting.java"))
+				+ SourceAssertions.read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteActivation.java"));
+		String livingStaff = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffItem.java"));
-		String packetHandler = read(SOURCE_ROOT.resolve(
+		String packetHandler = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
-		String feedPacket = read(SOURCE_ROOT.resolve(
+		String feedPacket = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketBloodStructureFeed.java"));
-		String feedManager = read(SOURCE_ROOT.resolve(
+		String feedManager = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/BloodStructureFeedManager.java"));
-		String craftingHelper = read(SOURCE_ROOT.resolve(
+		String craftingHelper = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/rite/structure/BloodStructureCraftingHelper.java"));
-		String visiblePositionRules = read(SOURCE_ROOT.resolve(
+		String visiblePositionRules = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/rite/structure/BloodStructureVisiblePositionRules.java"));
-		String clientData = read(SOURCE_ROOT.resolve(
+		String clientData = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/data/ActiveBloodStructureFeedClientData.java"));
-		String renderer = read(SOURCE_ROOT.resolve(
+		String renderer = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/world/BloodStructureFeedWarpRenderer.java"))
 				// The shell's face topology lives in the helper shared with the Working floor swallow.
-				+ read(SOURCE_ROOT.resolve(
+				+ SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/world/BlockShellFaces.java"));
-		String spiralParticles = read(SOURCE_ROOT.resolve(
+		String spiralParticles = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/world/BloodStructureFeedSpiralParticles.java"));
-		String feedAbocipherParticle = read(SOURCE_ROOT.resolve(
+		String feedAbocipherParticle = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/particle/BloodStructureFeedAbocipherParticle.java"));
-		String abocipherFactory = read(SOURCE_ROOT.resolve(
+		String abocipherFactory = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/particle/factory/AbocipherParticleFactory.java"));
-		String bloodCellFactory = read(SOURCE_ROOT.resolve(
+		String bloodCellFactory = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/particle/factory/BloodCellParticleFactory.java"));
-		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientTickEvents.java"))
-				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java"));
-		String shaderInit = read(SOURCE_ROOT.resolve(
+		String clientEvents = SourceAssertions.read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientTickEvents.java"))
+				+ SourceAssertions.read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java"));
+		String shaderInit = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java"));
-		String renderTypes = read(SOURCE_ROOT.resolve(
+		String renderTypes = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java"));
-		String shaderJson = read(RESOURCE_ROOT.resolve(
+		String shaderJson = SourceAssertions.read(RESOURCE_ROOT.resolve(
 				"assets/hemomancy/shaders/core/world/blood_structure_warp.json"));
-		String vertexShader = read(RESOURCE_ROOT.resolve(
+		String vertexShader = SourceAssertions.read(RESOURCE_ROOT.resolve(
 				"assets/hemomancy/shaders/core/world/blood_structure_warp.vsh"));
-		String fragmentShader = read(RESOURCE_ROOT.resolve(
+		String fragmentShader = SourceAssertions.read(RESOURCE_ROOT.resolve(
 				"assets/hemomancy/shaders/core/world/blood_structure_warp.fsh"));
 
 		assertContains("projection item tries structure feed before tile transfer", projectionItem,
@@ -69,7 +72,7 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"!targetPattern.isUnstained()");
 		assertContains("key packet keeps unstained structure path", keyPacket,
 				"targetPattern.isUnstained()");
-		assertContains("key packet hints projection use", keyPacket,
+		assertShowsEnglish("key packet hints projection use", keyPacket,
 				"use Blood Projection");
 		assertNotContains("puppeteer trials are no longer a Blood Crafting key path", keyPacket,
 				"tryActivatePuppeteerTrial");
@@ -107,7 +110,7 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"x >= row.length()");
 		assertContains("feed sync packet registered", packetHandler,
 				"PacketBloodStructureFeed.TYPE");
-		assertContains("feed packet targets client cache", read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/network/ClientboundEffectHandlers.java")),
+		assertContains("feed packet targets client cache", SourceAssertions.read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/network/ClientboundEffectHandlers.java")),
 				"ActiveBloodStructureFeedClientData");
 		assertContains("client feed cache tracks positions", clientData,
 				"List<BlockPos>");
@@ -253,24 +256,5 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"veinNoise");
 		assertNotContains("fragment shader should not key glow off diagonal uv sums", fragmentShader,
 				"p.x + p.y");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": contained " + unexpected);
-		}
 	}
 }

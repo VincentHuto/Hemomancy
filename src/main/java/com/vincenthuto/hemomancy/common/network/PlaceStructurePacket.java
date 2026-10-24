@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFootprintResolver;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.BlockPos;
@@ -86,12 +87,12 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 			if (ctx.player() instanceof ServerPlayer player) {
 				// Creative-only check
 				if (!player.isCreative()) {
-					player.sendSystemMessage(Component.literal("§cStructure Spawner requires creative mode!"));
+					player.sendSystemMessage(Component.translatable("message.hemomancy.place_structure_packet.structure_spawner_requires_creative_mode"));
 					return;
 				}
 				// Pasting rites, floors and offerings is an operator tool, used from the held spawner (F-9).
 				if (!player.hasPermissions(2)) {
-					player.sendSystemMessage(Component.literal("§cStructure Spawner requires operator permission!"));
+					player.sendSystemMessage(Component.translatable("message.hemomancy.place_structure_packet.structure_spawner_requires_operator_permission"));
 					return;
 				}
 				if (ServerboundGuards.heldItem(player, StructureSpawnerItem.class).isEmpty()) {
@@ -115,12 +116,13 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 		if (type == StructureType.RITE_FLOOR) {
 			CardinalRiteFloorDefinition floor = CardinalRiteFloorRegistry.get(recipeId).orElse(null);
 			if (floor == null) {
-				player.sendSystemMessage(Component.literal("§cCould not find Cardinal Rite floor: " + recipeId));
+				player.sendSystemMessage(HemoText.translatable("message.hemomancy.place_structure_packet.could_not_find_cardinal_rite_floor", recipeId));
 				return -1;
 			}
 			int placed = placeRiteFloor(level, player.blockPosition(), floor);
-			player.sendSystemMessage(Component.literal(
-					"§aPlaced " + placed + " blocks for: " + floor.displayName()));
+			player.sendSystemMessage(HemoText.translatable("message.hemomancy.place_structure_packet.placed_blocks_for",
+					placed,
+					floor.displayName()));
 			return placed;
 		}
 		MultiblockPattern pattern = null;
@@ -149,21 +151,22 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 		} else if (cardinalRite != null && cardinalRite.hasLayeredStation()) {
 			int placed = placeLayeredCardinalRite(level, player.blockPosition(), cardinalRite, player);
 			if (placed >= 0) {
-				player.sendSystemMessage(Component.literal(
-						"§aPlaced " + placed + " blocks for: " + recipeId.getPath()));
+				player.sendSystemMessage(HemoText.translatable("message.hemomancy.place_structure_packet.placed_blocks_for",
+						placed,
+						recipeId.getPath()));
 			}
 			return placed;
 		}
 
 		if (pattern == null) {
-			player.sendSystemMessage(Component.literal("§cCould not find recipe: " + recipeId));
+			player.sendSystemMessage(HemoText.translatable("message.hemomancy.place_structure_packet.could_not_find_recipe", recipeId));
 			return -1;
 		}
 
 		// Get structure dimensions for centering
 		List<BlockPosBlockPair> blockPairs = pattern.getBlockPosBlockList();
 		if (blockPairs.isEmpty()) {
-			player.sendSystemMessage(Component.literal("§cRecipe has no blocks to place!"));
+			player.sendSystemMessage(Component.translatable("message.hemomancy.place_structure_packet.recipe_has_no_blocks_to_place"));
 			return -1;
 		}
 
@@ -248,8 +251,10 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 			level.updateNeighborsAt(pos, level.getBlockState(pos).getBlock());
 		}
 
-		player.sendSystemMessage(Component.literal("§aPlaced " + placed + " blocks for: " + recipeId.getPath()
-				+ (craftStructureOnly ? " §7(shift-click to raise its Working floor, medium and offerings too)" : "")));
+		player.sendSystemMessage(HemoText.translatable("message.hemomancy.place_structure_packet.placed_blocks_for_2",
+				placed,
+				recipeId.getPath(),
+				(craftStructureOnly ? Component.translatable("message.hemomancy.place_structure_packet.working_floor_hint") : Component.empty())));
 		return placed;
 	}
 
@@ -257,8 +262,8 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 			CardinalRiteRecipe recipe, ServerPlayer player) {
 		CardinalRiteFloorDefinition floor = CardinalRiteFloorRegistry.get(recipe.getFloorId()).orElse(null);
 		if (floor == null) {
-			player.sendSystemMessage(Component.literal(
-					"§cCould not find Cardinal Rite floor: " + recipe.getFloorId()));
+			player.sendSystemMessage(HemoText.translatable("message.hemomancy.place_structure_packet.could_not_find_cardinal_rite_floor",
+					recipe.getFloorId()));
 			return -1;
 		}
 
@@ -266,21 +271,20 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 				.mapToInt(CardinalRiteRecipe.BrazierRequirement::count)
 				.sum();
 		if (requiredBraziers > floor.brazierSockets().size()) {
-			player.sendSystemMessage(Component.literal(
-					"§cRite requires " + requiredBraziers + " braziers, but floor "
-							+ floor.id() + " only defines " + floor.brazierSockets().size() + " sockets"));
+			player.sendSystemMessage(HemoText.translatable("message.hemomancy.place_structure_packet.rite_requires_braziers_but_floor_only",
+					requiredBraziers,
+					floor.id(),
+					floor.brazierSockets().size()));
 			return -1;
 		}
 		for (CardinalRiteRecipe.BrazierRequirement requirement : recipe.getBrazierSignature()) {
 			if (requirement.ingredient().getItems().length == 0) {
-				player.sendSystemMessage(Component.literal(
-						"§cRite has a brazier ingredient with no available representative item"));
+				player.sendSystemMessage(Component.translatable("message.hemomancy.place_structure_packet.rite_has_a_brazier_ingredient_with"));
 				return -1;
 			}
 		}
 		if (recipe.hasMedium() && recipe.getMedium().getItems().length == 0) {
-			player.sendSystemMessage(Component.literal(
-					"§cRite has a focus medium with no available representative item"));
+			player.sendSystemMessage(Component.translatable("message.hemomancy.place_structure_packet.rite_has_a_focus_medium_with"));
 			return -1;
 		}
 
@@ -291,7 +295,7 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 			ItemStack mediumStack = recipe.getMedium().getItems()[0].copyWithCount(1);
 			if (!(level.getBlockEntity(focusPos) instanceof CardinalFocusBlockEntity focus)
 					|| !focus.insertMedium(null, mediumStack)) {
-				player.sendSystemMessage(Component.literal("§cCould not seat the rite's medium in its Cardinal Focus"));
+				player.sendSystemMessage(Component.translatable("message.hemomancy.place_structure_packet.could_not_seat_the_rite_s"));
 				return -1;
 			}
 		}

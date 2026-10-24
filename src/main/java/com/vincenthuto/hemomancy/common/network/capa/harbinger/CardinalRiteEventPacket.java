@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -23,7 +23,7 @@ import java.util.List;
 public record CardinalRiteEventPacket(BlockPos center, CardinalRiteEventKind kind, int index,
 		String style, List<Vec3> points, ItemStack item) implements CustomPacketPayload {
 	public static final Type<CardinalRiteEventPacket> TYPE = new Type<>(
-			ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite_event"));
+			Hemomancy.rloc("cardinal_rite_event"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, CardinalRiteEventPacket> STREAM_CODEC =
 			StreamCodec.of(CardinalRiteEventPacket::encode, CardinalRiteEventPacket::decode);
 	/** Players this far from the rite centre receive its beats. */

@@ -68,7 +68,7 @@ public class BloodAneurysmManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (target(player).isEmpty()) {
-			player.displayClientMessage(Component.literal("No hostile vessel within reach."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.blood_aneurysm_manip.no_hostile_vessel_within_reach"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

@@ -141,7 +141,7 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 						// does the current vein have the same name(Say it was destroyed and replaced
 						// somehow)?
 						if (known.getVeinNameList().contains(te.getLoc().getName())) {
-							player.displayClientMessage( Component.translatable("You have already claimed this vein!"), true);
+							player.displayClientMessage( Component.translatable("message.hemomancy.earthen_vein.already_claimed"), true);
 						} else {
 							// Get the old vein from that location, remove it, and add the new one
 							known.getVeinList().removeIf((v) -> v.getPosition().equals(te.getLoc().getPosition()));
@@ -172,12 +172,12 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 							worldIn.setBlock(pos, newState, 10);
 						}
 					} else {
-						player.displayClientMessage( Component.translatable("Only Stented Veins can be Renamed!"), true);
+						player.displayClientMessage( Component.translatable("message.hemomancy.earthen_vein.only_stented_renamed"), true);
 
 					}
 				} else {
 					if (!worldIn.isClientSide) {
-						player.displayClientMessage( Component.translatable("You do not control this vein!"), true);
+						player.displayClientMessage( Component.translatable("message.hemomancy.earthen_vein_travel_manager.you_do_not_control_this_vein"), true);
 					}
 				}
 			}

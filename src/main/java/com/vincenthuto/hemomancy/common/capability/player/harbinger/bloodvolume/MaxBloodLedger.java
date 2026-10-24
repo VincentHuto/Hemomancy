@@ -7,7 +7,9 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
+import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.locale.Language;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 public final class MaxBloodLedger {
 	public static final double BASE_MAX_BLOOD = 5000.0D;
@@ -55,19 +56,19 @@ public final class MaxBloodLedger {
 
 		double capacityBonus = SkillPointHelper.getCapacityBonus(player);
 		if (capacityBonus > 0.0D) {
-			contributions.add(MaxBloodContribution.bonus("capacity", "Capacity", Category.SKILL, capacityBonus));
+			contributions.add(MaxBloodContribution.bonus("capacity", "message.hemomancy.max_blood_ledger.capacity", Category.SKILL, capacityBonus));
 		}
 
 		var organs = HemoCapabilityAccess.getVisceralOrgans(player);
 		if (organs.isExtracted(EnumOrgan.SPLEEN)) {
 			double spleenBonus = Math.max(0, organs.getOrganLevel(EnumOrgan.SPLEEN)) * 1000.0D;
 			if (spleenBonus > 0.0D) {
-				contributions.add(MaxBloodContribution.bonus("spleen", "Spleen", Category.ORGAN, spleenBonus));
+				contributions.add(MaxBloodContribution.bonus("spleen", "message.hemomancy.max_blood_ledger.spleen", Category.ORGAN, spleenBonus));
 			}
 		}
 
 		if (player.getPersistentData().getBoolean(ETERNAL_COVENANT_TAG)) {
-			contributions.add(MaxBloodContribution.bonus("eternal_covenant", "Eternal Covenant",
+			contributions.add(MaxBloodContribution.bonus("eternal_covenant", "message.hemomancy.max_blood_ledger.eternal_covenant",
 					Category.RITE, ETERNAL_COVENANT_BONUS));
 		}
 
@@ -75,19 +76,21 @@ public final class MaxBloodLedger {
 		for (ResourceLocation scarId : scars.getActiveCerebralScars()) {
 			ScarDefinition definition = ScarInit.getByName(scarId.toString());
 			if (definition != null) {
-				addScarContribution(contributions, scarId.toString(), titleCase(scarId.getPath()), definition);
+				addScarContribution(contributions, scarId.toString(), Util.makeDescriptionId("item", scarId),
+						definition);
 			}
 		}
 		ItemStack fungalScar = scars.getFungalScar();
 		if (fungalScar.getItem() instanceof ItemScar scar) {
 			ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(fungalScar.getItem());
-			addScarContribution(contributions, itemId.toString(), titleCase(itemId.getPath()),
+			addScarContribution(contributions, itemId.toString(), fungalScar.getItem().getDescriptionId(),
 					scar.getScarDefinition());
 		}
 
 		contributions.sort(Comparator
 				.comparing((MaxBloodContribution contribution) -> contribution.category().ordinal())
-				.thenComparing(MaxBloodContribution::label)
+				.thenComparing((MaxBloodContribution contribution) ->
+						Language.getInstance().getOrDefault(contribution.label()))
 				.thenComparing(MaxBloodContribution::sourceId));
 		return MaxBloodRules.snapshot(BASE_MAX_BLOOD, contributions);
 	}
@@ -103,20 +106,5 @@ public final class MaxBloodLedger {
 		} else if (amount < 0.0D) {
 			contributions.add(MaxBloodContribution.penalty(sourceId, label, Category.SCAR, -amount));
 		}
-	}
-
-	private static String titleCase(String value) {
-		String[] parts = value.toLowerCase(Locale.ROOT).split("_");
-		StringBuilder builder = new StringBuilder();
-		for (String part : parts) {
-			if (part.isEmpty()) {
-				continue;
-			}
-			if (!builder.isEmpty()) {
-				builder.append(' ');
-			}
-			builder.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
-		}
-		return builder.toString();
 	}
 }

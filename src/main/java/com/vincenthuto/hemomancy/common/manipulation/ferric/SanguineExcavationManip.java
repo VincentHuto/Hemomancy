@@ -77,7 +77,7 @@ public class SanguineExcavationManip extends BloodManipulation {
 
 		if (hitResult.getType() == HitResult.Type.MISS) {
 			player.displayClientMessage(
-					Component.literal("§cLook at a block to excavate!"), true);
+					Component.translatable("message.hemomancy.sanguine_excavation_manip.look_at_a_block_to_excavate"), true);
 			return;
 		}
 

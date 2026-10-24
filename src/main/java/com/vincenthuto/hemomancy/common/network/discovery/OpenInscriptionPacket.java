@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.discovery;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -11,16 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record OpenInscriptionPacket(
-		String title,
+		Component title,
 		List<String> lines,
 		boolean revealed,
 		@Nullable ResourceLocation riteId,
 		boolean requiresAbocipherLiteracy) implements CustomPacketPayload {
 	public static final Type<OpenInscriptionPacket> TYPE = new Type<>(Hemomancy.rloc("open_inscription_packet"));
-	public static final StreamCodec<FriendlyByteBuf, OpenInscriptionPacket> STREAM_CODEC =
+	public static final StreamCodec<RegistryFriendlyByteBuf, OpenInscriptionPacket> STREAM_CODEC =
 			StreamCodec.of(OpenInscriptionPacket::encode, OpenInscriptionPacket::decode);
 
-	public OpenInscriptionPacket(String title, List<String> lines, boolean revealed,
+	public OpenInscriptionPacket(Component title, List<String> lines, boolean revealed,
 			@Nullable ResourceLocation riteId) {
 		this(title, lines, revealed, riteId, false);
 	}
@@ -29,8 +31,8 @@ public record OpenInscriptionPacket(
 		lines = List.copyOf(lines);
 	}
 
-	public static void encode(FriendlyByteBuf buf, OpenInscriptionPacket msg) {
-		buf.writeUtf(msg.title);
+	public static void encode(RegistryFriendlyByteBuf buf, OpenInscriptionPacket msg) {
+		ComponentSerialization.TRUSTED_STREAM_CODEC.encode(buf, msg.title);
 		buf.writeVarInt(msg.lines.size());
 		for (String line : msg.lines) {
 			buf.writeUtf(line);
@@ -43,8 +45,8 @@ public record OpenInscriptionPacket(
 		buf.writeBoolean(msg.requiresAbocipherLiteracy);
 	}
 
-	public static OpenInscriptionPacket decode(FriendlyByteBuf buf) {
-		String title = buf.readUtf();
+	public static OpenInscriptionPacket decode(RegistryFriendlyByteBuf buf) {
+		Component title = ComponentSerialization.TRUSTED_STREAM_CODEC.decode(buf);
 		int count = buf.readVarInt();
 		List<String> lines = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {

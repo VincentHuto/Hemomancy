@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketSyncScarsState;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -101,41 +102,41 @@ public class MasonsEffigyBlock extends Block implements EntityBlock, SimpleWater
 		}
 		List<ResourceLocation> selected = new ArrayList<>(effigy.getSelectedScarIds());
 		if (selected.isEmpty()) {
-			message(player, "Select scars on the Effigy before pressing motif paper to it.", ChatFormatting.RED);
+			message(player, Component.translatable("message.hemomancy.masons_effigy_block.select_scars_on_the_effigy_before"), ChatFormatting.RED);
 			return InteractionResult.CONSUME;
 		}
 		if (effigy.hasPendingMotif()) {
-			message(player, "The Effigy is already holding a motif. Feed it with Blood Projection.", ChatFormatting.GOLD);
+			message(player, Component.translatable("message.hemomancy.masons_effigy_block.the_effigy_is_already_holding_a"), ChatFormatting.GOLD);
 			return InteractionResult.CONSUME;
 		}
 		int max = Math.min(MasonsEffigyMenu.MAX_SELECTED_SCARS,
 				com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.getMaxActiveScars(player));
 		if (selected.size() > max) {
-			message(player, "That pattern exceeds your current scar capacity.", ChatFormatting.RED);
+			message(player, Component.translatable("message.hemomancy.masons_effigy_block.that_pattern_exceeds_your_current_scar"), ChatFormatting.RED);
 			return InteractionResult.CONSUME;
 		}
 		IScars scars = HemoCapabilityAccess.getScarState(player);
 		if (scars == null) {
-			message(player, "Your scar memory is silent.", ChatFormatting.RED);
+			message(player, Component.translatable("message.hemomancy.masons_effigy_block.your_scar_memory_is_silent"), ChatFormatting.RED);
 			return InteractionResult.CONSUME;
 		}
 		for (ResourceLocation id : selected) {
 			ScarDefinition definition = ScarInit.getByName(id.toString());
 			if (definition == null || definition.getScarType() != ScarType.CEREBRAL || !scars.knowsCerebralScar(id)) {
-				message(player, "The Effigy rejects an unknown scar: " + id.getPath(), ChatFormatting.RED);
+				message(player, HemoText.translatable("message.hemomancy.masons_effigy_block.the_effigy_rejects_an_unknown_scar", id.getPath()), ChatFormatting.RED);
 				return InteractionResult.CONSUME;
 			}
 		}
 		if (!effigy.beginMotifRitual(player, stack)) {
-			message(player, "The Effigy will not take the motif yet.", ChatFormatting.RED);
+			message(player, Component.translatable("message.hemomancy.masons_effigy_block.the_effigy_will_not_take_the"), ChatFormatting.RED);
 			return InteractionResult.CONSUME;
 		}
-		message(player, "The motif settles on the Effigy. Feed it with Blood Projection.", ChatFormatting.DARK_RED);
+		message(player, Component.translatable("message.hemomancy.masons_effigy_block.the_motif_settles_on_the_effigy"), ChatFormatting.DARK_RED);
 		return InteractionResult.CONSUME;
 	}
 
-	private static void message(Player player, String text, ChatFormatting color) {
-		player.displayClientMessage(Component.literal(text).withStyle(color), true);
+	private static void message(Player player, Component text, ChatFormatting color) {
+		player.displayClientMessage(text.copy().withStyle(color), true);
 	}
 
 	@Override

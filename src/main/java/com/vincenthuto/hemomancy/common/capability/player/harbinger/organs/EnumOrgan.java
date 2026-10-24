@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.organs;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+
 /**
  * Enum of organs that can be extracted and modified through the Visceral Mirror ritual system.
  * Each organ grants unique benefits and risks when transplanted into the player's body.
@@ -7,35 +10,31 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.organs;
 public enum EnumOrgan {
 
 	/** Governs blood volume and filtration */
-	SPLEEN("Spleen", 3, "Governs blood volume and filtration"),
+	SPLEEN(3),
 
 	/** Metabolizes toxins and purifies the blood */
-	LIVER("Liver", 3, "Metabolizes toxins and purifies the blood"),
+	LIVER(3),
 
 	/** Oxygenates blood and sustains vital rhythm */
-	LUNGS("Lungs", 3, "Oxygenates blood and sustains vital rhythm"),
+	LUNGS(3),
 
 	/** Filters impurities and maintains humoral balance */
-	KIDNEYS("Kidneys", 3, "Filters impurities and maintains humoral balance"),
+	KIDNEYS(3),
 
 	/** The seat of circulation and will — the most risky organ */
-	HEART("Heart", 4, "The seat of circulation and will");
+	HEART(4);
 
-	private final String name;
 	private final int tier;
-	private final String description;
 
-	EnumOrgan(String name, int tier, String description) {
-		this.name = name;
+	EnumOrgan(int tier) {
 		this.tier = tier;
-		this.description = description;
 	}
 
 	/**
 	 * Returns the organ's display name.
 	 */
-	public String getName() {
-		return name;
+	public MutableComponent getDisplayName() {
+		return Component.translatable(getLangKey());
 	}
 
 	/**
@@ -48,8 +47,8 @@ public enum EnumOrgan {
 	/**
 	 * Returns a brief description of the organ's function and effects.
 	 */
-	public String getDescription() {
-		return description;
+	public MutableComponent getDescription() {
+		return Component.translatable(getLangKey() + ".description");
 	}
 
 	/** Returns the translation key for this organ (e.g., {@code hemomancy.organ.spleen}). */
@@ -61,7 +60,7 @@ public enum EnumOrgan {
 	public static EnumOrgan byName(String name) {
 		if (name == null) return null;
 		for (EnumOrgan organ : values()) {
-			if (organ.name.equalsIgnoreCase(name)) return organ;
+			if (organ.name().equalsIgnoreCase(name)) return organ;
 		}
 		return null;
 	}

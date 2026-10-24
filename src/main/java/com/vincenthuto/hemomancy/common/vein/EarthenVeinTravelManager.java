@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.vein;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.network.vein.EarthenVeinTravelVisualPack
 import com.vincenthuto.hemomancy.common.network.vein.OpenEarthenVeinDisplayPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
@@ -68,7 +69,7 @@ public final class EarthenVeinTravelManager {
 				|| !(sourceLevel.getBlockEntity(sourcePos) instanceof EarthenVeinBlockEntity source)) return false;
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null || !ownsSource(player, sourceLevel, sourcePos, source, known)) {
-			player.displayClientMessage(Component.literal("You do not control this vein!").withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.earthen_vein_travel_manager.you_do_not_control_this_vein").withStyle(ChatFormatting.DARK_RED), true);
 			return false;
 		}
 
@@ -82,15 +83,13 @@ public final class EarthenVeinTravelManager {
 		SourceKey sourceKey = new SourceKey(sourceLevel.dimension().location(), sourcePos);
 		UUID reservingPlayer = SOURCE_OWNERS.get(sourceKey);
 		if (reservingPlayer != null && !reservingPlayer.equals(player.getUUID())) {
-			player.displayClientMessage(Component.literal("The vein is already feeding another traveler.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.earthen_vein_travel_manager.the_vein_is_already_feeding_another").withStyle(ChatFormatting.DARK_RED), true);
 			return false;
 		}
 
 		List<EarthenVeinDestination> destinations = destinations(known, source, sourceLevel.dimension().location(), sourcePos);
 		if (destinations.isEmpty()) {
-			player.displayClientMessage(Component.literal("No other claimed veins answer this opening.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.earthen_vein_travel_manager.no_other_claimed_veins_answer_this").withStyle(ChatFormatting.DARK_RED), true);
 			return false;
 		}
 
@@ -126,8 +125,8 @@ public final class EarthenVeinTravelManager {
 		if (!session.select(player.getUUID(), destination, player.level().getGameTime())) return;
 		keepTemporaryAlive(player, session, player.level().getGameTime());
 		sync(player, session.sourceDimension(), session.sourcePos(), EarthenVeinTravelPhase.FEEDING, 0.0F);
-		player.displayClientMessage(Component.literal("Project blood into the opening: 0 / " + cost + " mB")
-				.withStyle(ChatFormatting.DARK_RED), true);
+		player.displayClientMessage(HemoText.translatable("message.hemomancy.earthen_vein_travel_manager.project_blood_into_the_opening_0",
+				cost).withStyle(ChatFormatting.DARK_RED), true);
 	}
 
 	public static double project(ServerPlayer player, ServerLevel level, BlockPos pos, double offered) {
@@ -146,10 +145,11 @@ public final class EarthenVeinTravelManager {
 		sync(player, session.sourceDimension(), pos, session.phase(), progress);
 		if (player.tickCount % 5 == 0 || session.phase() == EarthenVeinTravelPhase.READY) {
 			int required = session.destination() == null ? 0 : session.destination().cost();
-			String text = session.phase() == EarthenVeinTravelPhase.READY
-					? "The opening is sated. Stand upon it."
-					: Math.round(session.fedBlood()) + " / " + required + " mB";
-			player.displayClientMessage(Component.literal(text).withStyle(ChatFormatting.DARK_RED), true);
+			Component text = session.phase() == EarthenVeinTravelPhase.READY
+					? Component.translatable("message.hemomancy.earthen_vein_travel_manager.opening_sated")
+					: Component.translatable("message.hemomancy.earthen_vein_travel_manager.fed_progress",
+							Math.round(session.fedBlood()), required);
+			player.displayClientMessage(text.copy().withStyle(ChatFormatting.DARK_RED), true);
 		}
 		return accepted;
 	}
@@ -352,13 +352,11 @@ public final class EarthenVeinTravelManager {
 				target != null && target.isTemporary(), stented, matchingId)) {
 			known.getVeinList().remove(claimed);
 			KnownManipulationEvents.syncPlayerEvent(player);
-			if (reportFailure) player.displayClientMessage(Component.literal("That vein has ruptured.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			if (reportFailure) player.displayClientMessage(Component.translatable("message.hemomancy.earthen_vein_travel_manager.that_vein_has_ruptured").withStyle(ChatFormatting.DARK_RED), true);
 			return null;
 		}
 		if (!hasExitSpace(destination, claimed.getPosition())) {
-			if (reportFailure) player.displayClientMessage(Component.literal("That vein's opening is obstructed.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			if (reportFailure) player.displayClientMessage(Component.translatable("message.hemomancy.earthen_vein_travel_manager.that_vein_s_opening_is_obstructed").withStyle(ChatFormatting.DARK_RED), true);
 			return null;
 		}
 		if (!claimed.getName().equals(target.getLoc().getName())) {

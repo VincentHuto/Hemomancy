@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
-import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -60,7 +60,7 @@ public class ScratchEngramHandler {
     private static final float ETCH_DAMAGE = 2.0f;
 
     private static final ResourceLocation VIVIANITE_CLUSTER =
-            ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "vivianite_cluster");
+            Hemomancy.rloc("vivianite_cluster");
     private static final ResourceLocation OBSIDIAN_FLAKES =
             ResourceLocation.fromNamespaceAndPath("hutoslib", "obsidian_flakes");
 

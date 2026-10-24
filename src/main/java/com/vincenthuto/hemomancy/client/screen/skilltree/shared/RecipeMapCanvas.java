@@ -117,7 +117,7 @@ public final class RecipeMapCanvas {
 		for (String line : ScreenDrawUtils.wrapText(ctx.font(), tooltip.title(), maxWidth)) {
 			lines.add(Component.literal(line).withStyle(style -> style.withColor(accent & 0xFFFFFF).withBold(true)));
 		}
-		lines.add(Component.literal(tooltip.context())
+		lines.add(tooltip.context().copy()
 				.withStyle(style -> style.withColor(0xFF888888).withItalic(true)));
 		boolean shiftDown = net.minecraft.client.gui.screens.Screen.hasShiftDown();
 		String visibleDescription = RecipeMapTooltip.visibleDescription(entry, shiftDown);
@@ -126,19 +126,17 @@ public final class RecipeMapCanvas {
 				lines.add(Component.literal(line).withStyle(style -> style.withColor(0xFFBBBBBB)));
 			}
 		} else if (entry.key().kind() == RecipeMapEntry.Kind.RITE && !tooltip.description().isBlank()) {
-			lines.add(Component.literal("Hold Shift to read explanation")
-					.withStyle(style -> style.withColor(0xFF777777).withItalic(true)));
+			lines.add(Component.translatable("screen.hemomancy.recipe_map_canvas.hold_shift_to_read_explanation").withStyle(style -> style.withColor(0xFF777777).withItalic(true)));
 		}
 		boolean firstUse = RecipeMapTooltip.showsFirstUse(entry);
 		if (firstUse) {
-			lines.add(Component.literal(RecipeMapTooltip.gateLine(entry))
+			lines.add(RecipeMapTooltip.gateLine(entry).copy()
 					.withStyle(style -> style.withColor(entry.unlocked() ? 0xFF999999 : 0xFFAA5555)));
 		}
 		if (entry.unlocked()) {
-			lines.add(Component.literal("Click to view details")
-					.withStyle(style -> style.withColor(0xFFAA7777)));
+			lines.add(Component.translatable("screen.hemomancy.recipe_map_canvas.click_to_view_details").withStyle(style -> style.withColor(0xFFAA7777)));
 		} else if (!firstUse) {
-			lines.add(Component.literal(RecipeMapTooltip.gateLine(entry))
+			lines.add(RecipeMapTooltip.gateLine(entry).copy()
 					.withStyle(style -> style.withColor(0xFFAA5555)));
 		}
 		boolean blueprintCue = canImprint(entry);
@@ -196,7 +194,7 @@ public final class RecipeMapCanvas {
 		int centerY = layout.centerY();
 		for (int degree = 0; degree <= 8; degree++) {
 			if (SkillTreeLayerRules.layerForDegree(degree) != layer) continue;
-			String label = "Degree " + degree;
+			String label = Component.translatable("message.hemomancy.recipe_degree_gates.degree", degree).getString();
 			int radius = RecipeMapLayout.ringRadius(degree);
 			gfx.drawString(ctx.font(), label, centerX - ctx.font().width(label) / 2, centerY - radius - 4,
 					fadeColor(withAlpha(accent, degreeFilter == null || degreeFilter == degree ? 0xA8 : 0x45), alpha), false);
@@ -208,7 +206,8 @@ public final class RecipeMapCanvas {
 				hubSize, hubSize, fadeColor(withAlpha(accent, 0xCC), alpha));
 		HarbingerChromeRenderer.drawFrame(gfx, centerX - hubSize / 2, centerY - hubSize / 2,
 				hubSize, hubSize, fadeColor(accent, alpha), HarbingerChromeRenderer.State.ACTIVE);
-		gfx.drawCenteredString(ctx.font(), hubLabel,
+		gfx.drawCenteredString(ctx.font(), Component.translatable("Craft".equals(hubLabel)
+						? "screen.hemomancy.recipe_map_canvas.craft" : "screen.hemomancy.recipe_map_canvas.rites"),
 				centerX, centerY - 8, fadeColor(withAlpha(accent, 0xEE), alpha));
 		gfx.drawCenteredString(ctx.font(), layer == SkillTreeLayer.SURFACE ? "0-4" : "5-8",
 				centerX, centerY + 3, fadeColor(0xFF999999, alpha));
@@ -221,7 +220,7 @@ public final class RecipeMapCanvas {
 		if (groups != null) drawGroupArcs(gfx, layer, alpha);
 		for (RecipeMapLayout.Sector sector : layout.sectors(layer)) {
 			int color = fadeColor(withAlpha(groups == null ? accent : groups.apply(sector.family()).color(), 0xD8), alpha);
-			List<Component> lines = familyLabelLines(sector.family(),
+			List<Component> lines = familyLabelLines(HarbingerRecipeMapDefinitions.familyName(sector.family()).getString(),
 					text -> ctx.font().width(boldLabel(text))).stream().map(RecipeMapCanvas::boldLabel).toList();
 			int width = lines.stream().mapToInt(line -> ctx.font().width(line)).max().orElse(0);
 			double angle = sector.midAngle();
@@ -383,16 +382,20 @@ public final class RecipeMapCanvas {
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, 650);
 		RecipeMapControlsLayout.Result controls = RecipeMapControlsLayout.calculate(viewport);
-		ProgressFilterControlsView.draw(gfx, ctx, controls.degree(),
-				degreeFilter == null ? "Degree: All" : "Degree: " + degreeFilter, accent, mouseX, mouseY);
-		ProgressFilterControlsView.draw(gfx, ctx, controls.family(), groups == null
-				? FamilyFilterLabels.display(FamilyFilterLabels.nickname(familyFilter))
-				: groupFilter == null ? "Purpose: All" : groupFilter.label(), accent, mouseX, mouseY);
+		ProgressFilterControlsView.draw(gfx, ctx, controls.degree(), (degreeFilter == null
+				? Component.translatable("screen.hemomancy.recipe_map_canvas.degree_all")
+				: Component.translatable("screen.hemomancy.recipe_map_canvas.degree_filter", degreeFilter)).getString(),
+				accent, mouseX, mouseY);
+		ProgressFilterControlsView.draw(gfx, ctx, controls.family(), (groups == null
+				? FamilyFilterLabels.label(FamilyFilterLabels.nickname(familyFilter))
+				: groupFilter == null ? Component.translatable("screen.hemomancy.recipe_map_canvas.purpose_all")
+				: purposeLabel(groupFilter)).getString(), accent, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.layer(),
-				"Layer: " + (diveState.isDeepActive() ? "5-8" : "0-4"), accent, mouseX, mouseY);
+				Component.translatable("screen.hemomancy.recipe_map_canvas.layer",
+						diveState.isDeepActive() ? "5-8" : "0-4").getString(), accent, mouseX, mouseY);
 		List<RecipeMapKey> recents = history().entries();
 		if (!recents.isEmpty()) {
-			gfx.drawString(ctx.font(), "Recent", controls.recentLabelX(),
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.recipe_map_canvas.recent"), controls.recentLabelX(),
 					controls.recentBaselineY(), 0xFF888888, false);
 			int recentX = controls.firstRecent().left();
 			for (RecipeMapKey key : recents) {
@@ -607,6 +610,10 @@ public final class RecipeMapCanvas {
 			deepFade = 0.0F;
 		}
 		resetLayerFilter();
+	}
+
+	private static Component purposeLabel(RecipeMapPurposeGroup group) {
+		return Component.translatable("screen.hemomancy.recipe_map_purpose_group." + group.name().toLowerCase(java.util.Locale.ROOT));
 	}
 
 	private RecipeMapRecentHistory history() {

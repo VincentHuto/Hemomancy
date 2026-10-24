@@ -33,7 +33,7 @@ class SessionStateRegistryTest {
 	private static final Map<String, String> EXEMPT = Map.of(
 			"item/shared/ScaleGripEvents.java#PENDING_RETURNS",
 			"holds the protected items until respawn; clearing it would lose them (F-4 persists them instead)",
-			"manipulation/BodyIdiomEvents.java#RUPTURING", "re-entrancy guard for one rupture",
+			"manipulation/mortem/BlackheartedEvents.java#RUPTURING", "re-entrancy guard for one rupture",
 			"init/EffectInit.java#MNEMONIC_WHISPERS_REDRINKS", "re-entrancy guard for one drink",
 			"manipulation/mortem/LignumMortisManip.java#SESSIONS",
 			"each session ends with its channel, which ManipulationChannelManager clears");

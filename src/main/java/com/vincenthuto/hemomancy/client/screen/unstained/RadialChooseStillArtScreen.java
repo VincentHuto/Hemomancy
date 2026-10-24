@@ -27,7 +27,7 @@ public class RadialChooseStillArtScreen extends Screen {
 	private final List<TextRadialMenuItem> cachedMenuItems = Lists.newArrayList();
 
 	public RadialChooseStillArtScreen() {
-		super(Component.literal("STILL ARTS"));
+		super(Component.translatable("screen.hemomancy.radial_choose_still_art.still_arts"));
 		this.mc = Minecraft.getInstance();
 		this.menu = new GenericRadialMenu(Minecraft.getInstance(), new IRadialMenuHost() {
 			@Override
@@ -97,7 +97,7 @@ public class RadialChooseStillArtScreen extends Screen {
 		String selectedName = selected.getName();
 		if (selected != StillArt.BLANK && selected.isUnlockedFor(mc.player)) {
 			menu.setCentralText(Component.translatable("hemomancy.still_art.radial.selected",
-					selected.getProperName()));
+					selected.getDisplayName()));
 		} else {
 			menu.setCentralText(Component.translatable("hemomancy.still_art.radial.prompt"));
 		}
@@ -115,8 +115,8 @@ public class RadialChooseStillArtScreen extends Screen {
 					return true;
 				}
 			};
-			MutableComponent central = Component.literal(art.getProperName());
-			central.append(Component.literal("\n" + art.getRequiredStage().getTitle()));
+			MutableComponent central = art.getDisplayName();
+			central.append(Component.literal("\n")).append(art.getRequiredStage().getDisplayName());
 			if (art.getName().equals(selectedName)) {
 				central.append(Component.literal("\n"))
 						.append(Component.translatable("hemomancy.still_art.radial.current"));
@@ -131,7 +131,7 @@ public class RadialChooseStillArtScreen extends Screen {
 	}
 
 	private static String shortLabel(StillArt art) {
-		String[] parts = art.getProperName().split(" ");
+		String[] parts = art.getDisplayName().getString().split(" ");
 		if (parts.length == 1) {
 			return parts[0].substring(0, Math.min(3, parts[0].length()));
 		}

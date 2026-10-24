@@ -80,7 +80,7 @@ public class VialRackItem extends Item {
 			ItemStack vial = vials.get(i);
 			Component slotLabel = Component.literal("[" + (i + 1) + "] ").withStyle(ChatFormatting.DARK_GRAY);
 			if (vial.isEmpty()) {
-				tooltip.add(slotLabel.copy().append(Component.literal("No vial").withStyle(ChatFormatting.GRAY)));
+				tooltip.add(slotLabel.copy().append(Component.translatable("message.hemomancy.vial_rack_item.no_vial").withStyle(ChatFormatting.GRAY)));
 			} else if (isEmptyVial(vial)) {
 				tooltip.add(slotLabel.copy().append(
 						Component.translatable("item.hemomancy.vial_rack.slot_empty").withStyle(ChatFormatting.GRAY)));

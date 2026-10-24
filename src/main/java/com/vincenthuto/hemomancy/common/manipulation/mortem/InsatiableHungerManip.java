@@ -48,7 +48,7 @@ public class InsatiableHungerManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (target(player) == null) {
-			player.displayClientMessage(Component.literal("No vessel within reach to starve."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.insatiable_hunger_manip.no_vessel_within_reach_to_starve"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

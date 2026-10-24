@@ -1,42 +1,45 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import java.io.IOException;
-import java.nio.file.Files;
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+import org.junit.jupiter.api.Test;
+
 import java.nio.file.Path;
 
-public final class FinalBloodlustArmorAbilitySourceTest {
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertShowsEnglish;
+
+class FinalBloodlustArmorAbilitySourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 
-	private FinalBloodlustArmorAbilitySourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
-		String registry = read(SOURCE_ROOT.resolve(
+	@Test
+	void finalBloodlustArmorAbilitySourceContracts() {
+		String registry = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ability/ArmorSetAbilityRegistry.java"));
-		String ability = read(SOURCE_ROOT.resolve(
+		String ability = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ability/ArmorSetAbility.java"));
-		String simpleAbility = read(SOURCE_ROOT.resolve(
+		String simpleAbility = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ability/SimpleArmorSetAbility.java"));
-		String packet = read(SOURCE_ROOT.resolve(
+		String packet = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/capa/harbinger/ActivateArmorSetAbilityC2SPacket.java"));
-		String cooldownPacket = read(SOURCE_ROOT.resolve(
+		String cooldownPacket = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/capa/harbinger/SyncArmorSetAbilityCooldownS2CPacket.java"));
-		String packetHandler = read(SOURCE_ROOT.resolve(
+		String packetHandler = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
-		String radial = read(SOURCE_ROOT.resolve(
+		String radial = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/screen/manips/RadialChooseManipScreen.java"));
-		String edaciousHandler = read(SOURCE_ROOT.resolve(
+		String edaciousHandler = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ability/EdaciousBloodburstArmorAbilityHandler.java"));
-		String sheolicHandler = read(SOURCE_ROOT.resolve(
+		String sheolicHandler = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ability/SheolicBastionBloodlustArmorAbilityHandler.java"));
-		String phantasmalHandler = read(SOURCE_ROOT.resolve(
+		String phantasmalHandler = SourceAssertions.read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/armor/ability/PhanstmalBloodlustArmorAbilityHandler.java"));
 
 		assertContains("edacious id", registry, "edacious_bloodburst");
 		assertContains("sheolic id", registry, "sheolic_bastion_stance");
 		assertContains("phantasmal id", registry, "masquerade_of_the_forgotten");
 		assertContains("phantasmal constant", registry, "MASQUERADE_OF_THE_FORGOTTEN");
-		assertContains("phantasmal display", registry, "Masquerade of the Forgotten");
+		assertShowsEnglish("phantasmal display", registry, "Masquerade of the Forgotten");
 		assertContains("armor ability exposes tooltip lines", ability, "List<Component> tooltip()");
 		assertContains("simple ability stores tooltip lines separately from display icon", simpleAbility, "tooltip");
 		assertContains("edacious tooltip describes the power", registry, "ability.hemomancy.edacious_bloodburst.tooltip");
@@ -66,24 +69,5 @@ public final class FinalBloodlustArmorAbilitySourceTest {
 		assertContains("masquerade spawns echoes", phantasmalHandler, "PhantasmalEchoEntity");
 		assertContains("masquerade count", phantasmalHandler, "MASQUERADE_ECHO_COUNT = 8");
 		assertContains("masquerade duration", phantasmalHandler, "MASQUERADE_ECHO_DURATION_TICKS = 200");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + ": still contains " + unexpected);
-		}
 	}
 }

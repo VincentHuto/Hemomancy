@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
-import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -33,7 +33,7 @@ public final class ArmorSetAbilityRegistry {
 	static {
 		register(new SimpleArmorSetAbility(
 				EDACIOUS_BLOODBURST,
-				Component.literal("Bloodburst"),
+				Component.translatable("message.hemomancy.armor_set_ability_registry.bloodburst"),
 				tooltip("ability.hemomancy.edacious_bloodburst.tooltip", 240, 250.0D),
 				requiredSet(ItemInit.edacious_blood_lust_helm, ItemInit.edacious_blood_lust_chest,
 						ItemInit.edacious_blood_lust_legs, ItemInit.edacious_blood_lust_boots),
@@ -44,7 +44,7 @@ public final class ArmorSetAbilityRegistry {
 				250.0D));
 		register(new SimpleArmorSetAbility(
 				SHEOLIC_BASTION_STANCE,
-				Component.literal("Bastion Stance"),
+				Component.translatable("message.hemomancy.armor_set_ability_registry.bastion_stance"),
 				tooltip("ability.hemomancy.sheolic_bastion_stance.tooltip", 360, 0.0D),
 				requiredSet(ItemInit.sheolic_blood_lust_helm, ItemInit.sheolic_blood_lust_chest,
 						ItemInit.sheolic_blood_lust_legs, ItemInit.sheolic_blood_lust_boots),
@@ -55,7 +55,7 @@ public final class ArmorSetAbilityRegistry {
 				0.0D));
 		register(new SimpleArmorSetAbility(
 				MASQUERADE_OF_THE_FORGOTTEN,
-				Component.literal("Masquerade of the Forgotten"),
+				Component.translatable("message.hemomancy.armor_set_ability_registry.masquerade_of_the_forgotten"),
 				tooltip("ability.hemomancy.masquerade_of_the_forgotten.tooltip", 1200, 250.0D),
 				requiredSet(ItemInit.phantasmal_blood_lust_helm, ItemInit.phantasmal_blood_lust_chest,
 						ItemInit.phantasmal_blood_lust_legs, ItemInit.phantasmal_blood_lust_boots),
@@ -66,7 +66,7 @@ public final class ArmorSetAbilityRegistry {
 				250.0D));
 		register(new SimpleArmorSetAbility(
 				SILENT_ARCHON_SEVERANCE,
-				Component.literal("Silent Severance"),
+				Component.translatable("message.hemomancy.armor_set_ability_registry.silent_severance"),
 				tooltip("ability.hemomancy.silent_archon_severance.tooltip", 240, 300.0D),
 				requiredSet(ItemInit.silent_archon_helm, ItemInit.silent_archon_chestplate,
 						ItemInit.silent_archon_leggings, ItemInit.silent_archon_boots),
@@ -104,19 +104,19 @@ public final class ArmorSetAbilityRegistry {
 	public static boolean tryActivate(ServerPlayer player, ResourceLocation abilityId) {
 		ArmorSetAbility ability = ABILITIES.get(abilityId);
 		if (ability == null) {
-			message(player, Component.literal("No such armor ability.").withStyle(ChatFormatting.RED));
+			message(player, Component.translatable("message.hemomancy.armor_set_ability_registry.no_such_armor_ability").withStyle(ChatFormatting.RED));
 			return false;
 		}
 		if (!player.isAlive()) {
-			message(player, Component.literal("The armor is silent.").withStyle(ChatFormatting.RED));
+			message(player, Component.translatable("message.hemomancy.armor_set_ability_registry.the_armor_is_silent").withStyle(ChatFormatting.RED));
 			return false;
 		}
 		if (!ability.isAvailable(player)) {
-			message(player, Component.literal("The armor is incomplete.").withStyle(ChatFormatting.RED));
+			message(player, Component.translatable("message.hemomancy.armor_set_ability_registry.the_armor_is_incomplete").withStyle(ChatFormatting.RED));
 			return false;
 		}
 		if (!ability.canActivate(player)) {
-			message(player, Component.literal("The armor refuses.").withStyle(ChatFormatting.RED));
+			message(player, Component.translatable("message.hemomancy.armor_set_ability_registry.the_armor_refuses").withStyle(ChatFormatting.RED));
 			return false;
 		}
 		if (SHEOLIC_BASTION_STANCE.equals(ability.id()) && player.isShiftKeyDown()) {
@@ -133,17 +133,17 @@ public final class ArmorSetAbilityRegistry {
 		long cooldownUntil = getCooldownUntil(player, ability);
 		if (cooldownUntil > now) {
 			syncCooldown(player, ability, cooldownUntil);
-			message(player, Component.literal("Armor ability recharging.").withStyle(ChatFormatting.RED));
+			message(player, Component.translatable("message.hemomancy.armor_set_ability_registry.armor_ability_recharging").withStyle(ChatFormatting.RED));
 			return false;
 		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (ability.bloodCost() > 0.0D) {
 			if (volume == null || !volume.isActive() || volume.getBloodVolume() < ability.bloodCost()) {
-				message(player, Component.literal("Not enough blood.").withStyle(ChatFormatting.RED));
+				message(player, Component.translatable("message.hemomancy.armor_set_ability_registry.not_enough_blood").withStyle(ChatFormatting.RED));
 				return false;
 			}
 			if (!BloodAccounting.pay(player, ability.bloodCost(), ABILITY_COST).satisfied()) {
-				message(player, Component.literal("Not enough blood.").withStyle(ChatFormatting.RED));
+				message(player, Component.translatable("message.hemomancy.armor_set_ability_registry.not_enough_blood").withStyle(ChatFormatting.RED));
 				return false;
 			}
 		}

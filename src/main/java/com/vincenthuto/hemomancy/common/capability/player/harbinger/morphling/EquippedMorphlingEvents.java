@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling;
 
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -123,8 +123,7 @@ public class EquippedMorphlingEvents {
 				LastRiteHelper.clearMorphlingRites(player);
 				syncToClient((ServerPlayer) player);
 				player.displayClientMessage(
-						Component.literal("Your morphling withers from blood starvation...")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+						Component.translatable("message.hemomancy.equipped_morphling_events.your_morphling_withers_from_blood_starvation").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 			}
 		}
 

@@ -57,7 +57,7 @@ public class BloodLampManip extends BloodManipulation {
 
 		if (hitResult.getType() == HitResult.Type.MISS) {
 			player.displayClientMessage(
-					Component.literal("§cLook at a block to place a blood lamp!"), true);
+					Component.translatable("message.hemomancy.blood_lamp_manip.look_at_a_block_to_place"), true);
 			return;
 		}
 
@@ -66,7 +66,7 @@ public class BloodLampManip extends BloodManipulation {
 		BlockState existing = world.getBlockState(lightPos);
 		if (!existing.isAir()) {
 			player.displayClientMessage(
-					Component.literal("§cCannot place a light there!"), true);
+					Component.translatable("message.hemomancy.blood_lamp_manip.cannot_place_a_light_there"), true);
 			return;
 		}
 

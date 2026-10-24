@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.support.SourceAssertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,7 +31,8 @@ final class RingGatingServerSourceTest {
 	void projectionFeedsTheWokenRingAndTheSealWaitsForIt() throws IOException {
 		String handler = read(ROOT + "common/rite/harbinger/CardinalRiteInteractionHandler.java");
 		assertTrue(handler.contains("if (rite.hungryLaterRingAnchors() <= 0) return CardinalRiteProjectionResult.handled(0.0D);"));
-		assertTrue(handler.contains("The woken ring hungers. Feed its sores before the altar will seal."));
+		SourceAssertions.assertShowsEnglish("the hungry-ring refusal", handler,
+				"The woken ring hungers. Feed its sores before the altar will seal.");
 		assertTrue(handler.contains("filter(rite::isAnchorOpen)"), "the nearest-anchor fallback skips sleeping anchors");
 	}
 

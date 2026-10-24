@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJ
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -74,12 +75,11 @@ final class MorphlingSubcommand {
 		}
 		ItemStack stack = target.stack();
 		int stage = MorphlingItem.getMaturityLevel(stack);
-		source.sendSuccess(() -> Component.literal("")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" " + target.description() + ": ").withStyle(ChatFormatting.GRAY))
-				.append(stack.getHoverName().copy().withStyle(ChatFormatting.DARK_GREEN))
-				.append(Component.literal(" stage "))
-				.append(Component.literal(stage + " - " + MorphlingItem.getMaturityName(stage))
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.morphling.stage",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.translatable("commands.hemomancy.morphling.target_label", target.description()).withStyle(ChatFormatting.GRAY),
+				stack.getHoverName().copy().withStyle(ChatFormatting.DARK_GREEN),
+				Component.literal(stage + " - ").append(MorphlingItem.getMaturityName(stage))
 						.withStyle(MorphlingItem.MATURITY_COLORS[stage])),
 				false);
 		return 1;
@@ -88,8 +88,8 @@ final class MorphlingSubcommand {
 	private static int setMorphlingStage(CommandSourceStack source, ServerPlayer player, String rawStage) {
 		int stage = parseMorphlingStage(rawStage);
 		if (stage < 0) {
-			source.sendFailure(Component.literal("Unknown morphling stage: " + rawStage
-					+ ". Use 0-5, unfed, fledgling, developing, mature, apex, or primal."));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.morphling.unknown_morphling_stage_use_0_5",
+					rawStage));
 			return 0;
 		}
 		return setMorphlingStage(source, player, stage);
@@ -121,16 +121,16 @@ final class MorphlingSubcommand {
 		}
 		int actualStage = MorphlingItem.getMaturityLevel(updated);
 		boolean jarUpdated = sourceUpdated;
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" " + target.description() + " to stage "))
-				.append(Component.literal(actualStage + " - " + MorphlingItem.getMaturityName(actualStage))
-						.withStyle(MorphlingItem.MATURITY_COLORS[actualStage]))
-				.append(target.source() != MorphlingCommandRules.Source.EQUIPPED
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.morphling.set_to_stage",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				target.description(),
+				Component.literal(actualStage + " - ").append(MorphlingItem.getMaturityName(actualStage))
+						.withStyle(MorphlingItem.MATURITY_COLORS[actualStage]),
+				target.source() != MorphlingCommandRules.Source.EQUIPPED
 						? Component.empty()
 						: jarUpdated
-								? Component.literal(" and updated its jar item.").withStyle(ChatFormatting.GRAY)
-								: Component.literal("; no matching jar item was found.").withStyle(ChatFormatting.YELLOW)),
+								? Component.translatable("commands.hemomancy.morphling.and_updated_its_jar_item").withStyle(ChatFormatting.GRAY)
+								: Component.translatable("commands.hemomancy.morphling.no_matching_jar_item_was_found").withStyle(ChatFormatting.YELLOW)),
 				true);
 		return 1;
 	}
@@ -154,14 +154,14 @@ final class MorphlingSubcommand {
 		MorphlingCommandRules.Source selected = MorphlingCommandRules.chooseSource(!equipped.isEmpty(),
 				isMorphling(mainHand), isMorphling(offhand));
 		MorphlingCommandTarget target = switch (selected) {
-			case EQUIPPED -> new MorphlingCommandTarget(equipped, selected, "equipped morphling");
-			case MAIN_HAND -> new MorphlingCommandTarget(mainHand, selected, "main-hand morphling");
-			case OFF_HAND -> new MorphlingCommandTarget(offhand, selected, "offhand morphling");
+			case EQUIPPED -> new MorphlingCommandTarget(equipped, selected, Component.translatable("commands.hemomancy.morphling.target.equipped"));
+			case MAIN_HAND -> new MorphlingCommandTarget(mainHand, selected, Component.translatable("commands.hemomancy.morphling.target.main_hand"));
+			case OFF_HAND -> new MorphlingCommandTarget(offhand, selected, Component.translatable("commands.hemomancy.morphling.target.off_hand"));
 			case NONE -> null;
 		};
 		if (target == null) {
-			source.sendFailure(Component.literal(player.getName().getString()
-					+ " has no equipped or held morphling."));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.morphling.has_no_equipped_or_held_morphling",
+					player.getName().getString()));
 		}
 		return target;
 	}
@@ -186,7 +186,7 @@ final class MorphlingSubcommand {
 	}
 
 	private record MorphlingCommandTarget(ItemStack stack, MorphlingCommandRules.Source source,
-			String description) {
+			Component description) {
 	}
 
 	private static boolean writeBackEquippedMorphlingSource(ServerPlayer player, ItemStack original, ItemStack updated) {

@@ -68,12 +68,12 @@ public class WillRenderer extends MobRenderer<WillEntity, WillModel> {
 	}
 
 	private static Component stateLabel(WillPhase phase) {
-		return Component.literal(switch (phase) {
-			case DRIFTING -> "Drifting";
-			case MATERIALIZED -> "Materialized";
-			case FALTERING -> "Faltering";
-			case ABSORBING -> "Absorbing";
-			case DISSOLVING -> "Dissolving";
+		return Component.translatable(switch (phase) {
+			case DRIFTING -> "gui.hemomancy.will_renderer.drifting";
+			case MATERIALIZED -> "gui.hemomancy.will_renderer.materialized";
+			case FALTERING -> "gui.hemomancy.will_renderer.faltering";
+			case ABSORBING -> "gui.hemomancy.will_renderer.absorbing";
+			case DISSOLVING -> "gui.hemomancy.will_renderer.dissolving";
 		});
 	}
 

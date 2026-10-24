@@ -67,9 +67,7 @@ public class BloomOfRotManip extends BloodManipulation {
         com.vincenthuto.hemomancy.common.manipulation.MortemStatusVisuals.infect(player,SELF_POISON_DURATION);
 
 		player.displayClientMessage(
-				net.minecraft.network.chat.Component.literal(
-						"Putriciel's bloom erupts. Decay and life intertwine — the rot spreads to all, including you.")
-						.withStyle(net.minecraft.ChatFormatting.DARK_GREEN, net.minecraft.ChatFormatting.ITALIC),
+				net.minecraft.network.chat.Component.translatable("message.hemomancy.bloom_of_rot_manip.putriciel_s_bloom_erupts_decay_and").withStyle(net.minecraft.ChatFormatting.DARK_GREEN, net.minecraft.ChatFormatting.ITALIC),
 				true);
 
 		world.playSound(null, player.blockPosition(), SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.PLAYERS, 1.0f, 0.7f);

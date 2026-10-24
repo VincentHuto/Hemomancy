@@ -27,6 +27,6 @@ public class AntiphonomycesResonansItem extends ItemFungalScar {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.translatable("tooltip.hemomancy.antiphonomyces_resonans.crawling_choir").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 		tooltip.add(Component.translatable("tooltip.hemomancy.antiphonomyces_resonans.blood_manipulations_resonate_through_the_myceliu").withStyle(ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("✦ 20% chance to echo-cast at reduced cost").withStyle(ChatFormatting.DARK_GREEN));
+		tooltip.add(Component.translatable("tooltip.hemomancy.antiphonomyces_resonans.20_chance_to_echo_cast_at").withStyle(ChatFormatting.DARK_GREEN));
 	}
 }

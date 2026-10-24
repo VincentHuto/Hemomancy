@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnow
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -57,7 +58,7 @@ final class SummonsSubcommand {
 		List<String> names = HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames();
 		String display = names.isEmpty() ? "none" : String.join(", ", names);
 		source.sendSuccess(() -> Component.literal(player.getName().getString())
-				.append(Component.literal(" known puppeteer summons: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.translatable("commands.hemomancy.summons.known_puppeteer_summons").withStyle(ChatFormatting.GRAY))
 				.append(Component.literal(display).withStyle(names.isEmpty() ? ChatFormatting.DARK_GRAY : ChatFormatting.GREEN)),
 				false);
 		return Math.max(1, names.size());
@@ -75,13 +76,15 @@ final class SummonsSubcommand {
 		} else {
 			var definition = PuppeteerSummonDefinitions.byName(summonName).orElse(null);
 			if (definition == null) {
-				source.sendFailure(Component.literal("Unknown puppeteer summon '" + summonName
-						+ "'. Valid: " + puppeteerSummonList()));
+				source.sendFailure(HemoText.translatable("commands.hemomancy.summons.unknown_puppeteer_summon_valid",
+						summonName,
+						puppeteerSummonList()));
 				return 0;
 			}
 			if (current.contains(definition.name())) {
-				source.sendFailure(Component.literal(player.getName().getString() + " already knows "
-						+ definition.name() + "."));
+				source.sendFailure(HemoText.translatable("commands.hemomancy.summons.already_knows",
+						player.getName().getString(),
+						definition.name()));
 				return 0;
 			}
 			current.add(definition.name());
@@ -90,9 +93,10 @@ final class SummonsSubcommand {
 		}
 		KnownSummonEvents.sync(player, known);
 		int changed = added;
-		source.sendSuccess(() -> Component.literal("Added " + changed + " puppeteer summon"
-				+ (changed == 1 ? "" : "s") + " for ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.summons.added_puppeteer_summon_for",
+				changed,
+				(changed == 1 ? "" : "s"),
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
 		return Math.max(1, added);
 	}
 
@@ -102,23 +106,24 @@ final class SummonsSubcommand {
 		}
 		var definition = PuppeteerSummonDefinitions.byName(summonName).orElse(null);
 		if (definition == null) {
-			source.sendFailure(Component.literal("Unknown puppeteer summon '" + summonName
-					+ "'. Valid: " + puppeteerSummonList()));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.summons.unknown_puppeteer_summon_valid",
+					summonName,
+					puppeteerSummonList()));
 			return 0;
 		}
 		IKnownSummons known = HemoCapabilityAccess.getKnownSummons(player);
 		List<String> remaining = new ArrayList<>(known.getKnownSummonNames());
 		if (!remaining.remove(definition.name())) {
-			source.sendFailure(Component.literal(player.getName().getString() + " does not know "
-					+ definition.name() + "."));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.summons.does_not_know",
+					player.getName().getString(),
+					definition.name()));
 			return 0;
 		}
 		known.setKnownSummonNames(remaining);
 		KnownSummonEvents.sync(player, known);
-		source.sendSuccess(() -> Component.literal("Removed ")
-				.append(Component.literal(definition.name()).withStyle(ChatFormatting.RED))
-				.append(Component.literal(" from "))
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.summons.removed_from",
+				Component.literal(definition.name()).withStyle(ChatFormatting.RED),
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
 		return 1;
 	}
 
@@ -127,9 +132,10 @@ final class SummonsSubcommand {
 		int removed = known.getKnownSummonNames().size();
 		known.setKnownSummonNames(List.of());
 		KnownSummonEvents.sync(player, known);
-		source.sendSuccess(() -> Component.literal("Cleared " + removed + " known puppeteer summon"
-				+ (removed == 1 ? "" : "s") + " from ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.summons.cleared_known_puppeteer_summon_from",
+				removed,
+				(removed == 1 ? "" : "s"),
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
 		return Math.max(1, removed);
 	}
 

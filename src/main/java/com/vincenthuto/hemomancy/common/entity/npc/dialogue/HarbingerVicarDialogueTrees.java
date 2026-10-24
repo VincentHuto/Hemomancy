@@ -18,7 +18,7 @@ import java.util.List;
  */
 public final class HarbingerVicarDialogueTrees {
 
-	private static final ResourceLocation VICAR_ICON = ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "textures/entity/npc/harbinger/harbinger_vicar/harbinger_vicar.png");
+	private static final ResourceLocation VICAR_ICON = Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_vicar/harbinger_vicar.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_vicar";
 	public static final String EVENT_BLOOD_SHOTTING = "vicar_blood_shotting";
 	public static final String EVENT_HERMIT_ROAD_REPORT = "vicar_hermit_road_report";

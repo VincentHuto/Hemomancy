@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.VeinMinerHelper;
@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodStructureFeed;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -132,8 +133,8 @@ public class LignumMortisManip extends BloodManipulation {
 	}
 
 	private void completeSelection(Player player, Session session) {
-		player.displayClientMessage(net.minecraft.network.chat.Component.literal(
-				"Lignum selection complete: " + session.selected.size() + " blocks. Harvesting permitted blocks."), true);
+		player.displayClientMessage(HemoText.translatable("message.hemomancy.lignum_mortis_manip.lignum_selection_complete_blocks_harvesting_perm",
+				session.selected.size()), true);
 		com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.stop((ServerPlayer) player, true);
 	}
 

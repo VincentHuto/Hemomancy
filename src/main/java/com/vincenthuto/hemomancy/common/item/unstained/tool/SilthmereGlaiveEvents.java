@@ -72,8 +72,7 @@ public class SilthmereGlaiveEvents {
 		progress.addPurity(KILL_PURITY_REWARD);
 		UnstainedProgressEvents.syncProgress(killer, progress);
 		killer.displayClientMessage(
-				Component.literal("The title Silthmere answers purity grows.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.silthmere_glaive_events.the_title_silthmere_answers_purity_grows").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				true);
 	}
 }

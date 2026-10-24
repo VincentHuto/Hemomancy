@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -85,7 +86,7 @@ public final class MiniRecipeRenderer {
 		if (found == null) return 0;
 
 		// Section header
-		String typeLabel = getTypeLabel(found.kind());
+		Component typeLabel = getTypeLabel(found.kind());
 		gfx.drawString(font, typeLabel, x, y, accentColor, false);
 		y += 11;
 
@@ -209,10 +210,11 @@ public final class MiniRecipeRenderer {
 		int cookTime = recipe.getCookingTime();
 		if (xp > 0 || cookTime > 0) {
 			String info = "";
-			if (xp > 0) info += String.format("%.1f XP", xp);
+			if (xp > 0) info += Component.translatable("screen.hemomancy.mini_recipe_renderer.xp",
+					String.format("%.1f", xp)).getString();
 			if (cookTime > 0) {
 				if (!info.isEmpty()) info += "  ";
-				info += (cookTime / 20) + "s";
+				info += Component.translatable("screen.hemomancy.mini_recipe_renderer.seconds", cookTime / 20).getString();
 			}
 			gfx.drawString(font, info, outX + SLOT_SIZE + 3, y + 5, theme.labelDim(), false);
 		}
@@ -271,7 +273,8 @@ public final class MiniRecipeRenderer {
 		// Blood cost
 		double bloodCost = recipe.getBloodCost();
 		if (bloodCost > 0) {
-			gfx.drawString(font, String.format("%.0f Blood", bloodCost),
+			gfx.drawString(font, Component.translatable("screen.hemomancy.mini_recipe_renderer.blood",
+					String.format("%.0f", bloodCost)),
 					x, y + SLOT_SIZE + 2, theme.costColor(), false);
 		}
 
@@ -313,7 +316,8 @@ public final class MiniRecipeRenderer {
 				if (entry.getKey() != null && entry.getKey() != Blocks.AIR) blockTypes++;
 			}
 			if (blockTypes > 0) {
-				gfx.drawString(font, "+" + blockTypes + " blk", cx, y + 5, theme.labelDim(), false);
+				gfx.drawString(font, Component.translatable("screen.hemomancy.mini_recipe_renderer.more_blocks", blockTypes),
+						cx, y + 5, theme.labelDim(), false);
 			}
 		}
 
@@ -331,7 +335,8 @@ public final class MiniRecipeRenderer {
 		// Blood cost
 		double cost = recipe.getBloodCost();
 		if (cost > 0) {
-			gfx.drawString(font, String.format("%.0f Blood", cost),
+			gfx.drawString(font, Component.translatable("screen.hemomancy.mini_recipe_renderer.blood",
+					String.format("%.0f", cost)),
 					outX + SLOT_SIZE + 3, row2Y + 5, theme.costColor(), false);
 		}
 
@@ -503,16 +508,16 @@ public final class MiniRecipeRenderer {
 	}
 
 	/** Returns a label describing the recipe type. */
-	private static String getTypeLabel(RecipeKind kind) {
-		return switch (kind) {
-			case VANILLA_CRAFTING -> "Crafting Recipe:";
-			case GHASTLY_ALEMBIC      -> "Ghastly Alembic Recipe:";
-			case MEMORY_WEAVING   -> "Memory Weaving:";
-			case BLOOD_STRUCTURE  -> "Blood Structure:";
-			case WORKING_CRAFT    -> "Working Craft:";
-			case CHISEL           -> "Chisel Recipe:";
-			case INCUBATOR        -> "Incubation Recipe:";
-		};
+	private static Component getTypeLabel(RecipeKind kind) {
+		return Component.translatable(switch (kind) {
+			case VANILLA_CRAFTING -> "screen.hemomancy.mini_recipe_renderer.crafting_recipe";
+			case GHASTLY_ALEMBIC      -> "screen.hemomancy.mini_recipe_renderer.ghastly_alembic_recipe";
+			case MEMORY_WEAVING   -> "screen.hemomancy.mini_recipe_renderer.memory_weaving";
+			case BLOOD_STRUCTURE  -> "screen.hemomancy.mini_recipe_renderer.blood_structure";
+			case WORKING_CRAFT    -> "screen.hemomancy.mini_recipe_renderer.working_craft";
+			case CHISEL           -> "screen.hemomancy.mini_recipe_renderer.chisel_recipe";
+			case INCUBATOR        -> "screen.hemomancy.mini_recipe_renderer.incubation_recipe";
+		});
 	}
 
 	/** Returns a tick-like counter for cycling ingredient displays. */

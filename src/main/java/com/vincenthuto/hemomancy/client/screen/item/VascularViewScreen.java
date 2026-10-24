@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarNoe
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenu;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -234,11 +234,12 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
         Point point = new Point(centerX - 80, centerY - 60), center = new Point(centerX, centerY);
         for (EnumVeinSections selectedSection : EnumVeinSections.values()) {
             graphics.drawCenteredString(font,
-                    HLTextUtils.toProperCase(selectedSection.toString()), point.x + guiWidth / 2, point.y -20 + guiHeight / 2,
+                    BloodManipulation.sectionName(selectedSection), point.x + guiWidth / 2, point.y -20 + guiHeight / 2,
                     0xFFE2B5AD);
             graphics.drawCenteredString(font,
-                    vascularSystem.getBloodFlowBySection(selectedSection) + " "
-                            + String.format("%.1f/100", vascularSystem.getHealthBySection(selectedSection)),
+                    Component.translatable("screen.hemomancy.vascular_view.flow_health",
+                            Component.translatable("blood_flow_state.hemomancy." + vascularSystem.getBloodFlowBySection(selectedSection).name().toLowerCase(Locale.ROOT)),
+                            String.format("%.1f", vascularSystem.getHealthBySection(selectedSection))),
                     point.x + guiWidth / 2, point.y -30  + guiHeight / 2,
                     0xFFE2B5AD);
             int iconX = point.x - 8 + guiWidth / 2;
@@ -246,21 +247,21 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
             graphics.renderItem(new ItemStack(renderItem), iconX, iconY);
 
             if (mouseX >= iconX && mouseX < iconX + 16 && mouseY >= iconY && mouseY < iconY + 16) {
-                hoveredTooltip.add(Component.literal(HLTextUtils.toProperCase(selectedSection.name())));
+                hoveredTooltip.add(BloodManipulation.sectionName(selectedSection));
                 List<ScarDefinition> active = new ArrayList<>();
                 HemoCapabilityAccess.getScarState(player).forEachActiveCerebralScar(active::add);
                 var known = HemoCapabilityAccess.getKnownManipulations(player);
                 known.getEquippedMemoryRefs().forEach(ref -> {
                     if (ref.expression() == HematicMemoryExpression.THELEMIC) {
                         ref.muscleMemory().filter(memory -> memory.section() == selectedSection).ifPresent(memory ->
-                                hoveredTooltip.add(Component.literal("Thelemic: " + HLTextUtils.toProperCase(memory.id()))));
+                                hoveredTooltip.add(Component.translatable("screen.hemomancy.vascular_view.thelemic", Component.translatable("muscle_memory.hemomancy." + memory.id()))));
                     } else {
                         known.getKnownManips().keySet().stream()
                                 .filter(manip -> manip.getName().equals(ref.id()) && manip.getSection() == selectedSection)
                                 .findFirst().ifPresent(manip -> {
                                     int tier = ScarNoeticRoutingRules.bestMatchingTier(manip.getTend(), active);
-                                    String reduction = tier > 0 ? " (Scar T" + tier + ": -" + tier * 5 + "% strain)" : "";
-                                    hoveredTooltip.add(Component.literal("Noetic: ").append(manip.getDisplayName()).append(reduction));
+                                    Component reduction = tier > 0 ? Component.translatable("screen.hemomancy.vascular_view.scar_strain_reduction", tier, tier * 5) : Component.empty();
+                                    hoveredTooltip.add(Component.translatable("screen.hemomancy.vascular_view.noetic", manip.getDisplayName(), reduction));
                                 });
                     }
                 });

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -10,13 +11,13 @@ final class BottomRightTabLayoutTest {
 	@Test
 	void presentsPrimaryTabsInTheRequestedOrder() {
 		assertEquals(List.of("Skills", "Tendencies", "Rites & Crafts", "Materials"),
-				HarbingerProgressScreen.topTabLabels(4));
+				HarbingerProgressScreen.topTabLabelKeys(4).stream().map(EnglishText::of).toList());
 	}
 
 	@Test
 	void groupsSummonsBesideBestiaryAtTheBottomRight() {
 		assertEquals(List.of("Summons", "Bestiary"),
-				HarbingerProgressScreen.bottomRightTabLabels(2));
+				HarbingerProgressScreen.bottomRightTabLabelKeys(2).stream().map(EnglishText::of).toList());
 	}
 
 	@Test

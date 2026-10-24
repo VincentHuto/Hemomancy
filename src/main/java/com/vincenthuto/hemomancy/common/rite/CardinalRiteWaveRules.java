@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import net.minecraft.network.chat.Component;
+
 /** Shared deadline and objective contract for the ordeal controller and its guidance. */
 public final class CardinalRiteWaveRules {
     public static final int DEADLINE_TICKS = 360;
@@ -22,12 +24,12 @@ public final class CardinalRiteWaveRules {
         };
     }
 
-    public static String deadlineHint(String wave) {
+    public static Component deadlineHint(String wave) {
         int seconds = DEADLINE_TICKS / 20;
-        return switch (objective(wave)) {
-            case TRACE -> "Trace within " + seconds + "s or the rite fails";
-            case DEFEAT -> "Defeat the puppeteers within " + seconds + "s or the rite fails";
-            case SURVIVE -> "Survive " + seconds + "s or defeat the threats";
-        };
+        return Component.translatable(switch (objective(wave)) {
+            case TRACE -> "message.hemomancy.cardinal_rite_wave_rules.trace_within_or_the_rite_fails";
+            case DEFEAT -> "message.hemomancy.cardinal_rite_wave_rules.defeat_the_puppeteers_within_or_the_rite_fails";
+            case SURVIVE -> "message.hemomancy.cardinal_rite_wave_rules.survive_or_defeat_the_threats";
+        }, seconds);
     }
 }

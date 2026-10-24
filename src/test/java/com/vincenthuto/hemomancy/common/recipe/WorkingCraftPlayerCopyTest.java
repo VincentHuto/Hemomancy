@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.recipe;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.vincenthuto.hemomancy.support.SourceAssertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -16,8 +17,8 @@ final class WorkingCraftPlayerCopyTest {
 	void materialAtlasDoesNotCallWorkingCraftStationsBloodStructures() throws IOException {
 		String atlas = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsData.java"));
-		assertFalse(atlas.contains("Blood Structure station"),
-				"The Scarlet Vanity and Fungal Implantation Pylon are Working crafts now");
+		SourceAssertions.assertNotShowsEnglish(
+				"The Scarlet Vanity and Fungal Implantation Pylon are Working crafts now", atlas, "Blood Structure station");
 	}
 
 	@Test

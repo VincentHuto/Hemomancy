@@ -11,7 +11,7 @@ import net.minecraft.world.phys.Vec3;
 public record ManipulationAccentPacket(EnumBloodTendency primary, EnumBloodTendency secondary,
         Vec3 position, Vec3 direction, int targetId, boolean impact) implements CustomPacketPayload {
     public static final Type<ManipulationAccentPacket> TYPE=new Type<>(
-            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,"manipulation_accent"));
+            Hemomancy.rloc("manipulation_accent"));
     public static final StreamCodec<FriendlyByteBuf,ManipulationAccentPacket> STREAM_CODEC=StreamCodec.of(
             (buf,p)->{
                 buf.writeEnum(p.primary);buf.writeBoolean(p.secondary!=null);

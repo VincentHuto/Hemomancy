@@ -44,20 +44,20 @@ public final class ManipulationCostLedger {
 		}
 
 		List<ManipulationCostContribution> contributions = new ArrayList<>();
-		addIfNotNeutral(contributions, "efficiency", "Efficiency", Category.SKILL,
+		addIfNotNeutral(contributions, "efficiency", "message.hemomancy.manipulation_cost_ledger.efficiency", Category.SKILL,
 				SkillPointHelper.getEfficiencyMultiplier(player));
-		addIfNotNeutral(contributions, "purity", "Purity", Category.TENDENCY, purityCostMultiplier,
-				purityCostMultiplier <= 0.0D ? "Manipulation blocked" : "");
+		addIfNotNeutral(contributions, "purity", "message.hemomancy.manipulation_cost_ledger.purity", Category.TENDENCY, purityCostMultiplier,
+				purityCostMultiplier <= 0.0D ? "message.hemomancy.manipulation_cost_ledger.manipulation_blocked" : "");
 
 		ManipLevel manipLevel = HemoCapabilityAccess.getKnownManipulations(player).getManipLevel(manipulation);
 		double levelCostMultiplier = manipLevel != null ? manipLevel.getCostMultiplier() : 1.0D;
-		addIfNotNeutral(contributions, "manipulation_mastery", "Manipulation Mastery", Category.MASTERY,
+		addIfNotNeutral(contributions, "manipulation_mastery", "message.hemomancy.manipulation_cost_ledger.manipulation_mastery", Category.MASTERY,
 				levelCostMultiplier);
 
 		if (matchesStrongestTendency(player, manipulation.getTend())) {
 			double dynamicUse = SkillPointHelper.getDynamicUseMultiplier(player);
 			if (dynamicUse > 0.0D) {
-				addIfNotNeutral(contributions, "dynamic_use", "Dynamic Use", Category.SKILL,
+				addIfNotNeutral(contributions, "dynamic_use", "message.hemomancy.manipulation_cost_ledger.dynamic_use", Category.SKILL,
 						1.0D / dynamicUse);
 			}
 		}
@@ -65,53 +65,53 @@ public final class ManipulationCostLedger {
 		if (ModList.get().isLoaded("mna") && player.hasEffect(EffectInit.arcane_resonance)) {
 			try {
 				double reduction = HemoMnAConfig.ARCANE_RESONANCE_BLOOD_REDUCTION.get();
-				addIfNotNeutral(contributions, "arcane_resonance", "Arcane Resonance", Category.EFFECT,
+				addIfNotNeutral(contributions, "arcane_resonance", "message.hemomancy.manipulation_cost_ledger.arcane_resonance", Category.EFFECT,
 						1.0D - reduction);
 			} catch (Exception ignored) {
 			}
 		}
 
 		if (player instanceof ServerPlayer serverPlayer && QliphothBloomEvents.isInQliphothBloom(serverPlayer)) {
-			addIfNotNeutral(contributions, "qliphoth_bloom", "Qliphoth Bloom", Category.RITE, 0.75D);
+			addIfNotNeutral(contributions, "qliphoth_bloom", "message.hemomancy.manipulation_cost_ledger.qliphoth_bloom", Category.RITE, 0.75D);
 		}
 
 		if (player instanceof ServerPlayer serverPlayer && SanguineDominionEvents.isInOwnDomain(serverPlayer)) {
-			addIfNotNeutral(contributions, "sanguine_dominion", "Sanguine Dominion", Category.RITE, 0.75D);
+			addIfNotNeutral(contributions, "sanguine_dominion", "message.hemomancy.manipulation_cost_ledger.sanguine_dominion", Category.RITE, 0.75D);
 		}
 
 		long pomeExpiry = HemoCapabilityAccess.getInitiatoryDegree(player).getPomeEmpowermentExpiry();
 		if (player.level().getGameTime() < pomeExpiry) {
-			addIfNotNeutral(contributions, "qliphoth_pome_empowerment", "Qliphoth Pome Empowerment",
+			addIfNotNeutral(contributions, "qliphoth_pome_empowerment", "message.hemomancy.manipulation_cost_ledger.qliphoth_pome_empowerment",
 					Category.RITE,
 					QliphothPomeRules.empowermentCostMultiplier(
 							SkillPointHelper.getQliphothGestationLevel(player)));
 		}
 
 		if (BloodMoonEvents.isBloodMoonActive(player.level())) {
-			addIfNotNeutral(contributions, "blood_moon", "Blood Moon", Category.WORLD, 0.75D);
+			addIfNotNeutral(contributions, "blood_moon", "message.hemomancy.manipulation_cost_ledger.blood_moon", Category.WORLD, 0.75D);
 		}
 
 		var degreeData = HemoCapabilityAccess.getInitiatoryDegree(player);
 		int pomesConsumed = degreeData.getTotalPomesConsumed();
 		boolean blockedByPomes = pomesConsumed >= 9 && !ProgressionGates.hasDegree(degreeData, 8);
 		if (blockedByPomes) {
-			addIfNotNeutral(contributions, "pome_corruption_block", "Pome Corruption", Category.RITE,
-					1.0D, "Manipulation blocked until Apotheos");
+			addIfNotNeutral(contributions, "pome_corruption_block", "message.hemomancy.manipulation_cost_ledger.pome_corruption", Category.RITE,
+					1.0D, "message.hemomancy.manipulation_cost_ledger.manipulation_blocked_until_apotheos");
 		} else if (pomesConsumed > 0) {
-			addIfNotNeutral(contributions, "pome_corruption", "Pome Corruption", Category.RITE,
+			addIfNotNeutral(contributions, "pome_corruption", "message.hemomancy.manipulation_cost_ledger.pome_corruption", Category.RITE,
 					1.0D + pomesConsumed * 0.12D);
 		}
 
-		addIfNotNeutral(contributions, "blood_drunkenness", "Blood Drunkenness", Category.EFFECT,
+		addIfNotNeutral(contributions, "blood_drunkenness", "message.hemomancy.manipulation_cost_ledger.blood_drunkenness", Category.EFFECT,
 				CheapBloodInfusionHelper.getManipulationCostMultiplier(player));
-		addIfNotNeutral(contributions, "sporitic_thurible", "Sporitic Thurible", Category.TOOL,
+		addIfNotNeutral(contributions, "sporitic_thurible", "message.hemomancy.manipulation_cost_ledger.sporitic_thurible", Category.TOOL,
 				SporiticThuribleResonanceState.getCostMultiplier(player, manipulation.getTend()));
-		addIfNotNeutral(contributions, "mnemonic_screams", "Mnemonic Screams", Category.EFFECT,
+		addIfNotNeutral(contributions, "mnemonic_screams", "message.hemomancy.manipulation_cost_ledger.mnemonic_screams", Category.EFFECT,
 				MnemonicPotionRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mnemonic_screams)));
 
 		boolean clotted = HemoCapabilityAccess.getVascularSystem(player).getBloodFlowBySection(manipulation.getSection()) == EnumBloodFlow.ClOTTED;
 		if (clotted) {
-			addIfNotNeutral(contributions, "clotted_vein", "Clotted vein", Category.OTHER,
+			addIfNotNeutral(contributions, "clotted_vein", "message.hemomancy.manipulation_cost_ledger.clotted_vein", Category.OTHER,
 					CLOTTED_VEIN_COST_MULTIPLIER);
 		}
 

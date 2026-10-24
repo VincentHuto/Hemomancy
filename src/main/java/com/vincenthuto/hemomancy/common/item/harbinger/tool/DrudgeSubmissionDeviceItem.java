@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.SemiSentientConstructBlock;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -74,11 +75,11 @@ public class DrudgeSubmissionDeviceItem extends Item {
         if (recalled > 0) {
             level.playSound(null, sscPos, SoundEvents.ZOMBIE_AMBIENT, SoundSource.BLOCKS, 0.5f, 0.6f);
             player.displayClientMessage(
-                    Component.literal("§7" + recalled + " construct(s) recalled to the station."),
+                    HemoText.translatable("message.hemomancy.drudge_submission_device_item.construct_s_recalled_to_the_station", recalled),
                     false);
         } else {
             player.displayClientMessage(
-                    Component.literal("§8No constructs are bound to this station within range."),
+                    Component.translatable("message.hemomancy.drudge_submission_device_item.no_constructs_are_bound_to_this"),
                     false);
         }
 

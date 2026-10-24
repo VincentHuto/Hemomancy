@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.dialogue;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTheme;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
@@ -67,6 +68,6 @@ public record DialogueThemeStyle(ResourceLocation frameSprite, ResourceLocation 
 	}
 
 	private static ResourceLocation sprite(String path) {
-		return ResourceLocation.fromNamespaceAndPath("hemomancy", path);
+		return Hemomancy.rloc(path);
 	}
 }

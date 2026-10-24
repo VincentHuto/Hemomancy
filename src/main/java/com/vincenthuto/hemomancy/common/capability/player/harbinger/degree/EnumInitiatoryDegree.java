@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.degree;
 
+import net.minecraft.network.chat.Component;
+
 /**
  * The eight degrees of the Hematic Order.
  * Each degree is a rank within the secret society that the player
@@ -8,35 +10,33 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.degree;
 public enum EnumInitiatoryDegree {
 
 	/** Degree 1 — awarded by formal Vicar initiation */
-	NEOPHYTE(1, "Neophyte of the Crimson Veil"),
+	NEOPHYTE(1),
 
 	/** Degree 2 */
-	VOTARY(2, "Votary of the Hematic Covenant"),
+	VOTARY(2),
 
 	/** Degree 3 */
-	INITIATE(3, "Initiate of the Incarnadine Fane"),
+	INITIATE(3),
 
 	/** Degree 4 */
-	ADEPT(4, "Adept of the Sanguine Brotherhood"),
+	ADEPT(4),
 
 	/** Degree 5 */
-	ILLUMINATUS(5, "Illuminatus of the Crimson Lodge"),
+	ILLUMINATUS(5),
 
 	/** Degree 6 */
-	SANCTIFIED(6, "Sanctified of the Bloodline Covenant"),
+	SANCTIFIED(6),
 
 	/** Degree 7 */
-	ARCHON(7, "Archon of the Hematic Order"),
+	ARCHON(7),
 
 	/** Degree 8 — final rank */
-	APOTHEOS(8, "Apotheos of the Hematic Order");
+	APOTHEOS(8);
 
 	private final int number;
-	private final String title;
 
-	EnumInitiatoryDegree(int number, String title) {
+	EnumInitiatoryDegree(int number) {
 		this.number = number;
-		this.title = title;
 	}
 
 	/** Returns the translation key for this degree (e.g., {@code hemomancy.degree.1}). */
@@ -44,16 +44,9 @@ public enum EnumInitiatoryDegree {
 		return "hemomancy.degree." + number;
 	}
 
-	/**
-	 * Returns the hardcoded English title for this degree.
-	 * <p>
-	 * <b>Note:</b> This is intended for internal/fallback use only.
-	 * For localised display, use {@link #getLangKey()} with
-	 * {@code Component.translatable()}.
-	 * </p>
-	 */
-	public String getTitle() {
-		return title;
+	/** The degree's title, from {@link #getLangKey()}. */
+	public Component displayName() {
+		return Component.translatable(getLangKey());
 	}
 
 	public int getNumber() {

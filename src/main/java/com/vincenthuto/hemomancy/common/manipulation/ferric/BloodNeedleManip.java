@@ -90,7 +90,7 @@ public class BloodNeedleManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItemMainhand, float chargeTicks) {
 		if (mode == Mode.LANCE && chargeTicks < getRequiredChargeTicks()) {
-			player.displayClientMessage(net.minecraft.network.chat.Component.literal("Blood Needle Lance requires a full charge."), true);
+			player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.hemomancy.blood_needle_manip.blood_needle_lance_requires_a_full"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItemMainhand, chargeTicks);

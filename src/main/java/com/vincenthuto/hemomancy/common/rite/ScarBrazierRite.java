@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketSyncScarsState;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRite;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRites;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -120,81 +121,81 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 	 * One scar-rite check. When allowed it carries what the rite branch acts on: the caster's scar state, the scar to
 	 * learn (LEARN) and the loadout to activate (COMMIT).
 	 */
-	public record Preflight(boolean allowed, String message, ChatFormatting color, IScars scars,
+	public record Preflight(boolean allowed, Component message, ChatFormatting color, IScars scars,
 			ResourceLocation scarId, List<ResourceLocation> selected) {
 		private static Preflight accepted(IScars scars, ResourceLocation scarId, List<ResourceLocation> selected) {
-			return new Preflight(true, "", ChatFormatting.WHITE, scars, scarId, selected);
+			return new Preflight(true, Component.empty(), ChatFormatting.WHITE, scars, scarId, selected);
 		}
 
-		private static Preflight denied(String message, ChatFormatting color) {
+		private static Preflight denied(Component message, ChatFormatting color) {
 			return new Preflight(false, message, color, null, null, List.of());
 		}
 	}
 
 	private static Preflight preflight(Player player, ItemStack stack, ScarBrazierInteractionRules.Burn burn) {
 		if (burn == ScarBrazierInteractionRules.Burn.NONE) {
-			return Preflight.denied("The brazier finds no scar rite in this offering.", ChatFormatting.RED);
+			return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.the_brazier_finds_no_scar_rite"), ChatFormatting.RED);
 		}
 		if (!hasDegree(player)) {
 			return Preflight.denied(
-					"The Iron Brazier answers this scar rite only at the Fourth Degree and above.",
+					Component.translatable("message.hemomancy.scar_brazier_rite.the_iron_brazier_answers_this_scar"),
 					ChatFormatting.RED);
 		}
 		IScars scars = HemoCapabilityAccess.getScarState(player);
 		if (scars == null) {
-			return Preflight.denied("Your scar memory is silent.", ChatFormatting.RED);
+			return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.your_scar_memory_is_silent"), ChatFormatting.RED);
 		}
 		if (burn == ScarBrazierInteractionRules.Burn.LEARN) {
 			if (!(stack.getItem() instanceof ItemScar scarItem)) {
-				return Preflight.denied("Only scar items can be burned into memory.", ChatFormatting.RED);
+				return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.only_scar_items_can_be_burned"), ChatFormatting.RED);
 			}
 			ScarDefinition definition = scarItem.getScarDefinition();
 			if (definition == null || definition.getScarType() != ScarType.CEREBRAL) {
-				return Preflight.denied("Only cerebral scar items can be burned into memory.", ChatFormatting.RED);
+				return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.only_cerebral_scar_items_can_be"), ChatFormatting.RED);
 			}
 			ResourceLocation scarId = ScarInit.SCARS_TYPE_REGISTRY.getKey(definition);
 			if (scarId == null) {
-				return Preflight.denied("This scar has no registered pattern to remember.", ChatFormatting.RED);
+				return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.this_scar_has_no_registered_pattern"), ChatFormatting.RED);
 			}
 			if (scars.knowsCerebralScar(scarId)) {
-				return Preflight.denied("You already know this scar.", ChatFormatting.GOLD);
+				return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.you_already_know_this_scar"), ChatFormatting.GOLD);
 			}
 			return hasBlood(player, LEARN_BLOOD_COST)
 					? Preflight.accepted(scars, scarId, List.of())
-					: Preflight.denied("Not enough blood to sear the scar into memory.", ChatFormatting.RED);
+					: Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.not_enough_blood_to_sear_the"), ChatFormatting.RED);
 		}
 		if (burn == ScarBrazierInteractionRules.Burn.COMMIT) {
 			if (!(stack.getItem() instanceof ItemScarPattern) || !ItemScarPattern.hasPreparedLoadout(stack)) {
-				return Preflight.denied("This scar pattern carries no prepared loadout.", ChatFormatting.RED);
+				return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.this_scar_pattern_carries_no_prepared"), ChatFormatting.RED);
 			}
 			List<ResourceLocation> selected = ItemScarPattern.getScarIds(stack);
 			if (selected.isEmpty()) {
-				return Preflight.denied("This scar pattern carries no loadout.", ChatFormatting.RED);
+				return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.this_scar_pattern_carries_no_loadout"), ChatFormatting.RED);
 			}
 			if (selected.size() > getMaxActiveScars(player)) {
-				return Preflight.denied("That pattern exceeds your current scar capacity.", ChatFormatting.RED);
+				return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.that_pattern_exceeds_your_current_scar"), ChatFormatting.RED);
 			}
 			for (ResourceLocation id : selected) {
 				ScarDefinition definition = ScarInit.getByName(id.toString());
 				if (definition == null || definition.getScarType() != ScarType.CEREBRAL
 						|| !scars.knowsCerebralScar(id)) {
 					return Preflight.denied(
-							"The pattern contains a scar you have not learned: " + id.getPath(), ChatFormatting.RED);
+							HemoText.translatable("message.hemomancy.scar_brazier_rite.the_pattern_contains_a_scar_you", id.getPath()), ChatFormatting.RED);
 				}
 			}
 			return hasBlood(player, LOADOUT_BLOOD_COST)
 					? Preflight.accepted(scars, null, List.copyOf(selected))
-					: Preflight.denied("Not enough blood to seal the scar loadout.", ChatFormatting.RED);
+					: Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.not_enough_blood_to_seal_the"), ChatFormatting.RED);
 		}
 		if (!stack.is(ItemInit.runic_motif_paper.get())) {
-			return Preflight.denied("The brazier requires a blank runic motif to clear scars.", ChatFormatting.RED);
+			return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.the_brazier_requires_a_blank_runic"), ChatFormatting.RED);
 		}
 		if (scars.getActiveCerebralScars().isEmpty()) {
-			return Preflight.denied("No active cerebral scars answer the flame.", ChatFormatting.GOLD);
+			return Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.no_active_cerebral_scars_answer_the"), ChatFormatting.GOLD);
 		}
 		return hasBlood(player, LOADOUT_BLOOD_COST)
 				? Preflight.accepted(scars, null, List.of())
-				: Preflight.denied("Not enough blood to scour the active scar loadout.", ChatFormatting.RED);
+				: Preflight.denied(Component.translatable("message.hemomancy.scar_brazier_rite.not_enough_blood_to_scour_the"), ChatFormatting.RED);
 	}
 
 	private static boolean hasBlood(Player player, double cost) {
@@ -224,7 +225,7 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 		stack.shrink(1);
 		syncScarState(player, scars);
 		pulse(level, pos);
-		message(player, "The scar burns cleanly into your cerebral map.", ChatFormatting.DARK_RED);
+		message(player, Component.translatable("message.hemomancy.scar_brazier_rite.the_scar_burns_cleanly_into_your"), ChatFormatting.DARK_RED);
 	}
 
 	private static void tryCommitLoadout(Level level, BlockPos pos, Player player, ItemStack stack,
@@ -245,7 +246,7 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 						HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
 			} else if (!HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(serverPlayer)) {
-				message(player, "The loadout takes, but the Vein-Mason still requires your own Effigy preparation.",
+				message(player, Component.translatable("message.hemomancy.scar_brazier_rite.the_loadout_takes_but_the_vein"),
 						ChatFormatting.GOLD);
 			}
 			if (HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(serverPlayer)
@@ -258,7 +259,7 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 		stack.shrink(1);
 		syncScarState(player, scars);
 		pulse(level, pos);
-		message(player, "The pattern collapses into your active scar loadout.", ChatFormatting.DARK_RED);
+		message(player, Component.translatable("message.hemomancy.scar_brazier_rite.the_pattern_collapses_into_your_active"), ChatFormatting.DARK_RED);
 	}
 
 	private static void tryClearLoadout(Level level, BlockPos pos, Player player, ItemStack stack,
@@ -272,7 +273,7 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 		stack.shrink(1);
 		syncScarState(player, scars);
 		pulse(level, pos);
-		message(player, "The blank motif burns away your active cerebral scar loadout.", ChatFormatting.DARK_RED);
+		message(player, Component.translatable("message.hemomancy.scar_brazier_rite.the_blank_motif_burns_away_your"), ChatFormatting.DARK_RED);
 	}
 
 	private static boolean hasDegree(Player player) {
@@ -296,7 +297,7 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 		}
 	}
 
-	private static void message(Player player, String text, ChatFormatting color) {
-		player.displayClientMessage(Component.literal(text).withStyle(color), true);
+	private static void message(Player player, Component text, ChatFormatting color) {
+		player.displayClientMessage(text.copy().withStyle(color), true);
 	}
 }

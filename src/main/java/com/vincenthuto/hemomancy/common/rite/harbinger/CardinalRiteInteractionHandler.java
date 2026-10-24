@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRul
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
@@ -146,9 +147,7 @@ public final class CardinalRiteInteractionHandler {
 			if (committed <= 0) return CardinalRiteProjectionResult.handled(0.0D);
 			rite.fillAnchor(anchor, committed);
 			if (rite.enterInscription()) {
-				player.displayClientMessage(Component.literal(
-						"The boundary lives. Prepare support, then project into the daemon.")
-						.withStyle(ChatFormatting.DARK_RED), false);
+				player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_boundary_lives_prepare_support_then").withStyle(ChatFormatting.DARK_RED), false);
 			}
 			data.setDirty();
 			serverLevel.playSound(null, target, SoundInit.RITE_ANCHOR_FILL.get(),
@@ -171,37 +170,30 @@ public final class CardinalRiteInteractionHandler {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		if (recipe == null) return true;
 		if (!CardinalRiteStationMatcher.mediumMatches(level, rite.getCenterPos(), recipe)) {
-			player.displayClientMessage(Component.literal(recipe.hasMedium()
-							? "The rite's medium must remain seated in the Cardinal Focus."
-							: "The Cardinal Focus must be empty before this altar can be sealed.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage((recipe.hasMedium() ? Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_rite_s_medium_must_remain") : Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_cardinal_focus_must_be_empty")).withStyle(ChatFormatting.DARK_RED), true);
 			return true;
 		}
 		if (CardinalRiteThreatRules.allowsPassiveSacrifice(rite.getRecipeId().getPath())
 				&& rite.getSacrificeMl() < CardinalRiteThreatRules.SACRIFICE_REQUIRED_ML) {
-			player.displayClientMessage(Component.literal("The daemon will not seal until a named creature has bled "
-							+ CardinalRiteThreatRules.SACRIFICE_REQUIRED_ML + " mL inside the circle ("
-							+ rite.getSacrificeMl() + " so far).")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_daemon_will_not_seal_until",
+					CardinalRiteThreatRules.SACRIFICE_REQUIRED_ML,
+					rite.getSacrificeMl()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
 			return true;
 		}
 		if (!CardinalRiteAllyService.hasRequiredHelpers(level, rite)) {
-			player.displayClientMessage(Component.literal("Required bloodline helpers must take their stations before the rite can seal.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.required_bloodline_helpers_must_take_their").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
 			return true;
 		}
 		for (var socket : recipe.getCeremony().supportSockets()) {
 			if (socket.required()
 					&& !rite.isSigilAwakened(Hemomancy.rloc(socket.suggestedSigil()).toString())) {
-				player.displayClientMessage(Component.literal(
-								"The required " + socket.suggestedSigil() + " support sigil has not awakened.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
+				player.displayClientMessage(HemoText.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_required_support_sigil_has_not",
+						socket.suggestedSigil()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
 				return true;
 			}
 		}
 		if (!rite.areAnchorsConsecrated()) {
-			player.displayClientMessage(Component.literal("The woken ring hungers. Feed its sores before the altar will seal.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_woken_ring_hungers_feed_its").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
 			return true;
 		}
 		prepareWaveDeck(rite, recipe);
@@ -214,12 +206,7 @@ public final class CardinalRiteInteractionHandler {
 			ServerPlayer caster = level.getServer().getPlayerList().getPlayer(rite.getPlayerUUID());
 			if (caster != null) HarbingerCardinalRiteEvents.enterFinale(level, caster, rite, recipe);
 		}
-		player.displayClientMessage(Component.literal(rite.getTotalWaves() > 0
-						? "The altar is sealed. Endure the ordeal."
-						: rite.getPhase() == CardinalRitePhase.STILL_INTERVAL
-								? "The altar is sealed. Restore the rite before culmination."
-								: "The altar is sealed. The rite begins its culmination.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+		player.displayClientMessage((rite.getTotalWaves() > 0 ? Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_altar_is_sealed_endure_the") : (rite.getPhase() == CardinalRitePhase.STILL_INTERVAL ? Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_altar_is_sealed_restore_the") : Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_altar_is_sealed_the_rite"))).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
 		return true;
 	}
 
@@ -317,10 +304,7 @@ public final class CardinalRiteInteractionHandler {
 				boolean caught = CardinalRiteAllyService.tryCorrectMiss(level, rite);
 				if (!caught) rite.addInstability(CardinalRiteSigilRules.FALSE_STROKE_INSTABILITY);
 				spawnFalseStrokeBolts(level, rite, placement, sigil, touched);
-				player.displayClientMessage(Component.literal(caught
-								? "The Attendant catches the false stroke before it destabilizes the rite."
-								: "The false stroke takes a trace offering.")
-						.withStyle(ChatFormatting.DARK_PURPLE), true);
+				player.displayClientMessage((caught ? Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_attendant_catches_the_false_stroke") : Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_false_stroke_takes_a_trace")).withStyle(ChatFormatting.DARK_PURPLE), true);
 				return SigilOffer.handled(spend);
 			}
 			String bloodKey = "blood:" + progressKey;
@@ -344,10 +328,7 @@ public final class CardinalRiteInteractionHandler {
 				if (rite.awakenSigil(progressKey)) {
 					spawnAwakenedSigil(level, rite, placement, sigil);
 				}
-				player.displayClientMessage(Component.literal(learned
-								? "The shape resolves: " + sigil.name() + " — " + sigil.purpose()
-								: sigil.name() + " answers the rite.")
-						.withStyle(ChatFormatting.GOLD), false);
+				player.displayClientMessage((learned ? Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_shape_resolves", sigil.displayName(), sigil.displayPurpose()) : Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.answers_the_rite", sigil.displayName())).withStyle(ChatFormatting.GOLD), false);
 			}
 			return SigilOffer.handled(spend);
 		}
@@ -472,8 +453,7 @@ public final class CardinalRiteInteractionHandler {
 			int spent = spendBlood(player, rite, Math.max(1, Math.min(50, (int) projectionRate)));
 			if (spent > 0) {
 				rite.addInstability(6);
-				player.displayClientMessage(Component.literal("The counterfeit anchor drinks the projection.")
-						.withStyle(ChatFormatting.DARK_PURPLE), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_interaction_handler.the_counterfeit_anchor_drinks_the_projection").withStyle(ChatFormatting.DARK_PURPLE), true);
 			}
 			return spent;
 		}

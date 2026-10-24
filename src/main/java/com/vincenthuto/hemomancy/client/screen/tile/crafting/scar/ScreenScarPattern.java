@@ -56,9 +56,9 @@ public class ScreenScarPattern extends Screen {
 
 		graphics.drawCenteredString(font, ChatFormatting.GOLD + I18n.get(recipe.getResultItem().getDescriptionId()),
 				-85, 0, 8060954);
-		graphics.drawWordWrap(font, Component.translatable(ChatFormatting.BLACK + I18n.get(text)), centerX + 1 + 10,
+		graphics.drawWordWrap(font, Component.translatable(text).withStyle(ChatFormatting.BLACK), centerX + 1 + 10,
 				centerY + 151, 150, 0);
-		graphics.drawWordWrap(font, Component.translatable(ChatFormatting.GOLD + I18n.get(text)), centerX + 10,
+		graphics.drawWordWrap(font, Component.translatable(text).withStyle(ChatFormatting.GOLD), centerX + 10,
 				centerY + 150, 150, 0);
 
 		Lighting.setupFor3DItems();
@@ -95,7 +95,7 @@ public class ScreenScarPattern extends Screen {
 
 		// Back button to return to the binder viewer
 		this.addRenderableWidget(net.minecraft.client.gui.components.Button.builder(
-				Component.literal("Back"), (press) -> {
+				Component.translatable("screen.hemomancy.screen_scar_pattern.back"), (press) -> {
 					ScreenScarBinderViewer.openScreen(false);
 				}).bounds(left, top - 20, 55, 18).build());
 

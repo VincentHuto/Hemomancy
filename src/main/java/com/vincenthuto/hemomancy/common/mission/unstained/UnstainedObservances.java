@@ -66,18 +66,18 @@ public final class UnstainedObservances {
 	public static void handle(ServerPlayer player, Observance observance) {
 		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (!isAvailable(progress, observance)) {
-			notify(player, "This observance belongs to a later step of the Unstained path.", ChatFormatting.GRAY);
+			notify(player, Component.translatable("message.hemomancy.unstained_observances.this_observance_belongs_to_a_later"), ChatFormatting.GRAY);
 			return;
 		}
 		if ((progress.getClaimedObservances() & observance.mask()) != 0) {
-			notify(player, "You have already fulfilled this observance.", ChatFormatting.AQUA);
+			notify(player, Component.translatable("message.hemomancy.unstained_observances.you_have_already_fulfilled_this_observance"), ChatFormatting.AQUA);
 			return;
 		}
 		if ((progress.getAcceptedObservances() & observance.mask()) == 0) {
 			progress.setAcceptedObservances(progress.getAcceptedObservances() | observance.mask());
 			giveJournal(player);
 			UnstainedProgressEvents.syncProgress(player, progress);
-			notify(player, "Observance accepted. Consult the Book of Observances for its requirements.", ChatFormatting.AQUA);
+			notify(player, Component.translatable("message.hemomancy.unstained_observances.observance_accepted_consult_the_book_of"), ChatFormatting.AQUA);
 			return;
 		}
 		if (!consumeOffering(player, observance)) {
@@ -87,7 +87,7 @@ public final class UnstainedObservances {
 		applyReward(player, progress, observance);
 		progress.setClaimedObservances(progress.getClaimedObservances() | observance.mask());
 		UnstainedProgressEvents.syncProgress(player, progress);
-		notify(player, "Observance fulfilled. Your patient work leaves the blood quieter.", ChatFormatting.GREEN);
+		notify(player, Component.translatable("message.hemomancy.unstained_observances.observance_fulfilled_your_patient_work_leaves"), ChatFormatting.GREEN);
 	}
 
 	public static boolean isAvailable(IUnstainedProgress progress, Observance observance) {
@@ -190,23 +190,9 @@ public final class UnstainedObservances {
 		}
 	}
 
-	private static String requirement(Observance observance) {
-		return switch (observance) {
-			case GATHER_GHOST_PIPE -> "Bring four Ghost Pipe blooms.";
-			case WEAVE_WREATH -> "Bring one Lethean Poppy Wreath.";
-			case PREPARE_HEMOLYTIC -> "Bring two Hemolytic Solutions.";
-			case CONSECRATE_COPPER -> "Bring four Consecrated Copper Ingots.";
-			case OFFER_CHALICE -> "Bring one Lethean Chalice.";
-			case CONDENSE_STILL_WATERS -> "Bring four measures of Lethean Dew.";
-			case BEAR_PALLID_ICON -> "Bring one Pallid Icon.";
-			case PLATE_THE_WARD -> "Bring four Hemolytic Platings.";
-			case RING_THE_PALE_WATCH -> "Bring one Pale Silver Bell.";
-			case NOVITIATE_GATHER_REMEDIES -> "Bring four Ghost Pipe blooms and four Lethean Poppies.";
-			case NOVITIATE_GENTLE_SEPARATION -> "Distill Hemolytic Solution in a Pallid Retort.";
-			case NOVITIATE_STILLWATER_LABOR -> "Produce four Lethean Dew in a Stillwater Condenser.";
-			case NOVITIATE_CLEAN_LABOR -> "Consecrate eight blood-infested blocks.";
-			case NOVITIATE_SHELTER_AFFLICTED -> "Complete a protective rite while sheltering another soul.";
-		};
+	private static Component requirement(Observance observance) {
+		return Component.translatable("message.hemomancy.unstained_observances.requirement."
+				+ observance.name().toLowerCase(java.util.Locale.ROOT));
 	}
 
 	public static void beginNovitiate(ServerPlayer player) {
@@ -284,7 +270,7 @@ public final class UnstainedObservances {
 		if (!player.addItem(stack)) player.drop(stack, false);
 	}
 
-	private static void notify(ServerPlayer player, String message, ChatFormatting color) {
-		player.displayClientMessage(Component.literal(message).withStyle(color), false);
+	private static void notify(ServerPlayer player, Component message, ChatFormatting color) {
+		player.displayClientMessage(message.copy().withStyle(color), false);
 	}
 }

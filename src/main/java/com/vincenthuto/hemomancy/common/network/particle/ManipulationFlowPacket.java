@@ -1,19 +1,19 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 
 /** Cosmetic moving connections; the endpoints and lifetime use the existing tendril contract. */
 public record ManipulationFlowPacket(boolean umbra, TendrilAnchor start, TendrilAnchor end,
         TendrilEffectConfig config) implements CustomPacketPayload {
     public static final Type<ManipulationFlowPacket> TYPE = new Type<>(
-            ResourceLocation.fromNamespaceAndPath("hemomancy", "manipulation_flow"));
+            Hemomancy.rloc("manipulation_flow"));
     public static final StreamCodec<FriendlyByteBuf, ManipulationFlowPacket> STREAM_CODEC = StreamCodec.of(
             (buf, p) -> {
                 buf.writeBoolean(p.umbra);

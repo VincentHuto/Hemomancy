@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
@@ -85,15 +86,15 @@ public class LivingToolItem extends DiggerItem implements IDispellable, ITendenc
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		TendencyWeaponHelper.appendTendencyTooltip(stack, tooltip);
-		tooltip.add(Component.literal("Melee blood cost: 50% chance of " + (int) (getLivingAttackDamage() * 25f) + " mL per hit.")
-				.withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(HemoText.translatable("tooltip.hemomancy.living_tool.melee_blood_cost_50_chance_of",
+				(int) (getLivingAttackDamage() * 25f)).withStyle(ChatFormatting.DARK_RED));
 		if (this instanceof LivingBladeItem || this instanceof LivingAxeItem) {
-			tooltip.add(Component.literal("Feral hit: an additional " + (int) (getLivingAttackDamage() * 75f) + " mL.")
-					.withStyle(ChatFormatting.DARK_RED));
+			tooltip.add(HemoText.translatable("tooltip.hemomancy.living_tool.feral_hit_an_additional_ml",
+					(int) (getLivingAttackDamage() * 75f)).withStyle(ChatFormatting.DARK_RED));
 		}
 		if (this instanceof LivingTorchItem) {
-			tooltip.add(Component.literal("Breath upkeep: " + (int) (LivingTorchBreathRules.BLOOD_COST_PER_TICK * 20) + " mL/s.")
-					.withStyle(ChatFormatting.DARK_RED));
+			tooltip.add(HemoText.translatable("tooltip.hemomancy.living_tool.breath_upkeep_ml_s",
+					(int) (LivingTorchBreathRules.BLOOD_COST_PER_TICK * 20)).withStyle(ChatFormatting.DARK_RED));
 		}
 	}
 

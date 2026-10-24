@@ -17,10 +17,10 @@ import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -142,13 +142,16 @@ public class RitesAndCraftsTabController implements IProgressTab {
 		Map<ResourceLocation, Integer> firstUse = firstUseDegrees(tiers, used, fallback);
 		int order = 0;
 		for (CardinalRiteFloorDefinition floor : floors) {
-			String tier = HLTextUtils.toProperCase(floor.tier().getSerializedName());
-			String style = HLTextUtils.toProperCase(floor.style().replace('_', ' '));
-			String detail = floor.special()
-					? "The special " + style + " floor, laid for the " + floor.purpose().id() + " rite performed on it."
-					: "Focused floor-only construction view for the " + style + " ritual style.";
+			Component tier = CardinalRiteFloorDefinition.tierName(floor.tier());
+			Component style = CardinalRiteFloorDefinition.styleName(floor.style());
+			String detail = (floor.special()
+					? Component.translatable("screen.hemomancy.rites_and_crafts_tab_controller.special_floor_detail",
+							style, Component.translatable("cardinal_rite_purpose.hemomancy." + floor.purpose().id()))
+					: Component.translatable("screen.hemomancy.rites_and_crafts_tab_controller.floor_detail", style))
+					.getString();
 			entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.FLOOR, floor.id()),
-					tier + " " + style + " Floor", detail, firstUse.get(floor.id()),
+					Component.translatable("screen.hemomancy.rites_tab_view.floor", tier, style).getString(), detail,
+					firstUse.get(floor.id()),
 					HarbingerRecipeMapDefinitions.floorFamily(floor.purpose()), order++, true, true));
 		}
 	}
@@ -175,7 +178,9 @@ public class RitesAndCraftsTabController implements IProgressTab {
 			boolean known = knowledge != null && knowledge.isKnown(sigil.id());
 			boolean partial = knowledge != null && knowledge.discoveredNodeCount(sigil.id()) > 0;
 			entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.SIGIL, sigil.id()),
-					known ? sigil.name() : "Unknown Sigil", known ? sigil.purpose() : "",
+					known ? sigil.displayName().getString()
+							: Component.translatable("screen.hemomancy.rites_and_crafts_tab_controller.unknown_sigil").getString(),
+					known ? sigil.displayPurpose().getString() : "",
 					firstUse.get(sigil.id()), HarbingerRecipeMapDefinitions.SIGIL_FAMILY, order++, known || partial, known));
 		}
 	}
@@ -206,19 +211,25 @@ public class RitesAndCraftsTabController implements IProgressTab {
 	static String craftTooltip(CraftingMapRecipe recipe) {
 		if (recipe.isWorking()) {
 			ItemStack medium = recipe.getHeldItem();
-			return "Build it beside a Cardinal Focus on a " + recipe.floorLabel() + ", seat "
-					+ (medium.isEmpty() ? "its medium" : medium.getHoverName().getString())
-					+ " in the Focus, light its braziers and feed it " + (int) recipe.getBloodCost() + " mL.";
+			return Component.translatable("screen.hemomancy.rites_and_crafts_tab_controller.working_craft_tooltip",
+					recipe.floorLabel(),
+					medium.isEmpty() ? Component.translatable("screen.hemomancy.rites_and_crafts_tab_controller.its_medium")
+							: medium.getHoverName(),
+					(int) recipe.getBloodCost()).getString();
 		}
 		ItemStack held = recipe.getHeldItem();
 		ItemStack hit = recipe.getHitBlock() == null ? ItemStack.EMPTY : new ItemStack(recipe.getHitBlock());
 		return tooltipDescription((int) recipe.getBloodCost(),
-				held == null || held.isEmpty() ? "the required item" : held.getHoverName().getString(),
-				hit.isEmpty() ? "the required structure" : hit.getHoverName().getString());
+				held == null || held.isEmpty()
+						? Component.translatable("screen.hemomancy.rites_and_crafts_tab_controller.the_required_item")
+						: held.getHoverName(),
+				hit.isEmpty() ? Component.translatable("screen.hemomancy.rites_and_crafts_tab_controller.the_required_structure")
+						: hit.getHoverName()).getString();
 	}
 
-	static String tooltipDescription(int bloodCost, String heldItem, String hitBlock) {
-		return "Hold " + heldItem + " and activate " + hitBlock + ". Blood cost: " + bloodCost + " mL.";
+	static Component tooltipDescription(int bloodCost, Object heldItem, Object hitBlock) {
+		return Component.translatable("screen.hemomancy.rites_and_crafts_tab_controller.craft_tooltip",
+				heldItem, hitBlock, bloodCost);
 	}
 
 	private boolean craftSelected() {

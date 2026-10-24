@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
-import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomRules;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.IronheartedRules;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -15,45 +15,45 @@ import static org.junit.jupiter.api.Assertions.*;
 class IronheartedClientRegressionSourceTest {
 	@Test
 	void regeneratingIronHeartFollowsVanillaHeartBounce() {
-		assertEquals(98, BodyIdiomRules.ironHeartY(100, 3, true, 28, 20.0F));
-		assertEquals(100, BodyIdiomRules.ironHeartY(100, 2, true, 28, 20.0F));
-		assertEquals(100, BodyIdiomRules.ironHeartY(100, 3, false, 28, 20.0F));
+		assertEquals(98, IronheartedRules.ironHeartY(100, 3, true, 28, 20.0F));
+		assertEquals(100, IronheartedRules.ironHeartY(100, 2, true, 28, 20.0F));
+		assertEquals(100, IronheartedRules.ironHeartY(100, 3, false, 28, 20.0F));
 	}
 
 	@Test
 	void ironHeartUsesOneBriefPulsePerSecond() {
-		assertTrue(BodyIdiomRules.ironHeartPulse(0));
-		assertTrue(BodyIdiomRules.ironHeartPulse(3));
-		assertFalse(BodyIdiomRules.ironHeartPulse(4));
-		assertFalse(BodyIdiomRules.ironHeartPulse(19));
-		assertTrue(BodyIdiomRules.ironHeartPulse(20));
+		assertTrue(IronheartedRules.ironHeartPulse(0));
+		assertTrue(IronheartedRules.ironHeartPulse(3));
+		assertFalse(IronheartedRules.ironHeartPulse(4));
+		assertFalse(IronheartedRules.ironHeartPulse(19));
+		assertTrue(IronheartedRules.ironHeartPulse(20));
 	}
 
 	@Test
 	void formingIronHeartFadesInBeforeItFills() {
-		var fading = BodyIdiomRules.ironHeartFormation(0.0F, 0.25F);
+		var fading = IronheartedRules.ironHeartFormation(0.0F, 0.25F);
 		assertEquals(0.5F, fading.emptyAlpha());
 		assertEquals(0.0F, fading.fill());
 
-		var filling = BodyIdiomRules.ironHeartFormation(0.0F, 0.75F);
+		var filling = IronheartedRules.ironHeartFormation(0.0F, 0.75F);
 		assertEquals(1.0F, filling.emptyAlpha());
 		assertEquals(0.5F, filling.fill());
 
-		var existing = BodyIdiomRules.ironHeartFormation(0.5F, 0.5F);
+		var existing = IronheartedRules.ironHeartFormation(0.5F, 0.5F);
 		assertEquals(1.0F, existing.emptyAlpha());
 		assertEquals(0.5F, existing.fill());
 	}
 
 	@Test
 	void removedIronHeartsPlayThreeCrackFrames() {
-		assertEquals(2, BodyIdiomRules.removedIronHeartSlots(6.0F, 2.0F));
-		assertEquals(0, BodyIdiomRules.removedIronHeartSlots(6.0F, 5.0F));
-		assertEquals(0, BodyIdiomRules.removedIronHeartSlots(2.0F, 4.0F));
+		assertEquals(2, IronheartedRules.removedIronHeartSlots(6.0F, 2.0F));
+		assertEquals(0, IronheartedRules.removedIronHeartSlots(6.0F, 5.0F));
+		assertEquals(0, IronheartedRules.removedIronHeartSlots(2.0F, 4.0F));
 
-		assertEquals(0, BodyIdiomRules.ironHeartCrackFrame(100L, 100L));
-		assertEquals(1, BodyIdiomRules.ironHeartCrackFrame(100L, 104L));
-		assertEquals(2, BodyIdiomRules.ironHeartCrackFrame(100L, 108L));
-		assertEquals(-1, BodyIdiomRules.ironHeartCrackFrame(100L, 112L));
+		assertEquals(0, IronheartedRules.ironHeartCrackFrame(100L, 100L));
+		assertEquals(1, IronheartedRules.ironHeartCrackFrame(100L, 104L));
+		assertEquals(2, IronheartedRules.ironHeartCrackFrame(100L, 108L));
+		assertEquals(-1, IronheartedRules.ironHeartCrackFrame(100L, 112L));
 	}
 
 	@Test
@@ -66,22 +66,22 @@ class IronheartedClientRegressionSourceTest {
 		assertTrue(source.contains("var memory = known.getSelectedMemoryRef();"));
 		assertTrue(source.contains("ManipulationInit.getByName(memory.id())"));
 		assertTrue(source.contains("ManipulationInputRules.tick(type, down, clicked"));
-		assertFalse(source.contains("manipulationChargeTicks >= BodyIdiomRules.IRON_HEART_CHARGE_TICKS"));
+		assertFalse(source.contains("manipulationChargeTicks >= IronheartedRules.IRON_HEART_CHARGE_TICKS"));
 		assertFalse(source.contains("manipulationChargeSent"));
 	}
 
 	@Test
 	void ironHeartsCoverExistingHealthHeartsOnly() throws IOException {
-		String source = read("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/BodyIdiomOverlay.java");
+		String source = read("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/IronheartedOverlay.java");
 
 		assertTrue(source.contains("int y = height - 39;"));
-		assertTrue(source.contains("heart < BodyIdiomRules.ironHeartSlots(shownIron)"));
+		assertTrue(source.contains("heart < IronheartedRules.ironHeartSlots(shownIron)"));
 		assertTrue(source.contains("x + heart * 8"));
 	}
 
 	@Test
 	void ironHeartArtworkIsTextureBacked() throws IOException {
-		String source = read("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/BodyIdiomOverlay.java");
+		String source = read("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/IronheartedOverlay.java");
 		List<String> vanillaHeartMask = List.of(
 				"..##.##..",
 				".#######.",
@@ -99,7 +99,7 @@ class IronheartedClientRegressionSourceTest {
 		assertTrue(source.contains("graphics.blit(x, y, 0, 9, 9, emptyHeart, 1.0F, 1.0F, 1.0F, emptyAlpha)"));
 		assertTrue(source.contains("graphics.blit(pulse ? IRON_HEART_PULSE : IRON_HEART_FULL"));
 		for (String name : new String[] {"empty", "full", "pulse"}) {
-			String directory = name.equals("empty") ? "textures/gui/sprites/body_idiom/" : "textures/gui/body_idiom/";
+			String directory = name.equals("empty") ? "textures/gui/sprites/manipulation/ironhearted/" : "textures/gui/manipulation/ironhearted/";
 			var image = ImageIO.read(Path.of("src/main/resources/assets/hemomancy/" + directory
 					+ "iron_heart_" + name + ".png").toFile());
 			assertNotNull(image);
@@ -111,14 +111,14 @@ class IronheartedClientRegressionSourceTest {
 
 	@Test
 	void removedIronHeartUsesEditableCrackFrames() throws IOException {
-		String source = read("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/BodyIdiomOverlay.java");
+		String source = read("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/IronheartedOverlay.java");
 		assertTrue(source.contains("IRON_HEART_CRACK_FRAMES"));
-		assertTrue(source.contains("BodyIdiomRules.ironHeartCrackFrame"));
+		assertTrue(source.contains("IronheartedRules.ironHeartCrackFrame"));
 
 		var full = ImageIO.read(Path.of(
-				"src/main/resources/assets/hemomancy/textures/gui/body_idiom/iron_heart_full.png").toFile());
+				"src/main/resources/assets/hemomancy/textures/gui/manipulation/ironhearted/iron_heart_full.png").toFile());
 		for (int frame = 0; frame < 3; frame++) {
-			var cracked = ImageIO.read(Path.of("src/main/resources/assets/hemomancy/textures/gui/body_idiom/"
+			var cracked = ImageIO.read(Path.of("src/main/resources/assets/hemomancy/textures/gui/manipulation/ironhearted/"
 					+ "iron_heart_crack_" + frame + ".png").toFile());
 			assertNotNull(cracked);
 			assertEquals(9, cracked.getWidth());

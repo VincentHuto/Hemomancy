@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
+
 public final class MaterialGateRulesTest {
 	private MaterialGateRulesTest() {
 	}
@@ -36,9 +38,9 @@ public final class MaterialGateRulesTest {
 				MaterialGate.clarity(35.0F).visibilityFor(MaterialAtlasPath.UNSTAINED, 0, 10.0F, 10.0F),
 				MaterialVisibility.HIDDEN);
 
-		assertEquals("degree requirement text", MaterialGate.degree(4).requirementText(), "Requires Degree 4");
-		assertEquals("purity requirement text", MaterialGate.purity(25.0F).requirementText(), "Requires Purity 25");
-		assertEquals("clarity requirement text", MaterialGate.clarity(10.0F).requirementText(), "Requires Clarity 10");
+		assertEquals("degree requirement text", EnglishText.render(MaterialGate.degree(4).requirementText()), "Requires Degree 4");
+		assertEquals("purity requirement text", EnglishText.render(MaterialGate.purity(25.0F).requirementText()), "Requires Purity 25");
+		assertEquals("clarity requirement text", EnglishText.render(MaterialGate.clarity(10.0F).requirementText()), "Requires Clarity 10");
 	}
 
 	private static void assertVisibility(String label, MaterialVisibility actual, MaterialVisibility expected) {

@@ -218,8 +218,8 @@ them green.
 | gameTest `BlockBloodPersistenceGameTests` (suite `item_inventory_validation`) | 13 | L-7: block blood is saved only through the attachment (no own blood key in the saved tag) and an old save's own blood key still loads; each station's upgrade snapshot still carries its blood, so a mid-rite blood change aborts the upgrade |
 | `architecture/RecipeSerializerGuardrailTest` | 13 | L-8: one recipe JSON bridge; station recipes extend `StationRecipe`, not `CustomRecipe` |
 | `architecture/CommonClientIsolationTest#commonCodeNamesNoClientClass` | 13 | O-6: strict, no exception for item client extensions |
-| `architecture/HardCodedEnglishRatchetTest` | 13 | O-7: English `Component.literal` text at most 865, tooltip literals at most 28; every `tooltip.`/`message.hemomancy.*` key exists in `en_us` |
-| `architecture/ResourceLocationStyleRatchetTest` | 13 | D-8: at most 90 hand-built hemomancy resource locations outside `Hemomancy.java` |
+| `architecture/HardCodedEnglishGuardrailTest` (was `HardCodedEnglishRatchetTest`) | 13 | O-7: no `Component.literal` shows English (string, concatenated piece, ternary branch or `String.format` pattern; the dormant compat packages excepted); every key the code names is in `en_us` (a ratchet at 865 in step 13, strict since the follow-up) |
+| `architecture/ResourceLocationStyleGuardrailTest` (was `ResourceLocationStyleRatchetTest`) | 13 | D-8: no hand-built hemomancy resource location outside `Hemomancy.java` (a ratchet at 90 in step 13, strict since the follow-up) |
 | `architecture/ArchitectureStandardsIndexTest` | 13 | Every architecture test is listed in the guardrail index of `ARCHITECTURE_STANDARDS.md` |
 
 ## Step entries
@@ -1714,8 +1714,7 @@ for code); the audit's "about 4,900 files" counted more than that.
   unverified dead code), F-4, F-5, F-19, F-20, S-2b, S-5b (state and delivery), F-12 to F-17 and G-1 (blood and damage
   balance), G-2b, G-2c, G-7b (targeting, boss definition, flight), A-4, A-1b, V-3b, V-3c, V-6b (animation and visuals),
   F-11 (craft tick rate), O-5 (typed components), F-22 (creative tab) and F-25 (MnA config).
-- **Ratchets to lower over time:** 865 English literals and 28 tooltip literals (`HardCodedEnglishRatchetTest`), 90
-  hand-built resource locations (`ResourceLocationStyleRatchetTest`), 593 private test helpers
+- **Ratchets to lower over time:** 593 private test helpers
   (`PrivateTestHelperRatchetTest`), 426 `getPersistentData()` calls (`persistent-data-allow-list.txt`).
 - **Not done:** T-5 (the `/hemo test` scenario catalog); 335 legacy `main()` tests; stream codecs are still written by
   hand; the seven bridged recipes are not yet `RecordCodecBuilder` codecs; `ActiveCardinalRite` is still large (its
@@ -1728,3 +1727,79 @@ for code); the audit's "about 4,900 files" counted more than that.
   consolidation's last steps); `circussuccessionrunnercompletesatdegreefour` flaked once in step 12 and
   `crossingdimensionsdeliberatelyunravelssummon` once in step 13. Other default-batch tests that build outside their
   template may still be grid-sensitive; give any that flakes its own batch, as the outpost and journey-exit tests have.
+
+## Follow-up after step 13 (2026-10-23)
+
+Owner request after the consolidation: clear the two step 13 ratchets.
+
+- **Resource locations:** all 90 hand-built `hemomancy` locations now come from `Hemomancy.rloc` (payload `TYPE`s,
+  attribute-modifier ids, model layers, textures, templates). The `vesper_mount` generator lost its plain-location
+  option (re-running it reproduces `VesperMountModel.java` byte for byte) and the local circus generators write `rloc`.
+  `ResourceLocationStyleGuardrailTest` (renamed) is strict: zero hand-built locations outside `Hemomancy.java`.
+- **English:** every `Component.literal` that showed English (the 865 the ratchet counted, plus about 60 it could not
+  see: ternary branches, `String.format` patterns, `switch` arms and English after a leading expression) is now a key.
+  `en_us.json` grew from 6,406 to 7,361 keys in this pass. An `.append(...)` chain became one key with `%s` placeholders, each argument
+  keeping its own style; styled label fragments (a grey `" Blood: "` beside coloured values) stayed separate keys to keep
+  their colour. `common/util/HemoText.translatable` makes non-sendable arguments (`BlockPos`, `UUID`, enums) strings, as
+  concatenation did. `HardCodedEnglishGuardrailTest` (renamed) is strict.
+- **Evidence:** the `/hemo` command, dialogue-route and rite-kind fingerprint GameTests record chat through
+  `getString()` on the server, which resolves the keys; their goldens are unchanged, so the converted messages read
+  exactly as before. Test helpers `support/EnglishText` (renders a component against `en_us` without a bootstrap) and
+  `SourceAssertions.assertShowsEnglish` replace English pins; ten legacy `main()` tests touched by the pins were
+  converted to JUnit (with `CrimsonFireVisualSourceTest` for the resource locations).
+- **Text helpers:** a compiler-backed audit (javac's tree API over `src/main/java` on the compile classpath) found 14
+  helpers that wrapped a `String` parameter in a literal, fed English by 156 calls (the Loom's `msg`, the morphling
+  `maturityBonusLine`, the screen detail-line drawers, the scar-brazier preflight, the Unstained observance notices and
+  others). Each now takes a `Component`; their feeders (`MemoryBrazierRite`'s failure switch, `ScarBrazierRite.Preflight`)
+  became components too, and morphling stage names are keys. A second audit checked every translatable argument's static
+  type: it found the enzyme tooltip passing an enum since step 13's O-7 (`TranslatableContents` throws on it, so every
+  enzyme tooltip failed and JEI logged it), now `HemoText`, and English phrases passed as arguments (the rite-start line
+  became three whole keys). Both audits end clean apart from the `/hemo qliphoth` state tokens, which are command syntax.
+  `en_us.json` ends at 7,556 keys. The screen review client's 31 captures match the previous set pixel for pixel on 22
+  screens, including every text-heavy one; the other nine differ only in the save's held item and an animated wheel.
+- **Still English, not yet converted:** about 1,960 sentence-like string literals that never reach a literal call site
+  directly: data tables (the Liber material atlas in `MaterialsData`, about 780; manipulation descriptions in
+  `ManipulationInit`; milestone, chapter and summon names), messages built from rule records and `String` returns
+  (`UnstainedCardinalRiteEvents`, `ScryingDiagnosticsTooltipLines`, `CardinalRiteChecklist`, rite validators), and enum
+  names shown as text. The count includes some ids and validation messages. Strings passed into helpers that format text
+  later (`SkillTooltipDetails.upgradeCost("level up", ...)`) belong here too. The dormant MnA compat package is excluded.
+
+## Second follow-up: English in data tables (2026-10-23)
+
+Owner request: convert the English the first follow-up left (the "Still English" item above).
+
+- **Census:** the 1,961 sentence-like literals came to 1,623 once namespaced ids were left out, in 129 files. 179 remain,
+  in 38 files no player reads; `EnglishLiteralAllowListTest` (new) pins each file's count in
+  `src/test/resources/architecture/english-literal-allow-list.txt` with its reason: validation and decode errors, the
+  debug showcase, config comments, model labels, mixin descriptors, recipe-map family ids, `toString`s, and the saved
+  defaults `No Bloodline` / `No Selected` (in the `/hemo` fingerprints) and the founding `'s Blood Line` name.
+- **Material atlas:** `MaterialEntry` carries keys. Its 346 entries reuse the item or block name key where the English
+  matched (296) and add `material.hemomancy.<id>.desc`, a shared key per repeated description, and
+  `material.hemomancy.category.*`. Bucket labels, the hub labels and gate requirements are keys.
+- **Tables and rules:** manipulation Drudge descriptions, milestone, chapter and degree names (`getTitle()` is gone;
+  `displayName()` reads `hemomancy.degree.N`), purity/clarity stage names, summon roles, organs, living-weapon forms,
+  saint enums, Pome husks, floor styles and tiers, rite phases and waves, skill names (74 `skill.hemomancy.<id>`), Still
+  Arts, the Unstained rite failure reasons and results, the Cardinal Rite checklist and overlay, the scrying
+  diagnostics and the Visceral Mirror. Blood-flow and max-blood row labels are always keys
+  (`blood_source.hemomancy.<id>` for every `BloodAccounting.Source`), resolved by the client and sorted by their English.
+- **Data JSON:** rite names and sigil names/purposes stay in their JSON and show through
+  `Component.translatableWithFallback` with derived keys, so a language file can translate them; the books stay with
+  HutosLib.
+- **Payloads:** the Visceral Mirror update, the inscription screen and the active-rite sync now carry components;
+  `PROTOCOL_VERSION` is 5.
+- **Colour fix from the first follow-up:** ten lines had become `translatable("%sText", ChatFormatting.X)`, and a
+  section code inside an argument does not style the text after it, so they had lost their colour (the Vascularium
+  Charm and Unstained book tooltips, the scar binder and station hints, the Living Grasp warning, the blood-volume
+  greeting). They now use `withStyle`.
+- **Visible text changes, all from raw ids:** upper-case tendencies ("FERRIC") and flows ("RAGING") read as their names;
+  the scrying category `MUSCLE_MEMORY` reads "Thelemic Memory" (the player-facing term); max-blood scar rows show the
+  scar's item name ("Scar of the Heart", was "Scar Heart"); the rite overlay title and Mnemonic Blueprints show the rite
+  name; the skill toggle message shows the skill name; "greater Working floor" reads "Greater Working floor".
+- **Guardrails:** `HardCodedEnglishGuardrailTest` checks every whole key literal of any `*.hemomancy.*` family, not
+  only `screen`/`message`/`tooltip`/`gui`/`commands`; the orphaned `FieldNotesItem` (M-3) names five keys that were
+  never written and is skipped. `SourceAssertions.assertNotShowsEnglish` keeps "this English is gone" pins meaningful.
+- **Size:** `en_us.json` grew from 7,556 to 8,871 keys.
+- **Owner follow-ups, done:** rite-space descriptions (`RiteBoundRules.describe`) name their style through
+  `CardinalRiteFloorDefinition.styleName`, and the four `message.hemomancy.rite_bound_rules.style_*` keys are gone.
+  Skill names are title case ("Arterial Cadence", "Nerves of Steel"); compound adjectives take a hyphen ("Iron-Handed",
+  "Light-Footed") and `vespers_refusal` reads "Vesper's Refusal".

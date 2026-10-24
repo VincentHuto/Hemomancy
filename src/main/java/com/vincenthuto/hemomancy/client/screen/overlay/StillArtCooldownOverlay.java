@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 
 import net.minecraft.client.Minecraft;
@@ -84,7 +85,7 @@ public class StillArtCooldownOverlay {
 	private void renderNumericCooldown(GuiGraphics gfx, int screenWidth) {
 		Minecraft mc = Minecraft.getInstance();
 		int seconds = Math.max(1, (int) Math.ceil(cooldownRemaining / 20.0));
-		Component text = Component.literal(seconds + "s");
+		Component text = HemoText.translatable("screen.hemomancy.still_art_cooldown_overlay.s", seconds);
 		int textWidth = mc.font.width(text);
 
 		boolean gaugeOnLeft = UnstainedGaugeOverlay.isConfiguredOnLeftSide();

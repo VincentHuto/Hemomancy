@@ -62,10 +62,10 @@ public class StillwaterCondenserScreen extends AbstractContainerScreen<Stillwate
 
 	@Override protected void renderLabels(GuiGraphics gfx, int mouseX, int mouseY) {
 		gfx.drawString(font, title, titleLabelX, 6, PALE, false);
-		String status = !menu.hasWater() ? "Needs still water"
-				: !menu.hasGhostPipe() ? "Needs living Ghost Pipe"
-				: menu.hasLatticeBoost() ? "Lattice-assisted condensation" : "Condensing patiently";
-		gfx.drawCenteredString(font, Component.literal(status), imageWidth / 2, 61,
+		String status = !menu.hasWater() ? "screen.hemomancy.stillwater_condenser.needs_still_water"
+				: !menu.hasGhostPipe() ? "screen.hemomancy.stillwater_condenser.needs_living_ghost_pipe"
+				: menu.hasLatticeBoost() ? "screen.hemomancy.stillwater_condenser.lattice_assisted_condensation" : "screen.hemomancy.stillwater_condenser.condensing_patiently";
+		gfx.drawCenteredString(font, Component.translatable(status), imageWidth / 2, 61,
 				menu.hasWater() && menu.hasGhostPipe() ? TEAL : DIM);
 	}
 

@@ -10,13 +10,12 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 // Authored by tools/circus/build_cinder_bellows.py; regenerate the model, atlas and BBModel together.
 public class CinderBellowsModel extends EntityModel<CinderBellowsEntity> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "cinder_bellows"), "main");
+            Hemomancy.rloc("cinder_bellows"), "main");
     private final ModelPart root, pelvis, abdomen, chest, neck, head, jaw, tailTip;
     private final ModelPart[] tail = new ModelPart[10];
     private final ModelPart[] lungs, arms, forearms, hands;

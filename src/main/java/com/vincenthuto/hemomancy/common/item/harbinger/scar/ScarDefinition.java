@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
@@ -14,7 +14,8 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTendencyServerPacket;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -284,9 +285,10 @@ public class ScarDefinition {
 			tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.tier_s", tierStr).withStyle(ChatFormatting.DARK_PURPLE));
 		}
 
-		tooltip.add(Component.translatable(ChatFormatting.GOLD + "Tendency: "
-				+ HLTextUtils.toProperCase(assignedTendency.name())));
-		tooltip.add(Component.translatable(ChatFormatting.GREEN + "Tendency Amount: " + deepenAmount));
+		tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.tendency",
+				BloodManipulation.tendencyName(assignedTendency)).withStyle(ChatFormatting.GOLD));
+		tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.tendency_amount", String.valueOf(deepenAmount))
+				.withStyle(ChatFormatting.GREEN));
 
 		for (ScarModifier mod : passiveModifiers) {
 			if (mod.amount() <= 0) continue;
@@ -318,13 +320,14 @@ public class ScarDefinition {
 		if (maxBloodModifier != 0.0) {
 			String sign = maxBloodModifier > 0 ? "+" : "";
 			ChatFormatting color = maxBloodModifier > 0 ? ChatFormatting.DARK_GREEN : ChatFormatting.RED;
-			tooltip.add(Component.literal("* " + sign + String.format("%.0f", maxBloodModifier) + " Max Blood")
-					.withStyle(color));
+			tooltip.add(HemoText.translatable("tooltip.hemomancy.scar_definition.max_blood",
+					sign,
+					String.format("%.0f", maxBloodModifier)).withStyle(color));
 		}
 
 		if (bloodUpkeep > 0) {
-			tooltip.add(Component.literal("* Blood Upkeep: " + String.format("%.1f", bloodUpkeep) + "/tick")
-					.withStyle(ChatFormatting.RED));
+			tooltip.add(HemoText.translatable("tooltip.hemomancy.scar_definition.blood_upkeep_tick",
+					String.format("%.1f", bloodUpkeep)).withStyle(ChatFormatting.RED));
 		}
 
 		if (assignedTendency == EnumBloodTendency.MORTEM && tier == 1) {
@@ -334,58 +337,55 @@ public class ScarDefinition {
 
 	private void addBehaviorTooltip(List<Component> tooltip) {
 		if (ironHeartCapacityBonus > 0) {
-			tooltip.add(Component.literal("* +" + ironHeartCapacityBonus + " Iron Heart capacity")
-					.withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(HemoText.translatable("message.hemomancy.scar_definition.iron_heart_capacity",
+					ironHeartCapacityBonus).withStyle(ChatFormatting.DARK_GREEN));
 		}
 		if (assignedTendency == EnumBloodTendency.ANIMUS && tier >= 2) {
-			tooltip.add(Component.literal("* Heals " + tier + " on kill").withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(HemoText.translatable("message.hemomancy.scar_definition.heals_on_kill", tier).withStyle(ChatFormatting.DARK_GREEN));
 		}
 		if (assignedTendency == EnumBloodTendency.MORTEM && tier >= 3) {
-			tooltip.add(Component.literal("* Withers struck foes").withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(Component.translatable("message.hemomancy.scar_definition.withers_struck_foes").withStyle(ChatFormatting.DARK_GREEN));
 		} else if (assignedTendency == EnumBloodTendency.MORTEM && tier >= 2) {
-			tooltip.add(Component.literal("* Poisons struck foes").withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(Component.translatable("message.hemomancy.scar_definition.poisons_struck_foes").withStyle(ChatFormatting.DARK_GREEN));
 		}
 		if (assignedTendency == EnumBloodTendency.FLAMMEUS && tier >= 2) {
-			tooltip.add(Component.literal(tier >= 3 ? "* Ignites attackers" : "* Briefly ignites attackers")
-					.withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add((tier >= 3 ? Component.translatable("message.hemomancy.scar_definition.ignites_attackers") : Component.translatable("message.hemomancy.scar_definition.briefly_ignites_attackers")).withStyle(ChatFormatting.DARK_GREEN));
 		}
 		if (assignedTendency == EnumBloodTendency.FERRIC && tier >= 1) {
-			tooltip.add(Component.literal("* Thorns: reflects " + tier + " damage")
-					.withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(HemoText.translatable("message.hemomancy.scar_definition.thorns_reflects_damage",
+					tier).withStyle(ChatFormatting.DARK_GREEN));
 		}
 		if (assignedTendency == EnumBloodTendency.LUX) {
-			tooltip.add(Component.literal("* Blinds attackers").withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(Component.translatable("message.hemomancy.scar_definition.blinds_attackers").withStyle(ChatFormatting.DARK_GREEN));
 			if (tier >= 2) {
-				tooltip.add(Component.literal("* Marks attackers with Glowing").withStyle(ChatFormatting.DARK_GREEN));
+				tooltip.add(Component.translatable("message.hemomancy.scar_definition.marks_attackers_with_glowing").withStyle(ChatFormatting.DARK_GREEN));
 			}
 		}
 		if (assignedTendency == EnumBloodTendency.CONGEATIO) {
-			tooltip.add(Component.literal("* Slows struck foes").withStyle(ChatFormatting.DARK_GREEN));
-			if (tier >= 2) tooltip.add(Component.literal("* Slows nearby foes").withStyle(ChatFormatting.DARK_GREEN));
-			if (tier >= 3) tooltip.add(Component.literal("* Slow fall").withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(Component.translatable("message.hemomancy.scar_definition.slows_struck_foes").withStyle(ChatFormatting.DARK_GREEN));
+			if (tier >= 2) tooltip.add(Component.translatable("message.hemomancy.scar_definition.slows_nearby_foes").withStyle(ChatFormatting.DARK_GREEN));
+			if (tier >= 3) tooltip.add(Component.translatable("message.hemomancy.scar_definition.slow_fall").withStyle(ChatFormatting.DARK_GREEN));
 		}
 		if (assignedTendency == EnumBloodTendency.TENEBRIS) {
-			tooltip.add(Component.literal("* Grants invisibility in darkness").withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_invisibility_in_darkness").withStyle(ChatFormatting.DARK_GREEN));
 			if (tier >= 2) {
-				tooltip.add(Component.literal("* Grants invisibility when struck in darkness")
-						.withStyle(ChatFormatting.DARK_GREEN));
+				tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_invisibility_when_struck_in_darkness").withStyle(ChatFormatting.DARK_GREEN));
 			}
 			if (tier >= 3) {
-				tooltip.add(Component.literal("* Grants invisibility when struck").withStyle(ChatFormatting.DARK_GREEN));
+				tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_invisibility_when_struck").withStyle(ChatFormatting.DARK_GREEN));
 			}
 		}
 		if (assignedTendency == EnumBloodTendency.DUCTILIS && tier >= 2) {
-			tooltip.add(Component.literal("* Grants Haste on kill").withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_haste_on_kill").withStyle(ChatFormatting.DARK_GREEN));
 			if (tier >= 3) {
-				tooltip.add(Component.literal("* Grants Speed and Strength on kill")
-						.withStyle(ChatFormatting.DARK_GREEN));
+				tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_speed_and_strength_on_kill").withStyle(ChatFormatting.DARK_GREEN));
 			}
 		}
 		if (assignedTendency == EnumBloodTendency.ANIMUS && tier >= 3) {
-			tooltip.add(Component.literal("* Regenerates when gravely wounded").withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(Component.translatable("message.hemomancy.scar_definition.regenerates_when_gravely_wounded").withStyle(ChatFormatting.DARK_GREEN));
 		}
 		if (assignedTendency == EnumBloodTendency.LUX && tier >= 3) {
-			tooltip.add(Component.literal("* Grants Resistance in bright light").withStyle(ChatFormatting.DARK_GREEN));
+			tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_resistance_in_bright_light").withStyle(ChatFormatting.DARK_GREEN));
 		}
 	}
 

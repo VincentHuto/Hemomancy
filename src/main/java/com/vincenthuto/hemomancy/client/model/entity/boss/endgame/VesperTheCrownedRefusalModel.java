@@ -2,13 +2,13 @@ package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 // Made with Blockbench 5.1.6
@@ -18,7 +18,7 @@ import net.minecraft.util.Mth;
 public class VesperTheCrownedRefusalModel extends HierarchicalModel<VesperTheCrownedRefusalEntity> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			ResourceLocation.fromNamespaceAndPath("hemomancy", "vesper_crowned_refusal"), "main");
+			Hemomancy.rloc("vesper_crowned_refusal"), "main");
 	private final ModelPart whole;
 	private final ModelPart vesper;
 	private final ModelPart head2;

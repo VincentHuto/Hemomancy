@@ -47,6 +47,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 
 public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProvider, ProjectedBloodSink {
 	private static final BloodAccounting.Source MOTIF_CHARGE = BloodAccounting.Source.of("masons_effigy_motif", Category.SCAR, true, false);
@@ -148,16 +149,13 @@ public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProv
 	public double receiveProjectedBlood(Player player, double maxAmount, boolean livingStaff) {
 		if (player == null || level == null || !hasPendingMotif() || selectedScarIds.isEmpty()) {
 			if (player != null && level != null && level.getGameTime() % 20L == 0L) {
-				player.displayClientMessage(Component.literal(!hasPendingMotif()
-						? "Place motif paper on the Effigy before projecting blood."
-						: "Select scars on the Effigy before charging the motif.").withStyle(ChatFormatting.RED), true);
+				player.displayClientMessage((!hasPendingMotif() ? Component.translatable("message.hemomancy.masons_effigy_block_entity.place_motif_paper_on_the_effigy") : Component.translatable("message.hemomancy.masons_effigy_block_entity.select_scars_on_the_effigy_before")).withStyle(ChatFormatting.RED), true);
 			}
 			return 0.0D;
 		}
 		if (selectedScarIds.size() > ScarBrazierRite.getMaxActiveScars(player)) {
 			if (level.getGameTime() % 20L == 0L) {
-				player.displayClientMessage(Component.literal("That motif exceeds your current scar capacity.")
-						.withStyle(ChatFormatting.RED), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.masons_effigy_block_entity.that_motif_exceeds_your_current_scar").withStyle(ChatFormatting.RED), true);
 			}
 			return 0.0D;
 		}
@@ -167,8 +165,7 @@ public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProv
 			if (definition == null || definition.getScarType() != ScarType.CEREBRAL
 					|| scars == null || !scars.knowsCerebralScar(id)) {
 				if (level.getGameTime() % 20L == 0L) {
-					player.displayClientMessage(Component.literal("Learn every selected scar before charging this motif.")
-							.withStyle(ChatFormatting.RED), true);
+					player.displayClientMessage(Component.translatable("message.hemomancy.masons_effigy_block_entity.learn_every_selected_scar_before_charging").withStyle(ChatFormatting.RED), true);
 				}
 				return 0.0D;
 			}
@@ -176,8 +173,7 @@ public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProv
 		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player);
 		if (playerVolume == null || !playerVolume.isActive() || playerVolume.getBloodVolume() <= 0) {
 			if (level.getGameTime() % 20L == 0L) {
-				player.displayClientMessage(Component.literal("No blood answers the Effigy.")
-						.withStyle(ChatFormatting.DARK_RED), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.masons_effigy_block_entity.no_blood_answers_the_effigy").withStyle(ChatFormatting.DARK_RED), true);
 			}
 			return 0.0D;
 		}
@@ -197,12 +193,12 @@ public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProv
 		}
 		if (pendingBlood >= getRequiredBlood() - 0.001D) {
 			completeMotifRitual(player);
-			player.displayClientMessage(Component.literal("The Effigy casts off a completed scar pattern.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.masons_effigy_block_entity.the_effigy_casts_off_a_completed").withStyle(ChatFormatting.DARK_RED), true);
 		} else {
 			if (level.getGameTime() % 10L == 0L) {
-				player.displayClientMessage(Component.literal("Effigy blood charge: " + (int) pendingBlood + "/"
-						+ (int) getRequiredBlood()).withStyle(ChatFormatting.DARK_RED), true);
+				player.displayClientMessage(HemoText.translatable("message.hemomancy.masons_effigy_block_entity.effigy_blood_charge",
+						(int) pendingBlood,
+						(int) getRequiredBlood()).withStyle(ChatFormatting.DARK_RED), true);
 			}
 			BlockEntitySync.markAndSync(this);
 		}

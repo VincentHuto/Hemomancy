@@ -39,10 +39,9 @@ final class FaneSubcommand {
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
 		FoundingFaneEvents.setPreviewRelation(player, relation);
-		source.sendSuccess(() -> Component.literal("Fane boundary preview set to ")
-				.append(Component.literal(relation.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(". Wait up to two seconds for the next boundary sync.")
-						.withStyle(ChatFormatting.GRAY)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.fane.fane_boundary_preview_set_to",
+				Component.literal(relation.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED),
+				Component.translatable("commands.hemomancy.fane.wait_up_to_two_seconds_for").withStyle(ChatFormatting.GRAY)),
 				false);
 		return 1;
 	}
@@ -51,7 +50,7 @@ final class FaneSubcommand {
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
 		FoundingFaneEvents.clearPreviewRelation(player);
-		source.sendSuccess(() -> Component.literal("Fane boundary preview cleared.").withStyle(ChatFormatting.GRAY),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.fane.fane_boundary_preview_cleared").withStyle(ChatFormatting.GRAY),
 				false);
 		return 1;
 	}

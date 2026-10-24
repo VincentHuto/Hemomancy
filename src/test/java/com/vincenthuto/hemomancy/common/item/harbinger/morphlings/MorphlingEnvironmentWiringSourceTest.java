@@ -9,11 +9,11 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-final class MorphlingBodyIdiomWiringSourceTest {
+final class MorphlingEnvironmentWiringSourceTest {
 	private static final Path JAVA = Path.of("src/main/java/com/vincenthuto/hemomancy");
 
 	@Test
-	void bodyIdiomsUseTheExistingEquippedDamageAndExhaustionHooks() throws IOException {
+	void environmentResponsesUseTheExistingEquippedDamageAndExhaustionHooks() throws IOException {
 		String events = read("common/capability/player/harbinger/morphling/EquippedMorphlingEvents.java");
 		String hooks = read("mixin/util/MixinHooks.java");
 		String effects = read("common/init/EffectInit.java");

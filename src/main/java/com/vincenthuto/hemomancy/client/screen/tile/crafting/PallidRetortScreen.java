@@ -119,9 +119,9 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 
 		// Heat status text below heat indicator
 		if (this.menu.isHeated()) {
-			gfx.drawString(font, Component.literal("Refining"), 36, 56, 0xFFC8D8E8, false);
+			gfx.drawString(font, Component.translatable("screen.hemomancy.pallid_retort.refining"), 36, 56, 0xFFC8D8E8, false);
 		} else {
-			gfx.drawString(font, Component.literal("No Coolant"), 40, 56, 0xFF8899AA, false);
+			gfx.drawString(font, Component.translatable("screen.hemomancy.pallid_retort.no_coolant"), 40, 56, 0xFF8899AA, false);
 		}
 	}
 

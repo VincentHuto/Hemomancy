@@ -52,7 +52,7 @@ public class GlacialRampartManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (!player.isShiftKeyDown() && anchor(player).getType() == HitResult.Type.MISS) {
-			player.displayClientMessage(Component.literal("No surface to anchor the rampart."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.glacial_rampart_manip.no_surface_to_anchor_the_rampart"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);
@@ -114,6 +114,6 @@ public class GlacialRampartManip extends BloodManipulation {
 		if (placed > 0) {
 			level.playSound(null, base, SoundEvents.GLASS_PLACE, SoundSource.PLAYERS, 1.0F, .5F);
 			level.playSound(null, base, SoundEvents.POWDER_SNOW_BREAK, SoundSource.PLAYERS, .6F, .8F);
-		} else player.displayClientMessage(Component.literal("No space for the bastion to rise."), true);
+		} else player.displayClientMessage(Component.translatable("message.hemomancy.glacial_rampart_manip.no_space_for_the_bastion_to"), true);
 	}
 }

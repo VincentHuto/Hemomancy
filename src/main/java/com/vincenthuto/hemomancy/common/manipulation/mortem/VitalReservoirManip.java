@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -48,7 +49,7 @@ public class VitalReservoirManip extends BloodManipulation {
 
 		if (player.experienceLevel < XP_LEVELS_COST) {
 			player.displayClientMessage(
-					Component.literal("§cNot enough experience! (Need " + XP_LEVELS_COST + " levels)"), true);
+					HemoText.translatable("message.hemomancy.vital_reservoir_manip.not_enough_experience_need_levels", XP_LEVELS_COST), true);
 			return;
 		}
 
@@ -59,7 +60,7 @@ public class VitalReservoirManip extends BloodManipulation {
 
 		if (volume.isFull()) {
 			player.displayClientMessage(
-					Component.literal("§cBlood volume is already full!"), true);
+					Component.translatable("message.hemomancy.vital_reservoir_manip.blood_volume_is_already_full"), true);
 			return;
 		}
 

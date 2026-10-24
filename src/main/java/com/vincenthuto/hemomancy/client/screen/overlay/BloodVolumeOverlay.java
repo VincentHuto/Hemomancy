@@ -268,7 +268,7 @@ public class BloodVolumeOverlay {
                 centerX, posY  +125, 0xFFD9A29A, 0.55f);
         String volText = String.format("%.0f", vol);
         int textX = centerX - (fr.width(volText) / 2);
-        gfx.drawString(fr, Component.literal(volText).append("ml"), textX, posY + 130, 0xFFE05A5A, true);
+        gfx.drawString(fr, Component.translatable("screen.hemomancy.blood_volume_overlay.ml", volText), textX, posY + 130, 0xFFE05A5A, true);
     }
 
     private static ResourceLocation texture(String name) {

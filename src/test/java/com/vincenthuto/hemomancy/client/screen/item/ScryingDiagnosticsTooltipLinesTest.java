@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.client.screen.item;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
+import com.vincenthuto.hemomancy.support.EnglishText;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
@@ -25,7 +27,7 @@ public final class ScryingDiagnosticsTooltipLinesTest {
 				MaxBloodContribution.penalty("scar_heart", "Scar Heart",
 						MaxBloodContribution.Category.SCAR, 100.0D)));
 
-		List<String> lines = ScryingDiagnosticsTooltipLines.maxBloodMods(snapshot);
+		List<String> lines = english(ScryingDiagnosticsTooltipLines.maxBloodMods(snapshot));
 
 		assertContains(lines, "Skill - Capacity: +1500 mL");
 		assertContains(lines, "Organ - Spleen: +3000 mL");
@@ -36,13 +38,13 @@ public final class ScryingDiagnosticsTooltipLinesTest {
 		BloodFlowSnapshot snapshot = new BloodFlowSnapshot(List.of(
 				new BloodFlowContribution("base_regen", "Base Regen",
 						BloodFlowContribution.Category.BODY, 0.5D, 0.5D, false, ""),
-				new BloodFlowContribution("sanguine_siphon", "Sanguine Siphon",
+				new BloodFlowContribution("sanguine_siphon", "blood_source.hemomancy.sanguine_siphon",
 						BloodFlowContribution.Category.EFFECT, 1.0D, 0.25D, true, "Circulation capped"),
 				new BloodFlowContribution("blood_loss", "Blood Loss",
 						BloodFlowContribution.Category.EFFECT, -2.0D, -2.0D, false, "")),
 				0.75D, 2.0D, -1.25D, 100.0D, 25.0D, 75.0D, 20, true);
 
-		List<String> lines = ScryingDiagnosticsTooltipLines.bloodFlowMods(snapshot);
+		List<String> lines = english(ScryingDiagnosticsTooltipLines.bloodFlowMods(snapshot));
 
 		assertContains(lines, "Body - Base Regen: +0.50 mL/t");
 		assertContains(lines, "Effect - Sanguine Siphon: +0.25/+1.00 mL/t [Circulation capped]");
@@ -56,7 +58,7 @@ public final class ScryingDiagnosticsTooltipLinesTest {
 				ManipulationCostContribution.multiplier("pome_corruption", "Pome Corruption",
 						ManipulationCostContribution.Category.RITE, 1.24D)));
 
-		List<String> lines = ScryingDiagnosticsTooltipLines.manipulationCostMods(snapshot);
+		List<String> lines = english(ScryingDiagnosticsTooltipLines.manipulationCostMods(snapshot));
 
 		assertContains(lines, "Skill - Efficiency: x0.80");
 		assertContains(lines, "Rite - Pome Corruption: x1.24");
@@ -73,12 +75,16 @@ public final class ScryingDiagnosticsTooltipLinesTest {
 						ManipulationSlotContribution.Category.SKILL, 5)),
 				9);
 
-		List<String> lines = ScryingDiagnosticsTooltipLines.manipulationSlotMods(snapshot);
+		List<String> lines = english(ScryingDiagnosticsTooltipLines.manipulationSlotMods(snapshot));
 
 		assertContains(lines, "Base - Base Slots: +3");
 		assertContains(lines, "Degree - Initiatory Degree: +4");
 		assertContains(lines, "Skill - Manipulation Slots: +5");
 		assertContains(lines, "Cap: 9 slots, 3 capped off");
+	}
+
+	private static List<String> english(List<Component> lines) {
+		return lines.stream().map(EnglishText::render).toList();
 	}
 
 	private static void assertContains(List<String> lines, String expected) {

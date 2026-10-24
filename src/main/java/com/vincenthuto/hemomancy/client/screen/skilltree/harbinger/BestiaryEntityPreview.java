@@ -157,7 +157,7 @@ public final class BestiaryEntityPreview {
 		ScreenDrawUtils.drawSimpleBorder(gfx, left, top, right - left, bottom - top, 0xFF24442D);
 		HarbingerChromeRenderer.drawFrame(gfx, left, top, right - left, bottom - top, 0xFF77AA66,
 				HarbingerChromeRenderer.State.ACTIVE);
-		gfx.drawCenteredString(ctx.font(), Component.literal("Preview unavailable"), centerX, centerY - 4, 0xFF777777);
+		gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.bestiary_entity_preview.preview_unavailable"), centerX, centerY - 4, 0xFF777777);
 	}
 
 	private record PreviewRotations(float yBodyRot, float yRot, float xRot, int tickCount,

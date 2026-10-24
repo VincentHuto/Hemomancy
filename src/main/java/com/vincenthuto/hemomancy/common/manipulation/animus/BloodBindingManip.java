@@ -68,7 +68,7 @@ public class BloodBindingManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItemMainhand, float chargeTicks) {
 		if (target(player, player.level()) != null) return true;
-		player.displayClientMessage(Component.literal("No unbound vessel in sight."), true);
+		player.displayClientMessage(Component.translatable("message.hemomancy.blood_binding_manip.no_unbound_vessel_in_sight"), true);
 		return false;
 	}
 

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.event.WhiteHumorPoolSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.UnstainedWarhammerItem;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -57,8 +58,7 @@ public class PaleHumorFlaskItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal(String.format("%.0f mL of purified lymph, cold-distilled.", amount))
-                .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        tooltip.add(HemoText.translatable("tooltip.hemomancy.pale_humor_flask.ml_of_purified_lymph_cold_distilled", String.format("%.0f", amount)).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         tooltip.add(Component.translatable("tooltip.hemomancy.pale_humor_flask.drink_replenishes_white_humor").withStyle(ChatFormatting.WHITE));
         tooltip.add(Component.translatable("tooltip.hemomancy.pale_humor_flask.right_click_with_an_unstained_weapon")
                 .withStyle(ChatFormatting.AQUA));
@@ -83,8 +83,7 @@ public class PaleHumorFlaskItem extends Item {
                 level.playSound(null, player.blockPosition(),
                         SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 0.8f, 1.1f);
                 player.displayClientMessage(
-                        Component.literal("The white humor seeps into the blade.")
-                                .withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+                        Component.translatable("message.hemomancy.pale_humor_flask_item.the_white_humor_seeps_into_the").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
                         true);
                 return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
             }
@@ -99,7 +98,7 @@ public class PaleHumorFlaskItem extends Item {
             if (vol.isActive()) {
                 if (vol.isFull()) {
                     player.displayClientMessage(
-                            Component.literal("Your humors are already in balance."), true);
+                            Component.translatable("message.hemomancy.pale_humor_flask_item.your_humors_are_already_in_balance"), true);
                 } else {
                     vol.fill(amount);
                     level.playSound(null, player.blockPosition(),
@@ -108,7 +107,7 @@ public class PaleHumorFlaskItem extends Item {
                 }
             } else {
                 player.displayClientMessage(
-                        Component.literal("You have no use for this yet."), true);
+                        Component.translatable("message.hemomancy.pale_humor_flask_item.you_have_no_use_for_this"), true);
             }
         }
 

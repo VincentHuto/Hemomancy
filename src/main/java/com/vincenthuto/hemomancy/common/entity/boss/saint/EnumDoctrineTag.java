@@ -1,20 +1,19 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+
+import java.util.Locale;
+
 public enum EnumDoctrineTag {
 
-	MARTYRDOM("Martyrdom"),
-	ABSOLUTION("Absolution"),
-	WITNESS("Witness"),
-	SILENCE("Silence"),
-	JUDGMENT("Judgment");
+	MARTYRDOM,
+	ABSOLUTION,
+	WITNESS,
+	SILENCE,
+	JUDGMENT;
 
-	private final String displayName;
-
-	EnumDoctrineTag(String displayName) {
-		this.displayName = displayName;
-	}
-
-	public String getDisplayName() {
-		return displayName;
+	public MutableComponent getDisplayName() {
+		return Component.translatable("saint_doctrine.hemomancy." + name().toLowerCase(Locale.ROOT));
 	}
 }

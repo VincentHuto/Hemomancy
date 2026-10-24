@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
@@ -66,7 +67,7 @@ public final class CraftingTabView {
 	public static void draw(GuiGraphics gfx, ProgressScreenContext ctx,
 							CraftingTabState state, int mouseX, int mouseY, float partial) {
 		if (state.craftingRecipes.isEmpty()) {
-			gfx.drawCenteredString(ctx.font(), "No Blood Crafting recipes found",
+			gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.crafting_tab_view.no_blood_crafting_recipes_found"),
 					ctx.guiLeft() + ctx.guiWidth() / 2,
 					ctx.guiTop()  + ctx.guiHeight() / 2, 0xFF666666);
 			return;
@@ -79,7 +80,7 @@ public final class CraftingTabView {
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 400);
 			drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-			gfx.drawCenteredString(ctx.font(), state.unstainedStages ? "Select a stage" : "Select a tier",
+			gfx.drawCenteredString(ctx.font(), Component.translatable(state.unstainedStages ? "screen.hemomancy.crafting_tab_view.select_a_stage" : "screen.hemomancy.crafting_tab_view.select_a_tier"),
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
@@ -91,7 +92,7 @@ public final class CraftingTabView {
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 400);
 			drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-			gfx.drawCenteredString(ctx.font(), state.unstainedStages ? "No recipes at this stage" : "No recipes in this tier",
+			gfx.drawCenteredString(ctx.font(), Component.translatable(state.unstainedStages ? "screen.hemomancy.crafting_tab_view.no_recipes_at_this_stage" : "screen.hemomancy.crafting_tab_view.no_recipes_in_this_tier"),
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
@@ -118,7 +119,7 @@ public final class CraftingTabView {
 				state.craftingMaxLayer, state.craftingVisibleLayer,
 				state.tabColor, mouseX, mouseY);
 		drawInfoPanel(gfx, ctx, state, recipe, infoX, ctx.guiTop() + 30, infoW);
-		gfx.drawCenteredString(ctx.font(), "Drag to rotate",
+		gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.crafting_tab_view.drag_to_rotate"),
 				modelX + modelAreaW / 2, ctx.guiTop() + ctx.guiHeight() - 18, 0x44888888);
 
 		gfx.pose().popPose();
@@ -135,7 +136,7 @@ public final class CraftingTabView {
 		int sw  = ProgressScreenContext.TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
-		gfx.drawString(ctx.font(), Component.literal(state.sidebarTitle())
+		gfx.drawString(ctx.font(), state.sidebarTitle().copy()
 				.withStyle(s -> s.withColor(state.tabColor).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
 
@@ -151,7 +152,7 @@ public final class CraftingTabView {
 		for (int i = 0; i < CraftingTabState.TIER_NAMES.length; i++) {
 			String tierName = CraftingTabState.TIER_NAMES[i];
 			if (state.isTierHidden(tierName)) continue;
-			String tierLabel = state.tierLabel(i);
+			String tierLabel = state.tierLabel(i).getString();
 			boolean locked   = state.enableDegreeLock && ctx.playerDegree() < CraftingTabState.TIER_DEGREE_REQ[i];
 			boolean selected = tierName.equals(state.selectedCraftingTier);
 			List<CraftingMapRecipe> recipes =
@@ -173,7 +174,7 @@ public final class CraftingTabView {
 			if (locked) {
 				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
 				// Long stage names ("Enlightened") leave no room for the suffix; [X] already says locked.
-				String lockedLabel = "[X] " + tierLabel + " (Locked)";
+				String lockedLabel = Component.translatable("screen.hemomancy.crafting_tab_view.locked_tier", tierLabel).getString();
 				if (ctx.font().width(lockedLabel) > sw - 8) lockedLabel = "[X] " + tierLabel;
 				gfx.drawString(ctx.font(), lockedLabel, sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
 			} else {
@@ -392,18 +393,16 @@ public final class CraftingTabView {
 		y += 6;
 
 		// Blood cost
-		gfx.drawString(ctx.font(), Component.literal(recipe.isWorking() ? "Feed: " : "Blood Cost: ")
-				.withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal((int) recipe.getBloodCost() + " mL")
-						.withStyle(s -> s.withColor(0xAA4444))),
+		gfx.drawString(ctx.font(), (recipe.isWorking() ? Component.translatable("screen.hemomancy.crafting_tab_view.feed") : Component.translatable("screen.hemomancy.crafting_tab_view.blood_cost")).withStyle(s -> s.withColor(0x888888))
+				.append(HemoText.translatable("screen.hemomancy.crafting_tab_view.ml",
+						(int) recipe.getBloodCost()).withStyle(s -> s.withColor(0xAA4444))),
 				panelX, y, 0);
 		y += lineH + 4;
 
 		if (recipe.isWorking()) {
-			gfx.drawString(ctx.font(), Component.literal("Floor: ")
-					.withStyle(s -> s.withColor(0x888888))
-					.append(Component.literal(recipe.floorLabel())
-							.withStyle(s -> s.withColor(0xDDDDDD))),
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.crafting_tab_view.floor",
+					recipe.floorLabel().copy()
+							.withStyle(s -> s.withColor(0xDDDDDD))).withStyle(s -> s.withColor(0x888888)),
 					panelX, y, 0);
 			y += lineH + 4;
 		}
@@ -411,8 +410,7 @@ public final class CraftingTabView {
 		// Held item
 		ItemStack heldItem = recipe.getHeldItem();
 		if (heldItem != null && !heldItem.isEmpty()) {
-			gfx.drawString(ctx.font(), Component.literal(recipe.isWorking() ? "Seat in the Focus:" : "Held Item:")
-					.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			gfx.drawString(ctx.font(), (recipe.isWorking() ? Component.translatable("screen.hemomancy.crafting_tab_view.seat_in_the_focus") : Component.translatable("screen.hemomancy.crafting_tab_view.held_item")).withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 			y += lineH;
 			gfx.renderItem(heldItem, panelX, y);
 			gfx.renderItemDecorations(ctx.font(), heldItem, panelX, y);
@@ -429,8 +427,7 @@ public final class CraftingTabView {
 		// Hit block
 		Block hitBlock = recipe.getHitBlock();
 		if (hitBlock != null && hitBlock != Blocks.AIR) {
-			gfx.drawString(ctx.font(), Component.literal("Activate on:")
-					.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.crafting_tab_view.activate_on").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 			y += lineH;
 			ItemStack hitStack = new ItemStack(hitBlock);
 			if (!hitStack.isEmpty()) {
@@ -450,8 +447,7 @@ public final class CraftingTabView {
 		// Result
 		ItemStack result = recipe.getResult();
 		if (result != null && !result.isEmpty()) {
-			gfx.drawString(ctx.font(), Component.literal("Result:")
-					.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.crafting_tab_view.result").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 			y += lineH;
 			gfx.renderItem(result, panelX, y);
 			gfx.renderItemDecorations(ctx.font(), result, panelX, y);
@@ -468,8 +464,7 @@ public final class CraftingTabView {
 
 		// Brazier offerings
 		if (!recipe.getOfferings().isEmpty()) {
-			gfx.drawString(ctx.font(), Component.literal("Brazier Offerings:")
-					.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.crafting_tab_view.brazier_offerings").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 			y += lineH;
 			int offeringTextX = panelX + 20;
 			int offeringWrapW = panelW - 24;
@@ -495,8 +490,7 @@ public final class CraftingTabView {
 		if (recipe.getPattern() != null) {
 			List<MultiblockPattern.MaterialCount> materials = recipe.getPattern().getMaterialCounts(false);
 			if (!materials.isEmpty()) {
-				gfx.drawString(ctx.font(), Component.literal("Materials:")
-						.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+				gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.crafting_tab_view.materials").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 				y += lineH;
 				int materialTextX = panelX + 20;
 				int materialWrapW = panelW - 24;

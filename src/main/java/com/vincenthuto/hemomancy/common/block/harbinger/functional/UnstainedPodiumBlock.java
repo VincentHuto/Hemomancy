@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.UnstainedPodiumBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -133,9 +134,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 						HemoCapabilityAccess.getInitiatoryDegree(player).hasFoundedBloodline(), HemoCapabilityAccess.getInitiatoryDegree(player).isFounderIntegrationSevered());
 		var unstained = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (!unstained.hasBegunPurification() && !maySeekCure) {
-			player.displayClientMessage(Component.literal(
-					"The covenant you founded is rooted through every vein. Ordinary cure can no longer reach you.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.unstained_podium_block.the_covenant_you_founded_is_rooted").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 			return;
 		}
 
@@ -159,24 +158,18 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 				blood.isActive(), degree.getDegreeNumber(), degree.hasFoundedBloodline(),
 				degree.isFounderIntegrationSevered());
 		if (!eligible) {
-			player.displayClientMessage(Component.literal(blood == null || !blood.isActive()
-					? "You carry no active infection. Speak with a Zealot and take the vows."
-					: "Your infection lies beyond ordinary suppression.")
-					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+			player.displayClientMessage((blood == null || !blood.isActive() ? Component.translatable("message.hemomancy.unstained_podium_block.you_carry_no_active_infection_speak") : Component.translatable("message.hemomancy.unstained_podium_block.your_infection_lies_beyond_ordinary_suppression")).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 			return;
 		}
 		if (!unstained.isInfectionSuppressed()) {
 			stack.shrink(1);
 			unstained.setInfectionSuppressed(true);
-			player.displayClientMessage(Component.literal(
-					"The Podium quiets the infection. Seek Lethean Baptism before the silence breaks.")
-					.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.unstained_podium_block.the_podium_quiets_the_infection_seek").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 			worldIn.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0f, 1.0f);
 			spawnPurityParticles(worldIn, pos);
 			syncUnstainedProgress(worldIn, player, unstained);
 		} else {
-			player.displayClientMessage(Component.literal("The infection is already held in suppression.")
-					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.unstained_podium_block.the_infection_is_already_held_in").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 		}
 	}
 
@@ -188,9 +181,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 		if (unstained.isClarityPrepared() || unstained.hasClarityUnlocked()) return;
 		stack.shrink(1);
 		unstained.setClarityPrepared(true);
-		player.displayClientMessage(Component.literal(
-				"Consecrated Copper steadies the next crossing. The Rite of Clarity Ascension may now be performed.")
-				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		player.displayClientMessage(Component.translatable("message.hemomancy.unstained_podium_block.consecrated_copper_steadies_the_next_crossing").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		worldIn.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.5f, 0.8f);
 		spawnClarityParticles(worldIn, pos);
 		syncUnstainedProgress(worldIn, player, unstained);
@@ -250,42 +241,38 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 		UnstainedPhase phase = UnstainedAccessRules.phase(unstained);
 		if (phase == UnstainedPhase.OUTSIDER) {
 			player.displayClientMessage(
-					Component.literal("The podium hums faintly. Speak with a Zealot to seek treatment or take the vows.")
-							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.unstained_podium_block.the_podium_hums_faintly_speak_with").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 					false);
 			return;
 		}
 
 		if (phase == UnstainedPhase.NOVITIATE) {
-			player.displayClientMessage(Component.literal("Novitiate vows: "
-					+ UnstainedAccessRules.completedNovitiateVows(unstained.getClaimedObservances()) + "/5")
-					.withStyle(ChatFormatting.AQUA), false);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.unstained_podium_block.novitiate_vows_5",
+					UnstainedAccessRules.completedNovitiateVows(unstained.getClaimedObservances())).withStyle(ChatFormatting.AQUA), false);
 			return;
 		}
 		if (phase == UnstainedPhase.CLEANSED_UNPLEDGED) {
-			player.displayClientMessage(Component.literal("Your baseline is restored. Offer Consecrated Copper here, then perform Clarity Ascension to pledge.")
-					.withStyle(ChatFormatting.AQUA), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.unstained_podium_block.your_baseline_is_restored_offer_consecrated").withStyle(ChatFormatting.AQUA), false);
 			return;
 		}
 
 		EnumPurityStage purityStage = EnumPurityStage.byPurity(unstained.getPurity());
 		player.displayClientMessage(
-				Component.literal("Purity: " + String.format("%.0f", unstained.getPurity())
-						+ "/100 — " + purityStage.getTitle())
-						.withStyle(ChatFormatting.AQUA),
+				HemoText.translatable("message.hemomancy.unstained_podium_block.purity_100",
+						String.format("%.0f", unstained.getPurity()),
+						purityStage.getDisplayName()).withStyle(ChatFormatting.AQUA),
 				false);
 
 		if (unstained.hasClarityUnlocked()) {
 			EnumClarityStage clarityStage = EnumClarityStage.byClarity(unstained.getClarity());
 			player.displayClientMessage(
-					Component.literal("Clarity: " + String.format("%.0f", unstained.getClarity())
-							+ "/100 — " + clarityStage.getTitle())
-							.withStyle(ChatFormatting.WHITE),
+					HemoText.translatable("message.hemomancy.unstained_podium_block.clarity_100",
+							String.format("%.0f", unstained.getClarity()),
+							clarityStage.getDisplayName()).withStyle(ChatFormatting.WHITE),
 					false);
 		} else if (phase == UnstainedPhase.CURE_READY) {
 			player.displayClientMessage(
-					Component.literal("Purity is complete. Perform Closed Vein to make the cleansing irreversible.")
-							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					Component.translatable("message.hemomancy.unstained_podium_block.purity_is_complete_perform_closed_vein").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 					false);
 		}
 	}

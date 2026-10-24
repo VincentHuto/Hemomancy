@@ -8,11 +8,11 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-final class BodyIdiomWiringSourceTest {
+final class HeartManipulationWiringSourceTest {
 	private static final Path ROOT = Path.of("src/main");
 
 	@Test
-	void bodyIdiomsAreWiredThroughCastingDamageHudAndMemoryWeaving() throws IOException {
+	void heartManipulationsAreWiredThroughCastingDamageHudAndMemoryWeaving() throws IOException {
 		String manipulations = java("common/init/ManipulationInit.java");
 		String items = java("common/init/ItemInit.java");
 		String client = java("client/event/ManipulationChargeInput.java");
@@ -24,8 +24,8 @@ final class BodyIdiomWiringSourceTest {
 		assertTrue(items.contains("registerBloodMemoryItem(\"memory_blackhearted\", ManipulationInit.blackhearted)"));
 		assertTrue(client.contains("type == EnumManipulationType.CHARGED"));
 		assertTrue(packet.contains("player.blockPosition(), pTic"));
-		assertTrue(java("common/manipulation/BodyIdiomEvents.java")
-				.contains("event.getSource().is(DamageTypes.WITHER)"));
+		assertTrue(java("common/manipulation/mortem/BlackheartedEvents.java")
+				.contains("source.is(DamageTypes.WITHER)"));
 		for (String id : new String[] {"ironhearted", "blackhearted"}) {
 			assertTrue(Files.isRegularFile(ROOT.resolve("resources/assets/hemomancy/models/item/memory_" + id + ".json")));
 			assertTrue(Files.isRegularFile(ROOT.resolve("resources/data/hemomancy/recipe/memory_weaving/memory_" + id + ".json")));

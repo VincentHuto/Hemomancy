@@ -305,7 +305,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 			return Component.translatable("hemomancy.jei.craft.floorless");
 		}
 		return CardinalRiteFloorRegistry.get(recipe.floorId())
-				.<Component>map(floor -> Component.literal(floor.displayName()))
+				.<Component>map(floor -> floor.displayName())
 				.orElse(Component.translatable("hemomancy.jei.craft.floor"));
 	}
 

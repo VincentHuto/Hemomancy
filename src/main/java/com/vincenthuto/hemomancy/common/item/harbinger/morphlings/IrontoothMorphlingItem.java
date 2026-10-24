@@ -237,10 +237,10 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Burrow Sense (Reveal entities underground)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Earthen Bulwark (Resistance when hit underground)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Seismic Slam (Shockwave attack underground)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Deep Tremor Sense (Staff active maps life, nectar, and tunneling threats)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.irontooth_morphling_item.burrow_sense_reveal_entities_underground"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.irontooth_morphling_item.earthen_bulwark_resistance_when_hit_underground"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.irontooth_morphling_item.seismic_slam_shockwave_attack_underground"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.irontooth_morphling_item.deep_tremor_sense_staff_active_maps"), 5, currentMaturity));
 		return list;
 	}
 

@@ -94,8 +94,7 @@ public class AbsolutionDaggerItem extends SwordItem {
 								player.getRandom().nextInt(beneficial.size()));
 						target.removeEffect(toRemove.getEffect());
 						player.displayClientMessage(
-								Component.literal("The coagulant purges a corruption from your foe.")
-										.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+								Component.translatable("message.hemomancy.absolution_dagger_item.the_coagulant_purges_a_corruption_from").withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 								true);
 					}
 				}

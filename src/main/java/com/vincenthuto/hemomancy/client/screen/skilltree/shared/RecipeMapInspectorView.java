@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 public final class RecipeMapInspectorView {
 	private static final int TOGGLE_WIDTH = 18;
 	private static final int TOGGLE_HEIGHT = 20;
-	private static final String PREVIEW_HINT = "Drag preview to rotate";
+	private static final String PREVIEW_HINT = "screen.hemomancy.recipe_map_inspector_view.drag_preview_to_rotate";
 
 	private RecipeMapInspectorView() {}
 
@@ -39,7 +39,7 @@ public final class RecipeMapInspectorView {
 				accentColor, mouseX, mouseY);
 		ScreenDrawUtils.drawHarbingerLayerButtonFrames(gfx, preview.right() - 18,
 				preview.top() + preview.height() / 2, maxLayer, accentColor, mouseX, mouseY);
-		var hintLines = ctx.font().split(Component.literal(PREVIEW_HINT), preview.width());
+		var hintLines = ctx.font().split(Component.translatable(PREVIEW_HINT), preview.width());
 		int hintY = layout.preview().bottom() + 4;
 		for (var line : hintLines) {
 			gfx.drawCenteredString(ctx.font(), line, preview.left() + preview.width() / 2, hintY, 0x66888888);

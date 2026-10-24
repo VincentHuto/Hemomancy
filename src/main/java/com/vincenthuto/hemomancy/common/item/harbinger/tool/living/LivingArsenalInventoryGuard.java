@@ -105,8 +105,7 @@ public final class LivingArsenalInventoryGuard {
 		}
 		if (changed) {
 			menu.broadcastChanges();
-			player.displayClientMessage(Component.literal("Living weapons will not rest in dead storage.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.living_arsenal_inventory_guard.living_weapons_will_not_rest_in").withStyle(ChatFormatting.DARK_RED), true);
 		}
 		sanitizePlayerInventory(player);
 	}
@@ -195,8 +194,7 @@ public final class LivingArsenalInventoryGuard {
 			return;
 		}
 		if (!player.getInventory().add(stack)) {
-			player.displayClientMessage(Component.literal("The living weapon tears free, leaving no room to settle.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.living_arsenal_inventory_guard.the_living_weapon_tears_free_leaving").withStyle(ChatFormatting.DARK_RED), true);
 		}
 	}
 }

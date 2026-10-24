@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -18,7 +19,7 @@ public class LivingWeaponGraftItem extends Item {
 
 	@Override
 	public Component getName(ItemStack stack) {
-		return Component.literal(form(stack).graftName()).withStyle(ChatFormatting.DARK_RED);
+		return form(stack).graftName().withStyle(ChatFormatting.DARK_RED);
 	}
 
 	@Override
@@ -31,10 +32,8 @@ public class LivingWeaponGraftItem extends Item {
 				.withStyle(ChatFormatting.DARK_RED));
 		tooltip.add(Component.translatable("tooltip.hemomancy.living_weapon_graft.hold_the_living_staff_and_channel")
 				.withStyle(ChatFormatting.GRAY));
-		tooltip.add(Component.literal("Base switch: "
-				+ (int) com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.BASE_HOT_SWAP_COST_ML
-				+ " mL; Weapons Master reduces it to 50 mL. Weapon attacks cost separately.")
-				.withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(HemoText.translatable("tooltip.hemomancy.living_weapon_graft.base_switch_ml_weapons_master_reduces",
+				(int) com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.BASE_HOT_SWAP_COST_ML).withStyle(ChatFormatting.DARK_RED));
 	}
 
 	public static List<ItemStack> creativeStacks() {

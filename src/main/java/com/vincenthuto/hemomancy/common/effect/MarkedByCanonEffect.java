@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.effect;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,7 +19,7 @@ public class MarkedByCanonEffect extends MobEffect {
 	public MarkedByCanonEffect(MobEffectCategory typeIn, int liquidColorIn) {
 		super(typeIn, liquidColorIn);
 		this.addAttributeModifier(Attributes.MOVEMENT_SPEED,
-				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "marked_by_canon_movement_speed"),
+				Hemomancy.rloc("marked_by_canon_movement_speed"),
 				-0.05F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 	}
 

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationGeometry;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
 import net.minecraft.core.BlockPos;
@@ -1234,7 +1235,7 @@ public class ActiveCardinalRite {
 		ResourceLocation recipeId = ResourceLocation.parse(tag.getString("RecipeId"));
 		// The D7 Scriptorium rite was renamed from the Monolithic Script to the Rite of the Palimpsest.
 		if (recipeId.getNamespace().equals("hemomancy") && recipeId.getPath().equals("cardinal_rite/monolithic_script"))
-			recipeId = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/palimpsest");
+			recipeId = Hemomancy.rloc("cardinal_rite/palimpsest");
 		int totalTicks = tag.getInt("TotalTicks");
 		int riteSize = tag.getInt("RiteSize");
 		ActiveCardinalRite rite = new ActiveCardinalRite(playerUUID, centerPos, recipeId, totalTicks, riteSize);

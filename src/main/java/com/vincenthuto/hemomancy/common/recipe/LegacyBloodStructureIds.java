@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
@@ -33,9 +34,9 @@ public final class LegacyBloodStructureIds {
 			return Optional.empty();
 		}
 		String name = id.getPath().substring(STRUCTURE_PREFIX.length());
-		if (RETIRED_BLOODWELL.equals(name)) return Optional.of(ResourceLocation.fromNamespaceAndPath("hemomancy", FOUNDING_FANE));
+		if (RETIRED_BLOODWELL.equals(name)) return Optional.of(Hemomancy.rloc(FOUNDING_FANE));
 		return MOVED.contains(name)
-				? Optional.of(ResourceLocation.fromNamespaceAndPath("hemomancy", WORKING_PREFIX + name))
+				? Optional.of(Hemomancy.rloc(WORKING_PREFIX + name))
 				: Optional.empty();
 	}
 

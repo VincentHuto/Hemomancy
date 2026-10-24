@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -26,7 +27,7 @@ public class EnzymeItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.translatable("tooltip.hemomancy.enzyme.tendency_s", tend).withStyle(ChatFormatting.DARK_GREEN));
+		tooltip.add(HemoText.translatable("tooltip.hemomancy.enzyme.tendency_s", tend).withStyle(ChatFormatting.DARK_GREEN));
 		tooltip.add(Component.translatable("tooltip.hemomancy.enzyme.amount_s", amount).withStyle(ChatFormatting.GOLD));
 
 	}

@@ -285,9 +285,7 @@ public final class CircusRingmasterEntity extends PathfinderMob {
 		if (!result.success() && result.status() != KnownManipulationGrantHelper.MemoryGrantStatus.ALREADY_KNOWN) {
 			ItemStack memory = new ItemStack(ItemInit.memory_thread_ripper.get());
 			if (!player.getInventory().add(memory)) player.drop(memory, false);
-			player.displayClientMessage(Component.literal(
-					"Thread Ripper remains in its memory. Keep it until you can absorb it at a lit Iron Brazier.")
-					.withStyle(ChatFormatting.DARK_RED), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.circus_ringmaster_entity.thread_ripper_remains_in_its_memory").withStyle(ChatFormatting.DARK_RED), false);
 		}
 	}
 

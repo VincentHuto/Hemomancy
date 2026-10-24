@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hutoslib.common.book.FieldNotes;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,8 +15,8 @@ import java.util.List;
 public final class HemomancyFieldNotes implements FieldNotes.Provider {
     @Override public boolean available(Player player) {
         var books = BookPlaceboReloadListener.INSTANCE;
-        return books.getBookByTitle(ResourceLocation.parse("hemomancy:libersanguinium")) != null
-                || books.getBookByTitle(ResourceLocation.parse("hemomancy:liberimmaculatus")) != null;
+        return books.getBookByTitle(Hemomancy.rloc("libersanguinium")) != null
+                || books.getBookByTitle(Hemomancy.rloc("liberimmaculatus")) != null;
     }
     @Override public int pending(Player player) {
         return HemoCapabilityAccess.getLiberKnowledge(player).getPendingMemos().size();

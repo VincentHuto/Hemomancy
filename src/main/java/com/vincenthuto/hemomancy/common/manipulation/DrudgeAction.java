@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
  *
  * <p>Each manipulation that can be equipped by a Drudge registers its own
  * {@code DrudgeAction} via
- * {@link BloodManipulation#setDrudgeAction(DrudgeAction, String)}.
+ * {@link BloodManipulation#setDrudgeAction(DrudgeAction, net.minecraft.network.chat.Component)}.
  * Manipulations that are inherently player-only (inventory conjurations, nested
  * summons, etc.) should register {@link #DRUDGE_UNSUPPORTED} so the equip
  * interaction is blocked at the source.

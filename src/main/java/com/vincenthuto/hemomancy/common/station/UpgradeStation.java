@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.station;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.resources.ResourceLocation;
 
 public enum UpgradeStation {
@@ -22,7 +23,7 @@ public enum UpgradeStation {
     }
 
     public String serializedName() { return serializedName; }
-    public ResourceLocation blockId() { return ResourceLocation.fromNamespaceAndPath("hemomancy", blockPath); }
+    public ResourceLocation blockId() { return Hemomancy.rloc(blockPath); }
     /** Blocks behind the Cardinal Focus (opposite the rite's forward direction) where the station must sit. */
     public int seatDistance() { return seatDistance; }
     /** Stations whose first upgrade is raised on the Lesser Working floor rather than the Greater. */

@@ -18,22 +18,26 @@ public class HarbingerProgressScreen extends Screen {
 
     // ── Tabs ──
     private enum Tab {
-        SKILLS("Skills", 0xFFCC3333, 0, false),
-        TENDENCIES("Tendencies", 0xFFCC8833, 3, false),
-        RITES("Rites & Crafts", 0xFF8844CC, 0, false),
-        MATERIALS("Materials", 0xFFCC6644, 0, false),
-        SUMMONS("Summons", 0xFFBB3355, 2, true),
-        BESTIARY("Bestiary", 0xFF77AA66, 2, true);
+        SKILLS("screen.hemomancy.harbinger_progress.tab.skills", 0xFFCC3333, 0, false),
+        TENDENCIES("screen.hemomancy.harbinger_progress.tab.tendencies", 0xFFCC8833, 3, false),
+        RITES("screen.hemomancy.harbinger_progress.tab.rites", 0xFF8844CC, 0, false),
+        MATERIALS("screen.hemomancy.harbinger_progress.tab.materials", 0xFFCC6644, 0, false),
+        SUMMONS("screen.hemomancy.harbinger_progress.tab.summons", 0xFFBB3355, 2, true),
+        BESTIARY("screen.hemomancy.harbinger_progress.tab.bestiary", 0xFF77AA66, 2, true);
 
-        final String label;
+        final String labelKey;
         final int color;
         final int requiredDegree;
         final boolean bottomRight;
-        Tab(String label, int color, int requiredDegree, boolean bottomRight) {
-            this.label = label;
+        Tab(String labelKey, int color, int requiredDegree, boolean bottomRight) {
+            this.labelKey = labelKey;
             this.color = color;
             this.requiredDegree = requiredDegree;
             this.bottomRight = bottomRight;
+        }
+
+        Component label() {
+            return Component.translatable(labelKey);
         }
 
         boolean visibleAtDegree(int degree) {
@@ -286,7 +290,7 @@ public class HarbingerProgressScreen extends Screen {
     private List<ScreenDrawUtils.TabDesc> buildTabDescs() {
         List<ScreenDrawUtils.TabDesc> descs = new ArrayList<>();
         for (Tab tab : visibleTabs(playerDegree)) {
-            descs.add(new ScreenDrawUtils.TabDesc(tab.label, tab.color, tab == activeTab));
+            descs.add(new ScreenDrawUtils.TabDesc(tab.label().getString(), tab.color, tab == activeTab));
         }
         return descs;
     }
@@ -341,7 +345,7 @@ public class HarbingerProgressScreen extends Screen {
             if (active) {
                 gfx.fill(tx + 1, ty + 1, tx + tw - 1, ty + 2, tab.color);
             }
-            gfx.drawCenteredString(font, tab.label, tx + tw / 2, ty + (TAB_HEIGHT - 8) / 2,
+            gfx.drawCenteredString(font, tab.label(), tx + tw / 2, ty + (TAB_HEIGHT - 8) / 2,
                     active ? tab.color : (hovered ? 0xFFB8C8B8 : 0xFF777777));
         }
     }
@@ -356,7 +360,7 @@ public class HarbingerProgressScreen extends Screen {
     }
 
     private List<BottomRightTabLayout.Bounds> bottomRightTabBounds(List<Tab> tabs) {
-        List<Integer> widths = tabs.stream().map(tab -> font.width(tab.label) + 14).toList();
+        List<Integer> widths = tabs.stream().map(tab -> font.width(tab.label()) + 14).toList();
         return BottomRightTabLayout.layout(guiLeft, guiTop, guiWidth, guiHeight,
                 TAB_PAD, TAB_HEIGHT, widths);
     }
@@ -385,12 +389,12 @@ public class HarbingerProgressScreen extends Screen {
         return visible;
     }
 
-    static List<String> topTabLabels(int degree) {
-        return visibleTabs(degree).stream().map(tab -> tab.label).toList();
+    static List<String> topTabLabelKeys(int degree) {
+        return visibleTabs(degree).stream().map(tab -> tab.labelKey).toList();
     }
 
-    static List<String> bottomRightTabLabels(int degree) {
-        return bottomRightTabs(degree).stream().map(tab -> tab.label).toList();
+    static List<String> bottomRightTabLabelKeys(int degree) {
+        return bottomRightTabs(degree).stream().map(tab -> tab.labelKey).toList();
     }
 
     private boolean isOverHomeButton(double mx, double my) {
@@ -404,7 +408,7 @@ public class HarbingerProgressScreen extends Screen {
                 0xDD1A0505, 0x99120303, 0xFFCC3333, 0xFF444444, 0xFFFFAAAA, 0xFF888888);
         HarbingerChromeRenderer.drawFrame(gfx, homeButtonX(), homeButtonY(), HOME_BTN_SIZE, HOME_BTN_SIZE,
                 activeTab.color, hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
-        if (hovered) gfx.renderTooltip(font, Component.literal("Return to Center"), mouseX, mouseY);
+        if (hovered) gfx.renderTooltip(font, Component.translatable("screen.hemomancy.harbinger_progress.return_to_center"), mouseX, mouseY);
     }
 
     private int homeButtonX() {

@@ -43,8 +43,7 @@ public class LetheanChaliceItem extends Item {
 		if (!level.isClientSide) {
 			boolean onPath = HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification();
 			if (!onPath) {
-				player.displayClientMessage(Component.literal("The chalice remains cold and empty.")
-						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.lethean_chalice_item.the_chalice_remains_cold_and_empty").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
 				return InteractionResultHolder.fail(stack);
 			}
 

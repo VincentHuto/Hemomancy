@@ -147,7 +147,7 @@ public class MorphlingCradleBlockEntity extends HemoBlockEntity {
 		ItemStack held = player.getItemInHand(hand);
 		if (!(held.getItem() instanceof MorphlingItem)) return InteractionResult.PASS;
 		if (!canHostMorphling(held)) {
-			player.displayClientMessage(Component.literal("The cradle rejects that primal strain."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.morphling_cradle_block_entity.the_cradle_rejects_that_primal_strain"), true);
 			return InteractionResult.CONSUME;
 		}
 		ItemStack inserted = held.copy();
@@ -181,7 +181,7 @@ public class MorphlingCradleBlockEntity extends HemoBlockEntity {
 		ItemStack held = player.getItemInHand(hand);
 		if (!(held.getItem() instanceof MorphlingItem)) return InteractionResult.PASS;
 		if (!canHostMorphling(held)) {
-			player.displayClientMessage(Component.literal("The cradle rejects that primal strain."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.morphling_cradle_block_entity.the_cradle_rejects_that_primal_strain"), true);
 			return InteractionResult.CONSUME;
 		}
 		ItemStack outgoing = morphlingItem.copy();
@@ -327,7 +327,7 @@ public class MorphlingCradleBlockEntity extends HemoBlockEntity {
 			var vol = HemoCapabilityAccess.getBloodVolume(owner);
 			if (vol.isActive() && !vol.isFull() && bloodBuffer > 0) {
 				double moved = BloodFlowLedger.applyCirculationIncome(owner, vol, "morphling_cradle",
-						"Morphling Cradle", Category.MORPHLING, bloodBuffer, 20,
+						"blood_source.hemomancy.morphling_cradle", Category.MORPHLING, bloodBuffer, 20,
 						CirculationIncomeHelper.IncomeChannel.CRADLE);
 				bloodBuffer -= moved;
 			}

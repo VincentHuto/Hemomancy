@@ -1728,7 +1728,7 @@ public final class HemoJourneyFixtures {
 		for (int index = 0; index < forms.size(); index++) {
 			LivingWeaponForm form = forms.get(index);
 			if (!LivingWeaponGraftRecipeUnlocks.awardRecipeUnlock(player, form)) {
-				throw new IllegalStateException("Could not prepare the " + form.displayName() + " graft recipe unlock");
+				throw new IllegalStateException("Could not prepare the " + form.displayName().getString() + " graft recipe unlock");
 			}
 			BlockPos pos = forms.size() == 1 ? origin.above()
 					: origin.offset(index % 3 - 1, 1, index / 3);
@@ -1737,7 +1737,7 @@ public final class HemoJourneyFixtures {
 					fixtureLevel(player).getBlockState(pos).setValue(BrazierBlock.RITUAL_PHASE, 1), Block.UPDATE_ALL);
 			if (!(fixtureLevel(player).getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier)
 					|| !brazier.insertOffering(null, LivingWeaponGraftData.createStack(form))) {
-				throw new IllegalStateException(form.displayName() + " graft brazier could not be prepared");
+				throw new IllegalStateException(form.displayName().getString() + " graft brazier could not be prepared");
 			}
 		}
 	}

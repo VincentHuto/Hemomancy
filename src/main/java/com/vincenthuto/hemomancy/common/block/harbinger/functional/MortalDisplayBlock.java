@@ -84,16 +84,12 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
 		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
 		if (!(worldIn.getBlockEntity(pos) instanceof MortalDisplayBlockEntity display)
 				|| display.getLinkedHermit() == null) {
-			player.displayClientMessage(Component.literal(
-					"This heart has no living oath to answer.").withStyle(ChatFormatting.GRAY), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.mortal_display_block.this_heart_has_no_living_oath").withStyle(ChatFormatting.GRAY), false);
 			return InteractionResult.SUCCESS;
 		}
 		if (!TempleOathRules.canClaimHeart(display.getLinkedHermit(),
 				TempleOathRules.blessedHermit(player), display.isClaimed())) {
-			player.displayClientMessage(Component.literal(display.isClaimed()
-							? "The heart has already been claimed."
-							: "Speak with this temple's hermit and accept their blessing first.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			player.displayClientMessage((display.isClaimed() ? Component.translatable("message.hemomancy.mortal_display_block.the_heart_has_already_been_claimed") : Component.translatable("message.hemomancy.mortal_display_block.speak_with_this_temple_s_hermit")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 			return InteractionResult.SUCCESS;
 		}
 

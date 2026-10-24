@@ -1,21 +1,22 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeShape;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 public enum EnumClarityStage {
-    AWAKENED(0, "Awakened", 0f, null),
-    DISCERNING(1, "Discerning", 25f, null),
-    VIGILANT(2, "Vigilant", 50f, null),
-    RESOLUTE(3, "Resolute", 75f, null),
-    ENLIGHTENED(4, "Enlightened", 100f, null);
+    AWAKENED(0, 0f, null),
+    DISCERNING(1, 25f, null),
+    VIGILANT(2, 50f, null),
+    RESOLUTE(3, 75f, null),
+    ENLIGHTENED(4, 100f, null);
 
     private final int level;
-    private final String title;
     private final float minClarity;
     @Nullable
     private Supplier<ItemStack> iconItem;
@@ -23,10 +24,9 @@ public enum EnumClarityStage {
     private ResourceLocation iconTexture;
     private EnumNodeShape nodeShape = EnumNodeShape.DIAMOND;
 
-    EnumClarityStage(int level, String title, float minClarity,
+    EnumClarityStage(int level, float minClarity,
                      @Nullable Supplier<ItemStack> iconItem) {
         this.level = level;
-        this.title = title;
         this.minClarity = minClarity;
         this.iconItem = iconItem;
     }
@@ -35,8 +35,12 @@ public enum EnumClarityStage {
         return level;
     }
 
-    public String getTitle() {
-        return title;
+    public String getTranslationKey() {
+        return "hemomancy.clarity." + name().toLowerCase(Locale.ROOT);
+    }
+
+    public Component getDisplayName() {
+        return Component.translatable(getTranslationKey());
     }
 
     public float getMinClarity() {

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodPaymentRules.Outcome;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodPaymentRules.Terms;
+import com.vincenthuto.hemomancy.support.EnglishText;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -142,9 +143,10 @@ class BloodPaymentRulesTest {
 	}
 
 	@Test
-	void sourcesAreLabelledFromTheirIds() {
+	void sourcesAreLabelledByTheirIdKey() {
 		BloodAccounting.Source source = BloodAccounting.Source.of("living_staff_hot_swap", Category.TOOL, true, false);
-		assertEquals("Living Staff Hot Swap", source.label());
+		assertEquals("blood_source.hemomancy.living_staff_hot_swap", source.label());
+		assertEquals("Living Staff Hot Swap", EnglishText.of(source.label()));
 		assertTrue(source.countsAsSpend());
 		assertFalse(source.reserveProtected());
 	}

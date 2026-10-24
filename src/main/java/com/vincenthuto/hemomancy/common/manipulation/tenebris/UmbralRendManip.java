@@ -48,7 +48,7 @@ public class UmbralRendManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (targets(player, player.level()).isEmpty()) {
-			player.displayClientMessage(Component.literal("No shadowed body waits to be torn."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.umbral_rend_manip.no_shadowed_body_waits_to_be"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

@@ -197,10 +197,10 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Carapace Thorns (Reflect melee damage)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Ablative Plating (Regenerating Absorption shield)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Ironhide (Invulnerability + thorn burst on heavy hit)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Primal Carapace (Staff active banks damage into ferric shard burst)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.chitinite_morphling_item.carapace_thorns_reflect_melee_damage"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.chitinite_morphling_item.ablative_plating_regenerating_absorption_shield"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.chitinite_morphling_item.ironhide_invulnerability_thorn_burst_on_heavy"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.chitinite_morphling_item.primal_carapace_staff_active_banks_damage"), 5, currentMaturity));
 		return list;
 	}
 

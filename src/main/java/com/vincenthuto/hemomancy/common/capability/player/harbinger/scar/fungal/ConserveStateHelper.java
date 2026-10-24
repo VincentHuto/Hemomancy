@@ -63,7 +63,7 @@ public final class ConserveStateHelper {
 		double request = CONSERVE_REGEN_PER_SECOND * multiplierForStillTicks(state.stillTicks);
 		var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
 		BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "cryostroma_conserve",
-				"Cryostroma Stillness", Category.SCAR, request, 20,
+				"blood_source.hemomancy.cryostroma_conserve", Category.SCAR, request, 20,
 				CirculationIncomeHelper.IncomeChannel.SCAR);
 	}
 

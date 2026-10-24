@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -52,14 +53,12 @@ public class CrimsonTitheManip extends BloodManipulation {
 		if (!super.canPerformAction(player, chargeTicks)) return false;
 		if (player instanceof ServerPlayer serverPlayer) tickDebt(serverPlayer);
 		if (player.getPersistentData().contains(TITHE_EXPIRY_KEY)) {
-			player.displayClientMessage(Component.literal("The current tithe has not come due.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.crimson_tithe_manip.the_current_tithe_has_not_come").withStyle(ChatFormatting.DARK_RED), true);
 			return false;
 		}
 		if (!HemoServerConfig.BORROWED_BLOOD_ENABLED.get()
 				|| HemoServerConfig.BORROWED_BLOOD_CAP.get() - BorrowedBloodReserve.get(player) < BLOOD_STORE_AMOUNT) {
-			player.displayClientMessage(Component.literal("The reserve needs room for the full 500 mL tithe.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.crimson_tithe_manip.the_reserve_needs_room_for_the").withStyle(ChatFormatting.DARK_RED), true);
 			return false;
 		}
 		return true;
@@ -76,8 +75,8 @@ public class CrimsonTitheManip extends BloodManipulation {
 		player.getPersistentData().putDouble(TITHE_STORED_KEY, borrowed);
 
 		player.displayClientMessage(
-				Component.literal((int) borrowed + " borrowed blood granted. The tithe comes due in 30 seconds.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				HemoText.translatable("message.hemomancy.crimson_tithe_manip.borrowed_blood_granted_the_tithe_comes",
+						(int) borrowed).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				true);
 
 		world.playSound(null, player.blockPosition(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.PLAYERS, 0.8f, 1.2f);
@@ -111,13 +110,11 @@ public class CrimsonTitheManip extends BloodManipulation {
                 player.position(),player.position(),1,24);
         if (spent > 0.0D) {
 			player.hurt(player.damageSources().magic(), 6.0F);
-			player.displayClientMessage(Component.literal("The tithe was spent. Hemorath collects double.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.crimson_tithe_manip.the_tithe_was_spent_hemorath_collects").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
 			player.level().playSound(null, player.blockPosition(), SoundEvents.WARDEN_ROAR,
 					SoundSource.PLAYERS, 0.5F, 0.5F);
 		} else {
-			player.displayClientMessage(Component.literal("The unused tithe returns to Hemorath.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.crimson_tithe_manip.the_unused_tithe_returns_to_hemorath").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 		}
 	}
 }

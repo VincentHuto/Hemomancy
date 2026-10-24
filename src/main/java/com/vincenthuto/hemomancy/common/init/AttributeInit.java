@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,7 +30,7 @@ public class AttributeInit {
 	private static final DeferredHolder<Attribute, Attribute> FALL_FLYING = ATTRIBUTES.register("fall_flying",
 			() -> new RangedAttribute("hemomancy.fallFlying", 0.1d, 0.0d, 1.0d).setSyncable(true));
 	private static final AttributeModifier ELYTRA_MODIFIER = new AttributeModifier(
-			ResourceLocation.fromNamespaceAndPath("hemomancy", "elytra_modifier"), 1.0f,
+			Hemomancy.rloc("elytra_modifier"), 1.0f,
 			AttributeModifier.Operation.ADD_VALUE);
 
 	@SubscribeEvent

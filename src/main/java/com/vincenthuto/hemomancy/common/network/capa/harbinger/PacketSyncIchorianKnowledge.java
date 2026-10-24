@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
 import com.vincenthuto.hemomancy.common.rite.sigil.*;
@@ -16,8 +17,7 @@ public record PacketSyncIchorianKnowledge(Map<ResourceLocation, BitSet> partial,
 		Map<ResourceLocation, IchorianSigilDefinition> definitions)
 		implements CustomPacketPayload {
 	public static final Type<PacketSyncIchorianKnowledge> TYPE =
-			new Type<>(ResourceLocation.fromNamespaceAndPath(
-					"hemomancy", "packet_sync_ichorian_knowledge"));
+			new Type<>(Hemomancy.rloc("packet_sync_ichorian_knowledge"));
 	public static final StreamCodec<FriendlyByteBuf, PacketSyncIchorianKnowledge> STREAM_CODEC =
 			StreamCodec.of(PacketSyncIchorianKnowledge::encode, PacketSyncIchorianKnowledge::decode);
 

@@ -333,7 +333,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 			return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 		} else {
 			playerIn.displayClientMessage(
-					Component.literal("You lack the skill to manifest this power!").withStyle(ChatFormatting.RED),
+					Component.translatable("message.hemomancy.blood_absorption_item.you_lack_the_skill_to_manifest").withStyle(ChatFormatting.RED),
 					true);
 		}
 

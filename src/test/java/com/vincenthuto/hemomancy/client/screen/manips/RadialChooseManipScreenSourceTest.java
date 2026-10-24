@@ -1,22 +1,21 @@
 package com.vincenthuto.hemomancy.client.screen.manips;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+import org.junit.jupiter.api.Test;
 
-public final class RadialChooseManipScreenSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertShowsEnglish;
 
-	private RadialChooseManipScreenSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
-		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/RadialChooseManipScreen.java");
-		String loadout = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SynapticLoadoutScreen.java");
-		String menu = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/GenericRadialMenu.java");
-		String itemStackRadial = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/ItemStackRadialMenuItem.java");
-		String reliquary = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MnemonicReliquaryScreen.java");
-		String iconResolver = read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/ManipulationIconResolver.java");
+class RadialChooseManipScreenSourceTest {
+	@Test
+	void radialChooseManipScreenSourceContracts() {
+		String screen = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/RadialChooseManipScreen.java");
+		String loadout = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SynapticLoadoutScreen.java");
+		String menu = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/GenericRadialMenu.java");
+		String itemStackRadial = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/ItemStackRadialMenuItem.java");
+		String reliquary = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MnemonicReliquaryScreen.java");
+		String iconResolver = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/ManipulationIconResolver.java");
 
 		assertContains("radial screen imports fixed mechanical helper", screen,
 				"ManipulationEquipHelper");
@@ -76,8 +75,7 @@ public final class RadialChooseManipScreenSourceTest {
 				"ClientManipulationCooldowns.remainingTicks(manipulation.getName(), now)");
 		assertContains("cooling manipulation wedges reuse the red recharge tint", screen,
 				"? RECHARGING_ABILITY_SLICE_TINT : super.getBackgroundColor(fallbackColor)");
-		assertContains("cooling manipulation hover text shows its remaining time", screen,
-				"seconds + \"s cooldown\"");
+		assertShowsEnglish("cooling manipulation hover text shows its remaining time", screen, "%ss cooldown");
 		assertContains("item-stack radial entries support dynamic tooltip suppliers", itemStackRadial,
 				"Supplier<List<Component>> customTooltip");
 		assertNotContains("armor ability radial entry does not duplicate the tooltip title as central hover text", screen,
@@ -90,21 +88,5 @@ public final class RadialChooseManipScreenSourceTest {
 				"ManipulationEquipHelper.isFixedMechanicalManip(manip.getName())");
 		assertContains("reliquary normal-slot counter excludes fixed mechanics", reliquary,
 				"equippedManips.size()");
-	}
-
-	private static String read(String path) throws IOException {
-		return Files.readString(ROOT.resolve(path));
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (still contains '" + unexpected + "')");
-		}
 	}
 }

@@ -12,8 +12,12 @@ import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.IronheartedEvents;
+import com.vincenthuto.hemomancy.common.manipulation.mortem.BlackheartedEvents;
 import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
 import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncManipulationHearts;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -185,6 +189,36 @@ public final class ManipulationReactiveEvents {
 
 
 		if (active(player, "sovereign_instinct") && attacker != null) sovereignInstinct(player);
+	}
+
+	/**
+	 * The hearts answer last, after every ward and multiplier: Blackhearted first turns wither into saturation,
+	 * then Ironhearted spends its hearts on whatever is left. A Blackhearted rupture strikes past both.
+	 */
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void onHeartDamage(LivingIncomingDamageEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayer player) || event.getAmount() <= 0.0F
+				|| BlackheartedEvents.isRupturing(player)) return;
+		var state = HemoCapabilityAccess.getPowerGuardrails(player);
+		float saturation = state.getNecroticSaturation();
+		long refractoryUntil = state.getBlackheartedCooldownUntil();
+		float damage = BlackheartedEvents.metabolize(player, event.getSource(), event.getAmount());
+		boolean changed = saturation != state.getNecroticSaturation()
+				|| refractoryUntil != state.getBlackheartedCooldownUntil() || state.getIronHeartHealth() > 0.0F;
+		damage = IronheartedEvents.absorb(player, damage);
+		event.setAmount(damage);
+		if (changed) syncHearts(player);
+	}
+
+	/** Owner sync for the Ironhearted and Blackhearted state, with their attached visuals. */
+	public static void syncHearts(ServerPlayer player) {
+		var state = HemoCapabilityAccess.getPowerGuardrails(player);
+		ManipulationVisuals.attached(player, ManipulationVisuals.Form.IRON_HEART, state.getIronHeartHealth(),
+				state.getIronHeartHealth() > 0
+						? (int) Math.max(0, state.getIronHeartExpiryTick() - player.level().getGameTime()) : 0, 1);
+		ManipulationVisuals.attached(player, ManipulationVisuals.Form.BLACK_HEART, state.getNecroticSaturation(),
+				state.getNecroticSaturation() > 0 ? 30 : 0, 1);
+		PacketHandler.sendToPlayer(player, new PacketSyncManipulationHearts(state));
 	}
 
     @SubscribeEvent

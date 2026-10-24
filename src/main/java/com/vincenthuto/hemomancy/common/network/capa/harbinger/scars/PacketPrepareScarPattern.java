@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.scars;
 
-import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -70,33 +71,33 @@ public class PacketPrepareScarPattern implements CustomPacketPayload {
 			}
 			MasonsEffigyMenu menu = ServerboundGuards.menu(player, MasonsEffigyMenu.class);
 			if (menu == null || !menu.getPos().equals(msg.pos)) {
-				fail(player, "The Effigy is no longer listening.");
+				fail(player, Component.translatable("message.hemomancy.packet_prepare_scar_pattern.the_effigy_is_no_longer_listening"));
 				return;
 			}
 			BlockEntity be = player.level().getBlockEntity(msg.pos);
 			if (!(be instanceof MasonsEffigyBlockEntity effigy) || be.getType() != BlockEntityInit.mason_effigy.get()) {
-				fail(player, "No Mason's Effigy answers from that place.");
+				fail(player, Component.translatable("message.hemomancy.packet_prepare_scar_pattern.no_mason_s_effigy_answers_from"));
 				return;
 			}
 			List<ResourceLocation> selected = new ArrayList<>(new LinkedHashSet<>(msg.scarIds));
 			if (effigy.hasPendingMotif()) {
-				fail(player, "Finish charging the current motif before changing its scars.");
+				fail(player, Component.translatable("message.hemomancy.packet_prepare_scar_pattern.finish_charging_the_current_motif_before"));
 				return;
 			}
 			int max = Math.min(MasonsEffigyMenu.MAX_SELECTED_SCARS, menu.getMaxSelectableScars());
 			if (selected.size() > max) {
-				fail(player, "That pattern exceeds your current scar capacity.");
+				fail(player, Component.translatable("message.hemomancy.packet_prepare_scar_pattern.that_pattern_exceeds_your_current_scar"));
 				return;
 			}
 			var scars = HemoCapabilityAccess.getScarState(player);
 			if (scars == null) {
-				fail(player, "Your scar memory is silent.");
+				fail(player, Component.translatable("message.hemomancy.packet_prepare_scar_pattern.your_scar_memory_is_silent"));
 				return;
 			}
 			for (ResourceLocation id : selected) {
 				ScarDefinition definition = ScarInit.getByName(id.toString());
 				if (definition == null || definition.getScarType() != ScarType.CEREBRAL || !scars.knowsCerebralScar(id)) {
-					fail(player, "The Effigy rejects an unknown scar: " + id.getPath());
+					fail(player, HemoText.translatable("message.hemomancy.packet_prepare_scar_pattern.the_effigy_rejects_an_unknown_scar", id.getPath()));
 					return;
 				}
 			}
@@ -105,17 +106,15 @@ public class PacketPrepareScarPattern implements CustomPacketPayload {
 				return;
 			}
 			if (selected.isEmpty()) {
-				player.displayClientMessage(Component.literal("The Effigy releases its scar pattern.")
-						.withStyle(ChatFormatting.DARK_RED), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.packet_prepare_scar_pattern.the_effigy_releases_its_scar_pattern").withStyle(ChatFormatting.DARK_RED), true);
 				return;
 			}
-			player.displayClientMessage(Component.literal("The Effigy holds the selected scars. Press motif paper to it.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.packet_prepare_scar_pattern.the_effigy_holds_the_selected_scars").withStyle(ChatFormatting.DARK_RED), true);
 		});
 	}
 
-	private static void fail(ServerPlayer player, String text) {
-		player.displayClientMessage(Component.literal(text).withStyle(ChatFormatting.RED), true);
+	private static void fail(ServerPlayer player, Component text) {
+		player.displayClientMessage(text.copy().withStyle(ChatFormatting.RED), true);
 	}
 
 	@Override

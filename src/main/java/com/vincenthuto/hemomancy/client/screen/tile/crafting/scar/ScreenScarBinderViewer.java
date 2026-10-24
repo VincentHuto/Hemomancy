@@ -170,8 +170,11 @@ public class ScreenScarBinderViewer extends Screen {
 
 		// ── Title bar ───────────────────────────────────────────────────
 		int patternCount = entries.size();
-		String titleText = ChatFormatting.DARK_RED + "Scar Binder" + ChatFormatting.DARK_GRAY
-				+ " (" + patternCount + " pattern" + (patternCount != 1 ? "s" : "") + ")";
+		Component titleText = Component.translatable("screen.hemomancy.scar_binder_viewer").withStyle(ChatFormatting.DARK_RED)
+				.append(Component.translatable(patternCount != 1
+						? "screen.hemomancy.scar_binder_viewer.pattern_count_plural"
+						: "screen.hemomancy.scar_binder_viewer.pattern_count", patternCount)
+						.withStyle(ChatFormatting.DARK_GRAY));
 		graphics.drawString(font, titleText, left + 26, top + 8, 0x442200, false);
 
 		// Thin separator line below title
@@ -223,20 +226,21 @@ public class ScreenScarBinderViewer extends Screen {
 			List<Component> tooltipLines = new ArrayList<>();
 			tooltipLines.add(Component.literal(ChatFormatting.GOLD + entry.displayName()));
 			if (entry.recipe() != null) {
-				tooltipLines.add(Component.literal(ChatFormatting.GRAY + "Click to view full pattern"));
+				tooltipLines.add(Component.translatable("screen.hemomancy.screen_scar_binder_viewer.click_to_view_full_pattern").withStyle(ChatFormatting.GRAY));
 			} else {
-				tooltipLines.add(Component.literal(ChatFormatting.DARK_GRAY + "Pattern data unavailable"));
+				tooltipLines.add(Component.translatable("screen.hemomancy.screen_scar_binder_viewer.pattern_data_unavailable").withStyle(ChatFormatting.DARK_GRAY));
 			}
 			if (entry.recipe() != null && !entry.recipe().getIngredients().isEmpty()) {
-				tooltipLines.add(Component.literal(ChatFormatting.DARK_GRAY + "Ingredients: "
-						+ ChatFormatting.WHITE + entry.recipe().getIngredients().size()));
+				tooltipLines.add(Component.translatable("screen.hemomancy.screen_scar_binder_viewer.ingredients",
+						Component.literal(String.valueOf(entry.recipe().getIngredients().size()))
+								.withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.DARK_GRAY));
 			}
 			graphics.renderComponentTooltip(font, tooltipLines, mouseX, mouseY);
 		}
 
 		// ── Empty state ─────────────────────────────────────────────────
 		if (entries.isEmpty()) {
-			String emptyMsg = "No patterns stored";
+			Component emptyMsg = Component.translatable("screen.hemomancy.scar_binder_viewer.no_patterns_stored");
 			int textWidth = font.width(emptyMsg);
 			graphics.drawString(font, emptyMsg,
 					left + (GUI_WIDTH - textWidth) / 2,

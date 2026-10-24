@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.QliphothBloomBlockEntity;
 import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -75,9 +76,9 @@ final class QliphothSubcommand {
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(0));
 		ChamberOfWillManager.syncFor(player);
-		source.sendSuccess(() -> Component.literal("Reset ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" Qliphoth pome progress and Communion gate.").withStyle(ChatFormatting.DARK_PURPLE)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.qliphoth.reset",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.translatable("commands.hemomancy.qliphoth.qliphoth_pome_progress_and_communion_gate").withStyle(ChatFormatting.DARK_PURPLE)),
 				true);
 		return 1;
 	}
@@ -106,12 +107,11 @@ final class QliphothSubcommand {
 		}
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		ChamberOfWillManager.syncFor(player);
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" Silent Archon state to "))
-				.append(Component.literal(state).withStyle(ChatFormatting.DARK_PURPLE))
-				.append(Component.literal(" (degree " + transition.degreeNumber() + ").")
-						.withStyle(ChatFormatting.GRAY)), true);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.qliphoth.set_silent_archon_state_to",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(state).withStyle(ChatFormatting.DARK_PURPLE),
+				HemoText.translatable("commands.hemomancy.qliphoth.degree",
+		transition.degreeNumber()).withStyle(ChatFormatting.GRAY)), true);
 		return 1;
 	}
 
@@ -124,11 +124,11 @@ final class QliphothSubcommand {
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(clamped));
 		ChamberOfWillManager.syncFor(player);
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" Qliphoth pome progress to ").withStyle(ChatFormatting.DARK_PURPLE))
-				.append(Component.literal(String.valueOf(clamped)).withStyle(ChatFormatting.LIGHT_PURPLE))
-				.append(Component.literal("/9.").withStyle(ChatFormatting.DARK_PURPLE)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.qliphoth.set",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.translatable("commands.hemomancy.qliphoth.qliphoth_pome_progress_to").withStyle(ChatFormatting.DARK_PURPLE),
+				Component.literal(String.valueOf(clamped)).withStyle(ChatFormatting.LIGHT_PURPLE),
+				Component.literal("/9.").withStyle(ChatFormatting.DARK_PURPLE)),
 				true);
 		return 1;
 	}
@@ -136,7 +136,7 @@ final class QliphothSubcommand {
 	private static int spawnQliphothTree(CommandSourceStack source, ServerPlayer player, String rawStage) {
 		QliphothTreeStage stage = QliphothTreeStage.parse(rawStage);
 		if (stage == null) {
-			source.sendFailure(Component.literal("Unknown Qliphoth tree stage. Use initial, 1-9, fully_grown, or pruned."));
+			source.sendFailure(Component.translatable("commands.hemomancy.qliphoth.unknown_qliphoth_tree_stage_use_initial"));
 			return 0;
 		}
 
@@ -146,7 +146,7 @@ final class QliphothSubcommand {
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(level.getServer().overworld());
 		QliphothBloomSavedData.BloomEntry overlapping = data.getOverlappingBloom(center, dimension, 3);
 		if (overlapping != null && !overlapping.center().equals(center)) {
-			source.sendFailure(Component.literal("A Qliphoth Bloom already exists within 3 chunks of your position."));
+			source.sendFailure(Component.translatable("commands.hemomancy.qliphoth.a_qliphoth_bloom_already_exists_within"));
 			return 0;
 		}
 		if (overlapping != null) {
@@ -156,7 +156,7 @@ final class QliphothSubcommand {
 		QliphothBloomBlock bloomBlock = (QliphothBloomBlock) BlockInit.qliphoth_bloom.get();
 		IMultiBlock multiBlock = bloomBlock;
 		if (!multiBlock.canPlaceMultiBlock(level, center)) {
-			source.sendFailure(Component.literal("The Qliphoth tree needs more room here."));
+			source.sendFailure(Component.translatable("commands.hemomancy.qliphoth.the_qliphoth_tree_needs_more_room"));
 			return 0;
 		}
 
@@ -181,10 +181,10 @@ final class QliphothSubcommand {
 		}
 		HarbingerCardinalRiteEvents.syncQliphothBlooms(level.getServer());
 
-		source.sendSuccess(() -> Component.literal("Spawned Qliphoth tree stage ")
-				.append(Component.literal(rawStage).withStyle(ChatFormatting.LIGHT_PURPLE))
-				.append(Component.literal(" at ").withStyle(ChatFormatting.DARK_PURPLE))
-				.append(Component.literal(center.toShortString()).withStyle(ChatFormatting.GOLD)), true);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.qliphoth.spawned_qliphoth_tree_stage",
+				Component.literal(rawStage).withStyle(ChatFormatting.LIGHT_PURPLE),
+				Component.translatable("commands.hemomancy.qliphoth.at").withStyle(ChatFormatting.DARK_PURPLE),
+				Component.literal(center.toShortString()).withStyle(ChatFormatting.GOLD)), true);
 		return 1;
 	}
 

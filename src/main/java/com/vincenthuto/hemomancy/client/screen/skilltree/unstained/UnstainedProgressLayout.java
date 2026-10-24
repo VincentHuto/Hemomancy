@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPhase;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -42,12 +43,20 @@ public final class UnstainedProgressLayout {
 	public static final int HEADER_BAR_H = 6;
 	public static final int HEADER_PERCENT_DY = 23;
 	public static final int PENALTY_DY = 58;
-	public static final String PENALTY_WIDEST_TEXT = "Blood Magic Penalty: -100%";
+	/** The penalty line at its widest, {@code -100%}. */
+	public static final String PENALTY_KEY = "screen.hemomancy.unstained_progress.blood_magic_penalty_2";
+	public static final String VEILED_KEY = "screen.hemomancy.unstained_progress_layout.veiled";
 	public static final int PAD = 8;
 	public static final float FIT_ZOOM_MIN = 0.5F;
 	public static final float FIT_ZOOM_MAX = 1.0F;
 
 	public enum Kind { RITE, PURITY_STAGE, CLARITY_STAGE }
+
+	/** Resolves a translation key with arguments: {@code I18n::get} on the client. */
+	@FunctionalInterface
+	public interface Text {
+		String get(String key, Object... args);
+	}
 
 	public enum Status {
 		REACHED, CURRENT, NEXT, LOCKED, VEILED,
@@ -60,24 +69,23 @@ public final class UnstainedProgressLayout {
 	}
 
 	public enum Rite {
-		LETHEAN_BAPTISM("lethean_baptism", "Lethean Baptism", "Lethean", "Baptism"),
-		CLOSED_VEIN("closed_vein", "Closed Vein", "Closed", "Vein"),
-		CONSECRATED_COPPER("consecrated_copper", "Consecrated Copper", "Consecrated", "Copper"),
-		CLARITY_ASCENSION("clarity_ascension", "Clarity Ascension", "Clarity", "Ascension");
+		LETHEAN_BAPTISM("lethean_baptism"),
+		CLOSED_VEIN("closed_vein"),
+		CONSECRATED_COPPER("consecrated_copper"),
+		CLARITY_ASCENSION("clarity_ascension");
 
 		private final String id;
-		private final String title;
-		private final List<String> labelLines;
 
-		Rite(String id, String title, String line1, String line2) {
+		Rite(String id) {
 			this.id = id;
-			this.title = title;
-			this.labelLines = List.of(line1, line2);
 		}
 
 		public String id() { return id; }
-		public String title() { return title; }
-		public List<String> labelLines() { return labelLines; }
+		public String titleKey() { return "screen.hemomancy.unstained_progress_layout.rite." + id; }
+		public Component title() { return Component.translatable(titleKey()); }
+		public List<String> labelLines(Text text) {
+			return List.of(text.get(titleKey() + ".line1"), text.get(titleKey() + ".line2"));
+		}
 
 		/** The three rites between Purified and the clarity stages. */
 		public boolean isBridge() { return this != LETHEAN_BAPTISM; }
@@ -114,10 +122,10 @@ public final class UnstainedProgressLayout {
 			@Nullable Rite rite, @Nullable EnumPurityStage purityStage, @Nullable EnumClarityStage clarityStage,
 			List<String> labelLines) {
 
-		public String title() {
+		public Component title() {
 			if (rite != null) return rite.title();
-			if (purityStage != null) return purityStage.getTitle();
-			return clarityStage != null ? clarityStage.getTitle() : id;
+			if (purityStage != null) return Component.translatable(stageKey(purityStage));
+			return clarityStage != null ? Component.translatable(stageKey(clarityStage)) : Component.literal(id);
 		}
 
 		public boolean veiled() { return status == Status.VEILED; }
@@ -175,7 +183,7 @@ public final class UnstainedProgressLayout {
 	private final Rect penaltyRect;
 	private final Rect contentBounds;
 
-	private UnstainedProgressLayout(List<Node> nodes, Node focus) {
+	private UnstainedProgressLayout(List<Node> nodes, Node focus, Text text) {
 		this.nodes = List.copyOf(nodes);
 		this.focus = focus;
 		List<Link> builtLinks = new ArrayList<>();
@@ -191,7 +199,7 @@ public final class UnstainedProgressLayout {
 		Optional<Node> enlightened = node(stageId(EnumClarityStage.ENLIGHTENED));
 		this.clarityHeader = awakened.isPresent() && enlightened.isPresent()
 				? headerAt((awakened.get().x() + enlightened.get().x()) / 2) : null;
-		int penaltyW = estimateWidth(PENALTY_WIDEST_TEXT);
+		int penaltyW = estimateWidth(text.get(PENALTY_KEY, "100"));
 		this.penaltyRect = new Rect(purityCentre - penaltyW / 2, BASELINE_Y + PENALTY_DY, penaltyW, LABEL_TEXT_H);
 
 		Rect extent = purityHeader.union(penaltyRect);
@@ -203,7 +211,7 @@ public final class UnstainedProgressLayout {
 
 	// ── Construction ─────────────────────────────────────────────
 
-	public static UnstainedProgressLayout build(Progress progress) {
+	public static UnstainedProgressLayout build(Progress progress, Text text) {
 		UnstainedPhase phase = progress.phase();
 		boolean begun = phase == UnstainedPhase.PURIFYING || phase == UnstainedPhase.CURE_READY
 				|| phase == UnstainedPhase.CLEANSED_UNPLEDGED || phase == UnstainedPhase.PLEDGED;
@@ -253,13 +261,13 @@ public final class UnstainedProgressLayout {
 			} else {
 				status = Status.LOCKED;
 			}
-			Node node = slot.toNode(FIRST_X + i * PITCH, BASELINE_Y, status);
+			Node node = slot.toNode(FIRST_X + i * PITCH, BASELINE_Y, status, text);
 			nodes.add(node);
 			if (status == Status.NEXT) focus = node;
 			if (status == Status.CURRENT && focus == null) fallbackFocus = node;
 		}
 		if (focus == null) focus = fallbackFocus != null ? fallbackFocus : nodes.getFirst();
-		return new UnstainedProgressLayout(nodes, focus);
+		return new UnstainedProgressLayout(nodes, focus, text);
 	}
 
 	private record Slot(@Nullable Rite rite, @Nullable EnumPurityStage purityStage,
@@ -270,17 +278,17 @@ public final class UnstainedProgressLayout {
 
 		Slot bypass() { return new Slot(rite, purityStage, clarityStage, true, true); }
 
-		Node toNode(int x, int y, Status status) {
+		Node toNode(int x, int y, Status status, Text text) {
 			if (rite != null) {
-				List<String> lines = status == Status.VEILED ? List.of("Veiled") : rite.labelLines();
+				List<String> lines = status == Status.VEILED ? List.of(text.get(VEILED_KEY)) : rite.labelLines(text);
 				return new Node(Kind.RITE, rite.id(), x, y, RITE_SIZE / 2, status, rite, null, null, lines);
 			}
 			if (purityStage != null) {
 				return new Node(Kind.PURITY_STAGE, stageId(purityStage), x, y, STAGE_SIZE / 2, status,
-						null, purityStage, null, List.of(purityStage.getTitle()));
+						null, purityStage, null, List.of(text.get(stageKey(purityStage))));
 			}
 			return new Node(Kind.CLARITY_STAGE, stageId(clarityStage), x, y, STAGE_SIZE / 2, status,
-					null, null, clarityStage, List.of(clarityStage.getTitle()));
+					null, null, clarityStage, List.of(text.get(stageKey(clarityStage))));
 		}
 	}
 
@@ -320,6 +328,14 @@ public final class UnstainedProgressLayout {
 
 	public static String stageId(EnumClarityStage stage) {
 		return "clarity_" + stage.name().toLowerCase(java.util.Locale.ROOT);
+	}
+
+	public static String stageKey(EnumPurityStage stage) {
+		return "hemomancy.purity." + stage.name().toLowerCase(java.util.Locale.ROOT);
+	}
+
+	public static String stageKey(EnumClarityStage stage) {
+		return "hemomancy.clarity." + stage.name().toLowerCase(java.util.Locale.ROOT);
 	}
 
 	private static Rect headerAt(int centreX) {

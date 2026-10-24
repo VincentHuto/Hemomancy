@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -73,7 +74,7 @@ final class ManipulationsSubcommand {
 				.map(BloodManipulation::getName).sorted().toList();
 		String display = names.isEmpty() ? "none" : String.join(", ", names);
 		source.sendSuccess(() -> Component.literal(player.getName().getString())
-				.append(Component.literal(" known manipulations: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.translatable("commands.hemomancy.manipulations.known_manipulations").withStyle(ChatFormatting.GRAY))
 				.append(Component.literal(display).withStyle(names.isEmpty() ? ChatFormatting.DARK_GRAY : ChatFormatting.GREEN)),
 				false);
 		return Math.max(1, names.size());
@@ -97,13 +98,14 @@ final class ManipulationsSubcommand {
 		} else {
 			BloodManipulation manipulation = ManipulationInit.getByName(manipulationName);
 			if (!isAvailableManipulation(manipulation)) {
-				source.sendFailure(Component.literal("Unknown manipulation '" + manipulationName
-						+ "'. Use tab completion or 'all'."));
+				source.sendFailure(HemoText.translatable("commands.hemomancy.manipulations.unknown_manipulation_use_tab_completion_or",
+						manipulationName));
 				return 0;
 			}
 			if (known.doesListContainName(updated, manipulation)) {
-				source.sendFailure(Component.literal(player.getName().getString() + " already knows "
-						+ manipulation.getName() + "."));
+				source.sendFailure(HemoText.translatable("commands.hemomancy.manipulations.already_knows",
+						player.getName().getString(),
+						manipulation.getName()));
 				return 0;
 			}
 			updated.put(manipulation, new ManipLevel(0, 0));
@@ -112,9 +114,10 @@ final class ManipulationsSubcommand {
 		known.setKnownManips(updated);
 		syncKnownManipulations(player);
 		int changed = added;
-		source.sendSuccess(() -> Component.literal("Added " + changed + " manipulation"
-				+ (changed == 1 ? "" : "s") + " for ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.manipulations.added_manipulation_for",
+				changed,
+				(changed == 1 ? "" : "s"),
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
 		return Math.max(1, added);
 	}
 
@@ -143,16 +146,17 @@ final class ManipulationsSubcommand {
 		}
 		BloodManipulation manipulation = ManipulationInit.getByName(manipulationName);
 		if (!isAvailableManipulation(manipulation)) {
-			source.sendFailure(Component.literal("Unknown manipulation '" + manipulationName
-					+ "'. Use tab completion or 'all'."));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.manipulations.unknown_manipulation_use_tab_completion_or",
+					manipulationName));
 			return 0;
 		}
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		boolean removed = known.getKnownManips().entrySet().removeIf(entry ->
 				manipulation.getName().equals(entry.getKey().getName()));
 		if (!removed) {
-			source.sendFailure(Component.literal(player.getName().getString() + " does not know "
-					+ manipulation.getName() + "."));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.manipulations.does_not_know",
+					player.getName().getString(),
+					manipulation.getName()));
 			return 0;
 		}
 		if (known.getSelectedManip() != null
@@ -163,10 +167,9 @@ final class ManipulationsSubcommand {
 		equipped.removeIf(manipulation.getName()::equals);
 		known.setEquippedManipNames(equipped);
 		syncKnownManipulations(player);
-		source.sendSuccess(() -> Component.literal("Removed ")
-				.append(Component.literal(manipulation.getName()).withStyle(ChatFormatting.RED))
-				.append(Component.literal(" from "))
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.manipulations.removed_from",
+				Component.literal(manipulation.getName()).withStyle(ChatFormatting.RED),
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
 		return 1;
 	}
 
@@ -177,9 +180,10 @@ final class ManipulationsSubcommand {
 		known.setSelectedManip(BloodManipulation.BLANK);
 		known.setEquippedManipNames(List.of());
 		syncKnownManipulations(player);
-		source.sendSuccess(() -> Component.literal("Cleared " + removed + " known manipulation"
-				+ (removed == 1 ? "" : "s") + " from ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.manipulations.cleared_known_manipulation_from",
+				removed,
+				(removed == 1 ? "" : "s"),
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD)), true);
 		return Math.max(1, removed);
 	}
 
@@ -187,15 +191,17 @@ final class ManipulationsSubcommand {
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		ManipLevel mastery = selectedEquippedManipulationLevel(known);
 		if (mastery == null) {
-			source.sendFailure(Component.literal(player.getName().getString()
-					+ " does not have a selected equipped manipulation."));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.manipulations.does_not_have_a_selected_equipped",
+					player.getName().getString()));
 			return 0;
 		}
 		BloodManipulation selected = known.getSelectedManip();
 		known.setSelectedManipLevel(level);
 		syncKnownManipulations(player);
-		source.sendSuccess(() -> Component.literal("Set " + player.getName().getString() + "'s "
-				+ selected.getName() + " mastery level to " + mastery.getCurrentLevel() + "."), true);
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.manipulations.set_s_mastery_level_to",
+				player.getName().getString(),
+				selected.getName(),
+				mastery.getCurrentLevel()), true);
 		return 1;
 	}
 
@@ -203,15 +209,17 @@ final class ManipulationsSubcommand {
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		ManipLevel mastery = selectedEquippedManipulationLevel(known);
 		if (mastery == null) {
-			source.sendFailure(Component.literal(player.getName().getString()
-					+ " does not have a selected equipped manipulation."));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.manipulations.does_not_have_a_selected_equipped",
+					player.getName().getString()));
 			return 0;
 		}
 		BloodManipulation selected = known.getSelectedManip();
 		mastery.setXp(xp);
 		syncKnownManipulations(player);
-		source.sendSuccess(() -> Component.literal("Set " + player.getName().getString() + "'s "
-				+ selected.getName() + " raw mastery XP to " + mastery.getXp() + "."), true);
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.manipulations.set_s_raw_mastery_xp_to",
+				player.getName().getString(),
+				selected.getName(),
+				mastery.getXp()), true);
 		return 1;
 	}
 

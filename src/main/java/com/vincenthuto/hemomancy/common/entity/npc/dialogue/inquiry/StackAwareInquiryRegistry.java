@@ -1,6 +1,7 @@
 
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry;
 
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
@@ -39,16 +40,16 @@ public final class StackAwareInquiryRegistry {
         String detail;
         if (target == null) {
             state = "blank";
-            detail = "Blank plan: no rite or blood structure has been impressed into it.";
+            detail = "message.hemomancy.stack_aware_inquiry.blank_blueprint";
         } else {
             state = target.type() == MnemonicBlueprintTarget.Type.CARDINAL_RITE ? "rite" : "structure";
-            detail = proper(target.recipeId().getPath()) + " (" + target.recipeId() + ")";
+            detail = literal(proper(target.recipeId().getPath()) + " (" + target.recipeId() + ")");
         }
         return Optional.of(new ResolvedStackInquiry(
                 "blueprint/" + state + "/" + Integer.toHexString(detail.hashCode()),
                 BuiltInRegistries.ITEM.getKey(stack.getItem()),
                 List.of("hemomancy." + speakerId + ".item_inquiry.mnemonic_blueprint." + state,
-                        literal(detail))));
+                        detail)));
     }
 
     private static Optional<ResolvedStackInquiry> scarPattern(String speakerId, ItemStack stack,
@@ -58,13 +59,14 @@ public final class StackAwareInquiryRegistry {
         List<ResourceLocation> ids = new ArrayList<>(ItemScarPattern.getScarIds(stack));
         ids.sort(Comparator.comparing(ResourceLocation::toString));
         String state = ids.isEmpty() ? "blank" : ids.size() == 1 ? "template" : "loadout";
-        String detail = ids.isEmpty() ? "No scar route is written into this motif."
-                : "Written routes: " + ids.stream().map(id -> proper(id.getPath())).reduce((a, b) -> a + ", " + b).orElse("");
+        String detail = ids.isEmpty() ? "message.hemomancy.stack_aware_inquiry.no_scar_route"
+                : DialogueNode.translate("message.hemomancy.stack_aware_inquiry.written_routes",
+                        ids.stream().map(id -> proper(id.getPath())).reduce((a, b) -> a + ", " + b).orElse(""));
         String fingerprint = ids.stream().map(ResourceLocation::toString).reduce((a, b) -> a + ";" + b).orElse("blank");
         return Optional.of(new ResolvedStackInquiry(
                 "scar_pattern/" + Integer.toHexString(fingerprint.hashCode()),
                 BuiltInRegistries.ITEM.getKey(stack.getItem()),
-                List.of("hemomancy." + speakerId + ".item_inquiry.scar_pattern." + state, literal(detail))));
+                List.of("hemomancy." + speakerId + ".item_inquiry.scar_pattern." + state, detail)));
     }
 
     private static Optional<ResolvedStackInquiry> specimenJar(String speakerId, ItemStack stack,
@@ -78,12 +80,15 @@ public final class StackAwareInquiryRegistry {
         String layers = SpecimenJarData.getMorphlingLayers(tag).stream()
                 .map(layer -> proper(layer.name().toLowerCase(Locale.ROOT)))
                 .reduce((a, b) -> a + ", " + b).orElse("");
-        String detail = "Contained specimen: " + proper(specimen.get().getPath());
-        if (!layers.isBlank()) detail += ". Recorded layers: " + layers;
+        String detail = layers.isBlank()
+                ? DialogueNode.translate("message.hemomancy.stack_aware_inquiry.contained_specimen",
+                        proper(specimen.get().getPath()))
+                : DialogueNode.translate("message.hemomancy.stack_aware_inquiry.contained_specimen_with_layers",
+                        proper(specimen.get().getPath()), layers);
         return Optional.of(new ResolvedStackInquiry(
                 "specimen/" + specimen.get() + "/" + Integer.toHexString(layers.hashCode()),
                 BuiltInRegistries.ITEM.getKey(stack.getItem()),
-                List.of("hemomancy." + speakerId + ".item_inquiry.specimen_jar", literal(detail))));
+                List.of("hemomancy." + speakerId + ".item_inquiry.specimen_jar", detail)));
     }
 
     private static String proper(String value) {
@@ -99,7 +104,7 @@ public final class StackAwareInquiryRegistry {
     }
 
     private static String literal(String text) {
-        return "@literal:" + text;
+        return DialogueNode.literal(text);
     }
 
     public record ResolvedStackInquiry(String presentationKey, ResourceLocation itemId, List<String> lines) {}

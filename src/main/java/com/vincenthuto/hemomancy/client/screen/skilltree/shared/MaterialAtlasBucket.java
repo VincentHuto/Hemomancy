@@ -1,10 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import net.minecraft.network.chat.Component;
+
 public record MaterialAtlasBucket(
 		MaterialAtlasPath path,
 		String id,
-		String label,
-		String nickname,
+		Component label,
+		Component nickname,
 		int color,
 		int centerX,
 		int centerY,

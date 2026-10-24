@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
@@ -287,7 +288,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
             UUID owner = getOwnerUUID();
             if (owner != null && !owner.equals(player.getUUID()) && !player.getAbilities().instabuild) {
                 player.displayClientMessage(
-                        net.minecraft.network.chat.Component.literal("§cThis thrall doesn't belong to you."), true);
+                        net.minecraft.network.chat.Component.translatable("message.hemomancy.blood_thrall_entity.this_thrall_doesn_t_belong_to"), true);
                 return InteractionResult.FAIL;
             }
 
@@ -301,8 +302,8 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                         BloodVolumeEvents.syncVolume(serverPlayer, playerVol);
                     }
                     player.displayClientMessage(
-                            net.minecraft.network.chat.Component.literal(
-                                    "§4Thrall reabsorbed. §7Recovered §c" + (int) bloodBack + " mL§7."), true);
+                            HemoText.translatable("message.hemomancy.blood_thrall_entity.thrall_reabsorbed_recovered_ml",
+                            		(int) bloodBack), true);
                 }
 
                 level().broadcastEntityEvent(this, BLOOD_SPLATTER_EVENT);

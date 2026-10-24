@@ -595,7 +595,7 @@ public class VesperTheEveningStarEntity extends Monster {
 		setDeltaMovement(0.0D, 0.0D, 0.0D);
 		EndgameBossActions.clearVesperPuppets(this);
 		ensureSilentArchonShame();
-		bossBar.setName(Component.literal("Vesper, the Shamed Evening Star"));
+		bossBar.setName(Component.translatable("message.hemomancy.vesper_the_evening_star_entity.vesper_the_shamed_evening_star"));
 		playSound(SoundEvents.BEACON_DEACTIVATE, 1.4F, 0.45F);
 	}
 

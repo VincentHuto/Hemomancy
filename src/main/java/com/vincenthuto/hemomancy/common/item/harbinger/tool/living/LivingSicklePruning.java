@@ -51,8 +51,7 @@ public final class LivingSicklePruning {
 
 		if (isTemporarySickle(held)) {
 			if (!isBoundTo(held, bloom, dimension) || !eligible(serverPlayer, bloom, data)) {
-				serverPlayer.displayClientMessage(Component.literal("The sickle refuses a wound outside its making.")
-						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+				serverPlayer.displayClientMessage(Component.translatable("message.hemomancy.living_sickle_pruning.the_sickle_refuses_a_wound_outside").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 				return true;
 			}
 			if (!data.severBloom(bloom)) return true;
@@ -63,21 +62,17 @@ public final class LivingSicklePruning {
 					pos.getZ() + 0.5D, 30, 0.8D, 1.0D, 0.8D, 0.04D);
 			serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE, pos.getX() + 0.5D, pos.getY() + 1.1D,
 					pos.getZ() + 0.5D, 45, 0.8D, 1.0D, 0.8D, 0.025D);
-			serverPlayer.displayClientMessage(Component.literal(
-					"The living edge parts the trunk. The final refusal waits inside the wound.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD), false);
+			serverPlayer.displayClientMessage(Component.translatable("message.hemomancy.living_sickle_pruning.the_living_edge_parts_the_trunk").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD), false);
 			return true;
 		}
 
 		if (!eligible(serverPlayer, bloom, data)) {
-			serverPlayer.displayClientMessage(Component.literal("The tree waits for a valid refusal.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			serverPlayer.displayClientMessage(Component.translatable("message.hemomancy.living_sickle_pruning.the_tree_waits_for_a_valid").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			return true;
 		}
 		player.setItemInHand(hand, createTemporarySickle(held, bloom, dimension, player.registryAccess()));
 		serverLevel.playSound(null, pos, SoundEvents.SCULK_CATALYST_BLOOM, SoundSource.PLAYERS, 0.75F, 0.7F);
-		serverPlayer.displayClientMessage(Component.literal("The assumed limb hooks inward, remembering how death harvests.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+		serverPlayer.displayClientMessage(Component.translatable("message.hemomancy.living_sickle_pruning.the_assumed_limb_hooks_inward_remembering").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 		return true;
 	}
 

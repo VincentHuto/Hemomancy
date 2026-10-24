@@ -75,7 +75,7 @@ public class UmbralStepManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (destination(player) == null) {
-			player.displayClientMessage(Component.literal("No safe shadow answers your step."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.umbral_step_manip.no_safe_shadow_answers_your_step"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

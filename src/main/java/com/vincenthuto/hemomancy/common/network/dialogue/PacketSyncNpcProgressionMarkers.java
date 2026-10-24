@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
 public record PacketSyncNpcProgressionMarkers(Map<Integer, DialogueAttention> markers)
 		implements CustomPacketPayload {
 	public static final Type<PacketSyncNpcProgressionMarkers> TYPE =
-			new Type<>(ResourceLocation.fromNamespaceAndPath("hemomancy", "sync_npc_progression_markers"));
+			new Type<>(Hemomancy.rloc("sync_npc_progression_markers"));
 	public static final StreamCodec<FriendlyByteBuf, PacketSyncNpcProgressionMarkers> STREAM_CODEC =
 			StreamCodec.of(PacketSyncNpcProgressionMarkers::encode, PacketSyncNpcProgressionMarkers::decode);
 

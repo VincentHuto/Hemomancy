@@ -50,12 +50,12 @@ public class CrimsonFlameConjurationManip extends BloodManipulation {
 	private static BlockPos flamePos(Player player, Level world) {
 		BlockHitResult hitResult = aim(player, world);
 		if (hitResult.getType() == HitResult.Type.MISS) {
-			player.displayClientMessage(Component.literal("§cLook at a block to conjure crimson flames!"), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.crimson_flame_conjuration_manip.look_at_a_block_to_conjure"), true);
 			return null;
 		}
 		BlockPos firePos = hitResult.getBlockPos().relative(hitResult.getDirection());
 		if (!world.getBlockState(firePos).canBeReplaced() || !ManipulationCombatHelper.mayAlter(player, firePos)) {
-			player.displayClientMessage(Component.literal("§cCannot place flames there!"), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.crimson_flame_conjuration_manip.cannot_place_flames_there"), true);
 			return null;
 		}
 		return firePos;

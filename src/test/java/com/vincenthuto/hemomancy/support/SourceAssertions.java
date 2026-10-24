@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Shared source-text reads and assertions. New source-text assertions are for architecture guardrails only
@@ -49,6 +50,28 @@ public final class SourceAssertions {
 	public static void assertContains(String label, String text, String expected) {
 		if (!text.contains(expected)) {
 			throw new AssertionError(label + ": missing '" + expected + "'");
+		}
+	}
+
+	/**
+	 * The source shows this English through a translation key: {@code en_us.json} has a value containing
+	 * {@code english} (a template, with {@code %s} where arguments go) and the source names that key.
+	 */
+	public static void assertShowsEnglish(String label, String source, String english) {
+		List<String> keys = EnglishText.keysShowing(english);
+		if (keys.stream().noneMatch(key -> source.contains("\"" + key + "\""))) {
+			throw new AssertionError(label + ": no translation key used here shows '" + english + "'"
+					+ (keys.isEmpty() ? " (en_us.json has none)" : " (en_us.json has it under " + keys + ")"));
+		}
+	}
+
+	/** No translation key used in {@code source} shows {@code english}, and the source does not hold it either. */
+	public static void assertNotShowsEnglish(String label, String source, String english) {
+		assertNotContains(label, source, english);
+		List<String> shown = EnglishText.keysShowing(english).stream().filter(key -> source.contains("\"" + key + "\""))
+				.toList();
+		if (!shown.isEmpty()) {
+			throw new AssertionError(label + ": keys used here still show '" + english + "': " + shown);
 		}
 	}
 

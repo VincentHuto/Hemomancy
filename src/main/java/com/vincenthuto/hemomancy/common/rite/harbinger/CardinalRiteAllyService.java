@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity;
 import com.vincenthuto.hemomancy.common.succession.SuccessionResidents;
 import net.minecraft.ChatFormatting;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -55,19 +56,18 @@ public final class CardinalRiteAllyService {
         }
 		int quota = helperQuota(level, rite);
 		if (!rite.getAllyRoles().containsKey(player.getUUID()) && rite.getAllyRoles().size() >= quota) {
-			player.displayClientMessage(Component.literal("Every bloodline station is already occupied.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ally_service.every_bloodline_station_is_already_occupied").withStyle(ChatFormatting.DARK_RED), true);
 			return true;
 		}
 		rite.assignAlly(player.getUUID(), role);
 		if (player.isShiftKeyDown()) {
 			boolean optIn = !rite.getSharedPoolOptIns().contains(player.getUUID());
 			rite.setSharedPoolOptIn(player.getUUID(), optIn);
-			player.displayClientMessage(Component.literal("Shared blood access: " + (optIn ? "permitted" : "withheld"))
-					.withStyle(ChatFormatting.GOLD), false);
+			player.displayClientMessage(Component.translatable(optIn ? "message.hemomancy.cardinal_rite_ally_service.shared_blood_access_permitted"
+					: "message.hemomancy.cardinal_rite_ally_service.shared_blood_access_withheld").withStyle(ChatFormatting.GOLD), false);
 		} else {
-			player.displayClientMessage(Component.literal("You take the " + displayName(role) + " station.")
-					.withStyle(ChatFormatting.RED), false);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.cardinal_rite_ally_service.you_take_the_station",
+					displayName(role)).withStyle(ChatFormatting.RED), false);
 		}
 		return true;
 	}
@@ -79,8 +79,7 @@ public final class CardinalRiteAllyService {
 		Bloodline line = bloodline(level, rite);
 		if (!eligibleNpcHelper(npc, line)) return false;
 		if (line.isNpcBloodspent(npc.getUUID(), level.getGameTime())) {
-			caster.displayClientMessage(Component.literal("That ally is Bloodspent and must rest for a full day.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ally_service.that_ally_is_bloodspent_and_must").withStyle(ChatFormatting.DARK_RED), true);
 			return true;
 		}
 		for (var assigned : rite.getAllyRoles().keySet()) {
@@ -89,8 +88,7 @@ public final class CardinalRiteAllyService {
 		}
 		int quota = helperQuota(level, rite);
 		if (!rite.getAllyRoles().containsKey(npc.getUUID()) && rite.getAllyRoles().size() >= quota) {
-			caster.displayClientMessage(Component.literal("Every bloodline station is already occupied.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ally_service.every_bloodline_station_is_already_occupied").withStyle(ChatFormatting.DARK_RED), true);
 			return true;
 		}
         if (!rite.getAllyRoles().containsKey(npc.getUUID()) && CardinalRiteNpcTravel.assigned(level, npc.getUUID())) return false;
@@ -102,16 +100,15 @@ public final class CardinalRiteAllyService {
         }
         if (!supportsRole(recipe, next) || rite.getAllyRoles().containsValue(next)) return true;
 		if (!(npc instanceof Mob mob) || !safeStation(level, mob, station(level, rite, next))) {
-			caster.displayClientMessage(Component.literal(
-					"That rite station has no safe footing for an ally.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_ally_service.that_rite_station_has_no_safe").withStyle(ChatFormatting.DARK_RED), true);
 			return true;
 		}
 		if (((ProfessionalHarbingerEntity) npc).isSuccessor()) CardinalRiteNpcTravel.remember(level, rite, mob);
 		rite.assignAlly(npc.getUUID(), next);
 		directToStation(level, rite, mob, next);
-		caster.displayClientMessage(Component.literal("Assigned " + npc.getName().getString() + " as "
-				+ displayName(next) + ".").withStyle(ChatFormatting.RED), false);
+		caster.displayClientMessage(HemoText.translatable("message.hemomancy.cardinal_rite_ally_service.assigned_as",
+				npc.getName().getString(),
+				displayName(next)).withStyle(ChatFormatting.RED), false);
 		return true;
 	}
 

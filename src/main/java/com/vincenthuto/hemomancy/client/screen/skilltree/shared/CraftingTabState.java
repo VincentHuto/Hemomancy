@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -21,8 +22,8 @@ public class CraftingTabState {
 
 	// ── Tier configuration (constant, not per-recipe) ────────────
 	public static final String[] TIER_NAMES       = {
-			"No Degree", "Degree 1", "Degree 2", "Degree 3", "Degree 4",
-			"Degree 5", "Degree 6", "Degree 7", "Degree 8"
+			"degree_0", "degree_1", "degree_2", "degree_3", "degree_4",
+			"degree_5", "degree_6", "degree_7", "degree_8"
 	};
 	public static final int[]    TIER_DEGREE_REQ  = RecipeDegreeGates.LEVELS;
 
@@ -94,12 +95,15 @@ public class CraftingTabState {
 		return HLTextUtils.toProperCase(path.replace("_", " "));
 	}
 
-	public String sidebarTitle() {
-		return unstainedStages ? "Crafting by Stage" : "Tiers";
+	public Component sidebarTitle() {
+		return Component.translatable(unstainedStages ? "screen.hemomancy.crafting_tab_state.crafting_by_stage"
+				: "screen.hemomancy.crafting_tab_state.tiers");
 	}
 
-	public String tierLabel(int tierIndex) {
-		return unstainedStages ? RecipeDegreeGates.unstainedStageLabel(TIER_DEGREE_REQ[tierIndex]) : TIER_NAMES[tierIndex];
+	public Component tierLabel(int tierIndex) {
+		if (unstainedStages) return RecipeDegreeGates.unstainedStageLabel(TIER_DEGREE_REQ[tierIndex]);
+		return TIER_DEGREE_REQ[tierIndex] == 0 ? Component.translatable("message.hemomancy.recipe_degree_gates.no_degree")
+				: Component.translatable("message.hemomancy.recipe_degree_gates.degree", TIER_DEGREE_REQ[tierIndex]);
 	}
 
 	public boolean isTierHidden(String tierName) {

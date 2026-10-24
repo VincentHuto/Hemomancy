@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
-import com.vincenthuto.hemomancy.common.armor.BodyIdiomArmorRules;
+import com.vincenthuto.hemomancy.common.armor.ArmorSetBonusRules;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
@@ -59,9 +59,9 @@ public class ArmorSetBonusHandler {
 	private static final BloodAccounting.Source SILENT_REFUSAL = BloodAccounting.Source.of("silent_archon_refusal", Category.ARMOR, false, false);
 	private static final BloodAccounting.Source COVENANT_MANTLE = BloodAccounting.Source.of("covenant_mantle", Category.ARMOR, false, true);
 
-	private static final net.minecraft.resources.ResourceLocation CHITINITE_TOUGHNESS_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "chitinite_toughness");
-	private static final net.minecraft.resources.ResourceLocation MARROW_CROWN_DAMAGE_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "marrow_crown_damage");
-	private static final net.minecraft.resources.ResourceLocation PELAGIC_MOTION_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "pelagic_motion");
+	private static final net.minecraft.resources.ResourceLocation CHITINITE_TOUGHNESS_ID = Hemomancy.rloc("chitinite_toughness");
+	private static final net.minecraft.resources.ResourceLocation MARROW_CROWN_DAMAGE_ID = Hemomancy.rloc("marrow_crown_damage");
+	private static final net.minecraft.resources.ResourceLocation PELAGIC_MOTION_ID = Hemomancy.rloc("pelagic_motion");
 
 	private static final double HEMATIC_IRON_BLOOD_REGEN = 2.0;
 	private static final int HEMATIC_IRON_REGEN_INTERVAL = 20; // Every 20 ticks = 1 second
@@ -118,7 +118,7 @@ public class ArmorSetBonusHandler {
 			var volume = HemoCapabilityAccess.getBloodVolume(player);
 			if (player instanceof ServerPlayer serverPlayer) {
 				BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "hematic_iron_set",
-						"Hematic Iron Set", Category.ARMOR, HEMATIC_IRON_BLOOD_REGEN,
+						"blood_source.hemomancy.hematic_iron_set", Category.ARMOR, HEMATIC_IRON_BLOOD_REGEN,
 						HEMATIC_IRON_REGEN_INTERVAL, CirculationIncomeHelper.IncomeChannel.ARMOR);
 			}
 		}
@@ -398,7 +398,7 @@ public class ArmorSetBonusHandler {
 	}
 
 	private static void updatePelagicMotion(Player player) {
-		double amount = BodyIdiomArmorRules.pelagicSwimMultiplier(
+		double amount = ArmorSetBonusRules.pelagicSwimMultiplier(
 				ArmorSetHelper.hasFullPrismaticSet(player), ArmorSetHelper.hasFullPhantasmalBloodlust(player)) - 1.0D;
 		AttributeModifiers.sync(player.getAttribute(NeoForgeMod.SWIM_SPEED), PELAGIC_MOTION_ID, amount,
 				AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, amount > 0.0D);

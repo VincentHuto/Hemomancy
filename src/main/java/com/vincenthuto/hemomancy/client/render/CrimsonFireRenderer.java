@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
@@ -16,7 +17,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 public final class CrimsonFireRenderer {
-	private static final ResourceLocation CRIMSON_FIRE_SPRITE = ResourceLocation.parse("hemomancy:block/crimson_flames");
+	private static final ResourceLocation CRIMSON_FIRE_SPRITE = Hemomancy.rloc("block/crimson_flames");
 
 	private CrimsonFireRenderer() {
 	}

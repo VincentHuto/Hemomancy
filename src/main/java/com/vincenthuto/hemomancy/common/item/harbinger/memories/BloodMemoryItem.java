@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownM
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -51,16 +52,16 @@ public class BloodMemoryItem extends Item {
 			}, () -> { /* no DrudgeAction registered yet — show nothing */ });
 			tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.burn_in_a_lit_iron_brazier")
 					.withStyle(ChatFormatting.DARK_GRAY));
-			tooltip.add(Component.literal("Learn at Degree "
-					+ com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates.minDegreeForRank(getManip().getRank())
-					+ "; cast at " + (int) getManip().getAlignLevel() + " " + getManip().getTend().name() + " alignment.")
-					.withStyle(ChatFormatting.GRAY));
-			tooltip.add(Component.literal(getManip().getBaseCostLabel() + ": " + getManip().getBaseCostText())
+			tooltip.add(HemoText.translatable("tooltip.hemomancy.blood_memory.learn_at_degree_cast_at_alignment",
+					com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates.minDegreeForRank(getManip().getRank()),
+					(int) getManip().getAlignLevel(),
+					BloodManipulation.tendencyName(getManip().getTend())).withStyle(ChatFormatting.GRAY));
+			tooltip.add(getManip().getBaseCostLine()
 					.withStyle(ChatFormatting.DARK_RED));
 			ManipulationFamilyRegistry.form(getManip().getName()).ifPresent(form ->
-					tooltip.add(Component.literal("Requires " + ManipulationFamilyRegistry.baselineId(getManip().getName()).replace('_', ' ')
-							+ " mastery stage " + form.requiredLevel() + "; intermediate memories are optional.")
-							.withStyle(ChatFormatting.DARK_RED)));
+					tooltip.add(HemoText.translatable("tooltip.hemomancy.blood_memory.requires_mastery_stage_intermediate_memories_are",
+							BloodManipulation.displayName(ManipulationFamilyRegistry.baselineId(getManip().getName())),
+							form.requiredLevel()).withStyle(ChatFormatting.DARK_RED)));
 		}
 	}
 
@@ -91,11 +92,11 @@ public class BloodMemoryItem extends Item {
 				}
 				var result = KnownManipulationGrantHelper.grantCreativeMemory((ServerPlayer) playerIn, getManip(), this);
 				Component message = switch (result.status()) {
-					case GRANTED_EQUIPPED -> Component.literal("The memory settles into an open manipulation slot.");
-					case GRANTED -> Component.literal("The memory settles into your blood. Recall it at a Mnemonic Reliquary.");
-					case ALREADY_KNOWN -> Component.literal("You already carry this memory.");
-					case RETIRED -> Component.literal("This memory has gone dormant.");
-					default -> Component.literal("The memory will not take.");
+					case GRANTED_EQUIPPED -> Component.translatable("message.hemomancy.blood_memory_item.the_memory_settles_into_an_open");
+					case GRANTED -> Component.translatable("message.hemomancy.blood_memory_item.the_memory_settles_into_your_blood");
+					case ALREADY_KNOWN -> Component.translatable("message.hemomancy.blood_memory_item.you_already_carry_this_memory");
+					case RETIRED -> Component.translatable("message.hemomancy.blood_memory_item.this_memory_has_gone_dormant");
+					default -> Component.translatable("message.hemomancy.blood_memory_item.the_memory_will_not_take");
 				};
 				playerIn.displayClientMessage(message.copy().withStyle(ChatFormatting.DARK_RED), true);
 				return result.success() || result.status() == MemoryGrantStatus.ALREADY_KNOWN
@@ -103,9 +104,7 @@ public class BloodMemoryItem extends Item {
 						: InteractionResultHolder.fail(stack);
 			}
 			if (!worldIn.isClientSide && !playerIn.isShiftKeyDown()) {
-				playerIn.displayClientMessage(Component.literal(
-						"Burn this memory in a lit Iron Brazier and absorb it with Blood Absorption.")
-						.withStyle(ChatFormatting.DARK_RED), true);
+				playerIn.displayClientMessage(Component.translatable("message.hemomancy.blood_memory_item.burn_this_memory_in_a_lit").withStyle(ChatFormatting.DARK_RED), true);
 				return InteractionResultHolder.fail(stack);
 			}
 		}

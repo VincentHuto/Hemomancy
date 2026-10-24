@@ -162,10 +162,10 @@ public class UrchinMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Spine Lash (Thorns + Slow attackers)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Tidal Anchor (Push away hostile mobs)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Calcareous Shell (Resistance after heavy hit)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Reefheart Bastion (Staff active roots into a reflecting ritual anchor)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.urchin_morphling_item.spine_lash_thorns_slow_attackers"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.urchin_morphling_item.tidal_anchor_push_away_hostile_mobs"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.urchin_morphling_item.calcareous_shell_resistance_after_heavy_hit"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.urchin_morphling_item.reefheart_bastion_staff_active_roots_into"), 5, currentMaturity));
 		return list;
 	}
 

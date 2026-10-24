@@ -16,11 +16,12 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFormDefinition;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -671,22 +672,22 @@ public class ManipulationsTabController implements IProgressTab {
 		List<Component> tip = new ArrayList<>();
 		BloodManipulation manipulation = ManipulationInit.getByName(satellite.form().id());
 		if (manipulation != null && isManipRankLocked(manipulation)) {
-			tip.add(Component.literal("Requires Degree " + manipMinDegree(manipulation.getRank()))
-					.withStyle(s -> s.withColor(0xAA4444)));
+			tip.add(HemoText.translatable("screen.hemomancy.manipulations_tab_controller.requires_degree",
+					manipMinDegree(manipulation.getRank())).withStyle(s -> s.withColor(0xAA4444)));
 		} else if (!satellite.masteryEligible()) {
-			tip.add(Component.literal("Requires mastery level " + satellite.form().requiredLevel())
-					.withStyle(s -> s.withColor(0xAA4444)));
+			tip.add(HemoText.translatable("screen.hemomancy.manipulations_tab_controller.requires_mastery_level",
+					satellite.form().requiredLevel()).withStyle(s -> s.withColor(0xAA4444)));
 		} else if (!satellite.known()) {
-			tip.add(Component.literal("Mastery reached — craft and absorb this memory")
-					.withStyle(s -> s.withColor(0xFFAA44)));
+			tip.add(Component.translatable("screen.hemomancy.manipulations_tab_controller.mastery_reached_craft_and_absorb_this").withStyle(s -> s.withColor(0xFFAA44)));
 		} else {
 			String name = manipulation != null ? manipulation.getName() : satellite.form().id();
 			tip.add(BloodManipulation.displayName(name)
 					.withStyle(s -> s.withColor(0xFFAA44).withBold(true)));
 			if (manipulation != null) {
-				tip.add(Component.literal(HLTextUtils.toProperCase(manipulation.getType().name())
-						+ " · " + manipulation.getBaseCostLabel() + ": " + manipulation.getBaseCostText() + " · "
-						+ cooldownText(manipulation.getCooldownTicks())).withStyle(s -> s.withColor(0xAAAAAA)));
+				tip.add(Component.translatable("screen.hemomancy.manipulations_tab_controller.form_summary",
+						manipulation.getTypeName(),
+						manipulation.getBaseCostLabel(), manipulation.getBaseCostText(),
+						cooldownText(manipulation.getCooldownTicks())).withStyle(s -> s.withColor(0xAAAAAA)));
 			}
 		}
 		var pose = gfx.pose();
@@ -725,8 +726,9 @@ public class ManipulationsTabController implements IProgressTab {
                 if (manip != null) {
                     int reqDeg = manipMinDegree(manip.getRank());
                     EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(reqDeg);
-                    String degreeName = needed != null ? needed.getTitle() : ("Degree " + reqDeg);
-                    tip.add(Component.literal("Requires: " + degreeName).withStyle(s -> s.withColor(0xAA4444)));
+                    Component degreeName = needed != null ? needed.displayName()
+                            : Component.translatable("screen.hemomancy.manipulations_tab_controller.degree_number", reqDeg);
+                    tip.add(HemoText.translatable("screen.hemomancy.manipulations_tab_controller.requires", degreeName).withStyle(s -> s.withColor(0xAA4444)));
                 }
             } else {
                 String pretty = manip != null
@@ -735,44 +737,43 @@ public class ManipulationsTabController implements IProgressTab {
                 int nameCol = known ? 0xFFAA44 : 0x888888;
                 Component nameText = Component.literal(pretty).withStyle(s -> s.withColor(nameCol).withBold(true));
                 tip.add(veilUnknown ? AbocipherText.veil(nameText) : nameText);
-                tip.add(Component.literal(known ? "Known" : "Unknown")
-                        .withStyle(s -> s.withColor(known ? 0x44AA44 : 0xAA4444).withItalic(!known)));
+                tip.add((known ? Component.translatable("screen.hemomancy.manipulations_tab_controller.known") : Component.translatable("screen.hemomancy.manipulations_tab_controller.unknown")).withStyle(s -> s.withColor(known ? 0x44AA44 : 0xAA4444).withItalic(!known)));
 
                 if (manip != null) {
-                    tip.add(Component.literal(manip.getBaseCostLabel() + ": " + manip.getBaseCostText())
+                    tip.add(manip.getBaseCostLine()
                             .withStyle(s -> s.withColor(0xAA4444)));
                     if (com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.isStaffWeaponFormManip(manip.getName())) {
-                        tip.add(Component.literal("Weapons Master reduces switches to 50 mL. Item attacks cost separately."));
+                        tip.add(Component.translatable("screen.hemomancy.manipulations_tab_controller.weapons_master_reduces_switches_to_50"));
                     }
                     if ("conjure_sickle".equals(manip.getName())) {
-                        tip.add(Component.literal("Acquire at Degree VII: Silent Archon, defeated Vesper, staff bond and his memory."));
+                        tip.add(Component.translatable("screen.hemomancy.manipulations_tab_controller.acquire_at_degree_vii_silent_archon"));
                     }
-                    tip.add(Component.literal("Rank: " + HLTextUtils.toProperCase(manip.getRank().name()))
-                            .withStyle(s -> s.withColor(0x888888)));
+                    tip.add(Component.translatable("screen.hemomancy.manipulations_tab_controller.rank",
+                    		manip.getRankName()).withStyle(s -> s.withColor(0x888888)));
                     ParticleColor pc = manip.getTend().getColor();
                     int tendCol = (int)pc.getRed() << 16 | (int)pc.getGreen() << 8 | (int)pc.getBlue();
-                    String tendTipName = HLTextUtils.toProperCase(manip.getTend().name());
+                    Component tendTipName = BloodManipulation.tendencyName(manip.getTend());
                     double alignReq = manip.getAlignLevel();
-                    String tendTipText = alignReq > 0
-                            ? "Casting alignment: " + tendTipName + " (" + (int)alignReq + ")"
-                            : "Tendency: " + tendTipName;
-                    tip.add(Component.literal(tendTipText).withStyle(s -> s.withColor(tendCol)));
+                    MutableComponent tendTipText = alignReq > 0
+                            ? Component.translatable("screen.hemomancy.manipulations_tab_controller.casting_alignment", tendTipName, (int)alignReq)
+                            : Component.translatable("screen.hemomancy.manipulations_tab_controller.tendency", tendTipName);
+                    tip.add(tendTipText.withStyle(s -> s.withColor(tendCol)));
                     EnumBloodTendency secondaryTend = manip.getSecondaryTend();
                     if (secondaryTend != null) {
                         ParticleColor secPc = secondaryTend.getColor();
                         int secCol = (int)secPc.getRed() << 16 | (int)secPc.getGreen() << 8 | (int)secPc.getBlue();
-                        tip.add(Component.literal("Secondary: " + HLTextUtils.toProperCase(secondaryTend.name()))
-                                .withStyle(s -> s.withColor(secCol)));
+                        tip.add(Component.translatable("screen.hemomancy.manipulations_tab_controller.secondary",
+                        		BloodManipulation.tendencyName(secondaryTend)).withStyle(s -> s.withColor(secCol)));
                     }
                 }
 
                 if (!entry.getParentNames().isEmpty()) {
-                    StringBuilder sb = new StringBuilder("Relates to: ");
+                    StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < entry.getParentNames().size(); i++) {
                         if (i > 0) sb.append(", ");
                         sb.append(BloodManipulation.displayName(entry.getParentNames().get(i)).getString());
                     }
-                    Component relationText = Component.literal(sb.toString())
+                    Component relationText = Component.translatable("screen.hemomancy.manipulations_tab_controller.relates_to", sb.toString())
                             .withStyle(s -> s.withColor(0x666666).withItalic(true));
                     tip.add(veilUnknown ? AbocipherText.veil(relationText) : relationText);
                 }
@@ -882,15 +883,17 @@ public class ManipulationsTabController implements IProgressTab {
 
         if (rankLocked) {
             EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(manipMinDegree(manip.getRank()));
-            String degreeName = needed != null ? needed.getTitle() : ("Degree " + manipMinDegree(manip.getRank()));
-            gfx.drawString(ctx.font(), "Locked", tx, ty, 0xFF555555, false);
+            Component degreeName = needed != null ? needed.displayName()
+                    : Component.translatable("screen.hemomancy.manipulations_tab_controller.degree_number", manipMinDegree(manip.getRank()));
+            gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.manipulations_tab_controller.locked"), tx, ty, 0xFF555555, false);
             ty += lineH;
-            gfx.drawString(ctx.font(), "Requires: " + degreeName, tx, ty, 0xFFAA4444, false);
+            gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.manipulations_tab_controller.requires", degreeName), tx, ty, 0xFFAA4444, false);
             ty += lineH;
         } else {
-			String statusStr = known ? "Known" : !masteryEligible
-					? "Requires mastery stage " + selectedForm.orElseThrow().requiredLevel()
-					: selectedForm.isPresent() ? "Memory not absorbed" : "Unknown";
+			Component statusStr = known ? Component.translatable("screen.hemomancy.manipulations_tab_controller.known") : !masteryEligible
+					? Component.translatable("screen.hemomancy.manipulations_tab_controller.requires_mastery_stage", selectedForm.orElseThrow().requiredLevel())
+					: selectedForm.isPresent() ? Component.translatable("screen.hemomancy.manipulations_tab_controller.memory_not_absorbed")
+					: Component.translatable("screen.hemomancy.manipulations_tab_controller.unknown");
 			int statusCol = known ? 0xFF44AA44 : masteryEligible ? 0xFFFFAA44 : 0xFFAA4444;
             gfx.drawString(ctx.font(), statusStr, tx, ty, statusCol, false);
             ty += lineH + 3;
@@ -959,19 +962,19 @@ public class ManipulationsTabController implements IProgressTab {
     }
 
     private List<ManipStatCell> manipStatCells(BloodManipulation manip, int tendCol) {
-        String tendName = HLTextUtils.toProperCase(manip.getTend().name());
+        String tendName = BloodManipulation.tendencyName(manip.getTend()).getString();
         double alignReq = manip.getAlignLevel();
         String tendText = alignReq > 0 ? tendName + " (" + (int)alignReq + ")" : tendName;
         tendText += secondaryTendencyText(manip);
         EnumBloodTendency secondaryTend = manip.getSecondaryTend();
         int secondaryColor = secondaryTend != null ? tendencyColor(secondaryTend) : tendCol;
         return List.of(
-                new ManipStatCell("Type", HLTextUtils.toProperCase(manip.getType().name()), 0xFFCCCCCC, 0xFFCCCCCC, false),
-                new ManipStatCell("Rank", HLTextUtils.toProperCase(manip.getRank().name()), 0xFFCCCCCC, 0xFFCCCCCC, false),
-                new ManipStatCell("Tendency", tendText, tendCol, secondaryColor, secondaryTend != null),
-                new ManipStatCell(manip.getBaseCostLabel(), manip.getBaseCostText(), 0xFFAA4444, 0xFFAA4444, false),
-                new ManipStatCell("Section", HLTextUtils.toProperCase(manip.getSection().name()), 0xFFAAAAAA, 0xFFAAAAAA, false),
-                new ManipStatCell("Base cooldown", cooldownText(manip.getCooldownTicks()), 0xFFAAAA88, 0xFFAAAA88, false)
+                new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_type"), manip.getTypeName().getString(), 0xFFCCCCCC, 0xFFCCCCCC, false),
+                new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_rank"), manip.getRankName().getString(), 0xFFCCCCCC, 0xFFCCCCCC, false),
+                new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_tendency"), tendText, tendCol, secondaryColor, secondaryTend != null),
+                new ManipStatCell(manip.getBaseCostLabel(), manip.getBaseCostText().getString(), 0xFFAA4444, 0xFFAA4444, false),
+                new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_section"), BloodManipulation.sectionName(manip.getSection()).getString(), 0xFFAAAAAA, 0xFFAAAAAA, false),
+                new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_base_cooldown"), cooldownText(manip.getCooldownTicks()), 0xFFAAAA88, 0xFFAAAA88, false)
         );
     }
 
@@ -980,7 +983,7 @@ public class ManipulationsTabController implements IProgressTab {
         if (secondaryTend == null) {
             return "";
         }
-        return " / " + HLTextUtils.toProperCase(secondaryTend.name());
+        return " / " + BloodManipulation.tendencyName(secondaryTend).getString();
     }
 
     private void drawManipStatCell(GuiGraphics gfx, ProgressScreenContext ctx, ManipStatCell cell,
@@ -1016,12 +1019,13 @@ public class ManipulationsTabController implements IProgressTab {
 
     private static String cooldownText(int cooldownTicks) {
         if (cooldownTicks <= 0) {
-            return "None";
+            return Component.translatable("screen.hemomancy.manipulations_tab_controller.cooldown_none").getString();
         }
-        return String.format(Locale.ROOT, "%.1fs", cooldownTicks / 20.0F);
+        return Component.translatable("screen.hemomancy.manipulations_tab_controller.cooldown_seconds",
+                String.format(Locale.ROOT, "%.1f", cooldownTicks / 20.0F)).getString();
     }
 
-    private record ManipStatCell(String label, String value, int valueColor, int secondaryValueColor, boolean mixedTendency) {
+    private record ManipStatCell(Component label, String value, int valueColor, int secondaryValueColor, boolean mixedTendency) {
     }
 
     private ManipulationTreeEntry manipNodeUnder(ProgressScreenContext ctx, double mx, double my) {
@@ -1114,6 +1118,6 @@ public class ManipulationsTabController implements IProgressTab {
     private String familyLabel() {
         EnumBloodTendency selected = familyFilter.selected();
         return FamilyFilterLabels.display(selected == null ? null
-                : HLTextUtils.toProperCase(selected.name().replace('_', ' ')));
+                : BloodManipulation.tendencyName(selected).getString());
     }
 }

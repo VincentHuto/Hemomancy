@@ -45,7 +45,7 @@ Use this prompt for Codex, Copilot, Claude, or any similar coding harness that n
 ## Architecture Map
 
 - `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java` wires DeferredRegisters, configs, capabilities, packets, creative tabs, reload listeners, and HutosLib book serializer setup.
-- `common/init/*Init.java` owns registries. Use snake_case IDs and `Hemomancy.rloc("path")`; `ResourceLocationStyleRatchetTest` lets the hand-built locations left only fall.
+- `common/init/*Init.java` owns registries. Use snake_case IDs and `Hemomancy.rloc("path")`; `ResourceLocationStyleGuardrailTest` rejects a hand-built `hemomancy` location. Player-facing text is an `en_us.json` key (`HardCodedEnglishGuardrailTest`); see standards §8.
 - `client/` is client-only rendering, screens, particles, models, shaders, and overlays.
 - `common/` holds gameplay systems: blocks, items, entities, attachments/capabilities, manipulations, rites, recipes, events, menus, networking, and worldgen.
 - `compat/` holds optional integrations. Do not import dormant MnA or Curios compat into core code while Gradle excludes those packages.

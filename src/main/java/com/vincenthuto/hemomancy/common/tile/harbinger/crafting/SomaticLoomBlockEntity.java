@@ -51,6 +51,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -198,13 +199,13 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 				&& tier.upgradeItem().equals(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()))).findFirst();
 		if (upgrade.isPresent()) {
 			// Kits are installed by their rite, never woven: keep them out of the catalyst row.
-			msg(player, "Install this at the " + (upgrade.get().tier() == 1 ? "Rite of the Ganglionic Weave" : "Rite of the Cortical Weave")
-					+ ", with the Loom seated behind a Cardinal Focus.", ChatFormatting.YELLOW, true);
+			msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.install_this_at_the_with_the", (upgrade.get().tier() == 1 ? Component.translatable("message.hemomancy.somatic_loom_block_entity.rite_of_the_ganglionic_weave")
+					: Component.translatable("message.hemomancy.somatic_loom_block_entity.rite_of_the_cortical_weave"))), ChatFormatting.YELLOW, true);
 			return false;
 		}
 
 		if (stack.getItem() instanceof RecycledEnzymeItem) {
-			msg(player, "Recycled enzymes cannot be loaded into the loom.", ChatFormatting.GRAY, true);
+			msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.recycled_enzymes_cannot_be_loaded_into"), ChatFormatting.GRAY, true);
 			return false;
 		}
 
@@ -214,12 +215,12 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		}
 
 		if (stack.getItem() == ItemInit.lethean_dew.get()) {
-			msg(player, "The stored enzymes are already bound into the loom.", ChatFormatting.GRAY, true);
+			msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.the_stored_enzymes_are_already_bound"), ChatFormatting.GRAY, true);
 			return false;
 		}
 
 		if (ritualBloodCharged > 0 || isWeaving()) {
-			msg(player, "Cancel the paid weave before changing its catalysts.", ChatFormatting.YELLOW, true);
+			msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.cancel_the_paid_weave_before_changing"), ChatFormatting.YELLOW, true);
 			return false;
 		}
 		placeCatalyst(player, stack, hand);
@@ -261,13 +262,13 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		// Each enzyme dissolves into three spans of thread; the vial takes only whole enzymes.
 		int room = (ENZYME_CAPACITY - current) / EngramWeaveRules.SPANS_PER_ENZYME;
 		if (room <= 0) {
-			msg(player, tend.name() + " enzyme reservoir is full.", ChatFormatting.DARK_RED, true);
+			msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.enzyme_reservoir_is_full", BloodManipulation.tendencyName(tend)), ChatFormatting.DARK_RED, true);
 			return;
 		}
 		int amount = bulk ? Math.min(room, stack.getCount()) : 1;
 		storedEnzymes.put(tend, current + amount * EngramWeaveRules.SPANS_PER_ENZYME);
 		stack.shrink(amount);
-		msg(player, tend.name() + " thread: " + storedEnzymes.get(tend) + "/" + ENZYME_CAPACITY + " spans",
+		msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.thread_spans", BloodManipulation.tendencyName(tend), storedEnzymes.get(tend), ENZYME_CAPACITY),
 				ChatFormatting.DARK_PURPLE, true);
 		refreshRecipe();
 		BlockEntitySync.markAndSync(this);
@@ -525,7 +526,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 			return false;
 		}
 		craftingPhase = PHASE_AWAITING_BLOOD;
-		msg(player, "The loom darkens, waiting for blood.", ChatFormatting.DARK_RED, true);
+		msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.the_loom_darkens_waiting_for_blood"), ChatFormatting.DARK_RED, true);
 		BlockEntitySync.markAndSync(this);
 		return true;
 	}
@@ -560,16 +561,16 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 			if (lacking >= 0) {
 				EnumBloodTendency tend = EnumBloodTendency.values()[lacking];
 				int missing = board.reference()[lacking] - storedEnzymes.getOrDefault(tend, 0);
-				msg(player, Component.literal("The engram this memory recalls in you needs " + missing + " more spans of ")
-						.append(EnumBloodTendency.getRepEnzyme(tend).getDescription())
-						.append(" thread (each enzyme spins three)."), ChatFormatting.YELLOW, true);
+				msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.the_engram_this_memory_recalls_in",
+						missing,
+						EnumBloodTendency.getRepEnzyme(tend).getDescription()), ChatFormatting.YELLOW, true);
 				return false;
 			}
 		}
 
 		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player);
 		if (playerVolume == null || !playerVolume.isActive() || playerVolume.getBloodVolume() <= 0) {
-			msg(player, "No blood answers the loom.", ChatFormatting.DARK_RED, true);
+			msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.no_blood_answers_the_loom"), ChatFormatting.DARK_RED, true);
 			return false;
 		}
 
@@ -593,7 +594,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		if (ritualBloodCharged >= curRecipe.getBloodCost() - 0.001D) {
 			beginWeave(player);
 		} else if (level.getGameTime() % 10L == 0L) {
-			msg(player, "Blood charge: " + (int) ritualBloodCharged + "/" + (int) curRecipe.getBloodCost(),
+			msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.blood_charge", (int) ritualBloodCharged, (int) curRecipe.getBloodCost()),
 					ChatFormatting.DARK_RED, true);
 		}
 		BlockEntitySync.markAndSync(this);
@@ -603,7 +604,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 	public void cancelRitual(@Nullable Player player) {
 		if (!isCrafting() || refuseWhileRiteHeld(player)) return;
 		if (player != null) {
-			msg(player, "The engram withdraws into the loom. Spent blood is lost; its thread returns to the vials.", ChatFormatting.RED, true);
+			msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.the_engram_withdraws_into_the_loom"), ChatFormatting.RED, true);
 		}
 		playSound(SoundEvents.BEACON_DEACTIVATE, 0.7f, 0.8f);
 		clearActiveRitual(true);
@@ -623,7 +624,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		EngramBoard board = EngramBoard.load(engramFor(player).save());
 		dressIntrusions(board, player.getUUID());
 		engram.start(board);
-		msg(player, "The engram unfurls around the loom. Listen to each fragment with a Living Staff, then thread it home.",
+		msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.the_engram_unfurls_around_the_loom"),
 				ChatFormatting.DARK_PURPLE, true);
 		playSound(SoundEvents.END_PORTAL_FRAME_FILL, 0.8f, 0.55f);
 		if (level instanceof ServerLevel serverLevel)
@@ -745,9 +746,8 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		}
 		if (result.step() == EngramWeaveRules.Step.NO_STOCK && engram.serial() != serial) {
 			int colour = EngramWeaveRules.payColour(engram.board(), result.fragment());
-			msg(player, Component.literal("The vial is out of thread. Add more ")
-					.append(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[Math.max(0, colour)]).getDescription())
-					.append(" to the loom, or find a shorter way."), ChatFormatting.YELLOW, true);
+			msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.the_vial_is_out_of_thread",
+					EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[Math.max(0, colour)]).getDescription()), ChatFormatting.YELLOW, true);
 		}
 		if (result.changed() || engram.serial() != serial || press) BlockEntitySync.markAndSync(this);
 		return result.step();
@@ -788,7 +788,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 				case PRESSURE -> addPressure(server, player);
 				case BITE -> {
 					com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity.spawnIntrusion(server, this, tend, at, getWeaveRank());
-					msg(player, "A failed Harbinger's memory tears loose from the engram.", ChatFormatting.DARK_RED, true);
+					msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.a_failed_harbinger_s_memory_tears"), ChatFormatting.DARK_RED, true);
 				}
 				case NONE -> {
 				}
@@ -810,8 +810,8 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 				BloodAccounting.pay(serverPlayer,
 						Math.min(volume.getBloodVolume(), unpaid * EngramWeaveRules.BURN_BLOOD_PER_SPAN), BURNT_SPANS);
 		}
-		msg(player, "The false memory burns " + spans + " spans of " + tend.name().toLowerCase(java.util.Locale.ROOT)
-				+ " thread" + (unpaid > 0 ? ", and takes the rest from your blood." : "."), ChatFormatting.RED, true);
+		msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.the_false_memory_burns_spans_of", spans, BloodManipulation.tendencyName(tend), (unpaid > 0 ? Component.translatable("message.hemomancy.somatic_loom_block_entity.and_takes_the_rest_from_your_blood")
+				: Component.literal("."))), ChatFormatting.RED, true);
 	}
 
 	/** Summa and Magister mistakes build fungal pressure; when it boils over the engram's flesh scars or recalls a lie. */
@@ -819,7 +819,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		EngramBoard board = engram.board();
 		board.setPressure(board.pressure() + 1);
 		if (board.pressure() < EngramWeaveRules.PRESSURE_LIMIT) {
-			msg(player, "Fungal pressure gathers in the engram (" + board.pressure() + "/" + EngramWeaveRules.PRESSURE_LIMIT + ").",
+			msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.fungal_pressure_gathers_in_the_engram", board.pressure(), EngramWeaveRules.PRESSURE_LIMIT),
 					ChatFormatting.DARK_GREEN, true);
 			return;
 		}
@@ -835,7 +835,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		if (intrusion && weaver != null && EngramRecollections.get(server).bloodlineRemembers(server, weaver, selectedRecipeId))
 			board.premarkIntrusions();
 		engram.logPressure(node, intrusion);
-		msg(player, intrusion ? "The pressure boils over: another false memory surfaces." : "The pressure boils over: the engram's flesh scars.",
+		msg(player, (intrusion ? Component.translatable("message.hemomancy.somatic_loom_block_entity.the_pressure_boils_over_another_false") : Component.translatable("message.hemomancy.somatic_loom_block_entity.the_pressure_boils_over_the_engram")),
 				ChatFormatting.DARK_GREEN, true);
 	}
 
@@ -1018,7 +1018,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 		MemoryWeavingRecipe completedRecipe = curRecipe;
 		EnumManipulationRank completedRank = getWeaveRank();
 		if (completedRecipe == null || !catalystsMatch(completedRecipe)) {
-			msg(player, "The ritual unravels. Configuration changed.", ChatFormatting.RED, true);
+			msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.the_ritual_unravels_configuration_changed"), ChatFormatting.RED, true);
 			clearActiveRitual(true);
 			BlockEntitySync.markAndSync(this);
 			return;
@@ -1030,7 +1030,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		spawnMemoryResult(result);
 
-		msg(player, "The memory crystallizes.", ChatFormatting.DARK_PURPLE, false);
+		msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.the_memory_crystallizes"), ChatFormatting.DARK_PURPLE, false);
 		playSound(SoundEvents.END_PORTAL_SPAWN, 0.5f, 1.5f);
 		if (level instanceof ServerLevel server && weaver != null && !selectedRecipeId.isEmpty())
 			EngramRecollections.get(server).record(weaver, selectedRecipeId);
@@ -1096,25 +1096,26 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	public void provideTendencyFeedback(@Nullable Player player) {
 		if (recoveryRequired) {
-			msg(player, "The saved recipe is missing or changed. The weave is paused. Restore its recipe, or crouch-use to cancel; spent blood and enzymes will not return. Remaining inputs stay here.", ChatFormatting.RED, false);
+			msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.the_saved_recipe_is_missing_or"), ChatFormatting.RED, false);
 			return;
 		}
-		if (contents.get(0).isEmpty()) { msg(player, "Insert a Hematic Memory.", ChatFormatting.GRAY, true); return; }
+		if (contents.get(0).isEmpty()) { msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.insert_a_hematic_memory"), ChatFormatting.GRAY, true); return; }
 		MemoryWeavingRecipe held = curRecipe == null ? getPreviewRecipe() : null;
 		if (held != null && !stageAllows(held)) {
 			msg(player, tierRequired(held), ChatFormatting.YELLOW, true);
 			return;
 		}
 		if (curRecipe == null) {
-			msg(player, recipeChoices().isEmpty() ? "Add catalysts for a known recipe." : "Use the loom with an empty hand to choose an output before paying blood.", ChatFormatting.YELLOW, false);
+			msg(player, (recipeChoices().isEmpty() ? Component.translatable("message.hemomancy.somatic_loom_block_entity.add_catalysts_for_a_known_recipe") : Component.translatable("message.hemomancy.somatic_loom_block_entity.use_the_loom_with_an_empty")), ChatFormatting.YELLOW, false);
 			return;
 		}
 		if (isWeaving()) {
-			msg(player, "With a Living Staff in hand, rest your gaze on a fragment to hear its memory, then press it and sweep its thread along the star's lines into the loom. A colour never crosses another; it may ply into its own. Crouch-use the staff on a lane to cut it back; crouch-use the loom to cancel (the blood is lost, the thread returns).", ChatFormatting.DARK_PURPLE, false);
+			msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.with_a_living_staff_in_hand"), ChatFormatting.DARK_PURPLE, false);
 			return;
 		}
-		msg(player, Component.literal("Selected: ").append(curRecipe.getResultItem(level.registryAccess()).getHoverName())
-				.append(" - " + (int) curRecipe.getBloodCost() + " blood. Empty-hand use cycles outputs before payment."), ChatFormatting.DARK_PURPLE, false);
+		msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.selected_blood_empty_hand_use_cycles",
+				curRecipe.getResultItem(level.registryAccess()).getHoverName(),
+				(int) curRecipe.getBloodCost()), ChatFormatting.DARK_PURPLE, false);
 		// The payer's own engram decides the price: say exactly what it asks before any blood is taken.
 		int[] reference = player != null && !level.isClientSide ? engramFor(player).reference() : null;
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
@@ -1122,22 +1123,28 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 			if (needed <= 0) continue;
 			int spans = reference != null ? reference[tend.ordinal()] : minimumSpans(curRecipe, tend);
 			int stored = storedEnzymes.getOrDefault(tend, 0);
-			msg(player, Component.literal(needed + (needed == 1 ? " fragment of " : " fragments of ")).append(EnumBloodTendency.getRepEnzyme(tend).getDescription())
-					.append(": your engram needs " + spans + " spans (" + stored + " stored" + (stored < spans ? ", "
-							+ Math.ceilDiv(spans - stored, EngramWeaveRules.SPANS_PER_ENZYME) + " more enzyme" : "") + ")."),
+			msg(player, Component.translatable(needed == 1
+					? "message.hemomancy.somatic_loom_block_entity.engram_needs_one_fragment"
+					: "message.hemomancy.somatic_loom_block_entity.engram_needs_fragments",
+					needed,
+					EnumBloodTendency.getRepEnzyme(tend).getDescription(),
+					spans,
+					stored,
+					(stored < spans ? Component.translatable("message.hemomancy.somatic_loom_block_entity.more_enzyme",
+							Math.ceilDiv(spans - stored, EngramWeaveRules.SPANS_PER_ENZYME)) : Component.empty())),
 					stored < spans ? ChatFormatting.YELLOW : ChatFormatting.GRAY, false);
 		}
-		msg(player, "Have a Living Staff ready: the paid blood unfurls the engram around the loom, and the staff threads its fragments home.", ChatFormatting.GRAY, false);
+		msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.have_a_living_staff_ready_the"), ChatFormatting.GRAY, false);
 		if (player instanceof ServerPlayer serverPlayer && curRecipe.getResultItem(level.registryAccess()).getItem() instanceof BloodMemoryItem memory) {
 			var check = KnownManipulationGrantHelper.checkMemoryGrant(serverPlayer, memory.getManip(), memory);
-			String requirement = switch (check.status()) {
-				case MASTERY_TOO_LOW -> "Requires " + check.familyId().replace('_', ' ') + " mastery " + check.requiredMastery() + " (current " + check.currentMastery() + ").";
-				case RANK_TOO_LOW -> "Requires Degree " + check.requiredDegree() + ".";
-				case GRANTED, GRANTED_EQUIPPED -> "You can learn this memory now.";
-				case ALREADY_KNOWN -> "You already know this memory.";
-				default -> "You cannot learn this memory in your current state.";
+			Component requirement = switch (check.status()) {
+				case MASTERY_TOO_LOW -> HemoText.translatable("message.hemomancy.somatic_loom_block_entity.requires_mastery", check.familyId().replace('_', ' '), check.requiredMastery(), check.currentMastery());
+				case RANK_TOO_LOW -> HemoText.translatable("message.hemomancy.somatic_loom_block_entity.requires_degree", check.requiredDegree());
+				case GRANTED, GRANTED_EQUIPPED -> Component.translatable("message.hemomancy.somatic_loom_block_entity.can_learn_memory");
+				case ALREADY_KNOWN -> Component.translatable("message.hemomancy.somatic_loom_block_entity.already_know_memory");
+				default -> Component.translatable("message.hemomancy.somatic_loom_block_entity.cannot_learn_memory");
 			};
-			msg(player, requirement + " Choosing a locked memory crafts it for future use; the first lesson requires usable Blood Shot.", ChatFormatting.YELLOW, false);
+			msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.choosing_a_locked_memory_crafts_it", requirement), ChatFormatting.YELLOW, false);
 		}
 	}
 
@@ -1160,9 +1167,11 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 	}
 
 	private static Component missingEnzymeMessage(Component enzymeName, int stored, int needed) {
-		return Component.literal("Missing " + (needed - stored) + " × ")
-				.append(enzymeName)
-				.append(Component.literal(" (" + stored + "/" + needed + " stored)."));
+		return HemoText.translatable("message.hemomancy.somatic_loom_block_entity.missing_stored",
+				(needed - stored),
+				enzymeName,
+				stored,
+				needed);
 	}
 
 	private List<ItemStack> getCatalysts() {
@@ -1182,10 +1191,6 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 			}
 		}
 		return -1;
-	}
-
-	private void msg(@Nullable Player player, String text, ChatFormatting color, boolean actionBar) {
-		msg(player, Component.literal(text), color, actionBar);
 	}
 
 	private void msg(@Nullable Player player, Component text, ChatFormatting color, boolean actionBar) {
@@ -1263,7 +1268,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	private boolean refuseWhileRiteHeld(@Nullable Player player) {
 		if (!riteLocked) return false;
-		msg(player, "A rite holds the loom still until it ends.", ChatFormatting.GRAY, true);
+		msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.a_rite_holds_the_loom_still"), ChatFormatting.GRAY, true);
 		return true;
 	}
 

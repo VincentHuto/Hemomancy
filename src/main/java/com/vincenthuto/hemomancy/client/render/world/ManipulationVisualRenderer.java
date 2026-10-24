@@ -680,8 +680,9 @@ public final class ManipulationVisualRenderer {
             if(!tithe && p.form()!=ManipulationVisuals.Form.HOUR)continue;
             if(cue.life.retiring())continue;
             long seconds=(cue.life.remaining(world.getGameTime())+19)/20;
-            String text=tithe?"Tithe: "+p.count()+" mL reserve | "+Math.round(p.radius())+" mL due | "+seconds+"s"
-                    :"Endless Hour: "+String.format(java.util.Locale.ROOT,"%.1f",p.radius())+" HP deferred | "+seconds+"s";
+            net.minecraft.network.chat.Component text=tithe
+                    ?net.minecraft.network.chat.Component.translatable("gui.hemomancy.manipulation_visual_renderer.tithe",p.count(),Math.round(p.radius()),seconds)
+                    :net.minecraft.network.chat.Component.translatable("gui.hemomancy.manipulation_visual_renderer.endless_hour",String.format(java.util.Locale.ROOT,"%.1f",p.radius()),seconds);
             int x=(graphics.guiWidth()-mc.font.width(text))/2;
             graphics.fill(x-4,y-2,x+mc.font.width(text)+4,y+11,0xBB170A16);
             graphics.drawString(mc.font,text,x,y,seconds<=5?0xFF6878:0xEAC3B6);y-=15;

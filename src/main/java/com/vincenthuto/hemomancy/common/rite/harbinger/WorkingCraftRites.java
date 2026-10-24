@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteMediumRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -147,8 +148,7 @@ public final class WorkingCraftRites {
 		ServerPlayer caster = level.getServer().getPlayerList().getPlayer(rite.getPlayerUUID());
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		if (caster != null && recipe != null) HarbingerCardinalRiteEvents.enterFinale(level, caster, rite, recipe);
-		feeder.displayClientMessage(Component.literal("The Working floor has drunk its fill. The offerings are drawn in.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
+		feeder.displayClientMessage(Component.translatable("message.hemomancy.working_craft_rites.the_working_floor_has_drunk_its").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
 	}
 
 	/**
@@ -171,16 +171,13 @@ public final class WorkingCraftRites {
 			return true;
 		}
 		if (!subjectIntact(level, rite)) {
-			caster.displayClientMessage(Component.literal("The rite falls silent: its structure was disturbed.")
-					.withStyle(ChatFormatting.DARK_RED), false);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.working_craft_rites.the_rite_falls_silent_its_structure").withStyle(ChatFormatting.DARK_RED), false);
 			return false;
 		}
 		BlockPos center = rite.getCenterPos();
 		if (!(level.getBlockEntity(center) instanceof CardinalFocusBlockEntity focus)
 				|| !CardinalRiteMediumRules.finish(focus, recipe.getMedium(), recipe.shouldConsumeMediumOnSuccess())) {
-			caster.displayClientMessage(Component.literal(
-					"The rite falls silent: its medium is no longer seated in the Cardinal Focus.")
-					.withStyle(ChatFormatting.DARK_RED), false);
+			caster.displayClientMessage(Component.translatable("message.hemomancy.working_craft_rites.the_rite_falls_silent_its_medium").withStyle(ChatFormatting.DARK_RED), false);
 			return false;
 		}
 		// Witnessed in the chunk that loses the structure, so stale rite data cannot settle it again.
@@ -208,10 +205,9 @@ public final class WorkingCraftRites {
 		}
 		CardinalRiteBeats.sound(level, center, SoundInit.RITE_SUBJECT_SINK, 1.0F, 0.9F);
 		CardinalRiteBeats.sound(level, center, SoundInit.RITE_COMPLETE, 0.8F, 1.0F);
-		caster.displayClientMessage(Component.literal("The Working floor takes the structure. ")
-				.append(result.isEmpty() ? Component.literal("The rite is complete.") : result.getHoverName().copy()
-						.append(Component.literal(" condenses on the Focus.")))
-				.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), false);
+		caster.displayClientMessage(Component.translatable("message.hemomancy.working_craft_rites.the_working_floor_takes_the_structure",
+				result.isEmpty() ? Component.translatable("message.hemomancy.working_craft_rites.the_rite_is_complete") : result.getHoverName().copy()
+						.append(Component.translatable("message.hemomancy.working_craft_rites.condenses_on_the_focus"))).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), false);
 		SkillPointGainEvents.onRiteCompleted(caster);
 		LiberKnowledgeHelper.unlockForRite(caster, rite.getRecipeId().getPath());
 		return true;
@@ -250,8 +246,7 @@ public final class WorkingCraftRites {
 		// A structure already on a Working floor's rite is not a frame to start; take the projection quietly.
 		for (ActiveCardinalRite rite : CardinalRiteSavedData.get(level).getActiveRites().values()) {
 			if (isRite(rite) && !rite.isEnded() && subjectPositions(rite).contains(pos)) {
-				player.displayClientMessage(Component.literal("A Working floor's rite already holds this structure.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.working_craft_rites.a_working_floor_s_rite_already").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 				return true;
 			}
 		}
@@ -280,13 +275,11 @@ public final class WorkingCraftRites {
 		ItemStack[] media = recipe.getMedium().getItems();
 		String floor = recipe.getFloorId() == null ? "Working" : recipe.getFloorId().getPath();
 		String tier = floor.substring(floor.lastIndexOf('_') + 1);
-		return Component.literal("A frame for the ")
-				.append(recipe.getResult().getHoverName().copy().withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" (" + RecipeDegreeGates.requirementLabel(recipe) + ")"))
-				.append(Component.literal(". Raise it beside a Cardinal Focus on a " + tier + " Working floor, seat "))
-				.append(media.length == 0 ? Component.literal("its medium") : media[0].getHoverName().copy())
-				.append(Component.literal(" in the Focus, light its braziers and plant your Living Staff."))
-				.withStyle(ChatFormatting.DARK_RED);
+		return HemoText.translatable("message.hemomancy.working_craft_rites.a_frame_for_the_raise_it",
+				recipe.getResult().getHoverName().copy().withStyle(ChatFormatting.GOLD),
+				RecipeDegreeGates.requirementLabel(recipe),
+				tier,
+				media.length == 0 ? Component.translatable("message.hemomancy.working_craft_rites.its_medium") : media[0].getHoverName().copy()).withStyle(ChatFormatting.DARK_RED);
 	}
 
 	public static void clear() {

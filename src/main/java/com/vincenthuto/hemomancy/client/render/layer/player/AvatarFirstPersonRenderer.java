@@ -23,8 +23,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 public final class AvatarFirstPersonRenderer {
-	private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
-			Hemomancy.MOD_ID, "textures/models/armor/avatar_glow.png");
+	private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/models/armor/avatar_glow.png");
 	private static BloodAvatarModel<AbstractClientPlayer> model;
 
 	private AvatarFirstPersonRenderer() {

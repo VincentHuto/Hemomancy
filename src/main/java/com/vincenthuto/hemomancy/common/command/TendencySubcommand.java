@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Blo
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -60,9 +61,9 @@ final class TendencySubcommand {
 
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" Blood Tendencies:").withStyle(ChatFormatting.GRAY)), false);
-		source.sendSuccess(() -> Component.literal("  Total: ")
-				.append(Component.literal(String.format("%.2f", total)).withStyle(ChatFormatting.AQUA)), false);
+				.append(Component.translatable("commands.hemomancy.tendency.blood_tendencies").withStyle(ChatFormatting.GRAY)), false);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.tendency.total",
+				Component.literal(String.format("%.2f", total)).withStyle(ChatFormatting.AQUA)), false);
 
 		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
 			float value = bloodTendency.getAlignmentByTendency(tendency);
@@ -80,18 +81,18 @@ final class TendencySubcommand {
 
 	private static int resetTendency(CommandSourceStack source, ServerPlayer player) {
 		setAllTendencies(player, 0.0f);
-		source.sendSuccess(() -> Component.literal("Reset ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" blood tendencies to 0").withStyle(ChatFormatting.GREEN)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.tendency.reset",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.translatable("commands.hemomancy.tendency.blood_tendencies_to_0").withStyle(ChatFormatting.GREEN)),
 				true);
 		return 1;
 	}
 
 	private static int maxTendency(CommandSourceStack source, ServerPlayer player) {
 		setAllTendencies(player, 100.0f);
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" blood tendencies to 100").withStyle(ChatFormatting.GREEN)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.tendency.set",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.translatable("commands.hemomancy.tendency.blood_tendencies_to_100").withStyle(ChatFormatting.GREEN)),
 				true);
 		return 1;
 	}
@@ -99,7 +100,7 @@ final class TendencySubcommand {
 	private static int setTendency(CommandSourceStack source, ServerPlayer player, String tendencyName, float value) {
 		EnumBloodTendency tendency = parseBloodTendency(tendencyName);
 		if (tendency == null) {
-			source.sendFailure(Component.literal("Unknown tendency: " + tendencyName + ". Valid: " + getValidTendencyNames()));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.tendency.unknown_tendency_valid", tendencyName, getValidTendencyNames()));
 			return 0;
 		}
 
@@ -107,12 +108,10 @@ final class TendencySubcommand {
 		bloodTendency.setTendencyAlignment(tendency, value);
 		BloodTendencyEvents.syncTendency(player, bloodTendency);
 
-		source.sendSuccess(() -> Component.literal("Set ")
-				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" "))
-				.append(Component.literal(tendency.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED))
-				.append(Component.literal(" tendency to "))
-				.append(Component.literal(String.format("%.2f", bloodTendency.getAlignmentByTendency(tendency)))
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.tendency.set_tendency_to",
+				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
+				Component.literal(tendency.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.DARK_RED),
+				Component.literal(String.format("%.2f", bloodTendency.getAlignmentByTendency(tendency)))
 						.withStyle(ChatFormatting.AQUA)),
 				true);
 		return 1;

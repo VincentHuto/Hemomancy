@@ -10,12 +10,11 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
 
 // Authored by tools/circus/build_veinwing_vulture.py; regenerate the model, atlas and BBModel together.
 public class VeinwingVultureModel extends EntityModel<VeinwingVultureEntity> {
 	public static final ModelLayerLocation LAYER_LOCATION =
-			new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "veinwing_vulture"), "main");
+			new ModelLayerLocation(Hemomancy.rloc("veinwing_vulture"), "main");
 
 	private final ModelPart root;
 	private final ModelPart head;

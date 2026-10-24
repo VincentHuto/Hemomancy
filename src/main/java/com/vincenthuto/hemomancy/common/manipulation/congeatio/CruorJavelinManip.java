@@ -39,7 +39,7 @@ public class CruorJavelinManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (target(player, player.level()) == null) {
-			player.displayClientMessage(Component.literal("No body in line for the javelin."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.cruor_javelin_manip.no_body_in_line_for_the"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

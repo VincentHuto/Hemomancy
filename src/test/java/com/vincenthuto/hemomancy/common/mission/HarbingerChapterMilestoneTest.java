@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.mission;
 
 import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterMilestone;
+import com.vincenthuto.hemomancy.support.EnglishText;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumSet;
@@ -16,7 +17,7 @@ class HarbingerChapterMilestoneTest {
 		assertEquals(HarbingerChapterMilestone.FIRST_DISTILLATION,
 				HarbingerChapterMilestone.requiredForTargetDegree(3));
 		assertEquals("The First Separation",
-				HarbingerChapterMilestone.requiredForTargetDegree(3).chapterName());
+				EnglishText.render(HarbingerChapterMilestone.requiredForTargetDegree(3).chapterName()));
 		assertEquals(HarbingerChapterMilestone.WOVEN_VESSEL,
 				HarbingerChapterMilestone.requiredForTargetDegree(4));
 		assertEquals(HarbingerChapterMilestone.VEIN_MASON,

@@ -163,7 +163,7 @@ public class SSCScreen extends Screen {
 
         // ── Drudge rows ───────────────────────────────────────────────────────
         if (drudges.isEmpty()) {
-            String none = "No constructs are bound to this station.";
+            Component none = Component.translatable("screen.hemomancy.ssc_screen.no_constructs");
             int nw = font.width(none);
             gfx.drawString(font, none, px + (PANEL_W - nw) / 2,
                     py + HEADER_H + FOOTER_PAD, TEXT_DIM, false);
@@ -225,8 +225,8 @@ public class SSCScreen extends Screen {
         // Text label to the right of the bar
         int labelX = barX + barW + 8;
         int midY   = barY + barH / 2 - 8;
-        gfx.drawString(font, "SSC Blood", labelX, midY,     TEXT_DIM,   false);
-        String vol = (int) sscBlood + " / " + (int) sscMaxBlood + " mL";
+        gfx.drawString(font, Component.translatable("screen.hemomancy.ssc_screen.blood_label"), labelX, midY,     TEXT_DIM,   false);
+        Component vol = Component.translatable("screen.hemomancy.ssc_screen.blood_volume", (int) sscBlood, (int) sscMaxBlood);
         gfx.drawString(font, vol,          labelX, midY + 10, TEXT_BRIGHT, false);
     }
 
@@ -250,28 +250,28 @@ public class SSCScreen extends Screen {
         gfx.drawString(font, "#" + (index + 1), textX, textY, TEXT_DIM, false);
 
         // Name: custom name (from name tag) takes priority over memory name
-        String displayName;
+        Component displayName;
         if (!d.customName().isEmpty()) {
-            displayName = "§e" + d.customName();
+            displayName = Component.literal("§e" + d.customName());
         } else if (!d.memoryName().isEmpty()) {
-            displayName = "§7" + d.memoryName();
+            displayName = Component.literal("§7" + d.memoryName());
         } else {
-            displayName = "§8none";
+            displayName = Component.translatable("screen.hemomancy.ssc_screen.no_memory");
         }
-        gfx.drawString(font, Component.literal(displayName), textX + 22, textY, 0xFFFFFFFF, false);
+        gfx.drawString(font, displayName, textX + 22, textY, 0xFFFFFFFF, false);
 
         // Mode badge (right-aligned relative to bar start)
         int modeColor;
-        String modeStr;
+        Component modeStr;
         if (d.rogue()) {
             modeColor = TEXT_ROGUE;
-            modeStr = "ROGUE";
+            modeStr = Component.translatable("screen.hemomancy.ssc_screen.mode_rogue");
         } else if (d.passive()) {
             modeColor = TEXT_PASSIVE;
-            modeStr = "Passive";
+            modeStr = Component.translatable("screen.hemomancy.ssc_screen.mode_passive");
         } else {
             modeColor = TEXT_CMD;
-            modeStr = "Commanded";
+            modeStr = Component.translatable("screen.hemomancy.ssc_screen.mode_commanded");
         }
         int mw = font.width(modeStr);
         gfx.drawString(font, modeStr, px + PANEL_W - 14 - mw, textY, modeColor, false);
@@ -294,7 +294,7 @@ public class SSCScreen extends Screen {
                     (0xFF << 24) | (r << 16) | (green << 8) | b);
         }
         // Charge text — centered on the bar
-        String chargeText = (int) d.charge() + "/" + (int) d.maxCharge() + " mL";
+        Component chargeText = Component.translatable("screen.hemomancy.ssc_screen.charge", (int) d.charge(), (int) d.maxCharge());
         int ctw = font.width(chargeText);
         gfx.drawString(font, chargeText, cBarX + (cBarW - ctw) / 2, cBarY - 1, TEXT_DIM, false);
     }

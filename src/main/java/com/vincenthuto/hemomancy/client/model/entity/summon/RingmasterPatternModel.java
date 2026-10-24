@@ -8,12 +8,11 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
 
 // Authored by tools/circus/build_ringmaster_pattern.py; regenerate the model, atlas and BBModel together.
 public class RingmasterPatternModel extends HumanoidModel<RingmasterPatternEntity> {
 	public static final ModelLayerLocation LAYER_LOCATION =
-			new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "ringmaster_pattern"), "main");
+			new ModelLayerLocation(Hemomancy.rloc("ringmaster_pattern"), "main");
 	private final ModelPart leftCoattail;
 	private final ModelPart rightCoattail;
 

@@ -56,7 +56,7 @@ public class OsseousBloomManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (targets(player, player.level()).isEmpty()) {
-			player.displayClientMessage(Component.literal("No vessels within the bloom's reach."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.osseous_bloom_manip.no_vessels_within_the_bloom_s"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

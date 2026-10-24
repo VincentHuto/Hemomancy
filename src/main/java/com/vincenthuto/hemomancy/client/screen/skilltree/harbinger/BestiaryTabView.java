@@ -109,9 +109,9 @@ public final class BestiaryTabView {
 			BestiaryTabState state) {
 		gfx.drawString(ctx.font(), Component.translatable("bestiary.hemomancy.title")
 				.withStyle(s -> s.withColor(TAB_COLOR).withBold(true)), x, y, 0, false);
-		String counts = state.recordedSpecimenCount + "/" + SpecimenBestiaryDefinitions.totalResearchSpecimens()
-				+ " specimens  |  " + state.recordedMorphlingLayerCount + "/"
-				+ SpecimenBestiaryDefinitions.orderedMorphlingEntries().size() + " morphling strains";
+		Component counts = Component.translatable("screen.hemomancy.bestiary_tab_view.counts",
+				state.recordedSpecimenCount, SpecimenBestiaryDefinitions.totalResearchSpecimens(),
+				state.recordedMorphlingLayerCount, SpecimenBestiaryDefinitions.orderedMorphlingEntries().size());
 		gfx.drawString(ctx.font(), counts, x, y + 14, 0xFF9DAA9D, false);
 		gfx.fill(x, y + 30, x + w, y + 31, 0xFF24442D);
 	}
@@ -230,7 +230,7 @@ public final class BestiaryTabView {
 			gfx.disableScissor();
 		}
 		if (bounds.contains(mouseX, mouseY)) {
-			drawPreviewHint(gfx, ctx, "Rotate | Zoom",
+			drawPreviewHint(gfx, ctx, Component.translatable("screen.hemomancy.bestiary_tab_view.rotate_zoom"),
 					bounds.x() + 4, bounds.bottom() - 13, bounds.w() - 8);
 		}
 
@@ -327,7 +327,7 @@ public final class BestiaryTabView {
 		return Math.max(0.5F, availableWidth / (float) textWidth);
 	}
 
-	private static void drawPreviewHint(GuiGraphics gfx, ProgressScreenContext ctx, String text, int x, int y,
+	private static void drawPreviewHint(GuiGraphics gfx, ProgressScreenContext ctx, Component text, int x, int y,
 			int availableWidth) {
 		int textWidth = ctx.font().width(text);
 		float scale = previewHintScale(textWidth, availableWidth);

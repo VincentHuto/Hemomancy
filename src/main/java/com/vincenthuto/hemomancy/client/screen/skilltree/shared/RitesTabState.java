@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -112,13 +113,15 @@ public class RitesTabState {
 		return HLTextUtils.toProperCase(path.replace("_", " "));
 	}
 
-	public String sidebarTitle() {
-		return unstainedStages ? "Rites by Stage" : "Rite Degrees";
+	public Component sidebarTitle() {
+		return Component.translatable(unstainedStages ? "screen.hemomancy.rites_tab_state.rites_by_stage"
+				: "screen.hemomancy.rites_tab_state.rite_degrees");
 	}
 
-	public String tierLabel(int level) {
+	public Component tierLabel(int level) {
 		if (unstainedStages) return RecipeDegreeGates.unstainedStageLabel(level);
-		return level == 0 ? "No Degree" : "Degree " + level;
+		return level == 0 ? Component.translatable("message.hemomancy.recipe_degree_gates.no_degree")
+				: Component.translatable("message.hemomancy.recipe_degree_gates.degree", level);
 	}
 
 	public int recipeRowHeight(CardinalRiteRecipe recipe) {

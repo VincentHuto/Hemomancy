@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonBodies;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -56,7 +57,7 @@ public final class SummonsTabView {
 		drawDegreeSidebar(gfx, ctx, state, mouseX, mouseY);
 
 		if (state.selectedDefinition().isEmpty()) {
-			gfx.drawCenteredString(ctx.font(), "Select a bound construct",
+			gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.summons_tab_view.select_a_bound_construct"),
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF666666);
 			gfx.pose().popPose();
 			return;
@@ -80,8 +81,7 @@ public final class SummonsTabView {
 		int sw = ProgressScreenContext.TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
-		gfx.drawString(ctx.font(), Component.literal("Bound Summons")
-				.withStyle(s -> s.withColor(TAB_COLOR).withBold(true)), sx + 2, sy, 0);
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.summons_tab_view.bound_summons").withStyle(s -> s.withColor(TAB_COLOR).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
 
 		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF441A24);
@@ -110,7 +110,7 @@ public final class SummonsTabView {
 							: selected ? HarbingerChromeRenderer.State.ACTIVE
 							: hovered ? HarbingerChromeRenderer.State.HOVERED : HarbingerChromeRenderer.State.IDLE);
 
-			String label = "Degree " + degree + " (" + definitions.size() + ")";
+			Component label = Component.translatable("screen.hemomancy.summons_tab_view.degree_count", degree, definitions.size());
 			int labelColor = locked ? 0xFF555555 : (selected ? 0xFFFFAAB8 : 0xFFAA8A92);
 			gfx.drawString(ctx.font(), label, sx + 4, sy + (rowH - 8) / 2, labelColor, false);
 
@@ -178,7 +178,7 @@ public final class SummonsTabView {
 		int entityTop = y + 34;
 		int entityBottom = y + h - 30;
 		if (!degreeOk) {
-			gfx.drawCenteredString(ctx.font(), "Rite-shape withheld",
+			gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.summons_tab_view.rite_shape_withheld"),
 					x + w / 2, y + h / 2 - 4, 0xFF555555);
 			ScreenDrawUtils.renderScaledItem(gfx, primaryOffering(definition),
 					x + w / 2, y + h / 2 + 20, 14);
@@ -187,7 +187,7 @@ public final class SummonsTabView {
 		}
 
 		if (isOverPreview(ctx, mouseX, mouseY)) {
-			gfx.drawCenteredString(ctx.font(), "Drag to turn",
+			gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.summons_tab_view.drag_to_turn"),
 					x + w / 2, y + h - 18, 0xFF996677);
 		}
 	}
@@ -195,18 +195,18 @@ public final class SummonsTabView {
 	private static Component statusComponent(PuppeteerSummonDefinition definition, boolean degreeOk,
 											 boolean recipeUnlocked, boolean known) {
 		if (!degreeOk) {
-			return Component.literal("Locked: Degree " + definition.requiredDegree()).withStyle(ChatFormatting.DARK_GRAY);
+			return HemoText.translatable("screen.hemomancy.summons_tab_view.locked_degree", definition.requiredDegree()).withStyle(ChatFormatting.DARK_GRAY);
 		}
 		if (known) {
-			return Component.literal("Unlocked").withStyle(ChatFormatting.DARK_RED);
+			return Component.translatable("screen.hemomancy.summons_tab_view.unlocked").withStyle(ChatFormatting.DARK_RED);
 		}
 		if (grantedBySuccession(definition)) {
-			return Component.literal("Succession required").withStyle(ChatFormatting.GRAY);
+			return Component.translatable("screen.hemomancy.summons_tab_view.succession_required").withStyle(ChatFormatting.GRAY);
 		}
 		if (!recipeUnlocked) {
-			return Component.literal("Recipe locked").withStyle(ChatFormatting.GRAY);
+			return Component.translatable("screen.hemomancy.summons_tab_view.recipe_locked").withStyle(ChatFormatting.GRAY);
 		}
-		return Component.literal("Trial required").withStyle(ChatFormatting.GRAY);
+		return Component.translatable("screen.hemomancy.summons_tab_view.trial_required").withStyle(ChatFormatting.GRAY);
 	}
 
 	/** The Ringmaster Pattern has no trial rite: the Circus Succession finale binds it. */
@@ -214,8 +214,9 @@ public final class SummonsTabView {
 		return PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(definition.name());
 	}
 
-	static String unlockHint(PuppeteerSummonDefinition definition) {
-		return grantedBySuccession(definition) ? "Circus Succession finale" : "Puppetry Cardinal Ordeal";
+	static Component unlockHint(PuppeteerSummonDefinition definition) {
+		return Component.translatable(grantedBySuccession(definition)
+				? "screen.hemomancy.summons_tab_view.circus_succession_finale" : "screen.hemomancy.summons_tab_view.puppetry_cardinal_ordeal");
 	}
 
 	private static boolean hasTrialRecipe(PuppeteerSummonDefinition definition) {
@@ -319,7 +320,7 @@ public final class SummonsTabView {
 		int centerX = (left + right) / 2;
 		int centerY = (top + bottom) / 2;
 		ScreenDrawUtils.renderScaledItem(gfx, new ItemStack(ItemInit.puppeteering_thread.get()), centerX, centerY - 8, 20);
-		gfx.drawCenteredString(ctx.font(), "Preview unavailable", centerX, centerY + 18, 0xFF777777);
+		gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.summons_tab_view.preview_unavailable"), centerX, centerY + 18, 0xFF777777);
 	}
 
 	private static void drawDetailPanel(GuiGraphics gfx, ProgressScreenContext ctx, SummonsTabState state,
@@ -349,19 +350,19 @@ public final class SummonsTabView {
 		boolean degreeOk = ctx.playerDegree() >= definition.requiredDegree();
 		boolean known = state.isKnown(definition);
 		boolean recipeUnlocked = hasTrialRecipe(definition);
-		drawY = drawStackedDetailLine(gfx, ctx, "Status", statusComponent(definition, degreeOk, recipeUnlocked, known).getString(), textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Role", I18n.get(definition.roleTranslationKey()), textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Required", "Degree " + definition.requiredDegree(), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.status"), Component.literal(statusComponent(definition, degreeOk, recipeUnlocked, known).getString()), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.role"), Component.literal(I18n.get(definition.roleTranslationKey())), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.required"), HemoText.translatable("screen.hemomancy.summons_tab_view.degree", definition.requiredDegree()), textX, drawY, textW, lineH);
 		drawY += 4;
 
 		int sinew = SkillPointHelper.getLivingSinewLevel();
 		double health = definition.baseHealth() * PuppeteerSummonRules.healthMultiplier(sinew);
 		double damage = definition.baseDamage() * PuppeteerSummonRules.damageMultiplier(sinew);
-		drawY = drawStackedDetailLine(gfx, ctx, "Base Health", String.format("%.1f", definition.baseHealth()), textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Current Health", String.format("%.1f", health), textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Base Damage", String.format("%.1f", definition.baseDamage()), textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Current Damage", String.format("%.1f", damage), textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Mobility", String.format("%.2f", definition.movementSpeed()), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.base_health"), Component.literal(String.format("%.1f", definition.baseHealth())), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.current_health"), Component.literal(String.format("%.1f", health)), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.base_damage"), Component.literal(String.format("%.1f", definition.baseDamage())), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.current_damage"), Component.literal(String.format("%.1f", damage)), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.mobility"), Component.literal(String.format("%.2f", definition.movementSpeed())), textX, drawY, textW, lineH);
 		drawY += 4;
 
 		int economy = SkillPointHelper.getThreadEconomyLevel();
@@ -371,21 +372,21 @@ public final class SummonsTabView {
 		int callCost = PuppeteerSummonRules.adjustedThreadCost(definition.threadSummonCost(), economy);
 		int upkeep = PuppeteerSummonRules.adjustedThreadCost(definition.threadUpkeepPerMinute(), economy);
 		upkeep = PuppeteerSummonRules.interferedThreadUpkeep(upkeep, interference);
-		drawY = drawStackedDetailLine(gfx, ctx, "Call Charge", callCost + " charge", textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Upkeep", upkeep + " charge/min", textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Primary Offering", primaryOffering(definition).getHoverName().getString(),
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.call_charge"), HemoText.translatable("screen.hemomancy.summons_tab_view.charge", callCost), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.upkeep"), HemoText.translatable("screen.hemomancy.summons_tab_view.charge_min", upkeep), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.primary_offering"), Component.literal(primaryOffering(definition).getHoverName().getString()),
 				textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Unlock", unlockHint(definition), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.unlock"), unlockHint(definition), textX, drawY, textW, lineH);
 		drawY += 4;
 
 		int skein = SkillPointHelper.getPuppetSkeinLevel();
 		int tether = SkillPointHelper.getFarTetherLevel();
 		int boundCommand = SkillPointHelper.getBoundCommandLevel();
-		drawY = drawStackedDetailLine(gfx, ctx, "Active Cap", String.valueOf(PuppeteerSummonRules.activeSummonCap(skein)),
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.active_cap"), Component.literal(String.valueOf(PuppeteerSummonRules.activeSummonCap(skein))),
 				textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Tether Range", String.format("%.0f blocks", PuppeteerSummonRules.effectiveCommandRange(tether, boundCommand, interference)),
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.tether_range"), HemoText.translatable("screen.hemomancy.summons_tab_view.blocks", String.format("%.0f", PuppeteerSummonRules.effectiveCommandRange(tether, boundCommand, interference))),
 				textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Crossbar Capacity", PuppeteerSummonRules.threadCapacity(boundCommand) + " charge",
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.crossbar_capacity"), HemoText.translatable("screen.hemomancy.summons_tab_view.charge", PuppeteerSummonRules.threadCapacity(boundCommand)),
 				textX, drawY, textW, lineH);
 		drawY += 6;
 
@@ -418,10 +419,10 @@ public final class SummonsTabView {
 		});
 	}
 
-	private static int drawStackedDetailLine(GuiGraphics gfx, ProgressScreenContext ctx, String label, String value,
+	private static int drawStackedDetailLine(GuiGraphics gfx, ProgressScreenContext ctx, Component label, Component value,
 											 int x, int y, int totalW, int lineH) {
-		Component labelText = Component.literal(label + ":").withStyle(s -> s.withColor(0xFF888888));
-		Component valueText = Component.literal(value).withStyle(s -> s.withColor(0xFFDDC0C7));
+		Component labelText = label.copy().append(":").withStyle(s -> s.withColor(0xFF888888));
+		Component valueText = value.copy().withStyle(s -> s.withColor(0xFFDDC0C7));
 		int labelH = drawWrappedValue(gfx, ctx, labelText, x, y, totalW, lineH);
 		int valueY = y + labelH;
 		int valueW = Math.max(24, totalW - DETAIL_VALUE_INDENT);

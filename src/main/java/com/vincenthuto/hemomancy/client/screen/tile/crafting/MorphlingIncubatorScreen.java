@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Random;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 
 public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingIncubatorMenu> {
 
@@ -65,7 +66,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 			double vol = te.getBloodVolume();
 			double maxVol = te.getMaxBloodVolume();
 			graphics.renderTooltip(font, List.of(
-					Component.literal(String.format("§4Blood: §c%.0f §4/ §c%.0f", vol, maxVol))
+					HemoText.translatable("screen.hemomancy.morphling_incubator.blood", String.format("%.0f", vol), String.format("%.0f", maxVol))
 			), java.util.Optional.empty(), mouseX, mouseY);
 		}
 	}

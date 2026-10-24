@@ -22,8 +22,12 @@ public final class GuiLayerRegistrar {
         // Full-screen effects under the whole HUD, vanilla's camera overlays included.
         event.registerBelowAll(Hemomancy.rloc("screen_effects"), (graphics, deltaTracker) ->
                 ScreenOverlayEvents.renderUnderHud(graphics));
-        event.registerAboveAll(Hemomancy.rloc("body_idioms"), (graphics, deltaTracker) ->
-                BodyIdiomOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
+        event.registerAboveAll(Hemomancy.rloc("ironhearted"), (graphics, deltaTracker) ->
+                IronheartedOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
+        event.registerAboveAll(Hemomancy.rloc("blackhearted"), (graphics, deltaTracker) ->
+                BlackheartedOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
+        event.registerAboveAll(Hemomancy.rloc("manipulation_charge"), (graphics, deltaTracker) ->
+                ManipulationChargeOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
         event.registerAboveAll(Hemomancy.rloc("arbor_fruit_name"), (graphics, deltaTracker) ->
                 ArborFruitHudOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
         event.registerAboveAll(Hemomancy.rloc("mnemonic_blueprint_progress"), (graphics, deltaTracker) ->

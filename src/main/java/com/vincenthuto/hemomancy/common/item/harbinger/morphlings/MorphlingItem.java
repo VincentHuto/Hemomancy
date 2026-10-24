@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -35,6 +36,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public class MorphlingItem extends Item implements IMorphling {
 	private static final BloodAccounting.Source PRIMAL_ABILITY = BloodAccounting.Source.of("primal_morphling", Category.MORPHLING, false, false);
@@ -277,9 +279,9 @@ public class MorphlingItem extends Item implements IMorphling {
 	/**
 	 * Returns the maturity level name for display purposes.
 	 */
-	public static String getMaturityName(int level) {
-		if (level < 0 || level >= MATURITY_NAMES.length) return MATURITY_NAMES[0];
-		return MATURITY_NAMES[level];
+	public static Component getMaturityName(int level) {
+		String id = MATURITY_NAMES[level < 0 || level >= MATURITY_NAMES.length ? 0 : level];
+		return Component.translatable("tooltip.hemomancy.morphling.maturity." + id.toLowerCase(Locale.ROOT));
 	}
 
 	/**
@@ -319,8 +321,8 @@ public class MorphlingItem extends Item implements IMorphling {
 			tooltip.add(Component.translatable("tooltip.hemomancy.morphling.maturity_s", getMaturityName(maturity))
 					.withStyle(MATURITY_COLORS[maturity]));
 			if (feedings > 0) {
-				tooltip.add(Component.literal("Enzyme Power: " + String.format("%.1f", power))
-						.withStyle(ChatFormatting.DARK_GREEN));
+				tooltip.add(HemoText.translatable("tooltip.hemomancy.morphling.enzyme_power",
+						String.format("%.1f", power)).withStyle(ChatFormatting.DARK_GREEN));
 				tooltip.add(Component.translatable("tooltip.hemomancy.morphling.feedings_s", feedings)
 						.withStyle(ChatFormatting.GOLD));
 			}
@@ -330,8 +332,8 @@ public class MorphlingItem extends Item implements IMorphling {
 			}
 			if (isHungerEnabled() && maturity >= 3 && !morphTag.getBoolean(WILD_BOUND_KEY)) {
 				long now = context.level() == null ? 0L : context.level().getGameTime();
-				tooltip.add(Component.literal("Hunger: " + formatHungerState(hungerState(stack, now)))
-						.withStyle(ChatFormatting.DARK_RED));
+				tooltip.add(HemoText.translatable("tooltip.hemomancy.morphling.hunger",
+						formatHungerState(hungerState(stack, now))).withStyle(ChatFormatting.DARK_RED));
 			}
 
 			if (maturity < PrimalMorphlingRules.APEX_LEVEL) {
@@ -345,8 +347,8 @@ public class MorphlingItem extends Item implements IMorphling {
 							.withStyle(ChatFormatting.RED));
 				}
 				float nextThreshold = MATURITY_THRESHOLDS[maturity + 1];
-				tooltip.add(Component.literal("Next incubation at: " + String.format("%.0f", nextThreshold) + " power")
-						.withStyle(ChatFormatting.DARK_GRAY));
+				tooltip.add(HemoText.translatable("tooltip.hemomancy.morphling.next_incubation_at_power",
+						String.format("%.0f", nextThreshold)).withStyle(ChatFormatting.DARK_GRAY));
 			} else if (maturity == PrimalMorphlingRules.APEX_LEVEL) {
 				tooltip.add(Component.translatable("tooltip.hemomancy.morphling.primalization_morphic_nectar_after_apotheos")
 						.withStyle(ChatFormatting.DARK_PURPLE));
@@ -382,15 +384,9 @@ public class MorphlingItem extends Item implements IMorphling {
 	 * Helper to create a maturity bonus tooltip line. Unlocked bonuses are shown
 	 * in green, locked ones in dark gray with strikethrough.
 	 */
-	public static Component maturityBonusLine(String description, int requiredLevel, int currentLevel) {
-		String prefix = " " + MATURITY_NAMES[requiredLevel] + ": ";
-		if (currentLevel >= requiredLevel) {
-			return Component.literal(prefix + description)
-					.withStyle(ChatFormatting.GREEN);
-		} else {
-			return Component.literal(prefix + description)
-					.withStyle(ChatFormatting.DARK_GRAY);
-		}
+	public static Component maturityBonusLine(Component description, int requiredLevel, int currentLevel) {
+		return Component.translatable("tooltip.hemomancy.morphling.maturity_bonus", getMaturityName(requiredLevel), description)
+				.withStyle(currentLevel >= requiredLevel ? ChatFormatting.GREEN : ChatFormatting.DARK_GRAY);
 	}
 
 	public static boolean tryBeginPrimalAbility(Player player, ItemStack stack, String abilityKey,
@@ -399,14 +395,12 @@ public class MorphlingItem extends Item implements IMorphling {
 		long now = player.level().getGameTime();
 		long lastUse = getLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey);
 		if (now - lastUse < cooldownTicks) {
-			player.displayClientMessage(Component.literal("The primal morphling is still recoiling.")
-					.withStyle(ChatFormatting.DARK_PURPLE), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.morphling_item.the_primal_morphling_is_still_recoiling").withStyle(ChatFormatting.DARK_PURPLE), true);
 			return false;
 		}
 		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive() || volume.getBloodVolume() < bloodCost) {
-			player.displayClientMessage(Component.literal("The primal morphling hungers for more blood.")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.morphling_item.the_primal_morphling_hungers_for_more").withStyle(ChatFormatting.DARK_RED), true);
 			return false;
 		}
 		if (!BloodAccounting.pay(player, bloodCost, PRIMAL_ABILITY).satisfied()) return false;

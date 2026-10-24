@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomePro
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -99,17 +100,17 @@ public class QliphothPomeItem extends Item {
 	private static final int DARKNESS_TAINTED_DURATION_TICKS = 300;
 	private static final String POME_MESSAGE_KEY_BASE = "message.hemomancy.qliphoth_pome.consume.";
 
-	/** The nine Qliphoth husk names in consumption order (indices 0–8). */
-	public static final String[] HUSK_NAMES = {
-		"Nahemoth",
-		"Samael",
-		"Gamaliel",
-		"Harab Serapel",
-		"Golachab",
-		"Thagirion",
-		"A\u2019arab Zaraq",
-		"Satariel",
-		"Ghagiel"
+	/** The nine Qliphoth husk ids in consumption order (indices 0–8); their names are lang keys. */
+	public static final String[] HUSK_IDS = {
+		"nahemoth",
+		"samael",
+		"gamaliel",
+		"harab_serapel",
+		"golachab",
+		"thagirion",
+		"a_arab_zaraq",
+		"satariel",
+		"ghagiel"
 	};
 
 	public QliphothPomeItem(Properties properties) {
@@ -178,11 +179,11 @@ public class QliphothPomeItem extends Item {
 			// Show husk name and index if the pome was assigned one at drop time
 			if (tag.contains(HUSK_INDEX_KEY)) {
 				int huskIdx = tag.getInt(HUSK_INDEX_KEY);
-				if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
+				if (huskIdx >= 0 && huskIdx < HUSK_IDS.length) {
 					int ordinal = huskIdx + 1;
-					tooltip.add(Component.literal(ordinalString(ordinal) + " of nine. Sweet in the way that TV static and silence are sweet.")
-							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
-					tooltip.add(Component.literal("[" + HUSK_NAMES[huskIdx] + "]")
+					tooltip.add(HemoText.translatable("tooltip.hemomancy.qliphoth_pome.of_nine_sweet_in_the_way",
+							ordinalString(ordinal)).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+					tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.husk_bracketed", huskName(huskIdx))
 							.withStyle(ChatFormatting.DARK_PURPLE));
 				} else {
 					tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.one_of_nine_sweet_in_the")
@@ -196,8 +197,7 @@ public class QliphothPomeItem extends Item {
 					.withStyle(ChatFormatting.DARK_RED));
 			tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.regeneration_ii_12s")
 					.withStyle(ChatFormatting.RED));
-			tooltip.add(Component.literal("Manipulation Cost -25% (3 min)")
-					.withStyle(ChatFormatting.GOLD));
+			tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.manipulation_cost_25_3_min").withStyle(ChatFormatting.GOLD));
 			tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.darkness_7s")
 					.withStyle(ChatFormatting.DARK_GRAY));
 		}
@@ -209,8 +209,7 @@ public class QliphothPomeItem extends Item {
 	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
 		if (entity instanceof Player player && !canPlayerConsumeStack(stack, player)) {
 			if (!level.isClientSide) {
-				player.displayClientMessage(Component.literal("The pome resists your mouth. It belongs to the one who grew it.")
-						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_pome_item.the_pome_resists_your_mouth_it").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			}
 			return stack;
 		}
@@ -227,8 +226,8 @@ public class QliphothPomeItem extends Item {
 					? degree.getPomesConsumedFromBloom(itemTag.getLong(BLOOM_ORIGIN_KEY))
 					: degree.getPomesConsumedFromBloom(bloomId, itemTag.getLong(BLOOM_ORIGIN_KEY), migrateLegacyProgress);
 			if (!itemTag.contains(BLOOM_ORIGIN_KEY) || !itemTag.contains(HUSK_INDEX_KEY)
-					|| itemTag.getInt(HUSK_INDEX_KEY) != expected || expected >= HUSK_NAMES.length) {
-				player.displayClientMessage(Component.literal("This husk is already consumed or belongs later in this tree's covenant. The pome remains untouched."), true);
+					|| itemTag.getInt(HUSK_INDEX_KEY) != expected || expected >= HUSK_IDS.length) {
+				player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_pome_item.this_husk_is_already_consumed_or"), true);
 				return stack;
 			}
 		}
@@ -309,8 +308,7 @@ public class QliphothPomeItem extends Item {
 		player.addEffect(new MobEffectInstance(MobEffects.DARKNESS,
 				DARKNESS_TAINTED_DURATION_TICKS, 0, false, true, true));
 		player.displayClientMessage(
-				Component.literal("A hollow, severed thing crumbles in your veins...")
-						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.qliphoth_pome_item.a_hollow_severed_thing_crumbles_in").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 				true);
 	}
 
@@ -345,7 +343,7 @@ public class QliphothPomeItem extends Item {
 				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC);
 		if (huskIdx >= 0) {
 			consumeMessage = consumeMessage.copy()
-					.append(Component.literal(" [" + HUSK_NAMES[huskIdx] + "]")
+					.append(Component.translatable("message.hemomancy.qliphoth_pome.husk_suffix", huskName(huskIdx))
 							.withStyle(ChatFormatting.DARK_PURPLE));
 		}
 		player.displayClientMessage(
@@ -384,7 +382,7 @@ public class QliphothPomeItem extends Item {
 	private static int resolveHuskIndex(CompoundTag itemTag) {
 		if (itemTag.contains(HUSK_INDEX_KEY)) {
 			int huskIdx = itemTag.getInt(HUSK_INDEX_KEY);
-			if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
+			if (huskIdx >= 0 && huskIdx < HUSK_IDS.length) {
 				return huskIdx;
 			}
 		}
@@ -407,12 +405,9 @@ public class QliphothPomeItem extends Item {
 			degree.setQliphothCommunionDone(true);
 			if (QliphothPomeRules.shouldGrantFungalSpine(count, degree.hasFungalSpineGranted())) {
 				QliphothBloomEvents.deliverPendingFungalSpine(player);
-				player.displayClientMessage(Component.literal(
-						"The ninth husk opens. A calcified thread tears free from your back.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+				player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_pome_item.the_ninth_husk_opens_a_calcified").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 				if (!degree.hasFungalSpineGranted()) {
-					player.displayClientMessage(Component.literal(
-							"Make room in your inventory to receive your Fungal Spine."), false);
+					player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_pome_item.make_room_in_your_inventory_to"), false);
 				}
 			}
 			InitiatoryDegreeEvents.syncDegree(player, degree);
@@ -429,19 +424,14 @@ public class QliphothPomeItem extends Item {
 	}
 
 	/** Returns the English ordinal string for a number 1–9 (e.g. "First", "Second"). */
-	private static String ordinalString(int n) {
-		return switch (n) {
-			case 1 -> "First";
-			case 2 -> "Second";
-			case 3 -> "Third";
-			case 4 -> "Fourth";
-			case 5 -> "Fifth";
-			case 6 -> "Sixth";
-			case 7 -> "Seventh";
-			case 8 -> "Eighth";
-			case 9 -> "Ninth";
-			default -> String.valueOf(n) + "th";
-		};
+	private static Component ordinalString(int n) {
+		return n >= 1 && n <= 9
+				? Component.translatable("tooltip.hemomancy.qliphoth_pome.ordinal." + n)
+				: Component.translatable("tooltip.hemomancy.qliphoth_pome.ordinal.nth", n);
+	}
+
+	private static Component huskName(int huskIdx) {
+		return Component.translatable("item.hemomancy.qliphoth_pome.husk." + HUSK_IDS[huskIdx]);
 	}
 
 	// ── Renderer ──

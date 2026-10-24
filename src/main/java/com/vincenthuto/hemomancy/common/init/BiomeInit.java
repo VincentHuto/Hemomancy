@@ -46,7 +46,7 @@ public class BiomeInit {
 
 	private static ResourceKey<Biome> register(String name) {
 		ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME,
-				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, name));
+				Hemomancy.rloc(name));
 		return key;
 	}
 

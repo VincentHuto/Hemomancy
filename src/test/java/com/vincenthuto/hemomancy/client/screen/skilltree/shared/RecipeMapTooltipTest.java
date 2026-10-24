@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ final class RecipeMapTooltipTest {
 		assertEquals("Rite of the Marrow Spitter's Sanguine Attunement", tooltip.title());
 		assertEquals("Bind the defeated Marrow Spitter shape to an attuned Marionette Crossbar.",
 				tooltip.description());
-		assertEquals("Rite  |  Degree 2  |  Miscellaneous", tooltip.context());
+		assertEquals("Rite  |  Degree 2  |  Miscellaneous", EnglishText.render(tooltip.context()));
 	}
 
 	@Test
@@ -37,7 +38,7 @@ final class RecipeMapTooltipTest {
 	@Test
 	void craftingTooltipSummarizesTheSameActivationDetailsAsTheInspector() {
 		assertEquals("Hold Ferric Binder and activate Hematic Iron Block. Blood cost: 150 mL.",
-				RitesAndCraftsTabController.tooltipDescription(150, "Ferric Binder", "Hematic Iron Block"));
+				EnglishText.render(RitesAndCraftsTabController.tooltipDescription(150, "Ferric Binder", "Hematic Iron Block")));
 	}
 
 	@Test
@@ -49,7 +50,7 @@ final class RecipeMapTooltipTest {
 				2, "Ritual Floors", 0, true, true);
 
 		assertEquals("Ritual Floor  |  Greater  |  Ritual Floors",
-				RecipeMapTooltip.content(floor).context());
+				EnglishText.render(RecipeMapTooltip.content(floor).context()));
 	}
 
 	@Test
@@ -67,11 +68,11 @@ final class RecipeMapTooltipTest {
 						ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/test")),
 				"Test Rite", "", 3, "Order", 0, true, false);
 
-		assertEquals("Ritual Floor  |  Grand  |  Ritual Floors", RecipeMapTooltip.content(floor).context());
-		assertEquals("First used at Degree 6", RecipeMapTooltip.gateLine(floor));
-		assertEquals("Sigil  |  Ichorian Sigils", RecipeMapTooltip.content(sigil).context());
-		assertEquals("First used at Degree 5", RecipeMapTooltip.gateLine(sigil));
-		assertEquals("Requires Degree 3", RecipeMapTooltip.gateLine(rite));
+		assertEquals("Ritual Floor  |  Grand  |  Ritual Floors", EnglishText.render(RecipeMapTooltip.content(floor).context()));
+		assertEquals("First used at Degree 6", EnglishText.render(RecipeMapTooltip.gateLine(floor)));
+		assertEquals("Sigil  |  Ichorian Sigils", EnglishText.render(RecipeMapTooltip.content(sigil).context()));
+		assertEquals("First used at Degree 5", EnglishText.render(RecipeMapTooltip.gateLine(sigil)));
+		assertEquals("Requires Degree 3", EnglishText.render(RecipeMapTooltip.gateLine(rite)));
 	}
 
 	@Test

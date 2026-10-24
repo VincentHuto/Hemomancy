@@ -9,14 +9,13 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 
 // Authored by tools/circus/build_marrow_juggler.py; regenerate the model, atlas and BBModel together.
 public class MarrowSpitterModel extends EntityModel<MarrowSpitterEntity> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "marrow_spitter"), "main");
+            Hemomancy.rloc("marrow_spitter"), "main");
     private final ModelPart root, body, hood;
     private final ModelPart[] arms = new ModelPart[6], forearms = new ModelPart[6], hands = new ModelPart[6];
     private final ModelPart[] knives = new ModelPart[3];

@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -104,19 +105,20 @@ public class UnstainedGaugeOverlay {
 		EnumClarityStage clarityStage = EnumClarityStage.byClarity(clarity);
 
 		UnstainedPhase phase = UnstainedAccessRules.phase(cap);
-		String title = switch (phase) {
-			case NOVITIATE -> "Novitiate";
-			case CURE_READY -> "Cure Ready";
-			case CLEANSED_UNPLEDGED -> "Cleansed";
-			case PLEDGED -> clarityStage.getTitle();
-			default -> purityStage.getTitle();
+		Component title = switch (phase) {
+			case NOVITIATE -> Component.translatable("gui.hemomancy.unstained_gauge_overlay.novitiate");
+			case CURE_READY -> Component.translatable("gui.hemomancy.unstained_gauge_overlay.cure_ready");
+			case CLEANSED_UNPLEDGED -> Component.translatable("gui.hemomancy.unstained_gauge_overlay.cleansed");
+			case PLEDGED -> Component.translatable("hemomancy.clarity." + clarityStage.name().toLowerCase(Locale.ROOT));
+			default -> Component.translatable("hemomancy.purity." + purityStage.name().toLowerCase(Locale.ROOT));
 		};
-		String percent = switch (phase) {
-			case NOVITIATE -> "Vows " + UnstainedAccessRules.completedNovitiateVows(cap.getClaimedObservances()) + "/5";
-			case CURE_READY -> "Perform Closed Vein";
-			case CLEANSED_UNPLEDGED -> "Prepare the pledge";
-			case PLEDGED -> String.format("Clarity %.0f%%", clarity);
-			default -> String.format("Purity %.0f%%", purity);
+		Component percent = switch (phase) {
+			case NOVITIATE -> Component.translatable("gui.hemomancy.unstained_gauge_overlay.vows",
+					UnstainedAccessRules.completedNovitiateVows(cap.getClaimedObservances()));
+			case CURE_READY -> Component.translatable("gui.hemomancy.unstained_gauge_overlay.perform_closed_vein");
+			case CLEANSED_UNPLEDGED -> Component.translatable("gui.hemomancy.unstained_gauge_overlay.prepare_the_pledge");
+			case PLEDGED -> Component.translatable("gui.hemomancy.unstained_gauge_overlay.clarity_percent", String.format("%.0f", clarity));
+			default -> Component.translatable("gui.hemomancy.unstained_gauge_overlay.purity_percent", String.format("%.0f", purity));
 		};
 		int titleColor = clarityUnlocked ? VERDIGRIS : lerpColor(0xFFCC4A4A, 0xFFE6EEF8, purity / 100f);
 		int percentColor = clarityUnlocked ? 0xFF9EDACC : TEXT_DIM;
@@ -130,8 +132,8 @@ public class UnstainedGaugeOverlay {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
-		gfx.drawString(font, Component.literal(title), right - font.width(title), titleY, titleColor, true);
-		gfx.drawString(font, Component.literal(percent), right - font.width(percent), percentY, percentColor, true);
+		gfx.drawString(font, title, right - font.width(title), titleY, titleColor, true);
+		gfx.drawString(font, percent, right - font.width(percent), percentY, percentColor, true);
 
 		if (clarityUnlocked || purity >= 100f) {
 			renderLayer(gfx, clarityUnlocked ? HALO_TEXTURES[stepIndex(clarity, CLARITY_TEXTURE_STEPS)] : HALO_TEXTURES[0],

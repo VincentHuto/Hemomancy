@@ -1,13 +1,15 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
-import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
-import com.vincenthuto.hemomancy.common.armor.BodyIdiomArmorRules;
+import com.vincenthuto.hemomancy.common.armor.ArmorSetBonusRules;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
@@ -36,16 +38,16 @@ public final class SheolicBastionBloodlustArmorAbilityHandler {
 
 	public static void activateBastionStance(ServerPlayer player) {
 		if (player.isShiftKeyDown()) {
-			boolean enabled = BodyIdiomArmorRules.nextSearingContactState(
+			boolean enabled = ArmorSetBonusRules.nextSearingContactState(
 					player.getPersistentData().getBoolean(SEARING_CONTACT_KEY));
 			player.getPersistentData().putBoolean(SEARING_CONTACT_KEY, enabled);
-			player.displayClientMessage(Component.literal("Searing Contact: " + (enabled ? "ON" : "OFF"))
-					.withStyle(enabled ? ChatFormatting.GOLD : ChatFormatting.GRAY), true);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.sheolic_bastion_bloodlust_armor_ability_handler.searing_contact",
+					(enabled ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF)).withStyle(enabled ? ChatFormatting.GOLD : ChatFormatting.GRAY), true);
 			return;
 		}
 		if (isBastionActive(player)) {
 			clearBastion(player);
-			player.displayClientMessage(Component.literal("Bastion Stance released.").withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.sheolic_bastion_bloodlust_armor_ability_handler.bastion_stance_released").withStyle(ChatFormatting.DARK_RED), true);
 			return;
 		}
 		long until = player.level().getGameTime() + BASTION_DURATION_TICKS;
@@ -55,7 +57,7 @@ public final class SheolicBastionBloodlustArmorAbilityHandler {
 		player.getPersistentData().putDouble(BASTION_Z_KEY, player.getZ());
 		player.setDeltaMovement(Vec3.ZERO);
 		player.fallDistance = 0.0F;
-		player.displayClientMessage(Component.literal("Bastion Stance.").withStyle(ChatFormatting.DARK_RED), true);
+		player.displayClientMessage(Component.translatable("message.hemomancy.sheolic_bastion_bloodlust_armor_ability_handler.bastion_stance").withStyle(ChatFormatting.DARK_RED), true);
 	}
 
 	public static boolean isBastionActive(ServerPlayer player) {
@@ -79,11 +81,11 @@ public final class SheolicBastionBloodlustArmorAbilityHandler {
 	public static void onPlayerAttack(AttackEntityEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)
 				|| !(event.getTarget() instanceof LivingEntity target)) return;
-		if (BodyIdiomArmorRules.searingContactActive(
+		if (ArmorSetBonusRules.searingContactActive(
 				player.getPersistentData().getBoolean(SEARING_CONTACT_KEY),
 				ArmorSetHelper.hasFullSheolicBloodlust(player))) {
 			target.setRemainingFireTicks(Math.max(target.getRemainingFireTicks(),
-					BodyIdiomArmorRules.SEARING_CONTACT_FIRE_TICKS));
+					ArmorSetBonusRules.SEARING_CONTACT_FIRE_TICKS));
 		}
 	}
 

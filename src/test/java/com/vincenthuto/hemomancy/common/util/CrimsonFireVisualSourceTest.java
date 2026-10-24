@@ -1,40 +1,28 @@
 package com.vincenthuto.hemomancy.common.util;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+import org.junit.jupiter.api.Test;
 
-public final class CrimsonFireVisualSourceTest {
-	private static final Path SOURCE_ROOT = Path.of("src/main/java");
-	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-	private CrimsonFireVisualSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
-		String helper = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/block/harbinger/CrimsonFireHelper.java"));
-		String packetHandler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
-		String packet = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/particle/EntityVisualPacket.java"));
-		String clientState = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/data/CrimsonFireClientState.java"));
-		String renderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/CrimsonFireRenderer.java"));
-		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientTickEvents.java"))
-				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ScreenOverlayEvents.java"));
-		String mixin = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/mixin/core/MixinEntityRenderDispatcher.java"));
-		String mixinConfig = read(RESOURCE_ROOT.resolve("hemomancy.mixins.json"));
-		String crimsonBlock = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/block/harbinger/CrimsonFlameBlock.java"));
-		String ignition = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/manipulation/flammeus/SanguineIgnitionManip.java"));
-		String combustion = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/manipulation/flammeus/VitricCombustionManip.java"));
-		String torch = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingTorchItem.java"));
+class CrimsonFireVisualSourceTest {
+	@Test
+	void crimsonFireIsWiredFromHelperToRenderer() {
+		String helper = SourceAssertions.readMainJava("common/block/harbinger/CrimsonFireHelper.java");
+		String packetHandler = SourceAssertions.readMainJava("common/network/PacketHandler.java");
+		String packet = SourceAssertions.readMainJava("common/network/particle/EntityVisualPacket.java");
+		String clientState = SourceAssertions.readMainJava("client/data/CrimsonFireClientState.java");
+		String renderer = SourceAssertions.readMainJava("client/render/CrimsonFireRenderer.java");
+		String clientEvents = SourceAssertions.readMainJava("client/event/ClientTickEvents.java")
+				+ SourceAssertions.readMainJava("client/event/ScreenOverlayEvents.java");
+		String mixin = SourceAssertions.readMainJava("mixin/core/MixinEntityRenderDispatcher.java");
+		String mixinConfig = SourceAssertions.read("src/main/resources/hemomancy.mixins.json");
+		String crimsonBlock = SourceAssertions.readMainJava("common/block/harbinger/CrimsonFlameBlock.java");
+		String ignition = SourceAssertions.readMainJava("common/manipulation/flammeus/SanguineIgnitionManip.java");
+		String combustion = SourceAssertions.readMainJava("common/manipulation/flammeus/VitricCombustionManip.java");
+		String torch = SourceAssertions.readMainJava("common/item/harbinger/tool/living/LivingTorchItem.java");
 
 		assertContains("helper class exists", helper, "class CrimsonFireHelper");
 		assertContains("helper exposes crimson ignite", helper, "igniteCrimson(Entity target, float seconds)");
@@ -47,25 +35,22 @@ public final class CrimsonFireVisualSourceTest {
 
 		assertContains("packet registered", packetHandler, "EntityVisualPacket.TYPE");
 		assertContains("helper sends the crimson fire kind", packetHandler, "EntityVisualPacket.Kind.CRIMSON_FIRE");
-		assertContains("packet helper exists", packetHandler,
-				"sendCrimsonFireVisual(LivingEntity target, int durationTicks)");
-		assertContains("packet tracks entity and self", packetHandler,
-				"sendTracking(target");
+		assertContains("packet helper exists", packetHandler, "sendCrimsonFireVisual(LivingEntity target, int durationTicks)");
+		assertContains("packet tracks entity and self", packetHandler, "sendTracking(target");
 		assertContains("packet writes entity id", packet, "buffer.writeVarInt(packet.entityId())");
 		assertContains("packet writes duration", packet, "buffer.writeVarInt(packet.durationTicks())");
-		assertContains("packet updates client state", read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/network/ClientboundEffectHandlers.java")),
+		assertContains("packet updates client state",
+				SourceAssertions.readMainJava("client/network/ClientboundEffectHandlers.java"),
 				"CrimsonFireClientState.markActive(packet.entityId(), packet.durationTicks())");
 
 		assertContains("client state stores ids", clientState, "ACTIVE_UNTIL_BY_ENTITY_ID");
 		assertContains("client state requires actual fire", clientState, "entity.isOnFire()");
-		assertContains("client state expires entries", clientState,
-				"ACTIVE_UNTIL_BY_ENTITY_ID.entrySet().removeIf");
+		assertContains("client state expires entries", clientState, "ACTIVE_UNTIL_BY_ENTITY_ID.entrySet().removeIf");
 		assertContains("client event ticks state", clientEvents, "CrimsonFireClientState.tick()");
 		assertContains("client event handles fire overlay", clientEvents, "onRenderBlockScreenEffect");
-		assertContains("client event checks fire overlay", clientEvents,
-				"RenderBlockScreenEffectEvent.OverlayType.FIRE");
+		assertContains("client event checks fire overlay", clientEvents, "RenderBlockScreenEffectEvent.OverlayType.FIRE");
 
-		assertContains("renderer uses crimson flame atlas sprite", renderer, "hemomancy:block/crimson_flames");
+		assertContains("renderer uses crimson flame atlas sprite", renderer, "Hemomancy.rloc(\"block/crimson_flames\")");
 		assertContains("renderer has screen overlay method", renderer, "renderScreenOverlay");
 		assertContains("renderer has entity flame method", renderer, "renderEntityFlames");
 		assertContains("renderer uses cutout block sheet", renderer, "Sheets.cutoutBlockSheet()");
@@ -78,34 +63,13 @@ public final class CrimsonFireVisualSourceTest {
 
 		assertContains("crimson block marks visual state", crimsonBlock,
 				"CrimsonFireHelper.markCrimsonForRemainingFire(entity, 10)");
-		assertOrder("crimson block marks after vanilla fire", crimsonBlock,
-				"super.entityInside(state, level, pos, entity);",
-				"CrimsonFireHelper.markCrimsonForRemainingFire(entity, 10);");
+		int vanillaFire = crimsonBlock.indexOf("super.entityInside(state, level, pos, entity);");
+		int crimsonMark = crimsonBlock.indexOf("CrimsonFireHelper.markCrimsonForRemainingFire(entity, 10);");
+		assertTrue(vanillaFire >= 0 && vanillaFire < crimsonMark, "crimson block marks after vanilla fire");
 		assertContains("sanguine ignition captures school state", ignition, "SchoolDamage.cast");
-        if (ignition.contains("igniteCrimson")) throw new AssertionError("Ignition must use Searing instead of vanilla burn");
+		assertNotContains("ignition uses Searing instead of vanilla burn", ignition, "igniteCrimson");
 		assertContains("vitric combustion captures its payoff school", combustion, "SchoolDamage.cast");
-        if (combustion.contains("igniteCrimson")) throw new AssertionError("Combustion must consume heat");
+		assertNotContains("combustion consumes heat", combustion, "igniteCrimson");
 		assertContains("living torch uses school burn", torch, "HemoDamageTypes.livingTorchBreath");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertOrder(String label, String text, String first, String second) {
-		int firstIndex = text.indexOf(first);
-		int secondIndex = text.indexOf(second);
-		if (firstIndex < 0 || secondIndex < 0 || firstIndex >= secondIndex) {
-			throw new AssertionError(label + ": expected " + first + " before " + second);
-		}
 	}
 }

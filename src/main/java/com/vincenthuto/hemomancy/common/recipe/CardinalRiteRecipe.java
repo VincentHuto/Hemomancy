@@ -323,11 +323,16 @@ public class CardinalRiteRecipe extends StationRecipe {
 
 	/** {@code hemomancy.rite.<rite>.name}; the recipe's authored name is the fallback. */
 	public String nameKey() {
-		return "hemomancy.rite." + riteKeyId() + ".name";
+		return nameKey(getId());
+	}
+
+	/** {@code hemomancy.rite.<rite>.name} for a rite known only by its recipe id. */
+	public static String nameKey(ResourceLocation riteId) {
+		return "hemomancy.rite." + riteKeyId(riteId) + ".name";
 	}
 
 	public String descriptionKey() {
-		return "hemomancy.rite." + riteKeyId() + ".desc";
+		return "hemomancy.rite." + riteKeyId(getId()) + ".desc";
 	}
 
 	/** Localized rite name, falling back to the recipe's {@code riteName}. */
@@ -340,8 +345,8 @@ public class CardinalRiteRecipe extends StationRecipe {
 		return net.minecraft.network.chat.Component.translatableWithFallback(descriptionKey(), riteDescription);
 	}
 
-	private String riteKeyId() {
-		String path = getId().getPath();
+	private static String riteKeyId(ResourceLocation riteId) {
+		String path = riteId.getPath();
 		return path.startsWith("cardinal_rite/") ? path.substring("cardinal_rite/".length()) : path;
 	}
 

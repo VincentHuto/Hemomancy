@@ -9,13 +9,12 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 // Authored by tools/circus/build_gorebound_hulk.py; regenerate the model, atlas and BBModel together.
 public class GoreboundHulkModel extends EntityModel<GoreboundHulkEntity> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "gorebound_hulk"), "main");
+            Hemomancy.rloc("gorebound_hulk"), "main");
     private final ModelPart root, chest, head, jaw;
     private final ModelPart[] arms = new ModelPart[2], forearms = new ModelPart[2], hands = new ModelPart[2];
     private final ModelPart[] thighs = new ModelPart[2], shins = new ModelPart[2], feet = new ModelPart[2];

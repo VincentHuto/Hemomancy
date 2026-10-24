@@ -175,12 +175,12 @@ public final class ManipulationTargetingGameTests {
             HemoCapabilityAccess.getKnownManipulations(p).togglePassive("blackhearted");
             HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.MORTEM, 0);
             var damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().wither(), 4));
-            BodyIdiomEvents.onIncomingDamage(damage);
+            ManipulationReactiveEvents.onHeartDamage(damage);
             near(h, 4, damage.getAmount(), "Blackhearted ignored alignment");
             HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.MORTEM, 100);
             HemoCapabilityAccess.getBloodVolume(p).setActive(false);
             damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().wither(), 4));
-            BodyIdiomEvents.onIncomingDamage(damage);
+            ManipulationReactiveEvents.onHeartDamage(damage);
             near(h, 4, damage.getAmount(), "Blackhearted worked with inactive blood");
             h.succeed();
         } finally { p.discard(); }
@@ -294,15 +294,15 @@ public final class ManipulationTargetingGameTests {
         try {
             select(p, ManipulationInit.blackhearted.get()); HemoCapabilityAccess.getKnownManipulations(p).togglePassive("blackhearted");
             var damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().wither(), 100));
-            BodyIdiomEvents.onIncomingDamage(damage);
+            ManipulationReactiveEvents.onHeartDamage(damage);
             var state = HemoCapabilityAccess.getPowerGuardrails(p);
             near(h, 0, state.getNecroticSaturation(), "Rupture did not empty saturation");
             h.assertTrue(state.getBlackheartedCooldownUntil() > h.getLevel().getGameTime(), "Rupture did not start refractory period");
             damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().wither(), 4));
-            BodyIdiomEvents.onIncomingDamage(damage); near(h, 4, damage.getAmount(), "Conversion continued during refractory period");
+            ManipulationReactiveEvents.onHeartDamage(damage); near(h, 4, damage.getAmount(), "Conversion continued during refractory period");
             state.setBlackheartedCooldownUntil(h.getLevel().getGameTime());
             damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().wither(), 4));
-            BodyIdiomEvents.onIncomingDamage(damage); near(h, 1.4, damage.getAmount(), "Conversion did not recover");
+            ManipulationReactiveEvents.onHeartDamage(damage); near(h, 1.4, damage.getAmount(), "Conversion did not recover");
             near(h, 2.6, state.getNecroticSaturation(), "Recovered saturation incorrect");
             h.succeed();
         } finally { p.discard(); }

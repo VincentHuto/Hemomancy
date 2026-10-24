@@ -40,10 +40,7 @@ final class GuardianDialogueEvents {
 		if (!UnstainedDaggerReplacementRules.canExchange(progress.hasClarityUnlocked(), hasDagger,
 				player.getInventory().countItem(ItemInit.pale_silver_ingot.get()),
 				player.getInventory().countItem(ItemInit.cleansed_blood_crystal_shard.get()))) {
-			player.displayClientMessage(Component.literal(
-					hasDagger ? "The Guardian will not replace a dagger you still carry."
-							: "The Guardian requires two Pale Silver Ingots and one Cleansed Blood Crystal Shard.")
-					.withStyle(ChatFormatting.GRAY), false);
+			player.displayClientMessage((hasDagger ? Component.translatable("message.hemomancy.guardian_dialogue_events.the_guardian_will_not_replace_a") : Component.translatable("message.hemomancy.guardian_dialogue_events.the_guardian_requires_two_pale_silver")).withStyle(ChatFormatting.GRAY), false);
 			return;
 		}
 		DialogueRewards.consumeItemCount(player, ItemInit.pale_silver_ingot.get(), 2);

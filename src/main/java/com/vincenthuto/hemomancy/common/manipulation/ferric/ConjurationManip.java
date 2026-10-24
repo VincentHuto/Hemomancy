@@ -38,9 +38,7 @@ public class ConjurationManip extends BloodManipulation {
 
 		if (item.get() == ItemInit.living_staff.get() && player instanceof ServerPlayer serverPlayer
 				&& CardinalRiteStaffEscrow.isPlanted(serverPlayer)) {
-			player.displayClientMessage(Component.literal(
-					"Your Living Staff is planted in an active Cardinal Rite.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.conjuration_manip.your_living_staff_is_planted_in").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 			return;
 		}
 		if (CellHandFormHelper.applySelection(player, this)

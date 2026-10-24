@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.scars;
 
-import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -59,13 +60,10 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 		int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		if (playerDegree < REQUIRED_DEGREE) {
 			player.displayClientMessage(
-					Component.literal("The chisel resists your hand — ")
-							.withStyle(ChatFormatting.RED)
-							.append(Component.literal("Adept")
-									.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
-							.append(Component.literal(" rank (Degree " + REQUIRED_DEGREE
-									+ ") is required to carve scars.")
-									.withStyle(ChatFormatting.RED)),
+					Component.translatable("message.hemomancy.packet_scar_crafting_event.the_chisel_resists_your_hand",
+							Component.translatable("message.hemomancy.packet_scar_crafting_event.adept").withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD),
+							HemoText.translatable("message.hemomancy.packet_scar_crafting_event.rank_degree_is_required_to_carve",
+		REQUIRED_DEGREE).withStyle(ChatFormatting.RED)).withStyle(ChatFormatting.RED),
 					false);
 			return;
 		}
@@ -73,14 +71,13 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 		if (recipe != null && recipe.getTier() >= 3
 				&& !SkillPointHelper.isUnlocked(player, SkillPointInit.skill_deep_inscription)) {
 			player.displayClientMessage(
-					Component.literal("The third inscription tier refuses a shallow hand.")
-							.withStyle(ChatFormatting.DARK_RED), false);
+					Component.translatable("message.hemomancy.packet_scar_crafting_event.the_third_inscription_tier_refuses_a").withStyle(ChatFormatting.DARK_RED), false);
 			return;
 		}
 		if (!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.hasPersonalAccess(player, station.getBlockState().getBlock())
 				&& recipe != null && !recipe.getResultItem().is(
 						com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson.forPlayer(player).scar().get())) {
-			player.displayClientMessage(Component.literal("Supervised access is for your first lesson scar. Craft your own station for other patterns."), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.packet_scar_crafting_event.supervised_access_is_for_your_first"), false);
 			return;
 		}
 		Component failure = station.craftingFailure();

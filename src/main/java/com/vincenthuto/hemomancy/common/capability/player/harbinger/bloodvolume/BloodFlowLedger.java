@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.event.CirculationIncomeRules;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
+import net.minecraft.locale.Language;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.*;
@@ -14,6 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public final class BloodFlowLedger {
 	private static final int EXPIRY_PADDING_TICKS = 4;
+	private static final String FULL_RESERVE = "message.hemomancy.blood_flow.full_reserve";
 	private static final ConcurrentMap<UUID, ConcurrentMap<String, TrackedContribution>> RECENT =
 			new ConcurrentHashMap<>();
 
@@ -39,15 +41,15 @@ public final class BloodFlowLedger {
 		double actual = 0.0D;
 		String condition = "";
 		if (!volume.isActive()) {
-			condition = "Dormant";
+			condition = BloodPaymentRules.DORMANT;
 		} else if (volume.isFull()) {
-			condition = "Full reserve";
+			condition = FULL_RESERVE;
 		} else {
 			double before = volume.getBloodVolume();
 			volume.fill(amount);
 			actual = Math.max(0.0D, volume.getBloodVolume() - before);
 			if (actual + 0.000001D < amount) {
-				condition = "Full reserve";
+				condition = FULL_RESERVE;
 			}
 		}
 		record(player, BloodFlowContribution.direct(sourceId, label, category, amount / interval,
@@ -68,14 +70,14 @@ public final class BloodFlowLedger {
 		double actual = 0.0D;
 		String condition = "";
 		if (!volume.isActive()) {
-			condition = "Dormant";
+			condition = BloodPaymentRules.DORMANT;
 		} else if (volume.isFull()) {
-			condition = "Full reserve";
+			condition = FULL_RESERVE;
 		} else if (!circulationEnabled()) {
 			double before = volume.getBloodVolume();
 			volume.fill(requested);
 			actual = Math.max(0.0D, volume.getBloodVolume() - before);
-			condition = "Circulation disabled";
+			condition = "message.hemomancy.blood_flow.circulation_disabled";
 		} else {
 			long now = player.level().getGameTime();
 			PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
@@ -91,7 +93,7 @@ public final class BloodFlowLedger {
 			state.setCirculationWindowStart(grant.windowStart());
 			state.setCirculationWindowUsed(grant.usedInWindow() - (grant.granted() - actual));
 			if (actual + 0.000001D < requested) {
-				condition = actual <= 0.0D ? "Circulation saturated" : "Circulation limited";
+				condition = actual <= 0.0D ? "message.hemomancy.blood_flow.circulation_saturated" : BloodFlowRules.CIRCULATION_LIMITED;
 			}
 		}
 		record(player, new BloodFlowContribution(sourceId, label, category, requested / interval,
@@ -111,11 +113,11 @@ public final class BloodFlowLedger {
 		double actual = 0.0D;
 		String condition = "";
 		if (!playerVolume.isActive()) {
-			condition = "Dormant";
+			condition = BloodPaymentRules.DORMANT;
 		} else if (playerVolume.isFull()) {
-			condition = "Full reserve";
+			condition = FULL_RESERVE;
 		} else if (vesselVolume.getBloodVolume() <= 0.0D) {
-			condition = "Vessel empty";
+			condition = "message.hemomancy.blood_flow.vessel_empty";
 		} else {
 			double transfer = Math.min(requested, vesselVolume.getBloodVolume());
 			transfer = Math.min(transfer, playerVolume.getMaxBloodVolume() - playerVolume.getBloodVolume());
@@ -124,7 +126,7 @@ public final class BloodFlowLedger {
 			playerVolume.fill(transfer);
 			actual = Math.max(0.0D, playerVolume.getBloodVolume() - before);
 			if (actual + 0.000001D < requested) {
-				condition = playerVolume.isFull() ? "Full reserve" : "Vessel limited";
+				condition = playerVolume.isFull() ? FULL_RESERVE : "message.hemomancy.blood_flow.vessel_limited";
 			}
 		}
 		record(player, BloodFlowContribution.direct(sourceId, label, Category.VESSEL, requested / interval,
@@ -147,7 +149,8 @@ public final class BloodFlowLedger {
 						.map(TrackedContribution::contribution)
 						.sorted(Comparator
 								.comparing((BloodFlowContribution contribution) -> contribution.category().ordinal())
-								.thenComparing(BloodFlowContribution::label)
+								.thenComparing((BloodFlowContribution contribution) ->
+										Language.getInstance().getOrDefault(contribution.label()))
 								.thenComparing(BloodFlowContribution::sourceId))
 						.toList();
 		return BloodFlowRules.appliedSnapshot(contributions,

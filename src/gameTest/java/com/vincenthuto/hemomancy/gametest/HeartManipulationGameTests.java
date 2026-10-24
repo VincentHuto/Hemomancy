@@ -4,8 +4,9 @@ import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
-import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomEvents;
-import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomRules;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.IronheartedEvents;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.IronheartedRules;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -25,10 +26,10 @@ import java.util.UUID;
 
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)
-public final class BodyIdiomGameTests {
+public final class HeartManipulationGameTests {
 	private static final String EMPTY_TEMPLATE = "bastion/mobs/empty";
 
-	private BodyIdiomGameTests() {
+	private HeartManipulationGameTests() {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
@@ -36,11 +37,11 @@ public final class BodyIdiomGameTests {
 		ServerPlayer player = player(helper);
 		try {
 			ManipulationInit.ironhearted.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
-					player.blockPosition(), BodyIdiomRules.IRON_HEART_CHARGE_TICKS);
+					player.blockPosition(), IronheartedRules.IRON_HEART_CHARGE_TICKS);
 			var state = HemoCapabilityAccess.getPowerGuardrails(player);
 			helper.assertTrue(state.getIronHeartHealth() == 4.0F, "Charged action did not form two Iron Hearts");
 			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().generic(), 5.0F);
-			BodyIdiomEvents.onIncomingDamage(event);
+			ManipulationReactiveEvents.onHeartDamage(event);
 			helper.assertTrue(Math.abs(event.getAmount() - 1.0F) < 0.001F,
 					"Iron Heart did not absorb damage before health: " + event.getAmount());
 			helper.assertTrue(state.getIronHeartHealth() == 0.0F, "Spent Iron Heart remained on the body");
@@ -58,7 +59,7 @@ public final class BodyIdiomGameTests {
 			scars.activateCerebralScar(Hemomancy.rloc("scar_thorn"));
 			scars.activateCerebralScar(Hemomancy.rloc("scar_crucible"));
 			scars.activateCerebralScar(Hemomancy.rloc("scar_blood_honed"));
-			helper.assertTrue(BodyIdiomRules.maxIronHeartHealth(player) == 26.0F,
+			helper.assertTrue(IronheartedRules.maxIronHeartHealth(player) == 26.0F,
 					"Tier I and III Ferric scars did not add eight hearts without Blood-Honed");
 			helper.succeed();
 		} finally {
@@ -76,7 +77,7 @@ public final class BodyIdiomGameTests {
 			var state = HemoCapabilityAccess.getPowerGuardrails(player);
 			state.setIronHeartHealth(26.0F);
 			scars.deactivateCerebralScar(Hemomancy.rloc("scar_crucible"));
-			BodyIdiomEvents.reconcileIronHeartCapacity(player);
+			IronheartedEvents.reconcileIronHeartCapacity(player);
 			helper.assertTrue(state.getIronHeartHealth() == 14.0F,
 					"Removing the Tier III Ferric scar did not trim Iron Hearts to the Tier I cap");
 			helper.succeed();
@@ -97,7 +98,7 @@ public final class BodyIdiomGameTests {
 					com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.MORTEM, 35);
 			player.setHealth(10.0F);
 			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().wither(), 4.0F);
-			BodyIdiomEvents.onIncomingDamage(event);
+			ManipulationReactiveEvents.onHeartDamage(event);
 			var state = HemoCapabilityAccess.getPowerGuardrails(player);
 			helper.assertTrue(Math.abs(event.getAmount() - 1.4F) < 0.001F,
 					"Blackhearted did not prevent the expected Wither share: " + event.getAmount());
@@ -119,7 +120,7 @@ public final class BodyIdiomGameTests {
 					.setEquippedManipNames(List.of("blackhearted"));
 			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().wither(), 4.0F);
 
-			BodyIdiomEvents.onIncomingDamage(event);
+			ManipulationReactiveEvents.onHeartDamage(event);
 
 			helper.assertTrue(Math.abs(event.getAmount() - 4.0F) < 0.001F,
 					"Inactive Blackhearted still altered Wither damage");
@@ -136,7 +137,7 @@ public final class BodyIdiomGameTests {
 
 	private static ServerPlayer player(GameTestHelper helper) {
 		CommonListenerCookie cookie = CommonListenerCookie.createInitial(
-				new GameProfile(UUID.randomUUID(), "body-idiom-test"), false);
+				new GameProfile(UUID.randomUUID(), "heart-manipulation-test"), false);
 		ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
 				cookie.gameProfile(), cookie.clientInformation());
 		Connection connection = new Connection(PacketFlow.SERVERBOUND);

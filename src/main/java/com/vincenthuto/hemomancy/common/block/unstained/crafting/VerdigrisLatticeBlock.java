@@ -89,8 +89,7 @@ public class VerdigrisLatticeBlock extends Block {
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
 			BlockHitResult hit) {
-		player.displayClientMessage(Component.literal(
-				"Verdigris ward: 8 block shelter; nearby condensers work twice as fast and yield twice the dew."), true);
+		player.displayClientMessage(Component.translatable("message.hemomancy.verdigris_lattice_block.verdigris_ward_8_block_shelter_nearby"), true);
 		return InteractionResult.sidedSuccess(level.isClientSide);
 	}
 

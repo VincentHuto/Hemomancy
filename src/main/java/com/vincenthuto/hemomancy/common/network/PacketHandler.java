@@ -59,9 +59,11 @@ public class PacketHandler {
      *   <li>{@code "2"}: consolidation step 4 removed 18 never-sent payloads and registered 15 client-to-server
      *   payloads in their real direction.</li>
      *   <li>{@code "3"}: eight single-purpose VFX payloads folded into ParticleBurstPacket and EntityVisualPacket.</li>
+     *   <li>{@code "6"}: the Ironhearted and Blackhearted sync renamed to PacketSyncManipulationHearts
+     *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "4";
+    public static final String PROTOCOL_VERSION = "6";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -159,8 +161,8 @@ public class PacketHandler {
                 VascularSystemServerPacket.STREAM_CODEC, VascularSystemServerPacket::handle);
         net.playToClient(PacketSyncMuscleMemory.TYPE,
                 PacketSyncMuscleMemory.STREAM_CODEC, PacketSyncMuscleMemory::handle);
-		net.playToClient(PacketSyncBodyIdiomState.TYPE,
-				PacketSyncBodyIdiomState.STREAM_CODEC, PacketSyncBodyIdiomState::handle);
+		net.playToClient(PacketSyncManipulationHearts.TYPE,
+				PacketSyncManipulationHearts.STREAM_CODEC, PacketSyncManipulationHearts::handle);
 
         // ── Scar system ───────────────────────────────────────────────────────
         net.playToClient(PacketEquipmentSync.TYPE, PacketEquipmentSync.STREAM_CODEC, PacketEquipmentSync::handle);

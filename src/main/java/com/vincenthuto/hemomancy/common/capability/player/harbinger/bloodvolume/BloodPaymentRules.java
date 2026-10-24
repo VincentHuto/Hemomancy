@@ -11,10 +11,10 @@ public final class BloodPaymentRules {
 	public static final double RESERVE_FRACTION = 0.15D;
 	static final double EPSILON = 0.000001D;
 
-	public static final String DORMANT = "Dormant";
-	public static final String RESERVE_PROTECTED = "Sanguine reserve protected";
-	public static final String INSUFFICIENT = "Insufficient blood";
-	public static final String EXHAUSTED = "Blood exhausted";
+	public static final String DORMANT = "message.hemomancy.blood_flow.dormant";
+	public static final String RESERVE_PROTECTED = "message.hemomancy.blood_flow.sanguine_reserve_protected";
+	public static final String INSUFFICIENT = "message.hemomancy.blood_flow.insufficient_blood";
+	public static final String EXHAUSTED = "message.hemomancy.blood_flow.blood_exhausted";
 
 	private BloodPaymentRules() {
 	}

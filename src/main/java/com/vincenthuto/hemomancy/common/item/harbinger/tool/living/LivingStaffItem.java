@@ -205,7 +205,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		ItemStack creature = cap.getEquippedMorphling();
 		if (!(creature.getItem() instanceof IMorphling morphling)) return;
 		if (!com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem.isPrimal(creature)) {
-			player.displayClientMessage(Component.literal("Your morphling has not reached its Primal stage."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.living_staff_item.your_morphling_has_not_reached_its"), true);
 			return;
 		}
 		if (!com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents

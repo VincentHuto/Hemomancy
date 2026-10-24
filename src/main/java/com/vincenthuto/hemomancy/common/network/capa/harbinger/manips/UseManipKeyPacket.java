@@ -91,8 +91,8 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 						if (active || wasSelected) {
                             com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.passive(
                                     (net.minecraft.server.level.ServerPlayer) player, passive, active);
-							player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')
-									+ (active ? " manifested" : " dismissed"))
+							player.displayClientMessage(Component.translatable(active ? "message.hemomancy.use_manip_key_packet.manifested"
+									: "message.hemomancy.use_manip_key_packet.dismissed", passive.getName().replace('_', ' '))
 									.withStyle(active ? ChatFormatting.GREEN : ChatFormatting.GRAY), true);
 						}
 						return;
@@ -101,8 +101,8 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 					boolean active = knownCheck.togglePassive(passive.getName());
                     com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.passive(
                             (net.minecraft.server.level.ServerPlayer) player, passive, active);
-					player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')
-							+ (active ? " enabled" : " disabled"))
+					player.displayClientMessage(Component.translatable(active ? "message.hemomancy.use_manip_key_packet.enabled"
+							: "message.hemomancy.use_manip_key_packet.disabled", passive.getName().replace('_', ' '))
 							.withStyle(active ? ChatFormatting.GREEN : ChatFormatting.GRAY), true);
 					return;
 				}
@@ -120,16 +120,14 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 					if (selectedManip != null) {
 						if (ManipulationRetirementRules.isRetiredManipulation(selectedManip)) {
 							player.displayClientMessage(
-									Component.literal("That manipulation has gone dormant.")
-											.withStyle(ChatFormatting.DARK_GRAY), true);
+									Component.translatable("message.hemomancy.use_manip_key_packet.that_manipulation_has_gone_dormant").withStyle(ChatFormatting.DARK_GRAY), true);
 							ManipulationRetirementRules.sanitizeKnownManipulations(known);
 							return;
 						}
 						// Check manipulation is equipped
 						if (!known.isManipEquipped(selectedManip)) {
 							player.displayClientMessage(
-									Component.literal("That manipulation is unequipped!")
-											.withStyle(ChatFormatting.RED), true);
+									Component.translatable("message.hemomancy.use_manip_key_packet.that_manipulation_is_unequipped").withStyle(ChatFormatting.RED), true);
 							return;
 						}
 						if (selectedManip.getType() == EnumManipulationType.CONTINUOUS) return;
@@ -164,12 +162,10 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 									}
 									volume.fill(bloodRefund);
 									mainStack.shrink(1);
-									player.displayClientMessage(Component.literal("Dispelled Conjured Item")
-											.withStyle(ChatFormatting.RED), true);
+									player.displayClientMessage(Component.translatable("message.hemomancy.use_manip_key_packet.dispelled_conjured_item").withStyle(ChatFormatting.RED), true);
 								} else {
 									player.displayClientMessage(
-											Component.literal("Conjuration Requires an Empty Hand!")
-													.withStyle(ChatFormatting.RED),
+											Component.translatable("message.hemomancy.use_manip_key_packet.conjuration_requires_an_empty_hand").withStyle(ChatFormatting.RED),
 											true);
 								}
 							} else {
@@ -185,8 +181,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 					}
 				}
 			} else {
-				player.displayClientMessage(Component.literal("You lack the skill to manifest this power!")
-						.withStyle(ChatFormatting.RED), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.use_manip_key_packet.you_lack_the_skill_to_manifest").withStyle(ChatFormatting.RED), true);
 			}
             } finally {
                 if(message.action==Action.CAST) {

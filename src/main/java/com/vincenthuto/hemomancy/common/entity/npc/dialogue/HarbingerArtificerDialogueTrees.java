@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import com.vincenthuto.hemomancy.Hemomancy;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -10,8 +10,7 @@ import java.util.List;
 import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
 
 public final class HarbingerArtificerDialogueTrees {
-	private static final ResourceLocation ARTIFICER_ICON = ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
-			"textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer.png");
+	private static final ResourceLocation ARTIFICER_ICON = Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_artificer";
 	public static final String EVENT_CLAIM_WORN_VOW_REWARD = "artificer_claim_worn_vow_reward";
 	public static final String EVENT_CLAIM_THREE_ANSWERS_REWARD = "artificer_claim_three_answers_reward";

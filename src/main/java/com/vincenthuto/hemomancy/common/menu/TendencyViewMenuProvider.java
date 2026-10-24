@@ -19,6 +19,6 @@ public class TendencyViewMenuProvider implements MenuProvider {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.literal("Tendency View");
+		return Component.translatable("message.hemomancy.tendency_view_menu_provider.tendency_view");
 	}
 }

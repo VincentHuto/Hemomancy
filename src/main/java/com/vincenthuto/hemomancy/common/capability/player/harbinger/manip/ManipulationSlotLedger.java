@@ -18,14 +18,14 @@ public final class ManipulationSlotLedger {
 		int degreeBonus = Math.max(0, degree / 2);
 		int skillBonus = skillBonus(player);
 		List<ManipulationSlotContribution> contributions = new ArrayList<>();
-		contributions.add(ManipulationSlotContribution.amount("base", "Base Slots",
+		contributions.add(ManipulationSlotContribution.amount("base", "message.hemomancy.manipulation_slot_ledger.base_slots",
 				Category.BASE, ManipSlotHelper.BASE_SLOTS));
 		if (degreeBonus > 0) {
-			contributions.add(ManipulationSlotContribution.amount("degree", "Initiatory Degree",
+			contributions.add(ManipulationSlotContribution.amount("degree", "message.hemomancy.manipulation_slot_ledger.initiatory_degree",
 					Category.DEGREE, degreeBonus));
 		}
 		if (skillBonus > 0) {
-			contributions.add(ManipulationSlotContribution.amount("skill_manip_slots", "Manipulation Slots",
+			contributions.add(ManipulationSlotContribution.amount("skill_manip_slots", "message.hemomancy.manipulation_slot_ledger.manipulation_slots",
 					Category.SKILL, skillBonus));
 		}
 		return ManipulationSlotRules.snapshot(contributions, ManipSlotHelper.MAX_SLOTS);

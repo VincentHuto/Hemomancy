@@ -121,8 +121,7 @@ public final class LivingStaffWeaponFormHelper {
 		player.setItemInHand(hand, restoredStaffStack(stack, player.registryAccess()));
 		LivingArsenalInventoryGuard.sanitizePlayerInventory(player);
 		syncMorph(player, beforeMain, beforeOff);
-		player.displayClientMessage(Component.literal("The Living Staff recoils back into shape.")
-				.withStyle(ChatFormatting.DARK_RED), true);
+		player.displayClientMessage(Component.translatable("message.hemomancy.living_staff_weapon_form_helper.the_living_staff_recoils_back_into").withStyle(ChatFormatting.DARK_RED), true);
 		return true;
 	}
 
@@ -171,9 +170,7 @@ public final class LivingStaffWeaponFormHelper {
 
 	private static boolean applyWeaponForm(Player player, String formName) {
 		if (player instanceof ServerPlayer serverPlayer && CardinalRiteStaffEscrow.isPlanted(serverPlayer)) {
-			player.displayClientMessage(Component.literal(
-					"The Living Arsenal cannot answer while its staff is planted in a Cardinal Rite.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.living_staff_weapon_form_helper.the_living_arsenal_cannot_answer_while").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 			return false;
 		}
 		ItemStack held = player.getMainHandItem();
@@ -186,8 +183,7 @@ public final class LivingStaffWeaponFormHelper {
 			return true;
 		}
 		if (!(held.getItem() instanceof LivingStaffItem) && !isTransformedStaffWeapon(held)) {
-			player.displayClientMessage(Component.literal("The Living Staff must be in hand.")
-					.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.living_staff_weapon_form_helper.the_living_staff_must_be_in").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		if (!chargeHotSwapCost(player)) {
@@ -210,14 +206,12 @@ public final class LivingStaffWeaponFormHelper {
 	private static boolean chargeHotSwapCost(Player player) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
-			player.displayClientMessage(Component.literal("The staff finds no active blood in you.")
-					.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.living_staff_weapon_form_helper.the_staff_finds_no_active_blood").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		double cost = SkillPointHelper.getLivingStaffHotSwapCost(player);
 		if (volume.getBloodVolume() < cost) {
-			player.displayClientMessage(Component.literal("Not enough blood to reshape the Living Staff.")
-					.withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.living_staff_weapon_form_helper.not_enough_blood_to_reshape_the").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		BloodAccounting.pay(player, cost, HOT_SWAP);

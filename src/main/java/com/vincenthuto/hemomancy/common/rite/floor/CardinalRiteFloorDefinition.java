@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -51,15 +53,35 @@ public record CardinalRiteFloorDefinition(
 		return new CardinalRiteFloorRequirement(style, tier);
 	}
 
-	public String displayName() {
+	public MutableComponent displayName() {
 		return displayName(style, tier);
 	}
 
 	/** "Working Floor (Greater)". */
-	public static String displayName(String style, CardinalRiteType tier) {
-		String styleName = style.isEmpty() ? "Rite" : Character.toUpperCase(style.charAt(0)) + style.substring(1);
-		String tierName = tier.getSerializedName();
-		return styleName + " Floor (" + Character.toUpperCase(tierName.charAt(0)) + tierName.substring(1) + ")";
+	public static MutableComponent displayName(String style, CardinalRiteType tier) {
+		return Component.translatable("cardinal_rite_floor.hemomancy.display_name", styleName(style), tierName(tier));
+	}
+
+	/** "Working"; a datapack style without a key shows its id capitalised. */
+	public static MutableComponent styleName(String style) {
+		if (style.isEmpty()) return Component.translatable("cardinal_rite_floor.hemomancy.style.unnamed");
+		return Component.translatableWithFallback("cardinal_rite_floor.hemomancy.style." + style,
+				Character.toUpperCase(style.charAt(0)) + style.substring(1));
+	}
+
+	/** "Greater". */
+	public static MutableComponent tierName(CardinalRiteType tier) {
+		return Component.translatable("cardinal_rite_floor.hemomancy.tier." + tier.getSerializedName());
+	}
+
+	/** "Greater (7x7)". */
+	public static MutableComponent tierWithSize(CardinalRiteType tier) {
+		return Component.translatable("cardinal_rite_floor.hemomancy.tier_size", tierName(tier), tier.getSize(), tier.getSize());
+	}
+
+	/** "Working Greater". */
+	public MutableComponent styleAndTier() {
+		return Component.translatable("cardinal_rite_floor.hemomancy.style_tier", styleName(style), tierName(tier));
 	}
 
 	/** Lists floors in purpose order (Threshold, Dominion, Working, Communion), smallest tier first; other styles last. */

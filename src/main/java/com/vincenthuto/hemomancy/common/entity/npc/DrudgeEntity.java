@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -223,7 +224,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             // Immediately forget the home so pathfinding stops being home-directed
             setHomePos(null);
             if (!level().isClientSide) {
-                setCustomName(Component.literal("Rogue Drudge").withStyle(ChatFormatting.DARK_RED));
+                setCustomName(Component.translatable("message.hemomancy.drudge_entity.rogue_drudge").withStyle(ChatFormatting.DARK_RED));
                 setCustomNameVisible(true);
             }
         }
@@ -337,12 +338,12 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         // Only owner can interact (or creative)
         UUID ownerUUID = getOwnerUUID();
         if (ownerUUID != null && !ownerUUID.equals(player.getUUID()) && !player.getAbilities().instabuild) {
-            player.displayClientMessage(Component.literal("§cThis construct answers to another hand."), true);
+            player.displayClientMessage(Component.translatable("message.hemomancy.drudge_entity.this_construct_answers_to_another_hand"), true);
             return InteractionResult.FAIL;
         }
 
         if (isRogue()) {
-            player.displayClientMessage(Component.literal("§4The construct has turned rogue."), true);
+            player.displayClientMessage(Component.translatable("message.hemomancy.drudge_entity.the_construct_has_turned_rogue"), true);
             return InteractionResult.FAIL;
         }
 
@@ -353,7 +354,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             if (equippedMemory != null) {
                 dropMemoryItem(player);
             } else {
-                player.displayClientMessage(Component.literal("§8No memory is installed."), true);
+                player.displayClientMessage(Component.translatable("message.hemomancy.drudge_entity.no_memory_is_installed"), true);
             }
             return InteractionResult.SUCCESS;
         }
@@ -361,7 +362,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         // Right-click with a Blood Memory → equip it
         if (!held.isEmpty() && held.getItem() instanceof BloodMemoryItem memItem) {
             if (memItem.isRetiredMemoryItem()) {
-                player.displayClientMessage(Component.literal("§8That memory has gone dormant."), true);
+                player.displayClientMessage(Component.translatable("message.hemomancy.drudge_entity.that_memory_has_gone_dormant"), true);
                 return InteractionResult.FAIL;
             }
             com.vincenthuto.hemomancy.common.manipulation.DrudgeAction da =
@@ -376,8 +377,8 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             if (!player.getAbilities().instabuild) {
                 held.shrink(1);
             }
-            player.displayClientMessage(Component.literal("§7Memory installed: ")
-                    .append(memItem.getManip().getDisplayName().withStyle(ChatFormatting.RED)), true);
+            player.displayClientMessage(Component.translatable("message.hemomancy.drudge_entity.memory_installed",
+            		memItem.getManip().getDisplayName().withStyle(ChatFormatting.RED)), true);
             return InteractionResult.SUCCESS;
         }
 
@@ -386,9 +387,12 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             setPassiveMode(!isPassiveMode());
             String modeStr = isPassiveMode() ? "§aPassive" : "§eCommanded";
             Component memName = equippedMemory != null ? equippedMemory.getDisplayName().withStyle(ChatFormatting.RED)
-                    : Component.literal("§8none");
-            player.displayClientMessage(Component.literal("§7Mode: " + modeStr + " §7| Memory: ").append(memName)
-                    .append(" §7| Charge: §c" + (int) getBloodCharge() + "/" + (int) MAX_BLOOD_CHARGE + " mL"), true);
+                    : Component.translatable("message.hemomancy.drudge_entity.none");
+            player.displayClientMessage(HemoText.translatable("message.hemomancy.drudge_entity.mode_memory_charge_ml",
+            		modeStr,
+            		memName,
+            		(int) getBloodCharge(),
+            		(int) MAX_BLOOD_CHARGE), true);
             return InteractionResult.SUCCESS;
         }
 
@@ -409,7 +413,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         if (ManipulationRetirementRules.isRetiredManipulation(equippedMemory)) {
             setEquippedMemory(null);
             if (player != null) {
-                player.displayClientMessage(Component.literal("§8The dormant memory flakes away."), true);
+                player.displayClientMessage(Component.translatable("message.hemomancy.drudge_entity.the_dormant_memory_flakes_away"), true);
             }
             return;
         }
@@ -419,7 +423,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
                 || dropMemoryItemFromRegister(player, com.vincenthuto.hemomancy.common.init.ItemInit.HANDHELDITEMS)
                 || dropMemoryItemFromRegister(player, com.vincenthuto.hemomancy.common.init.ItemInit.SPECIALITEMS);
         if (!dropped && player != null) {
-            player.displayClientMessage(Component.literal("§8No matching memory item found."), true);
+            player.displayClientMessage(Component.translatable("message.hemomancy.drudge_entity.no_matching_memory_item_found"), true);
         }
     }
 
@@ -432,7 +436,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
                     spawnAtLocation(new net.minecraft.world.item.ItemStack(bmi));
                     setEquippedMemory(null);
                     if (player != null) {
-                        player.displayClientMessage(Component.literal("§7Memory retrieved."), true);
+                        player.displayClientMessage(Component.translatable("message.hemomancy.drudge_entity.memory_retrieved"), true);
                     }
                     return true;
                 }

@@ -76,8 +76,8 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
                 && this.hoveredSlot.index == GhastlyAlembicMenu.FLASK_OUTPUT_SLOT
                 && !this.hoveredSlot.hasItem()) {
             graphics.renderTooltip(font, List.of(
-                    Component.literal("\u00A74Container output"),
-                    Component.literal("\u00A77Place a blood gourd here to fill it from the alembic.")
+                    Component.translatable("screen.hemomancy.ghastly_alembic.container_output"),
+                    Component.translatable("screen.hemomancy.ghastly_alembic.place_a_blood_gourd_here_to")
             ), java.util.Optional.empty(), mouseX, mouseY);
         }
 		if (this.hoveredSlot != null && this.hoveredSlot.index == GhastlyAlembicMenu.RESULT_SLOT

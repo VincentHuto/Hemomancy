@@ -34,7 +34,7 @@ public class BlackVeilCovenantManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (BlackVeilCovenantManager.hasActiveVeil(player)) {
-			player.displayClientMessage(net.minecraft.network.chat.Component.literal("Your black veil still stands."), true);
+			player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.hemomancy.black_veil_covenant_manip.your_black_veil_still_stands"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

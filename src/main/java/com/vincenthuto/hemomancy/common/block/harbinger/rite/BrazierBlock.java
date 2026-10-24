@@ -325,7 +325,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 						volume.getBloodVolume());
 		if (poured <= 0.0D) {
 			if (level.getGameTime() % 20L == 0L) {
-				player.displayClientMessage(Component.literal("No blood answers the brazier."), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.brazier_block.no_blood_answers_the_brazier"), true);
 			}
 			return 0.0D;
 		}

@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostSnapshot;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotContribution;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotSnapshot;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,59 +18,54 @@ public final class ScryingDiagnosticsTooltipLines {
 	private ScryingDiagnosticsTooltipLines() {
 	}
 
-	public static List<String> maxBloodMods(MaxBloodSnapshot snapshot) {
-		List<String> lines = new ArrayList<>();
+	public static List<Component> maxBloodMods(MaxBloodSnapshot snapshot) {
+		List<Component> lines = new ArrayList<>();
 		if (snapshot == null || snapshot.contributions().isEmpty()) {
-			lines.add("No max-blood modifiers.");
+			lines.add(Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.no_max_blood_modifiers"));
 			return lines;
 		}
 		for (MaxBloodContribution contribution : snapshot.contributions()) {
-			String line = titleCase(contribution.category().name()) + " - " + contribution.label()
-					+ ": " + signedWhole(contribution.amount()) + " mL";
-			if (!contribution.condition().isEmpty()) {
-				line += " [" + contribution.condition() + "]";
-			}
-			lines.add(line);
+			lines.add(row(contribution.category(), contribution.label(),
+					Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.ml",
+							signedWhole(contribution.amount())),
+					contribution.condition()));
 		}
 		return lines;
 	}
 
-	public static List<String> bloodFlowMods(BloodFlowSnapshot snapshot) {
-		List<String> lines = new ArrayList<>();
+	public static List<Component> bloodFlowMods(BloodFlowSnapshot snapshot) {
+		List<Component> lines = new ArrayList<>();
 		if (snapshot == null || snapshot.contributions().isEmpty()) {
-			lines.add("No active blood-flow modifiers.");
+			lines.add(Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.no_active_blood_flow_modifiers"));
 			return lines;
 		}
 		for (BloodFlowContribution contribution : snapshot.contributions()) {
-			String line = titleCase(contribution.category().name()) + " - " + contribution.label()
-					+ ": " + flowRate(contribution) + " mL/t";
-			if (!contribution.condition().isEmpty()) {
-				line += " [" + contribution.condition() + "]";
-			}
-			lines.add(line);
+			lines.add(row(contribution.category(), contribution.label(),
+					Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.ml_per_tick",
+							flowRate(contribution)),
+					contribution.condition()));
 		}
 		return lines;
 	}
 
-	public static List<String> manipulationCostMods(ManipulationCostSnapshot snapshot) {
-		List<String> lines = new ArrayList<>();
+	public static List<Component> manipulationCostMods(ManipulationCostSnapshot snapshot) {
+		List<Component> lines = new ArrayList<>();
 		if (isEmptyCost(snapshot)) {
-			lines.add("No selected manipulation cost.");
+			lines.add(Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.no_selected_manipulation_cost"));
 			return lines;
 		}
 		if (snapshot.contributions().isEmpty()) {
-			lines.add("No manipulation cost modifiers.");
+			lines.add(Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.no_manipulation_cost_modifiers"));
 		} else {
 			for (ManipulationCostContribution contribution : snapshot.contributions()) {
-				String line = titleCase(contribution.category().name()) + " - " + contribution.label()
-						+ ": x" + multiplier(contribution.multiplier());
-				if (!contribution.condition().isEmpty()) {
-					line += " [" + contribution.condition() + "]";
-				}
-				lines.add(line);
+				lines.add(row(contribution.category(), contribution.label(),
+						Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.multiplier",
+								multiplier(contribution.multiplier())),
+						contribution.condition()));
 			}
 		}
-		lines.add("Effective Cost: " + unsigned(snapshot.effectiveCost()) + " mL");
+		lines.add(Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.effective_cost_ml",
+				unsigned(snapshot.effectiveCost())));
 		return lines;
 	}
 
@@ -79,26 +75,54 @@ public final class ScryingDiagnosticsTooltipLines {
 				&& Math.abs(snapshot.effectiveCost()) < 0.000001D);
 	}
 
-	public static List<String> manipulationSlotMods(ManipulationSlotSnapshot snapshot) {
-		List<String> lines = new ArrayList<>();
+	public static List<Component> manipulationSlotMods(ManipulationSlotSnapshot snapshot) {
+		List<Component> lines = new ArrayList<>();
 		if (snapshot == null || snapshot.contributions().isEmpty()) {
-			lines.add("No manipulation slot modifiers.");
+			lines.add(Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.no_manipulation_slot_modifiers"));
 			return lines;
 		}
 		for (ManipulationSlotContribution contribution : snapshot.contributions()) {
-			String line = titleCase(contribution.category().name()) + " - " + contribution.label()
-					+ ": " + signedInt(contribution.amount());
-			if (!contribution.condition().isEmpty()) {
-				line += " [" + contribution.condition() + "]";
-			}
-			lines.add(line);
+			lines.add(row(contribution.category(), contribution.label(),
+					signedInt(contribution.amount()), contribution.condition()));
 		}
 		if (snapshot.cappedOffSlots() > 0) {
-			lines.add("Cap: " + snapshot.maxSlots() + " slots, " + snapshot.cappedOffSlots() + " capped off");
+			lines.add(Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.cap_slots_capped_off",
+					snapshot.maxSlots(), snapshot.cappedOffSlots()));
 		} else {
-			lines.add("Cap: " + snapshot.maxSlots() + " slots");
+			lines.add(Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.cap_slots",
+					snapshot.maxSlots()));
 		}
 		return lines;
+	}
+
+	/** "Category - Label", with " [condition]" when the source reports one. */
+	public static Component sourceLabel(Enum<?> category, String label, String condition) {
+		return condition.isEmpty()
+				? Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.source",
+						categoryName(category), text(label))
+				: Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.source_with_condition",
+						categoryName(category), text(label), text(condition));
+	}
+
+	public static Component categoryName(Enum<?> category) {
+		return Component.translatable("screen.hemomancy.scrying_diagnostics.category."
+				+ category.name().toLowerCase(Locale.ROOT));
+	}
+
+	/**
+	 * A ledger label or condition: a translation key, or older plain text from a source that has not moved to one
+	 * (a missing key shows as itself).
+	 */
+	private static Component text(String keyOrText) {
+		return Component.translatable(keyOrText);
+	}
+
+	private static Component row(Enum<?> category, String label, Object value, String condition) {
+		return condition.isEmpty()
+				? Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.row",
+						categoryName(category), text(label), value)
+				: Component.translatable("screen.hemomancy.scrying_diagnostics_tooltip_lines.row_with_condition",
+						categoryName(category), text(label), value, text(condition));
 	}
 
 	private static String flowRate(BloodFlowContribution contribution) {
@@ -126,20 +150,5 @@ public final class ScryingDiagnosticsTooltipLines {
 
 	private static String signedInt(int value) {
 		return String.format(Locale.ROOT, "%+d", value);
-	}
-
-	private static String titleCase(String value) {
-		String[] parts = value.toLowerCase(Locale.ROOT).split("_");
-		StringBuilder builder = new StringBuilder();
-		for (String part : parts) {
-			if (part.isEmpty()) {
-				continue;
-			}
-			if (!builder.isEmpty()) {
-				builder.append(' ');
-			}
-			builder.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
-		}
-		return builder.toString();
 	}
 }

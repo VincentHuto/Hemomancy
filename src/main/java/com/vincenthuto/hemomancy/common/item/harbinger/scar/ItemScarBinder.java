@@ -88,11 +88,6 @@ public class ItemScarBinder extends Item {
 		return ClientBridge.get().hasTranslation(key);
 	}
 
-	private String fallbackString(String key, String fallback) {
-		String tmp = ClientBridge.get().translate(key);
-		return tmp.equals(key) ? fallback : tmp;
-	}
-
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
@@ -107,8 +102,7 @@ public class ItemScarBinder extends Item {
 			if (hasTranslation(translationKey + ".info3"))
 				tooltip.add(Component.translatable(ClientBridge.get().translate(translationKey + ".info3")));
 		} else {
-			tooltip.add(
-					Component.translatable(fallbackString("Hemomancy.shift", "Press <Shift> for info.")));
+			tooltip.add(Component.translatable("tooltip.hemomancy.item_scar_binder.press_shift_for_info"));
 		}
 	}
 }

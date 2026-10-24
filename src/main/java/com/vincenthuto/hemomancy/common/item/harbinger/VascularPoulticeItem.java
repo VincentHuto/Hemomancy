@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,7 +38,7 @@ public class VascularPoulticeItem extends Item {
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
 		tooltip.add(Component.translatable("tooltip.hemomancy.vascular_poultice.repairs_the_two_most_strained_vein").withStyle(ChatFormatting.GRAY));
-		tooltip.add(Component.literal("Restores +" + (int) healAmount + " health to each").withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(HemoText.translatable("tooltip.hemomancy.vascular_poultice.restores_health_to_each", (int) healAmount).withStyle(ChatFormatting.DARK_RED));
 	}
 
 	@Override
@@ -72,8 +73,8 @@ public class VascularPoulticeItem extends Item {
 			vascular.setVascularSystem(vascular.getVascularSystem());
 			VascularSystemEvents.syncVascular(player, vascular);
 			VeinMasonAssignments.onTreatment(player);
-			player.displayClientMessage(Component.literal("Poultice sealed " + results.size() + " strained sections")
-					.withStyle(ChatFormatting.DARK_RED), true);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.vascular_poultice_item.poultice_sealed_strained_sections",
+					results.size()).withStyle(ChatFormatting.DARK_RED), true);
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					SoundEvents.HONEY_DRINK, SoundSource.PLAYERS, 0.7F, 0.85F);
 			if (!player.getAbilities().instabuild) {

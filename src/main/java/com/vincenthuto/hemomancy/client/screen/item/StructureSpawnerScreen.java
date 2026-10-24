@@ -15,6 +15,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -80,9 +81,8 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	private static final int HEADER_HEIGHT = 14;
 	/** Whole rite floors list above the degree sections. */
 	private static final int FLOOR_SECTION = -1;
-	private static final Component CRAFT_SPAWN_HINT = Component.literal("Click: the structure only.\n")
-			.append(Component.literal("Shift-click: also its Working floor, with the medium seated in the Focus"
-					+ " and the offerings lit in their braziers.").withStyle(ChatFormatting.GRAY));
+	private static final Component CRAFT_SPAWN_HINT = Component.translatable("screen.hemomancy.structure_spawner.click_the_structure_only",
+			Component.translatable("screen.hemomancy.structure_spawner.shift_click_also_its_working_floor").withStyle(ChatFormatting.GRAY));
 
 	private final List<StructureEntry> entries = new ArrayList<>();
 	/** Flat display list: mix of section headers (null recipeId) and clickable entries. */
@@ -140,7 +140,7 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 
 			// Whole rite floors with their Focus and lit, empty braziers, ready for any rite or Working craft
 			for (CardinalRiteFloorDefinition floor : CardinalRiteFloorRegistry.all().values()) {
-				String name = floor.displayName();
+				String name = floor.displayName().getString();
 				entries.add(new StructureEntry(
 						floor.id(),
 						name,
@@ -177,17 +177,21 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	}
 
 	private String getSectionSortLabel(int level) {
+		return sectionTitle(level).getString();
+	}
+
+	private MutableComponent sectionTitle(int level) {
 		if (level == FLOOR_SECTION) {
-			return "-- Rite Floors --";
+			return Component.translatable("screen.hemomancy.structure_spawner.rite_floors_section");
 		}
 		if (selectedTab == PathTab.UNSTAINED) {
-			return "-- Stage " + level + " - " + RecipeDegreeGates.unstainedStageLabel(level) + " --";
+			return Component.translatable("screen.hemomancy.structure_spawner.stage_section", level, RecipeDegreeGates.unstainedStageLabel(level));
 		}
-		return "-- " + RecipeDegreeGates.degreeLabel(level) + " --";
+		return Component.translatable("screen.hemomancy.structure_spawner.degree_section", RecipeDegreeGates.degreeLabel(level));
 	}
 
 	private Component getSectionLabel(int level) {
-		return Component.literal(getSectionSortLabel(level)).withStyle(sectionTextStyle());
+		return sectionTitle(level).withStyle(sectionTextStyle());
 	}
 
 	private static Component createEntryLabel(PlaceStructurePacket.StructureType type, boolean workingCraft, String name) {
@@ -196,12 +200,12 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 			case CARDINAL_RITE -> ChatFormatting.LIGHT_PURPLE;
 			case RITE_FLOOR -> ChatFormatting.GOLD;
 		};
-		String prefix = workingCraft ? "[Craft] " : switch (type) {
-			case BLOOD_STRUCTURE -> "[Structure] ";
-			case CARDINAL_RITE -> "[Rite] ";
-			case RITE_FLOOR -> "[Floor] ";
+		String prefix = workingCraft ? "screen.hemomancy.structure_spawner.prefix_craft" : switch (type) {
+			case BLOOD_STRUCTURE -> "screen.hemomancy.structure_spawner.prefix_structure";
+			case CARDINAL_RITE -> "screen.hemomancy.structure_spawner.prefix_rite";
+			case RITE_FLOOR -> "screen.hemomancy.structure_spawner.prefix_floor";
 		};
-		return Component.literal(prefix).withStyle(prefixColor)
+		return Component.translatable(prefix).withStyle(prefixColor)
 				.append(Component.literal(name).withStyle(ChatFormatting.WHITE));
 	}
 
@@ -210,7 +214,7 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 				? (tab == PathTab.UNSTAINED ? ChatFormatting.AQUA : ChatFormatting.GOLD)
 				: ChatFormatting.GRAY;
 		String prefix = tab == selectedTab ? "> " : "";
-		return Component.literal(prefix + tab.label).withStyle(color, ChatFormatting.BOLD);
+		return Component.literal(prefix).append(Component.translatable(tab.labelKey)).withStyle(color, ChatFormatting.BOLD);
 	}
 
 	private void selectTab(PathTab tab) {
@@ -355,10 +359,10 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 
 	@Override
 	protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-		graphics.drawString(this.font, Component.literal("Structure Spawner").withStyle(sectionTextStyle()), 8, 6, titleTextColor(), false);
+		graphics.drawString(this.font, Component.translatable("screen.hemomancy.structure_spawner.structure_spawner").withStyle(sectionTextStyle()), 8, 6, titleTextColor(), false);
 
 		// Entry count info
-		String info = getVisibleEntryCount() + " " + selectedTab.label.toLowerCase() + " entries";
+		Component info = Component.translatable(selectedTab.entryCountKey, getVisibleEntryCount());
 		graphics.drawString(this.font, info, GUI_WIDTH - font.width(info) - 8, 6, 0x888888, false);
 	}
 
@@ -477,15 +481,17 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 
 
 	private enum PathTab {
-		HARBINGER(false, "Harbingers"),
-		UNSTAINED(true, "Unstained");
+		HARBINGER(false, "screen.hemomancy.structure_spawner.tab_harbingers", "screen.hemomancy.structure_spawner.harbinger_entry_count"),
+		UNSTAINED(true, "screen.hemomancy.structure_spawner.tab_unstained", "screen.hemomancy.structure_spawner.unstained_entry_count");
 
 		private final boolean unstained;
-		private final String label;
+		private final String labelKey;
+		private final String entryCountKey;
 
-		PathTab(boolean unstained, String label) {
+		PathTab(boolean unstained, String labelKey, String entryCountKey) {
 			this.unstained = unstained;
-			this.label = label;
+			this.labelKey = labelKey;
+			this.entryCountKey = entryCountKey;
 		}
 	}
 

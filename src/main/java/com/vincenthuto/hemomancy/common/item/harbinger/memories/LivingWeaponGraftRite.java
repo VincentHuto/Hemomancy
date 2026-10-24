@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.BrazierItemAbsorptionRite;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRite;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRites;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
@@ -67,13 +68,11 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 		boolean vesperMemoryOffering = offering.is(ItemInit.memory_of_vesper.get());
 		LivingWeaponForm form = data == null ? null : data.form();
 		if (!channel.lit()) {
-			messageEverySecond(level, player, "Light the brazier before receiving its offering.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.light_the_brazier_before_receiving_its"));
 			return Gate.refuse(true, false);
 		}
 		if (!LivingStaffItem.isLivingStaffAbsorptionUse(player, player.getUseItem())) {
-			messageEverySecond(level, player, vesperMemoryOffering
-					? "Hold the Living Staff to receive the memory."
-					: "Hold the Living Staff to receive the limb.");
+			messageEverySecond(level, player, (vesperMemoryOffering ? Component.translatable("message.hemomancy.living_weapon_graft_rite.hold_the_living_staff_to_receive") : Component.translatable("message.hemomancy.living_weapon_graft_rite.hold_the_living_staff_to_receive_2")));
 			return Gate.refuse(true, false);
 		}
 		if (vesperMemoryOffering) {
@@ -87,7 +86,7 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 				return Gate.refuse(true, false);
 			}
 			if (!hasEarnedRecipeUnlockOrCreative(player, form)) {
-				messageEverySecond(level, player, "The graft knows the shape. Your blood has not earned it.");
+				messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.the_graft_knows_the_shape_your"));
 				return Gate.refuse(true, false);
 			}
 		}
@@ -116,9 +115,8 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 			player.displayClientMessage(Component.translatable("hemomancy.memory_of_vesper.awakened")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		} else {
-			player.displayClientMessage(Component.literal("Your blood remembers " + form.manipulationDisplayName()
-							+ ". The staff will answer this shape when called.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			player.displayClientMessage(HemoText.translatable("message.hemomancy.living_weapon_graft_rite.your_blood_remembers_the_staff_will",
+					form.manipulationDisplayName()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		}
 		level.playSound(null, channel.pos(), SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 0.55F, 0.65F);
 		spawnCompletionParticles(level, channel.pos());
@@ -128,16 +126,16 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 	private static boolean checkVesperMemory(ServerLevel level, ServerPlayer player) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
-			messageEverySecond(level, player, "The graft dries before it can speak.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.the_graft_dries_before_it_can"));
 			return false;
 		}
 		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		if (progress == null || !progress.hasLivingStaffBond()) {
-			messageEverySecond(level, player, "The memory refuses a hand without a Living Staff bond.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.the_memory_refuses_a_hand_without"));
 			return false;
 		}
 		if (progress.isVesperMemoryAwakened()) {
-			messageEverySecond(level, player, "Vesper's refusal is already disciplined within your staff-bond.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.vesper_s_refusal_is_already_disciplined"));
 			return false;
 		}
 		boolean earnedRefusal = (ProgressionGates.isDegree(player, 7)
@@ -145,7 +143,7 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 				&& HarbingerAdvancementGranter.hasAdvancement(player,
 						HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
 		if (!earnedRefusal) {
-			messageEverySecond(level, player, "Vesper's memory answers only the refusal that defeated him.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.vesper_s_memory_answers_only_the"));
 			return false;
 		}
 		return true;
@@ -154,16 +152,16 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 	private static boolean awakenVesperMemory(ServerLevel level, ServerPlayer player) {
 		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		if (progress == null || !progress.hasLivingStaffBond()) {
-			messageEverySecond(level, player, "The memory refuses a hand without a Living Staff bond.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.the_memory_refuses_a_hand_without"));
 			return false;
 		}
 		if (!progress.awakenVesperMemory()) {
-			messageEverySecond(level, player, "Vesper's refusal is already disciplined within your staff-bond.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.vesper_s_refusal_is_already_disciplined"));
 			return false;
 		}
 		if (!LivingStaffBondHelper.ensureVesperSickleKnown(player)) {
 			progress.setVesperMemoryAwakened(false);
-			messageEverySecond(level, player, "The refusal cannot find its final shape.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.the_refusal_cannot_find_its_final"));
 			return false;
 		}
 		LivingStaffBondHelper.syncProgress(player);
@@ -176,17 +174,17 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 
 	private static void reportFailure(ServerLevel level, ServerPlayer player, MemoryGrantResult result) {
 		if (result.status() == MemoryGrantStatus.ALREADY_KNOWN) {
-			messageEverySecond(level, player, "Your blood already remembers this limb.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.your_blood_already_remembers_this_limb"));
 		} else if (result.status() == MemoryGrantStatus.NO_ACTIVE_BLOOD) {
-			messageEverySecond(level, player, "The graft dries before it can speak.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.the_graft_dries_before_it_can"));
 		} else if (result.status() == MemoryGrantStatus.RANK_TOO_LOW) {
-			messageEverySecond(level, player, "The memory recoils from a smaller vessel.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.the_memory_recoils_from_a_smaller"));
 		} else {
-			messageEverySecond(level, player, "The brazier keeps its hunger.");
+			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.the_brazier_keeps_its_hunger"));
 		}
 	}
 
-	private static void messageEverySecond(ServerLevel level, ServerPlayer player, String text) {
+	private static void messageEverySecond(ServerLevel level, ServerPlayer player, Component text) {
 		BrazierRites.messageEverySecond(level, player, text, ChatFormatting.DARK_RED);
 	}
 

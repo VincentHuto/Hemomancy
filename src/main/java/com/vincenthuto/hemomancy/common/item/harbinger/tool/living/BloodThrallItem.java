@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HematicSutureNodeBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -68,7 +69,7 @@ public class BloodThrallItem extends Item {
                 tag.remove(TAG_DEST); // reset dest if re-binding
                 if (!level.isClientSide) {
                     player.displayClientMessage(
-                            Component.literal("§4Source bound: §c" + pos.toShortString()), true);
+                            HemoText.translatable("message.hemomancy.blood_thrall_item.source_bound", pos.toShortString()), true);
                     level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.6f, 0.8f);
                 }
                 stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -79,15 +80,15 @@ public class BloodThrallItem extends Item {
                 if (src.equals(pos)) {
                     if (!level.isClientSide) {
                         player.displayClientMessage(
-                                Component.literal("§cChoose different source and destination blocks!"), true);
+                                Component.translatable("message.hemomancy.blood_thrall_item.choose_different_source_and_destination_blocks"), true);
                     }
                     return InteractionResult.FAIL;
                 }
                 tag.put(TAG_DEST, NbtUtils.writeBlockPos(pos));
                 if (!level.isClientSide) {
                     player.displayClientMessage(
-                            Component.literal("§1Destination bound: §9" + pos.toShortString()
-                                    + " §7(Right-click ground to deploy)"), true);
+                            HemoText.translatable("message.hemomancy.blood_thrall_item.destination_bound_right_click_ground_to",
+                            		pos.toShortString()), true);
                     level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.6f, 1.2f);
                 }
                 stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -101,7 +102,7 @@ public class BloodThrallItem extends Item {
             if (!tag.contains(TAG_SOURCE) || !tag.contains(TAG_DEST)) {
                 if (!level.isClientSide) {
                     player.displayClientMessage(
-                            Component.literal("§cShift+click a source, then a destination first!"), true);
+                            Component.translatable("message.hemomancy.blood_thrall_item.shift_click_a_source_then_a"), true);
                 }
                 return InteractionResult.FAIL;
             }
@@ -111,7 +112,7 @@ public class BloodThrallItem extends Item {
                 IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player);
                 if (playerVol == null || playerVol.getBloodVolume() < SPAWN_BLOOD_COST) {
                     player.displayClientMessage(
-                            Component.literal("§cNot enough blood! Need " + (int) SPAWN_BLOOD_COST + " mL."), true);
+                            HemoText.translatable("message.hemomancy.blood_thrall_item.not_enough_blood_need_ml", (int) SPAWN_BLOOD_COST), true);
                     return InteractionResult.FAIL;
                 }
                 BloodAccounting.pay(player, SPAWN_BLOOD_COST, THRALL_SPAWN);
@@ -150,8 +151,8 @@ public class BloodThrallItem extends Item {
                 .withStyle(ChatFormatting.GRAY));
         tips.add(Component.translatable("tooltip.hemomancy.blood_thrall.shift_click_thrall_pick_up")
                 .withStyle(ChatFormatting.GRAY));
-        tips.add(Component.literal("Cost: " + (int) SPAWN_BLOOD_COST + " mL")
-                .withStyle(ChatFormatting.DARK_GRAY));
+        tips.add(HemoText.translatable("tooltip.hemomancy.blood_thrall.cost_ml",
+        		(int) SPAWN_BLOOD_COST).withStyle(ChatFormatting.DARK_GRAY));
 
         if (tag != null) {
             if (tag.contains(TAG_SOURCE)) {

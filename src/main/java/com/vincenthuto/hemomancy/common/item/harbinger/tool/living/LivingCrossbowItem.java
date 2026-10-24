@@ -376,8 +376,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		TendencyWeaponHelper.appendTendencyTooltip(stack, tooltip);
-		tooltip.add(Component.literal("Blood bolt: 50% chance of 50 mL per projectile. Other ammunition has no blood cost.")
-				.withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(Component.translatable("tooltip.hemomancy.living_crossbow.blood_bolt_50_chance_of_50").withStyle(ChatFormatting.DARK_RED));
 		List<ItemStack> list = getChargedProjectiles(stack, context.registries());
 		if (isCharged(stack) && !list.isEmpty()) {
 			ItemStack itemstack = list.get(0);

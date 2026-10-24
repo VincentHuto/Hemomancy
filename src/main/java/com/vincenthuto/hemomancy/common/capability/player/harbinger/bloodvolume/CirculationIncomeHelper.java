@@ -29,7 +29,8 @@ public final class CirculationIncomeHelper {
 			return 0.0D;
 		}
 		return BloodFlowLedger.applyCirculationIncome(serverPlayer, volume,
-				"circulation_" + channelName(channel), titleCase(channelName(channel)), category(channel), requested,
+				"circulation_" + channelName(channel), "blood_source.hemomancy.circulation_" + channelName(channel),
+				category(channel), requested,
 				CirculationIncomeRules.DEFAULT_WINDOW_TICKS, channel);
 	}
 
@@ -49,10 +50,4 @@ public final class CirculationIncomeHelper {
 		return channel == null ? "other" : channel.name().toLowerCase();
 	}
 
-	private static String titleCase(String value) {
-		if (value == null || value.isEmpty()) {
-			return "Other";
-		}
-		return Character.toUpperCase(value.charAt(0)) + value.substring(1);
-	}
 }

@@ -4,7 +4,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VisceralMirrorBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
@@ -15,41 +17,41 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 public class VisceralMirrorUpdatePacket implements CustomPacketPayload {
 
 	public static final Type<VisceralMirrorUpdatePacket> TYPE = new Type<>(Hemomancy.rloc("visceral_mirror_update_packet"));
-	public static final StreamCodec<FriendlyByteBuf, VisceralMirrorUpdatePacket> STREAM_CODEC = StreamCodec.of(VisceralMirrorUpdatePacket::encode, VisceralMirrorUpdatePacket::decode);
+	public static final StreamCodec<RegistryFriendlyByteBuf, VisceralMirrorUpdatePacket> STREAM_CODEC = StreamCodec.of(VisceralMirrorUpdatePacket::encode, VisceralMirrorUpdatePacket::decode);
 
 	private final BlockPos pos;
 	private final int phaseOrdinal;
 	private final int ritualTicks;
 	private final int totalRitualTicks;
 	private final int organOrdinal; // -1 if no organ
-	private final String statusMessage;
+	private final Component statusMessage;
 
 	public VisceralMirrorUpdatePacket(BlockPos pos, VisceralMirrorBlockEntity.RitualPhase phase,
-			int ritualTicks, int totalRitualTicks, EnumOrgan organ, String statusMessage) {
+			int ritualTicks, int totalRitualTicks, EnumOrgan organ, Component statusMessage) {
 		this.pos = pos;
 		this.phaseOrdinal = phase.ordinal();
 		this.ritualTicks = ritualTicks;
 		this.totalRitualTicks = totalRitualTicks;
 		this.organOrdinal = organ != null ? organ.ordinal() : -1;
-		this.statusMessage = statusMessage != null ? statusMessage : "";
+		this.statusMessage = statusMessage != null ? statusMessage : Component.empty();
 	}
 
-	public static void encode(FriendlyByteBuf buf, VisceralMirrorUpdatePacket msg) {
+	public static void encode(RegistryFriendlyByteBuf buf, VisceralMirrorUpdatePacket msg) {
 		buf.writeBlockPos(msg.pos);
 		buf.writeInt(msg.phaseOrdinal);
 		buf.writeInt(msg.ritualTicks);
 		buf.writeInt(msg.totalRitualTicks);
 		buf.writeInt(msg.organOrdinal);
-		buf.writeUtf(msg.statusMessage);
+		ComponentSerialization.TRUSTED_STREAM_CODEC.encode(buf, msg.statusMessage);
 	}
 
-	public static VisceralMirrorUpdatePacket decode(FriendlyByteBuf buf) {
+	public static VisceralMirrorUpdatePacket decode(RegistryFriendlyByteBuf buf) {
 		BlockPos pos = buf.readBlockPos();
 		int phaseOrd = buf.readInt();
 		int ritualTicks = buf.readInt();
 		int totalRitualTicks = buf.readInt();
 		int organOrd = buf.readInt();
-		String statusMsg = buf.readUtf();
+		Component statusMsg = ComponentSerialization.TRUSTED_STREAM_CODEC.decode(buf);
 
 		VisceralMirrorBlockEntity.RitualPhase phase =
 				phaseOrd >= 0 && phaseOrd < VisceralMirrorBlockEntity.RitualPhase.values().length
@@ -66,7 +68,7 @@ public class VisceralMirrorUpdatePacket implements CustomPacketPayload {
 	public int getRitualTicks() { return ritualTicks; }
 	public int getTotalRitualTicks() { return totalRitualTicks; }
 	public int getOrganOrdinal() { return organOrdinal; }
-	public String getStatusMessage() { return statusMessage; }
+	public Component getStatusMessage() { return statusMessage; }
 
 	public VisceralMirrorBlockEntity.RitualPhase getPhase() {
 		return phaseOrdinal >= 0 && phaseOrdinal < VisceralMirrorBlockEntity.RitualPhase.values().length

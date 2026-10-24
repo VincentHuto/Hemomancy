@@ -84,7 +84,7 @@ public class LivingWeaponGraftRecipeCategory implements IRecipeCategory<LivingWe
 		int brazierCx = BRAZIER_X + 9;
 
 		JeiPanel.panel(gfx, t, W, H, FOOTER_Y);
-		JeiPanel.title(gfx, font, t, Component.literal(recipe.form().graftName()), 6, 4, W - 12, W);
+		JeiPanel.title(gfx, font, t, recipe.form().graftName(), 6, 4, W - 12, W);
 
 		// Staff, drawing blood from the brazier across a thin thread
 		JeiPanel.slot(gfx, t, STAFF_X + 1, SLOT_Y + 1);

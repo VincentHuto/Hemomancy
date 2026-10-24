@@ -46,7 +46,7 @@ public class HematicFlareManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (findTarget(player, player.level(), range(player)) == null) {
-			player.displayClientMessage(net.minecraft.network.chat.Component.literal("No visible target answers your flare."), true);
+			player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.hemomancy.hematic_flare_manip.no_visible_target_answers_your_flare"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

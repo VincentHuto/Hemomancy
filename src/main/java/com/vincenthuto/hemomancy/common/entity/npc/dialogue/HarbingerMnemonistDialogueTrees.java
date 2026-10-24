@@ -16,8 +16,7 @@ import java.util.Map;
  * manipulation memories, crude echoes, loadout slots, and memory weaving.
  */
 public final class HarbingerMnemonistDialogueTrees {
-	private static final ResourceLocation MNEMONIST_ICON = ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
-			"textures/entity/npc/harbinger/harbinger_mnemonist/harbinger_mnemonist.png");
+	private static final ResourceLocation MNEMONIST_ICON = Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_mnemonist/harbinger_mnemonist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_mnemonist";
 	public static final String EVENT_WOVEN_VESSEL_TURN_IN = "mnemonist_woven_vessel_turn_in";
 	public static final String EVENT_BLANK_MEMORY_RECIPE = "mnemonist_blank_memory_recipe";

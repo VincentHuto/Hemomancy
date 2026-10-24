@@ -12,8 +12,10 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
@@ -25,6 +27,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
@@ -118,7 +121,7 @@ public final class RitesTabView {
 	public static void draw(GuiGraphics gfx, ProgressScreenContext ctx,
 							RitesTabState state, int mouseX, int mouseY, float partial) {
 		if (state.riteRecipes.isEmpty()) {
-			gfx.drawCenteredString(ctx.font(), "No Cardinal Rites found",
+			gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.no_cardinal_rites_found"),
 					ctx.guiLeft() + ctx.guiWidth() / 2,
 					ctx.guiTop()  + ctx.guiHeight() / 2, 0xFF666666);
 			return;
@@ -131,7 +134,7 @@ public final class RitesTabView {
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 400);
 			drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-			gfx.drawCenteredString(ctx.font(), state.unstainedStages ? "Select a stage" : "Select a degree",
+			gfx.drawCenteredString(ctx.font(), Component.translatable(state.unstainedStages ? "screen.hemomancy.crafting_tab_view.select_a_stage" : "screen.hemomancy.rites_tab_view.select_a_degree"),
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
@@ -143,7 +146,7 @@ public final class RitesTabView {
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 400);
 			drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-			gfx.drawCenteredString(ctx.font(), state.unstainedStages ? "No rites at this stage" : "No rites at this degree",
+			gfx.drawCenteredString(ctx.font(), Component.translatable(state.unstainedStages ? "screen.hemomancy.rites_tab_view.no_rites_at_this_stage" : "screen.hemomancy.rites_tab_view.no_rites_at_this_degree"),
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
@@ -180,7 +183,7 @@ public final class RitesTabView {
 				gfx.disableScissor();
 			}
 			if (!rendered) {
-				gfx.drawCenteredString(ctx.font(), "Preview unavailable",
+				gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.preview_unavailable"),
 						modelX + modelAreaW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF777777);
 			}
 		} else {
@@ -200,8 +203,8 @@ public final class RitesTabView {
 					state.tabColor, mouseX, mouseY);
 		}
 		drawInfoPanel(gfx, ctx, state, rite, infoX, ctx.guiTop() + 30, infoW, mouseX, mouseY);
-		String previewHint = selectedSigil == null ? "Drag to rotate"
-				: selectedSigil.name() + " · Morphing cycle · Drag to rotate";
+		Component previewHint = selectedSigil == null ? Component.translatable("screen.hemomancy.crafting_tab_view.drag_to_rotate")
+				: Component.translatable("screen.hemomancy.rites_tab_view.morphing_cycle_drag_to_rotate", selectedSigil.displayName());
 		gfx.drawCenteredString(ctx.font(), previewHint,
 				modelX + modelAreaW / 2, ctx.guiTop() + ctx.guiHeight() - 18, 0x44888888);
 
@@ -222,7 +225,7 @@ public final class RitesTabView {
 		if (state.showIchorianSigils) {
 			sy = drawIchorianDropdown(gfx, ctx, state, sx, sy, sw, mouseX, mouseY);
 		}
-		gfx.drawString(ctx.font(), Component.literal(state.sidebarTitle())
+		gfx.drawString(ctx.font(), state.sidebarTitle().copy()
 				.withStyle(s -> s.withColor(state.tabColor).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
 
@@ -258,12 +261,12 @@ public final class RitesTabView {
 			gfx.fill(sx, sy,           sx + 1,  sy + rowH,  bc);
 			gfx.fill(sx + sw - 1, sy, sx + sw,  sy + rowH,  bc);
 
-			String tierLabel = state.tierLabel(type);
+			String tierLabel = state.tierLabel(type).getString();
 
 			if (locked) {
 				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
 				// Long stage names ("Enlightened") leave no room for the suffix; [X] already says locked.
-				String lockedLabel = "[X] " + tierLabel + " (Locked)";
+				String lockedLabel = Component.translatable("screen.hemomancy.crafting_tab_view.locked_tier", tierLabel).getString();
 				if (ctx.font().width(lockedLabel) > sw - 8) lockedLabel = "[X] " + tierLabel;
 				gfx.drawString(ctx.font(), lockedLabel, sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
 			} else {
@@ -381,7 +384,7 @@ public final class RitesTabView {
 			boolean rendered = IchorianSigilPreviewRenderer.render(gfx, sigil,
 					preview.left(), preview.top(), preview.width(), preview.height(),
 					state.riteRotationAngle, elapsedTicks, partial);
-			if (!rendered) gfx.drawCenteredString(ctx.font(), "Preview unavailable",
+			if (!rendered) gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.preview_unavailable"),
 					preview.left() + preview.width() / 2, preview.top() + preview.height() / 2, 0xFF777777);
 		} else if (rite != null) {
 			drawModelForRite(gfx, state, rite, preview.left(), preview.top(), preview.width(), preview.height());
@@ -409,22 +412,25 @@ public final class RitesTabView {
 			CardinalRiteFloorDefinition floor, RecipeMapInspectorLayout.IntRect info) {
 		gfx.enableScissor(info.left(), info.top(), info.right(), info.bottom());
 		int y = info.top() - state.riteInfoScroll;
-		String tier = HLTextUtils.toProperCase(floor.tier().getSerializedName());
-		String style = HLTextUtils.toProperCase(floor.style().replace('_', ' '));
-		gfx.drawString(ctx.font(), Component.literal(tier + " " + style + " Floor")
-				.withStyle(text -> text.withBold(true)), info.left(), y, 0xFFE8B75A, false);
+		Component tier = CardinalRiteFloorDefinition.tierName(floor.tier());
+		Component style = CardinalRiteFloorDefinition.styleName(floor.style());
+		gfx.drawString(ctx.font(), HemoText.translatable("screen.hemomancy.rites_tab_view.floor",
+				tier,
+				style).withStyle(text -> text.withBold(true)), info.left(), y, 0xFFE8B75A, false);
 		y += 18;
-		for (FormattedCharSequence line : ctx.font().split(Component.literal(
-				"Focused construction view of this ritual floor. Only the floor pattern is shown."), info.width())) {
+		for (FormattedCharSequence line : ctx.font().split(Component.translatable("screen.hemomancy.rites_tab_view.focused_construction_view_of_this_ritual"), info.width())) {
 			gfx.drawString(ctx.font(), line, info.left(), y, 0xFFBBBBBB, false);
 			y += 10;
 		}
 		y += 8;
-		for (String line : List.of("Style: " + style, "Rite Form: " + tier,
-				"Floor Size: " + floor.tier().getSize() + "x" + floor.tier().getSize(),
-				"Footprint Radius: " + String.format(java.util.Locale.ROOT, "%.1f", floor.footprintRadius()),
-				"Braziers count in: the " + (2 * floor.half() + 1) + "x" + (2 * floor.half() + 1) + "x"
-						+ (2 * floor.half() + 1) + " cube on the floor")) {
+		int cube = 2 * floor.half() + 1;
+		for (Component line : List.of(Component.translatable("screen.hemomancy.rites_tab_view.style", style),
+				Component.translatable("screen.hemomancy.rites_tab_view.rite_form", tier),
+				Component.translatable("screen.hemomancy.rites_tab_view.floor_size",
+						floor.tier().getSize(), floor.tier().getSize()),
+				Component.translatable("screen.hemomancy.rites_tab_view.footprint_radius",
+						String.format(java.util.Locale.ROOT, "%.1f", floor.footprintRadius())),
+				Component.translatable("screen.hemomancy.rites_tab_view.braziers_count_in", cube, cube, cube))) {
 			gfx.drawString(ctx.font(), line, info.left(), y, 0xFF999999, false);
 			y += 12;
 		}
@@ -435,32 +441,34 @@ public final class RitesTabView {
 			IchorianSigilDefinition sigil, RecipeMapInspectorLayout.IntRect info) {
 		gfx.enableScissor(info.left(), info.top(), info.right(), info.bottom());
 		int y = info.top() - state.riteInfoScroll;
-		gfx.drawString(ctx.font(), Component.literal(sigil.name()).withStyle(style -> style.withBold(true)),
+		gfx.drawString(ctx.font(), sigil.displayName().withStyle(style -> style.withBold(true)),
 				info.left(), y, 0xFFE8B75A, false);
 		y += 16;
-		for (FormattedCharSequence line : ctx.font().split(Component.literal(sigil.purpose()), info.width())) {
+		for (FormattedCharSequence line : ctx.font().split(sigil.displayPurpose(), info.width())) {
 			gfx.drawString(ctx.font(), line, info.left(), y, 0xFFBBBBBB, false);
 			y += 10;
 		}
 		y += 6;
-		for (String line : List.of("Kind: " + properCase(sigil.kind().name()), "Sigil Tier: " + sigil.tier(),
-				"Stability: " + sigil.stability(), "Capacity: " + sigil.capacityMl() + " mL",
-				"Inscription Cost: " + sigil.bloodCostMl() + " mL")) {
+		for (Component line : List.of(
+				Component.translatable("screen.hemomancy.rites_tab_view.kind", Component.translatable(switch (sigil.kind()) {
+					case SUPPORT -> "ichorian_sigil_kind.hemomancy.support";
+					case RESPONSE -> "ichorian_sigil_kind.hemomancy.response";
+				})),
+				Component.translatable("screen.hemomancy.rites_tab_view.sigil_tier", sigil.tier()),
+				Component.translatable("screen.hemomancy.rites_tab_view.stability", sigil.stability()),
+				Component.translatable("screen.hemomancy.rites_tab_view.capacity", sigil.capacityMl()),
+				Component.translatable("screen.hemomancy.rites_tab_view.inscription_cost", sigil.bloodCostMl()))) {
 			gfx.drawString(ctx.font(), line, info.left(), y, 0xFF999999, false);
 			y += 12;
 		}
 		gfx.disableScissor();
 	}
 
-	private static String properCase(String value) {
-		String lower = value.toLowerCase(java.util.Locale.ROOT);
-		return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
-	}
-
 	private static int drawIchorianDropdown(GuiGraphics gfx, ProgressScreenContext ctx,
 			RitesTabState state, int x, int y, int width, int mouseX, int mouseY) {
 		gfx.fill(x, y, x + width, y + 18, state.rowBgNormal);
-		gfx.drawString(ctx.font(), "Ichorian Sigils " + (state.ichorianSigilsExpanded ? "▲" : "▼"),
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.ichorian_sigils",
+						state.ichorianSigilsExpanded ? "▲" : "▼"),
 				x + 3, y + 5, 0xFFE8B75A, false);
 		y += 20;
 		if (!state.ichorianSigilsExpanded) return y + 2;
@@ -484,8 +492,9 @@ public final class RitesTabView {
 			}
 			int color = 0xFF000000 | sigil.color();
 			gfx.fill(x + 4, y + 3, x + 10, y + 10, color);
-			String label = known ? sigil.name() + " · " + sigil.bloodCostMl() + "ml"
-					: "Unknown shape · " + partial + "/" + sigil.nodes().size();
+			Component label = known
+					? Component.translatable("screen.hemomancy.rites_tab_view.sigil_row", sigil.displayName(), sigil.bloodCostMl())
+					: Component.translatable("screen.hemomancy.rites_tab_view.unknown_shape", partial, sigil.nodes().size());
 			gfx.drawString(ctx.font(), label, x + 13, y + 3, known ? 0xFFE9D8AE : 0xFF9B879F, false);
 			int pipX = x + 13;
 			for (int i = 0; i < sigil.nodes().size() && pipX + i * 3 < x + width - 4; i++) {
@@ -733,17 +742,18 @@ public final class RitesTabView {
 		drawScrollingTitle(gfx, ctx, name, panelX, y, panelW-17, state.nameColor);
 		y += lineH;
 		if (rite.hasLayeredStation()) {
-			String floor = rite.getFloorId().getPath().replace('_', ' ');
-			gfx.drawString(ctx.font(), Component.literal("Minimum Floor: ")
-					.withStyle(s -> s.withColor(0x888888))
-					.append(Component.literal(HLTextUtils.toProperCase(floor) + " (higher same-style tiers valid)")
-							.withStyle(s -> s.withColor(0xBB7777))), panelX, y, 0);
+			Component floor = CardinalRiteFloorRegistry.get(rite.getFloorId())
+					.<Component>map(CardinalRiteFloorDefinition::styleAndTier)
+					.orElseGet(() -> Component.literal(HLTextUtils.toProperCase(rite.getFloorId().getPath().replace('_', ' '))));
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.minimum_floor",
+					HemoText.translatable("screen.hemomancy.rites_tab_view.higher_same_style_tiers_valid",
+		floor).withStyle(s -> s.withColor(0xBB7777))).withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 			y += lineH;
-			String structure = rite.getRequiredStructure() == null ? "None"
-					: rite.shouldConsumeRequiredStructure() ? "Consumed on success" : "Reusable";
-			gfx.drawString(ctx.font(), Component.literal("Upper Structure: ")
-					.withStyle(s -> s.withColor(0x888888))
-					.append(Component.literal(structure).withStyle(s -> s.withColor(0xAAAAAA))),
+			String structure = rite.getRequiredStructure() == null ? "screen.hemomancy.rites_tab_view.none"
+					: rite.shouldConsumeRequiredStructure() ? "screen.hemomancy.rites_tab_view.consumed_on_success"
+					: "screen.hemomancy.rites_tab_view.reusable";
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.upper_structure",
+					Component.translatable(structure).withStyle(s -> s.withColor(0xAAAAAA))).withStyle(s -> s.withColor(0x888888)),
 					panelX, y, 0);
 			y += lineH;
 		}
@@ -764,22 +774,18 @@ public final class RitesTabView {
 
 		// Rite form controls structure size / cast time, not progression access.
 		CardinalRiteType type = rite.getRiteType();
-		String typeStr = HLTextUtils.toProperCase(type.getSerializedName())
-				+ " (" + type.getSize() + "x" + type.getSize() + ")";
-		gfx.drawString(ctx.font(), Component.literal("Rite Form: ")
-				.withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal(typeStr).withStyle(s -> s.withColor(state.tabColor & 0xFFFFFF))),
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.rite_form",
+				CardinalRiteFloorDefinition.tierWithSize(type).withStyle(s -> s.withColor(state.tabColor & 0xFFFFFF))).withStyle(s -> s.withColor(0x888888)),
 				panelX, y, 0);
 		y += lineH;
 
 		// Upfront blood cost (interactive ceremonies feed their declared anchors instead).
-		String bloodLabel = rite.hasInteractiveCeremony() && rite.getBloodCost() == 0.0D
-				? "None"
-				: (int) rite.getBloodCost() + " mL";
-		gfx.drawString(ctx.font(), Component.literal("Upfront Blood: ")
-				.withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal(bloodLabel)
-						.withStyle(s -> s.withColor(0xAA4444))),
+		MutableComponent bloodLabel = rite.hasInteractiveCeremony() && rite.getBloodCost() == 0.0D
+				? Component.translatable("screen.hemomancy.rites_tab_view.none")
+				: Component.translatable("screen.hemomancy.rites_tab_view.ml", (int) rite.getBloodCost());
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.upfront_blood",
+				bloodLabel
+						.withStyle(s -> s.withColor(0xAA4444))).withStyle(s -> s.withColor(0x888888)),
 				panelX, y, 0);
 		y += lineH;
 
@@ -787,13 +793,12 @@ public final class RitesTabView {
 		if (state.enableDegreeLock) {
 			int reqDeg = RecipeDegreeGates.getRequiredDegree(rite);
 			if (reqDeg > 0) {
-				String degName = RecipeDegreeGates.requirementLabel(rite);
+				MutableComponent degName = RecipeDegreeGates.requirementLabel(rite);
 				boolean meets = Minecraft.getInstance().player != null
 						&& RecipeDegreeGates.playerMeets(Minecraft.getInstance().player, rite);
 				int degColor = meets ? 0xFF88CC88 : 0xFFCC4444;
-				gfx.drawString(ctx.font(), Component.literal("Requires: ")
-						.withStyle(s -> s.withColor(0x888888))
-						.append(Component.literal(degName).withStyle(s -> s.withColor(degColor))),
+				gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.requires",
+						degName.withStyle(s -> s.withColor(degColor))).withStyle(s -> s.withColor(0x888888)),
 						panelX, y, 0);
 				y += lineH;
 			}
@@ -803,18 +808,15 @@ public final class RitesTabView {
 		float seconds = (rite.hasInteractiveCeremony()
 				? rite.getCeremony().targetDurationTicks()
 				: type.getCastingDurationTicks()) / 20f;
-		gfx.drawString(ctx.font(), Component.literal("Cast Time: ")
-				.withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal(String.format("%.1fs", seconds))
-						.withStyle(s -> s.withColor(0xAAAA88))),
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.cast_time",
+				HemoText.translatable("screen.hemomancy.rites_tab_view.seconds", String.format("%.1f", seconds)).withStyle(s -> s.withColor(0xAAAA88))).withStyle(s -> s.withColor(0x888888)),
 				panelX, y, 0);
 		y += lineH + 6;
 
 		// Result item
 		ItemStack result = rite.getResult();
 		if (result != null && !result.isEmpty()) {
-			gfx.drawString(ctx.font(), Component.literal("Result:")
-					.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.result").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 			y += lineH;
 			gfx.renderItem(result, panelX, y);
 			gfx.renderItemDecorations(ctx.font(), result, panelX, y);
@@ -834,22 +836,23 @@ public final class RitesTabView {
 					: media[(int) (materialCycleIndex() % media.length)];
 			if (!medium.isEmpty()) {
 				gfx.renderItem(medium, panelX + 2, y);
-				String label = rite.shouldConsumeMediumOnSuccess() ? "Medium: " : "Preserved Medium: ";
-				gfx.drawString(ctx.font(), Component.literal(label).withStyle(s -> s.withColor(0x888888))
+				String label = rite.shouldConsumeMediumOnSuccess() ? "screen.hemomancy.rites_tab_view.medium"
+						: "screen.hemomancy.rites_tab_view.preserved_medium";
+				gfx.drawString(ctx.font(), Component.translatable(label).withStyle(s -> s.withColor(0x888888))
 						.append(medium.getHoverName().copy().withStyle(s -> s.withColor(0xCC9966))),
 						panelX + 20, y + 4, 0);
 				y += 20;
 			}
 		}
 		if (rite.isPuppeteerTrial()) {
-			String summon = rite.getPuppeteerTrial().summonName().replace('_', ' ');
-			gfx.drawString(ctx.font(), Component.literal("Victory Binding: ")
-					.withStyle(s -> s.withColor(0x888888))
-					.append(Component.literal(HLTextUtils.toProperCase(summon))
-							.withStyle(s -> s.withColor(0xFFAAAA))), panelX, y, 0);
+			String summon = rite.getPuppeteerTrial().summonName();
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.victory_binding",
+					Component.translatableWithFallback("entity.hemomancy." + summon,
+									HLTextUtils.toProperCase(summon.replace('_', ' ')))
+							.withStyle(s -> s.withColor(0xFFAAAA))).withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 			y += lineH;
 			for (String line : ScreenDrawUtils.wrapText(ctx.font(),
-					"Defeat the manifested puppet. Failure spends committed blood and offerings, but never the Crossbar.", panelW)) {
+					Component.translatable("screen.hemomancy.rites_tab_view.defeat_the_manifested_puppet").getString(), panelW)) {
 				gfx.drawString(ctx.font(), line, panelX, y, 0xFFAAAAAA, false);
 				y += lineH;
 			}
@@ -859,8 +862,7 @@ public final class RitesTabView {
 		// Lit brazier offerings
 		List<OfferingDisplayEntry> offerings = offeringDisplayEntries(rite.getBrazierSignature());
 		if (!offerings.isEmpty()) {
-			gfx.drawString(ctx.font(), Component.literal("Lit Brazier Offerings:")
-					.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.lit_brazier_offerings").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 			y += lineH;
 			int offeringTextX = panelX + 20;
 			int offeringWrapW = panelW - 24;
@@ -885,8 +887,7 @@ public final class RitesTabView {
 			List<MnemonicBlueprintPattern.MaterialCount> materials =
 					MnemonicBlueprintPattern.fromRite(rite).materialCounts(false);
 			if (!materials.isEmpty()) {
-				gfx.drawString(ctx.font(), Component.literal("Materials:")
-						.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+				gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.rites_tab_view.materials").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 				y += lineH;
 				int materialTextX = panelX + 20;
 				int materialWrapW = panelW - 24;
@@ -965,7 +966,7 @@ public final class RitesTabView {
 		if (rite.isPuppeteerTrial()) {
 			y += lineH;
 			y += ScreenDrawUtils.wrapText(font,
-					"Defeat the manifested puppet. Failure spends committed blood and offerings, but never the Crossbar.",
+					Component.translatable("screen.hemomancy.rites_tab_view.defeat_the_manifested_puppet").getString(),
 					panelW).size() * lineH + 6;
 		}
 

@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+
 import java.util.Locale;
 
 public record MaterialGate(Type type, int degree, float threshold) {
@@ -43,12 +46,12 @@ public record MaterialGate(Type type, int degree, float threshold) {
 		};
 	}
 
-	public String requirementText() {
+	public MutableComponent requirementText() {
 		return switch (type) {
-			case ALWAYS -> "";
-			case DEGREE -> "Requires Degree " + degree;
-			case PURITY -> "Requires Purity " + compact(threshold);
-			case CLARITY -> "Requires Clarity " + compact(threshold);
+			case ALWAYS -> Component.empty();
+			case DEGREE -> Component.translatable("screen.hemomancy.material_gate.requires_degree", degree);
+			case PURITY -> Component.translatable("screen.hemomancy.material_gate.requires_purity", compact(threshold));
+			case CLARITY -> Component.translatable("screen.hemomancy.material_gate.requires_clarity", compact(threshold));
 		};
 	}
 

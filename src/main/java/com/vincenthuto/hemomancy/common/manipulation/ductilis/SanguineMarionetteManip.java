@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -17,7 +18,7 @@ public final class SanguineMarionetteManip extends BloodManipulation {
                 EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.LEGS);
         setSecondaryTend(EnumBloodTendency.ANIMUS);
         setCooldownTicks(SanguineMarionetteRules.COOLDOWN);
-        setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Requires a player's sustained aim");
+        setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.sanguine_marionette.drudge"));
     }
 
     private LivingEntity acquireTarget(ServerPlayer caster) {

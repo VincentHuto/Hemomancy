@@ -52,9 +52,9 @@ public class VasculariumCharmItem extends Item implements IHarbingerEquipment {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.literal(ChatFormatting.RED + "So you've chosen the path of blood."));
-		tooltip.add(Component.literal(ChatFormatting.RED + "Representative of your resolve."));
-		tooltip.add(Component.literal(ChatFormatting.RED + "Leads you to a place of solace."));
+		tooltip.add(Component.translatable("tooltip.hemomancy.vascularium_charm.so_you_ve_chosen_the_path").withStyle(ChatFormatting.RED));
+		tooltip.add(Component.translatable("tooltip.hemomancy.vascularium_charm.representative_of_your_resolve").withStyle(ChatFormatting.RED));
+		tooltip.add(Component.translatable("tooltip.hemomancy.vascularium_charm.leads_you_to_a_place_of").withStyle(ChatFormatting.RED));
 	}
 
 	public Rarity getRarity(ItemStack stack) {
@@ -107,7 +107,7 @@ public class VasculariumCharmItem extends Item implements IHarbingerEquipment {
 					pPlayer.swing(pHand, true);
 					return InteractionResultHolder.success(itemstack);
 				} else {
-					pPlayer.displayClientMessage(Component.literal("Could Not Find A Temple"), true);
+					pPlayer.displayClientMessage(Component.translatable("message.hemomancy.vascularium_charm_item.could_not_find_a_temple"), true);
 				}
 			}
 

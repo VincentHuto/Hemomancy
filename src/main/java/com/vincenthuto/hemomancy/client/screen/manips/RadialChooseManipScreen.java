@@ -24,7 +24,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ActivateArmorSetAbilityC2SPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UpdateCurrentManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UpdateCurrentMemoryPacket;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -71,7 +71,7 @@ public class RadialChooseManipScreen extends Screen {
 	private final GenericRadialMenu menu;
 
 	public RadialChooseManipScreen(IHarbingerEquipmentItemHandler invIn) {
-		super(Component.literal("RADIAL MENU"));
+		super(Component.translatable("screen.hemomancy.radial_choose_manip.radial_menu"));
 		inv = invIn;
 		this.mc = Minecraft.getInstance();
 
@@ -161,7 +161,7 @@ public class RadialChooseManipScreen extends Screen {
 		}
 		if (this.cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)
 				&& this.cachedMechanicalItems.stream().noneMatch(RadialMenuItem::isVisible)) {
-			this.menu.setCentralText(Component.literal("No Memorized Memories"));
+			this.menu.setCentralText(Component.translatable("screen.hemomancy.radial_choose_manip.no_memorized_memories"));
 		} else if (gourdEquipped != null) {
 
 			MutableComponent textComponents = Component.empty().copy();
@@ -170,10 +170,10 @@ public class RadialChooseManipScreen extends Screen {
 						.orElseThrow(NullPointerException::new);
 				IBloodVolume volCap = HemoCapabilityAccess.getBloodVolume(mc.player)
 						;
-				textComponents.append(Component.literal("Self: "
-						+ BloodGourdItem.formatBloodAmount(volCap.getBloodVolume()) + " mL\n"));
-				textComponents.append(Component.literal("Gourd: "
-						+ BloodGourdItem.formatBloodAmount(bloodVolume.getBloodVolume()) + " mL"));
+				textComponents.append(HemoText.translatable("screen.hemomancy.radial_choose_manip.self_ml",
+						BloodGourdItem.formatBloodAmount(volCap.getBloodVolume())));
+				textComponents.append(HemoText.translatable("screen.hemomancy.radial_choose_manip.gourd_ml",
+						BloodGourdItem.formatBloodAmount(bloodVolume.getBloodVolume())));
 
 			}
 			this.menu.setCentralText(textComponents);
@@ -267,7 +267,9 @@ public class RadialChooseManipScreen extends Screen {
 				ManipulationIconResolver.base(manipulation.getName()),
 				0, 0, 16, 16, 16, 16,
 				manipulation.getDisplayName()
-						.append(staffUnavailable ? " (staff planted in active rite)" : "")) {
+						.append(staffUnavailable
+								? Component.translatable("screen.hemomancy.radial_choose_manip.staff_planted_in_active_rite")
+								: Component.empty())) {
 			@Override
 			public boolean onClick() {
 				if (staffUnavailable) return false;
@@ -291,7 +293,7 @@ public class RadialChooseManipScreen extends Screen {
 				MutableComponent label = manipulation.getDisplayName();
 				if (remaining <= 0) return label;
 				long seconds = Math.max(1L, (remaining + 19L) / 20L);
-				return label.append(Component.literal("\n" + seconds + "s cooldown").withStyle(ChatFormatting.RED));
+				return label.append(HemoText.translatable("screen.hemomancy.radial_choose_manip.s_cooldown", seconds).withStyle(ChatFormatting.RED));
 			}
 		};
 		if (staffUnavailable) item.setBackgroundColor(UNAVAILABLE_ABILITY_SLICE_TINT);
@@ -314,16 +316,20 @@ public class RadialChooseManipScreen extends Screen {
 		long seconds = (state.reserveTicks(memory) + 19L) / 20L;
 		EnumBloodFlow currentFlow = flow.get();
 		String reserve = String.format(java.util.Locale.ROOT, "%d:%02d", seconds / 60L, seconds % 60L);
-		String status = currentFlow == EnumBloodFlow.DEAD ? "Blocked: dead vascular section"
-				: state.reserveTicks(memory) <= 0 ? "Blocked: reserve empty"
-				: state.isEnabled(memory) ? "Active" : "Prepared; activate to use";
+		Component status = Component.translatable(currentFlow == EnumBloodFlow.DEAD
+				? "screen.hemomancy.radial_choose_manip.blocked_dead_vascular_section"
+				: state.reserveTicks(memory) <= 0 ? "screen.hemomancy.radial_choose_manip.blocked_reserve_empty"
+				: state.isEnabled(memory) ? "screen.hemomancy.radial_choose_manip.active"
+				: "screen.hemomancy.radial_choose_manip.prepared_activate_to_use");
 		List<Component> tooltip = List.of(
-				Component.literal(HLTextUtils.convertInitToLang(memory.section().name()) + " Vascular Section").withStyle(ChatFormatting.RED),
+				Component.translatable("screen.hemomancy.radial_choose_manip.vascular_section", BloodManipulation.sectionName(memory.section())).withStyle(ChatFormatting.RED),
 				Component.translatable("muscle_memory.hemomancy." + memory.id()),
-				Component.literal("Thelemic Memory"),
-				Component.literal("Reserve " + reserve + " • " + trimNumber(memory.bloodCost())
-						+ " blood • " + trimNumber(memory.vascularStrain()) + " strain"),
-				Component.literal(status));
+				Component.translatable("screen.hemomancy.radial_choose_manip.thelemic_memory"),
+				HemoText.translatable("screen.hemomancy.radial_choose_manip.reserve_blood_strain",
+						reserve,
+						trimNumber(memory.bloodCost()),
+						trimNumber(memory.vascularStrain())),
+				status);
 		MuscleMemoryRadialMenuItem item = new MuscleMemoryRadialMenuItem(this.menu,
 				Hemomancy.rloc("textures/item/vascular_status_gauge.png"), tooltip, presentation,
 				() -> state.reserveTicks(memory) / (double) MuscleMemoryPrimingRules.TICKS_PER_DOSE,
@@ -332,7 +338,7 @@ public class RadialChooseManipScreen extends Screen {
 					RadialChooseManipScreen.this.menu.close();
 				});
 		if (ref.equals(selected)) item.setCentralText(Component.translatable(
-				"muscle_memory.hemomancy." + memory.id()).append(Component.literal("\nSelected")));
+				"muscle_memory.hemomancy." + memory.id()).append(Component.translatable("screen.hemomancy.radial_choose_manip.selected")));
 		item.setVisible(true);
 		return item;
 	}

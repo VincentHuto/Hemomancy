@@ -27,8 +27,7 @@ import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgre
  */
 public final class HarbingerAlchemistDialogueTrees {
 
-	private static final ResourceLocation ALCHEMIST_ICON = ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
-			"textures/entity/npc/harbinger/harbinger_alchemist/harbinger_alchemist.png");
+	private static final ResourceLocation ALCHEMIST_ICON = Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_alchemist/harbinger_alchemist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_alchemist";
 	public static final String EVENT_RED_TAXONOMY_PREFIX = "alchemist_red_taxonomy_";
 	public static final String EVENT_BESTIARY_RECORD = "alchemist_bestiary_record";

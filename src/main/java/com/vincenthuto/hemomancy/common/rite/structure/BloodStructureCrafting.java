@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodCraftRing;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -76,14 +77,13 @@ public final class BloodStructureCrafting {
 				int requiredDegree = RecipeDegreeGates.getRequiredDegree(targetPattern);
 				if (!RecipeDegreeGates.playerMeets(player, targetPattern)
 						&& !UnstainedAccessRules.bypassesUnstainedLevelGate(targetPattern.getId().getPath(), HemoCapabilityAccess.getUnstainedProgress(player))) {
-					String requiredName = RecipeDegreeGates.requirementLabel(targetPattern);
+					var requiredName = RecipeDegreeGates.requirementLabel(targetPattern);
 					player.displayClientMessage(
-							Component.literal("This formation requires " + targetPattern.getId().getPath() + " to be held, and demands ")
-									.withStyle(ChatFormatting.RED)
-									.append(Component.literal(requiredName)
-											.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-									.append(Component.literal(targetPattern.isUnstained() ? " purity stage." : ".")
-											.withStyle(ChatFormatting.RED)),
+							HemoText.translatable("message.hemomancy.blood_structure_crafting.this_formation_requires_to_be_held",
+									targetPattern.getId().getPath(),
+									requiredName
+											.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+									(targetPattern.isUnstained() ? Component.translatable("message.hemomancy.blood_structure_crafting.purity_stage") : Component.literal(".")).withStyle(ChatFormatting.RED)).withStyle(ChatFormatting.RED),
 							false);
 					handled = true;
 					break;
@@ -133,7 +133,7 @@ public final class BloodStructureCrafting {
 					handled = true;
 				} else {
 					player.displayClientMessage(
-							Component.literal("Not enough blood can be drawn for formation"), true);
+							Component.translatable("message.hemomancy.blood_structure_crafting.not_enough_blood_can_be_drawn"), true);
 					sLevel.playLocalSound(player.blockPosition().getX(),
 							player.blockPosition().getY(), player.blockPosition().getZ(),
 							SoundEvents.ENDERMAN_SCREAM, null, 1f, 1f, false);
@@ -165,14 +165,13 @@ public final class BloodStructureCrafting {
 						int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
 						if (!RecipeDegreeGates.playerMeets(player, recipe)
 								&& !UnstainedAccessRules.bypassesUnstainedLevelGate(recipe.getId().getPath(), HemoCapabilityAccess.getUnstainedProgress(player))) {
-							String requiredName = RecipeDegreeGates.requirementLabel(recipe);
+							var requiredName = RecipeDegreeGates.requirementLabel(recipe);
 							player.displayClientMessage(
-									Component.literal("This formation requires " + recipe.getId().getPath() + " to be held, and demands ")
-											.withStyle(ChatFormatting.RED)
-											.append(Component.literal(requiredName)
-													.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-											.append(Component.literal(recipe.isUnstained() ? " purity stage." : ".")
-													.withStyle(ChatFormatting.RED)),
+									HemoText.translatable("message.hemomancy.blood_structure_crafting.this_formation_requires_to_be_held",
+											recipe.getId().getPath(),
+											requiredName
+													.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+											(recipe.isUnstained() ? Component.translatable("message.hemomancy.blood_structure_crafting.purity_stage") : Component.literal(".")).withStyle(ChatFormatting.RED)).withStyle(ChatFormatting.RED),
 									false);
 						} else {
 							// Path alignment check
@@ -181,10 +180,10 @@ public final class BloodStructureCrafting {
 								player.displayClientMessage(alignError, false);
 							} else {
 								player.displayClientMessage(
-										Component.literal("This formation requires you to hold: "+ recipe.getId().getPath() + " to be held, and demands ")
-												.withStyle(ChatFormatting.RED)
-												.append(recipe.getHeldItem().getHoverName().copy()
-														.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)),
+										HemoText.translatable("message.hemomancy.blood_structure_crafting.this_formation_requires_you_to_hold",
+												recipe.getId().getPath(),
+												recipe.getHeldItem().getHoverName().copy()
+														.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)).withStyle(ChatFormatting.RED),
 										false);
 							}
 						}
@@ -199,8 +198,7 @@ public final class BloodStructureCrafting {
 
 	private static void showProjectionHint(Player player) {
 		player.displayClientMessage(
-				Component.literal("To complete this formation, use Blood Projection with its catalyst in your offhand.")
-						.withStyle(ChatFormatting.DARK_RED),
+				Component.translatable("message.hemomancy.blood_structure_crafting.to_complete_this_formation_use_blood").withStyle(ChatFormatting.DARK_RED),
 				false);
 	}
 

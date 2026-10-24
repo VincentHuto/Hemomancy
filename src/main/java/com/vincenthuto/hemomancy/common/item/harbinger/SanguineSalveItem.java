@@ -3,8 +3,9 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -55,8 +56,8 @@ public class SanguineSalveItem extends Item {
 		super.appendHoverText(stack, context, tooltip, flag);
 		tooltip.add(Component.translatable("tooltip.hemomancy.sanguine_salve.repairs_the_most_damaged_vein_section")
 				.withStyle(ChatFormatting.GRAY));
-		tooltip.add(Component.literal("Restores +" + (int) healAmount + " vascular health")
-				.withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(HemoText.translatable("tooltip.hemomancy.sanguine_salve.restores_vascular_health",
+				(int) healAmount).withStyle(ChatFormatting.DARK_RED));
 	}
 
 	// ── Use behaviour (hold-to-apply, like eating) ──
@@ -92,7 +93,7 @@ public class SanguineSalveItem extends Item {
 
 		if (!needsHeal) {
 			player.displayClientMessage(
-					Component.literal("All vein sections are healthy").withStyle(ChatFormatting.GREEN), true);
+					Component.translatable("message.hemomancy.sanguine_salve_item.all_vein_sections_are_healthy").withStyle(ChatFormatting.GREEN), true);
 			return InteractionResultHolder.fail(stack);
 		}
 
@@ -118,10 +119,12 @@ public class SanguineSalveItem extends Item {
 			VeinMasonAssignments.onTreatment((ServerPlayer) player);
 
 			// Feedback
-			String sectionName = HLTextUtils.toProperCase(worst.name());
+			Component sectionName = BloodManipulation.sectionName(worst);
 			player.displayClientMessage(
-					Component.literal(sectionName + " repaired: " + (int) before + "% → " + (int) after + "%")
-							.withStyle(ChatFormatting.DARK_RED),
+					HemoText.translatable("message.hemomancy.sanguine_salve_item.repaired",
+							sectionName,
+							(int) before,
+							(int) after).withStyle(ChatFormatting.DARK_RED),
 					true);
 
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),

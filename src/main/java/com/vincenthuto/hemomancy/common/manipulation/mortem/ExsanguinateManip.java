@@ -70,7 +70,7 @@ public class ExsanguinateManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (target(player).isEmpty()) {
-			player.displayClientMessage(Component.literal("No weakened blood-bearing enemy in sight."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.exsanguinate_manip.no_weakened_blood_bearing_enemy_in"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);
@@ -87,7 +87,7 @@ public class ExsanguinateManip extends BloodManipulation {
 
 		if (targetOpt.isEmpty()) {
 			player.displayClientMessage(
-					Component.literal("§8No weakened vessel within reach."), true);
+					Component.translatable("message.hemomancy.exsanguinate_manip.no_weakened_vessel_within_reach"), true);
 			return;
 		}
 

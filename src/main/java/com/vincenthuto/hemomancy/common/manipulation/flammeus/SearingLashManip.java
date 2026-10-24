@@ -38,7 +38,7 @@ public class SearingLashManip extends BloodManipulation {
 	@Override
 	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
 		if (target(player, player.level()) == null) {
-			player.displayClientMessage(Component.literal("Nothing within the lash's reach."), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.searing_lash_manip.nothing_within_the_lash_s_reach"), true);
 			return false;
 		}
 		return super.canPerformAction(player, heldItem, ticks);

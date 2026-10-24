@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.rite.zone;
 
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
+import net.minecraft.network.chat.Component;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,15 +46,17 @@ public final class RiteBoundRules {
 	}
 
 	/** "a Dominion rite space", named by the floor style each purpose is performed on. */
-	public static String describe(Requirement requirement) {
-		if (requirement.any()) return "any rite space";
-		List<String> styles = new ArrayList<>();
+	public static Component describe(Requirement requirement) {
+		if (requirement.any()) return Component.translatable("message.hemomancy.rite_bound_rules.any_rite_space");
+		Component styles = null;
 		for (CardinalRitePurpose purpose : CardinalRitePurpose.values()) {
 			if (!requirement.purposes().contains(purpose)) continue;
-			String style = purpose.floorStyle();
-			styles.add(Character.toUpperCase(style.charAt(0)) + style.substring(1));
+			Component style = CardinalRiteFloorDefinition.styleName(purpose.floorStyle());
+			styles = styles == null ? style
+					: Component.translatable("message.hemomancy.rite_bound_rules.either", styles, style);
 		}
-		return "a " + String.join(" or ", styles) + " rite space";
+		return Component.translatable("message.hemomancy.rite_bound_rules.a_rite_space",
+				styles == null ? Component.empty() : styles);
 	}
 
 	public static boolean unravels(int ticksOutside) {

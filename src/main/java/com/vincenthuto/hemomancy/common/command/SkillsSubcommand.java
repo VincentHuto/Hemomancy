@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProg
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSkills;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -36,26 +37,26 @@ final class SkillsSubcommand {
 
 	private static int getSkills(CommandSourceStack source, ServerPlayer player) {
 		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
-		source.sendSuccess(() -> Component.literal("Skill Points: ")
-				.append(Component.literal(String.valueOf(progress.getSkillPoints())).withStyle(ChatFormatting.AQUA)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.skills.skill_points",
+				Component.literal(String.valueOf(progress.getSkillPoints())).withStyle(ChatFormatting.AQUA)),
 				false);
-		source.sendSuccess(() -> Component.literal("Milestones: ")
-				.append(Component.literal(progress.getCompletedMilestoneCount() + "/" + HemoMilestone.values().length)
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.skills.milestones",
+				Component.literal(progress.getCompletedMilestoneCount() + "/" + HemoMilestone.values().length)
 						.withStyle(ChatFormatting.GOLD)),
 				false);
-		source.sendSuccess(() -> Component.literal("  Manip Uses: " + progress.getTotalManipulationUses()
-				+ "  Kills: " + progress.getTotalKillsWithBlood()
-				+ "  Rites: " + progress.getTotalRitesCompleted()
-				+ "  Advancements: " + progress.getTotalHemoAdvancements())
-				.withStyle(ChatFormatting.GRAY), false);
+		source.sendSuccess(() -> HemoText.translatable("commands.hemomancy.skills.manip_uses_kills_rites_advancements",
+				progress.getTotalManipulationUses(),
+				progress.getTotalKillsWithBlood(),
+				progress.getTotalRitesCompleted(),
+				progress.getTotalHemoAdvancements()).withStyle(ChatFormatting.GRAY), false);
 		return 1;
 	}
 
 	private static int setSkillPoints(CommandSourceStack source, ServerPlayer player, int amount) {
 		HemoCapabilityAccess.getSkillProgress(player).setSkillPoints(amount);
 		syncSkills(player);
-		source.sendSuccess(() -> Component.literal("Set skill points to ")
-				.append(Component.literal(String.valueOf(amount)).withStyle(ChatFormatting.AQUA)),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.skills.set_skill_points_to",
+				Component.literal(String.valueOf(amount)).withStyle(ChatFormatting.AQUA)),
 				true);
 		return 1;
 	}
@@ -63,7 +64,7 @@ final class SkillsSubcommand {
 	private static int resetSkills(CommandSourceStack source, ServerPlayer player) {
 		HemoCapabilityAccess.getSkillProgress(player).reset();
 		syncSkills(player);
-		source.sendSuccess(() -> Component.literal("Reset all skills, milestones, and skill points").withStyle(ChatFormatting.YELLOW),
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.skills.reset_all_skills_milestones_and_skill").withStyle(ChatFormatting.YELLOW),
 				true);
 		return 1;
 	}

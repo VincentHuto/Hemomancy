@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -49,7 +50,7 @@ public class DSDItem extends Item {
 					dissolve(player, drudge);
 					return InteractionResult.SUCCESS;
 				} else {
-					player.displayClientMessage(Component.literal("§cThis construct answers to another hand."), true);
+					player.displayClientMessage(Component.translatable("message.hemomancy.dsditem.this_construct_answers_to_another_hand"), true);
 					return InteractionResult.FAIL;
 				}
 			}
@@ -76,8 +77,8 @@ public class DSDItem extends Item {
 
 		drudge.discard();
 
-		player.displayClientMessage(Component.literal(
-				"§7The construct unravels. §c+" + (int) DISSOLUTION_REFUND + " mL§7 returned to blood."),
+		player.displayClientMessage(HemoText.translatable("message.hemomancy.dsditem.the_construct_unravels_ml_returned_to",
+				(int) DISSOLUTION_REFUND),
 				false);
 	}
 }

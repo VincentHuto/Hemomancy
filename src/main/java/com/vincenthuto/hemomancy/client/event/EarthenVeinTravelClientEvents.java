@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.vein.SelectEarthenVeinDestinationPacket;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -130,13 +131,13 @@ public final class EarthenVeinTravelClientEvents {
 		int x = graphics.guiWidth() / 2;
 		int y = graphics.guiHeight() / 2 + 14;
 		var destination = marker.destination();
-		graphics.drawCenteredString(minecraft.font, Component.literal(destination.name())
+		graphics.drawCenteredString(minecraft.font, destination.displayName()
 				.withStyle(ChatFormatting.DARK_RED), x, y, 0xFFF2D8D8);
 		graphics.drawCenteredString(minecraft.font, Component.literal(
 				destination.dimension().getPath() + "  " + destination.position().toShortString()),
 				x, y + 11, 0xFFC2B8B8);
-		graphics.drawCenteredString(minecraft.font, Component.literal(destination.cost() + " mB")
-				.withStyle(ChatFormatting.RED), x, y + 22, 0xFFFF6868);
+		graphics.drawCenteredString(minecraft.font, HemoText.translatable("gui.hemomancy.earthen_vein_travel_client_events.mb",
+				destination.cost()).withStyle(ChatFormatting.RED), x, y + 22, 0xFFFF6868);
 	}
 
 	@Nullable

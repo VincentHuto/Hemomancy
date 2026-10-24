@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.screen.widget;
 
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 import java.util.List;
@@ -84,7 +84,7 @@ public final class BloodVolumeBarWidget {
                                      double volume, double maxVolume, int mouseX, int mouseY) {
         if (!bounds.contains(mouseX, mouseY)) return;
         gfx.renderTooltip(font, List.of(
-                Component.literal(String.format("\u00A74Blood: \u00A7c%.0f \u00A74/ \u00A7c%.0f", volume, maxVolume))
+                HemoText.translatable("screen.hemomancy.blood_volume_bar_widget.blood", String.format("%.0f", volume), String.format("%.0f", maxVolume))
         ), Optional.empty(), mouseX, mouseY);
     }
 }

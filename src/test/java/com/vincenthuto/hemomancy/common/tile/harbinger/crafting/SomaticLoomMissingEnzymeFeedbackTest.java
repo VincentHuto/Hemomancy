@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
 import net.minecraft.network.chat.Component;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ class SomaticLoomMissingEnzymeFeedbackTest {
 		Component message = assertDoesNotThrow(() -> (Component) formatter.invoke(
 				null, Component.literal("Frigid Enzyme"), 1, 3));
 
-		assertEquals("Missing 2 × Frigid Enzyme (1/3 stored).", message.getString());
+		assertEquals("Missing 2 × Frigid Enzyme (1/3 stored).", EnglishText.render(message));
 	}
 
 	@Test

@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 
 public record PacketSyncVesperFightScene(boolean active, BlockPos center) implements CustomPacketPayload {
 	public static final Type<PacketSyncVesperFightScene> TYPE = new Type<>(
-			ResourceLocation.fromNamespaceAndPath("hemomancy", "sync_vesper_fight_scene"));
+			Hemomancy.rloc("sync_vesper_fight_scene"));
 	public static final StreamCodec<FriendlyByteBuf, PacketSyncVesperFightScene> STREAM_CODEC =
 			StreamCodec.of(PacketSyncVesperFightScene::encode, PacketSyncVesperFightScene::decode);
 

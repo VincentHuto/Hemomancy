@@ -19,6 +19,6 @@ public class VascularViewMenuProvider implements MenuProvider {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.literal("Vascular View");
+		return Component.translatable("message.hemomancy.vascular_view_menu_provider.vascular_view");
 	}
 }

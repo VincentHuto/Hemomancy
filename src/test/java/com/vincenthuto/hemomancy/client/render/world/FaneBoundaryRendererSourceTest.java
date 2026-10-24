@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,8 +35,10 @@ public final class FaneBoundaryRendererSourceTest {
 		assertContains("renderer hidden mode disables all fane visuals", renderer, "ViewMode.HIDDEN");
 		assertContains("client fane data stores view mode locally", clientData, "private static ViewMode viewMode");
 		assertContains("client fane data cycles fane sight modes", clientData, "cycleViewMode()");
-		assertContains("client fane data offers mundane outsider view", clientData, "MUNDANE(\"Fane Sight: Mundane\")");
-		assertContains("client fane data offers revealed outsider view", clientData, "REVEALED(\"Fane Sight: Revealed\")");
+		assertContains("client fane data offers mundane outsider view", clientData, "MUNDANE(\"");
+		assertContains("client fane data offers revealed outsider view", clientData, "REVEALED(\"");
+		SourceAssertions.assertShowsEnglish("mundane outsider view is labelled", clientData, "Fane Sight: Mundane");
+		SourceAssertions.assertShowsEnglish("revealed outsider view is labelled", clientData, "Fane Sight: Revealed");
 		assertContains("client config defines fane border toggle", clientConfig, "RENDER_FANE_BOUNDARY");
 		assertContains("client config defaults fane border toggle on", clientConfig,
 				"define(\"renderFaneBoundary\", true)");

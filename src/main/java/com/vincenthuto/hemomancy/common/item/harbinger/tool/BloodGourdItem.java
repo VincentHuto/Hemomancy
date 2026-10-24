@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentType;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -49,13 +50,13 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		HemoCapabilityAccess.getBloodVolume(stack).ifPresent(bloodVolume -> {
 			CompoundTag data = getCustomData(stack);
-			tooltip.add(Component.literal(tier.getRoleName()).withStyle(ChatFormatting.DARK_RED));
+			tooltip.add(tier.getRoleName().withStyle(ChatFormatting.DARK_RED));
 			tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.capacity_s_ml", tier.getMaxVolume())
 					.withStyle(ChatFormatting.GOLD));
 			tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.flow_rate_s_ml_tick", tier.getTransferRate())
 					.withStyle(ChatFormatting.RED));
-			tooltip.add(Component.literal("Kill Siphon: " + Math.round(tier.getKillSiphonMultiplier() * 100) + "%")
-					.withStyle(ChatFormatting.RED));
+			tooltip.add(HemoText.translatable("tooltip.hemomancy.blood_gourd.kill_siphon",
+					Math.round(tier.getKillSiphonMultiplier() * 100)).withStyle(ChatFormatting.RED));
 			if (tier.getPassiveGenerationRate() > 0) {
 				tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.marrow_growth_s_ml_tick", tier.getPassiveGenerationRate())
 						.withStyle(ChatFormatting.DARK_RED));
@@ -63,8 +64,8 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment {
 			tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.proper_vessel_no_blood_drunkenness")
 					.withStyle(ChatFormatting.GRAY));
 			if (!data.isEmpty()) {
-				tooltip.add(Component.literal("Blood volume: " + formatBloodAmount(bloodVolume.getBloodVolume()) + " mL")
-						.withStyle(ChatFormatting.RED));
+				tooltip.add(HemoText.translatable("tooltip.hemomancy.blood_gourd.blood_volume_ml",
+						formatBloodAmount(bloodVolume.getBloodVolume())).withStyle(ChatFormatting.RED));
 				if (data.getBoolean(TAG_STATE)) {
 					tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.state_open").withStyle(ChatFormatting.RED));
 				} else {
@@ -146,7 +147,7 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment {
 				transfer = Math.min(transfer, playerVolume.getMaxBloodVolume() - playerVolume.getBloodVolume());
 				if (player instanceof ServerPlayer serverPlayer) {
 					BloodFlowLedger.transferFromVessel(serverPlayer, playerVolume, bloodVolume,
-							"open_blood_gourd", "Open Blood Gourd", transfer, 1);
+							"open_blood_gourd", "blood_source.hemomancy.open_blood_gourd", transfer, 1);
 				}
 			}
 

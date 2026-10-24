@@ -25,12 +25,12 @@ public class IronheartedManip extends BloodManipulation {
 
 	@Override
 	protected boolean canPerformAction(Player player, float chargeTicks) {
-		if (chargeTicks < BodyIdiomRules.IRON_HEART_CHARGE_TICKS) {
+		if (chargeTicks < IronheartedRules.IRON_HEART_CHARGE_TICKS) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.ironhearted.charge")
 					.withStyle(ChatFormatting.GRAY), true);
 			return false;
 		}
-		float maxIronHeartHealth = BodyIdiomRules.maxIronHeartHealth(player);
+		float maxIronHeartHealth = IronheartedRules.maxIronHeartHealth(player);
 		if (HemoCapabilityAccess.getPowerGuardrails(player).getIronHeartHealth()
 				>= maxIronHeartHealth) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.ironhearted.full")
@@ -42,7 +42,7 @@ public class IronheartedManip extends BloodManipulation {
 
 	@Override
 	public int getRequiredChargeTicks() {
-		return BodyIdiomRules.IRON_HEART_CHARGE_TICKS;
+		return IronheartedRules.IRON_HEART_CHARGE_TICKS;
 	}
 
 	@Override
@@ -54,10 +54,10 @@ public class IronheartedManip extends BloodManipulation {
 		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
 		float strength = ManipulationCastingRules.chargeFraction(chargeTicks, getRequiredChargeTicks());
 		state.setIronHeartHealth(net.minecraft.util.Mth.clamp(state.getIronHeartHealth()
-				+ BodyIdiomRules.IRON_HEART_HEALTH_PER_CAST * strength,
-				0.0F, BodyIdiomRules.maxIronHeartHealth(player)));
-		state.setIronHeartExpiryTick(world.getGameTime() + BodyIdiomRules.IRON_HEART_DURATION_TICKS);
-		BodyIdiomEvents.sync(serverPlayer);
+				+ IronheartedRules.IRON_HEART_HEALTH_PER_CAST * strength,
+				0.0F, IronheartedRules.maxIronHeartHealth(player)));
+		state.setIronHeartExpiryTick(world.getGameTime() + IronheartedRules.IRON_HEART_DURATION_TICKS);
+		ManipulationReactiveEvents.syncHearts(serverPlayer);
 		level.playSound(null, player.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.55F, 1.35F);
 	        }
     }

@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 
 /**
  * A standalone screen that lets the player view their bloodline's shared blood pool,
@@ -66,7 +67,7 @@ public class BloodlinePoolScreen extends Screen {
 	private double autoDrawThreshold;
 
 	public BloodlinePoolScreen() {
-		super(Component.literal("Bloodline Pool"));
+		super(Component.translatable("screen.hemomancy.bloodline_pool.bloodline_pool"));
 	}
 
 	public static void openScreen() {
@@ -101,7 +102,7 @@ public class BloodlinePoolScreen extends Screen {
 		int donateButtonW = Math.max(64, scaled(70));
 		int fieldGap = scaled(6);
 		donateAmountField = new CenteredEditBox(this.font, widgetX, y, Math.max(48, widgetW - donateButtonW - fieldGap),
-				widgetHeight(20), Component.literal("Amount"));
+				widgetHeight(20), Component.translatable("screen.hemomancy.bloodline_pool.amount"));
 		styleEditBox(donateAmountField);
 		donateAmountField.setMaxLength(7);
 		donateAmountField.setValue("100");
@@ -109,7 +110,7 @@ public class BloodlinePoolScreen extends Screen {
 		addRenderableWidget(donateAmountField);
 
 		donateButton = new RitualButton(widgetX + widgetW - donateButtonW, y, donateButtonW, widgetHeight(18),
-				Component.literal("Donate"), btn -> {
+				Component.translatable("screen.hemomancy.bloodline_pool.donate"), btn -> {
 			try {
 				double amount = Double.parseDouble(donateAmountField.getValue());
 				if (amount > 0) {
@@ -126,14 +127,14 @@ public class BloodlinePoolScreen extends Screen {
 
 		// ── Trickle Donation Section ──
 		trickleToggleButton = new ToggleRitualButton(widgetX, y, scaled(126), widgetHeight(18),
-				"Trickle Tithe", trickleEnabled, selected -> {
+				Component.translatable("screen.hemomancy.bloodline_pool.trickle_tithe"), trickleEnabled, selected -> {
 			trickleEnabled = selected;
 			sendPoolSettings();
 		});
 		addRenderableWidget(trickleToggleButton);
 
 		trickleRateField = new CenteredEditBox(this.font, widgetX + scaled(226), y, scaled(58), widgetHeight(18),
-				Component.literal("Rate"));
+				Component.translatable("screen.hemomancy.bloodline_pool.rate"));
 		styleEditBox(trickleRateField);
 		trickleRateField.setMaxLength(6);
 		trickleRateField.setValue(String.format("%.2f", trickleRate));
@@ -145,14 +146,14 @@ public class BloodlinePoolScreen extends Screen {
 
 		// ── Auto-Draw Section ──
 		autoDrawToggleButton = new ToggleRitualButton(widgetX, y, scaled(126), widgetHeight(18),
-				"Blood Recall", autoDrawEnabled, selected -> {
+				Component.translatable("screen.hemomancy.bloodline_pool.blood_recall"), autoDrawEnabled, selected -> {
 			autoDrawEnabled = selected;
 			sendPoolSettings();
 		});
 		addRenderableWidget(autoDrawToggleButton);
 
 		autoDrawThresholdField = new CenteredEditBox(this.font, widgetX + scaled(226), y, scaled(58), widgetHeight(18),
-				Component.literal("Threshold"));
+				Component.translatable("screen.hemomancy.bloodline_pool.threshold"));
 		styleEditBox(autoDrawThresholdField);
 		autoDrawThresholdField.setMaxLength(4);
 		autoDrawThresholdField.setValue(String.format("%.0f", autoDrawThreshold * 100));
@@ -164,9 +165,9 @@ public class BloodlinePoolScreen extends Screen {
 
 		// ── Fane Sight Button ──
 		faneSightButton = new RitualButton(widgetX, y, widgetW, widgetHeight(20),
-				Component.literal(FaneBoundaryClientData.viewMode().label()), btn -> {
+				faneSightLabel(FaneBoundaryClientData.viewMode()), btn -> {
 			FaneBoundaryClientData.ViewMode mode = FaneBoundaryClientData.cycleViewMode();
-			btn.setMessage(Component.literal(mode.label()));
+			btn.setMessage(faneSightLabel(mode));
 		});
 		addRenderableWidget(faneSightButton);
 
@@ -175,14 +176,14 @@ public class BloodlinePoolScreen extends Screen {
 		// ── Bloodline Message Section ──
 		int sendButtonW = Math.max(48, scaled(54));
 		messageField = new CenteredEditBox(this.font, widgetX, y, Math.max(58, widgetW - sendButtonW - fieldGap),
-				widgetHeight(20), Component.literal("Message"));
+				widgetHeight(20), Component.translatable("screen.hemomancy.bloodline_pool.message"));
 		styleEditBox(messageField);
 		messageField.setMaxLength(256);
 		messageField.setHint(Component.empty());
 		addRenderableWidget(messageField);
 
 		sendMessageButton = new RitualButton(widgetX + widgetW - sendButtonW, y, sendButtonW, widgetHeight(18),
-				Component.literal("Send"), btn -> {
+				Component.translatable("screen.hemomancy.bloodline_pool.send"), btn -> {
 			String msg = messageField.getValue().trim();
 			if (!msg.isEmpty()) {
 				PacketHandler.sendToServer(new PacketBloodlineMessage(msg));
@@ -222,7 +223,7 @@ public class BloodlinePoolScreen extends Screen {
 				addRenderableWidget(kickNextButton);
 
 				kickMemberButton = new RitualButton(kickButtonX, kickRowY, kickButtonW, widgetHeight(18),
-						Component.literal("Banish"), btn -> {
+						Component.translatable("screen.hemomancy.bloodline_pool.banish"), btn -> {
 					List<UUID> kickable = getKickableMembers(localPlayer);
 					if (!kickable.isEmpty()) {
 						int idx = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
@@ -327,7 +328,8 @@ public class BloodlinePoolScreen extends Screen {
 		renderCenteredEditBoxText(graphics, donateAmountField, "100");
 		renderCenteredEditBoxText(graphics, trickleRateField, "0.00");
 		renderCenteredEditBoxText(graphics, autoDrawThresholdField, "0");
-		renderCenteredEditBoxText(graphics, messageField, "Send to bloodline...");
+		renderCenteredEditBoxText(graphics, messageField,
+				Component.translatable("screen.hemomancy.bloodline_pool.send_to_bloodline").getString());
 		renderVesselTooltip(graphics, mouseX, mouseY);
 	}
 
@@ -336,7 +338,7 @@ public class BloodlinePoolScreen extends Screen {
 
 		if (!bloodline.isValid()) {
 			graphics.drawCenteredString(this.font,
-					Component.literal("You are not in a bloodline."),
+					Component.translatable("screen.hemomancy.bloodline_pool.you_are_not_in_a_bloodline"),
 					centerX, guiTop + scaled(40), 0xFFAA4444);
 			return;
 		}
@@ -351,7 +353,7 @@ public class BloodlinePoolScreen extends Screen {
 
 		// Member count
 		graphics.drawCenteredString(this.font,
-				Component.literal("Members: " + BloodlinePoolClientData.getMemberCount()),
+				HemoText.translatable("screen.hemomancy.bloodline_pool.members", BloodlinePoolClientData.getMemberCount()),
 				centerX, y, 0xFFAAAAAA);
 		y += scaled(14);
 
@@ -360,7 +362,8 @@ public class BloodlinePoolScreen extends Screen {
 		float poolMax = BloodlinePoolClientData.getPoolMax();
 		float ratio = poolMax > 0 ? Mth.clamp(poolVol / poolMax, 0f, 1f) : 0f;
 
-		String poolText = String.format("%s / %.0f ml", formatPoolVolume(poolVol), poolMax);
+		String poolText = Component.translatable("screen.hemomancy.bloodline_pool.pool_volume_ml",
+				formatPoolVolume(poolVol), String.format("%.0f", poolMax)).getString();
 		int reservoirCenterX = centerX + scaled(18);
 		int reservoirCenterY = guiTop + scaled(92);
 		renderBloodSphere(graphics, reservoirCenterX, reservoirCenterY, scaled(44), ratio, poolText, partialTick);
@@ -369,20 +372,20 @@ public class BloodlinePoolScreen extends Screen {
 				volume.getBloodVolume(), volume.getMaxBloodVolume());
 
 		// Label for donate field
-		graphics.drawString(this.font, "Offer (ml):", donateAmountField.getX(), donateAmountField.getY() - scaled(14),
+		graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.offer_ml"), donateAmountField.getX(), donateAmountField.getY() - scaled(14),
 				0xFFFF8A8A,
 				true);
 
 		// Trickle rate label
-		graphics.drawString(this.font, "Rate:", trickleRateField.getX() - scaled(42),
+		graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.rate_label"), trickleRateField.getX() - scaled(42),
 				trickleRateField.getY() + scaled(5), 0xFFFF8A8A, true);
 
 		// Auto-draw threshold label
-		graphics.drawString(this.font, "Threshold %:", autoDrawThresholdField.getX() - scaled(86),
+		graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.threshold_percent_label"), autoDrawThresholdField.getX() - scaled(86),
 				autoDrawThresholdField.getY() + scaled(5), 0xFFFF8A8A, true);
 
 		// Bloodline message label
-		graphics.drawString(this.font, "Bloodline Message:", messageField.getX(),
+		graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.bloodline_message_label"), messageField.getX(),
 				messageField.getY() - scaled(14), 0xFFFF8A8A, true);
 
 		if (kickMemberButton != null) {
@@ -392,7 +395,8 @@ public class BloodlinePoolScreen extends Screen {
 			renderRitualPanel(graphics, targetX, kickMemberButton.getY(), targetW, kickMemberButton.getHeight(),
 					0xFF050101, 0xFF6A1218);
 			if (kickable.isEmpty()) {
-				drawCenteredFittingString(graphics, this.font, "No player members", targetX + targetW / 2,
+				drawCenteredFittingString(graphics, this.font,
+						Component.translatable("screen.hemomancy.bloodline_pool.no_player_members").getString(), targetX + targetW / 2,
 						kickMemberButton.getY() + scaled(5), targetW - scaled(6), 0xFFAA6666, false);
 				kickMemberButton.active = false;
 				kickPrevButton.active = false;
@@ -600,6 +604,11 @@ public class BloodlinePoolScreen extends Screen {
 		}
 	}
 
+	private static Component faneSightLabel(FaneBoundaryClientData.ViewMode mode) {
+		return Component.translatable("screen.hemomancy.bloodline_pool.fane_sight."
+				+ mode.name().toLowerCase(java.util.Locale.ROOT));
+	}
+
 	private static class RitualButton extends Button {
 		protected RitualButton(int x, int y, int width, int height, Component message, OnPress onPress) {
 			super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
@@ -627,11 +636,11 @@ public class BloodlinePoolScreen extends Screen {
 	}
 
 	private static final class ToggleRitualButton extends RitualButton {
-		private final String label;
+		private final Component label;
 		private final Consumer<Boolean> onToggle;
 		private boolean selected;
 
-		private ToggleRitualButton(int x, int y, int width, int height, String label, boolean selected,
+		private ToggleRitualButton(int x, int y, int width, int height, Component label, boolean selected,
 				Consumer<Boolean> onToggle) {
 			super(x, y, width, height, Component.empty(), btn -> {
 			});
@@ -649,7 +658,8 @@ public class BloodlinePoolScreen extends Screen {
 		}
 
 		private void updateLabel() {
-			setMessage(Component.literal((selected ? "[x] " : "[ ] ") + label));
+			setMessage(Component.translatable(selected ? "screen.hemomancy.bloodline_pool.toggle_on"
+					: "screen.hemomancy.bloodline_pool.toggle_off", label));
 		}
 	}
 }

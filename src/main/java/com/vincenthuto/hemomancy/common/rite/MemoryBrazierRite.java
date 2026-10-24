@@ -63,10 +63,7 @@ public final class MemoryBrazierRite implements BrazierRite<BloodMemoryItem> {
 			reportFailure(level, player, result);
 			return Completion.kept(true);
 		}
-		player.displayClientMessage(Component.literal(result.status() == MemoryGrantStatus.GRANTED_EQUIPPED
-					? "The burning memory enters your blood and settles into an open manipulation slot."
-					: "The burning memory enters your blood. Recall it at a Mnemonic Reliquary.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+		player.displayClientMessage((result.status() == MemoryGrantStatus.GRANTED_EQUIPPED ? Component.translatable("message.hemomancy.memory_brazier_rite.the_burning_memory_enters_your_blood") : Component.translatable("message.hemomancy.memory_brazier_rite.the_burning_memory_enters_your_blood_2")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		level.playSound(null, pos, SoundEvents.SOUL_ESCAPE.value(), SoundSource.BLOCKS, 0.65F, 0.8F);
 		level.sendParticles(HemoParticleData.glow(new ParticleColor(190, 0, 24)),
 				pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
@@ -75,14 +72,14 @@ public final class MemoryBrazierRite implements BrazierRite<BloodMemoryItem> {
 	}
 
 	private static void reportFailure(ServerLevel level, ServerPlayer player, MemoryGrantResult result) {
-		String text = switch (result.status()) {
-			case ALREADY_KNOWN -> "Your blood already carries this memory.";
-			case NO_ACTIVE_BLOOD -> "The memory finds no living blood to enter.";
-			case RANK_TOO_LOW -> "This memory requires Degree " + result.requiredDegree() + ".";
-			case MASTERY_TOO_LOW -> "Master " + result.familyId().replace('_', ' ') + " to stage "
-					+ result.requiredMastery() + " before absorbing this memory.";
-			case RETIRED -> "This memory has gone dormant.";
-			default -> "The burning memory will not take.";
+		Component text = switch (result.status()) {
+			case ALREADY_KNOWN -> Component.translatable("message.hemomancy.memory_brazier_rite.already_known");
+			case NO_ACTIVE_BLOOD -> Component.translatable("message.hemomancy.memory_brazier_rite.no_active_blood");
+			case RANK_TOO_LOW -> Component.translatable("message.hemomancy.memory_brazier_rite.rank_too_low", result.requiredDegree());
+			case MASTERY_TOO_LOW -> Component.translatable("message.hemomancy.memory_brazier_rite.mastery_too_low",
+					result.familyId().replace('_', ' '), result.requiredMastery());
+			case RETIRED -> Component.translatable("message.hemomancy.memory_brazier_rite.retired");
+			default -> Component.translatable("message.hemomancy.memory_brazier_rite.will_not_take");
 		};
 		BrazierRites.messageEverySecond(level, player, text, ChatFormatting.DARK_RED);
 	}

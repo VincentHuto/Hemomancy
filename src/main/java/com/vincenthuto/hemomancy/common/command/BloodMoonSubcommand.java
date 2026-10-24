@@ -33,7 +33,7 @@ final class BloodMoonSubcommand {
 		ServerLevel overworld = source.getServer().overworld();
 		BloodMoonSavedData data = BloodMoonSavedData.get(overworld);
 		if (data.isActive()) {
-			source.sendFailure(Component.literal("A Blood Moon is already active."));
+			source.sendFailure(Component.translatable("commands.hemomancy.blood_moon.a_blood_moon_is_already_active"));
 			return 0;
 		}
 		data.start(overworld.getGameTime() + 11900L);
@@ -42,8 +42,7 @@ final class BloodMoonSubcommand {
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		}
 		PacketHandler.sendToAll(new PacketSyncBloodMoon(true));
-		source.sendSuccess(() -> Component.literal("Blood Moon summoned.")
-				.withStyle(ChatFormatting.DARK_RED), true);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.blood_moon.blood_moon_summoned").withStyle(ChatFormatting.DARK_RED), true);
 		return 1;
 	}
 
@@ -51,7 +50,7 @@ final class BloodMoonSubcommand {
 		ServerLevel overworld = source.getServer().overworld();
 		BloodMoonSavedData data = BloodMoonSavedData.get(overworld);
 		if (!data.isActive()) {
-			source.sendFailure(Component.literal("No Blood Moon is currently active."));
+			source.sendFailure(Component.translatable("commands.hemomancy.blood_moon.no_blood_moon_is_currently_active"));
 			return 0;
 		}
 		data.stop();
@@ -60,8 +59,7 @@ final class BloodMoonSubcommand {
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
 		PacketHandler.sendToAll(new PacketSyncBloodMoon(false));
-		source.sendSuccess(() -> Component.literal("Blood Moon cancelled.")
-				.withStyle(ChatFormatting.GRAY), true);
+		source.sendSuccess(() -> Component.translatable("commands.hemomancy.blood_moon.blood_moon_cancelled").withStyle(ChatFormatting.GRAY), true);
 		return 1;
 	}
 }

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.*;
@@ -13,7 +14,6 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 
@@ -24,7 +24,7 @@ import org.joml.Vector3f;
 public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEveningStarEntity> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			ResourceLocation.fromNamespaceAndPath("hemomancy", "vesper_evening_star"), "main");
+			Hemomancy.rloc("vesper_evening_star"), "main");
 	private final ModelPart whole;
 	private final ModelPart head;
 	private final ModelPart crown;

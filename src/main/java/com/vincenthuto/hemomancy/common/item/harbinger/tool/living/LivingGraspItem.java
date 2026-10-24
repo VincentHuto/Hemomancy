@@ -66,8 +66,7 @@ public class LivingGraspItem extends Item {
 					BloodAccounting.pay(player, 50f, GRASP);
 					if (worldIn.random.nextInt(10) == 6) {
 
-						player.displayClientMessage(Component.literal(
-								ChatFormatting.DARK_PURPLE + "Abuse of Power does not come without consequence"), true);
+						player.displayClientMessage(Component.translatable("message.hemomancy.living_grasp_item.abuse_of_power_does_not_come").withStyle(ChatFormatting.DARK_PURPLE), true);
 					}
 					if (player.isCrouching()) {
 						this.summonNoteStorm(worldIn.random.nextInt(3), worldIn, player);
@@ -83,7 +82,7 @@ public class LivingGraspItem extends Item {
 						player.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND
 								: EquipmentSlot.OFFHAND);
 			} else {
-				player.displayClientMessage(Component.literal("Not enough blood to be shed"), true);
+				player.displayClientMessage(Component.translatable("message.hemomancy.living_grasp_item.not_enough_blood_to_be_shed"), true);
 			}
 		}
 

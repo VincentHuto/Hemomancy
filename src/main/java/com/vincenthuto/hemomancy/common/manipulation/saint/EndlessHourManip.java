@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
 import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -87,9 +88,7 @@ public class EndlessHourManip extends BloodManipulation {
 		long existingExpiry = player.getPersistentData().getLong(EXPIRY_KEY);
 		if (existingExpiry > 0) {
 			player.displayClientMessage(
-					net.minecraft.network.chat.Component.literal(
-							"The hour has not yet ended. You cannot extend borrowed time.")
-							.withStyle(net.minecraft.ChatFormatting.DARK_AQUA),
+					net.minecraft.network.chat.Component.translatable("message.hemomancy.endless_hour_manip.the_hour_has_not_yet_ended").withStyle(net.minecraft.ChatFormatting.DARK_AQUA),
 					true);
 			return;
 		}
@@ -98,9 +97,7 @@ public class EndlessHourManip extends BloodManipulation {
 		player.getPersistentData().putFloat(DEFERRED_DAMAGE_KEY, 0.0f);
 
 		player.displayClientMessage(
-				net.minecraft.network.chat.Component.literal(
-						"Velorum's hour begins. Death is deferred — but it remembers.")
-						.withStyle(net.minecraft.ChatFormatting.DARK_AQUA, net.minecraft.ChatFormatting.ITALIC),
+				net.minecraft.network.chat.Component.translatable("message.hemomancy.endless_hour_manip.velorum_s_hour_begins_death_is").withStyle(net.minecraft.ChatFormatting.DARK_AQUA, net.minecraft.ChatFormatting.ITALIC),
 				true);
 
 		world.playSound(null, player.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.PLAYERS, 1.2f, 0.3f);
@@ -154,9 +151,8 @@ public class EndlessHourManip extends BloodManipulation {
 			if (grace != null) grace.hemomancy$setSpawnInvulnerableTime(spawnGrace);
 		}
 		if (!collected) return;
-		player.displayClientMessage(net.minecraft.network.chat.Component.literal(
-				"The hour ends. Velorum collects: " + String.format("%.1f", deferred) + " damage returns.")
-				.withStyle(net.minecraft.ChatFormatting.RED, net.minecraft.ChatFormatting.BOLD), false);
+		player.displayClientMessage(HemoText.translatable("message.hemomancy.endless_hour_manip.the_hour_ends_velorum_collects_damage",
+				String.format("%.1f", deferred)).withStyle(net.minecraft.ChatFormatting.RED, net.minecraft.ChatFormatting.BOLD), false);
 		if (player.level() instanceof ServerLevel level) {
 			level.playSound(null, player.blockPosition(), SoundEvents.LIGHTNING_BOLT_THUNDER,
 					SoundSource.PLAYERS, .6F, .5F);

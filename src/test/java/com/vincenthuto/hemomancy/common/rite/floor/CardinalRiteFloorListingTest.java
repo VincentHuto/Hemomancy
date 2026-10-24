@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.floor;
 
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
+import com.vincenthuto.hemomancy.support.EnglishText;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,8 +10,14 @@ import static org.junit.jupiter.api.Assertions.*;
 final class CardinalRiteFloorListingTest {
 	@Test
 	void floorsAreNamedByStyleAndTier() {
-		assertEquals("Working Floor (Greater)", CardinalRiteFloorDefinition.displayName("working", CardinalRiteType.GREATER));
-		assertEquals("Threshold Floor (Minor)", CardinalRiteFloorDefinition.displayName("threshold", CardinalRiteType.MINOR));
+		assertEquals("Working Floor (Greater)",
+				EnglishText.render(CardinalRiteFloorDefinition.displayName("working", CardinalRiteType.GREATER)));
+		assertEquals("Threshold Floor (Minor)",
+				EnglishText.render(CardinalRiteFloorDefinition.displayName("threshold", CardinalRiteType.MINOR)));
+		assertEquals("Pale Floor (Grand)",
+				EnglishText.render(CardinalRiteFloorDefinition.displayName("pale", CardinalRiteType.GRAND)),
+				"a datapack style without a key shows its id capitalised");
+		assertEquals("Greater (7x7)", EnglishText.render(CardinalRiteFloorDefinition.tierWithSize(CardinalRiteType.GREATER)));
 	}
 
 	@Test

@@ -2,14 +2,20 @@ package com.vincenthuto.hemomancy.common.vein;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.UUID;
 
 public record EarthenVeinDestination(UUID id, String name, ResourceLocation dimension, BlockPos position, int cost) {
 	public EarthenVeinDestination {
-		name = name == null || name.isBlank() ? "Unnamed Earthen Vein" : name;
+		name = name == null || name.isBlank() ? "" : name;
 		position = position.immutable();
+	}
+
+	public MutableComponent displayName() {
+		return name.isEmpty() ? Component.translatable("gui.hemomancy.earthen_vein.unnamed") : Component.literal(name);
 	}
 
 	public void write(FriendlyByteBuf buffer) {

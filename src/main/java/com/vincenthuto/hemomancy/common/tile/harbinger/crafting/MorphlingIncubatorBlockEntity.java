@@ -476,7 +476,7 @@ public class MorphlingIncubatorBlockEntity extends HemoContainerBlockEntity impl
 
 	@Override
 	protected Component getDefaultName() {
-		return Component.literal("Morphling Incubator");
+		return Component.translatable("message.hemomancy.morphling_incubator_block_entity.morphling_incubator");
 	}
 
 	// ---- Serialization ----

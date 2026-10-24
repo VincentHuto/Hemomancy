@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
+import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -44,7 +45,7 @@ final class SlotsSubcommand {
 		int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(equipped);
 		MutableComponent msg = Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
-				.append(Component.literal(" Slots: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.translatable("commands.hemomancy.slots.slots").withStyle(ChatFormatting.GRAY))
 				.append(Component.literal(normalSlots + "/" + maxSlots).withStyle(ChatFormatting.DARK_RED));
 		source.sendSuccess(() -> msg, false);
 		for (int i = 0; i < equipped.size(); i++) {
@@ -61,15 +62,16 @@ final class SlotsSubcommand {
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		if (known.equipManip(manipName, maxSlots)) {
 			int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
-			source.sendSuccess(() -> Component.literal("Equipped ")
-					.append(Component.literal(manipName).withStyle(ChatFormatting.GREEN))
-					.append(Component.literal(" (" + normalSlots + "/" + maxSlots + ")")
+			source.sendSuccess(() -> Component.translatable("commands.hemomancy.slots.equipped",
+					Component.literal(manipName).withStyle(ChatFormatting.GREEN),
+					Component.literal(" (" + normalSlots + "/" + maxSlots + ")")
 							.withStyle(ChatFormatting.GRAY)),
 					true);
 		} else {
 			int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
-			source.sendFailure(Component.literal("Cannot equip: no free slot or already equipped (" +
-					normalSlots + "/" + maxSlots + ")"));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.slots.cannot_equip_no_free_slot_or",
+					normalSlots,
+					maxSlots));
 		}
 		return 1;
 	}
@@ -78,11 +80,11 @@ final class SlotsSubcommand {
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				;
 		if (known.unequipManip(manipName)) {
-			source.sendSuccess(() -> Component.literal("Unequipped ")
-					.append(Component.literal(manipName).withStyle(ChatFormatting.YELLOW)),
+			source.sendSuccess(() -> Component.translatable("commands.hemomancy.slots.unequipped",
+					Component.literal(manipName).withStyle(ChatFormatting.YELLOW)),
 					true);
 		} else {
-			source.sendFailure(Component.literal("Manipulation '" + manipName + "' was not equipped."));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.slots.manipulation_was_not_equipped", manipName));
 		}
 		return 1;
 	}

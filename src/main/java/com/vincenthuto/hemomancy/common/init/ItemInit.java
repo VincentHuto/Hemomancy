@@ -709,10 +709,10 @@ public class ItemInit {
                     new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).component(
                             DataComponentInit.STRUCTURE_SCANNER_TOOLTIP.get(),
                             new StructureScannerTooltipComponent(List.of(
-                                    Component.literal("Right-click two corners of a structure").withStyle(ChatFormatting.GRAY),
-                                    Component.literal("to export it as recipe JSON.").withStyle(ChatFormatting.GRAY),
-                                    Component.literal("Sneak+click to reset stored corner.").withStyle(ChatFormatting.DARK_GRAY),
-                                    Component.literal("Creative mode only!").withStyle(ChatFormatting.RED))))));
+                                    Component.translatable("message.hemomancy.item_init.right_click_two_corners_of_a").withStyle(ChatFormatting.GRAY),
+                                    Component.translatable("message.hemomancy.item_init.to_export_it_as_recipe_json").withStyle(ChatFormatting.GRAY),
+                                    Component.translatable("message.hemomancy.item_init.sneak_click_to_reset_stored_corner").withStyle(ChatFormatting.DARK_GRAY),
+                                    Component.translatable("message.hemomancy.item_init.creative_mode_only").withStyle(ChatFormatting.RED))))));
 
     // Equipment
     // Artifacts

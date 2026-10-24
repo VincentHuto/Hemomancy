@@ -181,10 +181,10 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Sepia Wake (Illuminate hostiles while sprinting)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Low-Light Camouflage (Stillness hides you in dark or water)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Ink Mantle Reprieve (Prevent death using blood)", 4, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Last-Light Mantle (Primal rescue mantle cleanses and prevents death)", 5, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.lumenlace_morphling_item.sepia_wake_illuminate_hostiles_while_sprinting"), 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.lumenlace_morphling_item.low_light_camouflage_stillness_hides_you"), 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.lumenlace_morphling_item.ink_mantle_reprieve_prevent_death_using"), 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine(Component.translatable("message.hemomancy.lumenlace_morphling_item.last_light_mantle_primal_rescue_mantle"), 5, currentMaturity));
 		return list;
 	}
 }

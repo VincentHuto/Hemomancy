@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 
 /** Marks an entity as showing a timed visual on clients that track it. */
 public record EntityVisualPacket(Kind kind, int entityId, int durationTicks) implements CustomPacketPayload {
@@ -17,7 +16,7 @@ public record EntityVisualPacket(Kind kind, int entityId, int durationTicks) imp
 
 	// MOD_ID is a compile-time constant, so building the id this way keeps the codec usable without loading
 	// Hemomancy (VisualPayloadCodecTest).
-	public static final Type<EntityVisualPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "entity_visual"));
+	public static final Type<EntityVisualPacket> TYPE = new Type<>(Hemomancy.rloc("entity_visual"));
 	public static final StreamCodec<FriendlyByteBuf, EntityVisualPacket> STREAM_CODEC =
 			StreamCodec.of(EntityVisualPacket::encode, EntityVisualPacket::decode);
 

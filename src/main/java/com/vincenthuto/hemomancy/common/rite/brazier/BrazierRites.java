@@ -74,9 +74,9 @@ public final class BrazierRites {
 	}
 
 	/** Action-bar feedback for a refused channel, at most once a second while absorption is held. */
-	public static void messageEverySecond(ServerLevel level, Player player, String text, ChatFormatting color) {
+	public static void messageEverySecond(ServerLevel level, Player player, Component text, ChatFormatting color) {
 		if (level.getGameTime() % 20L == 0L) {
-			player.displayClientMessage(Component.literal(text).withStyle(color), true);
+			player.displayClientMessage(text.copy().withStyle(color), true);
 		}
 	}
 }

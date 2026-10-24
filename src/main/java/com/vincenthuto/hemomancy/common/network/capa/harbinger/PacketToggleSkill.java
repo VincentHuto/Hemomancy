@@ -26,8 +26,8 @@ public record PacketToggleSkill(int skillId) implements CustomPacketPayload {
 			SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 			if (skill == null || !progress.toggleEnabled(skill)) return;
 			boolean enabled = progress.isEnabled(skill);
-			player.displayClientMessage(Component.literal(skill.getName().replace("skill_", "").replace('_', ' ')
-					+ (enabled ? ": enabled" : ": disabled"))
+			player.displayClientMessage(Component.translatable(enabled ? "message.hemomancy.packet_toggle_skill.enabled"
+					: "message.hemomancy.packet_toggle_skill.disabled", Component.translatable("skill.hemomancy." + skill.getName()))
 					.withStyle(enabled ? ChatFormatting.GOLD : ChatFormatting.GRAY), true);
 			PacketHandler.sendToPlayer(player, new PacketSyncSkills(progress.toSyncTag()));
 		});

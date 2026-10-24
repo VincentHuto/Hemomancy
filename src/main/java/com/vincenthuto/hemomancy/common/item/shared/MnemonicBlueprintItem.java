@@ -1,11 +1,15 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -99,11 +103,11 @@ public class MnemonicBlueprintItem extends Item {
 					.withStyle(ChatFormatting.GRAY));
 			return;
 		}
-		String name = displayName(target.recipeId());
+		MutableComponent name = displayName(target);
 		String key = target.type() == MnemonicBlueprintTarget.Type.CARDINAL_RITE
 				? "item.hemomancy.mnemonic_blueprint.tooltip.rite"
 				: "item.hemomancy.mnemonic_blueprint.tooltip.structure";
-		tooltip.add(Component.translatable(key, Component.literal(name).withStyle(ChatFormatting.DARK_RED))
+		tooltip.add(Component.translatable(key, name.withStyle(ChatFormatting.DARK_RED))
 				.withStyle(ChatFormatting.GRAY));
 		tooltip.add(Component.translatable("item.hemomancy.mnemonic_blueprint.tooltip.use")
 				.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
@@ -122,13 +126,18 @@ public class MnemonicBlueprintItem extends Item {
 	public Component getName(ItemStack stack) {
 		MnemonicBlueprintTarget target = getTarget(stack);
 		return target == null ? super.getName(stack)
-				: Component.translatable("item.hemomancy.mnemonic_blueprint.named", displayName(target.recipeId()));
+				: Component.translatable("item.hemomancy.mnemonic_blueprint.named", displayName(target));
 	}
 
-	private static String displayName(ResourceLocation id) {
+	/** A floor's style and tier, a rite's name from its key; a structure, or a rite without one, shows its recipe path. */
+	private static MutableComponent displayName(MnemonicBlueprintTarget target) {
+		ResourceLocation id = target.recipeId();
 		String path = id.getPath();
 		if (path.contains("/")) path = path.substring(path.lastIndexOf('/') + 1);
-		return com.vincenthuto.hutoslib.client.HLTextUtils.toProperCase(path.replace('_', ' '));
+		String fallback = com.vincenthuto.hutoslib.client.HLTextUtils.toProperCase(path.replace('_', ' '));
+		if (target.type() != MnemonicBlueprintTarget.Type.CARDINAL_RITE) return Component.literal(fallback);
+		return CardinalRiteFloorRegistry.get(id).map(CardinalRiteFloorDefinition::styleAndTier)
+				.orElseGet(() -> Component.translatableWithFallback(CardinalRiteRecipe.nameKey(id), fallback));
 	}
 
 	@OnlyIn(Dist.CLIENT)
