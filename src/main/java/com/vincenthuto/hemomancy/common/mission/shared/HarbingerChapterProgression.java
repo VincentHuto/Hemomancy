@@ -26,8 +26,8 @@ public final class HarbingerChapterProgression {
 			completed.add(HarbingerChapterMilestone.FIRST_BLOODCRAFT);
 		if (FirstSeparationAssignment.isClaimed(player)) completed.add(HarbingerChapterMilestone.FIRST_SEPARATION);
 		if (FirstSeparationAssignment.isClaimed(player) && HemoCapabilityAccess.stationUpgrades(player).hasUsed(
-				com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
-				com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.DISTILL)) {
+				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC,
+				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.DISTILL)) {
 			completed.add(HarbingerChapterMilestone.FIRST_DISTILLATION);
 		}
 		if (HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(player)) completed.add(HarbingerChapterMilestone.WOVEN_VESSEL);

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
+import com.vincenthuto.hemomancy.client.model.morphling.MorphlingPlayerPartVisibility;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import net.minecraft.client.model.HumanoidModel;

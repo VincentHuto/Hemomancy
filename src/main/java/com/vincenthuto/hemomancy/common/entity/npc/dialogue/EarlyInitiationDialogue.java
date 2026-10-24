@@ -17,8 +17,8 @@ public final class EarlyInitiationDialogue {
   if (!ClinicalBloodKnowledge.eligible(player) || !ProgressionGates.isDegree(player, 2)
     || !FirstSeparationAssignment.isClaimed(player)
     || !com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player).hasUsed(
-            com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
-            com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.DISTILL)) return tree;
+            com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC,
+            com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.DISTILL)) return tree;
   List<DialogueOption> options = new ArrayList<>();
   if (!ConcentratedBlood.pending(player)) options.add(new DialogueOption("hemomancy.initiation.replace", null, "alchemist_replace_concentrated_blood"));
   options.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));

@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.antecedent.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
@@ -11,6 +10,16 @@ import com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DeepDarkCommissionDialogue;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity;
+import com.vincenthuto.hemomancy.common.item.harbinger.AhaematicColloidItem;
+import com.vincenthuto.hemomancy.common.item.component.AhaematicSample;
+import com.vincenthuto.hemomancy.common.item.component.AncientRecordings;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AntecedentDialogue;
+import com.vincenthuto.hemomancy.common.item.harbinger.ListeningScarItem;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilArchiveBlockEntity;
+import com.vincenthuto.hemomancy.common.worldgen.structure.vigil.VigilLayout;
+import com.vincenthuto.hemomancy.common.worldgen.structure.vigil.VigilModules;
+import com.vincenthuto.hemomancy.common.worldgen.structure.vigil.VigilPlacement;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilSites;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -30,7 +39,7 @@ import net.minecraft.world.level.block.state.properties.SculkSensorPhase;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.neoforged.neoforge.gametest.*;
 import java.util.UUID;
-import static com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.*;
+import static com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch.Evidence.*;
 
 @GameTestHolder("antecedent_validation")
 @PrefixGameTestTemplate(false)

@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryWorldEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.RootedStateHelper;
-import com.vincenthuto.hemomancy.common.circus.CircusPracticalController;
+import com.vincenthuto.hemomancy.common.mission.circus.CircusPracticalController;
 import com.vincenthuto.hemomancy.common.effect.ChummedWatersAreaManager;
 import com.vincenthuto.hemomancy.common.effect.LanternTickLightManager;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneEvents;
@@ -48,7 +48,7 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEven
 import com.vincenthuto.hemomancy.common.rite.harbinger.WorkingCraftRites;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.ActiveEngramLooms;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing;
-import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelManager;
+import com.vincenthuto.hemomancy.common.world.vein.EarthenVeinTravelManager;
 import com.vincenthuto.hemomancy.common.worldgen.feature.CorticalArchipelagoFeature;
 
 import net.minecraft.server.level.ServerPlayer;

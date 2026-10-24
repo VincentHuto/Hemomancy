@@ -42,7 +42,7 @@ import net.minecraft.world.level.Level;
  *       is offered to an enemy of the Covenant.</li>
  * </ul>
  */
-public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
+public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
 
     private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> INITIATING =
             net.minecraft.network.syncher.SynchedEntityData.defineId(HarbingerVicarEntity.class, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
@@ -220,7 +220,7 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
                     hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_COVENANT_VIGIL_COMPLETED));
         }
         tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.StationUpgradeDialogue.append(tree, serverPlayer,
-                com.vincenthuto.hemomancy.common.station.UpgradeStation.CONDENSER, "hemomancy.dialogue.vicar.option.leave");
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.CONDENSER, "hemomancy.dialogue.vicar.option.leave");
         return withFieldResearch(tree, serverPlayer, degree);
     }
 

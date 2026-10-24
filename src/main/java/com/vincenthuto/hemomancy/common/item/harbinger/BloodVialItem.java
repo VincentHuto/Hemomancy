@@ -53,8 +53,8 @@ public class BloodVialItem extends Item {
 
     @Override public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
         if (level.isClientSide || !(entity instanceof Player player)
-                || !com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(stack)) return;
-        var migrated = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.migrate(stack);
+                || !com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(stack)) return;
+        var migrated = com.vincenthuto.hemomancy.common.item.component.AhaematicSample.migrate(stack);
         if (migrated == stack) return;
         if (player.getMainHandItem() == stack) player.setItemInHand(InteractionHand.MAIN_HAND,migrated);
         else if (player.getOffhandItem() == stack) player.setItemInHand(InteractionHand.OFF_HAND,migrated);
@@ -74,7 +74,7 @@ public class BloodVialItem extends Item {
             return;
         }
         if (!BloodSampleData.isFilled(stack)) return;
-        var identity = com.vincenthuto.hemomancy.common.succession.SuccessionSamples.identity(stack);
+        var identity = com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.identity(stack);
         if (!identity.isEmpty()) {
             tooltip.add(Component.translatable("hemomancy.succession.sample_donor", identity.getString("Name")));
             if (identity.hasUUID("Bloodline")) tooltip.add(Component.translatable("hemomancy.succession.sample_bound"));
@@ -127,7 +127,7 @@ public class BloodVialItem extends Item {
                 }
                 BloodAccounting.pay(player, 100, SELF_SAMPLE);
                 ItemStack sample = stack.getCount() == 1 ? stack : stack.copyWithCount(1);
-                com.vincenthuto.hemomancy.common.succession.SuccessionSamples.fill(sample, player, null, "");
+                com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.fill(sample, player, null, "");
                 if (sample != stack) {
                     stack.shrink(1);
                     player.setItemInHand(hand, sample);
@@ -249,7 +249,7 @@ public class BloodVialItem extends Item {
 				tag.putString(TAG_ENTITY_TYPE, entityTypeId.toString());
 				tag.putBoolean(TAG_STATE, true);
 				sample.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-                if (entity instanceof Player donor) com.vincenthuto.hemomancy.common.succession.SuccessionSamples.fill(sample, donor, null, "");
+                if (entity instanceof Player donor) com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.fill(sample, donor, null, "");
                 sample.remove(DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());
                 if (sample != stack) {
                     stack.shrink(1);

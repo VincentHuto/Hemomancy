@@ -25,8 +25,8 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 public class ClairaudiographBlockEntity extends HemoBlockEntity implements MenuProvider {
     private static long nextToken;
     private long startedAt;
-    private final com.vincenthuto.hemomancy.common.antecedent.AntecedentPlayback observations = new com.vincenthuto.hemomancy.common.antecedent.AntecedentPlayback();
-    public com.vincenthuto.hemomancy.common.antecedent.AncientRecordings.Program program() { return com.vincenthuto.hemomancy.common.antecedent.AncientRecordings.get(inventory.getStackInSlot(1)); }
+    private final com.vincenthuto.hemomancy.common.tile.harbinger.functional.AntecedentPlayback observations = new com.vincenthuto.hemomancy.common.tile.harbinger.functional.AntecedentPlayback();
+    public com.vincenthuto.hemomancy.common.item.component.AncientRecordings.Program program() { return com.vincenthuto.hemomancy.common.item.component.AncientRecordings.get(inventory.getStackInSlot(1)); }
     public int elapsed() { return level == null ? 0 : (int)(level.getGameTime()-startedAt); }
     public boolean playable() { return program()!=null || ClairaudiographCatalogue.allowed(recording())!=null; }
 
@@ -103,8 +103,8 @@ public class ClairaudiographBlockEntity extends HemoBlockEntity implements MenuP
         if(level.isClientSide) { if(be.progress > 0) be.progress = Math.min(80, be.progress + 1); return; }
         var specimen = be.inventory.getStackInSlot(0);
         if (be.progress == 0 && specimen.getItem() instanceof com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem
-                && com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(specimen))
-            be.inventory.setStackInSlot(0,com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.migrate(specimen));
+                && com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(specimen))
+            be.inventory.setStackInSlot(0,com.vincenthuto.hemomancy.common.item.component.AhaematicSample.migrate(specimen));
         boolean power = level.hasNeighborSignal(pos);
         if(!be.initialized) { be.initialized = true; be.powered = power; }
         else if(power != be.powered) {

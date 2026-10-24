@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.antecedent.AntecedentKnowledge;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentEntityEventHandler;

@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.gametest.journey;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselRules;
-import com.vincenthuto.hemomancy.common.circus.CircusPavilionSavedData;
-import com.vincenthuto.hemomancy.common.circus.CircusPavilionStateRules;
-import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionStateRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.PeacockSpiderEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
@@ -33,7 +33,7 @@ final class CircusJourneyAutomation {
 			case ACCLIMATING -> { }
 			case ATTENTION -> runAttentionAct(player, origin);
 			case ROUTE -> CircusJourneyFixtures.ringmaster(player, origin).handleChoice(player,
-					CircusJourneyController.route(player) == com.vincenthuto.hemomancy.common.circus.CircusRouteRules.Route.SUCCESSION
+					CircusJourneyController.route(player) == com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusRouteRules.Route.SUCCESSION
 							? CircusRingmasterEntity.EVENT_ACCEPT : CircusRingmasterEntity.EVENT_REJECT);
 			case ACTS -> runActs(player, origin);
 			case FINALE -> runFinale(player, origin);

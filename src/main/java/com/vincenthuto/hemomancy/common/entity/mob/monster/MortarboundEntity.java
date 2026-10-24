@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.antecedent.VigilSites;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilSites;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

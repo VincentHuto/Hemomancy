@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeMigration;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeMigration;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
@@ -23,16 +23,16 @@ import net.minecraft.world.level.GameType;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites;
-import com.vincenthuto.hemomancy.common.station.StationTierProperty;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeTier;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeTier;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import java.util.ArrayList;
-import com.vincenthuto.hemomancy.common.station.UpgradeStation;
-import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeableStation;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.HematicArmatureBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity;
@@ -393,7 +393,7 @@ public final class StationUpgradeGameTests {
         progress.sync(player, true);
         helper.assertTrue(!LiberKnowledgeHelper.hasEntry(player, entry), "Inactive blood revealed the lesson");
         HemoCapabilityAccess.getBloodVolume(player).setActive(true);
-        com.vincenthuto.hemomancy.common.station.StationUpgradeEvents.onLogin(
+        com.vincenthuto.hemomancy.common.event.StationUpgradeEvents.onLogin(
                 new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent(player));
         helper.assertTrue(LiberKnowledgeHelper.hasEntry(player, entry), "Login did not backfill earned teaching");
         helper.assertTrue(!progress.hasClaimed(UpgradeStation.ALEMBIC, 1)

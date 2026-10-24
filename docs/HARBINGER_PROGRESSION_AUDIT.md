@@ -224,7 +224,7 @@ Values below are current base definitions, before skills, buffs, interference an
 | Ringmaster Pattern | 4 plus succession unlock | 28 | 1 | .28 | 52 | 14 | 14.6 min |
 | Mnemonist Puppet | 5 | 26 | 3 | .26 | 64 | 16 | 12.0 min |
 
-Reserve duration assumes one puppet, no replenishment and uninterrupted base upkeep. It is not a prediction of survival in combat. [PuppeteerSummonDefinitions](../src/main/java/com/vincenthuto/hemomancy/common/summon/PuppeteerSummonDefinitions.java) is the source of the base table.
+Reserve duration assumes one puppet, no replenishment and uninterrupted base upkeep. It is not a prediction of survival in combat. [PuppeteerSummonDefinitions](../src/main/java/com/vincenthuto/hemomancy/common/entity/summon/puppeteer/PuppeteerSummonDefinitions.java) is the source of the base table.
 
 The Hulk has the most HP and base damage while charging the least upkeep. Slowness and melee access may justify this, but it is the clearest candidate for sustained-combat dominance. Test narrow passages, fast targets, vertical terrain and open arenas before deciding to raise its upkeep. Veinwing mobility and Mummer/Ringmaster utility need appropriate encounters to show their value.
 

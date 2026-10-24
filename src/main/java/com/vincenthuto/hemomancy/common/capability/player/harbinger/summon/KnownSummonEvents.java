@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.summon.KnownSummonsServerPacket;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinition;
 import net.minecraft.server.level.ServerPlayer;
 
 public class KnownSummonEvents {

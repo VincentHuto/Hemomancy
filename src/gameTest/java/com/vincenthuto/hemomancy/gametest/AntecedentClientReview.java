@@ -2,11 +2,13 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.google.gson.JsonParser;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.antecedent.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity;
+import com.vincenthuto.hemomancy.common.item.component.AhaematicSample;
+import com.vincenthuto.hemomancy.common.item.component.AncientRecordings;
+import com.vincenthuto.hemomancy.common.worldgen.structure.vigil.VigilModules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;

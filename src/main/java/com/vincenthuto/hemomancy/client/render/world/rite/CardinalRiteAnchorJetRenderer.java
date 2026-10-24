@@ -9,7 +9,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes;
 import com.vincenthuto.hemomancy.client.render.world.rite.escalation.RingTear;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteRingRules;

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item.harbinger.crossbar;
 
-import com.vincenthuto.hemomancy.common.circus.CinderBellowsRules;
+import com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsRules;
 
 import java.util.ArrayList;
 import java.util.Collections;

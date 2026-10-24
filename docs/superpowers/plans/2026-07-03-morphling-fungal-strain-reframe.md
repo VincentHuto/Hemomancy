@@ -20,7 +20,7 @@
 | Registrations | `common/init/ItemInit.java` lines ~537–561 (`morphling_fungal` … `morphling_mole`), `morphling_jar` at ~587, polyp spawn egg at ~1007 |
 | Stack data keys | `"EnzymePower"` (float), `MorphlingItem.PRIMALIZED_KEY`, `MorphlingItem.WILD_BOUND_KEY`, `MATURITY_THRESHOLDS`, `PrimalMorphlingRules.APEX_LEVEL` |
 | Equipped state | `common/capability/player/harbinger/morphling/EquippedMorphling(.java/Events)`, `SyncEquippedMorphlingPacket` |
-| Client mutation | `client/morphling/MorphlingMutationRegistry.java`, `MorphlingVisualMutation`, `MorphlingModelAttachment`, `client/render/layer/player/MorphlingMutationLayer.java`, models under `client/model/entity/summon/`, bbmodels under `assets/hemomancy/models/entity/bbmodel/morphling/` |
+| Client mutation | `client/model/morphling/MorphlingMutationRegistry.java`, `MorphlingVisualMutation`, `MorphlingModelAttachment`, `client/render/layer/player/MorphlingMutationLayer.java`, models under `client/model/entity/summon/`, bbmodels under `assets/hemomancy/models/entity/bbmodel/morphling/` |
 | Incubation | `data/hemomancy/recipe/incubator/morphling_*.json` (12 files), `MorphlingIncubatorBlockEntity` |
 | Wild pipeline | `ItemMorphlingPolyp` (+ `MorphlingLayers` custom data), `WildMorphlingRules`, `SpecimenJarBlockEntity`, `common/capability/player/harbinger/bestiary/SpecimenBestiaryProgress.java` |
 | Cradle | `MorphlingCradleBlockEntity` (cradle-suitable set currently: Fungal, Leeches, Chitinite, Pests, Urchin — **three of five are being cut**, so this set must be retargeted) |
@@ -60,7 +60,7 @@
 - Modify `MorphlingItem.java`: binomial tooltip line, hunger-state fields (Task 8), harvested-material hooks.
 - Modify `WildMorphlingRules.java`, `ItemMorphlingPolyp.java`: layer-family → strain retarget.
 - Modify `MorphlingCradleBlockEntity.java`: cradle-suitable set + Primal area behavior retarget.
-- Modify `client/morphling/MorphlingMutationRegistry.java` + attachment model classes: 8 strain silhouettes.
+- Modify `client/model/morphling/MorphlingMutationRegistry.java` + attachment model classes: 8 strain silhouettes.
 - Replace `data/hemomancy/recipe/incubator/` 12 JSONs with 8; update lang, item models/textures, JEI category contents (data-driven — verify only).
 - Modify `docs/MORPHLING_REFERENCE.md`, `docs/HEMOMANCY_REFERENCE.md` §16 at the end.
 - Tests: `src/test/java/.../MorphlingMigrationRulesTest.java`, `MorphlingStrainResourceTest.java` (+ update any existing morphling resource tests).
@@ -135,7 +135,7 @@ Each step names exact old behavior → new behavior. All removed triggers are **
 ### Task 7: Client mutation layer — 8 silhouettes
 
 **Files:**
-- Modify: `client/morphling/MorphlingMutationRegistry.java`, attachment model classes under `client/model/entity/summon/`
+- Modify: `client/model/morphling/MorphlingMutationRegistry.java`, attachment model classes under `client/model/entity/summon/`
 
 - [ ] **Step 1:** Re-key the registry to the 8 new items. Asset triage per spec §9: **reuse as-is** (fungal head → Gravecap; leech arms → Deadman's Purse arms *interim*), **retint/rename** (spider body → Bootlace cords interim; centipede body → Winter Shroud shell interim; mole arms → Irontooth claws; bat head → Witch's Ear interim; cuttlefish head → Lumenlace; serpent legs → Emberfang interim), and mark each interim with a follow-up art note in the reference doc.
 - [ ] **Step 2:** Regenerate bbmodel examples: `node tools/model_export/java_model_to_bbmodel.mjs --set=morphling --check` and fix drift.

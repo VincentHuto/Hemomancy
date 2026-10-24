@@ -116,8 +116,8 @@ public final class ArtificerProgressionGameTests {
 		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(5);
 		HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 		HemoCapabilityAccess.stationUpgrades(player).recordUse(
-				com.vincenthuto.hemomancy.common.station.UpgradeStation.ARMATURE,
-				com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ARMOR_UPGRADE);
+				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ARMATURE,
+				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.ARMOR_UPGRADE);
 		var artificer = EntityInit.harbinger_artificer.get().create(helper.getLevel());
 		var vicar = EntityInit.harbinger_vicar.get().create(helper.getLevel());
 		var origin = helper.absolutePos(new net.minecraft.core.BlockPos(4, 2, 4)).getCenter();
@@ -167,7 +167,7 @@ public final class ArtificerProgressionGameTests {
 		HemoCapabilityAccess.getBloodVolume(legacy).setActive(true);
 		legacy.getPersistentData().putBoolean("hemomancy.vicar_consecration_kit_claimed", true);
 		legacy.setPos(origin);
-		com.vincenthuto.hemomancy.common.station.StationUpgradeMigration.migrate(legacy);
+		com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeMigration.migrate(legacy);
 		helper.assertTrue(legacy.getRecipeBook().contains(Hemomancy.rloc("vicars_consecration_kit")),
 				"An old claimant did not learn the material-cost replacement when migrated");
 		helper.assertTrue(!DialogueOptionPacket.dispatch(legacy, newEvent, artificer.getId()).wasRewardDelivered(),

@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonRules;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -174,10 +174,10 @@ public class SanguineHoundEntity extends Wolf implements SyncedBoundSummon {
 	public boolean canAttack(LivingEntity target) {
 		if (!isBloodCur()) return BoundSummonBehavior.canAttack(this, this, target) && super.canAttack(target);
 		if (target == null || !target.isAlive() || target == this) return false;
-		if (target instanceof net.minecraft.world.entity.Mob mob && com.vincenthuto.hemomancy.common.circus.CircusDemonstrations.isStage(mob)) return false;
+		if (target instanceof net.minecraft.world.entity.Mob mob && com.vincenthuto.hemomancy.common.mission.circus.CircusDemonstrations.isStage(mob)) return false;
 		if (target instanceof SanguineHoundEntity cur && cur.isBloodCur() && cur.curOwner() != null) return false;
-		if (target.getPersistentData().hasUUID(com.vincenthuto.hemomancy.common.circus.CircusPracticalController.EXAM)
-				&& !target.getPersistentData().getUUID(com.vincenthuto.hemomancy.common.circus.CircusPracticalController.EXAM).equals(curOwner())) return false;
+		if (target.getPersistentData().hasUUID(com.vincenthuto.hemomancy.common.mission.circus.CircusPracticalController.EXAM)
+				&& !target.getPersistentData().getUUID(com.vincenthuto.hemomancy.common.mission.circus.CircusPracticalController.EXAM).equals(curOwner())) return false;
 		if (hemomancy$isTrialSummon()) return target instanceof Player player
 				&& !player.isCreative() && !player.isSpectator();
 		UUID ownerId = entityData.get(DATA_CUR_OWNER_UUID).orElse(null);

@@ -69,7 +69,7 @@ class PlayerStateSyncTest {
 	void noWholeAttachmentIsPolledPerTick() throws Exception {
 		String known = SourceAssertions.readMainJava("common/capability/player/harbinger/manip/KnownManipulationEvents.java");
 		assertFalse(known.contains("LAST_OWNER_SNAPSHOT"), "the per-tick serialise-and-diff is gone");
-		String stations = SourceAssertions.readMainJava("common/station/StationUpgradeEvents.java");
+		String stations = SourceAssertions.readMainJava("common/event/StationUpgradeEvents.java");
 		assertFalse(SourceAssertions.methodBody(stations, "public static void onTick(").contains(".sync("),
 				"the station tick only backfills lessons; changes are sent through the dirty flag");
 	}

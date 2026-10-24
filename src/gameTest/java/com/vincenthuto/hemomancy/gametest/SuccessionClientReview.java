@@ -8,13 +8,16 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.Ha
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.*;
-import com.vincenthuto.hemomancy.common.succession.*;
 import com.vincenthuto.hemomancy.common.rite.*;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionProfessions;
+import com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionSavedData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;

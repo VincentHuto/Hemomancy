@@ -6,9 +6,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.Initi
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.FungalScarMigrationRules;
 import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents;
-import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeMigration;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeMigration;
 import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.EventPriority;

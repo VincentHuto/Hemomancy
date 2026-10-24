@@ -39,7 +39,7 @@ public class ClairaudiographRenderer implements BlockEntityRenderer<Clairaudiogr
             pose.pushPose();pose.translate(3.25*PX,10.25*PX,11.75*PX);pose.scale(.22F,.22F,.22F);
             mc.getItemRenderer().renderStatic(sample,ItemDisplayContext.FIXED,light,overlay,pose,buffers,be.getLevel(),0);pose.popPose();
         }
-        if(com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(sample)) {
+        if(com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(sample)) {
             pose.pushPose();pose.translate(3.25*PX-.1,8.5*PX-.075,11.75*PX-.1);pose.scale(.2F,.5F,.2F);
             float response=be.playing() && be.program()!=null && be.program().unresolved(be.elapsed())?Math.clamp((be.elapsed()-1100)/180F,0,1):0;
             AntecedentVesselRenderer.draw(pose,buffers,light,overlay,time,response,false,false);pose.popPose();

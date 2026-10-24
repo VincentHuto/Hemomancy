@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.mojang.serialization.Codec;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.antecedent.AhaematicSample;
+import com.vincenthuto.hemomancy.common.item.component.AhaematicSample;
 import com.vincenthuto.hemomancy.common.brewing.AdvancedBrewData;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantPattern;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumProvenance;

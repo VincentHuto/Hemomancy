@@ -371,7 +371,7 @@ public final class VesperOrdealManager {
 				evening.discard();
 			} else if (entity.getPersistentData().getBoolean("HemomancyVesperEncounterPuppet")) {
 				if (entity instanceof net.minecraft.world.entity.Mob mob) {
-					com.vincenthuto.hemomancy.common.summon.PuppetStrings.unspool(mob);
+					com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings.unspool(mob);
 				} else {
 					entity.discard();
 				}

@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.mojang.logging.LogUtils;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.boss.MycophantGlimpse;
-import com.vincenthuto.hemomancy.client.boss.MycophantIntroClientState;
+import com.vincenthuto.hemomancy.client.render.entity.boss.MycophantGlimpse;
+import com.vincenthuto.hemomancy.client.data.MycophantIntroClientState;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.MycophantModel;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantAttack;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantControllerRules;

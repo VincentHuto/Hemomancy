@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
+import com.vincenthuto.hemomancy.client.model.morphling.MorphlingPlayerPartVisibility;
 import com.vincenthuto.hemomancy.client.player.LivingStaffMorphClientState;
 import com.vincenthuto.hemomancy.client.player.PlayerAnimationClientState;
 import com.vincenthuto.hemomancy.client.player.BloodVialInjectionClientState;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailItem;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PlayerAnimationKind;

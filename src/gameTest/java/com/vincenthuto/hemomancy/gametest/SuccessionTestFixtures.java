@@ -1,9 +1,13 @@
 package com.vincenthuto.hemomancy.gametest;
 
-import com.vincenthuto.hemomancy.common.succession.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionProfessions;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionResidents;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionSavedData;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessorRecord;
 
 /** Explicit test assist. Production successors must be born through a rite. */
 public final class SuccessionTestFixtures {

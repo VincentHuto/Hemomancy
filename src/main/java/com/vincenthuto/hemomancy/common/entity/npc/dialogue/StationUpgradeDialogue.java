@@ -4,10 +4,10 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerArtificerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerMnemonistEntity;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeRules;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeTier;
-import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeRules;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeTier;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 

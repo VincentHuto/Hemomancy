@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.network.dialogue;
 
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MonolithDialogueContext;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
-import com.vincenthuto.hemomancy.common.succession.SuccessionDialogue;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SuccessionDialogue;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 

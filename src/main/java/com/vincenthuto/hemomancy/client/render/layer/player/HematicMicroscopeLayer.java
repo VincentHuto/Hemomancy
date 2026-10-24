@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
+import com.vincenthuto.hemomancy.client.model.morphling.MorphlingPlayerPartVisibility;
 import com.vincenthuto.hemomancy.client.player.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;

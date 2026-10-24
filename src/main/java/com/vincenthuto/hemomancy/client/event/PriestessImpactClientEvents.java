@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.boss.VesperRumbleClientState;
+import com.vincenthuto.hemomancy.client.data.VesperRumbleClientState;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.PriestessEruptionEntity;
 import net.minecraft.client.Minecraft;

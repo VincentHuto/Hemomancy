@@ -50,8 +50,8 @@ import com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusPerceptio
 import com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusSchool;
 import com.vincenthuto.hemomancy.common.network.dialogue.PacketSyncNpcProgressionMarkers;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSyncSutureLinks;
-import com.vincenthuto.hemomancy.common.rite.zone.RiteSpaceSyncPacket;
-import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket;
+import com.vincenthuto.hemomancy.common.network.rite.RiteSpaceSyncPacket;
+import com.vincenthuto.hemomancy.common.network.rite.RiteZoneSyncPacket;
 import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
 import com.vincenthuto.hutoslib.common.book.knowledge.IDiscoverySource;
 import java.util.Set;

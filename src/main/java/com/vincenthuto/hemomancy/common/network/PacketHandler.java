@@ -93,11 +93,11 @@ public class PacketHandler {
                 PhlegethonticCurrentPacket::handle);
         net.playToClient(PacketSyncStationUpgrades.TYPE, PacketSyncStationUpgrades.STREAM_CODEC,
                 PacketSyncStationUpgrades::handle);
-        net.playToServer(com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket.TYPE,
-                com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket.STREAM_CODEC,
-                com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket::handle);
-        net.playToClient(com.vincenthuto.hemomancy.common.succession.ResidentsSnapshotPacket.TYPE,
-                com.vincenthuto.hemomancy.common.succession.ResidentsSnapshotPacket.STREAM_CODEC,
+        net.playToServer(com.vincenthuto.hemomancy.common.network.succession.ResidentsRequestPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.succession.ResidentsRequestPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.succession.ResidentsRequestPacket::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.succession.ResidentsSnapshotPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.succession.ResidentsSnapshotPacket.STREAM_CODEC,
                 ClientPayloadHandlers::dispatch);
         net.playToClient(CastingAnimationPacket.TYPE, CastingAnimationPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToServer(CastingChargePacket.TYPE, CastingChargePacket.STREAM_CODEC, CastingChargePacket::handle);
@@ -339,8 +339,8 @@ public class PacketHandler {
 
         // ── World events ──────────────────────────────────────────────────────
         net.playToClient(PacketSyncQliphothBlooms.TYPE, PacketSyncQliphothBlooms.STREAM_CODEC, ClientPayloadHandlers::dispatch);
-        net.playToClient(com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket.TYPE, com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
-        net.playToClient(com.vincenthuto.hemomancy.common.rite.zone.RiteSpaceSyncPacket.TYPE, com.vincenthuto.hemomancy.common.rite.zone.RiteSpaceSyncPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.rite.RiteZoneSyncPacket.TYPE, com.vincenthuto.hemomancy.common.network.rite.RiteZoneSyncPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.rite.RiteSpaceSyncPacket.TYPE, com.vincenthuto.hemomancy.common.network.rite.RiteSpaceSyncPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketSyncBloodMoon.TYPE, PacketSyncBloodMoon.STREAM_CODEC, PacketSyncBloodMoon::handle);
 
         // ── Visceral Mirror ───────────────────────────────────────────────────

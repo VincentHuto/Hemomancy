@@ -40,7 +40,7 @@ public final class ClientSessionEvents {
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
         ActiveRiteClientData.clear();
-        com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.clear();
+        com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState.clear();
         WorkingCraftSwallowRenderer.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteGuidance.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.clear();
@@ -56,8 +56,8 @@ public final class ClientSessionEvents {
         CardinalRiteFogRenderer.clear();
         VesperFightClientData.clear();
         MycophantFightClientData.clear();
-        com.vincenthuto.hemomancy.client.boss.MycophantIntroClientState.INSTANCE.start(
-                com.vincenthuto.hemomancy.client.boss.MycophantIntroClientState.CLEAR, 0);
+        com.vincenthuto.hemomancy.client.data.MycophantIntroClientState.INSTANCE.start(
+                com.vincenthuto.hemomancy.client.data.MycophantIntroClientState.CLEAR, 0);
         VesperFightFloorRenderer.clear();
         ArborOfWillRenderer.clearCaches();
         QliphothBloomRenderer.clearCaches();
@@ -82,14 +82,14 @@ public final class ClientSessionEvents {
         BloodProjectileEffects.clear();
         CinderBreathFlames.clear();
         PuppetStringStates.clear();
-        com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState.clear();
+        com.vincenthuto.hemomancy.client.data.CardinalRiteStaffPlantingClientState.clear();
     }
 
     @SubscribeEvent
     public static void onClientLevelUnload(net.neoforged.neoforge.event.level.LevelEvent.Unload event) {
         if (!(event.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel)) return;
         ActiveRiteClientData.clear();
-        com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.clear();
+        com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState.clear();
         WorkingCraftSwallowRenderer.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteGuidance.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.clear();

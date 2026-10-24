@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.antecedent.AhaematicColloidItem;
-import com.vincenthuto.hemomancy.common.antecedent.ListeningScarItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.AhaematicColloidItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.ListeningScarItem;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules;
@@ -38,7 +38,7 @@ import com.vincenthuto.hemomancy.common.item.unstained.tool.AnnettasSanguisLance
 import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.UnstainedWarhammerItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.succession.BoundMnemonicRemnantItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.BoundMnemonicRemnantItem;
 import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;

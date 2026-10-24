@@ -55,10 +55,10 @@ public final class LiberEntryDefinitions {
 
 	static {
         register(entry("the_hematic_order/pages/troupe_school"), HemomancyDiscoverySource.DIALOGUE);
-        for (var lesson : com.vincenthuto.hemomancy.common.circus.CircusCurriculum.lessons())
+        for (var lesson : com.vincenthuto.hemomancy.common.mission.circus.CircusCurriculum.lessons())
             register(entry("the_hematic_order/pages/troupe_" + lesson.summon()), HemomancyDiscoverySource.DIALOGUE);
 
-        for (var fact : com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.values())
+        for (var fact : com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch.Evidence.values())
             register(entry("the_infection/pages/antecedent_" + fact.key()), HemomancyDiscoverySource.MEMO);
         register(entry("the_infection/pages/clairaudiograph"), HemomancyDiscoverySource.DIALOGUE);
         for (String lesson : java.util.List.of("specimen", "microscopy", "ordered_collection", "microscope", "injection",

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.vincenthuto.hemomancy.client.sound.ClairaudiographSounds;
 import com.vincenthuto.hemomancy.client.sound.SpectrogramAnalysis;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;

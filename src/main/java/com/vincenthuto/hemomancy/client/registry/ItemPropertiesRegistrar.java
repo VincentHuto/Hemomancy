@@ -42,7 +42,7 @@ public final class ItemPropertiesRegistrar {
             ItemProperties.register(ItemInit.bloody_vial.get(), Hemomancy.rloc("state"),
                     (stack, world, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData.isFilled(stack) ? 1.0F : 0.0F);
             ItemProperties.register(ItemInit.ahaematic_colloid.get(),Hemomancy.rloc("colloid_motion"),
-                    (stack,world,entity,seed)->com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(stack)?com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects.sampleFrame():0);
+                    (stack,world,entity,seed)->com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(stack)?com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects.sampleFrame():0);
 
             ItemProperties.register(ItemInit.vial_rack.get(), Hemomancy.rloc("state"),
                     (ItemStack stack, ClientLevel world, LivingEntity ent, int seed) -> {

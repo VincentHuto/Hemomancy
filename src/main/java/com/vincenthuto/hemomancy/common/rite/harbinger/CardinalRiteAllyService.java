@@ -6,8 +6,8 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
-import com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity;
-import com.vincenthuto.hemomancy.common.succession.SuccessionResidents;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionResidents;
 import net.minecraft.ChatFormatting;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.core.BlockPos;
@@ -183,7 +183,7 @@ public final class CardinalRiteAllyService {
     public static void returnNpcAlliesToFane(ServerLevel level, ActiveCardinalRite rite) {
         Bloodline line = bloodline(level, rite);
         for (var id : java.util.List.copyOf(rite.getAllyRoles().keySet())) {
-            boolean resident = com.vincenthuto.hemomancy.common.succession.SuccessionSavedData.get(level)
+            boolean resident = com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionSavedData.get(level)
                     .residents.containsKey(id);
             if (!resident && (line == null || !line.hasNpcMember(id))) continue;
             var role = rite.getAllyRoles().get(id);

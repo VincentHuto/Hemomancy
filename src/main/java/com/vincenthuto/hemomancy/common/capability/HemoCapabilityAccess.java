@@ -53,11 +53,11 @@ import java.util.Optional;
  * stay {@code Optional}: most of those holders carry nothing.
  */
 public final class HemoCapabilityAccess {
-public static com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch antecedent(Player player) { return player.getData(HemoAttachmentTypes.ANTECEDENT); }
+public static com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch antecedent(Player player) { return player.getData(HemoAttachmentTypes.ANTECEDENT); }
 public static com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress clinicalBlood(Player player) {
     return player.getData(HemoAttachmentTypes.CLINICAL_BLOOD);
 }
-public static com.vincenthuto.hemomancy.common.station.StationUpgradeProgress stationUpgrades(Player player) {
+public static com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeProgress stationUpgrades(Player player) {
     return player.getData(HemoAttachmentTypes.STATION_UPGRADES);
 }
 
@@ -69,7 +69,7 @@ public static com.vincenthuto.hemomancy.common.capability.player.shared.migratio
     return player.getData(HemoAttachmentTypes.DATA_VERSION);
 }
 
-public static com.vincenthuto.hemomancy.common.circus.CircusProgress circusProgress(Player player) {
+public static com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgress circusProgress(Player player) {
     return player.getData(HemoAttachmentTypes.CIRCUS_PROGRESS);
 }
 

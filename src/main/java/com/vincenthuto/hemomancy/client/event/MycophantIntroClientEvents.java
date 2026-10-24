@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.boss.MycophantGlimpse;
-import com.vincenthuto.hemomancy.client.boss.MycophantIntroClientState;
+import com.vincenthuto.hemomancy.client.render.entity.boss.MycophantGlimpse;
+import com.vincenthuto.hemomancy.client.data.MycophantIntroClientState;
 import com.vincenthuto.hemomancy.client.screen.overlay.MycophantMyceliumOverlay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

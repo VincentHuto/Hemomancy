@@ -13,7 +13,7 @@ import com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteCeremonyLa
 import com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteEndingRules;
 import com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteHelixEffects;
 import com.vincenthuto.hemomancy.client.render.world.rite.RiteQuads;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;

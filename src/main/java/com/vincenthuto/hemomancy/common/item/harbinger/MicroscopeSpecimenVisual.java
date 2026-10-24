@@ -17,7 +17,7 @@ public record MicroscopeSpecimenVisual(Kind kind, EnumSaintType saint) {
                     ? new MicroscopeSpecimenVisual(Kind.ORDINARY_BLOOD, null)
                     : new MicroscopeSpecimenVisual(Kind.CONSECRATED_SAINT_BLOOD, saint);
         }
-        if (com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(stack))
+        if (com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(stack))
             return new MicroscopeSpecimenVisual(Kind.AHAEMATIC_COLLOID, null);
         return new MicroscopeSpecimenVisual(Kind.ORDINARY_BLOOD, null);
     }

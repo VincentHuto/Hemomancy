@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;

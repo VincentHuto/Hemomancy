@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.sound;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.antecedent.AncientRecordings;
+import com.vincenthuto.hemomancy.common.item.component.AncientRecordings;
 import com.vincenthuto.hemomancy.common.network.ClairaudiographSoundPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity;
 import net.minecraft.client.Minecraft;

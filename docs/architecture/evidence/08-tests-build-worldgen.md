@@ -288,7 +288,7 @@ There are six distinct mechanisms:
 2. **Code-composed `PoolElementStructurePiece`s from NBT:** `DynastyCastleStructure.java:60-98`.
 3. **A block-by-block custom `StructurePiece`:** `structure/VagrantMindPiece.java:151-248`. Piece type `hemomancy:vagrant_mind`, NBT keys `OriginX/Y/Z` and `Seed`.
 4. **Village pool injection** at `ServerAboutToStartEvent`: `village/VillageEvents.java:104-118`, using the processor registered in `VillagerInit.java:35`.
-5. **Mixin into ancient-city jigsaw:** `mixin/core/MixinAntecedentCity` together with `common/antecedent/VigilPlacement.java:31-130`. This lives outside `worldgen`.
+5. **Mixin into ancient-city jigsaw:** `mixin/core/MixinAntecedentCity` together with `common/worldgen/structure/vigil/VigilPlacement.java:31-130`. This lives outside `worldgen`.
 6. **Runtime `setBlock` construction by managers:** Chamber rooms (`ChamberOfWillManager.java:378-452`), the Vesper arena (`VesperOrdealManager.java:357-370`) and the Mycophant nursery. These build inside a flat void dimension.
 
 Separately, terrain features are block-by-block `Feature` subclasses. The Fungal Gardens is a pure data dimension.

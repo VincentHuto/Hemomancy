@@ -5,7 +5,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
-import com.vincenthuto.hemomancy.common.summon.PuppetStringsRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStringsRules;
 import net.minecraft.world.entity.Entity;
 
 import java.util.HashMap;

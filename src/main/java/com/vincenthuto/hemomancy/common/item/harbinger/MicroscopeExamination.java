@@ -129,8 +129,8 @@ public final class MicroscopeExamination {
         }
         if (player instanceof ServerPlayer serverPlayer)
             com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.examined(serverPlayer, session.sample);
-        if (player instanceof ServerPlayer observer && com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.readable(session.sample))
-            com.vincenthuto.hemomancy.common.antecedent.AntecedentKnowledge.record(observer, com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.SAMPLE_ANALYZED);
+        if (player instanceof ServerPlayer observer && com.vincenthuto.hemomancy.common.item.component.AhaematicSample.readable(session.sample))
+            com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentKnowledge.record(observer, com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch.Evidence.SAMPLE_ANALYZED);
         send(player, session, Phase.COMPLETE);
     }
 

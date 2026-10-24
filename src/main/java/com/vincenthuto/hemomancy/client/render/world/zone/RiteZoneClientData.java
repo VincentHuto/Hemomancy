@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world.zone;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket;
+import com.vincenthuto.hemomancy.common.network.rite.RiteZoneSyncPacket;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

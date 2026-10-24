@@ -2,11 +2,11 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.circus.CircusPerformanceController;
-import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
-import com.vincenthuto.hemomancy.common.circus.CircusPavilionSavedData;
-import com.vincenthuto.hemomancy.common.circus.CircusPavilionStateRules;
-import com.vincenthuto.hemomancy.common.circus.CircusRouteRules;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformanceController;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionStateRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusRouteRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusAcrobatEntity;

@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneKind;
-import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket;
+import com.vincenthuto.hemomancy.common.network.rite.RiteZoneSyncPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.ParticleStatus;

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinition;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -20,14 +20,14 @@ class PuppeteerSummonStructureTest {
 
 	@Test
 	void everyDefinitionHasExactlyOneBodyMapping() throws IOException {
-		String bodies = read("common/summon/PuppeteerSummonBodies.java");
+		String bodies = read("common/entity/summon/puppeteer/PuppeteerSummonBodies.java");
 		for (PuppeteerSummonDefinition definition : PuppeteerSummonDefinitions.all()) {
 			String constant = definition.name().toUpperCase(Locale.ROOT);
 			assertTrue(bodies.contains("PuppeteerSummonDefinitions." + constant + ", EntityInit." + definition.name()),
 					definition.name() + " must map to its own entity type");
 		}
-		for (String caller : List.of("common/summon/PuppeteerSummonFactory.java",
-				"client/screen/skilltree/harbinger/SummonsTabView.java", "common/circus/CircusDemonstrations.java")) {
+		for (String caller : List.of("common/entity/summon/puppeteer/PuppeteerSummonFactory.java",
+				"client/screen/skilltree/harbinger/SummonsTabView.java", "common/mission/circus/CircusDemonstrations.java")) {
 			assertTrue(read(caller).contains("PuppeteerSummonBodies.create("), caller + " must use the shared body table");
 			assertFalse(read(caller).contains("EntityInit.mnemonist_puppet"), caller + " must not pick bodies itself");
 		}

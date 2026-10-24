@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.station.StationTierProperty;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -104,8 +104,8 @@ public final class AlembicFootprintGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 60, batch = "station_upgrade")
     public static void blockedMantleAtRiteCompletionRecoversEscrow(GameTestHelper h) {
-        var tier = com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.get(
-                com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, 2);
+        var tier = com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.get(
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, 2);
         var rite = StationUpgradeGameTests.upgradeRite(h, tier);
         var level = h.getLevel();
         h.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.prepare(level, rite), "Clear Athanor preparation failed");

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hemomancy.common.vein.EarthenVeinFeedingVortexProfile;
-import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelPhase;
+import com.vincenthuto.hemomancy.common.world.vein.EarthenVeinFeedingVortexProfile;
+import com.vincenthuto.hemomancy.common.world.vein.EarthenVeinTravelPhase;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 

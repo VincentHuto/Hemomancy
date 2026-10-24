@@ -98,11 +98,16 @@ class LivingWeaponPlayerPoseTest {
 
 	@Test
 	void sickleHooksInwardAndPullsTheCutBack() {
-		assertTrue(tipDir(Stroke.SICKLE, .44F).x < tipDir(Stroke.SICKLE, .22F).x - .5F, "The reap sweeps across the body");
-		assertTrue(gripZ(Stroke.SICKLE, .44F) > gripZ(Stroke.SICKLE, .22F) + .15F, "The hook draws back toward the reaper");
-		var wide = arm(Stroke.SICKLE, .22F);
-		var hooked = arm(Stroke.SICKLE, .44F);
-		assertTrue(wide.armYRot() > .5F && hooked.armYRot() < -.5F, "Third person reaches out wide, then hooks inward");
+		float cocked = .24F, hooked = Stroke.SICKLE.contact, drawn = .58F;
+		assertTrue(tipDir(Stroke.SICKLE, hooked).x < tipDir(Stroke.SICKLE, cocked).x - .5F, "The reap lays the blade over across the body");
+		assertTrue(gripZ(Stroke.SICKLE, hooked) < gripZ(Stroke.SICKLE, 0) - .1F, "The point reaches out to bite");
+		assertTrue(gripZ(Stroke.SICKLE, drawn) > gripZ(Stroke.SICKLE, hooked) + .15F, "The hook draws back toward the reaper");
+		var high = arm(Stroke.SICKLE, cocked);
+		var bite = arm(Stroke.SICKLE, hooked);
+		var low = arm(Stroke.SICKLE, drawn);
+		assertTrue(high.armXRot() < -2.2F && high.armYRot() > .5F, "Third person cocks the sickle high outside");
+		assertTrue(bite.armYRot() < -.5F, "Then hooks inward across the body");
+		assertTrue(low.armXRot() > -.6F && low.armYRot() < bite.armYRot(), "And draws through to finish low before the far hip");
 	}
 
 	@Test

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteImpactClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteImpactClientState;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;

@@ -10,8 +10,8 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonFactory;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.ChatFormatting;
@@ -66,9 +66,9 @@ public final class PuppeteerTrialRiteController {
 			if (notify) caster.displayClientMessage(Component.translatable("hemomancy.summon.trial.already_known"), true);
 			return false;
 		}
-		if (!com.vincenthuto.hemomancy.common.circus.CircusCurriculum.mayBeginOrdeal(summonName,
+		if (!com.vincenthuto.hemomancy.common.mission.circus.CircusCurriculum.mayBeginOrdeal(summonName,
 				HemoCapabilityAccess.getPlayerDegreeNumber(caster),
-				com.vincenthuto.hemomancy.common.circus.CircusApprenticeshipProgress.instructionSatisfied(caster, summonName), known)) {
+				com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.instructionSatisfied(caster, summonName), known)) {
 			if (notify) caster.displayClientMessage(Component.translatable("hemomancy.circus.school.instruction_required"), true);
 			return false;
 		}
@@ -126,7 +126,7 @@ public final class PuppeteerTrialRiteController {
 			rite.markCollapsed();
 			return;
 		}
-		com.vincenthuto.hemomancy.common.summon.PuppetStrings.descend(created.get());
+		com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings.descend(created.get());
 		net.minecraft.world.phys.Vec3 manifestation = net.minecraft.world.phys.Vec3.atCenterOf(rite.getCenterPos())
 				.add(0.0D, 1.5D, 0.0D);
 		int drawn = 0;

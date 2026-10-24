@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.player.LivingStaffMorphClientState;
 import com.vincenthuto.hemomancy.client.player.LivingStaffMorphEffects;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingStaffMorphRenderer;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffMorphSequence;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;

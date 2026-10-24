@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.HematicMemoryToolItem;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
-import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelManager;
+import com.vincenthuto.hemomancy.common.world.vein.EarthenVeinTravelManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;

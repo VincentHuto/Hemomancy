@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonTrialEvents;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.registries.BuiltInRegistries;

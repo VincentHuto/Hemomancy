@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,7 +15,8 @@ import net.minecraft.world.phys.Vec3;
 final class SchoolStateVisuals {
     private SchoolStateVisuals() {}
 
-    static void collect(PoseStack poses, LuxUmbraBatch batch, VertexConsumer iron, Vec3 camera,
+    /** {@code iron} draws the solid-pass Lodestone plates; {@code cruorCore} the translucent-pass Rime clot cores. */
+    static void collect(PoseStack poses, LuxUmbraBatch batch, VertexConsumer iron, VertexConsumer cruorCore, Vec3 camera,
                         double time, float partial, boolean solids) {
         var mc = Minecraft.getInstance();
         if (mc.level == null) return;
@@ -87,14 +89,10 @@ final class SchoolStateVisuals {
                                     living.getId() + i, alpha);
                         }
                     }
-                    case RIME -> {
-                        for (int i = 0; i < meter.levels; i++) {
-                            double y = height * (.14 + i * .18);
-                            ring(poses, v, localCamera, radius, y, 0xE3F3FF, alpha, false);
-                            VisceralMesh.tube(poses, v, new Vec3(-.07, y - .06, -radius),
-                                    new Vec3(.04, y + .06, -radius), .009, 0xE3F3FF, alpha);
-                        }
-                    }
+                    // The cruor core dithers below full alpha, so the clots stay opaque until the state runs out.
+                    case RIME -> rime(poses, cruorCore, v, living, meter.levels,
+                            Mth.clamp((float)(time - meter.lastBuild) / 8, 0, 1),
+                            (float)Math.min(1, (meter.expires - time) / 10));
                     case DISRUPTED -> {
                         Vec3 a = right.scale(-.28).add(0, height + .2, 0);
                         Vec3 b = a.add(right.scale(.24)).add(0, .12, 0);
@@ -102,7 +100,7 @@ final class SchoolStateVisuals {
                         FerricDuctilisGeometry.ribbon(poses, v, b.add(right.scale(.1)).add(0, -.08, 0),
                                 b.add(right.scale(.35)), .09, .01, time, living.getId()+1, localCamera, 0xFFF0BE, alpha);
                     }
-                    case ILLUMINATED -> ring(poses, v, localCamera, radius * 1.2, height + .3, 0xFFE9A5, alpha, true);
+                    case ILLUMINATED -> ring(poses, v, localCamera, radius * 1.2, height + .3, 0xFFE9A5, alpha);
                     case OBSCURED, VEILED -> {
                         for (int i = 0; i < 2; i++) {
                             Vec3 start = new Vec3(-radius, height * (.75 + .12 * i), 0);
@@ -117,18 +115,35 @@ final class SchoolStateVisuals {
         }
     }
 
-    private static void ring(PoseStack poses, VertexConsumer v, Vec3 camera, double radius, double y, int color, float alpha, boolean diamond) {
-        int sides = diamond ? 4 : 12;
-        for (int i = 0; i < sides; i++) {
-            double a = i * Math.PI * 2 / sides, b = (i + 1) * Math.PI * 2 / sides;
+    /**
+     * Frozen cruor crusting the body, one band per Rime level from the shins up; the newest band grows out
+     * from the moment it was built, the way a Cruor Form projection sets on its target.
+     */
+    private static void rime(PoseStack poses, VertexConsumer core, VertexConsumer frost, LivingEntity living,
+                             int levels, float newest, float alpha) {
+        double width = living.getBbWidth(), height = living.getBbHeight();
+        int seed = living.getId() * 31;
+        for (int band = 0; band < levels; band++) {
+            float growth = band == levels - 1 ? HemoEasing.smoothstep(newest) : 1;
+            if (growth <= .01) continue;
+            for (int i = 0; i < 5; i++) {
+                int slot = band * 5 + i;
+                double a = slot * 2.39996 + ThermalMotion.random(seed, slot) * .6;
+                double y = height * (.16 + band * .3 + (ThermalMotion.random(seed, slot + 20) - .5) * .12);
+                double out = width * (.42 + .08 * growth);
+                Vec3 at = new Vec3(Math.cos(a) * out, y, Math.sin(a) * out);
+                double size = width * (.14 + ThermalMotion.random(seed, slot + 40) * .1) * growth;
+                ThermalGeometry.clot(poses, core, frost, at, size, seed + slot, a, alpha);
+            }
+        }
+    }
+
+    private static void ring(PoseStack poses, VertexConsumer v, Vec3 camera, double radius, double y, int color, float alpha) {
+        for (int i = 0; i < 4; i++) {
+            double a = i * Math.PI * 2 / 4, b = (i + 1) * Math.PI * 2 / 4;
             Vec3 start = new Vec3(Math.cos(a) * radius, y, Math.sin(a) * radius);
             Vec3 end = new Vec3(Math.cos(b) * radius, y, Math.sin(b) * radius);
-            if (diamond) LuxUmbraGeometry.ribbon(poses, v, start, end, camera, .075,
-                    LuxUmbraGeometry.RIBBON, i, color, alpha, 0, 1);
-            else {
-                VisceralMesh.tube(poses, v, start, end, .018, color, alpha);
-                ThermalGeometry.powder(poses, v, start, new Vec3(1, 0, 0), new Vec3(0, 1, 0), .09, i, alpha);
-            }
+            LuxUmbraGeometry.ribbon(poses, v, start, end, camera, .075, LuxUmbraGeometry.RIBBON, i, color, alpha, 0, 1);
         }
     }
 }

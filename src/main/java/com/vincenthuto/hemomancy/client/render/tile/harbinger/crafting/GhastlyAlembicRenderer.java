@@ -67,8 +67,8 @@ public class GhastlyAlembicRenderer implements BlockEntityRenderer<GhastlyAlembi
 	private static boolean ghostActive(GhastlyAlembicBlockEntity station) {
 		if (!station.isRiteLocked()) return false;
 		return ActiveRiteClientData.getActiveRites().stream().anyMatch(rite ->
-				com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.forRite(rite.getRecipeId())
-						.filter(tier -> tier.station() == com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC)
+				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.forRite(rite.getRecipeId())
+						.filter(tier -> tier.station() == com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC)
 						.isPresent()
 						&& rite.getCenter().distManhattan(station.getBlockPos()) <= 2
 						&& (rite.getPhase().equals("STATION_PROJECTION")

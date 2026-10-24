@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.player;
 
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.AbsolutionDaggerItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world.zone;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
-import com.vincenthuto.hemomancy.common.rite.zone.RiteSpaceSyncPacket;
+import com.vincenthuto.hemomancy.common.network.rite.RiteSpaceSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;

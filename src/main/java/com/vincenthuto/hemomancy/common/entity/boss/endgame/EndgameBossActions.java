@@ -313,7 +313,7 @@ final class EndgameBossActions {
 		if (!(boss.level() instanceof ServerLevel server)) return;
 		server.getEntitiesOfClass(Mob.class, boss.getBoundingBox().inflate(72.0D),
 				mob -> mob.getTags().contains(VesperMountMoves.VESPER_PUPPET_TAG))
-				.forEach(com.vincenthuto.hemomancy.common.summon.PuppetStrings::unspool);
+				.forEach(com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings::unspool);
 	}
 
 	static void tickVesperClientParticles(Monster boss) {

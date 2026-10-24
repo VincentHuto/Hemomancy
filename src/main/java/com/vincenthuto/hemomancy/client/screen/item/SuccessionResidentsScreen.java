@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket;
+import com.vincenthuto.hemomancy.common.network.succession.ResidentsRequestPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;

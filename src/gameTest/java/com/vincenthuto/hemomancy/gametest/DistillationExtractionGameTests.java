@@ -205,7 +205,7 @@ public final class DistillationExtractionGameTests {
 		alembic.loadWithComponents(saved, level.registryAccess());
 		ItemStack pickedUp = menu.getSlot(GhastlyAlembicMenu.RESULT_SLOT).remove(1);
 		menu.getSlot(GhastlyAlembicMenu.RESULT_SLOT).onTake(player, pickedUp);
-		helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "refine")
+		helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, "refine")
 				&& alembic.saveWithoutMetadata(level.registryAccess()).getString("CompletedOperation").isEmpty(),
 				"Advanced pickup did not record and consume the completion");
 		alembic.setItem(GhastlyAlembicBlockEntity.SLOT_RESULT, output.copy());
@@ -214,7 +214,7 @@ public final class DistillationExtractionGameTests {
 		saved.put("CompletedOutput", output.save(level.registryAccess()));
 		alembic.loadWithComponents(saved, level.registryAccess());
 		menu.quickMoveStack(player, GhastlyAlembicMenu.RESULT_SLOT);
-		helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "compound")
+		helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, "compound")
 				&& alembic.saveWithoutMetadata(level.registryAccess()).getString("CompletedOperation").isEmpty(),
 				"Advanced shift-click did not record and consume the completion");
 		helper.succeed();
@@ -242,7 +242,7 @@ public final class DistillationExtractionGameTests {
 
 		ItemStack pickedUp = menu.getSlot(GhastlyAlembicMenu.RESULT_SLOT).remove(1);
 		menu.getSlot(GhastlyAlembicMenu.RESULT_SLOT).onTake(player, pickedUp);
-		helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill"),
+		helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, "distill"),
 				"Taking the first ordinary distillation did not record its proof");
 		helper.assertTrue(HarbingerChapterProgression.unmetChapterForTargetDegree(player, 3)
 				== HarbingerChapterMilestone.FIRST_DISTILLATION,

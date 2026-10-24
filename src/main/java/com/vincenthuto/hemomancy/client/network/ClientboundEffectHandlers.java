@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.boss.MycophantGlimpse;
-import com.vincenthuto.hemomancy.client.boss.MycophantIntroClientState;
+import com.vincenthuto.hemomancy.client.render.entity.boss.MycophantGlimpse;
+import com.vincenthuto.hemomancy.client.data.MycophantIntroClientState;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBindingTendrilClientState;
@@ -28,13 +28,13 @@ import com.vincenthuto.hemomancy.client.render.world.LuxUmbraEffects;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationAmbientParticles;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
 import com.vincenthuto.hemomancy.client.render.world.SanguineMonolithShatterRenderer;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.client.screen.overlay.SanguineOmenOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.WillPresenceOverlay;
 import com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects;
 import com.vincenthuto.hemomancy.client.sound.ClairaudiographSounds;
-import com.vincenthuto.hemomancy.client.vein.EarthenVeinTravelClientState;
+import com.vincenthuto.hemomancy.client.data.EarthenVeinTravelClientState;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.network.AntecedentEffectPacket;
 import com.vincenthuto.hemomancy.common.network.CastingAnimationPacket;

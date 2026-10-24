@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -85,9 +85,9 @@ public final class DialogueRouteCharacterisationGameTests {
 		List<Route> routes = new ArrayList<>();
 		// Routes that match before the per-id switch.
 		routes.add(new Route(StationUpgradeDialogue.claimEvent(StationUpgradeCatalog.get(
-				com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, 1)), Speaker.ALCHEMIST));
+				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, 1)), Speaker.ALCHEMIST));
 		routes.add(new Route(StationUpgradeDialogue.claimEvent(StationUpgradeCatalog.get(
-				com.vincenthuto.hemomancy.common.station.UpgradeStation.SCRIPTORIUM, 1)), Speaker.MNEMONIST));
+				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.SCRIPTORIUM, 1)), Speaker.MNEMONIST));
 		routes.add(new Route(StationUpgradeDialogue.CLAIM_PREFIX + "nonsense", Speaker.ALCHEMIST));
 		for (String antecedent : List.of("antecedent_recognition", "antecedent_housing", "antecedent_replay",
 				"antecedent_research", "antecedent_vessel", "antecedent_effect")) {

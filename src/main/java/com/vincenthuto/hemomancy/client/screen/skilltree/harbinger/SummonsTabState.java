@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinition;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.*;

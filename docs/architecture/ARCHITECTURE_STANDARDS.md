@@ -182,7 +182,12 @@ models. Log through `Hemomancy.LOGGER` or a class logger, never `System.out`.
 
 ## 10. Packages
 
-- `common/` by feature family, with `harbinger` / `unstained` / `shared` where both paths exist.
+- `common/` and `client/` by function, with `harbinger` / `unstained` / `shared` where both paths exist. A class
+  lives with what it is (block, item, block entity, entity, payload, attachment, client state) or the function
+  package it serves; a feature gets a named sub-package there (`entity/npc/circus`, `network/succession`,
+  `world/vein`, `mission/circus`), never a top-level folder of its own. `common/rite` and `common/manipulation` are
+  the two systems large enough to own a top-level package; their blocks, items and payloads still live in the
+  function packages. The top-level packages are pinned by `PackageLayoutGuardrailTest`.
 - `common/encounter/` holds boss and arena managers (the Chamber of Will, Chamber visits, Fungal Gardens travel,
   Mycophant, Vesper and Vagrant Mind encounters); `common/worldgen/` holds terrain and structures.
 - `common/network/` holds payloads, `PacketHandler`, `ServerboundGuards` and three listed helpers.
@@ -269,6 +274,7 @@ test under `src/test/java/.../architecture/` is listed here.
 | Data | `RecipeSerializerGuardrailTest` | 13 | One recipe JSON bridge; station recipes off `CustomRecipe` |
 | Data | `JigsawStructureGuardrailTest` | 13 | One jigsaw codec and placement call |
 | Packages | `EncounterPackageGuardrailTest` | 13 | Encounter managers in `common/encounter` |
+| Packages | `PackageLayoutGuardrailTest` | – | Function-first top-level packages under `common/` and `client/`; no feature folders |
 | Tooling | `BuildRunTableGuardrailTest` | 13 | Base runs only in `build.gradle`; both run tables applied |
 | Tooling | `RepositoryTextEncodingTest` | 2 | Strict UTF-8 across sources, docs and tracked tools |
 | Tooling | `PrivateTestHelperRatchetTest` | 2 | Private test helper copies only fall |

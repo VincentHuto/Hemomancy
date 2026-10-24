@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.client.player.*;
 import com.vincenthuto.hemomancy.client.render.outpouring.CastVeinsLayer;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringClientState;
 import com.vincenthuto.hemomancy.client.render.world.CastingAnatomyRenderer;
-import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
+import com.vincenthuto.hemomancy.client.model.morphling.MorphlingPlayerPartVisibility;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastLane;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;

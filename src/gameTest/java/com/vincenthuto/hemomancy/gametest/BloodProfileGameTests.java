@@ -291,7 +291,7 @@ public final class BloodProfileGameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, syringe);
         syringe.getItem().interactLivingEntity(syringe, player, EntityType.WARDEN.create(h.getLevel()), InteractionHand.MAIN_HAND);
         var sample = VialRackItem.getVials(ItemStack.parseOptional(h.getLevel().registryAccess(), syringe.get(DataComponents.CUSTOM_DATA).copyTag().getCompound(LivingSyringeItem.TAG_LOADED_RACK))).getFirst();
-        h.assertTrue(com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(sample), "Warden lost its special sample");
+        h.assertTrue(com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(sample), "Warden lost its special sample");
         pig.discard();
         player.discard();
         h.succeed();

@@ -74,7 +74,7 @@ public class ClairaudiographScreen extends AbstractContainerScreen<Clairaudiogra
         g.drawString(font,font.plainSubstrByWidth(title.getString(),160),8,6,0xFFAA2222,false);
         var recording=menu.machine.recording();
         String label=recording==null?sourceName(menu.source):recording.readable()?sourceName(recording.source())+" / "+Component.translatable("sound_kind.hemomancy."+recording.kind()).getString():text("unreadable").getString();
-        if(recording==null && com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(menu.machine.inventory.getStackInSlot(0)))label=menu.machine.inventory.getStackInSlot(0).getHoverName().getString();
+        if(recording==null && com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(menu.machine.inventory.getStackInSlot(0)))label=menu.machine.inventory.getStackInSlot(0).getHoverName().getString();
         if(menu.machine.program()!=null)label=Component.translatable("hemomancy.antecedent.cylinder.title."+menu.machine.program().id()).getString();
         g.drawString(font,font.plainSubstrByWidth(label,160),8,16,0xFFCC8888,false);
     }

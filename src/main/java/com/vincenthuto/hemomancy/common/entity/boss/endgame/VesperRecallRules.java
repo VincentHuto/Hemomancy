@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.summon.PuppetStringsRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStringsRules;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /**

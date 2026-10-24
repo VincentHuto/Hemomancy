@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.entity.npc;
 
-import com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity;
 import net.minecraft.client.model.geom.ModelPart;
 
 public final class SuccessionModelPose {

@@ -8,9 +8,9 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.summon.PacketPuppeteersSpindleAction;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinition;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonRules;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.PuppeteersSpindleBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -305,7 +305,7 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 			return false;
 		}
 		return player.getRecipeBook()
-				.contains(com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents.recipeId(definition));
+				.contains(com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonTrialEvents.recipeId(definition));
 	}
 
 	private int summonRowAt(double mouseX, double mouseY) {

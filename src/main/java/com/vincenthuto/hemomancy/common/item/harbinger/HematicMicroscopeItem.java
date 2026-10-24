@@ -27,8 +27,8 @@ public final class HematicMicroscopeItem extends Item {
             feedback(player, sample.isEmpty() ? "offhand" : "empty");
             return InteractionResultHolder.fail(instrument);
         }
-        if (!level.isClientSide && sample.getItem() instanceof BloodVialItem && com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(sample)) {
-            sample = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.migrate(sample);
+        if (!level.isClientSide && sample.getItem() instanceof BloodVialItem && com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(sample)) {
+            sample = com.vincenthuto.hemomancy.common.item.component.AhaematicSample.migrate(sample);
             player.setItemInHand(InteractionHand.OFF_HAND, sample);
         }
         player.startUsingItem(hand);

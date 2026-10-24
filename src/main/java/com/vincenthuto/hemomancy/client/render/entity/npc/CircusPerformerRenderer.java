@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.PerformerHandAnchors;
 import com.vincenthuto.hemomancy.client.screen.overlay.CircusPerceptionOverlay;
-import com.vincenthuto.hemomancy.common.circus.CircusProgressRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgressRules;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusAcrobatEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusStiltWalkerEntity;

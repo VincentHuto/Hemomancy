@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
-import com.vincenthuto.hemomancy.common.circus.CircusProgressRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgressRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;

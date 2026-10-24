@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncDegree;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonTrialEvents;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import net.minecraft.server.level.ServerPlayer;

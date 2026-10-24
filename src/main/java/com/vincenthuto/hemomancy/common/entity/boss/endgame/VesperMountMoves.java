@@ -23,9 +23,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
-import com.vincenthuto.hemomancy.common.summon.PuppetStrings;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonBodies;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonBodies;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
 
 import javax.annotation.Nullable;
 import java.util.List;

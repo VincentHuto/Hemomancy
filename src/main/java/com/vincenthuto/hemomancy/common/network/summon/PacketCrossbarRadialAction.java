@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.network.summon;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerCommandMode;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerCrossbarCommands;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerCommandMode;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerCrossbarCommands;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

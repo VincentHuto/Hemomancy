@@ -49,8 +49,8 @@ public final class CardinalRiteProgressionPolicy {
 		}
 		// Station upgrade rites always take the upgrade item plus five offerings, whatever their degree.
 		// Working crafts carry the components of what they make, so they share the same allowance.
-		int maxOfferings = com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.isUpgradeRitePath(ritePath)
-				? com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.OFFERINGS_PER_RITE
+		int maxOfferings = com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.isUpgradeRitePath(ritePath)
+				? com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.OFFERINGS_PER_RITE
 				: workingCraft ? WorkingCraftRecipeRules.MAX_OFFERINGS : limits.maxOfferings();
 		if (offeringCount > maxOfferings) {
 			problems.add("offerings " + offeringCount + " exceed " + maxOfferings);

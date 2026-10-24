@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelPhase;
+import com.vincenthuto.hemomancy.common.world.vein.EarthenVeinTravelPhase;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 

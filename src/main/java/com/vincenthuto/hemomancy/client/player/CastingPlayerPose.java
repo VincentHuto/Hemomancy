@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.player;
 
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteStaffPlantingClientState;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;

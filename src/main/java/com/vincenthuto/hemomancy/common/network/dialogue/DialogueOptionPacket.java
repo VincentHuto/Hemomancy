@@ -48,9 +48,9 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 			Player player = ctx.player();
 			if (player instanceof ServerPlayer sender && msg.eventId != null && !msg.eventId.isEmpty()) {
 				var speaking = sender.level().getEntity(msg.entityId);
-                if (speaking instanceof com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity npc
+                if (speaking instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity npc
                         && (npc.isMisbegotten() || npc.isSuccessor()
-                        && !com.vincenthuto.hemomancy.common.succession.SuccessionResidents.mayServe(sender, npc))) return;
+                        && !com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionResidents.mayServe(sender, npc))) return;
                 if (MemoHelper.isMemoEvent(msg.eventId)) {
 					MemoHelper.handleMemoEvent(sender, msg.eventId);
 					return;
@@ -103,12 +103,12 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 					|| OverworldFungalSurveyDialogue.REPORT.equals(eventId))
 					&& !(entity instanceof HarbingerAlchemistEntity)) return null;
 		}
-        if (entity instanceof com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity npc && (npc.isSuccessor() || npc.isMisbegotten())) {
-            if (npc.isMisbegotten() || !com.vincenthuto.hemomancy.common.succession.SuccessionResidents.mayServe(sender, npc)
+        if (entity instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity npc && (npc.isSuccessor() || npc.isMisbegotten())) {
+            if (npc.isMisbegotten() || !com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionResidents.mayServe(sender, npc)
                     || "recruit_harbinger".equals(eventId) || "expel_harbinger".equals(eventId)
                     || eventId.startsWith("succession_")) return null;
         }
-        if (com.vincenthuto.hemomancy.common.succession.SuccessionDialogue.handle(sender, entity, eventId)) return null;
+        if (com.vincenthuto.hemomancy.common.entity.npc.dialogue.SuccessionDialogue.handle(sender, entity, eventId)) return null;
 		DialogueEvent event = new DialogueEvent(sender, eventId, entityId);
 		NeoForge.EVENT_BUS.post(event);
 		return event;

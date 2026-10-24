@@ -17,7 +17,7 @@ public final class BloodSampleData {
     public static boolean examinable(ItemStack stack) {
         return stack.getItem() instanceof CleansingHemolymphItem
                 || ConsecratedSyringeItem.getSaintType(stack) != null
-                || com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.readable(stack)
+                || com.vincenthuto.hemomancy.common.item.component.AhaematicSample.readable(stack)
                 || entityType(stack) != null;
     }
     private BloodSampleData() {}
@@ -32,7 +32,7 @@ public final class BloodSampleData {
         var data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         return stack.getItem() instanceof CleansingHemolymphItem
                 || ConsecratedSyringeItem.getSaintType(stack) != null
-                || com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(stack)
+                || com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(stack)
                 || data.contains(BloodVialItem.TAG_ENTITY_TYPE) || data.getBoolean(BloodVialItem.TAG_STATE);
     }
     public static boolean isSpecimenVessel(ItemStack stack) {
@@ -44,7 +44,7 @@ public final class BloodSampleData {
     /** A complete source-bearing vial; resolution may fail when its source mod is absent. */
     public static boolean isStorableSample(ItemStack stack) {
         if (com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(stack)) return true;
-        if (!isSpecimenVessel(stack) || (sourceId(stack) == null && !com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(stack))) return false;
+        if (!isSpecimenVessel(stack) || (sourceId(stack) == null && !com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(stack))) return false;
         var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         return !tag.contains(BloodVialItem.TAG_STATE) || tag.getBoolean(BloodVialItem.TAG_STATE);
     }
@@ -52,7 +52,7 @@ public final class BloodSampleData {
         if (stack.getItem() instanceof CleansingHemolymphItem) return "hemomancy:cleansing_hemolymph";
         var saint = ConsecratedSyringeItem.getSaintType(stack);
         if (saint != null) return "hemomancy:saint/" + saint.name().toLowerCase(Locale.ROOT);
-        var ahaematic = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.get(stack);
+        var ahaematic = com.vincenthuto.hemomancy.common.item.component.AhaematicSample.get(stack);
         if (ahaematic != null) return ahaematic.source();
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getString(BloodVialItem.TAG_ENTITY_TYPE);
     }
@@ -63,7 +63,7 @@ public final class BloodSampleData {
     public static EntityType<?> entityType(ItemStack stack) {
         if (stack.getItem() instanceof CleansingHemolymphItem
                 || stack.getItem() instanceof ConsecratedSyringeItem
-                || com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(stack)) return null;
+                || com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(stack)) return null;
         var id = sourceId(stack);
         return id == null ? null : BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
     }
@@ -72,7 +72,7 @@ public final class BloodSampleData {
         var tag = sample.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         tag.remove(BloodVialItem.TAG_ENTITY_TYPE);
         tag.remove(BloodVialItem.TAG_STATE);
-        tag.remove(com.vincenthuto.hemomancy.common.succession.SuccessionSamples.KEY);
+        tag.remove(com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.KEY);
         if (tag.isEmpty()) empty.remove(DataComponents.CUSTOM_DATA);
         else empty.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         empty.remove(DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());

@@ -7,10 +7,10 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
-import com.vincenthuto.hemomancy.common.station.StationTierProperty;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
-import com.vincenthuto.hemomancy.common.station.UpgradeStation;
-import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeableStation;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;

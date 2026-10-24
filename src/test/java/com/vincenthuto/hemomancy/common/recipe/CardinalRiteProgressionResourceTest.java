@@ -154,7 +154,7 @@ final class CardinalRiteProgressionResourceTest {
 		String completionSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
 		completionSource += Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/station/StationUpgradeCatalog.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/upgrade/StationUpgradeCatalog.java"));
 		completionSource += Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java"));
 		try (var paths = Files.list(ROOT)) {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
@@ -165,7 +165,7 @@ final class CardinalRiteProgressionResourceTest {
 				// Rank rites resolve through their recipe-carried target degree.
 				if (json.has("rankup") && json.get("rankup").getAsBoolean()) continue;
 				String id = path.getFileName().toString().replace(".json", "");
-				assertTrue(com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(
+				assertTrue(com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites.isRecipe(
 						net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/" + id))
 						|| completionSource.contains("\"cardinal_rite/" + id + "\""),
 						id + " has neither a material result nor a named completion path");

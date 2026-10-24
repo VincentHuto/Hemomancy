@@ -2,10 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
-import com.vincenthuto.hemomancy.common.circus.CircusCarouselEncounterRules;
-import com.vincenthuto.hemomancy.common.circus.CircusPavilionSavedData;
-import com.vincenthuto.hemomancy.common.circus.CircusPavilionStateRules;
-import com.vincenthuto.hemomancy.common.circus.CircusRouteRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusRouteRules;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;

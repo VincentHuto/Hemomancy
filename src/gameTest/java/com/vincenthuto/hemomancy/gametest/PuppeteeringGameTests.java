@@ -20,11 +20,11 @@ import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
 import com.vincenthuto.hemomancy.common.rite.harbinger.PuppeteerTrialRiteController;
-import com.vincenthuto.hemomancy.common.summon.PuppetStrings;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerCrossbarCommands;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerCrossbarCommands;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinition;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonFactory;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.PuppeteersSpindleBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -318,7 +318,7 @@ public final class PuppeteeringGameTests {
 			ItemStack crossbar = attunedCrossbar(caster, 0);
 			var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
 			degree.setDegreeNumber(4);
-            com.vincenthuto.hemomancy.common.circus.CircusApprenticeshipProgress.state(caster).putBoolean("taught.scarlet_mummer", true);
+            com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.state(caster).putBoolean("taught.scarlet_mummer", true);
 			degree.syncTotalPomesConsumed(8);
 			helper.assertTrue(PuppeteerTrialRiteController.canBegin(caster, crossbar,
 					PuppeteerSummonDefinitions.SCARLET_MUMMER, 0.0D, false),

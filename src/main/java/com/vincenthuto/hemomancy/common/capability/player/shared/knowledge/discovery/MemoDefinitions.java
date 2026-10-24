@@ -102,7 +102,7 @@ public final class MemoDefinitions {
 			MemoDefinition.MemoPath.UNSTAINED));
 
     static {
-        for (var fact : com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.values())
+        for (var fact : com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch.Evidence.values())
             register(new MemoDefinition(Hemomancy.rloc("antecedent_"+fact.key()),
                 Hemomancy.rloc("libersanguinium/the_infection/pages/antecedent_"+fact.key()), MemoDefinition.MemoPath.HARBINGER));
     }

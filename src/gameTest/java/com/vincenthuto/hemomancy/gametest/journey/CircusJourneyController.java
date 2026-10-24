@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
-import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
-import com.vincenthuto.hemomancy.common.circus.CircusPavilionSavedData;
-import com.vincenthuto.hemomancy.common.circus.CircusProgressRules;
-import com.vincenthuto.hemomancy.common.circus.CircusRouteRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgressRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusRouteRules;
 import com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;

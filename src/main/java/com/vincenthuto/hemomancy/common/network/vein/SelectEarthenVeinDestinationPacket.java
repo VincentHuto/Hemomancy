@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.vein;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelManager;
+import com.vincenthuto.hemomancy.common.world.vein.EarthenVeinTravelManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

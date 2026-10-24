@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.summon;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.render.world.PuppetStringStates;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonRules;
 import net.minecraft.world.entity.LivingEntity;
 
 final class PuppeteerSummonRenderHelper {

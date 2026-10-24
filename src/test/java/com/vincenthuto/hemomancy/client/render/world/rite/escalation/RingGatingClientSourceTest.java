@@ -28,7 +28,7 @@ final class RingGatingClientSourceTest {
 	@Test
 	void theFloorShakesAndTheWorldSurgesWhenARingWakes() throws IOException {
 		String floor = RiteWorldSourceTest.read(ROOT + "client/render/world/floor/FloorRiteResponse.java");
-		String events = RiteWorldSourceTest.read(ROOT + "client/rite/CardinalRiteEventClientState.java");
+		String events = RiteWorldSourceTest.read(ROOT + "client/data/CardinalRiteEventClientState.java");
 		assertTrue(floor.contains("CardinalRiteEventKind.RING_OPENED"));
 		assertTrue(floor.contains("RingOpeningMath.shockScale("));
 		assertTrue(events.contains("RiteWorldState.ringOpened(packet.center(),"));

@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ArmatureGeometry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
-import com.vincenthuto.hemomancy.common.station.StationTierProperty;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.HematicArmatureBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

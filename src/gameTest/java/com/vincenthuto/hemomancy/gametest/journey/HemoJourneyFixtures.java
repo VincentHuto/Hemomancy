@@ -270,8 +270,8 @@ public final class HemoJourneyFixtures {
 				case VICAR_CONSECRATION_KIT -> {
 					// The kit claim now requires having worked the Armature once.
 					HemoCapabilityAccess.stationUpgrades(player).recordUse(
-							com.vincenthuto.hemomancy.common.station.UpgradeStation.ARMATURE,
-							com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ARMOR_UPGRADE);
+							com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ARMATURE,
+							com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.ARMOR_UPGRADE);
 					spawnArtificer(level, origin);
 				}
 				case ARTIFICER_FRAME_CONSECRATED -> prepareFrameConsecration(player, origin);

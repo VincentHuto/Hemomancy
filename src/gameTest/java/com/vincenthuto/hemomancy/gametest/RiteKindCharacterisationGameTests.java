@@ -17,11 +17,11 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEven
 import com.vincenthuto.hemomancy.common.rite.harbinger.RiteKind;
 import com.vincenthuto.hemomancy.common.rite.harbinger.RiteOfferingEscrow;
 import com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeTier;
-import com.vincenthuto.hemomancy.common.station.UpgradeStation;
-import com.vincenthuto.hemomancy.common.succession.SuccessionRites;
-import com.vincenthuto.hemomancy.common.succession.SuccessionSavedData;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeTier;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
+import com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionSavedData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;

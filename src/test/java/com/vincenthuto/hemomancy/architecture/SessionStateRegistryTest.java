@@ -45,7 +45,7 @@ class SessionStateRegistryTest {
 			"common/event/FungalProjectionEvents.java", "forces a projection back to its body",
 			"common/item/harbinger/tool/living/LivingStaffWeaponFormEvents.java", "restores the staff's held form",
 			"common/item/harbinger/tool/living/LivingTorchChannelEvents.java", "stops a breathing channel",
-			"common/summon/PuppeteerCommandEvents.java", "rotates the owner's puppet session",
+			"common/entity/summon/puppeteer/PuppeteerCommandEvents.java", "rotates the owner's puppet session",
 			"common/manipulation/ductilis/Paralysis.java", "lifts paralysis, as on login, respawn and dimension change");
 
 	@Test

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.npc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.*;
@@ -50,7 +50,7 @@ public final class SuccessionIdentityLayer<T extends ProfessionalHarbingerEntity
                     ? Hemomancy.rloc("textures/block/bog_flesh_ripe.png") : skin)), light, OverlayTexture.NO_OVERLAY);
             seams.render(pose, buffers.getBuffer(RenderType.eyes(Hemomancy.rloc("textures/block/hematic_iron_block.png"))), 15728880, OverlayTexture.NO_OVERLAY, 0xFFC52A38);
             // A professional implement pierces the shortened arm; imitation is shown in the opposite hand.
-            var item = switch (com.vincenthuto.hemomancy.common.succession.SuccessionProfessions.profession(npc)) {
+            var item = switch (com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionProfessions.profession(npc)) {
                 case "alchemist" -> com.vincenthuto.hemomancy.common.init.ItemInit.bloody_vial.get();
                 case "mnemonist" -> com.vincenthuto.hemomancy.common.init.ItemInit.mnemonic_ambergris.get();
                 case "artificer" -> com.vincenthuto.hemomancy.common.init.ItemInit.vivianite_scalpel.get();

@@ -20,7 +20,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class HarbingerArtificerEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
+public class HarbingerArtificerEntity extends com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerArtificerEntity(EntityType<? extends HarbingerArtificerEntity> type, Level level) {

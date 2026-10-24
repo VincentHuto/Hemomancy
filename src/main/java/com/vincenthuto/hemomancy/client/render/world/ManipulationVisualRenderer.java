@@ -178,7 +178,7 @@ public final class ManipulationVisualRenderer {
         if(!solids)poses.mulPose(event.getModelViewMatrix());
         var buffers = mc.renderBuffers().bufferSource();
         SchoolStateVisuals.collect(poses, FLOWS, solids ? buffers.getBuffer(FerricDuctilisRenderTypes.IRON) : null,
-                camera, time, partial, solids);
+                solids ? null : buffers.getBuffer(ThermalRenderTypes.CORE), camera, time, partial, solids);
         if (!solids) MycophantSiphonTetherGeometry.collect(world, poses, FLOWS.vertices(LuxUmbraBatch.Material.CRUOR),
                 camera, time, partial);
         for (Cue cue : CUES) {

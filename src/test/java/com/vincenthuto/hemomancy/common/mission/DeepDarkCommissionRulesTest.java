@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.mission;
 
-import com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch;
 import com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommissionRules;
 import org.junit.jupiter.api.Test;
 
-import static com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.*;
+import static com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch.Evidence.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

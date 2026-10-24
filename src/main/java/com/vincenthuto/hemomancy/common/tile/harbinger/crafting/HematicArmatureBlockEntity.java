@@ -11,9 +11,9 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
-import com.vincenthuto.hemomancy.common.station.StationTierProperty;
-import com.vincenthuto.hemomancy.common.station.UpgradeStation;
-import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeableStation;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
 import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
 import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
@@ -165,10 +165,10 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 			ArtificerAssignments.onArmatureUpgrade(player, upgraded, recipe.getRequiredDegree());
 			var stationProgress = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player);
 			stationProgress.recordUse(UpgradeStation.ARMATURE,
-					com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ARMOR_UPGRADE);
+					com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.ARMOR_UPGRADE);
 			if (getArmatureTier().id() >= ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED.id())
 				stationProgress.recordUse(UpgradeStation.ARMATURE,
-						com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ARMOR_UPGRADE_CONSECRATED);
+						com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.ARMOR_UPGRADE_CONSECRATED);
 			ItemStack reagent = match.reagent();
 			reagent.shrink(1);
 			if (reagent.isEmpty()) {

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonRules;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -114,12 +114,12 @@ public class MarrowSpitterEntity extends Skeleton implements SyncedBoundSummon {
         if (target == null || !target.isAlive() || !canAttack(target) || !hasLineOfSight(target)) { shotCooldown = 0; return; }
         getLookControl().setLookAt(target, 30, 30);
         if (distanceToSqr(target) > 24 * 24) { shotCooldown = 0; return; }
-        if (com.vincenthuto.hemomancy.common.circus.MarrowJugglerRules.throwTick(shotCooldown)) performRangedAttack(target, 1);
+        if (com.vincenthuto.hemomancy.common.entity.summon.MarrowJugglerRules.throwTick(shotCooldown)) performRangedAttack(target, 1);
         shotCooldown = (shotCooldown + 1) % SHOT_INTERVAL_TICKS;
     }
     @Override public void performRangedAttack(LivingEntity target, float distanceFactor) {
         var shot = new com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity(level(), this,
-                com.vincenthuto.hemomancy.common.circus.MarrowJugglerRules.daggerDamage(getAttributeValue(Attributes.ATTACK_DAMAGE)));
+                com.vincenthuto.hemomancy.common.entity.summon.MarrowJugglerRules.daggerDamage(getAttributeValue(Attributes.ATTACK_DAMAGE)));
         shot.setPuppetDagger();
         double dx = target.getX() - getX(), dz = target.getZ() - getZ();
         shot.shoot(dx, target.getY(.55) - shot.getY() + Math.sqrt(dx * dx + dz * dz) * .03, dz, 1.7F, 1);

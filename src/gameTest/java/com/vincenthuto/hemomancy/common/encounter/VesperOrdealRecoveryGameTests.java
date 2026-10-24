@@ -148,7 +148,7 @@ public final class VesperOrdealRecoveryGameTests {
 			throw new IllegalStateException(missing);
 		}
 		callStatic(actions, "clearVesperPuppets", new Class<?>[] { net.minecraft.world.entity.Mob.class }, boss);
-		helper.assertTrue(com.vincenthuto.hemomancy.common.summon.PuppetStrings.isUnspooling(puppet),
+		helper.assertTrue(com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings.isUnspooling(puppet),
 				"phase-end cleanup hauls puppets away on their strings");
 		helper.succeed();
 	}

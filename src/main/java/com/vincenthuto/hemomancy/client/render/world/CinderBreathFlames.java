@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hemomancy.common.circus.CinderBellowsRules;
+import com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsRules;
 import com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsEntity;
 import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;

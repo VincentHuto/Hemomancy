@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world.rite.escalation;
 
 import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstability;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;

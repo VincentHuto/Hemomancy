@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeableStation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;

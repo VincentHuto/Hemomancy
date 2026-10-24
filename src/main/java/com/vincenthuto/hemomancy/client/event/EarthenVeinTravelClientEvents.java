@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.EarthenVeinDestinationLayout;
 import com.vincenthuto.hemomancy.client.render.world.EarthenVeinDestinationTargeting;
 import com.vincenthuto.hemomancy.client.render.world.SanguineTendrilRibbonRenderer;
-import com.vincenthuto.hemomancy.client.vein.EarthenVeinTravelClientState;
+import com.vincenthuto.hemomancy.client.data.EarthenVeinTravelClientState;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;

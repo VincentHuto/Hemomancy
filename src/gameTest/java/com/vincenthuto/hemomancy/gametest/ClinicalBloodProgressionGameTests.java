@@ -3153,19 +3153,19 @@ public final class ClinicalBloodProgressionGameTests {
                     holder -> holder.is(com.vincenthuto.hemomancy.Hemomancy.rloc("circus_pavilion"))).isValid(),
                     "Supplied Circus structure reference must be visible to real observation");
             HemoCapabilityAccess.getBloodVolume(actor).setActive(false);
-            actor.tickCount = com.vincenthuto.hemomancy.common.circus.CircusProgressRules.PASSIVE_POINT_TICKS;
+            actor.tickCount = com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgressRules.PASSIVE_POINT_TICKS;
             actor.setGameMode(GameType.SPECTATOR);
             com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
                     new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
             h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(actor)
-                            && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 0,
+                            && com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress.acclimation(actor) == 0,
                     "Spectator inspection must not earn Circus discovery or passive acclimation");
             actor.setGameMode(GameType.SURVIVAL);
             actor.setHealth(0);
             com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
                     new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
             h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(actor)
-                            && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 0,
+                            && com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress.acclimation(actor) == 0,
                     "Dead-player ticks must not earn Circus discovery or passive acclimation");
             actor.setHealth(20);
             for (int interval = 0; interval < 4; interval++) {
@@ -3174,14 +3174,14 @@ public final class ClinicalBloodProgressionGameTests {
                         new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
             }
             h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(actor)
-                            && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 1
+                            && com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress.acclimation(actor) == 1
                             && HemoCapabilityAccess.getInitiatoryDegree(actor).getDegreeNumber() == 0,
                     "Living D0 inactive-blood discovery must remain valid without rank credit");
             actor.setGameMode(GameType.SPECTATOR);
             com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
                     new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
             h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(actor)
-                            && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 1,
+                            && com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress.acclimation(actor) == 1,
                     "Spectator inspection must retain earned discovery without gaining acclimation");
         } finally {
             chunk.setAllStarts(oldStarts);

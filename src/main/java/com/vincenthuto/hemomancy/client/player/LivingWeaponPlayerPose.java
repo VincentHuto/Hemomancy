@@ -172,20 +172,33 @@ public final class LivingWeaponPlayerPose {
 						.to(1, 0, SMOOTH).build())
 				.jolt(.44F).build(), .44F),
 
-		/** Mortem sickle: reaches out wide, then hooks inward across the body, pulling the cut toward the reaper. */
+		/**
+		 * Mortem sickle: cocked high over the weapon shoulder, hooked down and across so the point bites, then drawn
+		 * back through the cut to finish low before the far hip. The honed inner curve faces forward from the grip, so
+		 * first person lays the blade over (roll) to keep the crescent in view as it reaches past the crosshair and is
+		 * pulled back toward the reaper.
+		 */
 		SICKLE(new Motion.Builder()
-				.armX(SwingCurve.from(HELD_X).to(.22F, -1.35F, SMOOTH).to(.44F, -1.15F, SHARP).to(1, HELD_X, SMOOTH).build())
-				.armY(SwingCurve.from(0).to(.22F, -.75F, SMOOTH).to(.44F, .80F, SHARP).to(.56F, .88F, OUT)
+				.armX(SwingCurve.from(HELD_X).to(.24F, -2.50F, SMOOTH).to(.40F, -1.05F, IN).to(.58F, -.40F, OUT)
+						.to(1, HELD_X, SMOOTH).build())
+				.armY(SwingCurve.from(0).to(.24F, -.55F, SMOOTH).to(.40F, .55F, IN).to(.58F, .80F, OUT)
 						.to(1, 0, SMOOTH).build())
-				.twist(SwingCurve.from(0).to(.22F, .30F, SMOOTH).to(.44F, -.35F, SHARP).to(1, 0, SMOOTH).build())
-				.offX(SwingCurve.from(0).to(.22F, -.30F, SMOOTH).to(.44F, .30F, SHARP).to(1, 0, SMOOTH).build())
-				.plane(1.35F)
-				.pitch(SwingCurve.from(0).to(.22F, .60F, SMOOTH).to(.44F, -1.30F, SHARP).to(.56F, -1.45F, OUT)
+				.armZ(SwingCurve.from(0).to(.24F, .45F, SMOOTH).to(.40F, 0, IN).to(.58F, -.15F, OUT)
 						.to(1, 0, SMOOTH).build())
-				.z(SwingCurve.from(0).to(.22F, -.18F, SMOOTH).to(.44F, .04F, SHARP).to(1, 0, SMOOTH).build())
-				.x(SwingCurve.from(0).to(.22F, .14F, SMOOTH).to(.44F, -.40F, SHARP).to(1, 0, SMOOTH).build())
-				.roll(SwingCurve.from(0).to(.22F, -.15F, SMOOTH).to(.44F, .20F, SHARP).to(1, 0, SMOOTH).build())
-				.build(), .33F);
+				.twist(SwingCurve.from(0).to(.24F, .32F, SMOOTH).to(.40F, -.32F, IN).to(.58F, -.22F, OUT)
+						.to(1, 0, SMOOTH).build())
+				.offX(SwingCurve.from(0).to(.24F, -.45F, SMOOTH).to(.40F, .20F, IN).to(.58F, .30F, OUT)
+						.to(1, 0, SMOOTH).build())
+				.x(SwingCurve.from(0).to(.24F, -.22F, SMOOTH).to(.40F, -.32F, IN).to(.58F, -.40F, OUT)
+						.to(1, 0, SMOOTH).build())
+				.y(SwingCurve.from(0).to(.24F, .04F, SMOOTH).to(.40F, .08F, IN).to(.58F, -.10F, OUT)
+						.to(1, 0, SMOOTH).build())
+				.z(SwingCurve.from(0).to(.40F, -.14F, IN).to(.58F, .08F, OUT).to(1, 0, SMOOTH).build())
+				.roll(SwingCurve.from(0).to(.24F, .12F, SMOOTH).to(.40F, .95F, IN).to(.58F, 1.00F, OUT)
+						.to(1, 0, SMOOTH).build())
+				.pitch(SwingCurve.from(0).to(.24F, .16F, SMOOTH).to(.40F, -.35F, IN).to(.58F, -.10F, OUT)
+						.to(1, 0, SMOOTH).build())
+				.jolt(.40F).build(), .40F);
 
 		private final Motion motion;
 		/** Progress at which the stroke visibly lands. */

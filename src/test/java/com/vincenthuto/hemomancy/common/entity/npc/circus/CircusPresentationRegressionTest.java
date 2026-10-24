@@ -132,7 +132,7 @@ class CircusPresentationRegressionTest {
 	@Test
 	void firstHostAndControlledActsGiveReadableFeedback() throws IOException {
 		String performer = source("common/entity/npc/circus/CircusPerformerEntity.java");
-		String performance = source("common/circus/CircusPerformanceController.java");
+		String performance = source("common/entity/npc/circus/CircusPerformanceController.java");
 		assertTrue(performer.contains("boolean firstVisit = CircusPlayerProgress.awardMilestone"));
 		assertTrue(performer.contains("hemomancy.dialogue.circus_performer.welcome"));
 		assertTrue(performance.contains("ticks == required / 2"));

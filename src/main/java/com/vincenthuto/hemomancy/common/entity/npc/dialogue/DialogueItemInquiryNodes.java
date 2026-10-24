@@ -20,7 +20,7 @@ public final class DialogueItemInquiryNodes {
 
     public static DialogueTree withInventoryItemInquiries(DialogueTree tree, Player player, String speakerKey,
             int degree, float purity) {
-        tree = com.vincenthuto.hemomancy.common.antecedent.AntecedentDialogue.append(tree, player, speakerKey);
+        tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.AntecedentDialogue.append(tree, player, speakerKey);
         List<ItemStack> inventory = new ArrayList<>(player.getInventory().getContainerSize());
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
             inventory.add(player.getInventory().getItem(slot));
@@ -30,7 +30,7 @@ public final class DialogueItemInquiryNodes {
         var seen = new HashSet<String>();
         inventory.removeIf(stack -> {
             if (stack.isEmpty()) return false;
-            var lines = com.vincenthuto.hemomancy.common.antecedent.AntecedentDialogue.inquiry(player, speakerKey, stack);
+            var lines = com.vincenthuto.hemomancy.common.entity.npc.dialogue.AntecedentDialogue.inquiry(player, speakerKey, stack);
             if (lines.isEmpty()) lines = ClinicalBloodDialogue.inquiry(player, speakerKey, stack);
             if (lines.isEmpty()) return false;
             var id = BuiltInRegistries.ITEM.getKey(stack.getItem());

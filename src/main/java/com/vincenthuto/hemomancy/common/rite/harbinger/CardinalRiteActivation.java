@@ -320,15 +320,15 @@ public final class CardinalRiteActivation {
 								.toList());
 					}
 				}
-				if (com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(recipe.getId())
-                        && !com.vincenthuto.hemomancy.common.succession.SuccessionRites.prepare(sLevel, serverPlayer, rite, stationMatch))
+				if (com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites.isRecipe(recipe.getId())
+                        && !com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites.prepare(sLevel, serverPlayer, rite, stationMatch))
                     return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
                 ItemStack plantingStaff = ItemStack.EMPTY;
 				if (!recipe.isUnstained() && recipe.hasInteractiveCeremony()
 						&& "living_staff".equals(recipe.getCeremony().focusMode())) {
 					ItemStack staff = CardinalRiteStaffEscrow.capture(serverPlayer);
 					if (staff.isEmpty()) {
-                        com.vincenthuto.hemomancy.common.succession.SuccessionRites.cleanup(sLevel, rite);
+                        com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites.cleanup(sLevel, rite);
 						player.displayClientMessage(
 								Component.translatable("message.hemomancy.cardinal_rite_activation.a_living_staff_must_be_planted").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 								false);
@@ -340,7 +340,7 @@ public final class CardinalRiteActivation {
 					serverPlayer.stopUsingItem();
 					plantingStaff = staff;
 				}
-				var upgradeTier = com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.forRite(rite.getRecipeId());
+				var upgradeTier = com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.forRite(rite.getRecipeId());
 				if (upgradeTier.isPresent() && !HemoCapabilityAccess.stationUpgrades(serverPlayer).eligible(serverPlayer, upgradeTier.get())) {
 					CardinalRiteStaffEscrow.restore(serverPlayer, rite);
 					player.displayClientMessage(Component.translatable("hemomancy.station_upgrade.requirements_unmet")
@@ -376,7 +376,7 @@ public final class CardinalRiteActivation {
 						Component.translatable(recipe.isWorkingCraft()
 								? "message.hemomancy.cardinal_rite_activation.rite_begins_working"
 								: recipe.hasInteractiveCeremony()
-                                && !com.vincenthuto.hemomancy.common.succession.SuccessionRites.is(rite)
+                                && !com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites.is(rite)
 								? "message.hemomancy.cardinal_rite_activation.rite_awaits_consecration"
 								: "message.hemomancy.cardinal_rite_activation.rite_begins_timed",
 								recipe.displayName(), castingDuration / 20).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.player;
 
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.client.sound.MicroscopeExaminationSound;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
-import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;

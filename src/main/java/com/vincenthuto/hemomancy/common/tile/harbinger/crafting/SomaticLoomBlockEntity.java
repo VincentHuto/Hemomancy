@@ -32,9 +32,9 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramSig
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveSession;
 import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
-import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
-import com.vincenthuto.hemomancy.common.station.UpgradeStation;
-import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeableStation;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;

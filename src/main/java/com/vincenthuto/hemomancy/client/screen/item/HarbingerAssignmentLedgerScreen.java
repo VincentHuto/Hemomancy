@@ -955,7 +955,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
                     "hemomancy.circus.school.ledger." + quest,
                     "hemomancy.circus.school.ledger." + quest + "." + CircusSchoolLedgerState.storyNext(quest), mouseX, mouseY);
         }
-        for (var lesson : com.vincenthuto.hemomancy.common.circus.CircusCurriculum.lessons()) {
+        for (var lesson : com.vincenthuto.hemomancy.common.mission.circus.CircusCurriculum.lessons()) {
             String summon = lesson.summon();
             renderAssignmentCard(gfx, x + 8, y + 42 + row++ * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP), w - 16, ASSIGNMENT_CARD_HEIGHT,
                     CircusSchoolLedgerState.complete("practical." + summon), MNEMONIST_PORTRAIT,

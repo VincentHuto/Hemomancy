@@ -56,7 +56,7 @@ public final class CircusKnifeProjectileEntity extends BloodNeedleEntity {
             var type = registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE)
                     .getHolderOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE,
                             com.vincenthuto.hemomancy.Hemomancy.rloc("marrow_dagger")));
-            float damage = com.vincenthuto.hemomancy.common.circus.MarrowJugglerRules.impactDamage(getBaseDamage(), getDeltaMovement().length());
+            float damage = com.vincenthuto.hemomancy.common.entity.summon.MarrowJugglerRules.impactDamage(getBaseDamage(), getDeltaMovement().length());
             if (target.hurt(new net.minecraft.world.damagesource.DamageSource(type, this, getOwner()), damage))
                 target.addEffect(new MobEffectInstance(com.vincenthuto.hemomancy.common.init.EffectInit.blood_loss, 1000, 2));
             discard(); return;

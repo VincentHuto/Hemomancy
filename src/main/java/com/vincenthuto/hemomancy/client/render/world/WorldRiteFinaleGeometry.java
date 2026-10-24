@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;

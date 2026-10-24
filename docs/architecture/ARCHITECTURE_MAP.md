@@ -39,8 +39,12 @@ External code that shapes the architecture:
 
 ## 2. Package ownership
 
-`common/` is organised by feature family. The larger families split into
-`harbinger`, `unstained` and `shared` sub-packages.
+`common/` is organised by function: a class lives with the kind of thing it is
+(block, item, block entity, entity, payload, attachment) or the function package
+it serves. A feature gets a named sub-package inside those homes
+(`entity/npc/circus`, `network/circus`, `world/vein`), never a top-level folder of
+its own. The larger families split into `harbinger`, `unstained` and `shared`
+sub-packages.
 
 | Package | Owns | Notes |
 |---|---|---|
@@ -50,19 +54,21 @@ External code that shapes the architecture:
 | `common/rite` | Cardinal Rites, Working crafts, floors, sigils, rite spaces and zones, brazier rites, and the legacy Unstained rites | `HarbingerCardinalRiteEvents` drives the level tick for every rite kind. |
 | `common/tile` | Block entities: machines and stations | There is no shared base class. |
 | `common/block`, `common/item`, `common/entity` | Content classes | `entity` includes bosses, NPCs and dialogue (`entity/npc/dialogue`). |
-| `common/station` | Shared station-upgrade catalog, progress and rites | The contract is `docs/STATION_UPGRADES.md`. All seven stations use it. |
+| `common/tile/harbinger/crafting/upgrade` | Shared station-upgrade catalog, tiers and rules (player progress is `capability/player/harbinger/station`) | The contract is `docs/STATION_UPGRADES.md`. All seven stations use it. |
 | `common/network` | Payloads and `PacketHandler` | It also contains gameplay that belongs elsewhere: blood-structure crafting and rite activation. |
 | `common/worldgen` | Structures, features and biomes, plus encounter managers | The Chamber of Will, Mycophant and Vesper managers live here although they are not worldgen. |
 | `common/event` | Cross-cutting event handlers | Includes `TransientServerStateEvents`, the intended home for server start and stop cleanup. |
-| `common/effect`, `damage`, `summon`, `brewing`, `enchanting`, `loot` | Mob effects, damage attribution, summons, and small station rule layers | `damage/SchoolDamage` is the damage-attribution context. |
-| `common/mission`, `succession`, `circus`, `antecedent`, `world` | Side progression systems | Each is self-contained. Several keep their state in raw persistent NBT. |
+| `common/effect`, `damage`, `brewing`, `enchanting`, `loot` | Mob effects, damage attribution, and small station rule layers | `damage/SchoolDamage` is the damage-attribution context. Puppeteer summon rules are `entity/summon/puppeteer`. |
+| `common/mission` | Teacher assignments and quests, one sub-package per teacher (`alchemist`, `vicar`, `circus`, ...) | |
+| `common/world` | World-level systems with no block or entity of their own: the folded hallway (`world/fold`) and Earthen Vein travel (`world/vein`) | |
 | `common/data` | Data-driven loaders and datagen (`data/gen`) | `JsonResourceReloadListener` is the shared loader base. Only two loaders use it. |
 | `common/command` | The `/hemo` command tree | `HemoCommand.java` is 1,982 lines. |
 | `common/testing` | `DevTestHooks` for GameTest registration | Test infrastructure that ships in the main jar. |
 
 `client/` mirrors this layout:
 - `client/render` holds renderers, VFX and render types.
-- `client/model` holds models.
+- `client/model` holds models, including the morphling mutation attachments (`client/model/morphling`).
+- `client/data` holds client-side state that packets and render events read.
 - `client/particle` holds particles.
 - `client/screen` holds screens.
 - `client/player` holds casting and other player-animation playback, plus HUD.
@@ -258,7 +264,7 @@ Entities cast through a parallel path:
 | Durable player progress | A field on an existing attachment, or a new attachment in `HemoAttachmentTypes` with an accessor in `HemoCapabilityAccess` | Standards §6 |
 | Session-only server state, such as a cooldown map or an active channel | A static map cleared through `TransientServerStateEvents` and on logout | Standards §6 |
 | A packet | A record in `common/network/<area>/`, registered once in `PacketHandler` with its real direction, with client handling in `client/**` | Standards §2 |
-| A block-entity machine | `common/tile/**`. Blood goes through `IBloodReservoir` and the `BLOCK_BLOOD_VOLUME` attachment. Upgrades go through `common/station`. | `docs/STATION_UPGRADES.md` |
+| A block-entity machine | `common/tile/**`. Blood goes through `IBloodReservoir` and the `BLOCK_BLOOD_VOLUME` attachment. Upgrades go through `common/tile/harbinger/crafting/upgrade`. | `docs/STATION_UPGRADES.md` |
 | A rite or Working craft | JSON under `data/hemomancy/recipe/cardinal_rite/**` with a `purpose`, and a Liber map family in `HarbingerRecipeMapDefinitions` | AGENTS.md rite rules |
 | A data-driven JSON catalogue | A loader extending `common/data/JsonResourceReloadListener`, registered in `Hemomancy.onAddReloadListeners` | Standards §8 |
 | A renderer or VFX | `client/render/**`, render types in `HemoRenderTypes`, existing particles and geometry helpers | `docs/MANIPULATION_VISUALS.md`; standards §3 |

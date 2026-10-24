@@ -20,7 +20,7 @@ public abstract class MixinAntecedentCity {
         callback.setReturnValue(Optional.of(new Structure.GenerationStub(original.position(),builder->{
             var pieces=original.getPiecesBuilder().build().pieces();
             pieces.forEach(builder::addPiece);
-            com.vincenthuto.hemomancy.common.antecedent.VigilPlacement.find(
+            com.vincenthuto.hemomancy.common.worldgen.structure.vigil.VigilPlacement.find(
                     context.structureTemplateManager(), context.heightAccessor(), pieces).forEach(builder::addPiece);
         })));
     }

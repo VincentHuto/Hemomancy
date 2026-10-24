@@ -9,7 +9,7 @@ public class AmbergrisCylinderItem extends Item {
         var pattern=stack.get(DataComponentInit.RESONANT_PATTERN.get());
         if(pattern!=null) return Component.translatable(pattern.master()
                 ? "item.hemomancy.ambergris_cylinder.master" : "item.hemomancy.ambergris_cylinder.pattern");
-        var program=com.vincenthuto.hemomancy.common.antecedent.AncientRecordings.get(stack);
+        var program=com.vincenthuto.hemomancy.common.item.component.AncientRecordings.get(stack);
         return program==null?super.getName(stack):Component.translatable("hemomancy.antecedent.cylinder."+program.id());
     }
     @Override public void appendHoverText(ItemStack stack,TooltipContext context,List<Component> lines,TooltipFlag flags){
@@ -33,7 +33,7 @@ public class AmbergrisCylinderItem extends Item {
             return;
         }
         if(stack.has(DataComponentInit.ANCIENT_RECORDING.get())) {
-            var program=com.vincenthuto.hemomancy.common.antecedent.AncientRecordings.get(stack);
+            var program=com.vincenthuto.hemomancy.common.item.component.AncientRecordings.get(stack);
             lines.add(Component.translatable(program==null?"gui.hemomancy.clairaudiograph.unreadable":"hemomancy.antecedent.cylinder.description"));
             return;
         }

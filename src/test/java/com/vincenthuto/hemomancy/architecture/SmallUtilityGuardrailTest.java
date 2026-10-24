@@ -101,7 +101,7 @@ class SmallUtilityGuardrailTest {
 
 	/** L-4: pattern origins, orientation loops and match bounds come from {@code PatternOrigins}. */
 	private static final Map<String, String> PATTERN_FRAMES = Map.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/succession/SuccessionRites.java",
+			"src/main/java/com/vincenthuto/hemomancy/common/rite/succession/SuccessionRites.java",
 			"Places the effigy body two blocks to the floor's right; not a pattern origin");
 	private static final Pattern PATTERN_FRAME = Pattern.compile(
 			"getNormal\\(\\)\\.cross\\(|== finger\\.getOpposite\\(\\)|getBlock\\(i, j, k\\)\\.getPos\\(\\);\\s*if \\(\\w+\\.getX\\(\\) <");

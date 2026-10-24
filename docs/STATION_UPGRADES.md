@@ -4,7 +4,7 @@ Current contract: 2026-10-20 (Sanguine Condenser added as the seventh station). 
 
 ## Rules for every upgradeable station
 
-- Use `common/station/StationUpgradeCatalog`, `StationUpgradeProgress`, `StationUpgradeRules`, `StationTierProperty`, and `UpgradeableStation`, with `common/rite/harbinger/StationUpgradeRites`. Do not introduce private station-upgrade ceremonies or parallel reward ledgers.
+- Use `common/tile/harbinger/crafting/upgrade/StationUpgradeCatalog`, `StationUpgradeRules` and `UpgradeableStation`, `common/capability/player/harbinger/station/StationUpgradeProgress`, `common/block/harbinger/crafting/StationTierProperty`, with `common/rite/harbinger/StationUpgradeRites`. Do not introduce private station-upgrade ceremonies or parallel reward ledgers.
 - Offering escrow, return and the settled-once marker live in `common/rite/harbinger/RiteOfferingEscrow`, shared with Working crafts (`WorkingCraftRites`). Station upgrades are the Working floor's upgrade-in-place rites; Working crafts are its consuming rites (see `HEMOMANCY_REFERENCE.md` §25.1.1). Both are `making` rites and the same contract applies to their escrow and recovery. An escrowed offering stays shown in its brazier as an untouchable display copy until the procession takes it (the vessel draws it for a station, the daemon breaks it for a craft); recall, collapse or any other ending clears the copies, and a brazier drops a copy whose rite no longer exists.
 - Upgrade the existing machine in place, exactly one stage at a time. The current shared `stage` property is 0 (base), 1, or 2. Preserve the block entity, contents, stored blood, orientation, and relevant machine state. More stages require explicitly extending the property, rules, persistence, resources, and tests.
 - Distinguish **installed stage**, **personal eligibility**, and **free-kit claim**. A rite requires the correct installed source stage and the acting player's eligibility for the requested upgrade and every earlier upgrade of that station. Eligibility means active blood, sufficient degree, and all required personal machine-use proofs. It does not mean accepting a teacher's gift.
@@ -161,7 +161,7 @@ The 2026-10-11 Somatic Loom addition passed the station JVM/resource tests (12 c
 The 2026-10-01 shape-contract follow-up replaced an obsolete full-box source assertion with controller model-part wiring checks and a loaded-server test of all three Alembic stages and four facings. Actual placed controller/filler selection and collision match the authored clipped geometry, stay inside each linked cell, and retain the 31/16 base/Condenser and 38/16 Athanor heights. Both focused shape JVM tests and all 33 station GameTests passed in `build/alembic-shape-contract-current.log`. No production shape changed. This does not establish client visual acceptance; the full progression gate remains red.
 
 ```powershell
-./gradlew.bat test --tests 'com.vincenthuto.hemomancy.common.station.*' compileGameTestJava --offline --console=plain
+./gradlew.bat test --tests '*StationUpgrade*' --tests '*StationTier*' compileGameTestJava --offline --console=plain
 ./gradlew.bat runStationUpgradeGameTestServer --offline --console=plain
 ```
 

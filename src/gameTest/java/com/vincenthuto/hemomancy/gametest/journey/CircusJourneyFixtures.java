@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.circus.CircusPavilionSavedData;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;

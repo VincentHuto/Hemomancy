@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
 import com.vincenthuto.hemomancy.common.rite.zone.RiteBound;
-import com.vincenthuto.hemomancy.common.rite.zone.RiteSpaceSyncPacket;
+import com.vincenthuto.hemomancy.common.network.rite.RiteSpaceSyncPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;

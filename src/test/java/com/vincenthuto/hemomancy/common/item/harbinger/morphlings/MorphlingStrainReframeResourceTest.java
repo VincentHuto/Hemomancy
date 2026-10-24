@@ -93,7 +93,7 @@ public final class MorphlingStrainReframeResourceTest {
 				"ItemInit.morphling_gravecap.get()");
 		assertFileContains("client staff uses lumenlace", "client/registry/ItemPropertiesRegistrar.java",
 				"selectedStack.getItem() == ItemInit.morphling_lumenlace.get()");
-		assertFileContains("mutation registry maps winter shroud", "client/morphling/MorphlingMutationRegistry.java",
+		assertFileContains("mutation registry maps winter shroud", "client/model/morphling/MorphlingMutationRegistry.java",
 				"register(ItemInit.morphling_winter_shroud.get()");
 		assertFileContains("materials list uses deadman's purse",
 				"client/screen/skilltree/shared/MaterialsData.java",

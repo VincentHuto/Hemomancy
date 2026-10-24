@@ -194,8 +194,8 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 				HarbingerAdvancementGranter.isFirstSeparationComplete(player),
 				FirstSeparationAssignment.isClaimed(player),
 				HemoCapabilityAccess.stationUpgrades(player).hasUsed(
-						com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
-						com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.DISTILL),
+						com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC,
+						com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.DISTILL),
 				ConcentratedBlood.pending(player),
 				ProgressionGates.hasDegree(player, 3));
 	}

@@ -43,8 +43,8 @@ public final class ConcentratedBlood {
         return ProgressionGates.isDegree(player, 2) && EarlyInitiation.attached(player)
                 && FirstSeparationAssignment.isClaimed(player) && !pending(player)
                 && HemoCapabilityAccess.stationUpgrades(player).hasUsed(
-                com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
-                com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.DISTILL)
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC,
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.DISTILL)
                 && ClinicalBloodKnowledge.eligible(player);
     }
     public static boolean inject(ServerPlayer player) {
@@ -58,8 +58,8 @@ public final class ConcentratedBlood {
                 || !ProgressionGates.isDegree(player, 2) || !ClinicalBloodKnowledge.eligible(player)
                 || !FirstSeparationAssignment.isClaimed(player)
                 || !HemoCapabilityAccess.stationUpgrades(player).hasUsed(
-                com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
-                com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.DISTILL)) return false;
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC,
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.DISTILL)) return false;
         if (!DegreeProgression.advance(player, 3)) return false;
         pending(player, false);
         player.displayClientMessage(Component.translatable("hemomancy.initiation.awakened"), false);

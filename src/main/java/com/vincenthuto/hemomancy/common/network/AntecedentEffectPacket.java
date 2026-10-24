@@ -22,7 +22,7 @@ public record AntecedentEffectPacket(int kind,BlockPos position) implements Cust
         context.enqueueWork(()->{
             var research=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.antecedent(player);
             if(packet.kind==4 && research.complete() && ProgressionGates.hasDegree(player, 7))
-                com.vincenthuto.hemomancy.common.antecedent.AntecedentKnowledge.record(player,com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.EPILOGUE);
+                com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentKnowledge.record(player,com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch.Evidence.EPILOGUE);
         });
     }
 }

@@ -131,7 +131,7 @@ public final class HematicMicroscopeOverlay {
         gfx.drawWordWrap(mc.font,Component.translatable(key),282,29,148,0xFFE1D3B4);
         if(identified) {
             var research=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.antecedent(mc.player);
-            boolean nonacoustic=research.has(com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.SAMPLE_RESPONSE);
+            boolean nonacoustic=research.has(com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch.Evidence.SAMPLE_RESPONSE);
             gfx.drawWordWrap(mc.font,Component.translatable("hemomancy.antecedent.microscope."+(nonacoustic?"unknown_stimulus":"acoustic")),282,175,148,0xFF74B1AA);
         }
     }

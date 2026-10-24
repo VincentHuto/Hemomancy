@@ -12,7 +12,7 @@ public final class SummonsPreviewSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String view = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/SummonsTabView.java");
-		String bodies = read("src/main/java/com/vincenthuto/hemomancy/common/summon/PuppeteerSummonBodies.java");
+		String bodies = read("src/main/java/com/vincenthuto/hemomancy/common/entity/summon/puppeteer/PuppeteerSummonBodies.java");
 		String controller = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/SummonsTabController.java");
 
 		assertNotContains("summons preview should not use limited follow-mouse entity renderer",

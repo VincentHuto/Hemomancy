@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.summon.PuppetStrings;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings;
 import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;

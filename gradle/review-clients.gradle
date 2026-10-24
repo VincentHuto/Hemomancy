@@ -52,6 +52,8 @@ def reviewClients = [
                           props: ['hemomancy.brazierReview': 'true']],
     condenserReviewClient: [dir: 'build/condenser-client-review', user: 'CondenserReview', size: review,
                             props: ['hemomancy.condenserReview': 'true']],
+    sickleStrokeReviewClient: [dir: 'build/sickle-stroke-review', user: 'SickleReview', size: review,
+                               props: ['hemomancy.sickleStrokeReview': 'true']],
     infusionReviewClient: [dir: 'build/infusion-client-review', user: 'InfusionReview', size: review,
                            props: ['hemomancy.infusionReview': 'true']],
     jeiReviewClient: [dir: 'build/jei-client-review', user: 'JeiReview', size: review,

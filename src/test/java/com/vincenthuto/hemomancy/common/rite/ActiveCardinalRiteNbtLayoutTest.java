@@ -152,8 +152,8 @@ final class ActiveCardinalRiteNbtLayoutTest {
 	}
 
 	private static ActiveCardinalRite stationRite() {
-		var tier = com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.get(
-				com.vincenthuto.hemomancy.common.station.UpgradeStation.RESONANT_FORGE, 1);
+		var tier = com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.get(
+				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.RESONANT_FORGE, 1);
 		ActiveCardinalRite rite = ActiveCardinalRite.interactive(CASTER, CENTER, tier.rite(), 2400, tier.requiredDegree(),
 				tier.requiredDegree(), false, 0, tier.anchors());
 		for (int i = 0; i < rite.getAnchorBloodMl().length; i++) rite.fillAnchor(i, 50);

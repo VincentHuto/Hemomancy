@@ -50,7 +50,7 @@ public final class HemoAttachmentTypes {
                     () -> AttachmentType.serializable(com.vincenthuto.hemomancy.common.damage.SchoolCombatState::new).build());
 
     // ── Player attachments (copyOnDeath so data survives death/respawn) ──
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch>> ANTECEDENT = ATTACHMENT_TYPES.register("antecedent", () -> AttachmentType.serializable(com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch::new).copyOnDeath().build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch>> ANTECEDENT = ATTACHMENT_TYPES.register("antecedent", () -> AttachmentType.serializable(com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch::new).copyOnDeath().build());
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress>> CLINICAL_BLOOD =
             ATTACHMENT_TYPES.register("clinical_blood", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress::new).copyOnDeath().build());
@@ -64,9 +64,9 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("resonant_forge", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.enchanting.ResonantForgeProgress::new).copyOnDeath().build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.station.StationUpgradeProgress>> STATION_UPGRADES =
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeProgress>> STATION_UPGRADES =
             ATTACHMENT_TYPES.register("station_upgrades", () -> AttachmentType.serializable(
-                    com.vincenthuto.hemomancy.common.station.StationUpgradeProgress::new).copyOnDeath().build());
+                    com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeProgress::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOOD_VOLUME =
             ATTACHMENT_TYPES.register("blood_volume",
@@ -164,9 +164,9 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("data_version",
                     () -> AttachmentType.serializable(PlayerDataVersion::new).copyOnDeath().build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.circus.CircusProgress>> CIRCUS_PROGRESS =
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgress>> CIRCUS_PROGRESS =
             ATTACHMENT_TYPES.register("circus_progress", () -> AttachmentType.serializable(
-                    com.vincenthuto.hemomancy.common.circus.CircusProgress::new).copyOnDeath().build());
+                    com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgress::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.encounter.ChamberAccess>> CHAMBER_ACCESS =
             ATTACHMENT_TYPES.register("chamber_access", () -> AttachmentType.serializable(

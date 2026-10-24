@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
-import com.vincenthuto.hemomancy.common.station.CreativeStationUpgrades;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
@@ -83,12 +82,12 @@ public class ResonantForgeBlock extends BaseEntityBlock implements EntityBlock, 
     public ResonantForgeBlock(BlockBehaviour.Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH)
-                .setValue(com.vincenthuto.hemomancy.common.station.StationTierProperty.STAGE, 0));
+                .setValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty.STAGE, 0));
     }
 
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, com.vincenthuto.hemomancy.common.station.StationTierProperty.STAGE);
+        builder.add(FACING, com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty.STAGE);
     }
     private static double[][] concat(double[][] a, double[][] b) {
         double[][] all = java.util.Arrays.copyOf(a, a.length + b.length);
@@ -98,7 +97,7 @@ public class ResonantForgeBlock extends BaseEntityBlock implements EntityBlock, 
     @Override public BlockPos[] getFillerOffsets() { return offsets(Direction.NORTH); }
     @Override public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
     private static Map<BlockPos, VoxelShape> cells(BlockState state) {
-        return CELLS.get(com.vincenthuto.hemomancy.common.station.StationTierProperty.stage(state)).get(state.getValue(FACING));
+        return CELLS.get(com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty.stage(state)).get(state.getValue(FACING));
     }
     private static VoxelShape shape(BlockState state) { return cells(state).getOrDefault(BlockPos.ZERO, Shapes.block()); }
     @Override public VoxelShape fillerShape(BlockState controller, BlockPos offset) { return cells(controller).get(offset); }
@@ -237,7 +236,7 @@ public class ResonantForgeBlock extends BaseEntityBlock implements EntityBlock, 
         BlockItem.setBlockEntityData(station, BlockEntityInit.resonant_forge.get(), saved.tag());
         station.set(net.minecraft.core.component.DataComponents.BLOCK_STATE,
                 net.minecraft.world.item.component.BlockItemStateProperties.EMPTY
-                        .with(com.vincenthuto.hemomancy.common.station.StationTierProperty.STAGE, state));
+                        .with(com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty.STAGE, state));
         return List.of(station);
     }
 

@@ -42,7 +42,7 @@ public class ClairaudiographMenu extends HemoContainerMenu {
         if(owner.level().isClientSide) return;
         if(catalogue != ClairaudiographCatalogue.revision() || !source.equals(machine.source())) {
             catalogue = ClairaudiographCatalogue.revision(); source = machine.source(); version++;
-            choices = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(machine.inventory.getStackInSlot(0)) ? List.of() : ClairaudiographCatalogue.choices(source).stream().map(ClairaudiographCatalogue.Choice::recording).toList();
+            choices = com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(machine.inventory.getStackInSlot(0)) ? List.of() : ClairaudiographCatalogue.choices(source).stream().map(ClairaudiographCatalogue.Choice::recording).toList();
             if(owner instanceof ServerPlayer sp) PacketHandler.sendToPlayer(sp,new ClairaudiographChoicesPacket(containerId,version,source,choices));
         }
     }

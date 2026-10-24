@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.rite.zone;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SanguineDominionSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SanguineFervorSavedData;
+import com.vincenthuto.hemomancy.common.network.rite.RiteZoneSyncPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;

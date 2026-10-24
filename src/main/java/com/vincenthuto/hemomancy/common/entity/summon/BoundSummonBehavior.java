@@ -13,12 +13,12 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBendRules;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
-import com.vincenthuto.hemomancy.common.summon.PuppetStrings;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerCommandMode;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
-import com.vincenthuto.hemomancy.common.summon.RingmasterConductorRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerCommandMode;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinition;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.RingmasterConductorRules;
 import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.nbt.CompoundTag;
@@ -565,14 +565,14 @@ public final class BoundSummonBehavior {
 	}
 
 	public static boolean canAttack(Mob mob, BoundPuppeteerSummon summon, LivingEntity target) {
-		if (com.vincenthuto.hemomancy.common.circus.CircusDemonstrations.isStage(mob)) return false;
-        if (target != null && target.getPersistentData().hasUUID(com.vincenthuto.hemomancy.common.circus.CircusPracticalController.EXAM)
-                && !target.getPersistentData().getUUID(com.vincenthuto.hemomancy.common.circus.CircusPracticalController.EXAM).equals(summon.hemomancy$getOwnerUUID())) return false;
+		if (com.vincenthuto.hemomancy.common.mission.circus.CircusDemonstrations.isStage(mob)) return false;
+        if (target != null && target.getPersistentData().hasUUID(com.vincenthuto.hemomancy.common.mission.circus.CircusPracticalController.EXAM)
+                && !target.getPersistentData().getUUID(com.vincenthuto.hemomancy.common.mission.circus.CircusPracticalController.EXAM).equals(summon.hemomancy$getOwnerUUID())) return false;
 		if (target == null || !target.isAlive() || target == mob) {
 			return false;
 		}
 		if (target instanceof Mob targetMob
-				&& com.vincenthuto.hemomancy.common.circus.CircusDemonstrations.isStage(targetMob)) return false;
+				&& com.vincenthuto.hemomancy.common.mission.circus.CircusDemonstrations.isStage(targetMob)) return false;
 		if (target instanceof SanguineHoundEntity hound && hound.isBloodCur() && hound.curOwner() != null) return false;
 		if (summon.hemomancy$isTrialSummon()) {
 			return target instanceof Player player && !player.isSpectator() && !player.isCreative();

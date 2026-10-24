@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.common.antecedent.VigilSites;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilSites;
 import net.minecraft.server.level.*;
 import net.minecraft.world.level.block.entity.SculkShriekerBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;

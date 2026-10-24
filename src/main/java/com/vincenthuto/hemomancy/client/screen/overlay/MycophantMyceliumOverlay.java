@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.client.boss.MycophantIntroClientState;
+import com.vincenthuto.hemomancy.client.data.MycophantIntroClientState;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.FastColor;

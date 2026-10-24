@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hemomancy.common.vein.EarthenVeinDestination;
+import com.vincenthuto.hemomancy.common.world.vein.EarthenVeinDestination;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;

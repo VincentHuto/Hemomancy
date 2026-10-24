@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineCondenserBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.station.StationTierProperty;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;

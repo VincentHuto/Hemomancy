@@ -153,11 +153,11 @@ public class JEIPlugin implements IModPlugin {
 			// Succession and Restoration keep their own category, laid out around the effigy.
 			registry.addRecipes(riteTypeFor(purpose), CardinalRiteRecipe.getAllRecipes(world).stream()
 					.filter(recipe -> recipe.isCataloguedUnder(purpose))
-					.filter(recipe -> !com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(recipe.getId()))
+					.filter(recipe -> !com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites.isRecipe(recipe.getId()))
 					.map(CraftingMapRecipe::of).toList());
 		}
 		registry.addRecipes(SuccessionRecipeCategory.TYPE, CardinalRiteRecipe.getAllRecipes(world).stream()
-				.filter(recipe -> com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(recipe.getId())).toList());
+				.filter(recipe -> com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites.isRecipe(recipe.getId())).toList());
 		registry.addRecipes(blood_infusion_recipe_type, BloodInfusionRecipe.getAllRecipes(world));
 		registry.addRecipes(scar_station_recipe_type, ScarRecipe.getAllRecipes(world));
 		registry.addRecipes(incubator_recipe_type, IncubatorRecipe.getAllRecipes(world));

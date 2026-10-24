@@ -701,7 +701,7 @@ public final class CardinalRiteOrdealEngine {
 			// A trial puppet leaves on its strings like any other; other threats vanish as before.
 			if (entity instanceof net.minecraft.world.entity.Mob mob
 					&& mob instanceof com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon)
-				com.vincenthuto.hemomancy.common.summon.PuppetStrings.unspool(mob);
+				com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings.unspool(mob);
 			else if (entity != null) entity.discard();
 		}
 		rite.clearRiteThreats();

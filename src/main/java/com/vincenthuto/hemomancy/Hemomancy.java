@@ -15,7 +15,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorLoader;
-import com.vincenthuto.hemomancy.common.succession.SuccessionProfessions;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionProfessions;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLoader;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographCatalogue;
 import com.vincenthuto.hemomancy.config.HemoConfig;

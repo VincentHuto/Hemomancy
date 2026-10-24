@@ -137,8 +137,8 @@ public class VialRackItem extends Item {
 		for (int i = 0; i < vials.size(); i++) {
 			ItemStack vial = vials.get(i);
 			if (vial.getItem() instanceof BloodVialItem
-					&& com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.is(vial)) {
-				vials.set(i, com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.migrate(vial));
+					&& com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(vial)) {
+				vials.set(i, com.vincenthuto.hemomancy.common.item.component.AhaematicSample.migrate(vial));
 				changed = true;
 			}
 		}

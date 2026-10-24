@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.player.*;
-import com.vincenthuto.hemomancy.client.morphling.MorphlingPlayerPartVisibility;
+import com.vincenthuto.hemomancy.client.model.morphling.MorphlingPlayerPartVisibility;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringAnchors;
 import com.vincenthuto.hemomancy.client.render.world.CastingAnatomyRenderer;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastLane;

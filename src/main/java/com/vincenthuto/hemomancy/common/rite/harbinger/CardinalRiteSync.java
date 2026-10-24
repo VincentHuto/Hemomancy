@@ -99,7 +99,7 @@ final class CardinalRiteSync {
 		String fogProfile = atmosphere == null ? (unstained ? "none" : "storm") : atmosphere.fog();
 		boolean fogLightning = atmosphere == null ? !unstained : atmosphere.lightning();
 		boolean boundaryDome = atmosphere == null ? !unstained : atmosphere.dome();
-        boolean succession = com.vincenthuto.hemomancy.common.succession.SuccessionRites.is(rite);
+        boolean succession = com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites.is(rite);
         int successionTicks = rite.succession().ticks();
         if (succession) {
             cue = "hemomancy.succession.phase." + Math.min(5, successionTicks / 200);

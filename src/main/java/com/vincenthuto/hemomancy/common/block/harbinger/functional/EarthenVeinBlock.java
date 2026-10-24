@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnown
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
 import com.vincenthuto.hemomancy.common.util.HemoTickers;
-import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelManager;
+import com.vincenthuto.hemomancy.common.world.vein.EarthenVeinTravelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;

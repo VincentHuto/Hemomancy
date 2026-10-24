@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue.route;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.antecedent.AntecedentDialogue;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AntecedentDialogue;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.circus.CircusSchoolDialogue;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.CircusSchoolDialogue;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.StationUpgradeDialogue;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge;

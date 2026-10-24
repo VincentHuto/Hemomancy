@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
-import com.vincenthuto.hemomancy.common.antecedent.VigilArchiveBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilArchiveBlockEntity;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
@@ -26,7 +26,7 @@ public final class AntecedentVesselRenderer implements BlockEntityRenderer<Vigil
         var player=net.minecraft.client.Minecraft.getInstance().player;
         boolean proximity=false;
         if(player!=null && player.distanceToSqr(vessel.getBlockPos().getCenter())<64) {
-            for(var stack:player.getInventory().items) if(com.vincenthuto.hemomancy.common.antecedent.AncientRecordings.get(stack)==com.vincenthuto.hemomancy.common.antecedent.AncientRecordings.SEVERED) proximity=true;
+            for(var stack:player.getInventory().items) if(com.vincenthuto.hemomancy.common.item.component.AncientRecordings.get(stack)==com.vincenthuto.hemomancy.common.item.component.AncientRecordings.SEVERED) proximity=true;
         }
         draw(pose,buffers,light,overlay,time,progress,true,proximity);
     }

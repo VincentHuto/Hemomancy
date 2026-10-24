@@ -132,7 +132,7 @@ public class LivingSyringeItem extends LivingItem {
         int slot = VialRackItem.findFirstEmptyVialSlot(rack);
         if (slot < 0) return InteractionResult.FAIL;
         var vials = VialRackItem.getVials(rack);
-        var vial = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.create("block", "minecraft:sculk_catalyst");
+        var vial = com.vincenthuto.hemomancy.common.item.component.AhaematicSample.create("block", "minecraft:sculk_catalyst");
         vials.set(slot, vial);
         VialRackItem.setVials(rack, vials);
         setLoadedRack(syringe, rack);
@@ -142,7 +142,7 @@ public class LivingSyringeItem extends LivingItem {
     }
     /** The dialogue validates consent before requesting an authenticated donation. */
     public InteractionResult collectDonation(net.minecraft.server.level.ServerPlayer player,
-            com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity donor,
+            com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity donor,
             java.util.UUID bloodline, String profession) {
         var syringe = player.getMainHandItem();
         if (syringe.getItem() != this) return InteractionResult.FAIL;
@@ -177,11 +177,11 @@ public class LivingSyringeItem extends LivingItem {
 		vialTag.putString(BloodVialItem.TAG_ENTITY_TYPE, targetId.toString());
 		vialTag.putBoolean(BloodVialItem.TAG_STATE, true);
 		sampledVial.set(DataComponents.CUSTOM_DATA, CustomData.of(vialTag));
-        if (donorBloodline != null) com.vincenthuto.hemomancy.common.succession.SuccessionSamples.fill(sampledVial, target, donorBloodline, donorProfession);
-        else if (target instanceof Player donor) com.vincenthuto.hemomancy.common.succession.SuccessionSamples.fill(sampledVial, donor, null, "");
+        if (donorBloodline != null) com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.fill(sampledVial, target, donorBloodline, donorProfession);
+        else if (target instanceof Player donor) com.vincenthuto.hemomancy.common.rite.succession.SuccessionSamples.fill(sampledVial, donor, null, "");
         sampledVial.remove(com.vincenthuto.hemomancy.common.init.DataComponentInit.BLOOD_SAMPLE_IDENTIFIED.get());
         if (target.getType() == net.minecraft.world.entity.EntityType.WARDEN)
-            sampledVial = com.vincenthuto.hemomancy.common.antecedent.AhaematicSample.create("entity", "minecraft:warden");
+            sampledVial = com.vincenthuto.hemomancy.common.item.component.AhaematicSample.create("entity", "minecraft:warden");
 		vials.set(emptySlot, sampledVial);
 		VialRackItem.setVials(rack, vials);
 		setLoadedRack(syringe, rack);

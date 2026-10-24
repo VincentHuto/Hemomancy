@@ -20,7 +20,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServer
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodFlowDiagnostics;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMaxBloodDiagnostics;
-import com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;

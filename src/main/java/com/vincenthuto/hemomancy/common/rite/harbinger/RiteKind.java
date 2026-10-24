@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteCulmination;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteTermination.Outcome;
-import com.vincenthuto.hemomancy.common.succession.SuccessionRites;
+import com.vincenthuto.hemomancy.common.rite.succession.SuccessionRites;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 

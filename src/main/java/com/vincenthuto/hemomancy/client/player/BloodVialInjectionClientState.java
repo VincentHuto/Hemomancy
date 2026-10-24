@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.player;
 
 import com.vincenthuto.hemomancy.client.render.world.ManipulationAmbientParticles;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.network.PacketBloodVialInjection;

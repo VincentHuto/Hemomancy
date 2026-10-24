@@ -218,7 +218,7 @@ public final class BloodInjectionGameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, sample);
         h.assertTrue(!sample.use(h.getLevel(), player, InteractionHand.MAIN_HAND).getResult().consumesAction(), "Unclaimed mission permitted injection");
         com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.markClaimed(player);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player).recordUse(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill");
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player).recordUse(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, "distill");
         sample.use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         for (int i = 0; i < 7; i++) player.doTick();
         player.releaseUsingItem();
@@ -236,12 +236,12 @@ public final class BloodInjectionGameTests {
                             && EarlyInitiation.attached(respawned)
                             && com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.isClaimed(respawned)
                             && HemoCapabilityAccess.stationUpgrades(respawned).hasUsed(
-                            com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill"),
+                            com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, "distill"),
                     "Death clone proofs: degree=" + HemoCapabilityAccess.getPlayerDegreeNumber(respawned)
                             + ", charm=" + EarlyInitiation.attached(respawned)
                             + ", separation=" + com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.isClaimed(respawned)
                             + ", distillation=" + HemoCapabilityAccess.stationUpgrades(respawned).hasUsed(
-                            com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill")
+                            com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, "distill")
                             + ", originalUuid=" + player.getUUID() + ", replacementUuid=" + respawned.getUUID());
             h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.canInject(respawned),
                     "Pending rest after death permitted another injection or replacement claim");

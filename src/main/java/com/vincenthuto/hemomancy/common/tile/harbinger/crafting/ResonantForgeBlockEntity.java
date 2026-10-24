@@ -3,9 +3,9 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeTier;
-import com.vincenthuto.hemomancy.common.station.StationTierProperty;
-import com.vincenthuto.hemomancy.common.station.UpgradeStation;
-import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeableStation;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ResonantForgeBlock;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -224,11 +224,11 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
         if (player == null) return;
         var progress = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player);
         if (finished == Operation.APPLY)
-            progress.recordUse(UpgradeStation.RESONANT_FORGE, com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.APPLY);
+            progress.recordUse(UpgradeStation.RESONANT_FORGE, com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.APPLY);
         if (finished == Operation.GRIND) {
-            progress.recordUse(UpgradeStation.RESONANT_FORGE, com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.GRIND);
+            progress.recordUse(UpgradeStation.RESONANT_FORGE, com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.GRIND);
             if (selective) progress.recordUse(UpgradeStation.RESONANT_FORGE,
-                    com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.GRIND_SELECTED);
+                    com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.GRIND_SELECTED);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
-import com.vincenthuto.hemomancy.common.circus.CircusCurriculum;
+import com.vincenthuto.hemomancy.common.mission.circus.CircusCurriculum;
 import net.minecraft.nbt.CompoundTag;
 
 public final class CircusSchoolLedgerState {

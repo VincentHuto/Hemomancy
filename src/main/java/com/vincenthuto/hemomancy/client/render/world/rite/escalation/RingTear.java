@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite.escalation;
 
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.rite.RingOpeningMath;
 import net.minecraft.core.BlockPos;

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.npc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierMount;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
-import com.vincenthuto.hemomancy.common.succession.SuccessionBrazierOrder;
+import com.vincenthuto.hemomancy.common.rite.succession.SuccessionBrazierOrder;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.client.Minecraft;

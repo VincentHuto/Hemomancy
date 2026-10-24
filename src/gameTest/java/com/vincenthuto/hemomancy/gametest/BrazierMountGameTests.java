@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
-import com.vincenthuto.hemomancy.common.succession.SuccessionBrazierOrder;
+import com.vincenthuto.hemomancy.common.rite.succession.SuccessionBrazierOrder;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.core.BlockPos;

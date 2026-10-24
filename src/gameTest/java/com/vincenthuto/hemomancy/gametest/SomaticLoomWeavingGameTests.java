@@ -743,10 +743,10 @@ public final class SomaticLoomWeavingGameTests {
         var progress = HemoCapabilityAccess.stationUpgrades(s.weaver);
         pay(helper, s);
         helper.assertTrue(LoomWeaveTestSupport.weaveAll(helper.getLevel(), s.pos, s.loom, s.weaver), "The weave completes");
-        helper.assertTrue(progress.hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.LOOM,
-                com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.LOOM_WEAVE)
-                && progress.hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.LOOM,
-                com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.LOOM_WEAVE_GANGLIONIC),
+        helper.assertTrue(progress.hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.LOOM,
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.LOOM_WEAVE)
+                && progress.hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.LOOM,
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.LOOM_WEAVE_GANGLIONIC),
                 "A Magister weave on a Ganglionic loom proves both loom practices");
         helper.succeed();
     }
@@ -775,10 +775,10 @@ public final class SomaticLoomWeavingGameTests {
         helper.assertTrue(te.tryChargeRitualBlood(fake, 50, false), "Blood Shot weave begins");
         helper.assertTrue(LoomWeaveTestSupport.weaveAll(level, pos, te, fake), "The weave completes");
         var progress = HemoCapabilityAccess.stationUpgrades(fake);
-        helper.assertTrue(progress.hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.LOOM,
-                com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.LOOM_WEAVE)
-                && !progress.hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.LOOM,
-                com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.LOOM_WEAVE_GANGLIONIC),
+        helper.assertTrue(progress.hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.LOOM,
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.LOOM_WEAVE)
+                && !progress.hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.LOOM,
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.LOOM_WEAVE_GANGLIONIC),
                 "A Humilis weave proves only the first loom practice");
         helper.assertTrue(te.getStoredEnzyme(EnumBloodTendency.ANIMUS) == 0, "its one enzyme is spent");
         helper.succeed();

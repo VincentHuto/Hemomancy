@@ -5,7 +5,13 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.Known
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
-import com.vincenthuto.hemomancy.common.summon.*;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppetStrings;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerCommandMode;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinition;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonFactory;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.RingmasterConductorRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -420,7 +426,7 @@ public class MarionetteCrossbarItem extends Item {
 		UUID crossbarId = ensureCrossbarId(stack);
 		List<Mob> alreadyActive = activeSummonsForCrossbar(player, crossbarId, selected);
 		if (!alreadyActive.isEmpty()) {
-            com.vincenthuto.hemomancy.common.circus.CircusSchoolQuests.observeControl((ServerPlayer) player, crossbarId, "recall", selected);
+            com.vincenthuto.hemomancy.common.mission.circus.CircusSchoolQuests.observeControl((ServerPlayer) player, crossbarId, "recall", selected);
 			for (Mob mob : alreadyActive) {
 				PuppetStrings.unspool(mob);
 			}
@@ -432,7 +438,7 @@ public class MarionetteCrossbarItem extends Item {
 		List<Mob> activeBodies = activeSummonsForOwner(player);
 		boolean conductor = PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(selected)
 				|| activeBodies.stream().anyMatch(BoundSummonBehavior::isRingmasterConductor);
-		int shapedBodyCap = com.vincenthuto.hemomancy.common.summon.RingmasterConductorRules.activeCap(
+		int shapedBodyCap = com.vincenthuto.hemomancy.common.entity.summon.puppeteer.RingmasterConductorRules.activeCap(
 				PuppeteerSummonRules.activeSummonCap(SkillPointHelper.getPuppetSkeinLevel(player)), conductor);
 		int claimedBonusCap = BoundSummonBehavior.claimedWillBonusCap(player);
 		int shapedBodies = (int) activeBodies.stream()
@@ -474,7 +480,7 @@ public class MarionetteCrossbarItem extends Item {
 			return;
 		}
 		PuppetStrings.descend(mob);
-		com.vincenthuto.hemomancy.common.circus.CircusSchoolQuests.observeControl((ServerPlayer) player, crossbarId, "call", selected);
+		com.vincenthuto.hemomancy.common.mission.circus.CircusSchoolQuests.observeControl((ServerPlayer) player, crossbarId, "call", selected);
 		player.getCooldowns().addCooldown(stack.getItem(), 20);
 		player.playSound(SoundEvents.EVOKER_PREPARE_SUMMON, 0.55F, 0.75F);
 		player.displayClientMessage(Component.translatable("hemomancy.summon.called",

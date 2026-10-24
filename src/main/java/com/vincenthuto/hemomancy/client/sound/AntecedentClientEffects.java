@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.client.sound;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.antecedent.*;
 import com.vincenthuto.hemomancy.common.network.*;
+import com.vincenthuto.hemomancy.common.item.component.AncientRecordings;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AntecedentDialogue;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilArchiveBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilSites;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;

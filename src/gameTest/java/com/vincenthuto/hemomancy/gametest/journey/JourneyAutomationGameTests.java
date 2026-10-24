@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
-import com.vincenthuto.hemomancy.common.circus.CircusPerformanceController;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformanceController;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
@@ -110,18 +110,18 @@ public final class JourneyAutomationGameTests {
 		ServerPlayer player = connectedPlayer(helper);
 		try {
 			var brewing = HemoCapabilityAccess.stationUpgrades(player);
-			brewing.recordUse(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill");
+			brewing.recordUse(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, "distill");
 			var persisted = new net.minecraft.nbt.CompoundTag();
 			persisted.putBoolean("hemomancy:concentrated_blood_pending", true);
 			player.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, persisted);
 			helper.assertTrue(HemoJourneySnapshot.capture(player).passed(), "Journey snapshot capture failed");
 			helper.assertTrue(HemoJourneySnapshot.resetForJourney(player).passed(), "Journey snapshot reset failed");
-			helper.assertTrue(!HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill")
+			helper.assertTrue(!HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, "distill")
 					&& !player.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG)
 							.getBoolean("hemomancy:concentrated_blood_pending"),
 					"Journey reset retained preexisting D3 proof or pending-rest state");
 			helper.assertTrue(HemoJourneySnapshot.restore(player).passed(), "Journey snapshot restore failed");
-			helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill")
+			helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, "distill")
 					&& player.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG)
 							.getBoolean("hemomancy:concentrated_blood_pending"),
 					"Journey restore lost preexisting D3 proof or pending-rest state");
@@ -222,7 +222,7 @@ public final class JourneyAutomationGameTests {
 				boolean complete = !JourneyAutoRunner.activeForTest(player)
 						&& !player.getPersistentData().contains(HemoJourneySnapshot.SNAPSHOT_KEY);
 				if (complete) {
-					helper.assertTrue(!com.vincenthuto.hemomancy.common.circus.CircusPavilionSavedData
+					helper.assertTrue(!com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData
 							.get(player.serverLevel()).hasSite(player.serverLevel(), fixtureOrigin.above()),
 						"Circus automation must remove its fixture pavilion state after restoring the player");
 					setServerPlayerLookup(player, false);
@@ -269,10 +269,10 @@ public final class JourneyAutomationGameTests {
 				helper.assertTrue(complete,
 						"Degree-4 Succession must finish, award the Ringmaster Pattern, and restore the snapshot. "
 								+ JourneyAutoRunner.describe(player) + " Challenges="
-								+ com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.challenges(player)
+								+ com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress.challenges(player)
 								+ " active=" + player.getPersistentData().getInt("hemomancy.circus_active_challenge")
 								+ " ticks=" + player.getPersistentData().getInt("hemomancy.circus_challenge_ticks"));
-				helper.assertTrue(!com.vincenthuto.hemomancy.common.circus.CircusPavilionSavedData
+				helper.assertTrue(!com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData
 						.get(player.serverLevel()).hasSite(player.serverLevel(), fixtureOrigin.above()),
 						"Circus automation must remove its fixture pavilion state after restoring the player");
 				setServerPlayerLookup(player, false);
@@ -762,7 +762,7 @@ public final class JourneyAutomationGameTests {
 			HarbingerVicarEntity vicar = helper.getLevel().getEntitiesOfClass(HarbingerVicarEntity.class,
 					HemoJourneyFixtures.bounds(origin), entity -> entity.getTags().contains(
 							HemoJourneyFixtures.entityMarker(origin))).getFirst();
-			com.vincenthuto.hemomancy.common.succession.SuccessionResidents.tick(helper.getLevel(), vicar);
+			com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionResidents.tick(helper.getLevel(), vicar);
 			helper.assertTrue(!vicar.isSuccessor() && line.hasNpcMember(vicar.getUUID())
 					&& CardinalRiteAllyService.isAvailable(helper.getLevel(), rite, vicar.getUUID()),
 					"Recruited Vicar must remain a valid Vigil helper after its residency tick");

@@ -29,7 +29,7 @@ import net.minecraft.world.level.Level;
  * The Mnemonist teaches crude memories, active manipulation slots, and the later
  * tools used to order and weave refined memories.
  */
-public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
+public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerMnemonistEntity(EntityType<? extends HarbingerMnemonistEntity> type, Level level) {
@@ -116,9 +116,9 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.s
 			tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.VagrantMindInquiryDialogue.memory(
 					tree, com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.progress(serverPlayer));
 		tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.StationUpgradeDialogue.append(tree, serverPlayer,
-				com.vincenthuto.hemomancy.common.station.UpgradeStation.SCRIPTORIUM, "hemomancy.dialogue.mnemonist.option.leave");
+				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.SCRIPTORIUM, "hemomancy.dialogue.mnemonist.option.leave");
 		tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.StationUpgradeDialogue.append(tree, serverPlayer,
-				com.vincenthuto.hemomancy.common.station.UpgradeStation.LOOM, "hemomancy.dialogue.mnemonist.option.leave");
+				com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.LOOM, "hemomancy.dialogue.mnemonist.option.leave");
 		return ClinicalBloodDialogue.append(tree, serverPlayer, "mnemonist");
 	}
 

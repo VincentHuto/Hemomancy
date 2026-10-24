@@ -12,7 +12,7 @@ class CircusPerformerThreadSourceTest {
 
 	@Test
 	void stageBodiesSyncTheirTeacherAsOwnerSoClientsCanDrawTheThread() throws Exception {
-		String demonstrations = Files.readString(SOURCE.resolve("common/circus/CircusDemonstrations.java"));
+		String demonstrations = Files.readString(SOURCE.resolve("common/mission/circus/CircusDemonstrations.java"));
 		assertTrue(demonstrations.contains("bound.hemomancy$setOwnerUUID(teacher.getUUID())"),
 				"new and already-saved stage bodies must carry the teacher in the synced owner field");
 	}

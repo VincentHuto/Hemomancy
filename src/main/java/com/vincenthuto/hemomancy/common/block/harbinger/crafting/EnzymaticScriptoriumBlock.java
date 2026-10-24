@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
-import com.vincenthuto.hemomancy.common.station.CreativeStationUpgrades;
 
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -36,7 +35,7 @@ import java.util.Map;
 public class EnzymaticScriptoriumBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final net.minecraft.world.level.block.state.properties.IntegerProperty STAGE =
-            com.vincenthuto.hemomancy.common.station.StationTierProperty.STAGE;
+            com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty.STAGE;
 
     /** Stem, slanted desk and the vial rack wrapping its sides and back; the book's face stays open above. */
     private static final double[][] DESK = {

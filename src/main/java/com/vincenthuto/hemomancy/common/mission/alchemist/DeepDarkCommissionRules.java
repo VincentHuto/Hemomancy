@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.mission.alchemist;
 
-import com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch;
 
-import static com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.*;
+import static com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch.Evidence.*;
 
 public final class DeepDarkCommissionRules {
     private DeepDarkCommissionRules() {

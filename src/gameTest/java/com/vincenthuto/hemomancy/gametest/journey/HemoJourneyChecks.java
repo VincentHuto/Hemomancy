@@ -106,7 +106,7 @@ public final class HemoJourneyChecks {
 			case ENZYME_RECOVERED -> require(unmet, HarbingerAdvancementGranter.isFirstSeparationComplete(player), "Recover the enzyme from the centrifuge output.");
 			case ALCHEMIST_REWARD -> require(unmet, FirstSeparationAssignment.isClaimed(player), "First Separation reward has not been claimed.");
 			case FIRST_DISTILLATION -> require(unmet,
-					HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill")
+					HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.ALEMBIC, "distill")
 							&& outputPresent(player, stage, origin, claimOutputs),
 					"Take the first ordinary Ghastly Alembic distillation output.");
 			case CONCENTRATED_BLOOD_REST -> require(unmet,

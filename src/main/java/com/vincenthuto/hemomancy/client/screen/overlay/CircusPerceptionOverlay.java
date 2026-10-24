@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
-import com.vincenthuto.hemomancy.common.circus.CircusProgressRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgressRules;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

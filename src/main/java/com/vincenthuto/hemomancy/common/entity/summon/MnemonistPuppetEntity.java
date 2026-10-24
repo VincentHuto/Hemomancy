@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.common.entity.summon;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonRules;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
@@ -160,7 +160,7 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 		}
 		MnemonistPuppetEvents.withReplayDamage(() -> {
             if (target.hurt(level().damageSources().magic(), damage))
-                com.vincenthuto.hemomancy.common.circus.CircusPracticalController.replay(this, target, memory.attackerId());
+                com.vincenthuto.hemomancy.common.mission.circus.CircusPracticalController.replay(this, target, memory.attackerId());
         });
 		playReplayEffects(serverLevel, target);
 	}

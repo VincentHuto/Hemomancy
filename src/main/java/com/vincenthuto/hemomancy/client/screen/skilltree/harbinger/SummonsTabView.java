@@ -8,10 +8,10 @@ import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonBodies;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonBodies;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinition;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonRules;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -222,7 +222,7 @@ public final class SummonsTabView {
 	private static boolean hasTrialRecipe(PuppeteerSummonDefinition definition) {
 		Minecraft mc = Minecraft.getInstance();
 		return mc.player != null && mc.player.getRecipeBook()
-				.contains(com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents.recipeId(definition));
+				.contains(com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonTrialEvents.recipeId(definition));
 	}
 
 	private static void renderPreviewEntity(GuiGraphics gfx, ProgressScreenContext ctx, SummonsTabState state,

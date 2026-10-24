@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.EarthenVeinModel;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.EarthenVeinFeedingTendrilRenderer;
-import com.vincenthuto.hemomancy.client.vein.EarthenVeinTravelClientState;
+import com.vincenthuto.hemomancy.client.data.EarthenVeinTravelClientState;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;

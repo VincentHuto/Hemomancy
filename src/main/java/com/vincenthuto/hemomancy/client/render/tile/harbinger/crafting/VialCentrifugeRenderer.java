@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.VialCentrifugeBlock;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
-import com.vincenthuto.hemomancy.common.station.StationTierProperty;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeRotorRules;
 import net.minecraft.client.Minecraft;

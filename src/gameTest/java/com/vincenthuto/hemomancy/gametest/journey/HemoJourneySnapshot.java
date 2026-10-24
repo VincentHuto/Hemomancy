@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.gametest.journey;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
-import com.vincenthuto.hemomancy.common.circus.CircusProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree;
@@ -391,7 +391,7 @@ public final class HemoJourneySnapshot {
 		var emptyTendency = new BloodTendency();
 		var emptyRecipeBook = new ServerRecipeBook();
 		var emptyBestiary = new SpecimenBestiaryProgress();
-		var emptyBrewing = new com.vincenthuto.hemomancy.common.station.StationUpgradeProgress();
+		var emptyBrewing = new com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeProgress();
 		ParsedState reset = new ParsedState(false, 0.0D, 5000.0D, 0,
 				emptyDegree.serializeNBT(player.registryAccess()), emptyTendency.serializeNBT(player.registryAccess()), emptyInventory,
 				resetAdvancements, emptySkills.serializeNBT(player.registryAccess()),
@@ -889,7 +889,7 @@ public final class HemoJourneySnapshot {
 	}
 
 	private static boolean validateAdvancedBrewingSchema(ServerPlayer player, CompoundTag tag) {
-		var progress = new com.vincenthuto.hemomancy.common.station.StationUpgradeProgress();
+		var progress = new com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeProgress();
 		progress.deserializeNBT(player.registryAccess(), tag.copy());
 		return progress.serializeNBT(player.registryAccess()).equals(tag);
 	}

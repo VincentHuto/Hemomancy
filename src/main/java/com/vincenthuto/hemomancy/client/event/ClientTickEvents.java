@@ -33,12 +33,12 @@ public final class ClientTickEvents {
         ActiveBloodCraftClientData.tick();
         ActiveBloodStructureFeedClientData.tick();
         ActiveRiteClientData.tick();
-        com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.tick();
+        com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState.tick();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteGuidance.tick(Minecraft.getInstance());
         if (Minecraft.getInstance().level != null && !Minecraft.getInstance().isPaused()) {
             com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.tick(
                     ActiveRiteClientData.getActiveRites(),
-                    com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.ghosts(),
+                    com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState.ghosts(),
                     center -> com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteFloor.at(
                             Minecraft.getInstance().level, center));
             com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSkyWound.tick(Minecraft.getInstance());

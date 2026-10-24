@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.network.particle.LivingFlailImpactPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
@@ -12,8 +13,6 @@ import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectSpawner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -126,8 +125,8 @@ public final class LivingFlailImpactEffects {
 				population, 0.4D + charge, 0.2D + charge * 0.5D, 0.4D + charge, 0.08D + charge * 0.08D);
 		level.sendParticles(HemoParticleData.bloodCell(PALE_ICE), center.x, center.y + 0.1D, center.z,
 				Math.max(2, population / 5), 0.3D + charge, 0.25D, 0.3D + charge, 0.04D);
-		level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SNOW_BLOCK.defaultBlockState()),
-				center.x, center.y, center.z, population, 0.6D + charge, 0.35D, 0.6D + charge, 0.12D);
+		ManipulationVisuals.burst(level, ManipulationVisuals.Form.CRYOGENIC_PULSE, center, center,
+				Math.max(1.0D, LivingFlailRules.impactRadius(charge) * impactScale), 20 + Math.round(charge * 12.0F));
 		int tendrils = 3 + Math.round(charge * 5.0F);
 		for (int i = 0; i < tendrils; i++) {
 			double angle = Math.PI * 2.0D * i / tendrils;

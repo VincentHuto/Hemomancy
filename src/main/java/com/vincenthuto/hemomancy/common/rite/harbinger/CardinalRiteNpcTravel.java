@@ -4,7 +4,10 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.*;
-import com.vincenthuto.hemomancy.common.succession.*;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionResidents;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionSavedData;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionWorkplaces;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;

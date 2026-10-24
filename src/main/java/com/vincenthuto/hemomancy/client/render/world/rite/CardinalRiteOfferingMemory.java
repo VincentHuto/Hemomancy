@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.render.world.rite;
 
 import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.RiteEvent;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState.RiteEvent;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

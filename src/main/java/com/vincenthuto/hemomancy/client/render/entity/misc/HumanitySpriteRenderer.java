@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteVisualRule
 import com.vincenthuto.hemomancy.client.render.world.rite.DaemonHaze;
 import com.vincenthuto.hemomancy.client.render.world.rite.DaemonHazeQueue;
 import com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
+import com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.entity.utility.DaemonFlight;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCancellationRules;

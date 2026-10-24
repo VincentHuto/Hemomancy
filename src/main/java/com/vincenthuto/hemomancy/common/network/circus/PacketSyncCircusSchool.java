@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.circus;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.circus.*;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress;
+import com.vincenthuto.hemomancy.common.mission.circus.CircusCurriculum;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

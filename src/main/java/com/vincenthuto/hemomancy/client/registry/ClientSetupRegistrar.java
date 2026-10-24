@@ -24,7 +24,7 @@ public final class ClientSetupRegistrar {
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
         ClientBridge.install(new ClientBridgeImpl());
-        com.vincenthuto.hemomancy.client.morphling.MorphlingMutationRegistry.init();
+        com.vincenthuto.hemomancy.client.model.morphling.MorphlingMutationRegistry.init();
         event.enqueueWork(() -> {
             ItemBlockRenderTypes.setRenderLayer(BlockInit.frozen_cruor.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR.get(), RenderType.translucent());

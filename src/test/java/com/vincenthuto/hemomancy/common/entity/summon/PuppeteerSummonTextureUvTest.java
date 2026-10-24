@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.google.gson.JsonParser;
 import com.vincenthuto.hemomancy.client.model.entity.summon.*;
-import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;

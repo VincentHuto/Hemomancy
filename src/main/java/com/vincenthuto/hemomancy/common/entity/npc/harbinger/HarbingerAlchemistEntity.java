@@ -44,7 +44,7 @@ import net.minecraft.world.level.Level;
  *       and no further engagement.</li>
  * </ul>
  */
-public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
+public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 

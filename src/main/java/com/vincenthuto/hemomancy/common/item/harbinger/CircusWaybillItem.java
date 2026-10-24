@@ -13,8 +13,8 @@ public final class CircusWaybillItem extends CovenantWaybillItem {
         String tagName = "circus_waybill_targets";
         if (!player.isShiftKeyDown()) {
             int degree = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player);
-            var lesson = com.vincenthuto.hemomancy.common.circus.CircusCurriculum.lessons().stream()
-                    .filter(l -> l.degree() <= degree && !com.vincenthuto.hemomancy.common.circus.CircusApprenticeshipProgress.instructionSatisfied(player, l.summon()))
+            var lesson = com.vincenthuto.hemomancy.common.mission.circus.CircusCurriculum.lessons().stream()
+                    .filter(l -> l.degree() <= degree && !com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress.instructionSatisfied(player, l.summon()))
                     .findFirst().orElse(null);
             if (lesson != null) tagName = "troupe_teacher_" + switch (lesson.teacher()) {
                 case "circus_acrobat" -> "air";
@@ -28,7 +28,7 @@ public final class CircusWaybillItem extends CovenantWaybillItem {
         var origin = player.blockPosition();
         var found = level.findNearestMapStructure(tag, origin, 160, false);
         if (!tagName.equals("circus_waybill_targets") || found == null) return found;
-        var sites = com.vincenthuto.hemomancy.common.circus.CircusPavilionSavedData.get(level);
+        var sites = com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData.get(level);
         if (!sites.isCompletedNear(level, found)) return found;
         net.minecraft.core.BlockPos best = null;
         for (int dx : new int[]{-1536, 0, 1536}) for (int dz : new int[]{-1536, 0, 1536}) {
