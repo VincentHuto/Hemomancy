@@ -214,6 +214,7 @@ minecraft:block hemomancy:dendrite_growth
 minecraft:block hemomancy:dendritic_distributor
 minecraft:block hemomancy:devils_tooth
 minecraft:block hemomancy:dictation_table
+minecraft:block hemomancy:dormant_ganglion
 minecraft:block hemomancy:dura_membrane
 minecraft:block hemomancy:earthen_vein
 minecraft:block hemomancy:engram_block
@@ -496,6 +497,7 @@ minecraft:entity_type hemomancy:circus_stilt_walker
 minecraft:entity_type hemomancy:circus_strongman
 minecraft:entity_type hemomancy:circus_threadkeeper
 minecraft:entity_type hemomancy:circus_understudy
+minecraft:entity_type hemomancy:coagulum_projectile
 minecraft:entity_type hemomancy:constrictor_cord_projectile
 minecraft:entity_type hemomancy:containment_anchor
 minecraft:entity_type hemomancy:covenant_throne_seat
@@ -557,6 +559,7 @@ minecraft:entity_type hemomancy:peacock_spider
 minecraft:entity_type hemomancy:pelagic_herring
 minecraft:entity_type hemomancy:phantasmal_echo
 minecraft:entity_type hemomancy:phlegethontic_bombardier
+minecraft:entity_type hemomancy:phlegethosoma
 minecraft:entity_type hemomancy:priestess_eruption
 minecraft:entity_type hemomancy:prism_cuttle
 minecraft:entity_type hemomancy:putriciel
@@ -574,6 +577,7 @@ minecraft:entity_type hemomancy:siphonophore
 minecraft:entity_type hemomancy:spectral_companion
 minecraft:entity_type hemomancy:stained_lance
 minecraft:entity_type hemomancy:stained_priestess
+minecraft:entity_type hemomancy:temporary_coagulum
 minecraft:entity_type hemomancy:thirster
 minecraft:entity_type hemomancy:thread_bolt
 minecraft:entity_type hemomancy:thread_hazard
@@ -1223,6 +1227,7 @@ minecraft:item hemomancy:spawn_egg_osteophage
 minecraft:item hemomancy:spawn_egg_peacock_spider
 minecraft:item hemomancy:spawn_egg_pelagic_herring
 minecraft:item hemomancy:spawn_egg_phlegethontic_bombardier
+minecraft:item hemomancy:spawn_egg_phlegethosoma
 minecraft:item hemomancy:spawn_egg_prism_cuttle
 minecraft:item hemomancy:spawn_egg_pyrosome
 minecraft:item hemomancy:spawn_egg_sanguine_hound

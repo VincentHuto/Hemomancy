@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.rite.*;
 import com.vincenthuto.hemomancy.common.block.inscription.DictationTableBlock;
 import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionBlock;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
+import com.vincenthuto.hemomancy.common.block.shared.DormantGanglionBlock;
 import com.vincenthuto.hemomancy.common.block.shared.HemoWallBlock;
 import com.vincenthuto.hemomancy.common.block.shared.MnemonicCandleBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedDoorBlock;
@@ -300,6 +301,9 @@ public class BlockInit {
 
 	public static final DeferredHolder<Block, Block> synaptic_node = BASEBLOCKS.register("synaptic_node",
 			() -> new Block(BlockBehaviour.Properties.of().strength(1.2F, 4.0F).lightLevel(state -> 10)));
+
+	public static final DeferredHolder<Block, Block> dormant_ganglion = BASEBLOCKS.register("dormant_ganglion",
+			DormantGanglionBlock::new);
 
 	public static final DeferredHolder<Block, Block> dura_membrane = BASEBLOCKS.register("dura_membrane",
 			() -> new Block(BlockBehaviour.Properties.of().strength(0.6F, 1.0F).noOcclusion()));
@@ -961,7 +965,7 @@ public class BlockInit {
 			"sanguine_conduit", "sanguine_conduit");
 	private static final Set<String> ITEMLESS_BLOCKS = Set.of("attached_gourd_stem", "filler_block",
 			"warp_chair_filler", "abocipher_emitter", "qliphoth_bloom",
-			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor");
+			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion");
 	private static final Set<String> HIDDEN_BLOCK_ITEMS = Set.of("active_befouling_ash_trail",
 			"active_smouldering_ash_trail", "engram_block");
 

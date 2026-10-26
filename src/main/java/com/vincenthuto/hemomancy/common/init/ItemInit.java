@@ -1167,6 +1167,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_scarlet_mummer = SPAWNEGGS.register(
             "spawn_egg_scarlet_mummer",
             () -> new DeferredSpawnEggItem(EntityInit.scarlet_mummer, 0x550916, 0xE9B51D, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_phlegethosoma = SPAWNEGGS.register("spawn_egg_phlegethosoma", () -> new DeferredSpawnEggItem(EntityInit.phlegethosoma, 0x21090E, 0xAC3026, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_excoriated = SPAWNEGGS.register(
             "spawn_egg_excoriated", () -> new DeferredSpawnEggItem(EntityInit.excoriated, 0x2D060A, 0xC4A180, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_phlegethontic_bombardier = SPAWNEGGS.register(

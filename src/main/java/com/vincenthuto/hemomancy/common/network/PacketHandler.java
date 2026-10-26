@@ -63,7 +63,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "11";
+    public static final String PROTOCOL_VERSION = "14";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -89,6 +89,7 @@ public class PacketHandler {
 
     private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
         var net = event.registrar(PROTOCOL_VERSION);
+        net.playToClient(PhlegethosomaSuctionPacket.TYPE, PhlegethosomaSuctionPacket.STREAM_CODEC, PhlegethosomaSuctionPacket::handle);
         net.playToClient(PhlegethonticCurrentPacket.TYPE, PhlegethonticCurrentPacket.STREAM_CODEC,
                 PhlegethonticCurrentPacket::handle);
         net.playToClient(PacketSyncStationUpgrades.TYPE, PacketSyncStationUpgrades.STREAM_CODEC,

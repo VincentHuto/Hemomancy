@@ -10,6 +10,7 @@ public final class BossSceneCatalog {
 	}
 
 	public static void registerAll() {
+        BossSceneRegistry.register(BossPresentationIds.SCENE_PHLEGETHOSOMA, PhlegethosomaScene::new);
 		BossSceneRegistry.register(BossPresentationIds.SCENE_MYCOPHANT_WAKING, MycophantWakingScene::new);
 		BossSceneRegistry.register(BossPresentationIds.SCENE_MYCOPHANT_REMATCH, MycophantRematchScene::new);
 		BossSceneRegistry.register(BossPresentationIds.SCENE_MYCOPHANT_CAPTURE, MycophantCaptureScene::new);

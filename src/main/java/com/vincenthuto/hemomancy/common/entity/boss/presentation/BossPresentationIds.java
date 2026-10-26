@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
  * plays. The client registers art and timing under these ids; the server only ever sends an id.
  */
 public final class BossPresentationIds {
+    public static final ResourceLocation FRAME_PHLEGETHOSOMA = Hemomancy.rloc("phlegethosoma");
+    public static final ResourceLocation SCENE_PHLEGETHOSOMA = Hemomancy.rloc("phlegethosoma");
 	public static final ResourceLocation FRAME_MYCOPHANT = Hemomancy.rloc("mycophant");
 	public static final ResourceLocation FRAME_ANNETTA_KNOWLES = Hemomancy.rloc("annetta_knowles");
 	public static final ResourceLocation FRAME_STAINED_PRIESTESS = Hemomancy.rloc("stained_priestess");
@@ -38,11 +40,11 @@ public final class BossPresentationIds {
 	public static final ResourceLocation SCENE_SAINT_RISE = Hemomancy.rloc("saint_rise");
 	public static final ResourceLocation SCENE_HEMORATH_EMPTIES_CARD = Hemomancy.rloc("hemorath_empties");
 
-	public static final List<ResourceLocation> FRAMES = List.of(FRAME_MYCOPHANT, FRAME_ANNETTA_KNOWLES,
+	public static final List<ResourceLocation> FRAMES = List.of(FRAME_PHLEGETHOSOMA, FRAME_MYCOPHANT, FRAME_ANNETTA_KNOWLES,
 			FRAME_STAINED_PRIESTESS, FRAME_LATENT_INFECTION, FRAME_NAEGLEROPHAEON, FRAME_VESPER_CROWNED_REFUSAL,
 			FRAME_VESPER_EVENING_STAR, FRAME_HEMORATH, FRAME_PUTRICIEL, FRAME_VELORUM, FRAME_SERAPHAE);
 
-	public static final List<ResourceLocation> SCENES = List.of(SCENE_MYCOPHANT_WAKING, SCENE_MYCOPHANT_REMATCH,
+	public static final List<ResourceLocation> SCENES = List.of(SCENE_PHLEGETHOSOMA, SCENE_MYCOPHANT_WAKING, SCENE_MYCOPHANT_REMATCH,
 			SCENE_MYCOPHANT_CAPTURE, SCENE_MYCOPHANT_SPLIT_CARD, SCENE_ANNETTA_KNOWLES, SCENE_ANNETTA_BREAK_CARD,
 			SCENE_STAINED_PRIESTESS, SCENE_LATENT_INFECTION, SCENE_NAEGLEROPHAEON, SCENE_NAEGLEROPHAEON_TRANSITION_CARD,
 			SCENE_VESPER_CROWNED_REFUSAL, SCENE_VESPER_COCOON_CARD, SCENE_VESPER_EVENING_STAR, SCENE_SAINT_RISE,

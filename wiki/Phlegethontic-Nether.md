@@ -48,6 +48,18 @@ Elevated targets receive a two-shot piercing volley. At close range the guardian
 
 Initial loot uses bones and existing sanguine formations. There is no new progression gate or extraction recipe.
 
+## Phlegethosoma — The Arterial Fluke
+
+Phlegethosoma is a long, narrow blood fluke that swims rapidly through ichor. A small sucker head leads a flexible, frilled body and tapering ribbon tail; waves of muscular contraction drive its movement. It is much slower on land. It is a rare, solitary encounter that can return through natural spawning in explored Basins. Fighting it requires no faction, degree, or active blood magic. Its emergence displays a brief title while it remains passive; player movement stays available.
+
+The animal braces before drawing prey toward its mouth. Retreat, circle outside its frontal reach, or shelter behind stone or its own coagulum clots. Deal six direct attack damage while it braces or pulls to interrupt it and gain a stagger window. Suction preserves jumping and is suppressed at unsafe drops and lava. The close feeding bite briefly slows rather than mounting or immobilizing its victim.
+
+At sixty percent health its crop distends and it gains a pressure spray. At twenty-five percent its soft tissues rupture and its frills flutter, accelerating its swimming and attacks. These phases persist even if it feeds or the world reloads. Its lunge always has a contraction and recovery period.
+
+Clots obstruct movement and shelter players from suction and spray. They have ten health, last eight seconds, and drop nothing. Breaking them, waiting, or ending combat clears the obstruction without altering terrain. Kills credited to a player yield two to four Sanguine Formations and one to two Calcified Blood Spines, affected by Looting, plus fifteen experience. The four unique materials proposed in the design guide are deferred.
+
+In a deep enough pool, the fluke dives below the ichor and leaves a crimson disturbance on the surface before leaping at the player. Its strike commits to a position, giving a chance to dodge. A leap deals eight damage on contact, then the animal dives back underwater without another hit on the return. Low ceilings and shallow pools prevent this attack.
+
 ## Development and acceptance
 
 The editable Blockbench model is `src/main/resources/assets/hemomancy/models/entity/bbmodel/excoriated.bbmodel`. It uses the approved Orcadian horseman: 58 rotated cuboids, a fused forearm bow, and a 256×256 box-UV atlas. At rest, its thin arms extend down the flanks and its fused bow trails near the ground. The limbs retract into the aiming pose over the first eight draw ticks and lower again after firing. Native Java model parts drive walking, wading, aiming, drawing, firing, rearing, breath, clotting, and death poses. Tethers attach to the interpolated, animated bow transform.

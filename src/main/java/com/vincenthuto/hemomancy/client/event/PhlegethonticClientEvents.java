@@ -19,6 +19,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 public final class PhlegethonticClientEvents {
     private PhlegethonticClientEvents() {}
     @SubscribeEvent public static void layers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.boss.phlegethosoma.PhlegethosomaModel.LAYER_LOCATION,com.vincenthuto.hemomancy.client.model.entity.boss.phlegethosoma.PhlegethosomaModel::createBodyLayer);
         event.registerLayerDefinition(ExcoriatedModel.LAYER_LOCATION,ExcoriatedModel::createBodyLayer);
         event.registerLayerDefinition(PhlegethonticBombardierModel.LAYER_LOCATION,PhlegethonticBombardierModel::createBodyLayer);
         event.registerLayerDefinition(RecallBarbRenderer.LAYER,RecallBarbRenderer::layer);

@@ -438,6 +438,9 @@ public class EntityInit {
                             .sized(0.6F, 1.8F)
                             .build(Hemomancy.rloc("blood_drunk_puppeteer").toString()));
 
+    public static final DeferredHolder<EntityType<?>,EntityType<com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaEntity>> phlegethosoma=ENTITY_TYPES.register("phlegethosoma",()->EntityType.Builder.of(com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaEntity::new,MobCategory.MONSTER).sized(1.35F,.85F).fireImmune().clientTrackingRange(12).updateInterval(2).build(Hemomancy.rloc("phlegethosoma").toString()));
+    public static final DeferredHolder<EntityType<?>,EntityType<com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.CoagulumProjectileEntity>> coagulum_projectile=ENTITY_TYPES.register("coagulum_projectile",()->EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.CoagulumProjectileEntity>of(com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.CoagulumProjectileEntity::new,MobCategory.MISC).sized(.4F,.4F).clientTrackingRange(8).build(Hemomancy.rloc("coagulum_projectile").toString()));
+    public static final DeferredHolder<EntityType<?>,EntityType<com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.TemporaryCoagulumEntity>> temporary_coagulum=ENTITY_TYPES.register("temporary_coagulum",()->EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.TemporaryCoagulumEntity>of(com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.TemporaryCoagulumEntity::new,MobCategory.MISC).sized(1.5F,1.5F).clientTrackingRange(8).build(Hemomancy.rloc("temporary_coagulum").toString()));
     public static final DeferredHolder<EntityType<?>,EntityType<ExcoriatedEntity>> excoriated=ENTITY_TYPES.register(
             "excoriated",() -> EntityType.Builder.of(ExcoriatedEntity::new,MobCategory.MONSTER)
                     .sized(1.55F,4F).fireImmune().clientTrackingRange(10).build(Hemomancy.rloc("excoriated").toString()));
@@ -908,6 +911,7 @@ public class EntityInit {
 
     @SubscribeEvent
     public static void onRegisterSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        event.register(phlegethosoma.get(),SpawnPlacementTypes.NO_RESTRICTIONS,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaSpawnRules::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(excoriated.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 ExcoriatedSpawnRules::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(phlegethontic_bombardier.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
@@ -1047,6 +1051,7 @@ public class EntityInit {
 
     @SubscribeEvent
     public static void onAttributeCreate(EntityAttributeCreationEvent event) {
+        event.put(phlegethosoma.get(),com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaEntity.attributes().build());
         event.put(excoriated.get(),ExcoriatedEntity.setAttributes().build());
         event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build());
         event.put(EntityInit.mortarbound.get(), MortarboundEntity.attributes().build());

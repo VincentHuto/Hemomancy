@@ -14,6 +14,7 @@ public final class BossBarFrames {
 	private static final Map<ResourceLocation, BossBarFrame> FRAMES = new HashMap<>();
 
 	static {
+        FRAMES.put(BossPresentationIds.FRAME_PHLEGETHOSOMA, new PhlegethosomaFrame());
 		FRAMES.put(BossPresentationIds.FRAME_MYCOPHANT, new MycophantFrame());
 		FRAMES.put(BossPresentationIds.FRAME_ANNETTA_KNOWLES, new AnnettaKnowlesFrame());
 		FRAMES.put(BossPresentationIds.FRAME_STAINED_PRIESTESS, new StainedPriestessFrame());

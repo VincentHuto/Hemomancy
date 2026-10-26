@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.common.init.StructureInit;
 import com.vincenthuto.hemomancy.common.worldgen.terrain.cortical.CorticalAxis;
 import com.vincenthuto.hemomancy.common.worldgen.feature.VoxelBresenhamIterator;
 import java.util.List;
+import java.util.Comparator;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -76,6 +78,23 @@ public class VagrantMindPiece extends StructurePiece {
 		return VagrantMindFiberWeb.nodes(strands(lobes())).stream()
 				.map(point -> world(point[0], point[1], point[2]))
 				.toList();
+	}
+
+	/** The same ordering is used by new generation and safe backfill of older Minds. */
+	public List<BlockPos> awakeningNodes() {
+		return nodePositions().stream().filter(this::containsInterior)
+				.sorted(Comparator.comparingDouble((BlockPos node) -> node.distSqr(origin))
+						.thenComparingInt(BlockPos::getX).thenComparingInt(BlockPos::getY).thenComparingInt(BlockPos::getZ))
+				.toList();
+	}
+
+	public BlockPos awakeningPosition() {
+		List<BlockPos> candidates = awakeningNodes();
+		return candidates.isEmpty() ? null : candidates.getFirst();
+	}
+
+	public static AABB arenaBounds(BlockPos origin) {
+		return AABB.of(envelope(origin)).inflate(16);
 	}
 
 	public VagrantMindPiece(BlockPos origin, long seed) {
@@ -153,6 +172,9 @@ public class VagrantMindPiece extends StructurePiece {
 			}
 		}
 		placeFiberWeb(level, chunkBox, lobes);
+		BlockPos awakening = awakeningPosition();
+		if (awakening != null && chunkBox.isInside(awakening))
+			level.setBlock(awakening, BlockInit.dormant_ganglion.get().defaultBlockState(), 2);
 		placeBorers(level, chunkBox, lobes);
 	}
 

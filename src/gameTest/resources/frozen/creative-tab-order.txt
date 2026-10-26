@@ -443,6 +443,7 @@ hemomancy:spawn_egg_marrow_spitter
 hemomancy:spawn_egg_gorebound_hulk
 hemomancy:spawn_egg_mnemonist_puppet
 hemomancy:spawn_egg_scarlet_mummer
+hemomancy:spawn_egg_phlegethosoma
 hemomancy:spawn_egg_excoriated
 hemomancy:spawn_egg_phlegethontic_bombardier
 hemomancy:spawn_egg_sanguine_hound

@@ -247,7 +247,7 @@ public final class RegistrationGameTests {
                 "active_smouldering_ash_trail", "placed_blood_stained_stone", "lethean_poppy_wreath", "sanguine_conduit"));
         var expectedItemless = new java.util.TreeSet<>(java.util.Set.of("attached_gourd_stem", "filler_block",
                 "warp_chair_filler", "abocipher_emitter", "qliphoth_bloom", "escharian_overgrowth",
-                "escharian_overgrowth_rim"));
+                "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion"));
         helper.assertTrue(custom.equals(expectedCustom) && manual.equals(expectedManual) && itemless.equals(expectedItemless),
                 "Block item exceptions changed without an explicit decision: custom=" + custom + " manual=" + manual
                         + " itemless=" + itemless);

@@ -71,6 +71,12 @@ The practical advice is simple. If you want the bridges intact for travelling, m
 
 ## Naeglerophaeon
 
+Exploring the Mind does not summon its miniboss. Find the **Dormant Ganglion**, a maroon-and-ivory knot pulsing among the inner Synaptic Nodes. An on-screen warning appears within eight blocks: breaking this knot will awaken **Naeglerophaeon**. Ordinary mining, cutting nerves, and killing Myelin Borers leave it dormant. Borers still defend their network.
+
+Break the Ganglion when you are ready. It drops no item, and only the person who breaks it receives the opening cinematic. Nearby players keep their camera and movement control, but can join the shared fight. Peaceful difficulty and blocked emergence leave the knot available for another attempt.
+
+If no living Survival/Adventure player remains within the Mind and its 16-block margin for **30 seconds**, the fight resets without rewards and the knot returns. The next attempt begins at full health. Synaptic Nodes destroyed by the abandoned boss regrow into empty space; your construction and ordinary mining remain. Defeating Naeglerophaeon permanently clears that Mind. Existing generated Minds can acquire the knot without regenerating their terrain.
+
 A deep-maroon cluster of luminous red and yellow orbs swims freely through the Vagrant Mind.
 Twelve ivory tendrils trail behind **Naeglerophaeon**, joined near their roots by thin red membranes.
 Pulses travel outward through the tendril nodes and spark at their tips. A much longer crimson
@@ -80,8 +86,8 @@ side to side. When it turns, the outer tendril joints and long crimson tail foll
 the core instead of rotating as a rigid cluster.
 
 It also tends the web. When a Myelin Borer chews a repairable one-block gap, Naeglerophaeon
-may leave its patrol to close it with yellow-white Ductilis lightning. Cutting a fiber or bundle
-yourself is a mistake: it does not stop fighting. It turns on whoever made the cut, flashes, and
+may leave its patrol to close it with yellow-white Ductilis lightning. Once the encounter is awake, cutting a fiber or bundle
+yourself provokes it: it does not stop fighting. It turns on whoever made the cut, flashes, and
 strikes them with lightning that leaves Neural Overload behind. Then it seals the gap from range,
 or comes back to mend it once the fight is over.
 

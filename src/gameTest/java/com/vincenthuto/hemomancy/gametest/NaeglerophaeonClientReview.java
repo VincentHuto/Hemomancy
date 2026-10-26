@@ -4,6 +4,8 @@ import com.google.gson.JsonParser;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.encounter.VagrantMindEncounterData;
 import com.vincenthuto.hemomancy.common.worldgen.structure.vagrantmind.VagrantMindPiece;
 import java.nio.file.Files;
 import java.util.HashSet;
@@ -34,6 +36,10 @@ public final class NaeglerophaeonClientReview {
     private static boolean testGrip;
     private static int gripHits;
     private static long lastGripHit;
+    private static volatile VagrantMindPiece dormantPiece;
+    private static int miningTicks;
+    private static volatile int captureCountdown;
+    private static String captureLabel;
     private static final Set<Integer> captured = new HashSet<>();
 
     @SubscribeEvent public static void tick(ClientTickEvent.Post event) {
@@ -42,6 +48,23 @@ public final class NaeglerophaeonClientReview {
         var root = mc.gameDirectory.toPath().toAbsolutePath().normalize();
         if (!root.endsWith("naeglerophaeon-client") || mc.player == null || mc.getSingleplayerServer() == null) return;
         try {
+            if (captureCountdown > 0 && --captureCountdown == 0)
+                Screenshot.grab(mc.gameDirectory, "ganglion-" + captureLabel + ".png", mc.getMainRenderTarget(), message -> {});
+            if (miningTicks > 0 && mc.screen == null && dormantPiece != null) {
+                BlockPos knot = dormantPiece.awakeningPosition();
+                if (!mc.level.getBlockState(knot).is(BlockInit.dormant_ganglion.get())) {
+                    miningTicks = 0;
+                    captureLabel = "client-mine";
+                    captureCountdown = 20;
+                    Hemomancy.LOGGER.info("GANGLION_REVIEW client mining completed through normal destroy packets");
+                } else if (++miningTicks > 600) {
+                    miningTicks = 0;
+                    Hemomancy.LOGGER.error("GANGLION_REVIEW client mining timed out");
+                } else {
+                    mc.gameMode.continueDestroyBlock(knot, net.minecraft.core.Direction.NORTH);
+                    mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+                }
+            }
             NaeglerophaeonEntity boss = null;
             for (var entity : mc.level.entitiesForRendering())
                 if (entity.getUUID().equals(bossId) && entity instanceof NaeglerophaeonEntity found) boss = found;
@@ -85,6 +108,44 @@ public final class NaeglerophaeonClientReview {
             var data = JsonParser.parseString(Files.readString(request)).getAsJsonObject();
             Files.delete(request);
             String op = data.get("op").getAsString();
+            if (op.equals("mine") && dormantPiece != null) {
+                BlockPos knot = dormantPiece.awakeningPosition();
+                Hemomancy.LOGGER.info("GANGLION_REVIEW client mining progress/tick={} grounded={}",
+                        mc.level.getBlockState(knot).getDestroyProgress(mc.player, mc.level, knot), mc.player.onGround());
+                mc.gameMode.startDestroyBlock(knot, net.minecraft.core.Direction.NORTH);
+                miningTicks = 1;
+                return;
+            }
+            if (op.equals("dormant") || op.equals("awaken") || op.equals("retreat") || op.equals("return")) {
+                firstPerson = true;
+                mc.setCameraEntity(mc.player);
+                mc.options.hideGui = false;
+                mc.options.pauseOnLostFocus = false;
+                UUID playerId = mc.player.getUUID();
+                mc.getSingleplayerServer().execute(() -> {
+                    var player = mc.getSingleplayerServer().getPlayerList().getPlayer(playerId);
+                    try {
+                        if (op.equals("dormant")) setupDormant(player);
+                        else if (dormantPiece != null) {
+                            BlockPos knot = dormantPiece.awakeningPosition();
+                            if (op.equals("awaken")) {
+                                player.gameMode.destroyBlock(knot);
+                                bossId = VagrantMindEncounterData.get(player.serverLevel()).encounter(dormantPiece.origin()).entity();
+                            } else if (op.equals("retreat")) {
+                                BlockPos far = dormantPiece.origin().offset(400, 0, 0);
+                                player.serverLevel().setBlockAndUpdate(far.below(), net.minecraft.world.level.block.Blocks.BARRIER.defaultBlockState());
+                                player.teleportTo(player.serverLevel(), far.getX() + .5, far.getY(), far.getZ() + .5, 0, 0);
+                            } else standAtKnot(player, knot);
+                        }
+                        var entry = VagrantMindEncounterData.get(player.serverLevel()).encounter(dormantPiece.origin());
+                        Hemomancy.LOGGER.info("GANGLION_REVIEW {} entity={} defeated={} knot={}", op,
+                                entry == null ? null : entry.entity(), entry != null && entry.defeated(), dormantPiece.awakeningPosition());
+                        captureLabel = op;
+                        captureCountdown = 20;
+                    } catch (Exception failure) { Hemomancy.LOGGER.error("GANGLION_REVIEW failure", failure); }
+                });
+                return;
+            }
             if(op.equals("griptest")) { testGrip=true; gripHits=0; return; }
             if (op.equals("camera")) {
                 angle = data.get("angle").getAsDouble();
@@ -185,6 +246,45 @@ public final class NaeglerophaeonClientReview {
         player.teleportTo(level, boss.getX() + 2, boss.getY() + 1, boss.getZ() + 3, 0, 0);
         player.getAbilities().flying = true;
         player.onUpdateAbilities();
+    }
+
+    /** Native activation fixture with real structure references; ordinary mining still starts the fight. */
+    private static void setupDormant(ServerPlayer player) {
+        var level = player.getServer().getLevel(Level.END);
+        var origin = new BlockPos(2048 + (int) (level.getGameTime() / 20) * 512, 150, 0);
+        dormantPiece = new VagrantMindPiece(origin, 37L);
+        player.setGameMode(GameType.CREATIVE);
+        player.teleportTo(level, origin.getX(), origin.getY(), origin.getZ(), 0, 0);
+        var box = dormantPiece.getBoundingBox();
+        dormantPiece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(), level.random,
+                box, new ChunkPos(origin), origin);
+        var structure = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE)
+                .get(Hemomancy.rloc("vagrant_mind"));
+        var startChunk = level.getChunkAt(origin);
+        startChunk.setStartForStructure(structure, new net.minecraft.world.level.levelgen.structure.StructureStart(
+                structure, startChunk.getPos(), 0, new net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer(java.util.List.of(dormantPiece))));
+        for (int x = box.minX() >> 4; x <= box.maxX() >> 4; x++)
+            for (int z = box.minZ() >> 4; z <= box.maxZ() >> 4; z++)
+                level.getChunk(x, z).addReferenceForStructure(structure, startChunk.getPos().toLong());
+        BlockPos knot = dormantPiece.awakeningPosition();
+        level.setBlockAndUpdate(knot, BlockInit.dormant_ganglion.get().defaultBlockState());
+        player.setGameMode(GameType.SURVIVAL);
+        player.getAbilities().invulnerable = true;
+        player.onUpdateAbilities();
+        player.setNoGravity(true);
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                net.minecraft.world.effect.MobEffects.REGENERATION, 7200, 4, false, false));
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE, 7200, 4, false, false));
+        standAtKnot(player, knot);
+        bossId = null;
+    }
+
+    private static void standAtKnot(ServerPlayer player, BlockPos knot) {
+        var level = player.getServer().getLevel(Level.END);
+        level.setBlockAndUpdate(knot.offset(0, -1, 4), net.minecraft.world.level.block.Blocks.BARRIER.defaultBlockState());
+        player.teleportTo(level, knot.getX() + .5, knot.getY(), knot.getZ() + 4.5, 180, 16);
+        player.setNoGravity(false);
     }
 
     private static void set(Object object, String name, Object value) throws ReflectiveOperationException {

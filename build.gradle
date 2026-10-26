@@ -230,8 +230,8 @@ dependencies {
     implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 
     //Astral
-    localRuntime files("libs/observerlib-1.10.3.jar")
-    localRuntime files ("libs/AstralSorcery-2.0.0.3.jar")
+    //    localRuntime files("libs/observerlib-1.10.3.jar")
+    //    localRuntime files ("libs/AstralSorcery-2.0.0.3.jar")
 
 
     //Demonology

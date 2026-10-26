@@ -16,6 +16,7 @@ def putricielFightReview = gradleOr('putricielFightReview', 'false') == 'true'
 def hemorathFightReview = gradleOr('hemorathFightReview', 'false') == 'true'
 
 def reviewClients = [
+    phlegethosomaReviewClient: [dir: 'build/phlegethosoma-client', user: 'FlukeReview', size: review, props: ['hemomancy.phlegethosomaReview': 'true']],
     speculumPlantingReviewClient: [dir: 'build/speculum-planting-review', user: 'PlantingReview', size: review,
                                    props: ['hemomancy.speculumPlantingReview': 'true',
                                            'hemomancy.speculumPlantingReviewLabel': gradleOr('speculumPlantingReviewLabel', 'after')]],

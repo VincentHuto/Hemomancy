@@ -3328,6 +3328,9 @@ src/test/java/com/vincenthuto/hemomancy/common/world/fold/NonEuclideanHallwayPla
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/BrokenChurchBiomePlacementResourceTest.java,main,src/main/resources,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/BrokenChurchBiomePlacementResourceTest.java,main,src/main/resources/data/hemomancy/tags/worldgen/biome/has_structure/broken_church.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/BrokenChurchBiomePlacementResourceTest.java,main,src/main/resources/data/hemomancy/worldgen/structure/broken_church.json,resource,base-dir
+src/test/java/com/vincenthuto/hemomancy/common/worldgen/DormantGanglionResourcesTest.java,junit,src/main/resources/assets/hemomancy/textures/block/dormant_ganglion.png,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/worldgen/DormantGanglionResourcesTest.java,junit,src/main/resources/assets/hemomancy/textures/block/dormant_ganglion.png.mcmeta,resource,by-name
+src/test/java/com/vincenthuto/hemomancy/common/worldgen/DormantGanglionResourcesTest.java,junit,src/main/resources/data/hemomancy/loot_table/blocks/dormant_ganglion.json,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/DynastyCastleWorldgenSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/init/StructureInit.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/DynastyCastleWorldgenSourceTest.java,junit,src/main/resources/data/hemomancy/tags/worldgen/biome/has_structure/dynasty_castle.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/DynastyCastleWorldgenSourceTest.java,junit,src/main/resources/data/hemomancy/worldgen/structure/dynasty_castle.json,resource,exact

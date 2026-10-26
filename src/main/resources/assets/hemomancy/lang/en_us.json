@@ -8915,5 +8915,15 @@
   "cardinal_rite_wave.hemomancy.rogue_will": "Rogue Will",
   "cardinal_rite_wave.hemomancy.false_omens": "False Omens",
   "cardinal_rite_wave.hemomancy.response_sigil": "Response Sigil",
-  "cardinal_rite_wave.hemomancy.covenant_pressure": "Covenant Pressure"
+  "cardinal_rite_wave.hemomancy.covenant_pressure": "Covenant Pressure",
+  "block.hemomancy.dormant_ganglion": "Dormant Ganglion",
+  "message.hemomancy.dormant_ganglion.warning": "Dormant Ganglion — break to awaken Naeglerophaeon.",
+  "message.hemomancy.dormant_ganglion.peaceful": "The ganglion remains dormant in Peaceful difficulty.",
+  "message.hemomancy.dormant_ganglion.blocked": "The ganglion cannot unfold here. Clear space around the inner synaptic nodes.",
+  "entity.hemomancy.phlegethosoma": "Phlegethosoma",
+  "entity.hemomancy.coagulum_projectile": "Coagulum Glob",
+  "entity.hemomancy.temporary_coagulum": "Temporary Coagulum",
+  "item.hemomancy.spawn_egg_phlegethosoma": "Phlegethosoma Spawn Egg",
+  "boss.hemomancy.phlegethosoma.name": "Phlegethosoma",
+  "boss.hemomancy.phlegethosoma.epithet": "The Arterial Fluke"
 }

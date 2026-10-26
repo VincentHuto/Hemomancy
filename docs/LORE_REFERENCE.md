@@ -1357,7 +1357,7 @@ anything. They are only waking a thing that had managed to stop.
 
 ## 20. Naeglerophaeon
 
-The Borers mend the Vagrant Mind's fibers. Naeglerophaeon takes what enters them. A maroon core
+The Borers mend the Vagrant Mind's fibers. Naeglerophaeon sleeps within a dormant ganglion, a maroon knot held in an ivory sheath among the inner nerves. Passing through the organ does not wake it. Breaking that sheath releases it into the web. When the organ empties of intruders, the predator eventually withdraws and the knot closes again. Once roused, Naeglerophaeon takes what enters the fibers. A maroon core
 holds a cluster of burning ganglia, surrounded by ivory tendrils and translucent crimson webs.
 Signals travel along the shorter arms, each ending in a small electrical discharge. One immense
 red axon trails behind, its lights steady. When the creature feeds, that axon swings forward to
@@ -1367,3 +1367,10 @@ found the Mind or an old reflex of the Mind itself. It does not need open water 
 ### Shared restraint and marine feeding materials
 
 Enthralling Filament is the ordinary restraint fibre formerly named Puppeteering Thread. A Peacock Spider spins it; a surface Hemojelly gathers prey with living tendrils; a Blood Drunk Puppeteer supplies it through a different expression of restraint. Its broader origin does not grant knowledge or control of a Crossbar. Hemojellies float like blood-coloured man-of-war colonies in warm and temperate seas, their feeding reach hanging below the surface. Deeper Siphonophores express Ductilis through brief tentacle discharges and ordinary neural ganglions. Those clusters are not the singular Naeglerophaeon organ. Chromatophores describe shared color/light anatomy rather than a cuttle-exclusive substance.
+
+
+### Phlegethosoma, the Arterial Fluke
+
+Phlegethosoma is a native ichor-feeding animal of the Phlegethontic Basin. Its long, serpentine blood-fluke body, adhesive oral sucker, soft frilled edges and distending crop support rapid, vicious swimming, muscular suction, clotting, feeding and rupture. It travels through ichor by a wave of lateral contractions, with a narrow body tapering into a ribbon tail; the former broad, plated limpet silhouette is superseded. It is neither a Horseman variant nor a summoned guardian, demon or Harbinger creation. Its pressure spray is expelled ichor rather than flame magic. The encounter is accessible to both paths and does not add a promotion gate.
+
+The Arterial Fluke can disappear below deep ichor, drive its body out of the pool toward prey, then fold back beneath the surface. The crimson disturbance above its submerged body precedes the breach; it remains an animal propelled by muscular motion.

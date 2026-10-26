@@ -192,6 +192,9 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.priestess_eruption.get(), com.vincenthuto.hemomancy.client.render.entity.boss.annetta.PriestessEruptionRenderer::new);
         event.registerEntityRenderer(EntityInit.stained_priestess.get(), StainedPriestessRenderer::new);
         event.registerEntityRenderer(EntityInit.latent_annetta_infection.get(), LatentAnnettaInfectionRenderer::new);
+        event.registerEntityRenderer(EntityInit.phlegethosoma.get(), com.vincenthuto.hemomancy.client.render.entity.boss.phlegethosoma.PhlegethosomaRenderer::new);
+        event.registerEntityRenderer(EntityInit.coagulum_projectile.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(EntityInit.temporary_coagulum.get(), com.vincenthuto.hemomancy.client.render.entity.boss.phlegethosoma.CoagulumRenderer::new);
         event.registerEntityRenderer(EntityInit.putriciel.get(), PutricielRenderer::new);
         event.registerEntityRenderer(EntityInit.velorum.get(), VelorumRenderer::new);
         event.registerEntityRenderer(EntityInit.vesper_crowned_refusal.get(), VesperTheCrownedRefusalRenderer::new);

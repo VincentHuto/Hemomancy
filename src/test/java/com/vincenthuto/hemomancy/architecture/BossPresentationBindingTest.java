@@ -40,7 +40,7 @@ class BossPresentationBindingTest {
 					wrong.add(RepoPaths.display(file) + ": " + matcher.group(1));
 			}
 		}
-		assertEquals(11, found, "one bar per boss");
+		assertEquals(12, found, "one bar per boss");
 		assertEquals(Set.of(), wrong, "pass a BossPresentationIds.FRAME_* id as the bar's frame");
 	}
 

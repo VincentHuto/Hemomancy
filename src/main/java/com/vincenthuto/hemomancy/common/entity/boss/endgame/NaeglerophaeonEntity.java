@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FiberRepair;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTravelPath;
 import com.vincenthuto.hemomancy.common.encounter.VagrantMindEncounterData;
+import com.vincenthuto.hemomancy.common.encounter.VagrantMindEncounterManager;
 import com.vincenthuto.hemomancy.common.worldgen.structure.vagrantmind.VagrantMindFiberWeb;
 import com.vincenthuto.hemomancy.common.worldgen.structure.vagrantmind.VagrantMindGeometry;
 import java.util.ArrayDeque;
@@ -223,6 +224,7 @@ public final class NaeglerophaeonEntity extends Monster {
         return e instanceof Player p && valid(p) ? p : null;
     }
     @Override public void tick() {
+        if (isAlive() && !VagrantMindEncounterManager.tickResident(this)) return;
         super.tick(); setNoGravity(true);
         parts[0].setOldPosAndRot();
         parts[0].setPos(gripPosition(1).add(0,-.3,0));
@@ -860,7 +862,8 @@ public final class NaeglerophaeonEntity extends Monster {
         BlockPos node=blastTarget;
         blastTarget=null;
         if(!usable(server,node)) return;
-        server.destroyBlock(node,false,this);
+        if (!server.destroyBlock(node,false,this)) return;
+        if (mindOrigin != null) VagrantMindEncounterData.get(server).destroyedNode(mindOrigin,getUUID(),node);
         Vec3 center=Vec3.atCenterOf(node);
         NaeglerophaeonEffects.nodeBurst(server,center);
         int count=NaeglerophaeonCombatRules.homingSparks(random.nextInt(),homing.size());
