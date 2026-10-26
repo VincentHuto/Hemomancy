@@ -11,6 +11,10 @@ public final class AnnettaEncounterRules {
     public static final int BREAK_MIN_TICKS = 2400;
     public static final float BREAK_MIN_DAMAGE = 50.0F;
 
+    /** Her opening on the Harbinger route: passive and untouchable while she arms herself; she screams at the card. */
+    public static final int HARBINGER_INTRO_TICKS = 60;
+    public static final int HARBINGER_SCREAM_AT = 20;
+
     // The break, in scene ticks.
     public static final int SHIELD_DROP = 12;
     public static final int LAST_WORDS = 24;

@@ -1,9 +1,15 @@
 package com.vincenthuto.hemomancy.client.render.entity.boss.velorum;
 
+import com.vincenthuto.hemomancy.client.render.entity.boss.SaintRiseRender;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumModel;
-import com.vincenthuto.hemomancy.client.render.AnimationTime;
+import com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumAnimState;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+import com.vincenthuto.hemomancy.client.render.layer.mob.VelorumFrostGlowLayer;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -15,6 +21,7 @@ public class VelorumRenderer extends MobRenderer<VelorumEntity, VelorumModel<Vel
 
     public VelorumRenderer(Context context) {
         super(context, new VelorumModel<>(context.bakeLayer(VelorumModel.LAYER_LOCATION)), 0.7F);
+        addLayer(new VelorumFrostGlowLayer<>(this));
     }
 
     @Override
@@ -24,17 +31,21 @@ public class VelorumRenderer extends MobRenderer<VelorumEntity, VelorumModel<Vel
 
     @Override
     protected void scale(VelorumEntity entity, PoseStack poseStack, float partialTick) {
-        float scale = 1.0F;
-        if (entity.isMartyrdom()) {
-            scale *= 1.02F + (float) Math.sin(AnimationTime.age(entity, partialTick) * 0.5F) * 0.015F;
-        }
-        if (entity.getVisualState() == VelorumEntity.VISUAL_FROST_NOVA) {
-            scale *= 0.98F;
-        } else if (entity.getVisualState() == VelorumEntity.VISUAL_VEIL) {
-            scale *= 1.04F;
-        } else if (entity.getVisualState() == VelorumEntity.VISUAL_SILENCE_DRAIN) {
-            scale *= 1.0F + (float) Math.sin(AnimationTime.age(entity, partialTick) * 0.7F) * 0.04F;
-        }
-        poseStack.scale(scale, scale, scale);
+        SaintRiseRender.sink(poseStack, entity, partialTick);
+    }
+
+    @Override
+    protected float getFlipDegrees(VelorumEntity entity) { return 0; }
+
+    @Override
+    public void render(VelorumEntity entity,float yaw,float partial,PoseStack poses,MultiBufferSource buffers,int light) {
+        super.render(entity,yaw,partial,poses,buffers,light);
+        float bodyYaw=Mth.rotLerp(partial,entity.yBodyRotO,entity.yBodyRot);
+        Vec3[] lanterns=java.util.Arrays.stream(model.lanterns()).map(point->offset(point,bodyYaw)).toArray(Vec3[]::new);
+        VelorumAnimState.of(entity).attachments(offset(model.core(),bodyYaw),offset(model.claw(),bodyYaw),lanterns);
+    }
+    private static Vec3 offset(Vector3f point,float yaw) {
+        point.set(-point.x,1.501F-point.y,point.z);
+        return new Vec3(point.rotateY((180-yaw)*Mth.DEG_TO_RAD));
     }
 }

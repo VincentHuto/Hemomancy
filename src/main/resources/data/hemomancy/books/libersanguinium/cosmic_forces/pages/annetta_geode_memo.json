@@ -1,6 +1,6 @@
 {
   "type": "hutoslib:page",
-  "ordinality": 5,
+  "ordinality": 8,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Field Scout's Notes",
   "subtitle": "The bugs were always a problem",

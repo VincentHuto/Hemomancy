@@ -9,7 +9,7 @@ import net.minecraft.commands.Commands;
  * events. Each branch is its own class, in this package, whose {@code build()} returns the branch:
  * {@code /hemo blood}, {@code bloodline}, {@code degree}, {@code morphling}, {@code qliphoth}, {@code skills},
  * {@code unstained}, {@code organs}, {@code tendency}, {@code bloodmoon}, {@code fane}, {@code chamber}, {@code will},
- * {@code summons}, {@code manipulations} and {@code slots}. Most paths take an optional trailing player and act on
+ * {@code summons}, {@code manipulations}, {@code slots}, {@code mycophant} and {@code vesper}. Most paths take an optional trailing player and act on
  * the executor without one. The syntax is pinned node by node by {@code HemoCommandTreeTest}.
  */
 public final class HemoCommand {
@@ -35,6 +35,8 @@ public final class HemoCommand {
 				.then(WillSubcommand.build())
 				.then(SummonsSubcommand.build())
 				.then(ManipulationsSubcommand.build())
-				.then(SlotsSubcommand.build()));
+				.then(SlotsSubcommand.build())
+				.then(MycophantSubcommand.build())
+				.then(VesperSubcommand.build()));
 	}
 }

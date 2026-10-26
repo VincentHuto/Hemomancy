@@ -10,12 +10,13 @@ public final class MycophantClaimRules {
 	private MycophantClaimRules() {
 	}
 
+	/** The embrace's meter fills over 5 s, the fusion's over 4 s, so the grab stops filling the fight. */
 	public static float meterPerTick(int phase) {
-		return phase >= 2 ? 1.0F / 110.0F : 1.0F / 160.0F;
+		return phase >= 2 ? 1.0F / 80.0F : 1.0F / 100.0F;
 	}
 
 	public static int hitsToBreak(int phase) {
-		return phase >= 2 ? 6 : 5;
+		return phase >= 2 ? 5 : 4;
 	}
 
 	public static float filledMeterDamage(int phase) {
@@ -56,6 +57,25 @@ public final class MycophantClaimRules {
 	 */
 	public static boolean castBreaks(boolean held, boolean hitWithinWindow, boolean alreadyUsedThisHold) {
 		return !alreadyUsedThisHold && (held || hitWithinWindow);
+	}
+
+	/** Ticks after a catch while the held player is still being drawn in to the hold point. */
+	public static int holdPullTicks() {
+		return 10;
+	}
+
+	/** The share of the remaining gap the held player's own client closes each tick while drawn in. */
+	public static double holdPullPerTick() {
+		return 0.5;
+	}
+
+	/**
+	 * How far (blocks) a held player may sit from the hold point before the server puts them there itself. The held
+	 * client pins itself, so the server only steps in for a client that has fallen out of step; a snap any tighter
+	 * fights the client's own placement and shakes the player back and forth.
+	 */
+	public static double holdSlack(int heldTicks) {
+		return heldTicks < holdPullTicks() ? 3.75 : 1.0;
 	}
 
 	public static double siphonRange() {

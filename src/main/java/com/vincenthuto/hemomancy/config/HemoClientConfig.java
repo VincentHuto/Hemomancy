@@ -5,6 +5,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public class HemoClientConfig {
     public static ModConfigSpec.BooleanValue MICROSCOPE_REDUCED_MOTION;
     public static ModConfigSpec.BooleanValue MICROSCOPE_LOW_DENSITY;
+    public static ModConfigSpec.BooleanValue BOSS_BAR_FRAMES;
+    public static ModConfigSpec.BooleanValue CINEMATIC_BOSS_SCENES;
+    public static ModConfigSpec.BooleanValue BOSS_SCENE_SHAKE;
 
 	public static ModConfigSpec.IntValue HUD_LOCATION;
 	public static ModConfigSpec.EnumValue<MorphlingHudMode> MORPHLING_HUD_MODE;
@@ -51,6 +54,14 @@ public class HemoClientConfig {
                 .comment("Slow cellular motion and replace sudden displacement with fades.").define("reducedMotion", false);
         MICROSCOPE_LOW_DENSITY = CLIENT_BUILDER.translation("hemomancy.configuration.microscopeLowDensity")
                 .comment("Show fewer cells without changing specimen information or examination time.").define("lowDensity", false);
+        CLIENT_BUILDER.pop();
+        CLIENT_BUILDER.push("boss_presentation");
+        BOSS_BAR_FRAMES = CLIENT_BUILDER.translation("hemomancy.configuration.bossBarFrames")
+                .comment("Draw each Hemomancy boss's bar in its own frame instead of the plain vanilla bar.").define("bossBarFrames", true);
+        CINEMATIC_BOSS_SCENES = CLIENT_BUILDER.translation("hemomancy.configuration.cinematicBossScenes")
+                .comment("Let boss openings move the camera. Off keeps the letterbox and title card but leaves the view with you.").define("cinematicBossScenes", true);
+        BOSS_SCENE_SHAKE = CLIENT_BUILDER.translation("hemomancy.configuration.bossSceneShake")
+                .comment("Shake the view during boss openings.").define("bossSceneShake", true);
         CLIENT_BUILDER.pop();
 		CLIENT_BUILDER.comment("Client settings for the power generator").push("powergen");
 
@@ -163,6 +174,18 @@ public class HemoClientConfig {
 	public static boolean useLowPolyVesperFightOuterRing() {
 		return USE_LOW_POLY_VESPER_FIGHT_OUTER_RING == null
 				|| USE_LOW_POLY_VESPER_FIGHT_OUTER_RING.get();
+	}
+
+	public static boolean bossBarFrames() {
+		return BOSS_BAR_FRAMES == null || BOSS_BAR_FRAMES.get();
+	}
+
+	public static boolean cinematicBossScenes() {
+		return CINEMATIC_BOSS_SCENES == null || CINEMATIC_BOSS_SCENES.get();
+	}
+
+	public static boolean bossSceneShake() {
+		return BOSS_SCENE_SHAKE == null || BOSS_SCENE_SHAKE.get();
 	}
 
 	public static boolean useTexturedDialogueStyle() {

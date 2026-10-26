@@ -23,8 +23,8 @@ rotates, fades, and clips these PNGs; it does not paint their shapes with GUI fi
 | `special/hemolymph_cell.png` | 32 x 32 | Bright-blue Cleansing Hemolymph cell. |
 | `special/hemolymph_spot.png` | 8 x 8 | White hemolymph inclusion. |
 | `special/hemolymph_filament.png` | 32 x 32 | Fine hemolymph connective strand. |
-| `special/hemorath_iron.png`, `special/hemorath_void.png` | 16 x 16 | Hemorath's ferric and mortem inclusions. |
-| `special/seraphae_halo.png`, `special/seraphae_mote.png` | 32 x 32, 8 x 8 | Seraphae's animus and lux inclusions. |
+| `special/hemorath_iron.png`, `special/hemorath_void.png` | 16 x 16 | Hemorath's ferric and animus inclusions. |
+| `special/seraphae_halo.png`, `special/seraphae_mote.png` | 32 x 32, 8 x 8 | Seraphae's lux inclusions; her ductilis strands reuse `ductilis_link.png`, tinted gold. |
 | `special/putriciel_ember.png`, `special/putriciel_spore.png` | 16 x 16 | Putriciel's flammeus and mortem inclusions. |
 | `special/velorum_crystal.png`, `special/velorum_shadow.png` | 16 x 16 | Velorum's congeatio and tenebris inclusions. |
 

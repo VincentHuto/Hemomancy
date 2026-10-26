@@ -122,6 +122,7 @@ public class ShaderInit {
     public static ShaderHolder MANIPULATION_MOLTEN = thermal("molten");
     public static ShaderHolder MANIPULATION_GLASS = thermal("glass");
     public static ShaderHolder MANIPULATION_CRUOR = thermal("cruor");
+    public static ShaderHolder MANIPULATION_RIME = thermal("rime");
     public static ShaderHolder MANIPULATION_SKIN = new ShaderHolder(Hemomancy.rloc("world/manipulation_skin"),
             DefaultVertexFormat.NEW_ENTITY, "ColorModulator");
 
@@ -238,6 +239,7 @@ public class ShaderInit {
         registerShader(event, MANIPULATION_MOLTEN.createInstance(provider));
         registerShader(event, MANIPULATION_GLASS.createInstance(provider));
         registerShader(event, MANIPULATION_CRUOR.createInstance(provider));
+        registerShader(event, MANIPULATION_RIME.createInstance(provider));
         registerShader(event, MANIPULATION_SKIN.createInstance(provider));
         registerShader(event, CAST_VEINS.createInstance(provider));
         registerShader(event, CAST_LUMEN.createInstance(provider));

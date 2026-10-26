@@ -47,7 +47,7 @@ public class LatentAnnettaInfectionRenderer extends MobRenderer<LatentAnnettaInf
 
     /** It bleeds where it stands: the infected pool's surface, spreading as it tears free and drying as it dies. */
     private static void renderStain(LatentAnnettaInfectionEntity entity, float partialTick, PoseStack poseStack, MultiBufferSource buffer) {
-        float spread = HemoEasing.smoothstep((entity.getEmergeTick() + partialTick - LatentCombatRules.EMERGE_HIDDEN) / 14.0F);
+        float spread = HemoEasing.smoothstep((entity.emergeTime(partialTick) - LatentCombatRules.EMERGE_HIDDEN) / 14.0F);
         float dying = entity.deathTime > 0 ? 1.0F - Math.min(1.0F, (entity.deathTime + partialTick) / 20.0F) : 1.0F;
         if (spread <= 0.0F || dying <= 0.0F) return;
         float shaderTime = (float) (AnimationTime.gameTime(entity.level(), partialTick) % 24000.0D);
@@ -72,7 +72,7 @@ public class LatentAnnettaInfectionRenderer extends MobRenderer<LatentAnnettaInf
         poseStack.scale(SCALE, SCALE, SCALE);
         if (entity.isEmerging()) {
             // It rises up out of the floor behind her; below the boards until it tears free.
-            float rise = LatentCombatRules.rise(entity.getEmergeTick() + partialTick);
+            float rise = LatentCombatRules.rise(entity.emergeTime(partialTick));
             poseStack.translate(0.0F, (1.0F - rise) * 2.4F, 0.0F);
         }
     }

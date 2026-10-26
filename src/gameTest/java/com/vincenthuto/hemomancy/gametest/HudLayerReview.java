@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
@@ -33,7 +34,7 @@ import java.util.function.Supplier;
 /**
  * With hemomancy.hudLayerReview, draws the HUD over a fixed test pattern once per scene: each full-screen effect that
  * draws before the HUD (white humor, morphic nectar, the Circus edge, the Sanguine Omen world grade) and the
- * Antecedent scar marker that draws after it, alone and stacked. The game time, the frame's partial tick and the
+ * Antecedent scar marker that draws after it, alone and stacked, then a short and a long action-bar message. The game time, the frame's partial tick and the
  * vignette are pinned, so a before and an after run of a pristine HudLayerReview save compare pixel for pixel. Shots
  * land in the game directory's screenshots folder as {@code hud-<label>-<scene>.png}. Excluded from release jars.
  */
@@ -52,6 +53,11 @@ public final class HudLayerReview {
         SanguineOmenOverlay.instance.start(10, 0.85F, 7, SanguineOmenOverlay.Mode.WORLD_GRADE);
         for (int i = 0; i < 3; i++) SanguineOmenOverlay.instance.tick();
     };
+    private static final Runnable ACTION_BAR_SHORT = () -> Minecraft.getInstance().gui.setOverlayMessage(
+            Component.translatable("hemomancy.machine_access.locked",
+                    Component.translatable("block.hemomancy.vial_centrifuge")), false);
+    private static final Runnable ACTION_BAR_LONG = () -> Minecraft.getInstance().gui.setOverlayMessage(
+            Component.translatable("hemomancy.mnemonist.chamber.guided.unavailable"), false);
     private static final Runnable SCAR = () -> {
         var player = Minecraft.getInstance().player;
         AntecedentClientEffects.accept(new AntecedentEffectPacket(1, player.blockPosition().offset(6, 0, 3)));
@@ -69,7 +75,10 @@ public final class HudLayerReview {
                 CIRCUS.run();
                 OMEN.run();
             }),
-            new Scene("stacked_white_humor", () -> BlockInit.WHITE_HUMOR_BLOCK.get().defaultBlockState(), OMEN));
+            new Scene("stacked_white_humor", () -> BlockInit.WHITE_HUMOR_BLOCK.get().defaultBlockState(), OMEN),
+            // The action bar wraps a message wider than its line limit and stacks the lines upward.
+            new Scene("action_bar", null, ACTION_BAR_SHORT),
+            new Scene("action_bar_long", null, ACTION_BAR_LONG));
 
     private static int ticks;
     private static int scene = -1;
@@ -118,6 +127,7 @@ public final class HudLayerReview {
             }
             CircusPerceptionOverlay.clear();
             SanguineOmenOverlay.instance.clear();
+            mc.gui.overlayMessageTime = 0;
         }
         if (++scene == SCENES.size()) {
             Hemomancy.LOGGER.info("HUD_LAYER_REVIEW captured {}", shots);

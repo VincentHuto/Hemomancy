@@ -819,8 +819,8 @@ public class LatentAnnettaInfectionModel extends HierarchicalModel<LatentAnnetta
 		float t = ageInTicks;
 		float move = Mth.clamp(limbSwingAmount, 0.0F, 1.0F);
 		LatentCombatRules.Attack attack = entity.getAttack();
-		float a = entity.getActionTick() + partial;
-		float emerge = entity.getEmergeTick() + partial;
+		float a = entity.actionTime(partial);
+		float emerge = entity.emergeTime(partial);
 		float hurt = entity.hurtTime > 0 ? entity.hurtDuration - (entity.hurtTime - partial) : -100.0F;
 		float dying = entity.deathTime > 0 ? Math.min(1.0F, (entity.deathTime + partial) / 20.0F) : 0.0F;
 		Drive d = this.drive;

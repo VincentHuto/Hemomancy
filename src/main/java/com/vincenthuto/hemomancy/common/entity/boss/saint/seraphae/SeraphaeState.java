@@ -7,13 +7,19 @@ package com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae;
  */
 public enum SeraphaeState {
 	/** Single cohesive entity. Slowly loses containment integrity over time. */
-	STABLE,
+	STABLE(200),
 	/** Splitting into multiple fragments that act independently. */
-	FRACTURING,
+	FRACTURING(100),
 	/** Fully dispersed — untargetable, environmental hazards only. */
-	DISPERSED,
+	DISPERSED(160),
 	/** Fragments converging back into core — vulnerability window for large integrity gain. */
-	CONDENSING;
+	CONDENSING(80);
+
+	private final int duration;
+
+	SeraphaeState(int duration) { this.duration = duration; }
+
+	public int duration() { return duration; }
 
 	public static SeraphaeState fromId(int id) {
 		SeraphaeState[] values = values();

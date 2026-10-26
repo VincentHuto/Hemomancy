@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 /** Sorts translucent quads across manipulation materials, retaining buffers between frames. */
 final class LuxUmbraBatch {
-    enum Material { LUX, UMBRA, FLAME, MOLTEN, GLASS, CRUOR, DUCTILIS, ANIMUS, MORTEM }
+    enum Material { LUX, UMBRA, FLAME, MOLTEN, GLASS, CRUOR, DUCTILIS, ANIMUS, MORTEM, RIME }
     private final List<Quad> quads = new ArrayList<>();
     private final Writer[] writers = java.util.Arrays.stream(Material.values()).map(Writer::new).toArray(Writer[]::new);
     private int count;

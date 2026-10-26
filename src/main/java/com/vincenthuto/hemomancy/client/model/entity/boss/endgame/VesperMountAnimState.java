@@ -44,6 +44,7 @@ public final class VesperMountAnimState {
 	private final BossReplayClock flightClock = new BossReplayClock();
 	private final BossReplayClock burrowClock = new BossReplayClock();
 	private final BossReplayClock transitionClock = new BossReplayClock();
+	private final BossReplayClock arrivalClock = new BossReplayClock();
 
 	private boolean started;
 	private float lastAge;
@@ -55,6 +56,7 @@ public final class VesperMountAnimState {
 	private float flightTime;
 	private float burrowTime;
 	private float transitionTime;
+	private float arrivalTime = -1.0F;
 
 	// Gait: what the body did last tick, eased so a single lerp hitch never kicks the legs.
 	private float targetRate;
@@ -116,6 +118,7 @@ public final class VesperMountAnimState {
 		flightTime = flightClock.sample(entity.getFlightMode().ordinal(), entity.getFlightTick(), tick, partial, 1);
 		burrowTime = burrowClock.sample(entity.getBurrowHuntTicks(), entity.getBurrowTick(), tick, partial, 1);
 		transitionTime = transitionClock.sample(0, entity.getTransitionTick(), tick, partial, 1);
+		arrivalTime = entity.getArrivalTick() < 0 ? -1.0F : arrivalClock.sample(0, entity.getArrivalTick(), tick, partial, 1);
 		renderY = (float) Mth.lerp(partial, entity.yOld, entity.getY());
 
 		if (tick != lastTick) {
@@ -330,6 +333,8 @@ public final class VesperMountAnimState {
 	public float flightTime() { return flightTime; }
 	public float burrowTime() { return burrowTime; }
 	public float transitionTime() { return transitionTime; }
+	/** Ticks into his arrival, or -1 once he is fighting. */
+	public float arrivalTime() { return arrivalTime; }
 	public float gaitPhase() { return phase; }
 	public float stride() { return stride; }
 	public float driveForward() { return driveForward; }

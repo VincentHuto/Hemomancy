@@ -11,8 +11,17 @@
 
 def gradleOr = { String name, String fallback -> providers.gradleProperty(name).getOrElse(fallback) }
 def review = [1280, 720]
+def velorumFightReview = gradleOr('velorumFightReview', 'false') == 'true'
+def putricielFightReview = gradleOr('putricielFightReview', 'false') == 'true'
+def hemorathFightReview = gradleOr('hemorathFightReview', 'false') == 'true'
 
 def reviewClients = [
+    speculumPlantingReviewClient: [dir: 'build/speculum-planting-review', user: 'PlantingReview', size: review,
+                                   props: ['hemomancy.speculumPlantingReview': 'true',
+                                           'hemomancy.speculumPlantingReviewLabel': gradleOr('speculumPlantingReviewLabel', 'after')]],
+    speculumReviewClient: [dir: 'build/speculum-client-review', user: 'SpeculumReview', driver: false, size: review,
+                           props: ['hemomancy.speculumReview': 'true',
+                                   'hemomancy.speculumReviewLabel': gradleOr('speculumReviewLabel', 'after')]],
     bookKitReviewClient: [dir: 'build/book-kit-client', user: 'BookKitReview', size: [1280, 900],
                           props: ['hemomancy.bookKitReview': 'true']],
     bookKitPeerClient: [dir: 'build/book-kit-peer/book-kit-client', user: 'BookKitPeer', size: [1000, 800],
@@ -56,6 +65,15 @@ def reviewClients = [
                                props: ['hemomancy.sickleStrokeReview': 'true']],
     infusionReviewClient: [dir: 'build/infusion-client-review', user: 'InfusionReview', size: review,
                            props: ['hemomancy.infusionReview': 'true']],
+    bossPresentationReviewClient: [dir: 'build/boss-presentation-review', user: 'BossReview', size: review,
+                                    args: velorumFightReview ? ['--quickPlaySingleplayer', gradleOr('velorumReviewWorld', 'BossPresentationReview')] :
+                                            putricielFightReview ? ['--quickPlaySingleplayer', gradleOr('putricielReviewWorld', 'BossPresentationReview')] :
+                                            hemorathFightReview ? ['--quickPlaySingleplayer', gradleOr('hemorathReviewWorld', 'BossPresentationReview')] : [],
+                                    props: ['hemomancy.bossPresentationReview': (hemorathFightReview || putricielFightReview || velorumFightReview) ? 'false' : 'true',
+                                            'hemomancy.putricielFightReview': putricielFightReview.toString(),
+                                            'hemomancy.velorumFightReview': velorumFightReview.toString(),
+                                            'hemomancy.hemorathFightReview': hemorathFightReview.toString(),
+                                           'hemomancy.bossPresentationReview.only': gradleOr('bossPresentationReviewOnly', '')]],
     jeiReviewClient: [dir: 'build/jei-client-review', user: 'JeiReview', size: review,
                       props: ['hemomancy.jeiReview': 'true']],
     loomReviewClient: [dir: 'build/loom-client-review', user: 'LoomReview', size: review,

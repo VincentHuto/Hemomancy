@@ -12,6 +12,8 @@ import com.vincenthuto.hemomancy.common.init.FluidInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketMycophantIntro;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMycophantFightScene;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -175,6 +177,8 @@ public final class MycophantEncounterManager {
 		if (boss != null) boss.setRematchIntro(rematch);
 		PacketHandler.sendToPlayer(player, new PacketMycophantIntro(rematch ? PacketMycophantIntro.REMATCH
 				: PacketMycophantIntro.WAKING, sceneSeed(player)));
+		if (boss != null) BossScenes.playTo(player, boss, rematch ? BossPresentationIds.SCENE_MYCOPHANT_REMATCH
+				: BossPresentationIds.SCENE_MYCOPHANT_WAKING, 0);
 		return true;
 	}
 

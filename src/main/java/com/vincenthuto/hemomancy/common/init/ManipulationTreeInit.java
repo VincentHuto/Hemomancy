@@ -39,6 +39,7 @@ public class ManipulationTreeInit {
 		// Row 0 (top) — SUMMA
 		register("blood_aneurysm",470,243, "blood_cloud");
 		register("blood_cloud",510,193, "blood_shot");
+		register("crimson_tithe",620,183, "blood_rush");
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("deadly_gaze",1080,160, "synaptic_jolt");
@@ -134,7 +135,6 @@ public class ManipulationTreeInit {
 				.setSoftParents("conjure_staff");
 
 		// Row 0 (top) — SUMMA
-		register("crimson_tithe",2330,-113, "exsanguinate");
 		register("bloom_of_rot",2330,17, "hemorrhage", "exsanguinate");
 
 		// Row 1 (middle) — MEDIOCRITAS

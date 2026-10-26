@@ -43,7 +43,9 @@ import java.util.TreeMap;
 @PrefixGameTestTemplate(false)
 public final class HemoCommandCharacterisationGameTests {
 	private static final String GOLDEN = "/command/hemo-command-fingerprints.txt";
-	private static final Set<String> SKIPPED = Set.of("hemo qliphoth tree");
+	private static final Set<String> SKIPPED = Set.of("hemo qliphoth tree",
+			// starts the real encounter: a capture, then a transfer into the Chamber, which would carry the probe away
+			"hemo mycophant", "hemo vesper");
 
 	private HemoCommandCharacterisationGameTests() {
 	}

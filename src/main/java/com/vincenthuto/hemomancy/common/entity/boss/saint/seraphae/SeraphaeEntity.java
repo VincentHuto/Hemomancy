@@ -1,10 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae;
 
+import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -31,14 +32,13 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Saint Seraphae — The Bound Radiance.
+ * Saint Seraphae — The Chain Saint.
  * <p>
  * A self-fracturing entity that cannot be killed through conventional damage.
  * Victory is achieved by raising containment integrity to 100 through
@@ -46,9 +46,13 @@ import net.minecraft.world.phys.Vec3;
  * <p>
  * The boss bar displays containment integrity (not health). Health is set very
  * high and the boss is effectively damage-immune during normal play — the win
- * condition is solely integrity-based.
+ * condition is solely integrity-based. Contained, she is chained back into her
+ * tomb ({@link SaintTrialEntity#endTrial}); she is immortal and cannot be killed.
+ * <p>
+ * She rises like the other Saints but keeps her own goals (stroll and look,
+ * no melee goal) and her own bar progress and chat reach.
  */
-public class SeraphaeEntity extends Monster {
+public class SeraphaeEntity extends SaintTrialEntity {
 
 	// ── synched data ──────────────────────────────────────────────────
 	private static final EntityDataAccessor<Integer> DATA_STATE =
@@ -78,13 +82,13 @@ public class SeraphaeEntity extends Monster {
 
 	// ── state timing ──────────────────────────────────────────────────
 	/** Ticks Seraphae stays STABLE before fracturing. */
-	private static final int STABLE_DURATION = 200;
+	private static final int STABLE_DURATION = SeraphaeState.STABLE.duration();
 	/** Ticks FRACTURING lasts before going DISPERSED. */
-	private static final int FRACTURING_DURATION = 100;
+	private static final int FRACTURING_DURATION = SeraphaeState.FRACTURING.duration();
 	/** Ticks DISPERSED lasts before CONDENSING. */
-	private static final int DISPERSED_DURATION = 160;
+	private static final int DISPERSED_DURATION = SeraphaeState.DISPERSED.duration();
 	/** Ticks CONDENSING window lasts. */
-	private static final int CONDENSING_DURATION = 80;
+	private static final int CONDENSING_DURATION = SeraphaeState.CONDENSING.duration();
 
 	/** Number of fragments spawned per FRACTURING cycle. */
 	private static final int MIN_FRAGMENTS = 3;
@@ -116,14 +120,15 @@ public class SeraphaeEntity extends Monster {
 	private boolean anchorsPlaced;
 	private boolean defeated;
 
-	private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.seraphae", BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.NOTCHED_10);
-
 	// ── constructor ───────────────────────────────────────────────────
 
 	public SeraphaeEntity(EntityType<? extends SeraphaeEntity> type, Level level) {
-		super(type, level);
-		this.setPersistenceRequired();
-		this.xpReward = 120;
+		super(type, level, 120, new BossBarBinding("entity.hemomancy.seraphae", BossPresentationIds.FRAME_SERAPHAE, BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.NOTCHED_10));
+	}
+
+	@Override
+	public EnumSaintType saintType() {
+		return EnumSaintType.SERAPHAE;
 	}
 
 	// ── attributes ────────────────────────────────────────────────────
@@ -189,6 +194,7 @@ public class SeraphaeEntity extends Monster {
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
+		if (rising()) return false;
 		// Seraphae cannot be conventionally killed — absorb damage but don't
 		// let health reach 0. Fragments are the mechanic, not DPS.
 		boolean condensingPlayerHit = !this.level().isClientSide && getSeraphaeState() == SeraphaeState.CONDENSING
@@ -210,9 +216,7 @@ public class SeraphaeEntity extends Monster {
 	private void recordCondensingHit() {
 		setContainmentIntegrity(getContainmentIntegrity() + CONDENSING_HIT_GAIN);
 		if (this.level() instanceof ServerLevel server) {
-			server.sendParticles(ParticleTypes.END_ROD,
-					this.getX(), this.getY() + 1.5, this.getZ(),
-					8, 0.5, 0.8, 0.5, 0.03);
+			SeraphaeEffects.burst(server, this.position().add(0, 1.5, 0), SeraphaeVisualRules.HIT, .8F);
 		}
 	}
 
@@ -222,9 +226,15 @@ public class SeraphaeEntity extends Monster {
 	public void aiStep() {
 		super.aiStep();
 
-		if (this.level().isClientSide || defeated) return;
+		if (this.level().isClientSide || tickRise() || defeated) return;
 
 		ServerLevel server = (ServerLevel) this.level();
+
+		// Resolve earned containment before this tick's decay can pull a full meter below the threshold.
+		if (getContainmentIntegrity() >= MAX_INTEGRITY) {
+			onContainmentComplete(server);
+			return;
+		}
 
 		// One-time anchor placement
 		if (!anchorsPlaced) {
@@ -242,12 +252,6 @@ public class SeraphaeEntity extends Monster {
 
 		integrity -= decay;
 		setContainmentIntegrity(integrity);
-
-		// ── win condition ──
-		if (getContainmentIntegrity() >= MAX_INTEGRITY) {
-			onContainmentComplete(server);
-			return;
-		}
 
 		// ── failure escalation ──
 		if (getContainmentIntegrity() <= MIN_INTEGRITY) {
@@ -285,9 +289,7 @@ public class SeraphaeEntity extends Monster {
 		// Coming from CONDENSING — award the burst integrity gain
 		if (getSeraphaeState() == SeraphaeState.CONDENSING) {
 			setContainmentIntegrity(getContainmentIntegrity() + CONDENSE_BURST_GAIN);
-			server.sendParticles(ParticleTypes.FLASH,
-					this.getX(), this.getY() + 1.5, this.getZ(),
-					3, 0.0, 0.0, 0.0, 0.0);
+			SeraphaeEffects.burst(server, this.position().add(0, 1.5, 0), SeraphaeVisualRules.HIT, 1.5F);
 			broadcastMessage("message.hemomancy.seraphae.condensing_complete_containment_strengthened",
 					ChatFormatting.GREEN);
 		}
@@ -314,9 +316,7 @@ public class SeraphaeEntity extends Monster {
 
 		server.playSound(null, this.getX(), this.getY(), this.getZ(),
 				SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 2.0F, 0.6F);
-		server.sendParticles(ParticleTypes.END_ROD,
-				this.getX(), this.getY() + 1.0, this.getZ(),
-				40, 1.0, 1.2, 1.0, 0.15);
+		SeraphaeEffects.burst(server, this.position().add(0, 1.5, 0), SeraphaeVisualRules.FRACTURE_BURST, 2.4F);
 
 		broadcastMessage("message.hemomancy.seraphae.seraphae_the_chain_saint_fractures_bind", ChatFormatting.RED);
 	}
@@ -326,9 +326,7 @@ public class SeraphaeEntity extends Monster {
 		setStateTimer(DISPERSED_DURATION);
 		this.setInvisible(true); // untargetable
 
-		server.sendParticles(ParticleTypes.FLASH,
-				this.getX(), this.getY() + 1.0, this.getZ(),
-				3, 0.0, 0.0, 0.0, 0.0);
+		SeraphaeEffects.burst(server, this.position().add(0, 1.5, 0), SeraphaeVisualRules.DISPERSE_BURST, 3F);
 
 		broadcastMessage("message.hemomancy.seraphae.seraphae_disperses_into_radiant_wisps", ChatFormatting.YELLOW);
 	}
@@ -347,89 +345,13 @@ public class SeraphaeEntity extends Monster {
 	// ── per-state tick behaviour ──────────────────────────────────────
 
 	private void tickState(ServerLevel server) {
-		switch (getSeraphaeState()) {
-			case STABLE -> tickStable(server);
-			case FRACTURING -> tickFracturing(server);
-			case DISPERSED -> tickDispersed(server);
-			case CONDENSING -> tickCondensing(server);
-		}
-	}
-
-	private void tickStable(ServerLevel server) {
-		// Gentle ambient particles
-		if (this.tickCount % 15 == 0) {
-			server.sendParticles(ParticleTypes.END_ROD,
-					this.getX(), this.getY() + 1.5, this.getZ(),
-					3, 0.3, 0.4, 0.3, 0.01);
-		}
-	}
-
-	private void tickFracturing(ServerLevel server) {
-		// Pulsing disruption particles
-		if (this.tickCount % 8 == 0) {
-			float urgency = 1.0F - Math.max(0.0F, Math.min(1.0F, stateTimer / (float) FRACTURING_DURATION));
-			server.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
-					this.getX(), this.getY() + 1.0, this.getZ(),
-					8 + (int) (8 * urgency), 0.6 + urgency * 0.4, 0.8, 0.6 + urgency * 0.4, 0.04);
-		}
-	}
-
-	private void tickDispersed(ServerLevel server) {
-		// Environmental hazard wisps — deal minor damage to nearby players
-		if (this.tickCount % 30 == 0) {
-			for (Player player : server.getEntitiesOfClass(Player.class,
-					this.getBoundingBox().inflate(ARENA_RADIUS))) {
-				// Random wisp damage from the dispersed radiance
-				if (server.random.nextFloat() < DISPERSED_DAMAGE_CHANCE) {
-					player.hurt(this.damageSources().magic(), 1.5F);
-					server.sendParticles(ParticleTypes.END_ROD,
-							player.getX(), player.getY() + 1.0, player.getZ(),
-							6, 0.3, 0.5, 0.3, 0.05);
-				}
+		// The state mesh carries the radiance, feather wisps and anchor tethers, even on Minimal particles.
+		if (getSeraphaeState() != SeraphaeState.DISPERSED || this.tickCount % 30 != 0) return;
+		for (Player player : server.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(ARENA_RADIUS))) {
+			if (server.random.nextFloat() < DISPERSED_DAMAGE_CHANCE) {
+				player.hurt(this.damageSources().magic(), 1.5F);
+				SeraphaeEffects.burst(server, player.position().add(0, 1, 0), SeraphaeVisualRules.HAZARD, .6F);
 			}
-		}
-		// Floating wisp particles near the boss location
-		if (this.tickCount % 5 == 0) {
-			double angle = (this.tickCount * 0.1) % (2 * Math.PI);
-			double wispX = this.getX() + Math.cos(angle) * 5.0;
-			double wispZ = this.getZ() + Math.sin(angle) * 5.0;
-			server.sendParticles(ParticleTypes.END_ROD,
-					wispX, this.getY() + 1.5, wispZ,
-					2, 0.1, 0.2, 0.1, 0.01);
-		}
-	}
-
-	private void tickCondensing(ServerLevel server) {
-		// Converging particles toward the boss
-		if (this.tickCount % 4 == 0) {
-			for (int i = 0; i < 6; i++) {
-				double angle = server.random.nextDouble() * 2 * Math.PI;
-				double dist = 3.0 + server.random.nextDouble() * 4.0;
-				double px = this.getX() + Math.cos(angle) * dist;
-				double pz = this.getZ() + Math.sin(angle) * dist;
-				server.sendParticles(ParticleTypes.END_ROD,
-						px, this.getY() + 0.5 + server.random.nextDouble() * 2.0, pz,
-						1, 0.0, 0.0, 0.0, 0.0);
-			}
-			for (ContainmentAnchorEntity anchor : server.getEntitiesOfClass(
-					ContainmentAnchorEntity.class,
-					new AABB(this.blockPosition()).inflate(ARENA_RADIUS),
-					a -> this.getUUID().equals(a.getParentId()))) {
-				sendContainmentLine(server, anchor.position().add(0.0, 0.8, 0.0), this.position().add(0.0, 1.3, 0.0));
-			}
-		}
-
-		// Award condense burst when window closes (handled in advanceState)
-		// Player can deal damage during this window; each hit adds small integrity
-	}
-
-	private void sendContainmentLine(ServerLevel server, Vec3 from, Vec3 to) {
-		Vec3 delta = to.subtract(from);
-		for (int i = 1; i <= 8; i++) {
-			Vec3 point = from.add(delta.scale(i / 9.0D));
-			server.sendParticles(ParticleTypes.END_ROD,
-					point.x, point.y, point.z,
-					1, 0.025, 0.025, 0.025, 0.0);
 		}
 	}
 
@@ -486,9 +408,7 @@ public class SeraphaeEntity extends Monster {
 		setContainmentIntegrity(getContainmentIntegrity() + gain);
 
 		if (this.level() instanceof ServerLevel server) {
-			server.sendParticles(ParticleTypes.HAPPY_VILLAGER,
-					this.getX(), this.getY() + 2.0, this.getZ(),
-					10, 0.5, 0.5, 0.5, 0.02);
+			SeraphaeEffects.burst(server, this.position().add(0, 1.5, 0), SeraphaeVisualRules.HIT, 1F);
 		}
 	}
 
@@ -516,24 +436,13 @@ public class SeraphaeEntity extends Monster {
 
 		server.playSound(null, this.getX(), this.getY(), this.getZ(),
 				SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.HOSTILE, 2.0F, 1.0F);
-		server.sendParticles(ParticleTypes.FLASH,
-				this.getX(), this.getY() + 1.5, this.getZ(),
-				5, 0.0, 0.0, 0.0, 0.0);
-		server.sendParticles(ParticleTypes.END_ROD,
-				this.getX(), this.getY() + 1.0, this.getZ(),
-				80, 2.0, 2.0, 2.0, 0.2);
+		SeraphaeEffects.burst(server, this.position().add(0, 1.5, 0), SeraphaeVisualRules.SEALED, 4F);
 
 		broadcastMessage("message.hemomancy.seraphae.seraphae_is_chained_once_more_the",
 				ChatFormatting.GOLD);
 
-		// Drop reward to nearest player
-		Player nearest = server.getNearestPlayer(this, ARENA_RADIUS);
-		if (nearest != null) {
-			ItemStack drop = new ItemStack(ItemInit.hallowed_residuum_seraphae.get());
-			if (!nearest.getInventory().add(drop)) {
-				nearest.drop(drop, false);
-			}
-		}
+		// Reward the nearest player and chain her back into her tomb
+		endTrial(null, null);
 
 		// Clean up anchors
 		for (ContainmentAnchorEntity anchor : server.getEntitiesOfClass(
@@ -607,17 +516,10 @@ public class SeraphaeEntity extends Monster {
 	@Override
 	public void startSeenByPlayer(ServerPlayer player) {
 		super.startSeenByPlayer(player);
-		bossBar.show(player);
 		player.displayClientMessage(
 				Component.translatable("message.hemomancy.seraphae.seraphae_the_chain_saint_stirs_maintain")
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 				false);
-	}
-
-	@Override
-	public void stopSeenByPlayer(ServerPlayer player) {
-		super.stopSeenByPlayer(player);
-		bossBar.hide(player);
 	}
 
 	// ── save / load ───────────────────────────────────────────────────
@@ -670,14 +572,22 @@ public class SeraphaeEntity extends Monster {
 		return SoundEvents.BEACON_DEACTIVATE;
 	}
 
-	// ── utility ───────────────────────────────────────────────────────
+	// ── rewards and chat ──────────────────────────────────────────────
 
-	private void broadcastMessage(String key, ChatFormatting color) {
+	/** Her residuum goes straight into the nearest player's hands. */
+	@Override
+	protected boolean rewardsGoToVictor() {
+		return true;
+	}
+
+	/** Her lines reach everyone in the arena, not only those who see the bar, and they are bold. */
+	@Override
+	protected void broadcast(Component message) {
 		if (!(this.level() instanceof ServerLevel server)) return;
 		for (Player player : server.getEntitiesOfClass(Player.class,
 				this.getBoundingBox().inflate(ARENA_RADIUS))) {
 			player.displayClientMessage(
-					Component.translatable(key).withStyle(color, ChatFormatting.BOLD),
+					message.copy().withStyle(ChatFormatting.BOLD),
 					false);
 		}
 	}

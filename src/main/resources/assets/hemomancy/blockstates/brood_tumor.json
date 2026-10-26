@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "half=lower": [
+      { "model": "hemomancy:block/brood_tumor_lower" },
+      { "model": "hemomancy:block/brood_tumor_lower", "y": 90 },
+      { "model": "hemomancy:block/brood_tumor_lower", "y": 180 },
+      { "model": "hemomancy:block/brood_tumor_lower", "y": 270 }
+    ],
+    "half=upper": [
+      { "model": "hemomancy:block/brood_tumor_upper" },
+      { "model": "hemomancy:block/brood_tumor_upper", "y": 90 },
+      { "model": "hemomancy:block/brood_tumor_upper", "y": 180 },
+      { "model": "hemomancy:block/brood_tumor_upper", "y": 270 }
+    ]
+  }
+}

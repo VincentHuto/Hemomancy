@@ -61,6 +61,12 @@ because of one, it says so.
 - Screen chrome comes from `ScreenDrawUtils` and `VeinBackgroundRenderer` with a per-screen `Style`.
 - HUD drawing is a layer in `client/registry/GuiLayerRegistrar`; world-space effects draw from the one ordered
   `client/render/world/WorldEffectDispatcher`.
+- A boss's bar names its frame where it is built (`new BossBarBinding(key, BossPresentationIds.FRAME_*, ...)`); the
+  frame's art is a `BossBarFrame` in `client/screen/overlay/boss/frame`, drawn by `BossBarFrameRenderer` through the
+  shared `BossBarFramePainter`. A boss's opening or phase card is a `BossScene` registered in `BossSceneCatalog` and
+  played from the server with `BossScenes.play`; its letterbox, card, camera, HUD hiding and input hold go through
+  `BossSceneDirector`, and a boss with no opening state of its own holds a `BossIntroWindow`
+  (`BossPresentationBindingTest`).
 - Shared shader noise lives in `assets/hemomancy/shaders/include/noise/*.glsl` and is pulled in with `#moj_import`.
 - Particle data is built through `HemoParticleData`; colour-only particles use `ColorParticleOptions`, every particle
   type is a `HemoParticleType`.
@@ -76,7 +82,8 @@ because of one, it says so.
 - Easing and interpolation come from `common/util/HemoEasing`; `smoothstep` is the cubic. Never `Mth.smoothstep`
   (quintic).
 - A boss replays a synced tick through `common/entity/boss/BossReplayClock` and times moves with `BossMoveTimeline`.
-  Bosses that still read a raw synced tick wait on decision A-1b.
+  No boss model, renderer, layer or entity getter adds the partial tick to a synced counter
+  (`BossAnimationClockGuardrailTest`).
 - Third-person player poses apply through `client/player/PlayerAnimationRegistry.THIRD_PERSON` in its listed order;
   first-person hand renderers keep their pinned `RenderHandEvent` priorities.
 - Client animation time comes from `client/render/AnimationTime`; wall-clock animation is listed until decision A-4.
@@ -249,6 +256,7 @@ test under `src/test/java/.../architecture/` is listed here.
 | Animation | `EasingCopyGuardrailTest` | 6 | No private easing copies |
 | Animation | `BossAnimationClockGuardrailTest` | 10 | Boss replay clocks |
 | Animation | `PlayerAnimationGuardrailTest` | 10 | Pose registry and hand-renderer priorities |
+| Rendering | `BossPresentationBindingTest` | boss presentation | Every boss bar names a frame and sends it on show; played scenes are named ids |
 | Animation | `AnimationTimeGuardrailTest` | 10 | Animation time through `AnimationTime` |
 | Mechanics | `SmallUtilityGuardrailTest` | 6 | No copies of the shared small helpers; no literal degree comparisons |
 | Mechanics | `BloodAccountingGuardrailTest` | 7 | Player blood paid only through `BloodAccounting` |
@@ -259,7 +267,7 @@ test under `src/test/java/.../architecture/` is listed here.
 | Mechanics | `HemoCommandStructureGuardrailTest` | 11 | `/hemo` one root, one class per branch |
 | Mechanics | `EntityCastGuardrailTest` | 11 | Entity casts as registration hooks |
 | Mechanics | `StationMenuGuardrailTest` | 11 | Menus never spend blood, record practice or enchant |
-| Content | `BossFrameworkGuardrailTest` | 13 | Boss bars through `BossBarBinding`; trial Saints share `SaintTrialEntity` |
+| Content | `BossFrameworkGuardrailTest` | 13 | Boss bars through `BossBarBinding`; all four Saints share `SaintTrialEntity` and its one ending (loot roll, tomb restore); a sarcophagus never picks a Saint at random |
 | Content | `ContentBoilerplateGuardrailTest` | 13 | `SyncedOwner`, `HemoContainerMenu`, `ProtectedNpc`, `ModelShapes.rotate`, effect categories |
 | Content | `ContentFamilyGuardrailTest` | 13 | Mob families, tracking orbs and combat-weapon storage share their base |
 | Content | `HardCodedEnglishGuardrailTest` | 13 | No literal shows English; every key the code names is in `en_us` |
@@ -277,11 +285,15 @@ test under `src/test/java/.../architecture/` is listed here.
 | Data | `RecipeSerializerGuardrailTest` | 13 | One recipe JSON bridge; station recipes off `CustomRecipe` |
 | Data | `JigsawStructureGuardrailTest` | 13 | One jigsaw codec and placement call |
 | Packages | `EncounterPackageGuardrailTest` | 13 | Encounter managers in `common/encounter` |
-| Packages | `PackageLayoutGuardrailTest` | – | Function-first top-level packages under `common/` and `client/`; no feature folders |
+| Packages | `PackageLayoutGuardrailTest` | â€“ | Function-first top-level packages under `common/` and `client/`; no feature folders |
 | Tooling | `BuildRunTableGuardrailTest` | 13 | Base runs only in `build.gradle`; both run tables applied |
 | Tooling | `RepositoryTextEncodingTest` | 2 | Strict UTF-8 across sources, docs and tracked tools |
 | Tooling | `PrivateTestHelperRatchetTest` | 2 | Private test helper copies only fall |
 | Tooling | `SourceTreeHygieneTest` | 3, 5 | No empty sources or subscribers; mixin list matches |
+| Rendering | `HemorathPresentationGuardrailTest` | 10 | Boss and attack goals emit no vanilla particles; Ferric links and blood effects use the shared world passes |
+| Rendering | `PutricielPresentationGuardrailTest` | Putriciel | Bespoke rot-fire offering geometry and no vanilla fight particles |
+| Rendering | `VelorumPresentationGuardrailTest` | Velorum | Shared rime and shadow pipeline; no vanilla fight particles |
+| Rendering | `SeraphaePresentationGuardrailTest` | 10 | No vanilla particles in the saint, fragments or anchors; dedicated radiance uses the shared Lux batch |
 | Tooling | `ArchitectureStandardsIndexTest` | 13 | Every guardrail above is listed |
 
 Behaviour and data tests that lock in consolidation work, beyond the guardrails: `LumpDonationValidationTest` (1),

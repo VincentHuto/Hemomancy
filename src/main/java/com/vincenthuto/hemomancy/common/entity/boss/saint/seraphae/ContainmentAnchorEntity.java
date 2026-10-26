@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -16,6 +15,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
 import java.util.UUID;
 
 /**
@@ -38,8 +38,7 @@ public class ContainmentAnchorEntity extends Entity {
 	private static final int ACTIVE_DISPLAY_TICKS = 30;
 
 	/** UUID of the parent Seraphae that spawned this anchor. */
-	@Nullable
-	private UUID parentId;
+	private static final SyncedOwner PARENT = SyncedOwner.define(ContainmentAnchorEntity.class);
 	private int activeTimer;
 
 	public ContainmentAnchorEntity(EntityType<?> type, Level level) {
@@ -52,6 +51,7 @@ public class ContainmentAnchorEntity extends Entity {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		builder.define(DATA_ACTIVE, false);
+		PARENT.defineDefault(builder);
 	}
 
 	public boolean isActive() {
@@ -61,12 +61,12 @@ public class ContainmentAnchorEntity extends Entity {
 	/* ---- parent tracking ---- */
 
 	public void setParentId(@Nullable UUID id) {
-		this.parentId = id;
+		PARENT.set(this, id);
 	}
 
 	@Nullable
 	public UUID getParentId() {
-		return parentId;
+		return PARENT.get(this);
 	}
 
 	/* ---- tick ---- */
@@ -75,20 +75,7 @@ public class ContainmentAnchorEntity extends Entity {
 	public void tick() {
 		super.tick();
 
-		if (this.level().isClientSide) {
-			// Idle glow particles
-			if (this.tickCount % 5 == 0) {
-				this.level().addParticle(ParticleTypes.END_ROD,
-						this.getX(), this.getY() + 0.6, this.getZ(),
-						0.0, 0.03, 0.0);
-			}
-			if (isActive()) {
-				this.level().addParticle(ParticleTypes.FLASH,
-						this.getX(), this.getY() + 0.8, this.getZ(),
-						0.0, 0.0, 0.0);
-			}
-			return;
-		}
+		if (this.level().isClientSide) return;
 
 		// Server-side active-display countdown
 		if (activeTimer > 0) {
@@ -128,6 +115,7 @@ public class ContainmentAnchorEntity extends Entity {
 	 * and notifies the parent Seraphae for an integrity boost.
 	 */
 	private void captureFragment(SeraphaeFragmentEntity fragment) {
+		Vec3 capturedFrom = fragment.position().add(0, .5, 0);
 		// Pull fragment to anchor position
 		Vec3 anchorPos = this.position();
 		fragment.teleportTo(anchorPos.x, anchorPos.y, anchorPos.z);
@@ -142,9 +130,7 @@ public class ContainmentAnchorEntity extends Entity {
 		if (this.level() instanceof ServerLevel server) {
 			server.playSound(null, this.getX(), this.getY(), this.getZ(),
 					SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 1.5F, 1.4F);
-			server.sendParticles(ParticleTypes.END_ROD,
-					this.getX(), this.getY() + 0.5, this.getZ(),
-					30, 0.4, 0.6, 0.4, 0.06);
+			SeraphaeEffects.bind(server, capturedFrom, anchorPos.add(0, .8, 0));
 		}
 
 		// Activate visual
@@ -152,11 +138,11 @@ public class ContainmentAnchorEntity extends Entity {
 		activeTimer = ACTIVE_DISPLAY_TICKS;
 
 		// Find parent Seraphae and award integrity
-		if (parentId != null && this.level() instanceof ServerLevel server) {
+		if (getParentId() != null && this.level() instanceof ServerLevel server) {
 			for (SeraphaeEntity seraphae : server.getEntitiesOfClass(
 					SeraphaeEntity.class,
 					new AABB(this.blockPosition()).inflate(64.0))) {
-				if (seraphae.getUUID().equals(parentId) && seraphae.isAlive()) {
+				if (seraphae.getUUID().equals(getParentId()) && seraphae.isAlive()) {
 					seraphae.onFragmentContained(true); // anchor-assisted = bonus
 					break;
 				}
@@ -169,15 +155,16 @@ public class ContainmentAnchorEntity extends Entity {
 	@Override
 	protected void readAdditionalSaveData(CompoundTag tag) {
 		if (tag.hasUUID("ParentSeraphae")) {
-			parentId = tag.getUUID("ParentSeraphae");
+			setParentId(tag.getUUID("ParentSeraphae"));
 		}
 		activeTimer = tag.getInt("ActiveTimer");
+		this.entityData.set(DATA_ACTIVE, activeTimer > 0);
 	}
 
 	@Override
 	protected void addAdditionalSaveData(CompoundTag tag) {
-		if (parentId != null) {
-			tag.putUUID("ParentSeraphae", parentId);
+		if (getParentId() != null) {
+			tag.putUUID("ParentSeraphae", getParentId());
 		}
 		tag.putInt("ActiveTimer", activeTimer);
 	}

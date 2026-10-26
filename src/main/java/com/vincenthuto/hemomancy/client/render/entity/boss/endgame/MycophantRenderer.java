@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.MycophantAnimState;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.MycophantModel;
 import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.MycophantGlowLayer;
 import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.MycophantSacLayer;
@@ -33,7 +34,9 @@ public class MycophantRenderer extends MobRenderer<MycophantEntity, MycophantMod
     protected void scale(MycophantEntity entity, PoseStack poseStack, float partialTick) {
         poseStack.scale(2.0F, 2.0F, 2.0F);
         if (entity.getState() == MycophantState.YIELD) {
-            float sink = MycophantYieldRules.sink(entity.getYieldTick()) * YIELD_SINK_BLOCKS;
+            MycophantAnimState motion = MycophantAnimState.of(entity);
+            motion.update(entity, partialTick);
+            float sink = MycophantYieldRules.sink(motion.yieldTime()) * YIELD_SINK_BLOCKS;
             poseStack.translate(0.0F, sink / 2.0F, 0.0F);   // the stack is flipped here: +Y is down
         }
     }

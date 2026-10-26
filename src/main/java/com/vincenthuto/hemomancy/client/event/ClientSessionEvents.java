@@ -56,6 +56,8 @@ public final class ClientSessionEvents {
         CardinalRiteFogRenderer.clear();
         VesperFightClientData.clear();
         MycophantFightClientData.clear();
+        com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrameClientState.clear();
+        com.vincenthuto.hemomancy.client.render.cinematic.BossSceneDirector.INSTANCE.clear();
         com.vincenthuto.hemomancy.client.data.MycophantIntroClientState.INSTANCE.start(
                 com.vincenthuto.hemomancy.client.data.MycophantIntroClientState.CLEAR, 0);
         VesperFightFloorRenderer.clear();
@@ -82,12 +84,20 @@ public final class ClientSessionEvents {
         BloodProjectileEffects.clear();
         CinderBreathFlames.clear();
         PuppetStringStates.clear();
+        com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.SeraphaeAnimState.clear();
+        com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathAnimState.clear();
+        com.vincenthuto.hemomancy.client.model.entity.boss.putriciel.PutricielAnimState.clear();
+        com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumAnimState.clear();
         com.vincenthuto.hemomancy.client.data.CardinalRiteStaffPlantingClientState.clear();
     }
 
     @SubscribeEvent
     public static void onClientLevelUnload(net.neoforged.neoforge.event.level.LevelEvent.Unload event) {
         if (!(event.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel)) return;
+        com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathAnimState.clear();
+        com.vincenthuto.hemomancy.client.model.entity.boss.putriciel.PutricielAnimState.clear();
+        com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumAnimState.clear();
+        com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.SeraphaeAnimState.clear();
         ActiveRiteClientData.clear();
         com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState.clear();
         WorkingCraftSwallowRenderer.clear();

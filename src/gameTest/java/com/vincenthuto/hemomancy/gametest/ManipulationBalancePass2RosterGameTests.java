@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.entity.projectile.CloudEntityBlood;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -74,9 +75,20 @@ public final class ManipulationBalancePass2RosterGameTests {
         schools(h, "sanguine_marionette", EnumBloodTendency.DUCTILIS, EnumBloodTendency.ANIMUS);
         schools(h, "sovereign_instinct", EnumBloodTendency.DUCTILIS, EnumBloodTendency.ANIMUS);
         schools(h, "sanguine_tempest", EnumBloodTendency.ANIMUS, EnumBloodTendency.DUCTILIS);
-        schools(h, "crimson_tithe", EnumBloodTendency.MORTEM, EnumBloodTendency.ANIMUS);
+        schools(h, "crimson_tithe", EnumBloodTendency.ANIMUS, EnumBloodTendency.FERRIC);
         h.assertTrue(BloodBindingManip.durationTicks(BloodBindingManip.Mode.CHAIN) == 80, "Chain Binding is not 80 ticks");
         h.assertTrue(BloodBindingManip.durationTicks(BloodBindingManip.Mode.LATTICE) == 160, "Blood Lattice changed");
+        h.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = BATCH)
+    public static void canonMemoriesTakeTheirSaintsPair(GameTestHelper h) {
+        Map<EnumSaintType, String> canon = Map.of(
+                EnumSaintType.HEMORATH, "crimson_tithe",
+                EnumSaintType.SERAPHAE, "unclosing_eye",
+                EnumSaintType.PUTRICIEL, "bloom_of_rot",
+                EnumSaintType.VELORUM, "endless_hour");
+        canon.forEach((saint, name) -> schools(h, name, saint.getPrimaryTendency(), saint.getSecondaryTendency()));
         h.succeed();
     }
 

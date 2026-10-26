@@ -5,10 +5,25 @@
 	// they read the same as tools/model_export/reference/spawn-mother-v8.html; bo() converts a point to model space
 	// (half size, Y down, the creature's right on -X). Rotations flip sign on X and Y for the same reason.
 
-	/** Review-client hook: a pose name ("stalk", "tending", "roar", "embrace", "spawn", "guard", "sweep", "yield"), with "_p2" for the opened head. */
+	/**
+	 * Review-client hook: a pose name, with "_p2" for the opened head. The rebuild's poses are "stalk", "tending",
+	 * "notice", "roar", "embrace", "hold", "spawn", "guard", "sweep", "siphon", "pluck", "bloom", "stagger", "yield" and
+	 * "drag"; the moveset's are "rake_l", "rake_r", "slam", "settle_rise", "settle_drop", "pin", "tail_coil",
+	 * "tail_lash", "vents_open", "hand_wind", "hand_sweep", "spit", "mortar", "nurse", "lances", "net", "gaze",
+	 * "last_brood_rear", "last_brood_pull" and "last_brood_collapse" (the phase-2 ones always show the opened head).
+	 */
 	public static volatile String reviewPose;
 
 	private static final class Pose {
+		/** Scalars first, then the three-float targets, in {@link #write} order. */
+		private static final int SCALARS = 19;
+		private static final int VECTORS = 9;
+		/** The pose as a flat array, for the blend memory each entity keeps in its MycophantAnimState. */
+		static final int SIZE = SCALARS + VECTORS * 3;
+		private static final float[] SCRATCH_A = new float[SIZE];
+		private static final float[] SCRATCH_B = new float[SIZE];
+		private static final float[] SCRATCH_OUT = new float[SIZE];
+
 		float thorax, neck, head, frill, maw, tongue, tentFwd, height, vents;
 		final float[] wing = new float[3];
 		final float[] hand = new float[3];
@@ -19,7 +34,21 @@
 		float curl;
 		final float[] front = new float[3];
 		final float[] second = new float[3];
-		float rake;
+		/** Offsets (blockout pixels, +x toward her right) added to the left and right front claws' footholds. */
+		final float[] reachL = new float[3];
+		final float[] reachR = new float[3];
+		/** The tail tendrils' coil (+ curls them up over the abdomen) and swing (+ toward her right). */
+		float tailCurl, tailSwing;
+		/** The abdomen's lift (radians, + raises its end) and swing (radians, + toward her right). */
+		float abdLift, abdYaw;
+		/** The sac's swell: 1 is the Last Brood's opening (1.3 times its size, pushed forward); below 0 it sags. */
+		float sac;
+		/** Blockout pixels the pulp pushes forward out of the opened skull. */
+		float pulpFwd;
+		/** Radians the head turns toward her right (toward a larger yaw), shared down the neck and thorax. */
+		float turn;
+		/** How far the wing spars hook their tips down; below 0 they open flat. */
+		float spar;
 
 		Pose set(float thorax, float neck, float head, float frill, float maw, float tongue, float tentFwd, float height,
 				float vents) {
@@ -46,36 +75,66 @@
 			return this;
 		}
 
-		Pose copy(Pose o) {
-			set(o.thorax, o.neck, o.head, o.frill, o.maw, o.tongue, o.tentFwd, o.height, o.vents);
-			System.arraycopy(o.wing, 0, wing, 0, 3);
-			System.arraycopy(o.hand, 0, hand, 0, 3);
-			System.arraycopy(o.handPole, 0, handPole, 0, 3);
-			System.arraycopy(o.siphonT, 0, siphonT, 0, 3);
-			System.arraycopy(o.siphonPole, 0, siphonPole, 0, 3);
-			System.arraycopy(o.front, 0, front, 0, 3);
-			System.arraycopy(o.second, 0, second, 0, 3);
-			grip = o.grip; curl = o.curl; rake = o.rake;
+		Pose reach(float lx, float ly, float lz, float rx, float ry, float rz) {
+			reachL[0] = lx; reachL[1] = ly; reachL[2] = lz; reachR[0] = rx; reachR[1] = ry; reachR[2] = rz;
 			return this;
 		}
 
-		/** this = mix(a, b, t). */
-		Pose mix(Pose a, Pose b, float t) {
-			thorax = Mth.lerp(t, a.thorax, b.thorax); neck = Mth.lerp(t, a.neck, b.neck); head = Mth.lerp(t, a.head, b.head);
-			frill = Mth.lerp(t, a.frill, b.frill); maw = Mth.lerp(t, a.maw, b.maw); tongue = Mth.lerp(t, a.tongue, b.tongue);
-			tentFwd = Mth.lerp(t, a.tentFwd, b.tentFwd); height = Mth.lerp(t, a.height, b.height);
-			vents = Mth.lerp(t, a.vents, b.vents); grip = Mth.lerp(t, a.grip, b.grip); curl = Mth.lerp(t, a.curl, b.curl);
-			rake = Mth.lerp(t, a.rake, b.rake);
-			for (int i = 0; i < 3; i++) {
-				wing[i] = Mth.lerp(t, a.wing[i], b.wing[i]);
-				hand[i] = Mth.lerp(t, a.hand[i], b.hand[i]);
-				handPole[i] = Mth.lerp(t, a.handPole[i], b.handPole[i]);
-				siphonT[i] = Mth.lerp(t, a.siphonT[i], b.siphonT[i]);
-				siphonPole[i] = Mth.lerp(t, a.siphonPole[i], b.siphonPole[i]);
-				front[i] = Mth.lerp(t, a.front[i], b.front[i]);
-				second[i] = Mth.lerp(t, a.second[i], b.second[i]);
-			}
+		Pose tail(float curl, float swing, float lift, float yaw) {
+			tailCurl = curl; tailSwing = swing; abdLift = lift; abdYaw = yaw;
 			return this;
+		}
+
+		Pose swell(float sac) { this.sac = sac; return this; }
+
+		Pose pulp(float forward) { pulpFwd = forward; return this; }
+
+		Pose turn(float turn) { this.turn = turn; return this; }
+
+		Pose spar(float spar) { this.spar = spar; return this; }
+
+		private float[][] vectors() {
+			return new float[][] { wing, hand, handPole, siphonT, siphonPole, front, second, reachL, reachR };
+		}
+
+		void write(float[] out) {
+			out[0] = thorax; out[1] = neck; out[2] = head; out[3] = frill; out[4] = maw; out[5] = tongue;
+			out[6] = tentFwd; out[7] = height; out[8] = vents; out[9] = grip; out[10] = curl; out[11] = tailCurl;
+			out[12] = tailSwing; out[13] = abdLift; out[14] = abdYaw; out[15] = sac; out[16] = pulpFwd; out[17] = turn;
+			out[18] = spar;
+			float[][] vectors = vectors();
+			for (int a = 0; a < VECTORS; a++) System.arraycopy(vectors[a], 0, out, SCALARS + a * 3, 3);
+		}
+
+		Pose read(float[] in) {
+			set(in[0], in[1], in[2], in[3], in[4], in[5], in[6], in[7], in[8]);
+			grip = in[9]; curl = in[10]; tailCurl = in[11]; tailSwing = in[12]; abdLift = in[13]; abdYaw = in[14];
+			sac = in[15]; pulpFwd = in[16]; turn = in[17]; spar = in[18];
+			float[][] vectors = vectors();
+			for (int a = 0; a < VECTORS; a++) System.arraycopy(in, SCALARS + a * 3, vectors[a], 0, 3);
+			return this;
+		}
+
+		Pose copy(Pose o) {
+			o.write(SCRATCH_OUT);
+			return read(SCRATCH_OUT);
+		}
+
+		/** this = mix(a, b, t). Either may be this pose. */
+		Pose mix(Pose a, Pose b, float t) {
+			a.write(SCRATCH_A);
+			b.write(SCRATCH_B);
+			for (int i = 0; i < SIZE; i++) SCRATCH_OUT[i] = Mth.lerp(t, SCRATCH_A[i], SCRATCH_B[i]);
+			return read(SCRATCH_OUT);
+		}
+
+		/** this += (b - a) * t: layers part of the move from a to b over what is already posed, so swings can overlap. */
+		Pose add(Pose a, Pose b, float t) {
+			a.write(SCRATCH_A);
+			b.write(SCRATCH_B);
+			write(SCRATCH_OUT);
+			for (int i = 0; i < SIZE; i++) SCRATCH_OUT[i] += (SCRATCH_B[i] - SCRATCH_A[i]) * t;
+			return read(SCRATCH_OUT);
 		}
 	}
 
@@ -119,6 +178,100 @@
 	private static final Pose YIELDED = new Pose().set(-0.35F, -0.45F, -0.55F, -0.2F, 0.0F, 0.6F, 0.9F, -12.0F, 0.0F).wing(-0.3F, -1.2F, -0.4F)
 			.hand(-30, 12, -54, -1, -0.5F, 0.2F, 0.2F).siphon(16, 26, -74, 1, 0.2F, 0.2F, -0.1F).drag(56, 0, -46, 66, 0, -14);
 
+	// the moveset's poses (2026-10-24 expansion). Rakes: a claw lifts and draws back outward, then sweeps in across the
+	// front, low; the slam cocks both front claws overhead in a crouch and brings them down together ahead of her
+	private static final Pose RAKE_L_UP = new Pose().set(0.1F, 0.05F, 0.05F, 0.8F, 0.35F, 0.2F, 0.5F, 1.0F, 0.0F).wing(0.0F, -0.5F, 0.08F)
+			.hand(-16, 56, -44, -1, -0.3F, 0.3F, 0.3F).siphon(24, 44, -38, 1, -0.4F, 0.3F, 0.25F).drag(46, 0, -60, 60, 0, -26)
+			.reach(-14, 44, 6, 0, 0, 0).tail(0.0F, 0.0F, 0.0F, 0.05F);
+	private static final Pose RAKE_L = new Pose().set(-0.12F, 0.0F, 0.05F, 0.9F, 0.6F, 0.1F, 0.8F, 0.0F, 0.0F).wing(0.05F, -0.4F, 0.1F)
+			.hand(-14, 50, -52, -1, -0.3F, 0.3F, 0.2F).siphon(24, 44, -38, 1, -0.4F, 0.3F, 0.25F).drag(46, 0, -60, 60, 0, -26)
+			.reach(32, 12, -34, 0, 0, 0).tail(0.0F, 0.0F, 0.0F, -0.06F).turn(0.06F);
+	private static final Pose RAKE_R_UP = new Pose().set(0.1F, 0.05F, 0.05F, 0.8F, 0.35F, 0.2F, 0.5F, 1.0F, 0.0F).wing(0.0F, -0.5F, 0.08F)
+			.hand(-26, 40, -50, -1, -0.3F, 0.3F, 0.3F).siphon(16, 58, -36, 1, -0.4F, 0.3F, 0.25F).drag(46, 0, -60, 60, 0, -26)
+			.reach(0, 0, 0, 14, 44, 6).tail(0.0F, 0.0F, 0.0F, -0.05F);
+	private static final Pose RAKE_R = new Pose().set(-0.12F, 0.0F, 0.05F, 0.9F, 0.6F, 0.1F, 0.8F, 0.0F, 0.0F).wing(0.05F, -0.4F, 0.1F)
+			.hand(-26, 40, -50, -1, -0.3F, 0.3F, 0.3F).siphon(16, 52, -42, 1, -0.4F, 0.3F, 0.2F).drag(46, 0, -60, 60, 0, -26)
+			.reach(0, 0, 0, -32, 12, -34).tail(0.0F, 0.0F, 0.0F, 0.06F).turn(-0.06F);
+	private static final Pose SLAM_COCK = new Pose().set(0.05F, -0.1F, -0.1F, 1.0F, 0.3F, 0.1F, 0.7F, -3.0F, 0.2F).wing(0.1F, -0.2F, 0.4F)
+			.hand(-24, 66, -40, -1, -0.4F, 0.3F, 0.2F).siphon(24, 68, -38, 1, -0.4F, 0.3F, 0.0F).drag(50, 0, -56, 64, 0, -22)
+			.reach(14, 76, 14, -14, 76, 14);
+	private static final Pose SLAM = new Pose().set(-0.25F, -0.1F, -0.1F, 1.0F, 1.0F, 0.0F, 1.0F, -2.0F, 0.3F).wing(0.2F, 0.3F, -0.2F)
+			.hand(-30, 52, -50, -1, -0.3F, 0.3F, 0.1F).siphon(30, 54, -48, 1, -0.3F, 0.3F, -0.2F).drag(50, 0, -58, 64, 0, -24)
+			.reach(32, 4, -26, -32, 4, -26);
+	// the Brood Settle: she rears up on all four claws spread wide, then drops her belly to the floor and lies there
+	private static final Pose SETTLE_RISE = new Pose().set(0.15F, 0.05F, 0.05F, 0.8F, 0.6F, 0.1F, 0.2F, 10.0F, 0.5F).wing(0.1F, 0.0F, 0.5F)
+			.hand(-50, 74, -34, -1, -0.5F, 0.5F, 0.1F).siphon(50, 74, -32, 1, -0.5F, 0.5F, -0.2F).drag(64, 0, -64, 78, 0, -22)
+			.swell(0.35F);
+	private static final Pose SETTLE_DROP = new Pose().set(-0.18F, -0.2F, -0.15F, 0.4F, 0.5F, 0.3F, 0.7F, -11.0F, 0.3F).wing(0.0F, -0.8F, -0.1F)
+			.hand(-40, 16, -62, -1, 0.3F, 0.3F, 0.3F).siphon(38, 18, -60, 1, 0.3F, 0.3F, 0.1F).drag(68, 0, -62, 82, 0, -20)
+			.tail(-0.2F, 0.0F, -0.06F, 0.0F).swell(0.1F);
+	// the Claw Pin: the right front claw rises and points, then stabs down onto the pin spot (MycophantHoldKind.PIN:
+	// 3.6 blocks ahead and 1.6 to her right, on the floor, so blockout (25.6, 0, -57.6)) and presses there
+	private static final Pose PIN_WIND = new Pose().set(0.12F, 0.05F, 0.1F, 0.75F, 0.3F, 0.2F, 0.5F, 1.5F, 0.0F).wing(0.0F, -0.5F, 0.08F)
+			.hand(-26, 44, -50, -1, -0.3F, 0.3F, 0.3F).siphon(16, 60, -36, 1, -0.4F, 0.3F, 0.2F).drag(46, 0, -60, 60, 0, -26)
+			.reach(0, 0, 0, -4, 42, -6);
+	private static final Pose PIN = new Pose().set(-0.16F, -0.05F, -0.12F, 0.85F, 0.5F, 0.2F, 0.9F, -1.0F, 0.0F).wing(0.05F, -0.3F, 0.0F)
+			.hand(-12, 30, -66, -1, 0.2F, 0.2F, 0.35F).siphon(14, 54, -40, 1, -0.4F, 0.3F, 0.3F).drag(46, 0, -60, 60, 0, -26)
+			.reach(0, 0, 0, -20.4F, 0, 2.4F);
+	// the Tail Lash: the tendrils coil up and to her left with the abdomen tilted, then lash across to her right (and back)
+	private static final Pose TAIL_COIL = new Pose().set(0.05F, 0.0F, 0.05F, 0.6F, 0.2F, 0.3F, 0.4F, 1.0F, 0.2F).wing(0.05F, -0.6F, 0.15F)
+			.hand(-26, 40, -50, -1, -0.3F, 0.3F, 0.3F).siphon(24, 44, -38, 1, -0.4F, 0.3F, 0.25F).drag(46, 0, -58, 64, 0, -22)
+			.tail(1.0F, -0.8F, 0.2F, -0.15F).turn(0.3F);
+	private static final Pose TAIL_LASH = new Pose().set(-0.02F, 0.0F, 0.0F, 0.8F, 0.5F, 0.2F, 0.3F, 0.0F, 0.2F).wing(0.05F, -0.5F, 0.1F)
+			.hand(-26, 40, -50, -1, -0.3F, 0.3F, 0.3F).siphon(24, 44, -38, 1, -0.4F, 0.3F, 0.25F).drag(48, 0, -58, 64, 0, -22)
+			.tail(0.15F, 1.0F, 0.1F, 0.25F).turn(0.15F);
+	private static final Pose TAIL_LASH_BACK = new Pose().copy(TAIL_LASH).tail(0.15F, -1.0F, 0.1F, -0.25F).turn(-0.15F);
+	// the Vent Bloom: the petal vents open wide with the abdomen raised and the tendrils lifted clear
+	private static final Pose VENTS_OPEN = new Pose().set(-0.05F, -0.05F, 0.0F, 0.5F, 0.2F, 0.3F, 0.4F, 1.0F, 1.5F).wing(0.0F, -0.5F, 0.08F)
+			.hand(-26, 40, -50, -1, -0.3F, 0.3F, 0.3F).siphon(24, 44, -38, 1, -0.4F, 0.3F, 0.25F).drag(46, 0, -60, 60, 0, -26)
+			.tail(0.5F, 0.0F, 0.25F, 0.0F);
+	// the Hand Sweep: the grasping hand swings out wide and low to her left, then sweeps across the front at the floor
+	private static final Pose HAND_WIND = new Pose().set(0.06F, 0.0F, 0.0F, 0.8F, 0.4F, 0.2F, 0.4F, 0.5F, 0.0F).wing(0.05F, -0.6F, 0.1F)
+			.hand(-76, 30, -16, -1, 0.4F, 0.3F, 0.05F).siphon(26, 46, -34, 1, -0.4F, 0.3F, 0.25F).drag(48, 0, -60, 60, 0, -26)
+			.tail(0.0F, 0.0F, 0.0F, 0.08F).turn(-0.2F);
+	private static final Pose HAND_SWEEP = new Pose().set(-0.1F, 0.0F, 0.0F, 0.9F, 0.7F, 0.1F, 0.6F, 0.0F, 0.0F).wing(0.05F, -0.4F, 0.1F)
+			.hand(28, 24, -70, -0.5F, 0.6F, 0.2F, 0.15F).siphon(34, 56, -30, 1, -0.4F, 0.3F, 0.1F).drag(46, 0, -60, 60, 0, -26)
+			.tail(0.0F, 0.0F, 0.0F, -0.08F).turn(0.2F);
+	// the Siphon Spit: the siphon arches up high over her right shoulder, pulsing forward at each glob
+	private static final Pose SPIT = new Pose().set(0.12F, 0.08F, 0.12F, 0.6F, 0.25F, 0.2F, 0.2F, 1.0F, 0.0F).wing(0.0F, -0.5F, 0.08F)
+			.hand(-26, 44, -48, -1, -0.3F, 0.3F, 0.3F).siphon(34, 96, -44, 1, -0.6F, 0.4F, -0.6F).drag(46, 0, -60, 60, 0, -26);
+	// the Spore Mortar: the abdomen lifts, the vents open and it pumps the eggs up and out
+	private static final Pose MORTAR = new Pose().set(-0.1F, -0.05F, 0.0F, 0.4F, 0.2F, 0.3F, 0.5F, -1.0F, 1.2F).wing(0.0F, -0.5F, 0.08F)
+			.hand(-28, 36, -48, -1, -0.3F, 0.3F, 0.3F).siphon(26, 40, -36, 1, -0.4F, 0.3F, 0.25F).drag(48, 0, -58, 66, 0, -20)
+			.tail(0.4F, 0.0F, 0.35F, 0.0F).swell(0.15F);
+	// Nursing: bowed low over the fungling as she tends it (the siphon itself swings onto it through the latch)
+	private static final Pose NURSE = new Pose().set(-0.22F, -0.25F, -0.3F, 0.05F, 0.05F, 0.5F, 0.8F, -2.0F, 0.0F).wing(-0.12F, 0.8F, -0.3F)
+			.hand(-8, 34, -62, -1, -0.6F, 0.1F, 0.6F).siphon(16, 46, -62, 1, -0.3F, 0.2F, 0.5F).drag(42, 0, -56, 58, 0, -22);
+	// the Hyphae Lances: the wings rise with the spars pointing down, then stab them into the floor
+	private static final Pose LANCES_RISE = new Pose().set(0.22F, 0.05F, 0.1F, 0.9F, 0.6F, 0.1F, -0.2F, 2.0F, 0.2F).wing(0.15F, 0.15F, 1.05F)
+			.hand(-44, 74, -30, -1, -0.5F, 0.5F, 0.1F).siphon(44, 74, -28, 1, -0.5F, 0.5F, -0.2F).drag(50, 0, -58, 62, 0, -24)
+			.spar(-0.3F);
+	private static final Pose LANCES = new Pose().set(-0.12F, -0.1F, -0.15F, 1.0F, 0.85F, 0.0F, 0.6F, -1.5F, 0.3F).wing(-0.2F, 0.55F, -0.6F)
+			.hand(-34, 40, -56, -1, -0.3F, 0.3F, 0.2F).siphon(34, 42, -52, 1, -0.3F, 0.3F, 0.0F).drag(52, 0, -62, 64, 0, -24)
+			.spar(0.8F);
+	// the Lattice Net: the wings spread forward and open flat, the arms flung wide
+	private static final Pose NET = new Pose().set(0.08F, 0.05F, 0.05F, 1.0F, 0.5F, 0.1F, 0.3F, 1.0F, 0.1F).wing(0.1F, 0.95F, 0.4F)
+			.hand(-50, 66, -44, -1, -0.4F, 0.5F, 0.0F).siphon(50, 66, -42, 1, -0.4F, 0.5F, -0.3F).drag(46, 0, -60, 60, 0, -26)
+			.spar(-0.35F);
+	// the Gaze: the collar flared to frame the pulp, which pushes forward with the tentacles drawn back; the head turns
+	// after the beam (added in attackPose)
+	private static final Pose GAZE = new Pose().set(0.05F, 0.02F, -0.04F, 1.0F, 0.9F, 0.0F, -0.5F, 1.0F, 0.2F).wing(0.12F, 0.3F, 0.5F)
+			.hand(-40, 56, -40, -1, -0.4F, 0.4F, 0.2F).siphon(40, 56, -38, 1, -0.4F, 0.4F, 0.0F).drag(48, 0, -60, 62, 0, -24)
+			.pulp(4.0F);
+	// the Last Brood: she rears and roars with the collar over-flared, then squats anchored with the sac swollen open
+	// toward the player and the arms spread to receive them; cut free, she collapses with the sac torn and slack
+	private static final Pose LAST_BROOD_REAR = new Pose().set(0.45F, -0.05F, -0.1F, 1.2F, 1.0F, 0.0F, -0.5F, 4.0F, 0.8F).wing(0.15F, 0.1F, 0.7F)
+			.hand(-56, 96, -20, -1, -0.5F, 0.5F, 0.0F).siphon(56, 94, -18, 1, -0.5F, 0.5F, -0.3F).drag(54, 58, -50, 64, 18, -32)
+			.tail(0.3F, 0.0F, 0.1F, 0.0F).swell(0.5F);
+	private static final Pose LAST_BROOD_PULL = new Pose().set(0.1F, -0.1F, -0.15F, 1.0F, 0.7F, 0.2F, 0.9F, -3.0F, 0.6F).wing(0.2F, 0.7F, 0.3F)
+			.hand(-60, 56, -54, -1, -0.2F, 0.4F, 0.0F).siphon(60, 56, -52, 1, -0.2F, 0.4F, -0.2F).drag(64, 0, -70, 76, 0, -18)
+			.tail(-0.1F, 0.0F, -0.04F, 0.0F).swell(1.0F);
+	private static final Pose LAST_BROOD_COLLAPSE = new Pose().set(-0.32F, -0.4F, -0.45F, -0.2F, 0.4F, 0.7F, 0.9F, -12.0F, 0.1F).wing(-0.3F, -1.1F, -0.4F)
+			.hand(-34, 10, -56, -1, -0.5F, 0.2F, 0.15F).siphon(20, 22, -72, 1, 0.2F, 0.2F, -0.1F).drag(60, 0, -50, 72, 0, -14)
+			.tail(-0.3F, 0.0F, -0.08F, 0.0F).swell(-0.2F).spar(0.6F);
+	/** Ticks each rake or slam takes to strike (arriving on its hit tick) and to ease back out after it. */
+	private static final float SWING_TICKS = 4.0F;
+
 	private final Pose pose = new Pose();
 	private final Pose poseA = new Pose();
 	private final Pose poseB = new Pose();
@@ -127,7 +280,8 @@
 	private final Quaternionf foreQ = new Quaternionf();
 	private final Vector3f euler = new Vector3f();
 	private final Vector3f siphonAim = new Vector3f();
-	private boolean siphonLatched;
+	/** 0..1: how far the siphon has swung onto its latched target (0 when there is none). */
+	private float siphonLatch;
 	/** Intro accents: how still the facial tentacles hold (0..1), the roar's tremble (0..1), the dropped fungling's fall (-1 = none). */
 	private float tentacleCalm;
 	private float roarTremble;
@@ -154,11 +308,19 @@
 		}
 		float partial = ageInTicks - entity.tickCount;
 		float time = ageInTicks / 20.0F;
+		// every synced counter is replayed on the client clock, so a burst or a gap in the server's updates never stalls
+		// or skips a beat
+		MycophantAnimState motion = MycophantAnimState.of(entity);
+		motion.update(entity, partial);
 		MycophantState state = entity.getState();
-		boolean walking = state == MycophantState.DRAG;
+		float gait = motion.gait(partial);
 		float split = entity.getPhase() >= 2 ? 1.0F : 0.0F;
-		float splitT = state == MycophantState.SPLIT ? entity.getSplitTick() + partial : (split > 0 ? 999.0F : 0.0F);
-		this.siphonLatched = false;
+		float splitT = state == MycophantState.SPLIT ? motion.splitTime() : (split > 0 ? 999.0F : 0.0F);
+		// the siphon swings onto its target and, once it lets go, back off it along the last line it fed on
+		float latch = motion.latch(partial);
+		boolean aimed = entity.getSiphonTargetId() >= 0 && aimSiphon(entity, partial);
+		if (aimed) motion.rememberAim(this.siphonAim);
+		this.siphonLatch = latch > 0.0F && (aimed || motion.recallAim(this.siphonAim)) ? latch : 0.0F;
 		this.tentacleCalm = 0.0F;
 		this.roarTremble = 0.0F;
 		this.splitShudder = 0.0F;
@@ -183,33 +345,73 @@
 				case "bloom" -> BLOOM;
 				case "stagger" -> STAGGER;
 				case "yield" -> YIELDED;
+				case "rake_l" -> RAKE_L;
+				case "rake_r" -> RAKE_R;
+				case "slam" -> SLAM;
+				case "settle_rise" -> SETTLE_RISE;
+				case "settle_drop" -> SETTLE_DROP;
+				case "pin" -> PIN;
+				case "tail_coil" -> TAIL_COIL;
+				case "tail_lash" -> TAIL_LASH;
+				case "vents_open" -> VENTS_OPEN;
+				case "hand_wind" -> HAND_WIND;
+				case "hand_sweep" -> HAND_SWEEP;
+				case "spit" -> SPIT;
+				case "mortar" -> MORTAR;
+				case "nurse" -> NURSE;
+				case "lances" -> LANCES;
+				case "net" -> NET;
+				case "gaze" -> GAZE;
+				case "last_brood_rear" -> LAST_BROOD_REAR;
+				case "last_brood_pull" -> LAST_BROOD_PULL;
+				case "last_brood_collapse" -> LAST_BROOD_COLLAPSE;
 				default -> STALK;
 			});
-			walking = name.equals("drag");
+			gait = name.equals("drag") ? 1.0F : 0.0F;
 			cradle = name.equals("tending");
-			splitT = opened ? 999.0F : 0.0F;
+			// the wing and pulp moves only exist with the head opened
+			boolean phaseTwo = switch (name) {
+				case "lances", "net", "gaze", "last_brood_rear", "last_brood_pull", "last_brood_collapse" -> true;
+				default -> false;
+			};
+			splitT = opened || phaseTwo ? 999.0F : 0.0F;
 		} else {
 			switch (state) {
-				case INTRO -> {
-					cradle = introPose(entity, partial);
-					walking = introPivoting(entity, partial);
-				}
-				case ATTACK -> attackPose(entity, partial);
+				case INTRO -> cradle = introPose(entity, motion.introTime());
+				case ATTACK -> attackPose(entity, motion, partial, ageInTicks);
 				case STAGGER -> {
-					float s = entity.getStateTick() + partial;
-					float rise = HemoEasing.smoothstep(s / 6.0F) * (1.0F - HemoEasing.smoothstep((s - 10.0F) / 20.0F));
-					this.pose.mix(STALK, STAGGER, rise);
+					float s = motion.stateTime();
+					if (motion.staggeredOutOfLastBrood()) {
+						lastBroodCollapse(s, motion.lastBroodCutFree());
+					} else {
+						float rise = HemoEasing.smoothstep(s / 6.0F) * (1.0F - HemoEasing.smoothstep((s - 10.0F) / 20.0F));
+						this.pose.mix(STALK, STAGGER, rise);
+					}
 				}
 				case SPLIT -> splitPose(splitT);
 				case YIELD -> {
-					float y = entity.getYieldTick() + partial;
-					this.pose.mix(STALK, YIELDED, HemoEasing.smoothstep(MycophantYieldRules.lower((int) y) * 0.6F + MycophantYieldRules.fold((int) y) * 0.4F));
-					this.pose.frill = Mth.lerp(MycophantYieldRules.fold((int) y), STALK.frill, -0.3F);
+					float y = motion.yieldTime();
+					this.pose.mix(STALK, YIELDED, HemoEasing.smoothstep(MycophantYieldRules.lower(y) * 0.6F + MycophantYieldRules.fold(y) * 0.4F));
+					this.pose.frill = Mth.lerp(MycophantYieldRules.fold(y), STALK.frill, -0.3F);
 				}
 				default -> this.pose.copy(STALK);
 			}
+			blendFromLast(entity, motion, ageInTicks);
 		}
-		apply(entity, time, walking, ageInTicks, splitT, cradle);
+		apply(entity, time, gait, ageInTicks, splitT, cradle);
+	}
+
+	/**
+	 * A new state, attack or hold starts from wherever she was drawn last, not from the authored start pose: a stagger
+	 * landing mid-swing, a catch mid-lunge or a release mid-squeeze all ease over instead of popping.
+	 */
+	private void blendFromLast(MycophantEntity entity, MycophantAnimState motion, float age) {
+		MycophantState state = entity.getState();
+		int attack = state == MycophantState.ATTACK ? entity.getAttack().ordinal() + 1 : 0;
+		motion.begin((state.ordinal() * 64 + attack) * 2 + (entity.isHolding() ? 1 : 0), age, Pose.SIZE);
+		float blend = motion.blend(age);
+		if (blend < 1.0F) this.pose.mix(this.poseA.read(motion.from()), this.pose, blend);
+		this.pose.write(motion.last());
 	}
 
 	/**
@@ -217,9 +419,8 @@
 	 * her claws, lets the fungling fall, draws back low, rears into the roar, then settles forward into the rush's
 	 * starting stance so the Rushing Embrace's wind-up picks up without a pop. Returns true while she still cradles it.
 	 */
-	private boolean introPose(MycophantEntity entity, float partial) {
+	private boolean introPose(MycophantEntity entity, float t) {
 		boolean rematch = entity.isRematchIntro();
-		float t = entity.getIntroTick() + partial;
 		float notice = MycophantIntroRules.tickOf(MycophantIntroRules.Beat.NOTICE, rematch);
 		float roar = MycophantIntroRules.tickOf(MycophantIntroRules.Beat.ROAR, rematch);
 		float rush = MycophantIntroRules.tickOf(MycophantIntroRules.Beat.RUSH, rematch);
@@ -311,19 +512,12 @@
 		if (settle > 0.0F) this.pose.mix(this.poseA.copy(this.pose), STALK, settle);
 	}
 
-	/** She pivots round on her claws during the intro's turn instead of spinning in place. */
-	private static boolean introPivoting(MycophantEntity entity, float partial) {
-		boolean rematch = entity.isRematchIntro();
-		float t = entity.getIntroTick() + partial;
-		float turn = MycophantIntroRules.tickOf(MycophantIntroRules.Beat.TURN, rematch);
-		return t >= turn && t < turn + MycophantIntroRules.turnTicks(rematch)
-				&& Math.abs(Mth.wrapDegrees(entity.yBodyRot - entity.yBodyRotO)) > 0.3F;
-	}
-
-	private void attackPose(MycophantEntity entity, float partial) {
+	private void attackPose(MycophantEntity entity, MycophantAnimState motion, float partial, float ageInTicks) {
 		MycophantAttack attack = entity.getAttack();
-		BossMoveTimeline timeline = MycophantControllerRules.timeline(attack, entity.getPhase());
-		float t = entity.getAttackTick() + partial;
+		int phase = entity.getPhase();
+		int variant = entity.getAttackVariant();
+		BossMoveTimeline timeline = MycophantControllerRules.timeline(attack, phase, variant);
+		float t = motion.attackTime();
 		float w = Math.max(1, timeline.windup());
 		float a = Math.max(1, timeline.active());
 		float r = Math.max(1, timeline.recovery());
@@ -333,11 +527,12 @@
 		switch (attack) {
 			case RUSHING_EMBRACE, FUSION_EMBRACE -> {
 				if (entity.isHolding()) {
+					// the attack clock stands still through a hold, so the slow head work runs on the entity's age
 					this.pose.copy(HOLD);
-					float squeeze = entity.getClaimMeter();
+					float squeeze = motion.claimMeter(partial);
 					this.pose.grip = Mth.lerp(squeeze, 0.7F, 1.0F);
 					this.pose.thorax -= squeeze * 0.08F;
-					this.pose.head += Mth.sin(t * 0.2F) * 0.05F;
+					this.pose.head += Mth.sin(ageInTicks * 0.2F) * 0.05F;
 				} else if (t < w) {
 					this.pose.mix(STALK, ROAR, wind);
 				} else if (t < w + a) {
@@ -349,21 +544,15 @@
 			}
 			case SIPHON_FEED -> {
 				if (t < w) this.pose.mix(STALK, SIPHON_AIM, wind);
-				else if (t < w + a) {
-					this.pose.copy(SIPHON_AIM);
-					this.siphonLatched = entity.getSiphonTargetId() >= 0 && aimSiphon(entity, partial);
-				} else this.pose.mix(SIPHON_AIM, STALK, rec);
+				else if (t < w + a) this.pose.copy(SIPHON_AIM);
+				else this.pose.mix(SIPHON_AIM, STALK, rec);
 			}
 			case PLUCK -> {
 				if (t < w) this.pose.mix(STALK, PLUCK_WIND, wind);
 				else if (t < w + a) this.pose.mix(PLUCK_WIND, PLUCK, act);
 				else this.pose.mix(PLUCK, STALK, rec);
 			}
-			case CLAW_RAKE -> {
-				this.pose.copy(STALK);
-				this.pose.rake = t < w ? wind : (t < w + a ? 1.0F + act : 2.0F - rec * 2.0F);
-				this.pose.thorax = Mth.lerp(Math.min(1.0F, this.pose.rake), 0.0F, 0.12F) - (t >= w && t < w + a ? act * 0.18F : 0.0F);
-			}
+			case RAKE_STRING -> rakeString(variant, phase, t, w, w + a + r);
 			case BROOD_CALL, NECTAR_SURGE -> {
 				if (t < w) this.pose.mix(STALK, SPAWN, wind);
 				else if (t < w + a) this.pose.copy(SPAWN);
@@ -385,8 +574,231 @@
 				else if (t < w + a) this.pose.mix(BLOOM_WIND, BLOOM, HemoEasing.smoothstep((t - w) / (a * 0.5F)));
 				else this.pose.mix(BLOOM, STALK, rec);
 			}
+			case BROOD_SETTLE -> {
+				if (t < w) {
+					this.pose.mix(STALK, SETTLE_RISE, wind);
+				} else if (t < w + a) {
+					// the belly comes down fast, squashing a little as it lands
+					this.pose.mix(SETTLE_RISE, SETTLE_DROP, HemoEasing.smoothstep((t - w) / 3.0F));
+				} else {
+					// she lies low and heaves through the punish window, getting up only at its end
+					float lie = t - w - a;
+					float up = HemoEasing.smoothstep((lie - (r - 14.0F)) / 14.0F);
+					this.pose.mix(SETTLE_DROP, STALK, up);
+					this.pose.height += Mth.sin(lie * 0.25F) * 0.5F * (1.0F - up);
+				}
+				this.pose.height -= bump((t - w - 2.0F) / 4.0F) * 1.5F;
+			}
+			case CLAW_PIN -> {
+				if (entity.isHolding()) {
+					// pressing down on the pinned player; the attack clock stands still through the pin
+					this.pose.copy(PIN);
+					this.pose.thorax += Mth.sin(ageInTicks * 0.35F) * 0.02F;
+					this.pose.reachR[1] -= Math.abs(Mth.sin(ageInTicks * 0.3F)) * 1.5F;
+				} else if (t < w) {
+					this.pose.mix(STALK, PIN_WIND, wind);
+				} else if (t < w + a) {
+					this.pose.mix(PIN_WIND, PIN, act);
+				} else {
+					this.pose.mix(PIN, STALK, rec);
+				}
+			}
+			case TAIL_LASH -> {
+				// coil through the wind-up, then lash in the swing ticks up to each hit, across and (variant 1) back
+				int[] hits = com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantStrikeRules.tailHits(variant);
+				this.pose.mix(STALK, TAIL_COIL, HemoEasing.smoothstep(t / Math.max(1.0F, w + hits[0] - SWING_TICKS)));
+				for (int i = 0; i < hits.length; i++) {
+					float lash = HemoEasing.smoothstep((t - (w + hits[i] - SWING_TICKS)) / SWING_TICKS);
+					if (lash > 0.0F) this.pose.mix(this.poseA.copy(this.pose), i % 2 == 0 ? TAIL_LASH : TAIL_LASH_BACK, lash);
+				}
+				if (rec > 0.0F) this.pose.mix(this.poseA.copy(this.pose), STALK, rec);
+			}
+			case VENT_BLOOM -> {
+				if (t < w) this.pose.mix(STALK, VENTS_OPEN, wind);
+				else if (t < w + a) this.pose.copy(VENTS_OPEN);
+				else this.pose.mix(VENTS_OPEN, STALK, rec);
+				// the cloud puffs out as the move commits
+				float puff = bump((t - w) / a);
+				this.pose.vents += puff * 0.4F;
+				this.pose.abdLift += puff * 0.08F;
+			}
+			case HAND_SWEEP -> {
+				if (t < w) {
+					this.pose.mix(STALK, HAND_WIND, wind);
+				} else if (t < w + a) {
+					// the hand swings out ahead of her on its way across, staying low
+					float s = HemoEasing.smoothstep((t - w) / a);
+					this.pose.mix(HAND_WIND, HAND_SWEEP, s);
+					float arc = Mth.sin(s * Mth.PI);
+					this.pose.hand[2] -= arc * 24.0F;
+					this.pose.hand[1] -= arc * 4.0F;
+				} else {
+					this.pose.mix(HAND_SWEEP, STALK, rec);
+				}
+			}
+			case SIPHON_SPIT -> {
+				if (t < w) this.pose.mix(STALK, SPIT, wind);
+				else if (t < w + a) this.pose.copy(SPIT);
+				else this.pose.mix(SPIT, STALK, rec);
+				// each glob swells the siphon and spits forward, peaking on its release tick
+				float spit = 0.0F;
+				int[] globs = com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantStrikeRules.globTicks(phase);
+				for (int g : globs) spit += bump((t - w - g + 2.0F) / 4.0F);
+				this.pose.siphonT[1] -= spit * 8.0F;
+				this.pose.siphonT[2] -= spit * 14.0F;
+				this.pose.curl += spit * 0.6F;
+				this.pose.thorax += spit * 0.04F;
+				this.pose.maw += spit * 0.2F;
+			}
+			case SPORE_MORTAR -> {
+				if (t < w) this.pose.mix(STALK, MORTAR, wind);
+				else if (t < w + a) this.pose.copy(MORTAR);
+				else this.pose.mix(MORTAR, STALK, rec);
+				// the vents pump twice through the tell, then three times as the eggs go up
+				float pump = t < w ? 0.4F * sinSquared(t / w * 2.0F) : (t < w + a ? sinSquared((t - w) / a * 3.0F) : 0.0F);
+				this.pose.abdLift += pump * 0.14F;
+				this.pose.vents += pump * 0.35F;
+				this.pose.height += pump * 0.8F;
+			}
+			case NURSING -> {
+				if (t < w) this.pose.mix(STALK, NURSE, wind);
+				else if (t < w + a) this.pose.copy(NURSE);
+				else this.pose.mix(NURSE, STALK, rec);
+				// rocking over the fungling in slow swallows, on the entity's age so a broken feeding never jumps
+				float tend = HemoEasing.smoothstep((t - w) / 6.0F) * (1.0F - rec);
+				float rock = Mth.sin(ageInTicks * 0.09F);
+				this.pose.head += rock * 0.07F * tend;
+				this.pose.neck += rock * 0.03F * tend;
+				this.pose.curl += Mth.sin(ageInTicks * 0.21F) * 0.18F * tend;
+				this.pose.grip += Mth.sin(ageInTicks * 0.13F) * 0.08F * tend;
+			}
+			case HYPHAE_LANCES -> {
+				if (t < w) {
+					this.pose.mix(STALK, LANCES_RISE, wind);
+				} else if (t < w + a) {
+					this.pose.mix(LANCES_RISE, LANCES, HemoEasing.smoothstep((t - w) / SWING_TICKS));
+				} else {
+					this.pose.mix(LANCES, STALK, rec);
+				}
+				// the spars stay driven in, straining, while the line erupts
+				this.pose.thorax += Mth.sin(ageInTicks * 1.7F) * 0.012F * act * (1.0F - rec);
+			}
+			case LATTICE_NET -> {
+				if (t < w) this.pose.mix(STALK, NET, wind);
+				else if (t < w + a) this.pose.copy(NET);
+				else this.pose.mix(NET, STALK, rec);
+				// the cast: the wings throw forward as the net goes out
+				float cast = bump((t - w) / a);
+				this.pose.wing[1] += cast * 0.3F;
+				this.pose.thorax -= cast * 0.1F;
+				this.pose.spar -= cast * 0.2F;
+			}
+			case GAZE -> {
+				if (t < w) this.pose.mix(STALK, GAZE, wind);
+				else if (t < w + a) this.pose.copy(GAZE);
+				else this.pose.mix(GAZE, STALK, rec);
+				// once the beam sweeps, the head follows it (relative to her body, as far as the neck allows)
+				float follow = HemoEasing.smoothstep((t - w) / SWING_TICKS) * (1.0F - rec);
+				float bodyYaw = Mth.rotLerp(partial, entity.yBodyRotO, entity.yBodyRot);
+				float relative = Mth.clamp(Mth.wrapDegrees(motion.gazeYaw(partial) - bodyYaw), -70.0F, 70.0F);
+				this.pose.turn += relative * Mth.DEG_TO_RAD * follow;
+				this.pose.pulpFwd += Mth.sin(ageInTicks * 0.9F) * 0.4F * follow;
+			}
+			case LAST_BROOD -> lastBrood(entity, t, w, ageInTicks);
 			case NONE -> this.pose.copy(STALK);
 		}
+	}
+
+	/**
+	 * The Rake String: left, right (and left again in phase 2's long form), then for variants 1 and 2 a crouched
+	 * hesitation with both claws cocked overhead and the slam. Each blow strikes in the {@link #SWING_TICKS} up to its
+	 * hit and eases back out over as many after it (the last one over the recovery); the next claw lifts while the last
+	 * one returns, so the string flows without a pause between blows.
+	 */
+	private void rakeString(int variant, int phase, float t, float w, float end) {
+		int[] hits = com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantStrikeRules.stringHits(variant, phase);
+		this.pose.copy(STALK);
+		float previous = 0.0F;
+		for (int i = 0; i < hits.length; i++) {
+			float hit = w + hits[i];
+			boolean slam = com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantStrikeRules.isSlam(variant, i, hits.length);
+			boolean last = i == hits.length - 1;
+			boolean left = i % 2 == 0;
+			Pose up = slam ? SLAM_COCK : (left ? RAKE_L_UP : RAKE_R_UP);
+			Pose struck = slam ? SLAM : (left ? RAKE_L : RAKE_R);
+			float strikeStart = hit - SWING_TICKS;
+			// the slam cocks quickly, then holds the hesitation until it drops
+			float raiseTicks = Math.max(1.0F, slam ? Math.min(6.0F, strikeStart - previous) : strikeStart - previous);
+			float raise = HemoEasing.smoothstep((t - previous) / raiseTicks);
+			float strike = HemoEasing.smoothstep((t - strikeStart) / SWING_TICKS);
+			float back = last ? HemoEasing.smoothstep((t - hit - 3.0F) / Math.max(SWING_TICKS, (end - hit - 3.0F) * 0.7F))
+					: HemoEasing.smoothstep((t - hit) / SWING_TICKS);
+			this.pose.add(STALK, up, raise * (1.0F - strike));
+			this.pose.add(STALK, struck, strike * (1.0F - back));
+			if (slam) {
+				// the hesitation creeps: she sinks a little lower and the claws lift a little higher before they drop
+				float creep = HemoEasing.smoothstep((t - previous - raiseTicks) / Math.max(1.0F, strikeStart - previous - raiseTicks))
+						* (1.0F - strike);
+				this.pose.height -= creep * 1.2F;
+				this.pose.thorax += creep * 0.04F;
+				this.pose.reachL[1] += creep * 6.0F;
+				this.pose.reachR[1] += creep * 6.0F;
+			}
+			previous = hit;
+		}
+	}
+
+	/**
+	 * The Last Brood: she rears and roars through the tell, sinks into the anchored pull with the sac swollen open as it
+	 * runs out, and strains there; a cocooned player is held against the opened sac.
+	 */
+	private void lastBrood(MycophantEntity entity, float t, float w, float ageInTicks) {
+		if (entity.isHolding()) {
+			this.pose.copy(HOLD);
+			this.pose.sac = 1.0F;
+			this.pose.frill = 1.0F;
+			this.pose.grip = 0.9F;
+			this.pose.thorax -= 0.06F;
+			this.pose.head += Mth.sin(ageInTicks * 0.2F) * 0.05F;
+			return;
+		}
+		if (t < w) {
+			float rear = HemoEasing.smoothstep(t / 8.0F);
+			this.pose.mix(STALK, LAST_BROOD_REAR, rear);
+			this.roarTremble = rear * (1.0F - HemoEasing.smoothstep((t - (w - 14.0F)) / 6.0F));
+			this.pose.maw *= 0.85F + Mth.sin(t * 1.7F) * 0.15F * this.roarTremble;
+			this.pose.mix(this.poseA.copy(this.pose), LAST_BROOD_PULL, HemoEasing.smoothstep((t - (w - 8.0F)) / 8.0F));
+			return;
+		}
+		this.pose.copy(LAST_BROOD_PULL);
+		float strain = HemoEasing.smoothstep((t - w) / 10.0F);
+		this.pose.thorax += Mth.sin(ageInTicks * 1.9F) * 0.02F * strain;
+		this.pose.head += Mth.sin(ageInTicks * 1.3F) * 0.03F * strain;
+		this.pose.sac += Mth.sin(ageInTicks * 0.45F) * 0.06F * strain;
+	}
+
+	/**
+	 * The stagger after the Last Brood: cut free, she falls from the pull onto her belly with the sac torn and lies
+	 * there through the collapse, rising only at its end; spent, she sags halfway for the shorter stagger.
+	 */
+	private void lastBroodCollapse(float s, boolean cutFree) {
+		float duration = cutFree ? com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantLastBroodRules.COLLAPSE
+				: com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantLastBroodRules.SPENT;
+		Pose low = cutFree ? LAST_BROOD_COLLAPSE : this.poseB.mix(STALK, LAST_BROOD_COLLAPSE, 0.55F);
+		this.pose.mix(LAST_BROOD_PULL, low, HemoEasing.smoothstep(s / 10.0F));
+		this.pose.height -= bump((s - 7.0F) / 5.0F) * (cutFree ? 1.5F : 0.8F);
+		this.pose.mix(this.poseA.copy(this.pose), STALK, HemoEasing.smoothstep((s - (duration - 16.0F)) / 16.0F));
+	}
+
+	/** 0 outside 0..1, rising to 1 at the middle and back with no jolt at either end. */
+	private static float bump(float x) {
+		return x <= 0.0F || x >= 1.0F ? 0.0F : sinSquared(x);
+	}
+
+	/** sin squared of x half-turns: x whole beats from 0 to 1 and back, smooth at every end. */
+	private static float sinSquared(float x) {
+		float s = Mth.sin(x * Mth.PI);
+		return s * s;
 	}
 
 	/** Points the siphon at its latched target; returns false when the target is gone. */
@@ -404,49 +816,56 @@
 		return true;
 	}
 
-	private void apply(MycophantEntity entity, float time, boolean walking, float ageInTicks, float splitT, boolean cradle) {
+	/** {@code drag} is 0..1, how far the claws have fallen into the drag gait, so starting and stopping never pops. */
+	private void apply(MycophantEntity entity, float time, float drag, float ageInTicks, float splitT, boolean cradle) {
 		Pose p = this.pose;
 		float breathe = Mth.sin(time * 1.3F);
 		float gait = MycophantMotionRules.dragPhase(ageInTicks);
-		float haul = walking ? Mth.sin(gait * Mth.TWO_PI * 2.0F) : 0.0F;
+		float haul = Mth.sin(gait * Mth.TWO_PI * 2.0F) * drag;
 
 		// body: bob, haul surge and sway
 		this.body.y = this.bodyBaseY - (p.height + breathe * 0.6F + Math.max(0.0F, haul) * 1.2F) / 2.0F;
 		this.body.z = -haul * 2.5F / 2.0F;
-		this.body.zRot = walking ? Mth.sin(gait * Mth.TWO_PI) * 0.03F : 0.0F;
-		this.body.yRot = walking ? -Mth.sin(gait * Mth.TWO_PI) * 0.03F : 0.0F;
+		this.body.zRot = Mth.sin(gait * Mth.TWO_PI) * 0.03F * drag;
+		this.body.yRot = -Mth.sin(gait * Mth.TWO_PI) * 0.03F * drag;
 
 		// thorax, neck and head
 		this.thorax.xRot = -(p.thorax + breathe * 0.015F);
+		this.thorax.yRot += p.turn * 0.15F;
 		this.neck.xRot = -p.neck;
+		this.neck.yRot += p.turn * 0.3F;
 		this.head.xRot = -p.head;
-		this.head.yRot = -Mth.sin(time * 0.6F) * 0.06F * (1.0F - this.tentacleCalm) + Mth.sin(ageInTicks * 2.3F) * 0.05F * this.roarTremble
+		this.head.yRot = p.turn * 0.55F - Mth.sin(time * 0.6F) * 0.06F * (1.0F - this.tentacleCalm) + Mth.sin(ageInTicks * 2.3F) * 0.05F * this.roarTremble
 				+ Mth.sin(ageInTicks * 3.3F) * 0.05F * this.splitShudder;
 		this.head.zRot = Mth.sin(time * 0.8F) * 0.04F + Mth.sin(ageInTicks * 1.9F + 1.0F) * 0.06F * this.roarTremble
 				+ Mth.sin(ageInTicks * 2.6F + 2.0F) * 0.06F * this.splitShudder;
 		this.head.xRot += Mth.sin(ageInTicks * 4.1F) * 0.03F * this.splitShudder;
 
 		// the abdomen breathes and pulses when spawning
-		this.abdomen.xRot = -(0.03F + breathe * 0.01F + p.vents * Mth.sin(time * 6.0F) * 0.01F);
-		this.abdomen.yRot = walking ? -Mth.sin(gait * Mth.TWO_PI) * 0.03F : 0.0F;
+		this.abdomen.xRot = p.abdLift - (0.03F + breathe * 0.01F + p.vents * Mth.sin(time * 6.0F) * 0.01F);
+		this.abdomen.yRot = -p.abdYaw - Mth.sin(gait * Mth.TWO_PI) * 0.03F * drag;
 		float pulse = 1.0F + p.vents * 0.03F * Mth.sin(time * 5.0F);
 		this.abdomen.xScale = pulse;
 		this.abdomen.yScale = pulse;
 		for (ModelPart[] vent : this.ventPetals)
 			for (int i = 0; i < vent.length; i++) vent[i].zRot = -p.vents * (1.0F + Mth.sin(time * 4.0F + i) * 0.12F);
+		// the tendrils run along -Y: +xRot curls them up, +zRot (and +yRot at the root) swings them to her left
 		for (int i = 0; i < this.tails.length; i++) {
 			ModelPart[] chain = this.tails[i];
 			for (int k = 0; k < chain.length; k++) {
-				chain[k].xRot += -(0.12F + Mth.sin(time * 1.8F - k * 0.5F + i) * 0.1F);
+				chain[k].xRot += -(0.12F + Mth.sin(time * 1.8F - k * 0.5F + i) * 0.1F) + p.tailCurl * (k == 0 ? 0.45F : 0.38F);
 				chain[k].zRot += Mth.cos(time * 1.4F - k * 0.4F + i * 2.0F) * 0.08F;
+				if (k == 0) chain[k].yRot -= p.tailSwing * 0.7F;
+				else chain[k].zRot -= p.tailSwing * 0.12F * (1.0F + k * 0.15F);
 			}
 		}
 
 		// the gestation sac breathes; its shell is drawn by the translucent sac layer only
-		float sacPulse = 1.0F + Mth.sin(time * 3.1F) * 0.02F;
+		float sacPulse = (1.0F + Mth.sin(time * 3.1F) * 0.02F) * (1.0F + p.sac * 0.3F);
 		this.sac.xScale = sacPulse;
 		this.sac.yScale = sacPulse;
 		this.sac.zScale = sacPulse;
+		this.sac.z -= Math.max(0.0F, p.sac) * 3.0F;
 		this.sacShell.visible = false;
 
 		// the collar: folded back along the neck at rest, flared out around the face on display
@@ -508,7 +927,7 @@
 		this.pulp.xScale = pulpScale;
 		this.pulp.yScale = pulpScale;
 		this.pulp.zScale = pulpScale;
-		this.pulp.z += (1.0F - bloom) * 2.0F;
+		this.pulp.z += (1.0F - bloom) * 2.0F - p.pulpFwd / 2.0F;
 		float writhe = Mth.lerp(bloom, 0.3F, 1.0F);
 		for (int i = 0; i < this.pulpTentacles.length; i++) {
 			ModelPart[] chain = this.pulpTentacles[i];
@@ -542,12 +961,13 @@
 			for (int k = 1; k < chain.length; k++) {
 				float start = 0.15F + 0.6F * (k - 1) / (chain.length - 1);
 				chain[k].zRot += (left ? 0.75F : -0.75F) * (1.0F - HemoEasing.smoothstep((wings - start) / 0.25F))
+						+ (left ? 0.15F : -0.15F) * p.spar
 						+ (left ? -1.0F : 1.0F) * Mth.sin(time * 1.4F - k * 0.5F + s) * 0.025F
 						+ Mth.sin(time * 9.0F - k * 0.9F + s) * 0.05F * shiver;
 			}
 		}
 
-		// the four claws drag the belly along; the right front one rakes
+		// the four claws drag the belly along; the front pair rake, slam and pin through their reach offsets
 		float[] footholds = new float[3];
 		for (int c = 0; c < 4; c++) {
 			boolean front = c < 2;
@@ -560,22 +980,21 @@
 			float tx = base[0] * side;
 			float ty = base[1];
 			float tz = base[2];
-			if (walking) {
+			if (drag > 0.0F) {
 				float pair = (front == (side > 0)) ? 0.5F : 0.0F;
 				float ph = (gait + pair) % 1.0F;
-				if (ph < 0.6F) tz += 22.0F * (ph / 0.6F - 0.5F);
+				if (ph < 0.6F) tz += 22.0F * (ph / 0.6F - 0.5F) * drag;
 				else {
 					float u = (ph - 0.6F) / 0.4F;
-					tz += 22.0F * (0.5F - u);
-					ty += Mth.sin(u * Mth.PI) * 16.0F;
+					tz += 22.0F * (0.5F - u) * drag;
+					ty += Mth.sin(u * Mth.PI) * 16.0F * drag;
 				}
 			}
-			if (front && side > 0 && p.rake > 0.0F) {
-				float raise = Math.min(1.0F, p.rake);
-				float slam = Math.max(0.0F, p.rake - 1.0F);
-				ty += raise * 46.0F - slam * 46.0F;
-				tz += -raise * 6.0F - slam * 34.0F;
-				tx -= slam * 18.0F;
+			float[] reach = side < 0 ? p.reachL : p.reachR;
+			if (front) {
+				tx += reach[0];
+				ty += reach[1];
+				tz += reach[2];
 			}
 			footholds[0] = bx(tx) - this.body.x;
 			footholds[1] = by(ty) - this.body.y;
@@ -585,7 +1004,11 @@
 			float l2 = ((front ? 28.0F : 26.0F) + 24.0F * k) / 2.0F;
 			solve(upper, fore, upper.x, upper.y, upper.z, footholds[0], footholds[1], footholds[2], -side * 0.7F, -1.0F, -0.2F, l1, l2);
 			hand.xRot = -0.35F;
-			dactyl.zRot = (walking ? 0.25F : 0.1F) + (p.front[1] > 20.0F || p.rake > 0.5F ? 0.6F : 0.0F);
+			// the dactyls open as the front claws lift or one reaches up to strike, eased so a blend through the threshold
+			// never pops
+			float open = Math.max(Mth.clamp((p.front[1] - 15.0F) / 10.0F, 0.0F, 1.0F),
+					front ? Mth.clamp((reach[1] - 15.0F) / 10.0F, 0.0F, 1.0F) : 0.0F);
+			dactyl.zRot = Mth.lerp(drag, 0.1F, 0.25F) + open * 0.6F;
 		}
 
 		// the upper arms work in the thorax's frame
@@ -611,23 +1034,25 @@
 		this.thumb0.xRot = 0.3F + p.grip * 0.5F;
 		this.thumb0.zRot = -(0.6F - p.grip * 0.7F);
 		this.thumb1.xRot = p.grip * 0.9F;
-		if (this.siphonLatched) {
-			// aim the siphon arm along the line to its target, as far as it reaches
+		float latch = this.siphonLatch;
+		float[] siphonTarget = p.siphonT;
+		if (latch > 0.0F) {
+			// aim the siphon arm along the line to its target, as far as it reaches, swinging over by the latch weight:
 			// the shoulder in ground space, then a point 30 units along the line to the target, back in blockout units
 			float sx = this.body.x + this.thorax.x + this.armSiphonUpper.x;
 			float sy = this.body.y + this.thorax.y + this.armSiphonUpper.y;
 			float sz = this.body.z + this.thorax.z + this.armSiphonUpper.z;
 			Vector3f dir = new Vector3f(this.siphonAim).sub(sx, sy, sz);
 			if (dir.lengthSquared() > 1.0E-4F) dir.normalize().mul(30.0F);
-			float[] aim = { -(sx + dir.x) * 2.0F, -(sy + dir.y) * 2.0F, (sz + dir.z) * 2.0F };
-			armIk(this.armSiphonUpper, this.armSiphonFore, aim, p.siphonPole, 11.0F, 12.0F);
-			for (int k = 0; k < this.siphon.length; k++) this.siphon[k].xRot += Mth.sin(time * 4.0F - k * 0.7F) * 0.05F;
-		} else {
-			armIk(this.armSiphonUpper, this.armSiphonFore, p.siphonT, p.siphonPole, 11.0F, 12.0F);
-			for (int k = 0; k < this.siphon.length; k++) {
-				this.siphon[k].xRot += p.curl * 0.22F - Mth.sin(time * 2.2F - k * 0.55F) * 0.1F;
-				this.siphon[k].zRot += Mth.cos(time * 1.6F - k * 0.5F) * 0.08F;
-			}
+			siphonTarget = new float[] { Mth.lerp(latch, p.siphonT[0], -(sx + dir.x) * 2.0F),
+					Mth.lerp(latch, p.siphonT[1], -(sy + dir.y) * 2.0F), Mth.lerp(latch, p.siphonT[2], (sz + dir.z) * 2.0F) };
+		}
+		armIk(this.armSiphonUpper, this.armSiphonFore, siphonTarget, p.siphonPole, 11.0F, 12.0F);
+		for (int k = 0; k < this.siphon.length; k++) {
+			float rest = p.curl * 0.22F - Mth.sin(time * 2.2F - k * 0.55F) * 0.1F;
+			float feeding = Mth.sin(time * 4.0F - k * 0.7F) * 0.05F;
+			this.siphon[k].xRot += Mth.lerp(latch, rest, feeding);
+			this.siphon[k].zRot += Mth.cos(time * 1.6F - k * 0.5F) * 0.08F * (1.0F - latch);
 		}
 	}
 

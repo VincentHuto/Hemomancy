@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.data;
 
+import com.vincenthuto.hemomancy.client.render.cinematic.BossSceneTracks;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantIntroRules;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
@@ -38,10 +39,10 @@ public final class MycophantIntroClientState {
 	private static final int SNAP_STAGGER = 9;
 	private static final int SNAP_TICKS = 12;
 	private static final int ROAR_SHAKE_TICKS = 26;
-	private static final int WAKING_LENGTH = 220;
+	public static final int WAKING_LENGTH = 220;
 	/** The root claim's length on the server (MycophantEncounterManager); the dark then holds until the waking. */
 	public static final int CAPTURE_TICKS = 100;
-	private static final int CAPTURE_LENGTH = CAPTURE_TICKS + 80;
+	public static final int CAPTURE_LENGTH = CAPTURE_TICKS + 80;
 	private static final int BLOOM_TICKS = 40;
 	private static final int WATCH_TICKS = 70;
 
@@ -216,11 +217,15 @@ public final class MycophantIntroClientState {
 
 	/** The mycelial vignette at the edge of the view: the webbing's bed, the hunt's watching. */
 	public float vignette(float partial) {
+		return Math.max(sceneVignette(partial), watch(partial));
+	}
+
+	/** The vignette's waking and capture part alone, which their scenes draw. */
+	public float sceneVignette(float partial) {
 		float t = time(partial);
-		float edge = 0.0F;
-		if (waking()) edge = keys(t, 0, 1, FIBER_SNAP, 1, 110, 0);
-		if (capturing()) edge = keys(t, 0, 0, 70, 0.85F, CAPTURE_TICKS, 1);
-		return Math.max(edge, watch(partial));
+		if (waking()) return keys(t, 0, 1, FIBER_SNAP, 1, 110, 0);
+		if (capturing()) return keys(t, 0, 0, 70, 0.85F, CAPTURE_TICKS, 1);
+		return 0.0F;
 	}
 
 	/** The hunt's watching pulse: the edges of the Gardens creep in for a few seconds (0..1, stronger later). */
@@ -238,13 +243,6 @@ public final class MycophantIntroClientState {
 
 	/** Piecewise smooth curve through (time, value) pairs; flat before the first and after the last. */
 	static float keys(float t, float... pairs) {
-		if (t <= pairs[0]) return pairs[1];
-		for (int i = 2; i < pairs.length; i += 2) {
-			if (t <= pairs[i]) {
-				float x = HemoEasing.clamp01((t - pairs[i - 2]) / (pairs[i] - pairs[i - 2]));
-				return pairs[i - 1] + (pairs[i + 1] - pairs[i - 1]) * x * x * (3.0F - 2.0F * x);
-			}
-		}
-		return pairs[pairs.length - 1];
+		return BossSceneTracks.keys(t, pairs);
 	}
 }

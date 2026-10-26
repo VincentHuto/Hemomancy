@@ -45,11 +45,11 @@ final class LatentInfectionLayer extends RenderLayer<LatentAnnettaInfectionEntit
             float slack = entity.deathTime > 0 ? Math.min(1.0F, (entity.deathTime + partialTick) / 20.0F) : 0.0F;
             float spasm = entity.hurtTime > 0 ? (entity.hurtTime - partialTick) / Math.max(1, entity.hurtDuration) : 0.0F;
             Attack attack = entity.getAttack();
-            float t = entity.getActionTick() + partialTick;
+            float t = entity.actionTime(partialTick);
             float bloom = attack == Attack.INFECTION_BLOOM ? window(t, 4.0F, 14.0F, 26.0F) : 0.0F;
             float lash = attack == Attack.WHIP_LASH ? window(t, 9.0F, 14.0F, 24.0F) : 0.0F;
             float dig = attack == Attack.ROOT_ERUPTION ? window(t, 4.0F, 20.0F, 34.0F) : 0.0F;
-            float grow = entity.isEmerging() ? LatentCombatRules.rise(entity.getEmergeTick() + partialTick) : 1.0F;
+            float grow = entity.isEmerging() ? LatentCombatRules.rise(entity.emergeTime(partialTick)) : 1.0F;
             return new Motion(1.0F - slack, Math.max(0.0F, spasm), bloom, lash, dig, grow, heartbeat(time));
         }
     }

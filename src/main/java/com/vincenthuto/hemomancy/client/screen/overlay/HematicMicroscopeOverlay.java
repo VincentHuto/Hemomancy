@@ -179,6 +179,7 @@ public final class HematicMicroscopeOverlay {
                     float pulse = 18 + (float)Math.sin(phase) * 3;
                     sprite(gfx, SERAPHAE_HALO, 32, x, y, pulse, 0, 1, 1, 1, 0.7F);
                     sprite(gfx, SERAPHAE_MOTE, 8, x + (float)Math.sin(phase) * 12, y - 8, 5, 0, 1, 1, 1, 0.86F);
+                    if (i % 2 == 0) sprite(gfx, DUCTILIS_LINK, 32, x + 10, y + 6, 22, i * 37, 1, 0.86F, 0.5F, 0.66F);
                 }
                 case PUTRICIEL -> {
                     sprite(gfx, PUTRICIEL_EMBER, 16, x, y - (float)((time * 0.12 + i * 3) % 10), 12, i * 31, 1, 1, 1, 0.78F);

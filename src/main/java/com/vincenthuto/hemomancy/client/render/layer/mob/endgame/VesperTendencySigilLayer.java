@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.layer.mob.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperEveningStarAnimState;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheEveningStarModel;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperCombatRules;
@@ -30,7 +31,7 @@ public final class VesperTendencySigilLayer
 			VesperTheEveningStarEntity entity, float limbSwing, float limbSwingAmount,
 			float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
 		if (entity.isInvisible()) return;
-		float downedFrame = entity.getDownedTicks() + partialTick;
+		float downedFrame = VesperEveningStarAnimState.of(entity).downedTime();
 		poseStack.pushPose();
 		poseStack.translate(0.0D, -2.25D, 0.72D);
 		VertexConsumer consumer = buffer.getBuffer(RenderType.lines());

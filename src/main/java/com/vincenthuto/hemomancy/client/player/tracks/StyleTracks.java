@@ -115,7 +115,7 @@ public final class StyleTracks {
             12,10).build();
     }
 
-    // Crimson Tithe (Mortem Summa Saint canon): bow forward and reach, hook both arms out in a wide sweep, haul them to the
+    // Crimson Tithe (Animus Summa Saint canon): bow forward and reach, hook both arms out in a wide sweep, haul them to the
     // hips as the body rocks back; the arms then hang a beat before rest.
     private static CastingTrack crimsonTithe() {
         CastingPose reach=pose(8,7,-3,-90,-38,-86,36,7), end=pose(2,-1,1,-26,8,-24,-8,6), hang=pose(2,1,0,-6,0,-6,0,5);

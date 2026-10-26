@@ -1,30 +1,43 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import com.vincenthuto.hemomancy.client.render.cinematic.BossSceneDirector;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.mojang.logging.LogUtils;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.entity.boss.MycophantGlimpse;
 import com.vincenthuto.hemomancy.client.data.MycophantIntroClientState;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.MycophantModel;
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantAttack;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantClaimRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantControllerRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantHazardEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantHoldKind;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantLastBroodRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantState;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.FluidInit;
 import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
+import com.vincenthuto.hemomancy.common.block.harbinger.plant.BroodTumorBlock;
+import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
@@ -33,6 +46,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 /**
  * Explicit opt-in visual fixture for the Mycophant (the Spawn Mother): held stills of every pose from every side and
@@ -50,9 +64,13 @@ public final class MycophantClientReview {
     }
 
     private static final MycophantAttack[] PHASE_ONE = {MycophantAttack.RUSHING_EMBRACE, MycophantAttack.SIPHON_FEED,
-            MycophantAttack.PLUCK, MycophantAttack.CLAW_RAKE, MycophantAttack.BROOD_CALL, MycophantAttack.NECTAR_SURGE};
+            MycophantAttack.PLUCK, MycophantAttack.RAKE_STRING, MycophantAttack.BROOD_CALL, MycophantAttack.NECTAR_SURGE,
+            MycophantAttack.BROOD_SETTLE, MycophantAttack.CLAW_PIN, MycophantAttack.TAIL_LASH, MycophantAttack.VENT_BLOOM,
+            MycophantAttack.HAND_SWEEP, MycophantAttack.SIPHON_SPIT, MycophantAttack.SPORE_MORTAR, MycophantAttack.NURSING};
+    // the joining also replays the phase-1 moves that phase 2 lengthens (the four-swing rake, the double lash, five globs)
     private static final MycophantAttack[] PHASE_TWO = {MycophantAttack.FUSION_EMBRACE, MycophantAttack.WING_GUARD,
-            MycophantAttack.WING_SWEEP, MycophantAttack.PULP_BLOOM};
+            MycophantAttack.WING_SWEEP, MycophantAttack.PULP_BLOOM, MycophantAttack.RAKE_STRING, MycophantAttack.TAIL_LASH,
+            MycophantAttack.SIPHON_SPIT, MycophantAttack.HYPHAE_LANCES, MycophantAttack.LATTICE_NET, MycophantAttack.GAZE};
     private static final int ATTACK_START = 20;
 
     private static final Scene[] SCENES = {
@@ -67,20 +85,42 @@ public final class MycophantClientReview {
             new Scene("p2_front", "stalk_p2", 16.0, 2.0, 0.0), new Scene("p2_head", "stalk_p2", 5.0, 0.6, 0.2, 2.6, new int[]{30}, 34),
             new Scene("p2_guard", "guard_p2", 16.0, 2.0, 0.5), new Scene("p2_sweep", "sweep_p2", 17.0, 2.0, 0.4),
             new Scene("p2_bloom", "bloom_p2", 15.0, 2.0, 0.5),
+            // the expanded moveset: the claws, belly and tail from the side they work on, the wing and pulp moves opened
+            new Scene("pose_rake_l", "rake_l", 15.0, 1.5, -0.6), new Scene("pose_rake_r", "rake_r", 15.0, 1.5, 0.6),
+            new Scene("pose_slam", "slam", 15.0, 2.0, 0.5),
+            // low and close on the striking claw, where a reach that sinks into the floor shows
+            new Scene("pose_rake_l_close", "rake_l", 8.0, -0.5, -0.9, -1.6, new int[]{30}, 34),
+            new Scene("pose_rake_r_close", "rake_r", 8.0, -0.5, 0.9, -1.6, new int[]{30}, 34),
+            new Scene("pose_settle_rise", "settle_rise", 16.0, 1.0, 1.5708), new Scene("pose_settle_drop", "settle_drop", 16.0, 1.0, 1.5708),
+            new Scene("pose_pin", "pin", 14.0, 1.5, 0.8),
+            new Scene("pose_tail_coil", "tail_coil", 15.0, 3.0, 2.6), new Scene("pose_tail_lash", "tail_lash", 15.0, 3.0, 2.6),
+            new Scene("pose_vents_open", "vents_open", 15.0, 4.5, 2.4),
+            new Scene("pose_hand_wind", "hand_wind", 15.0, 1.5, -0.5), new Scene("pose_hand_sweep", "hand_sweep", 15.0, 1.5, 0.5),
+            new Scene("pose_spit", "spit", 15.0, 1.5, -0.6), new Scene("pose_mortar", "mortar", 16.0, 3.0, 2.0),
+            new Scene("pose_nurse", "nurse", 15.0, 1.5, -0.6),
+            new Scene("pose_lances", "lances", 16.0, 2.0, 0.5), new Scene("pose_net", "net", 16.0, 2.0, 0.3),
+            new Scene("pose_gaze", "gaze", 15.0, 1.5, 0.2),
+            new Scene("pose_last_brood_rear", "last_brood_rear", 16.0, 2.0, 0.5),
+            new Scene("pose_last_brood_pull", "last_brood_pull", 15.0, 1.5, 0.4),
+            new Scene("pose_last_brood_collapse", "last_brood_collapse", 16.0, 2.5, 0.7),
             new Scene("drag_cycle", "drag", 17.0, 1.0, 1.2, 0.0, everyOther(10, 46), 48),
             new Scene("live_phase_one", null, 18.0, 4.0, 1.0, 0.0, attackShots(PHASE_ONE, 1), attackLength(PHASE_ONE, 1)),
             new Scene("live_phase_two", null, 18.0, 4.0, 1.0, 0.0, attackShots(PHASE_TWO, 2), attackLength(PHASE_TWO, 2)),
+            // phase 2 below a quarter: the tell, the pull on the dummy, then the probe cuts the four tendrils and she collapses
+            new Scene("live_last_brood", null, 18.0, 4.0, 1.0, 0.0, new int[]{28, 40, 49, 60, 90, 130, 152, 160, 175, 200, 225}, 245),
             new Scene("split", null, 15.0, 2.0, 0.5, 0.0, new int[]{12, 20, 28, 36, 44, 52, 60, 76, 92}, 96),
             // close on the face as it cracks and opens, then behind the shoulder as the wings grow (split tick = tick - 5)
             new Scene("split_head", null, 7.0, 0.2, 0.3, 3.6, everyOther(6, 60), 64),
             new Scene("split_wings", null, 7.5, 2.0, 2.2, 1.6, everyOther(36, 92), 94),
             new Scene("yield", null, 15.0, 2.0, 0.6, 0.0, new int[]{10, 25, 40, 55, 70, 90, 110, 128}, 130),
-            new Scene("intro_pov", null, 0.0, 0.0, 0.0, 0.0, new int[]{4, 20, 30, 44, 60, 76, 80, 84, 90, 110, 125, 140, 155, 175, 195, 205}, 210),
+            new Scene("intro_pov", null, 0.0, 0.0, 0.0, 0.0, new int[]{4, 20, 30, 44, 60, 76, 80, 84, 90, 110, 125, 140, 155, 165, 175, 195, 205}, 210),
+            // the rematch through the boss scene director: the shot circling her turn, the card over the roar, the view back before the rush
+            new Scene("rematch_pov", null, 0.0, 0.0, 0.0, 0.0, new int[]{2, 8, 14, 22, 30, 38, 44, 52, 60}, 64),
             new Scene("nursery_wide", "tending", 17.0, 2.0, 0.5), new Scene("nursery_high", "tending", 12.0, 9.0, 2.6),
             new Scene("nursery_rear", "tending", 15.0, 0.5, 3.1416),
             new Scene("capture_pov", "tending", 0.0, 0.0, 0.0, 0.0, new int[]{10, 30, 50, 70, 84, 96, 104}, 110),
             new Scene("glimpse", "tending", 0.0, 0.0, 0.0, 0.0, new int[]{10, 18, 30, 44, 60}, 64),
-            new Scene("hold_live", null, 0.0, 0.0, 0.0, 0.0, new int[0], 2400),
+            new Scene("hold_live", null, 0.0, 0.0, 0.0, 0.0, new int[0], 4800),
     };
     private static final BlockPos CENTER = new BlockPos(512, 100, 512);
 
@@ -88,16 +128,29 @@ public final class MycophantClientReview {
         return java.util.stream.IntStream.iterate(from, i -> i <= to, i -> i + 2).toArray();
     }
 
+    /** The live scenes play each string in its longest form: the delayed slam (phase 1), four swings and the double lash (phase 2). */
+    private static int variantFor(MycophantAttack attack, int phase) {
+        return switch (attack) {
+            case RAKE_STRING -> phase >= 2 ? 2 : 1;
+            case TAIL_LASH -> phase >= 2 ? 1 : 0;
+            default -> 0;
+        };
+    }
+
+    private static BossMoveTimeline liveTimeline(MycophantAttack attack, int phase) {
+        return MycophantControllerRules.timeline(attack, phase, variantFor(attack, phase));
+    }
+
     private static int start(MycophantAttack[] attacks, int index, int phase) {
         int at = ATTACK_START;
-        for (int i = 0; i < index; i++) at += MycophantControllerRules.timeline(attacks[i], phase).total() + 16;
+        for (int i = 0; i < index; i++) at += liveTimeline(attacks[i], phase).total() + 16;
         return at;
     }
 
     private static int[] attackShots(MycophantAttack[] attacks, int phase) {
         List<Integer> shots = new ArrayList<>();
         for (int i = 0; i < attacks.length; i++) {
-            var timeline = MycophantControllerRules.timeline(attacks[i], phase);
+            var timeline = liveTimeline(attacks[i], phase);
             int s = start(attacks, i, phase);
             for (int at : new int[]{timeline.windup() / 2, timeline.windup() - 1, timeline.windup() + timeline.active() / 2,
                     timeline.windup() + timeline.active() + timeline.recovery() / 2}) shots.add(s + at);
@@ -156,20 +209,31 @@ public final class MycophantClientReview {
             if (!started) {
                 started = true;
                 ready = false;
-                boolean screen = current.name().equals("intro_pov") || current.name().equals("capture_pov");
+                boolean screen = current.name().equals("intro_pov") || current.name().equals("capture_pov")
+                        || current.name().equals("rematch_pov");
                 client.options.hideGui = !screen;
                 MycophantModel.reviewPose = current.name().equals("capture_pov") || current.name().equals("glimpse") ? null : current.pose();
                 MycophantEntity.reviewHoldPose = MycophantModel.reviewPose;
                 MycophantGlimpse.clear();
-                if (current.name().equals("intro_pov")) MycophantIntroClientState.INSTANCE.start(MycophantIntroClientState.WAKING, 11);
-                else if (current.name().equals("capture_pov")) MycophantIntroClientState.INSTANCE.start(MycophantIntroClientState.CAPTURE, 11);
-                else MycophantIntroClientState.INSTANCE.start(MycophantIntroClientState.CLEAR, 0);
+                BossSceneDirector.INSTANCE.clear();
+                if (current.name().equals("intro_pov")) {
+                    MycophantIntroClientState.INSTANCE.start(MycophantIntroClientState.WAKING, 11);
+                    BossSceneDirector.INSTANCE.start(BossPresentationIds.SCENE_MYCOPHANT_WAKING, -1, 0);
+                } else if (current.name().equals("capture_pov")) {
+                    MycophantIntroClientState.INSTANCE.start(MycophantIntroClientState.CAPTURE, 11);
+                    BossSceneDirector.INSTANCE.start(BossPresentationIds.SCENE_MYCOPHANT_CAPTURE, -1, 0);
+                } else MycophantIntroClientState.INSTANCE.start(MycophantIntroClientState.CLEAR, 0);
                 server.execute(() -> setup(server.getPlayerList().getPlayer(uuid), current));
                 return;
             }
             if (!ready) return;
             tick++;
             int at = tick;
+            if (current.name().equals("rematch_pov") && tick == 1 && actor != null) {
+                MycophantIntroClientState.INSTANCE.start(MycophantIntroClientState.REMATCH, 11);
+                BossSceneDirector.INSTANCE.start(BossPresentationIds.SCENE_MYCOPHANT_REMATCH, actor.getId(), 0);
+            }
+            if (current.name().equals("hold_live")) watchHeldClient(client.player);
             if (current.name().equals("glimpse") && tick == 2) MycophantGlimpse.start(0x5EED);
             server.execute(() -> drive(server.getPlayerList().getPlayer(uuid), current, at));
             String requested = pendingShot;
@@ -198,11 +262,47 @@ public final class MycophantClientReview {
         }
     }
 
+    private static int clientHeldTicks;
+    private static double clientStep;
+    private static Vec3 clientLast;
+    private static MycophantHoldKind clientKind = MycophantHoldKind.SAC;
+
+    /**
+     * The held player's own client: once drawn in, it must sit still at the hold point. Logs the largest per-tick move
+     * after the pull for each hold of every kind (the sac, the claw pin, the cocoon); a client that falls and is snapped
+     * back shows here as steps of a tenth of a block.
+     */
+    private static void watchHeldClient(LocalPlayer player) {
+        List<MycophantEntity> holders = player.level().getEntitiesOfClass(MycophantEntity.class, player.getBoundingBox().inflate(12.0D),
+                boss -> boss.getClaimedId() == player.getId());
+        boolean held = !holders.isEmpty();
+        Vec3 at = player.position();
+        if (held) {
+            clientKind = holders.get(0).getHoldKind();
+            if (++clientHeldTicks > MycophantClaimRules.holdPullTicks() && clientLast != null)
+                clientStep = Math.max(clientStep, at.distanceTo(clientLast));
+        } else if (clientHeldTicks > 0) {
+            LogUtils.getLogger().info("MYCOPHANT_HOLD_JITTER kind={} held={} maxStepAfterPull={}", clientKind, clientHeldTicks,
+                    String.format(java.util.Locale.ROOT, "%.4f", clientStep));
+            clientHeldTicks = 0;
+            clientStep = 0.0D;
+        }
+        clientLast = at;
+    }
+
+    /** What the Gaze dealt the probed player (the beam's blows come from her while the Gaze is her move). */
+    @SubscribeEvent public static void gazeDamage(LivingDamageEvent.Post event) {
+        HoldProbe watching = probe;
+        if (watching == null || !(event.getEntity() instanceof ServerPlayer)) return;
+        if (event.getSource().getEntity() instanceof MycophantEntity boss && boss.getAttack() == MycophantAttack.GAZE)
+            watching.gazeDamage += event.getNewDamage();
+    }
+
     private static void setup(ServerPlayer player, Scene scene) {
         ServerLevel level = player.server.getLevel(Level.OVERWORLD);
         var source = player.createCommandSourceStack().withLevel(level).withPermission(4).withSuppressedOutput();
         for (String cmd : new String[]{"gamemode spectator", "gamerule doMobSpawning false", "gamerule doDaylightCycle false",
-                scene.name().equals("intro_pov") ? "time set 18000" : "time set 1000", "weather clear", "difficulty normal", "kill @e[type=minecraft:item]"})
+                scene.name().equals("intro_pov") || scene.name().equals("rematch_pov") ? "time set 18000" : "time set 1000", "weather clear", "difficulty normal", "kill @e[type=minecraft:item]"})
             player.server.getCommands().performPrefixedCommand(source, cmd);
         // keep the platform loaded however far away the save left the player, so a fresh boss is never unloaded to disk
         for (int cx = (CENTER.getX() - 32) >> 4; cx <= (CENTER.getX() + 32) >> 4; cx++)
@@ -233,11 +333,12 @@ public final class MycophantClientReview {
 
         String name = scene.name();
         // the real Morphic Nursery, its floor surface where the platform's is, for the waking and the arena stills
-        if (name.equals("intro_pov") || name.startsWith("nursery")) MycophantEncounterManager.buildNursery(level, CENTER.below(2));
+        boolean pov = name.equals("intro_pov") || name.equals("rematch_pov");
+        if (pov || name.startsWith("nursery")) MycophantEncounterManager.buildNursery(level, CENTER.below(2));
         boolean live = scene.pose() == null;
         boolean holdLive = name.equals("hold_live");
         dummy = null;
-        if (live && !name.equals("intro_pov") && !holdLive) {
+        if (live && !pov && !holdLive) {
             dummy = EntityType.VILLAGER.create(level);
             dummy.setNoAi(true);
             dummy.setInvulnerable(true);
@@ -247,13 +348,14 @@ public final class MycophantClientReview {
         }
         MycophantEntity boss = EntityInit.mycophant.get().create(level);
         boss.setPersistenceRequired();
-        float facing = name.equals("intro_pov") ? 0.0F : 180.0F;
+        float facing = pov ? 0.0F : 180.0F;
         boss.moveTo(Vec3.atBottomCenterOf(CENTER), facing, 0.0F);
         boss.setYHeadRot(facing);
         boss.yBodyRot = facing;
-        if (name.equals("intro_pov")) boss.setEncounterOwner(player.getUUID());
+        if (pov) boss.setEncounterOwner(player.getUUID());
+        if (name.equals("rematch_pov")) boss.setRematchIntro(true);
         if (dummy != null) boss.setTarget(dummy);
-        if (name.equals("live_phase_two")) forcePhaseTwo(boss);
+        if (name.equals("live_phase_two") || name.equals("live_last_brood")) forcePhaseTwo(boss);
         level.addFreshEntity(boss);
         actor = boss;
 
@@ -264,7 +366,7 @@ public final class MycophantClientReview {
             player.teleportTo(level, CENTER.getX() + 0.5, CENTER.getY(), CENTER.getZ() - 9.0 + 0.5, 0.0F, -12.0F);
             boss.setTarget(player);
             probe = new HoldProbe();
-        } else if (name.equals("intro_pov")) {
+        } else if (pov) {
             // the candidate's own eyes, where the Nursery delivers them: behind her, eleven blocks out
             player.teleportTo(level, CENTER.getX() + 0.5, CENTER.getY(), CENTER.getZ() - 11.0, 0.0F, -8.0F);
         } else if (name.equals("capture_pov")) {
@@ -304,8 +406,26 @@ public final class MycophantClientReview {
         if (name.startsWith("live_phase")) {
             MycophantAttack[] attacks = name.equals("live_phase_one") ? PHASE_ONE : PHASE_TWO;
             int phase = name.equals("live_phase_one") ? 1 : 2;
-            for (int i = 0; i < attacks.length; i++) if (tick == start(attacks, i, phase)) begin(actor, attacks[i]);
+            for (int i = 0; i < attacks.length; i++) {
+                if (tick != start(attacks, i, phase)) continue;
+                // nursing needs a young one of hers close by: a still, unharmed brood fungling at her right
+                if (attacks[i] == MycophantAttack.NURSING) spawnBrood(actor, new Vec3(5.0D, 0.0D, -2.0D));
+                // beginNow ends whatever follow-up she chained in the gap, so every move starts clean
+                beginNow(actor, attacks[i]);
+                invoke(actor, "setAttackVariant", new Class<?>[]{int.class}, variantFor(attacks[i], phase));
+            }
             if (dummy != null) actor.setTarget(dummy);
+        } else if (name.equals("live_last_brood")) {
+            if (dummy != null) actor.setTarget(dummy);
+            // below a quarter in phase 2: she starts it herself on her next tick
+            if (tick == ATTACK_START) actor.setHealth(actor.getMaxHealth() * 0.24F);
+            // late in the pull, cut all four binding tendrils (two blows each) for the cut-free collapse
+            if (tick == ATTACK_START + MycophantLastBroodRules.TELL + 100 || tick == ATTACK_START + MycophantLastBroodRules.TELL + 104)
+                for (MycophantHazardEntity tendril : MycophantHazardEntity.of((ServerLevel) actor.level(), actor, MycophantHazardEntity.Kind.BINDING_TENDRIL))
+                    cutTendril(player, tendril);
+            if (tick % 10 == 0) LogUtils.getLogger().info("MYCOPHANT_LIVE last_brood t={} outcome={} tendrils={} health={}", tick,
+                    actor.getLastBroodOutcome(), MycophantHazardEntity.of((ServerLevel) actor.level(), actor, MycophantHazardEntity.Kind.BINDING_TENDRIL).size(),
+                    String.format(java.util.Locale.ROOT, "%.1f", actor.getHealth()));
         } else if (name.startsWith("split") && tick == 4) {
             Object controller = invoke(actor, "controller", new Class<?>[0]);
             invoke(controller, "requestSplit", new Class<?>[0]);
@@ -326,23 +446,32 @@ public final class MycophantClientReview {
      * a filled meter at Hard leaves the player on the floor (I2); the siphon latches onto the player.
      */
     private static final class HoldProbe {
+        private static final int RESULT = 10;
         private int step, elapsed, heldTicks, nextHit, markTick = -1, landedTick = -1, deathsAtCatch;
         private boolean begun, wasHolding, walled, splitSeen;
         private Vec3 caughtAt;
         private double drift;
         private float healthAtBreak = -1.0F;
         private final List<String> results = new ArrayList<>();
+        // the expanded moveset's checks
+        private MycophantHoldKind caughtKind = MycophantHoldKind.SAC;
+        private int attempts, heldFor, seenTick = -1, gazeRun;
+        private boolean seen, flagged, netCaught;
+        float gazeDamage;
+        private BlockPos tumor;
 
         void tick(ServerPlayer player, MycophantEntity boss, int tick) {
             elapsed++;
             // her other moves land for real; keep the candidate standing except where a step measures their health
-            if (step != 3 && player.isAlive()) player.setHealth(player.getMaxHealth());
+            boolean measuring = step == 3 || (step == 9 && flagged);
+            if (!measuring && player.isAlive()) player.setHealth(player.getMaxHealth());
             boolean holding = boss.isHolding();
             if (holding && !wasHolding) {
                 caughtAt = boss.position();
+                caughtKind = boss.getHoldKind();
                 heldTicks = 0;
                 nextHit = tick + 30;
-                LogUtils.getLogger().info("MYCOPHANT_HOLD step={} caught t={} attack={}", step, tick, boss.getAttack());
+                LogUtils.getLogger().info("MYCOPHANT_HOLD step={} caught t={} attack={} kind={}", step, tick, boss.getAttack(), caughtKind);
                 pendingShot = "caught-" + step;
             }
             if (holding) {
@@ -451,7 +580,156 @@ public final class MycophantClientReview {
                         next();
                     }
                 }
-                case 5 -> {
+                case 5 -> { // the Claw Pin: pinned under the claw for its twenty ticks, then let go with no stagger
+                    if (!begun && ready(boss) && elapsed > 3) {
+                        boss.setHealth(boss.getMaxHealth() * 0.45F);
+                        stage(player, boss, 5.5D);
+                        start(boss, MycophantAttack.CLAW_PIN);
+                        attempts++;
+                    }
+                    if (wasHolding && !holding && markTick < 0) {
+                        markTick = tick;
+                        heldFor = heldTicks;
+                    }
+                    if (markTick >= 0 && tick - markTick <= 10 && boss.getState() == MycophantState.STAGGER) flagged = true;
+                    if (markTick >= 0 && tick - markTick == 10) {
+                        record("claw pin kind=" + caughtKind + " held=" + heldFor + " staggered=" + flagged,
+                                caughtKind == MycophantHoldKind.PIN && heldFor >= 16 && heldFor <= 24 && !flagged);
+                        next();
+                    }
+                    // a stab that missed: stage it again (up to three times)
+                    if (begun && markTick < 0 && !holding && boss.getAttack() != MycophantAttack.CLAW_PIN && ready(boss) && attempts < 3)
+                        begun = false;
+                }
+                case 6 -> { // the Lattice Net: caught, then the Fusion Embrace follows
+                    if (!begun && ready(boss) && elapsed > 3) {
+                        boss.setHealth(boss.getMaxHealth() * 0.45F);
+                        stage(player, boss, 9.0D);
+                        start(boss, MycophantAttack.LATTICE_NET);
+                        // the 85% follow-up roll, pinned so the check reads the rule and not the dice
+                        setField(invoke(boss, "controller", new Class<?>[0]), "followRoll", 0.0D);
+                    }
+                    // the net lands and the follow-up is queued on the same tick, so its catch is read through the link gap too
+                    // (the controller keeps it until the next move begins), and off the net itself
+                    if (begun && (seen || boss.getAttack() == MycophantAttack.LATTICE_NET) && markTick < 0
+                            && (boss.getAttack() == MycophantAttack.LATTICE_NET || boss.getAttack() == MycophantAttack.NONE)) {
+                        flagged |= (Boolean) invoke(invoke(boss, "controller", new Class<?>[0]), "netted", new Class<?>[0]);
+                        for (MycophantHazardEntity net : MycophantHazardEntity.of((ServerLevel) boss.level(), boss, MycophantHazardEntity.Kind.LATTICE_NET))
+                            if (net.landed() && net.caught(player)) netCaught = true;
+                    }
+                    if (begun && boss.getAttack() == MycophantAttack.LATTICE_NET) {
+                        seen = true;
+                        if (boss.getAttackTick() == MycophantControllerRules.timeline(MycophantAttack.LATTICE_NET, 2).windup() + 17)
+                            pendingShot = "net-landed";
+                    }
+                    if (begun && seen && seenTick < 0 && boss.getAttack() != MycophantAttack.LATTICE_NET) seenTick = tick;
+                    if (seenTick >= 0 && markTick < 0 && boss.getAttack() != MycophantAttack.NONE
+                            && boss.getAttack() != MycophantAttack.LATTICE_NET) {
+                        record("lattice net netted=" + flagged + " caughtByNet=" + netCaught + " next=" + boss.getAttack(),
+                                flagged && netCaught && boss.getAttack() == MycophantAttack.FUSION_EMBRACE);
+                        markTick = tick;
+                    }
+                    if (seenTick >= 0 && markTick < 0 && tick - seenTick > 40) {
+                        record("lattice net netted=" + flagged + " caughtByNet=" + netCaught + " next=none state=" + boss.getState(), false);
+                        next();
+                    }
+                    if (markTick >= 0 && holding && heldTicks == 12) pendingShot = "net-fusion";
+                    // once the netted player is in the fusion (or it missed), let them go and move on
+                    if (markTick >= 0 && ((holding && heldTicks >= 14) || boss.getAttack() != MycophantAttack.FUSION_EMBRACE)) {
+                        if (boss.isHolding()) boss.releaseHold();
+                        next();
+                    }
+                }
+                case 7 -> { // the Gaze: a tumor close in front of the player shelters them; in the open the beam lands
+                    if (!begun && ready(boss) && elapsed > 3) {
+                        boss.setHealth(boss.getMaxHealth() * 0.45F);
+                        stage(player, boss, 10.0D);
+                        tumor = CENTER.offset(0, 0, -9);
+                        if (gazeRun == 0) {
+                            boolean placed = ((BroodTumorBlock) BlockInit.brood_tumor.get()).place(boss.level(), tumor);
+                            LogUtils.getLogger().info("MYCOPHANT_HOLD gaze tumor placed={} at={}", placed, tumor);
+                        }
+                        gazeDamage = 0.0F;
+                        seen = false;
+                        start(boss, MycophantAttack.GAZE);
+                    }
+                    int sweepAt = MycophantControllerRules.timeline(MycophantAttack.GAZE, 2).windup() + 20;
+                    if (begun && boss.getAttack() == MycophantAttack.GAZE) {
+                        seen = true;
+                        if (boss.getAttackTick() == sweepAt) pendingShot = gazeRun == 0 ? "gaze-cover" : "gaze-open";
+                    }
+                    if (begun && seen && boss.getAttack() != MycophantAttack.GAZE) {
+                        if (gazeRun == 0) {
+                            record("gaze behind a tumor damage=" + fmt(gazeDamage), gazeDamage <= 0.0F);
+                            ((BroodTumorBlock) BlockInit.brood_tumor.get()).burst(boss.level(), tumor);
+                            gazeRun = 1;
+                            begun = false;
+                            seen = false;
+                            elapsed = 0;
+                        } else {
+                            record("gaze in the open damage=" + fmt(gazeDamage), gazeDamage > 0.0F);
+                            next();
+                        }
+                    }
+                }
+                case 8 -> { // the Last Brood, cut free: four tendrils cut twice each and she collapses
+                    if (!begun && ready(boss) && elapsed > 3) {
+                        stage(player, boss, 12.0D);
+                        // below a quarter in phase 2: she starts it herself
+                        boss.setHealth(boss.getMaxHealth() * 0.24F);
+                        begun = true;
+                    }
+                    List<MycophantHazardEntity> tendrils = MycophantHazardEntity.of((ServerLevel) boss.level(), boss,
+                            MycophantHazardEntity.Kind.BINDING_TENDRIL);
+                    if (begun && seenTick < 0 && boss.getAttack() == MycophantAttack.LAST_BROOD
+                            && tendrils.size() == MycophantLastBroodRules.TENDRILS) {
+                        seenTick = tick;
+                    }
+                    // a few ticks on, once the client has drawn the tendrils, and before the first cut
+                    if (seenTick >= 0 && tick == seenTick + 3) pendingShot = "last-brood-bound";
+                    if (seenTick >= 0 && (tick == seenTick + 4 || tick == seenTick + 10)) {
+                        LogUtils.getLogger().info("MYCOPHANT_HOLD cutting {} tendrils", tendrils.size());
+                        for (MycophantHazardEntity tendril : tendrils) cutTendril(player, tendril);
+                    }
+                    if (seenTick >= 0 && tick == seenTick + 14) pendingShot = "last-brood-collapse";
+                    if (seenTick >= 0 && tick == seenTick + 16) {
+                        record("last brood cut free state=" + boss.getState() + " outcome=" + boss.getLastBroodOutcome()
+                                        + " tendrils=" + tendrils.size(),
+                                boss.getState() == MycophantState.STAGGER
+                                        && boss.getLastBroodOutcome() == MycophantLastBroodRules.Outcome.CUT_FREE.ordinal());
+                        next();
+                    }
+                }
+                case 9 -> { // the Last Brood, cocooned: left alone the player is reeled in, sealed and let go alive
+                    if (!begun && ready(boss) && elapsed > 3) {
+                        stage(player, boss, 9.0D);
+                        deathsAtCatch = deaths(player);
+                        Object controller = invoke(boss, "controller", new Class<?>[0]);
+                        invoke(controller, "beginNow", new Class<?>[]{MycophantAttack.class}, MycophantAttack.LAST_BROOD);
+                        begun = true;
+                    }
+                    if (holding && heldTicks == 1 && boss.getHoldKind() == MycophantHoldKind.COCOON) {
+                        // low enough that the cocoon's full toll would kill: the floor must hold
+                        flagged = true;
+                        player.setHealth(10.0F);
+                    }
+                    if (holding && heldTicks == 30) pendingShot = "cocoon";
+                    if (flagged && wasHolding && !holding && markTick < 0) {
+                        markTick = tick;
+                        heldFor = heldTicks;
+                    }
+                    if (markTick >= 0 && tick - markTick == 3) {
+                        boolean sameLife = deaths(player) == deathsAtCatch;
+                        record("last brood cocooned kind=" + caughtKind + " held=" + heldFor + " outcome=" + boss.getLastBroodOutcome()
+                                        + " health=" + fmt(player.getHealth()) + " sameLife=" + sameLife,
+                                caughtKind == MycophantHoldKind.COCOON
+                                        && boss.getLastBroodOutcome() == MycophantLastBroodRules.Outcome.COCOONED.ordinal()
+                                        && sameLife && player.isAlive() && player.getHealth() >= 4.0F - 0.01F);
+                        if (player.isAlive()) player.setHealth(player.getMaxHealth());
+                        next();
+                    }
+                }
+                case RESULT -> {
                     boolean pass = !results.isEmpty() && results.stream().allMatch(line -> line.startsWith("PASS"));
                     LogUtils.getLogger().info("MYCOPHANT_HOLD_RESULT all={} {}", pass ? "PASS" : "FAIL", results);
                     command(player, "difficulty normal");
@@ -460,7 +738,7 @@ public final class MycophantClientReview {
                 }
                 default -> { }
             }
-            if (step < 5 && elapsed > 420) {
+            if (step < RESULT && elapsed > 420) {
                 record("step " + step + " timed out state=" + boss.getState() + " attack=" + boss.getAttack(), false);
                 next();
             }
@@ -500,6 +778,34 @@ public final class MycophantClientReview {
             markTick = -1;
             landedTick = -1;
             healthAtBreak = -1.0F;
+            attempts = 0;
+            heldFor = 0;
+            seenTick = -1;
+            seen = false;
+            flagged = false;
+            netCaught = false;
+        }
+
+        /** Free to start a staged move: roaming (still or dragging), holding nobody, between moves. */
+        private static boolean ready(MycophantEntity boss) {
+            MycophantState state = boss.getState();
+            return (state == MycophantState.IDLE || state == MycophantState.DRAG) && !boss.isHolding()
+                    && boss.getAttack() == MycophantAttack.NONE;
+        }
+
+        /**
+         * Puts her back on the platform's middle facing north and the player {@code distance} blocks straight in front
+         * of her, facing her, so each staged move starts from the same, readable spot.
+         */
+        private static void stage(ServerPlayer player, MycophantEntity boss, double distance) {
+            Vec3 middle = Vec3.atBottomCenterOf(CENTER);
+            boss.moveTo(middle.x, middle.y, middle.z, 180.0F, 0.0F);
+            boss.setYHeadRot(180.0F);
+            boss.yBodyRot = 180.0F;
+            boss.setDeltaMovement(Vec3.ZERO);
+            player.teleportTo((ServerLevel) boss.level(), middle.x, CENTER.getY(), middle.z - distance, 0.0F, -12.0F);
+            player.setDeltaMovement(Vec3.ZERO);
+            player.hurtMarked = true;
         }
 
         private static String fmt(double value) {
@@ -511,6 +817,43 @@ public final class MycophantClientReview {
         invoke(boss, "setPhase", new Class<?>[]{int.class}, 2);
         invoke(boss, "finishSplit", new Class<?>[0]);
         boss.setHealth(boss.getMaxHealth() * 0.45F);
+    }
+
+    /** Starts {@code attack} at once, ending any move or follow-up in flight (the controller's own beginNow). */
+    private static void beginNow(MycophantEntity boss, MycophantAttack attack) {
+        Object controller = invoke(boss, "controller", new Class<?>[0]);
+        invoke(controller, "beginNow", new Class<?>[]{MycophantAttack.class}, attack);
+    }
+
+    /** One blow on a binding tendril, as an arrow from {@code player}: a projectile needs no aim along its length. */
+    private static void cutTendril(ServerPlayer player, MycophantHazardEntity tendril) {
+        Arrow arrow = EntityType.ARROW.create(tendril.level());
+        if (arrow == null) return;
+        arrow.setOwner(player);
+        tendril.hurt(player.damageSources().arrow(arrow, player), 4.0F);
+    }
+
+    /** A brood fungling of hers at {@code offset} from her feet, held still and unharmed so the review can watch it. */
+    private static FunglingEntity spawnBrood(MycophantEntity boss, Vec3 offset) {
+        FunglingEntity fungling = EntityInit.fungling.get().create(boss.level());
+        Vec3 at = boss.position().add(offset);
+        fungling.moveTo(at.x, at.y, at.z, 0.0F, 0.0F);
+        fungling.setBrood(boss.getUUID());
+        fungling.setNoAi(true);
+        fungling.setInvulnerable(true);
+        fungling.setPersistenceRequired();
+        boss.level().addFreshEntity(fungling);
+        return fungling;
+    }
+
+    private static void setField(Object target, String name, Object value) {
+        try {
+            Field field = target.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            field.set(target, value);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Mycophant review could not set " + name, exception);
+        }
     }
 
     private static void begin(MycophantEntity boss, MycophantAttack attack) {

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.support.SourceAssertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
@@ -25,6 +26,23 @@ final class MycophantImplementationSourceTest {
 		assertTrue(entity.contains("DATA_CLAIMED_ID = SynchedEntityData.defineId"));
 		assertTrue(entity.contains("new MycophantController(this)"));
 		assertTrue(entity.contains("MycophantSaveRules.resume("));
+	}
+
+	@Test
+	void theMovesetExpansionDrawsWithTheToolkitNotVanillaParticles() {
+		for (String file : new String[] {
+				"common/entity/boss/endgame/MycophantClawMoves.java",
+				"common/entity/boss/endgame/MycophantRangedMoves.java",
+				"common/entity/boss/endgame/MycophantWingMoves.java",
+				"common/entity/boss/endgame/MycophantLastBrood.java",
+				"common/entity/boss/endgame/MycophantHazardEntity.java",
+				"common/entity/boss/endgame/MycophantGlobEntity.java",
+				"common/entity/boss/endgame/MycophantLanceEntity.java",
+				"common/entity/boss/endgame/MycophantBroodTumors.java",
+				"client/render/entity/boss/endgame/MycophantHazardRenderer.java",
+				"client/render/entity/boss/endgame/MycophantGlobRenderer.java",
+				"client/render/entity/boss/endgame/MycophantLanceRenderer.java" })
+			SourceAssertions.assertNotContains(file, SourceAssertions.readMainJava(file), "ParticleTypes.");
 	}
 
 	@Test

@@ -24,7 +24,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Bloom of Rot — Canon Memory of Saint Putriciel.
- * Doctrine: Absolution / Witness
+ * Tendencies: Mortem / Flammeus
  *
  * Spreads hematic fungus in a radius: every body the caster may harm takes
  * a direct hit and Necrosis (10 s). The rot spares no one, so the caster

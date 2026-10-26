@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.layer.mob.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountAnimState;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;
@@ -30,7 +31,8 @@ public final class VesperMountAbsorptionLayer
 	public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight,
 			VesperTheCrownedRefusalEntity entity, float limbSwing, float limbSwingAmount,
 			float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-		float transitionFrame = entity.getTransitionTick() + partialTick;
+		// the mount model's replayed transition clock, updated this frame before its layers draw
+		float transitionFrame = VesperMountAnimState.of(entity).transitionTime();
 		float progress = VesperPhaseTransitionRules.absorptionProgress(transitionFrame);
 		if (progress <= 0.0F || progress >= 1.0F || entity.isInvisible()) return;
 

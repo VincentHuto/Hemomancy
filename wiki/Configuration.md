@@ -8,6 +8,8 @@ Server settings control Blood Volume regeneration, drain, and kill gain; **Blood
 
 The client config includes HUD and render-layer options, such as blood volume HUD placement and toggles for blood gourds, horns, and morphling mutation rendering. World-rendering toggles control Founding Fane boundaries, Harbinger cardinal rite perimeter fog (`renderCardinalRiteFog`), blood orbs, and Oculiflora network sight. `cardinalRiteFogVerticalOffset` raises or lowers the diffuse smoke ring. These settings adjust readability and visual intensity without changing gameplay systems.
 
+The client `[boss_presentation]` section holds three switches, all on by default. `bossBarFrames` draws each Hemomancy boss's bar in its own frame. `cinematicBossScenes` lets boss openings move the camera; with it off the letterbox and title card still play, but the view stays the player's. `bossSceneShake` shakes the view during openings. None of them change a fight's timing: the server decides when a boss can act.
+
 ## Hematic Succession
 
 The server configuration section `succession` contains `per_bloodline_cap` and `global_cap`. Both default to `0`, disabling numeric caps so compatible workplaces limit residents. Profession workplace blocks are reloadable datapack lists under `data/hemomancy/succession_profession/`.

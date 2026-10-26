@@ -98,6 +98,10 @@ public final class AnnettaClientReview {
             // Her guard close up, every other tick, to judge the joints and the grip.
             new Scene("priestess_guard", 4.2, 0.4, 1.0, 0.0, java.util.stream.IntStream.rangeClosed(0, 15).map(i -> 20 + i * 2).toArray(), 52),
             new Scene("live_purge", 9.0, 2.6, 0.45, 1.0, new int[]{15, 55, 92, 100, 115, 135, 180, 230, 280, 330}, 340),
+            // the boss scenes with the HUD on: her Harbinger opening, the break card and the Priestess rising, the tear
+            new Scene("live_scene_harbinger", 7.0, 1.0, 0.6, 0.0, new int[]{4, 12, 22, 32, 44, 56, 66, 80}, 84),
+            new Scene("live_scene_break", 7.0, 1.6, 0.5, 0.0, new int[]{6, 20, 316, 330, 350, 372, 395, 420}, 430),
+            new Scene("live_scene_purge", 9.0, 2.0, 0.45, 0.6, new int[]{80, 92, 102, 112, 124, 140, 160}, 170),
     };
     private static final BlockPos CENTER = new BlockPos(512, 100, 512);
 
@@ -190,7 +194,7 @@ public final class AnnettaClientReview {
             if (!started) {
                 started = true;
                 ready = false;
-                client.options.hideGui = true;
+                client.options.hideGui = !current.name().contains("scene");
                 StainedPriestessModel.reviewWingPose = current.name().equals("priestess_spread")
                         || current.name().equals("priestess_head") ? StainedPriestessModel.WingPose.SPREAD : null;
                 server.execute(() -> setup(server.getPlayerList().getPlayer(uuid), current));
@@ -238,7 +242,7 @@ public final class AnnettaClientReview {
         AnnettaKnowlesEntity.reviewHoldClock = name.contains("poses");
         // The break runs on Peaceful: Annetta stays there, so the Priestess rising out of her must too.
         player.server.getCommands().performPrefixedCommand(source,
-                name.equals("live_break") ? "difficulty peaceful" : "difficulty normal");
+                name.equals("live_break") || name.equals("live_scene_break") ? "difficulty peaceful" : "difficulty normal");
         if (name.equals("latent_close")) {
             // At night, so its glow and the infection under its skin can be judged.
             player.server.getCommands().performPrefixedCommand(source, "time set 18000");
@@ -260,7 +264,7 @@ public final class AnnettaClientReview {
             mob = EntityInit.latent_annetta_infection.get().create(level);
         } else {
             AnnettaKnowlesEntity annetta = EntityInit.annetta_knowles.get().create(level);
-            AnnettaKnowlesEntity.EncounterState state = name.equals("cowering") || name.equals("live_purge")
+            AnnettaKnowlesEntity.EncounterState state = name.equals("cowering") || name.equals("live_purge") || name.equals("live_scene_purge")
                     ? AnnettaKnowlesEntity.EncounterState.COWERING
                     : name.equals("purged_resolved") ? AnnettaKnowlesEntity.EncounterState.RESOLVED
                     : name.equals("ally_poses") ? AnnettaKnowlesEntity.EncounterState.CURED_SUPPORT
@@ -274,7 +278,7 @@ public final class AnnettaClientReview {
             if (state == AnnettaKnowlesEntity.EncounterState.CURED_SUPPORT) {
                 annetta.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.annettas_absolution_dagger.get()));
             }
-            if (name.equals("live_break")) {
+            if (name.equals("live_break") || name.equals("live_scene_break")) {
                 // Both break conditions already met: the break begins on her first tick.
                 setField(annetta, "phaseOneTicks", 2400);
                 setField(annetta, "damageTaken", 60.0F);
@@ -289,7 +293,23 @@ public final class AnnettaClientReview {
         if (dummy != null) mob.setTarget(dummy);
         level.addFreshEntity(mob);
         actor = mob;
-        if (name.equals("live_purge") && mob instanceof AnnettaKnowlesEntity annetta) {
+        if (name.equals("live_scene_harbinger") && mob instanceof AnnettaKnowlesEntity annetta) {
+            // what startHarbingerRoute does once the jar is spent: her opening window, a hidden bar, and the scene
+            try {
+                var window = AnnettaKnowlesEntity.class.getDeclaredField("harbingerIntro");
+                window.setAccessible(true);
+                ((com.vincenthuto.hemomancy.common.entity.boss.presentation.BossIntroWindow) window.get(annetta)).begin();
+                var bar = AnnettaKnowlesEntity.class.getDeclaredField("bossBar");
+                bar.setAccessible(true);
+                ((com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding) bar.get(annetta)).setVisible(false);
+            } catch (ReflectiveOperationException exception) {
+                throw new IllegalStateException(exception);
+            }
+            annetta.setTarget(player);
+            com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes.playTo(player, annetta,
+                    com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds.SCENE_ANNETTA_KNOWLES, 0);
+        }
+        if ((name.equals("live_purge") || name.equals("live_scene_purge")) && mob instanceof AnnettaKnowlesEntity annetta) {
             invoke(annetta, "startCureRoute", new Class<?>[]{ServerPlayer.class, ItemStack.class}, player,
                     new ItemStack(ItemInit.draught_of_still_mercy.get()));
         }

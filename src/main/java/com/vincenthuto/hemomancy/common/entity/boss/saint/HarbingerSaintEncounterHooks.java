@@ -1,14 +1,17 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint;
 
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SaintSarcophagusBlock;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 
 public final class HarbingerSaintEncounterHooks {
 
@@ -20,10 +23,14 @@ public final class HarbingerSaintEncounterHooks {
 	}
 
 	public static boolean spawnSaintBoss(ServerLevel level, BlockPos pos, Player sourcePlayer, EnumSaintType saintType) {
-		Mob boss = createBoss(level, saintType);
+		SaintTrialEntity boss = createBoss(level, saintType);
 		if (boss == null) return false;
+		// remember the tomb before the encounter clears it, so every ending can close the Saint back into it
+		BlockState tomb = level.getBlockState(pos);
+		if (tomb.getBlock() instanceof SaintSarcophagusBlock) boss.bindTomb(pos, tomb);
 
-		boss.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+		// on the floor the sarcophagus stood on (it is cleared right after): the Saint rises out of that floor
+		boss.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
 				level.random.nextFloat() * 360.0F, 0.0F);
 		boss.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null);
 		boss.setPersistenceRequired();
@@ -33,13 +40,15 @@ public final class HarbingerSaintEncounterHooks {
 			boss.setTarget(serverPlayer);
 		}
 
+		boss.beginRise();
 		if (!level.addFreshEntity(boss)) return false;
+		BossScenes.play(boss, BossPresentationIds.SCENE_SAINT_RISE);
 		// Reset blood debt only after the encounter exists so a failed spawn cannot erase player state.
 		HemoCapabilityAccess.getBloodVolume(sourcePlayer).resetBloodDebt();
 		return true;
 	}
 
-	private static Mob createBoss(ServerLevel level, EnumSaintType saintType) {
+	private static SaintTrialEntity createBoss(ServerLevel level, EnumSaintType saintType) {
 		return switch (saintType) {
 			case HEMORATH -> EntityInit.hemorath.get().create(level);
 			case SERAPHAE -> EntityInit.seraphae.get().create(level);

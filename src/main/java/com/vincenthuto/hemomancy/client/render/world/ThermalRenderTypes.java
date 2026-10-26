@@ -14,6 +14,7 @@ public final class ThermalRenderTypes {
     static final RenderType MOLTEN=create("thermal_molten",ShaderInit.MANIPULATION_MOLTEN,false,false);
     static final RenderType GLASS=create("thermal_glass",ShaderInit.MANIPULATION_GLASS,false,false);
     static final RenderType CRUOR=create("thermal_cruor",ShaderInit.MANIPULATION_CRUOR,false,false);
+    static final RenderType RIME=create("velorum_rime",ShaderInit.MANIPULATION_RIME,false,false);
     static final RenderType CORE=create("thermal_cruor_core",ShaderInit.MANIPULATION_CRUOR,true,false);
     public static final RenderType SKIN=create("thermal_skin",ShaderInit.MANIPULATION_SKIN,false,true);
     private ThermalRenderTypes() {}
@@ -30,6 +31,7 @@ public final class ThermalRenderTypes {
             case DUCTILIS -> FerricDuctilisRenderTypes.NERVES;
             case ANIMUS -> AnimusMortemRenderTypes.ANIMUS;
             case MORTEM -> AnimusMortemRenderTypes.MORTEM;
+            case RIME -> RIME;
         };
     }
     private static RenderType create(String name,ShaderHolder holder,boolean solid,boolean entity) {

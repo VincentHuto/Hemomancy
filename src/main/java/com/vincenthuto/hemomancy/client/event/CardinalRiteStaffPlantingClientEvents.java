@@ -56,7 +56,6 @@ public final class CardinalRiteStaffPlantingClientEvents {
 		poseStack.pushPose();
 		poseStack.translate(0.0F, vertical - 0.08F, -0.72F);
 		poseStack.mulPose(Axis.XP.rotationDegrees(-12.0F + windup * 12.0F - strike * 8.0F));
-		poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
 		poseStack.scale(1.7F, 1.7F, 1.7F);
 		minecraft.getItemRenderer().renderStatic(
 				animation.staff(), ItemDisplayContext.FIXED, event.getPackedLight(),

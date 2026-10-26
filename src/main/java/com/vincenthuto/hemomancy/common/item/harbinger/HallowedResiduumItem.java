@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumDoctrineTag;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
@@ -14,8 +13,8 @@ import java.util.List;
 
 /**
  * Hallowed Residuum — a hybridized saint-enzyme extracted from a Preserved Corpus.
- * Unlike standard enzymes, these carry two tendency alignments and doctrine tags
- * that affect crafting in the Visceral Recaller.
+ * Unlike standard enzymes, these carry the Saint's two tendencies, the pair its
+ * Canon Memory is woven from.
  */
 public class HallowedResiduumItem extends Item {
 
@@ -37,9 +36,6 @@ public class HallowedResiduumItem extends Item {
 				saintType.getPrimaryTendency().name()).withStyle(ChatFormatting.DARK_RED));
 		tooltip.add(HemoText.translatable("tooltip.hemomancy.hallowed_residuum.secondary",
 				saintType.getSecondaryTendency().name()).withStyle(ChatFormatting.DARK_PURPLE));
-		tooltip.add(HemoText.translatable("tooltip.hemomancy.hallowed_residuum.doctrine",
-				saintType.getPrimaryDoctrine().getDisplayName(),
-				saintType.getSecondaryDoctrine().getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE));
 		tooltip.add(Component.translatable("tooltip.hemomancy.hallowed_residuum.potency_s", amount)
 				.withStyle(ChatFormatting.AQUA));
 	}
@@ -54,14 +50,6 @@ public class HallowedResiduumItem extends Item {
 
 	public EnumBloodTendency getSecondaryTendency() {
 		return saintType.getSecondaryTendency();
-	}
-
-	public EnumDoctrineTag getPrimaryDoctrine() {
-		return saintType.getPrimaryDoctrine();
-	}
-
-	public EnumDoctrineTag getSecondaryDoctrine() {
-		return saintType.getSecondaryDoctrine();
 	}
 
 	public float getAmount() {

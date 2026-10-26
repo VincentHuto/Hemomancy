@@ -5,6 +5,9 @@ import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentAnnettaInfectionEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedPriestessEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantGlobEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantHazardEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantLanceEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
@@ -373,6 +376,24 @@ public class EntityInit {
                     .clientTrackingRange(12)
                     .fireImmune()
                     .build(Hemomancy.rloc("mycophant").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<MycophantHazardEntity>> mycophant_hazard = ENTITY_TYPES.register(
+            "mycophant_hazard",
+            () -> EntityType.Builder.<MycophantHazardEntity>of(MycophantHazardEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 0.25F).clientTrackingRange(10).updateInterval(20)
+                    .build(Hemomancy.rloc("mycophant_hazard").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<MycophantGlobEntity>> mycophant_glob = ENTITY_TYPES.register(
+            "mycophant_glob",
+            () -> EntityType.Builder.<MycophantGlobEntity>of(MycophantGlobEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).clientTrackingRange(8).updateInterval(2)
+                    .build(Hemomancy.rloc("mycophant_glob").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<MycophantLanceEntity>> mycophant_lance = ENTITY_TYPES.register(
+            "mycophant_lance",
+            () -> EntityType.Builder.<MycophantLanceEntity>of(MycophantLanceEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 0.5F).clientTrackingRange(10).updateInterval(20)
+                    .build(Hemomancy.rloc("mycophant_lance").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
             () -> EntityType.Builder.of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)

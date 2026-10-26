@@ -4,7 +4,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathVisualRules;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEffects;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -12,12 +13,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
 
 /**
- * Hematic Collapse — the Hollow Vessel's signature reckoning. After a visible
+ * Hematic Collapse — Hemorath's signature reckoning. After a visible
  * telegraph window the boss discharges all accumulated blood debt as damage
  * against the target, then zeroes the debt.
  *
@@ -28,7 +28,7 @@ import java.util.EnumSet;
  */
 public class HematicCollapseGoal extends Goal {
 
-	private static final int TELEGRAPH_TICKS = 60;
+	private static final int TELEGRAPH_TICKS = HemorathVisualRules.COLLAPSE_WINDUP;
 	private static final int PHASE_1_COOLDOWN_TICKS = 200;
 	private static final int PHASE_2_COOLDOWN_TICKS = 120;
 	private static final float DAMAGE_FLOOR = 2.0F;
@@ -67,7 +67,8 @@ public class HematicCollapseGoal extends Goal {
 		telegraphTicks = boss.isInPhase2() ? TELEGRAPH_TICKS / 2 : TELEGRAPH_TICKS;
 		firing = true;
 		boss.setCollapseCharging(true);
-		boss.setVisualState(HemorathEntity.VISUAL_COLLAPSE_WINDUP, telegraphTicks);
+		boss.setVisualTarget(boss.getTarget());
+		boss.setVisualState(HemorathEntity.VISUAL_COLLAPSE_WINDUP, telegraphTicks * HemorathVisualRules.GOAL_TICK_INTERVAL);
 		if (boss.level() instanceof ServerLevel server) {
 			server.playSound(null, boss.getX(), boss.getY(), boss.getZ(),
 					SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 2.0F, 0.6F);
@@ -83,6 +84,7 @@ public class HematicCollapseGoal extends Goal {
 	public void stop() {
 		firing = false;
 		boss.setCollapseCharging(false);
+		boss.setVisualTarget(null);
 		if (boss.getVisualState() == HemorathEntity.VISUAL_COLLAPSE_WINDUP) {
 			boss.setVisualState(HemorathEntity.VISUAL_NONE, 0);
 		}
@@ -97,18 +99,11 @@ public class HematicCollapseGoal extends Goal {
 			return;
 		}
 		boss.getLookControl().setLookAt(target, 30.0F, 30.0F);
+		boss.setVisualTarget(target);
 
 		if (telegraphTicks > 0) {
 			telegraphTicks--;
-			if (boss.level() instanceof ServerLevel server && telegraphTicks % 4 == 0) {
-				server.sendParticles(ParticleTypes.DRIPPING_OBSIDIAN_TEAR,
-						target.getX(), target.getY() + 1.5, target.getZ(),
-						8, 0.4, 0.6, 0.4, 0.01);
-				server.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
-						boss.getX(), boss.getY() + 1.0, boss.getZ(),
-						10, 0.5, 0.8, 0.5, 0.02);
-				sendDebtTether(server, target);
-			}
+
 			return;
 		}
 
@@ -130,24 +125,8 @@ public class HematicCollapseGoal extends Goal {
 
 		server.playSound(null, target.getX(), target.getY(), target.getZ(),
 				SoundEvents.WITHER_BREAK_BLOCK, SoundSource.HOSTILE, 2.0F, 0.5F);
-		boss.setVisualState(HemorathEntity.VISUAL_COLLAPSE_IMPACT, 14);
-		server.sendParticles(ParticleTypes.SCULK_SOUL,
-				target.getX(), target.getY() + 1.0, target.getZ(),
-				40, 0.6, 1.0, 0.6, 0.1);
-		server.sendParticles(ParticleTypes.LARGE_SMOKE,
-				target.getX(), target.getY() + 1.0, target.getZ(),
-				25, 0.8, 0.8, 0.8, 0.05);
+		boss.setVisualState(HemorathEntity.VISUAL_COLLAPSE_IMPACT, HemorathVisualRules.COLLAPSE_IMPACT);
+		HemorathEffects.burst(server, target.position().add(0, target.getBbHeight() * .6, 0), HemorathVisualRules.DEBT_HIT, 1.5F);
 	}
 
-	private void sendDebtTether(ServerLevel server, LivingEntity target) {
-		Vec3 from = boss.position().add(0.0, 1.2, 0.0);
-		Vec3 to = target.position().add(0.0, target.getBbHeight() * 0.65, 0.0);
-		Vec3 delta = to.subtract(from);
-		for (int i = 1; i <= 10; i++) {
-			Vec3 point = from.add(delta.scale(i / 11.0D));
-			server.sendParticles(ParticleTypes.SCULK_SOUL,
-					point.x, point.y, point.z,
-					1, 0.02, 0.02, 0.02, 0.0);
-		}
-	}
 }

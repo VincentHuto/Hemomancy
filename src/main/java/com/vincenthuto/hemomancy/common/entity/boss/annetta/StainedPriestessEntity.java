@@ -1,9 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.PriestessCombatRules.Mode;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
@@ -85,7 +87,12 @@ public class StainedPriestessEntity extends Monster {
     private static final int VOLLEY_TICKS = 20;
     private static final int BLOOD_DRAIN = 300;
 
-    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.stained_priestess", BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_12);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.stained_priestess", BossPresentationIds.FRAME_STAINED_PRIESTESS, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_12);
+    // Client clocks: the synced counters arrive on the network's schedule, not every client tick, so the model and its
+    // layers read these instead. They advance with the client's own ticks and resync when the server disagrees;
+    // each read syncs, so the first frame after loading already reads the synced value.
+    private final BossReplayClock modeClock = new BossReplayClock();
+    private final BossReplayClock actionClock = new BossReplayClock(ACTION_NONE);
 
     private int modeLength = PriestessCombatRules.EMERGE_LENGTH;
     private float orbitAngle;
@@ -172,13 +179,25 @@ public class StainedPriestessEntity extends Monster {
         return this.entityData.get(DATA_FLYING);
     }
 
+    /** Ticks into the current flight mode, smooth across frames on the client. */
+    public float modeTime(float partialTick) {
+        if (!this.level().isClientSide || AnnettaKnowlesEntity.reviewHoldClock) return getModeTick();
+        return modeClock.sample(getMode().ordinal(), getModeTick(), this.tickCount, partialTick, 1);
+    }
+
+    /** Ticks into the current action, smooth across frames on the client. */
+    public float actionTime(float partialTick) {
+        if (!this.level().isClientSide || AnnettaKnowlesEntity.reviewHoldClock) return getActionTick();
+        return actionClock.sample(getAction(), getActionTick(), this.tickCount, partialTick, 1);
+    }
+
     /** How grown the tendril wings are (0 while she lies in the pool, 1 once she stands). */
     public float wingGrowth(float partialTick) {
-        return getMode() == Mode.EMERGING ? PriestessCombatRules.wingGrowth(getModeTick() + partialTick) : 1.0F;
+        return getMode() == Mode.EMERGING ? PriestessCombatRules.wingGrowth(modeTime(partialTick)) : 1.0F;
     }
 
     public float headGrowth(float partialTick) {
-        return getMode() == Mode.EMERGING ? PriestessCombatRules.headGrowth(getModeTick() + partialTick) : 1.0F;
+        return getMode() == Mode.EMERGING ? PriestessCombatRules.headGrowth(modeTime(partialTick)) : 1.0F;
     }
 
     private void setMode(Mode mode) {

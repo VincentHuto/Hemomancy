@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperCombatRules;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
@@ -626,6 +627,7 @@ public class VesperMountModel extends HierarchicalModel<VesperTheCrownedRefusalE
 				attack(attack, motion.attackTime(), ageInTicks);
 			}
 			if (motion.staggerTime() > 0.0F) stagger(motion.staggerTime(), ageInTicks);
+			if (motion.arrivalTime() >= 0.0F) arrival(motion.arrivalTime(), ageInTicks);
 		}
 		VesperBurrowRules.Stage burrow = entity.getBurrowStage();
 		if (burrow != null) burrowPose(burrow, motion.burrowTime(), entity.getBurrowHuntTicks(), ageInTicks);
@@ -641,6 +643,32 @@ public class VesperMountModel extends HierarchicalModel<VesperTheCrownedRefusalE
 			blendParts = this.root().getAllParts().filter(part -> part != this.woundScute).toList();
 		}
 		motion.blend(blendParts);
+	}
+
+	/**
+	 * His arrival: the mount rears onto its hind legs, forelegs pawing the air and the tail braced, holds while the
+	 * rider is shown, then drops back onto all six to fight.
+	 */
+	private void arrival(float t, float age) {
+		float up = HemoEasing.smoothstep(HemoEasing.clamp01((t - VesperCombatRules.ARRIVAL_REAR_START)
+				/ (float) (VesperCombatRules.ARRIVAL_REAR_PEAK - VesperCombatRules.ARRIVAL_REAR_START)));
+		float down = HemoEasing.smoothstep(HemoEasing.clamp01((t - VesperCombatRules.ARRIVAL_REAR_HOLD)
+				/ (float) (VesperCombatRules.ARRIVAL_REAR_END - VesperCombatRules.ARRIVAL_REAR_HOLD)));
+		float rear = up * (1.0F - down);
+		if (rear <= 0.0F) return;
+		float paw = Mth.sin(age * 0.45F) * rear;
+		this.root.xRot -= 0.55F * rear;
+		this.root.y -= 4.0F * rear;
+		this.leg0FemurR.xRot -= 0.9F * rear + 0.3F * paw;
+		this.leg0FemurL.xRot -= 0.9F * rear - 0.3F * paw;
+		this.leg0TibiaR.xRot += 0.7F * rear;
+		this.leg0TibiaL.xRot += 0.7F * rear;
+		this.leg1FemurR.xRot -= 0.35F * rear;
+		this.leg1FemurL.xRot -= 0.35F * rear;
+		this.neck.xRot -= 0.25F * rear;
+		this.head.xRot -= 0.15F * rear;
+		this.tail0.xRot += 0.25F * rear;
+		this.tail1.xRot += 0.12F * rear;
 	}
 
 	/** The whole mount rides the fitted ground plane: lifted or dropped onto it and tilted to its slope. */

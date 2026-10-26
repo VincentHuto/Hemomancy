@@ -18,10 +18,12 @@ public final class SupportingLoreCanonSourceTest {
 		String zealot = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/ZealotDialogueTrees.java");
 		String unstainedSyncHandler = read("src/main/java/com/vincenthuto/hemomancy/client/network/ClientboundStateHandlers.java");
 		String degreePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketSyncDegree.java");
-		assertContains(saints, "EnumBloodTendency.FERRIC, EnumBloodTendency.MORTEM");
-		assertContains(saints, "EnumBloodTendency.ANIMUS, EnumBloodTendency.LUX");
+		assertContains(saints, "HEMORATH(EnumBloodTendency.ANIMUS, EnumBloodTendency.FERRIC)");
+		assertContains(saints, "SERAPHAE(EnumBloodTendency.LUX, EnumBloodTendency.DUCTILIS)");
+		assertContains(hemorath, "\"animus\":  1");
 		assertContains(hemorath, "\"ferric\":  1");
-		assertContains(seraphae, "\"animus\":  1");
+		assertContains(seraphae, "\"lux\":  1");
+		assertContains(seraphae, "\"ductilis\":  1");
 		assertContains(paleSilver, "hemomancy:consecrated_copper_ingot");
 		assertNotContains(paleSilver, "minecraft:iron_ingot");
 		assertContains(dagger, "target.addEffect(new MobEffectInstance(EffectInit.hemolysis");

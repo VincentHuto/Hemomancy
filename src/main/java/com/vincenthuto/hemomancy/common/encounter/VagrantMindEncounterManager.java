@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -79,6 +81,9 @@ public final class VagrantMindEncounterManager {
 		if (landing == null) return;
 		boss.bindMind(piece.origin(), piece.seed(), piece.nodePositions());
 		boss.setPersistenceRequired();
-		if (level.addFreshEntity(boss)) data.active(piece.origin(), boss.getUUID(), landing);
+		boss.beginIntro();
+		if (!level.addFreshEntity(boss)) return;
+		data.active(piece.origin(), boss.getUUID(), landing);
+		BossScenes.play(boss, BossPresentationIds.SCENE_NAEGLEROPHAEON);
 	}
 }

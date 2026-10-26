@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.layer.mob.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperEveningStarAnimState;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheEveningStarModel;
 import com.vincenthuto.hemomancy.client.model.item.LivingFlailModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
@@ -40,10 +41,12 @@ public final class VesperLivingWeaponLayer
 			float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
 		ItemStack weapon = entity.getLivingWeaponStack();
 		if (weapon.isEmpty() || entity.isInvisible() || entity.isAwakening()) return;
+		// the model's replayed clocks, updated this frame before its layers draw
+		VesperEveningStarAnimState state = VesperEveningStarAnimState.of(entity);
 		float dissolve = entity.isAwaitingAbsorption()
-				? VesperCombatRules.weaponDissolveProgress(entity.getDownedTicks() + partialTick) : 0.0F;
+				? VesperCombatRules.weaponDissolveProgress(state.downedTime()) : 0.0F;
 		if (dissolve >= 1.0F) return;
-		float morph = entity.isRaging() ? 1.0F : Math.min(1.0F, entity.getStanceTick() / 30.0F);
+		float morph = entity.isRaging() ? 1.0F : Math.min(1.0F, state.stanceTime() / 30.0F);
 		float scale = 0.9F + morph * 0.65F;
 		renderWeapon(poseStack, buffer, packedLight, entity, weapon, scale, false, dissolve);
 		if (entity.isRaging() || entity.getActiveTendency() == EnumBloodTendency.TENEBRIS) {

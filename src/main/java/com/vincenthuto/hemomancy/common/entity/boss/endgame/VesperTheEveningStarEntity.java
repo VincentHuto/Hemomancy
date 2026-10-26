@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -12,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
+import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -97,7 +99,8 @@ public class VesperTheEveningStarEntity extends Monster {
 	private int actionCooldown;
 	private int actionHitMask;
 
-    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.vesper_evening_star", BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_12);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.vesper_evening_star", BossPresentationIds.FRAME_VESPER_EVENING_STAR, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_12);
+    private final BossReplayClock awakeningClock = new BossReplayClock();
 
     public VesperTheEveningStarEntity(EntityType<? extends VesperTheEveningStarEntity> type, Level level) {
         super(type, level);
@@ -470,9 +473,15 @@ public class VesperTheEveningStarEntity extends Monster {
 	}
 	public float getDefeatAbsorptionProgress() { return entityData.get(DATA_DEFEAT_ABSORPTION_PROGRESS); }
 	public int getFinalCollapseTick() { return entityData.get(DATA_FINAL_COLLAPSE_TICK); }
+	/**
+	 * Ticks into the awakening. On the client the synced counter is replayed on the client clock, since it arrives on
+	 * the network's schedule rather than every client tick; it never runs past the end of the awakening.
+	 */
 	public float getAwakeningFrame(float partialTick) {
-		return isAwakening() ? getAwakeningTick() + partialTick
-				: VesperPhaseTransitionRules.AWAKENING_TOTAL_TICKS;
+		if (!isAwakening()) return VesperPhaseTransitionRules.AWAKENING_TOTAL_TICKS;
+		if (!level().isClientSide) return getAwakeningTick();
+		return Math.min(VesperPhaseTransitionRules.AWAKENING_TOTAL_TICKS,
+				awakeningClock.sample(0, getAwakeningTick(), this.tickCount, partialTick, 1));
 	}
 
 	@Override

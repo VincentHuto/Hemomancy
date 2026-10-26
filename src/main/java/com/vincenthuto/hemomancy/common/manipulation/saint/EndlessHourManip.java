@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Endless Hour — Canon Memory of Saint Velorum.
- * Doctrine: Martyrdom / Silence
+ * Tendencies: Congeatio / Tenebris
  *
  * HP cannot drop below 1 temporarily. Damage that would have been lethal
  * is held as debt and returns at once when the hour expires. The hour grants

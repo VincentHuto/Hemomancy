@@ -6,9 +6,9 @@
                       }
                   ],
     "enzymes":  {
-                    "animus":  1,
+                    "animus":  0,
                     "flammeus":  0,
-                    "ductilis":  0,
+                    "ductilis":  1,
                     "lux":  1,
                     "mortem":  0,
                     "congeatio":  0,

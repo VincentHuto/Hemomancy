@@ -39,6 +39,9 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation QLIPHOTH = entry("cosmic_forces/pages/the_qliphoth");
 	public static final ResourceLocation SAINTS = entry("cosmic_forces/pages/the_saints");
 	public static final ResourceLocation HEMORATH = entry("cosmic_forces/pages/hemorath");
+	public static final ResourceLocation SERAPHAE = entry("cosmic_forces/pages/seraphae");
+	public static final ResourceLocation PUTRICIEL = entry("cosmic_forces/pages/putriciel");
+	public static final ResourceLocation VELORUM = entry("cosmic_forces/pages/velorum");
 	public static final ResourceLocation UNSTAINED_REJECTION = entry("the_unstained_path/pages/the_rejection");
 	public static final ResourceLocation COPPER_AND_SILVER = entry("the_unstained_path/pages/copper_and_silver");
 	public static final ResourceLocation PURIFIED = entry("the_unstained_path/pages/the_purified");
@@ -107,6 +110,9 @@ public final class LiberEntryDefinitions {
 		register(QLIPHOTH, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.DEGREE, CommonDiscoverySource.ITEM_PICKUP);
 		register(SAINTS, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.BLOOD_ECHO);
 		register(HEMORATH, CommonDiscoverySource.ITEM_PICKUP);
+		register(SERAPHAE, CommonDiscoverySource.ITEM_PICKUP);
+		register(PUTRICIEL, CommonDiscoverySource.ITEM_PICKUP);
+		register(VELORUM, CommonDiscoverySource.ITEM_PICKUP);
 		register(UNSTAINED_REJECTION, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ADVANCEMENT);
 		register(COPPER_AND_SILVER, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ITEM_PICKUP);
 		register(PURIFIED, CommonDiscoverySource.ADVANCEMENT, HemomancyDiscoverySource.RITE, CommonDiscoverySource.ITEM_PICKUP);

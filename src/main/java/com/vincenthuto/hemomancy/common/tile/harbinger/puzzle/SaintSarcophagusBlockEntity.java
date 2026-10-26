@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -13,22 +14,26 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import javax.annotation.Nullable;
+
 /**
  * Block entity for the Saint Sarcophagus — tracks the Preserved Corpus state,
  * which saint resides within, and how many times extraction has been attempted.
+ * A sarcophagus holds no Saint until a relic names it (or its item carries one);
+ * Saints are never chosen at random.
  */
 public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMultiBlockEntity {
 
 	public static final int OFFERING_THRESHOLD = 3;
 
-	private EnumSaintType saintType = EnumSaintType.HEMORATH;
+	@Nullable
+	private EnumSaintType saintType;
 	private EnumCorpusState corpusState = EnumCorpusState.DORMANT;
 	private int extractionAttempts = 0;
 	private int cooldownTicks = 0;
 	private boolean isOpen = false;
 	private boolean isConsecrated = false;
 	private int offeringBloodVolume = 0;
-	private boolean saintTypeAssigned = false;
 	private boolean sampleYielded = false;
 
 	// Client-side animation
@@ -51,18 +56,35 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 		}
 	}
 
+	/** The Saint at rest here, or null while no relic has named one. */
+	@Nullable
 	public EnumSaintType getSaintType() {
 		return saintType;
 	}
 
 	public void setSaintType(EnumSaintType saintType) {
 		this.saintType = saintType;
-		this.saintTypeAssigned = true;
 		setChanged();
 	}
 
 	public boolean isSaintTypeAssigned() {
-		return saintTypeAssigned;
+		return saintType != null;
+	}
+
+	/**
+	 * The tomb as a Saint's trial leaves it: {@code saint} back inside, dormant, lid closed, unconsecrated, no
+	 * offerings, nothing drawn and no cooldown.
+	 */
+	public void restoreDormant(EnumSaintType saint) {
+		this.saintType = saint;
+		this.corpusState = EnumCorpusState.DORMANT;
+		this.extractionAttempts = 0;
+		this.cooldownTicks = 0;
+		this.isOpen = false;
+		this.isConsecrated = false;
+		this.offeringBloodVolume = 0;
+		this.sampleYielded = false;
+		BlockEntitySync.markAndSync(this);
 	}
 
 	public boolean hasSampleYielded() {
@@ -152,10 +174,6 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 	}
 
 	public void tick() {
-		if (level != null && !level.isClientSide && !saintTypeAssigned) {
-			EnumSaintType[] saints = EnumSaintType.values();
-			setSaintType(saints[level.random.nextInt(saints.length)]);
-		}
 		if (cooldownTicks > 0) {
 			cooldownTicks--;
 			setChanged();
@@ -172,7 +190,7 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 		tag.putBoolean("IsOpen", isOpen);
 		tag.putBoolean("IsConsecrated", isConsecrated);
 		tag.putInt("OfferingBloodVolume", offeringBloodVolume);
-		tag.putString("SaintType", saintType.name());
+		if (saintType != null) tag.putString("SaintType", saintType.name());
 		tag.putString("CorpusState", corpusState.name());
 		tag.putBoolean("SampleYielded", sampleYielded);
 		return tag;
@@ -181,26 +199,27 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 	@Override
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 		super.saveAdditional(tag, provider);
-		tag.putString("SaintType", saintType.name());
+		if (saintType != null) tag.putString("SaintType", saintType.name());
 		tag.putString("CorpusState", corpusState.name());
 		tag.putInt("ExtractionAttempts", extractionAttempts);
 		tag.putInt("CooldownTicks", cooldownTicks);
 		tag.putBoolean("IsOpen", isOpen);
 		tag.putBoolean("IsConsecrated", isConsecrated);
 		tag.putInt("OfferingBloodVolume", offeringBloodVolume);
-		tag.putBoolean("SaintTypeAssigned", saintTypeAssigned);
+		tag.putBoolean("SaintTypeAssigned", saintType != null);
 		tag.putBoolean("SampleYielded", sampleYielded);
 	}
 
 	@Override
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 		super.loadAdditional(tag, provider);
-		if (tag.contains("SaintType")) {
+		// An older save stored HEMORATH with SaintTypeAssigned false before its first tick: that tomb was never named.
+		saintType = null;
+		if (tag.contains("SaintType") && (!tag.contains("SaintTypeAssigned") || tag.getBoolean("SaintTypeAssigned"))) {
 			try {
 				saintType = EnumSaintType.valueOf(tag.getString("SaintType"));
-				saintTypeAssigned = true;
 			} catch (IllegalArgumentException e) {
-				saintType = EnumSaintType.HEMORATH;
+				saintType = null;
 			}
 		}
 		if (tag.contains("CorpusState")) {
@@ -215,9 +234,6 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 		isOpen = tag.getBoolean("IsOpen");
 		isConsecrated = tag.getBoolean("IsConsecrated");
 		offeringBloodVolume = tag.getInt("OfferingBloodVolume");
-		if (tag.contains("SaintTypeAssigned")) {
-			saintTypeAssigned = tag.getBoolean("SaintTypeAssigned");
-		}
 		sampleYielded = tag.getBoolean("SampleYielded");
 	}
 }

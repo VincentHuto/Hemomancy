@@ -8,6 +8,9 @@ import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronWallRendere
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.AnnettaKnowlesRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.LatentAnnettaInfectionRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.StainedPriestessRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.MycophantGlobRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.MycophantHazardRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.MycophantLanceRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.MycophantRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.NaeglerophaeonRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.endgame.VesperTheCrownedRefusalRenderer;
@@ -194,6 +197,9 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.vesper_crowned_refusal.get(), VesperTheCrownedRefusalRenderer::new);
         event.registerEntityRenderer(EntityInit.vesper_evening_star.get(), VesperTheEveningStarRenderer::new);
         event.registerEntityRenderer(EntityInit.mycophant.get(), MycophantRenderer::new);
+        event.registerEntityRenderer(EntityInit.mycophant_hazard.get(), MycophantHazardRenderer::new);
+        event.registerEntityRenderer(EntityInit.mycophant_glob.get(), MycophantGlobRenderer::new);
+        event.registerEntityRenderer(EntityInit.mycophant_lance.get(), MycophantLanceRenderer::new);
         event.registerEntityRenderer(EntityInit.seraphae.get(), SeraphaeRenderer::new);
         event.registerEntityRenderer(EntityInit.seraphae_fragment.get(), SeraphaeFragmentRenderer::new);
         event.registerEntityRenderer(EntityInit.frayed_thread.get(), com.vincenthuto.hemomancy.client.render.entity.weave.FrayedThreadRenderer::new);

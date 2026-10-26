@@ -9,6 +9,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class GuiLayerRegistrar {
@@ -19,6 +20,8 @@ public final class GuiLayerRegistrar {
     // Overlay
     @SubscribeEvent
     public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
+        // Vanilla's action bar is one line and runs off the screen; this one wraps long messages.
+        event.replaceLayer(VanillaGuiLayers.OVERLAY_MESSAGE, ActionBarOverlay::render);
         // Full-screen effects under the whole HUD, vanilla's camera overlays included.
         event.registerBelowAll(Hemomancy.rloc("screen_effects"), (graphics, deltaTracker) ->
                 ScreenOverlayEvents.renderUnderHud(graphics));
@@ -92,6 +95,9 @@ public final class GuiLayerRegistrar {
         event.registerAboveAll(Hemomancy.rloc("hematic_microscope"), (graphics, deltaTracker) ->
                 com.vincenthuto.hemomancy.client.screen.overlay.HematicMicroscopeOverlay.render(
                         graphics, deltaTracker.getGameTimeDeltaPartialTick(true)));
+        event.registerAboveAll(Hemomancy.rloc("boss_scene"), (graphics, deltaTracker) ->
+                BossSceneOverlay.render(graphics, graphics.guiWidth(), graphics.guiHeight(),
+                        deltaTracker.getGameTimeDeltaPartialTick(true)));
         // Last, but at the base depth: the layers above stack toward the camera, and these markers stay behind them.
         event.registerAboveAll(Hemomancy.rloc("hud_markers"), (graphics, deltaTracker) -> {
             graphics.pose().pushPose();

@@ -24,7 +24,8 @@ public final class EarthenVeinTravelClientState {
 	public static void open(OpenEarthenVeinDisplayPacket packet) {
 		Minecraft minecraft = Minecraft.getInstance();
 		long openedAt = minecraft.level == null ? 0L : minecraft.level.getGameTime();
-		selection = new Selection(packet.nonce(), packet.sourceDimension(), packet.source(), packet.destinations(), openedAt);
+		selection = packet.destinations().isEmpty() ? null
+				: new Selection(packet.nonce(), packet.sourceDimension(), packet.source(), packet.destinations(), openedAt);
 	}
 
 	public static void update(EarthenVeinTravelVisualPacket packet) {

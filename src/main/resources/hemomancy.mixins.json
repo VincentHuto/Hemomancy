@@ -60,6 +60,7 @@
   "client": [
     "MixinScriptoriumItemRenderer",
     "CastingHandRendererInvoker",
+    "MixinCamera",
     "MixinCapeLayer",
     "MixinEntityRenderDispatcher",
     "MixinGameRenderer",

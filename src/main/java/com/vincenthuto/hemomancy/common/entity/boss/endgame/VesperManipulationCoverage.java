@@ -147,7 +147,7 @@ public final class VesperManipulationCoverage {
 		variant("radiant_wake", LUX, Kind.LINE, Form.RADIANT_WAKE, 8.0F);
 		variant("lodestone_collapse", FERRIC, Kind.PULL, Form.LODESTONE_COLLAPSE, 8.0F);
 		variant("thread_ripper", DUCTILIS, Kind.UNRAVEL, Form.THREAD, 0.0F);
-		variant("crimson_tithe", MORTEM, Kind.DRAIN, Form.TITHE_COLLECT, 6.0F);
+		variant("crimson_tithe", ANIMUS, Kind.DRAIN, Form.TITHE_COLLECT, 6.0F);
 		castable("unclosing_eye", LUX);
 		castable("bloom_of_rot", MORTEM);
 		variant("endless_hour", CONGEATIO, Kind.DEBUFF, Form.HOUR, 0.0F);

@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.velorum;
 
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -19,25 +18,26 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Velorum — The Frozen Martyr.
+ * Velorum — Saint of the Endless Hour.
  * <p>
- * Fourth of the entombed Saints; tendencies CONGEATIO + TENEBRIS. In life he
- * embraced silence and voluntary suffering as the highest form of devotion,
- * descending into a frozen-dark stillness so complete it became permanent.
- * His Canon Memory — Endless Hour — stretches the moment before an action to
- * its absolute limit; fitting for a Saint who never acted again.
+ * Fourth of the entombed Saints; tendencies CONGEATIO + TENEBRIS. In life a
+ * lucid ascetic who forced stillness on his congregation, he descended into a
+ * frozen-dark stillness so complete it became his dormancy. His Canon Memory —
+ * Endless Hour — stretches the moment before an action to its absolute limit.
+ * Felled, he always reverts to that dormancy and returns to his tomb.
  * <p>
  * Mechanics summary:
  * <ul>
@@ -47,9 +47,9 @@ import net.minecraft.world.phys.Vec3;
  *       Velorum floods the arena with umbral shadow, applying Blindness to
  *       nearby players. Blood-active (Harbinger) players also receive a brief
  *       Nausea effect — their blood recoils from the deep silence.</li>
- *   <li><b>Martyrdom Resistance</b>: Every time a player successfully damages
+ *   <li><b>Stillness Resistance</b>: Every time a player successfully damages
  *       Velorum he gains a short burst of Resistance I, reflecting the
- *       Saint's willingness to absorb suffering. This resistance wears off
+ *       stillness he forces on any body, his own included. This wears off
  *       quickly, creating rhythm-based attack windows.</li>
  *   <li><b>Silence Pulse</b>: At low HP (≤ 25%), Velorum drains blood from
  *       blood-active players nearby every {@link #SILENCE_DRAIN_INTERVAL}
@@ -60,29 +60,37 @@ public class VelorumEntity extends SaintTrialEntity {
     private static final BloodAccounting.Source SILENCE = BloodAccounting.Source.of("velorum_silence", Category.HAZARD, false, false);
 
     // ── synched data ──────────────────────────────────────────────────────
-    private static final EntityDataAccessor<Boolean> DATA_MARTYRDOM =
+    private static final EntityDataAccessor<Boolean> DATA_STILL_GUARD =
             SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private static final EntityDataAccessor<Integer> DATA_FROST_UNTIL = SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_VEIL_UNTIL = SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_DRAIN_UNTIL = SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_FROST_RELEASE = SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_VEIL_RELEASE = SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_DRAIN_RELEASE = SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_STILL_GUARD_TICKS = SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
 
     public static final int VISUAL_FROST_NOVA = 1;
     public static final int VISUAL_VEIL = 2;
     public static final int VISUAL_SILENCE_DRAIN = 3;
 
     // ── frost nova ────────────────────────────────────────────────────────
-    private static final int FROST_NOVA_INTERVAL = 100;
+    private static final int FROST_NOVA_INTERVAL = VelorumVisualRules.FROST_INTERVAL;
     private static final double FROST_NOVA_RADIUS = 10.0;
     private static final float FROST_NOVA_DAMAGE = 3.0F;
 
     // ── veil of darkness ──────────────────────────────────────────────────
-    private static final int DARKNESS_INTERVAL = 160;
+    private static final int DARKNESS_INTERVAL = VelorumVisualRules.VEIL_INTERVAL;
     private static final double DARKNESS_RADIUS = 12.0;
 
-    // ── martyrdom resistance ──────────────────────────────────────────────
-    private static final int MARTYRDOM_RESISTANCE_DURATION = 40;
-    private static final int MARTYRDOM_RESISTANCE_AMP = 0;
+    // ── stillness resistance ──────────────────────────────────────────────
+    private static final int STILL_GUARD_DURATION = VelorumVisualRules.MARTYRDOM;
+    private static final int STILL_GUARD_AMP = 0;
 
     // ── silence drain (Phase 2, ≤ 25% HP) ────────────────────────────────
     private static final float SILENCE_PHASE_THRESHOLD = 0.25F;
-    private static final int SILENCE_DRAIN_INTERVAL = 80;
+    private static final int SILENCE_DRAIN_INTERVAL = VelorumVisualRules.DRAIN_INTERVAL;
     private static final int SILENCE_BLOOD_DRAIN = 200;
     private static final double SILENCE_DRAIN_RADIUS = 8.0;
 
@@ -90,13 +98,17 @@ public class VelorumEntity extends SaintTrialEntity {
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState martyrdomAnimationState = new AnimationState();
 
-    private boolean defeated = false;
-    private int martyrdomTimer = 0;
+    private int stillGuardTimer = 0;
 
     // ── constructor ───────────────────────────────────────────────────────
 
     public VelorumEntity(EntityType<? extends VelorumEntity> type, Level level) {
-        super(type, level, 120, new BossBarBinding("entity.hemomancy.velorum", BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.NOTCHED_10));
+        super(type, level, 120, new BossBarBinding("entity.hemomancy.velorum", BossPresentationIds.FRAME_VELORUM, BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.NOTCHED_10));
+    }
+
+    @Override
+    public EnumSaintType saintType() {
+        return EnumSaintType.VELORUM;
     }
 
     // ── attributes ────────────────────────────────────────────────────────
@@ -123,16 +135,35 @@ public class VelorumEntity extends SaintTrialEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_MARTYRDOM, false);
+        builder.define(DATA_STILL_GUARD, false);
+        builder.define(DATA_FROST_UNTIL, 100);
+        builder.define(DATA_VEIL_UNTIL, 160);
+        builder.define(DATA_DRAIN_UNTIL, 80);
+        builder.define(DATA_FROST_RELEASE, 0);
+        builder.define(DATA_VEIL_RELEASE, 0);
+        builder.define(DATA_DRAIN_RELEASE, 0);
+        builder.define(DATA_STILL_GUARD_TICKS, 0);
+
     }
 
+    /** The brief stillness resistance after a hit (public names kept for the client model). */
     public boolean isMartyrdom() {
-        return this.entityData.get(DATA_MARTYRDOM);
+        return this.entityData.get(DATA_STILL_GUARD);
     }
 
-    private void setMartyrdom(boolean active) {
-        this.entityData.set(DATA_MARTYRDOM, active);
+    private void setStillGuard(boolean active) {
+        this.entityData.set(DATA_STILL_GUARD, active);
     }
+
+    public int getFrostUntil() { return this.entityData.get(DATA_FROST_UNTIL); }
+    public int getVeilUntil() { return this.entityData.get(DATA_VEIL_UNTIL); }
+    public int getDrainUntil() { return this.entityData.get(DATA_DRAIN_UNTIL); }
+    public int getFrostRelease() { return this.entityData.get(DATA_FROST_RELEASE); }
+    public int getVeilRelease() { return this.entityData.get(DATA_VEIL_RELEASE); }
+    public int getDrainRelease() { return this.entityData.get(DATA_DRAIN_RELEASE); }
+    public int getMartyrdomTicks() { return this.entityData.get(DATA_STILL_GUARD_TICKS); }
+
+    public boolean isSilencePhase() { return getHealth() <= getMaxHealth() * SILENCE_PHASE_THRESHOLD; }
 
     // ── main tick ─────────────────────────────────────────────────────────
 
@@ -146,16 +177,24 @@ public class VelorumEntity extends SaintTrialEntity {
             return;
         }
 
-        if (defeated) return;
+        if (tickRise()) return;
+        if (!isAlive()) return;
         ServerLevel server = (ServerLevel) this.level();
         tickVisualState();
+        this.entityData.set(DATA_FROST_UNTIL, FROST_NOVA_INTERVAL - Math.floorMod(tickCount, FROST_NOVA_INTERVAL));
+        this.entityData.set(DATA_VEIL_UNTIL, DARKNESS_INTERVAL - Math.floorMod(tickCount, DARKNESS_INTERVAL));
+        this.entityData.set(DATA_DRAIN_UNTIL, isSilencePhase() ? SILENCE_DRAIN_INTERVAL - Math.floorMod(tickCount, SILENCE_DRAIN_INTERVAL) : SILENCE_DRAIN_INTERVAL);
+        if (getFrostRelease() > 0) this.entityData.set(DATA_FROST_RELEASE, getFrostRelease() - 1);
+        if (getVeilRelease() > 0) this.entityData.set(DATA_VEIL_RELEASE, getVeilRelease() - 1);
+        if (getDrainRelease() > 0) this.entityData.set(DATA_DRAIN_RELEASE, getDrainRelease() - 1);
 
         bossBar.trackHealth(this);
 
-        if (martyrdomTimer > 0) {
-            martyrdomTimer--;
-            if (martyrdomTimer == 0) {
-                setMartyrdom(false);
+        if (stillGuardTimer > 0) {
+            stillGuardTimer--;
+            this.entityData.set(DATA_STILL_GUARD_TICKS, stillGuardTimer);
+            if (stillGuardTimer == 0) {
+                setStillGuard(false);
             }
         }
 
@@ -170,54 +209,44 @@ public class VelorumEntity extends SaintTrialEntity {
         }
 
         // Silence drain at low HP
-        boolean inSilencePhase = this.getHealth() <= this.getMaxHealth() * SILENCE_PHASE_THRESHOLD;
+        boolean inSilencePhase = isSilencePhase();
         if (inSilencePhase && this.tickCount % SILENCE_DRAIN_INTERVAL == 0) {
             fireSilenceDrain(server);
         }
 
-        // Ambient frozen particles
-        if (this.tickCount % 20 == 0) {
-            server.sendParticles(ParticleTypes.SNOWFLAKE,
-                    this.getX(), this.getY() + 1.2, this.getZ(),
-                    8, 0.4, 0.6, 0.4, 0.01);
-        }
     }
 
     private void fireFrostNova(ServerLevel server) {
-        setVisualState(VISUAL_FROST_NOVA, 18);
-        sendFloorRing(server, FROST_NOVA_RADIUS, ParticleTypes.SNOWFLAKE, 44, this.getY() + 0.08D);
-        server.sendParticles(ParticleTypes.SNOWFLAKE,
-                this.getX(), this.getY() + 0.5, this.getZ(),
-                80, FROST_NOVA_RADIUS * 0.5, 0.3, FROST_NOVA_RADIUS * 0.5, 0.05);
+        setVisualState(VISUAL_FROST_NOVA, VelorumVisualRules.FROST_RELEASE);
+        this.entityData.set(DATA_FROST_RELEASE, VelorumVisualRules.FROST_RELEASE);
+        VelorumEffects.burst(server, Vec3.atBottomCenterOf(blockPosition()), VelorumVisualRules.FROST, (float) FROST_NOVA_RADIUS);
         server.playSound(null, this.getX(), this.getY(), this.getZ(),
                 SoundEvents.POWDER_SNOW_FALL, SoundSource.HOSTILE, 2.0F, 0.5F);
 
         for (Player player : server.getEntitiesOfClass(Player.class,
                 new AABB(this.blockPosition()).inflate(FROST_NOVA_RADIUS))) {
             player.hurt(this.damageSources().magic(), FROST_NOVA_DAMAGE);
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2, false, true));
+            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2, false, false, true));
             // Brief root via maximum slow
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 6, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 6, false, false, false));
         }
     }
 
     private void fireVeilOfDarkness(ServerLevel server) {
-        setVisualState(VISUAL_VEIL, 22);
-        sendFloorRing(server, DARKNESS_RADIUS, ParticleTypes.SQUID_INK, 48, this.getY() + 0.12D);
-        server.sendParticles(ParticleTypes.SQUID_INK,
-                this.getX(), this.getY() + 1.0, this.getZ(),
-                60, DARKNESS_RADIUS * 0.4, 0.8, DARKNESS_RADIUS * 0.4, 0.04);
+        setVisualState(VISUAL_VEIL, VelorumVisualRules.VEIL_RELEASE);
+        this.entityData.set(DATA_VEIL_RELEASE, VelorumVisualRules.VEIL_RELEASE);
+        VelorumEffects.burst(server, Vec3.atBottomCenterOf(blockPosition()), VelorumVisualRules.VEIL, (float) DARKNESS_RADIUS);
         server.playSound(null, this.getX(), this.getY(), this.getZ(),
                 SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 1.0F, 0.4F);
 
         for (Player player : server.getEntitiesOfClass(Player.class,
                 new AABB(this.blockPosition()).inflate(DARKNESS_RADIUS))) {
-            player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0, false, true));
+            player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0, false, false, true));
 
             // Blood-active players get Nausea — their blood recoils from the silence
             var vol = HemoCapabilityAccess.getBloodVolume(player);
             if (vol.isActive()) {
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 0, false, true));
+                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 0, false, false, true));
             }
         }
 
@@ -225,51 +254,63 @@ public class VelorumEntity extends SaintTrialEntity {
     }
 
     private void fireSilenceDrain(ServerLevel server) {
-        setVisualState(VISUAL_SILENCE_DRAIN, 20);
-        server.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
-                this.getX(), this.getY() + 1.0, this.getZ(),
-                30, SILENCE_DRAIN_RADIUS * 0.3, 0.5, SILENCE_DRAIN_RADIUS * 0.3, 0.02);
+        setVisualState(VISUAL_SILENCE_DRAIN, VelorumVisualRules.DRAIN_RELEASE);
+        this.entityData.set(DATA_DRAIN_RELEASE, VelorumVisualRules.DRAIN_RELEASE);
 
         for (Player player : server.getEntitiesOfClass(Player.class,
                 new AABB(this.blockPosition()).inflate(SILENCE_DRAIN_RADIUS))) {
             var vol = HemoCapabilityAccess.getBloodVolume(player);
             if (vol.isActive() && vol.getBloodVolume() >= SILENCE_BLOOD_DRAIN) {
-                sendParticleLine(server, player.position().add(0.0D, 1.0D, 0.0D), this.position().add(0.0D, 1.2D, 0.0D), ParticleTypes.SOUL_FIRE_FLAME, 8);
-                BloodAccounting.pay(player, SILENCE_BLOOD_DRAIN, SILENCE);
+                var payment = BloodAccounting.pay(player, SILENCE_BLOOD_DRAIN, SILENCE);
+                if (payment.paid() > 0)
+                    VelorumEffects.drain(server, player.position().add(0, 1, 0), this.position().add(0, 1.5, 0));
             }
         }
     }
 
-    private void sendParticleLine(ServerLevel server, Vec3 from, Vec3 to, net.minecraft.core.particles.SimpleParticleType particle, int points) {
-        Vec3 delta = to.subtract(from);
-        for (int i = 1; i <= points; i++) {
-            Vec3 point = from.add(delta.scale(i / (double) (points + 1)));
-            server.sendParticles(particle, point.x, point.y, point.z, 1, 0.015D, 0.015D, 0.015D, 0.0D);
-        }
-    }
-
-    // ── martyrdom resistance on being hit ─────────────────────────────────
+    // ── stillness resistance on being hit ─────────────────────────────────
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
         if (hurt && !this.level().isClientSide) {
-            // Grant brief resistance — the Saint absorbs pain willingly
+            // Grant brief resistance — the Saint stills around the wound
             this.addEffect(new MobEffectInstance(
-                    MobEffects.DAMAGE_RESISTANCE, MARTYRDOM_RESISTANCE_DURATION,
-                    MARTYRDOM_RESISTANCE_AMP, false, false));
-            setMartyrdom(true);
-            martyrdomTimer = MARTYRDOM_RESISTANCE_DURATION;
+                    MobEffects.DAMAGE_RESISTANCE, STILL_GUARD_DURATION,
+                    STILL_GUARD_AMP, false, false));
+            setStillGuard(true);
+            stillGuardTimer = STILL_GUARD_DURATION;
+            this.entityData.set(DATA_STILL_GUARD_TICKS, stillGuardTimer);
+            VelorumEffects.burst((ServerLevel) this.level(), this.position().add(0, 1.5, 0), VelorumVisualRules.MARTYR, 1);
         }
         return hurt;
     }
 
-    // ── drops ─────────────────────────────────────────────────────────────
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        boolean hit = super.doHurtTarget(target);
+        if (hit && this.level() instanceof ServerLevel server)
+            VelorumEffects.burst(server, target.position().add(0, target.getBbHeight() * .6, 0), VelorumVisualRules.MELEE, .8F);
+        return hit;
+    }
 
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        this.spawnAtLocation(new ItemStack(ItemInit.hallowed_residuum_velorum.get(), 1));
+    public void die(DamageSource source) {
+        if (this.level() instanceof ServerLevel server)
+            VelorumEffects.burst(server, this.position().add(0, 1.5, 0), VelorumVisualRules.REST, 3);
+        super.die(source);
+    }
+
+    @Override
+    protected void tickDeath() {
+        if (++this.deathTime >= 20 && !this.level().isClientSide && !this.isRemoved())
+            this.remove(RemovalReason.KILLED);
+    }
+
+    /** Felled, he goes still again; the tomb closes over him after. */
+    @Override
+    protected void announceTrialEnd(Player victor) {
+        broadcastMessage("message.hemomancy.velorum.returns_to_stillness", ChatFormatting.DARK_AQUA);
     }
 
     // ── sounds ────────────────────────────────────────────────────────────

@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * Unclosing Eye — Canon Memory of Saint Seraphae.
- * Doctrine: Witness / Light
+ * Tendencies: Lux / Ductilis
  *
  * <p>Seraphae's gaze strips concealment from every living thing within range —
  * concealment is suppressed, all entities glow, and the caster is revealed too.

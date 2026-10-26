@@ -24,6 +24,10 @@ final class ManipulationMotes {
 
     static void emit(ManipulationVisualPacket packet, ClientLevel level, boolean expiry) {
         Form form=packet.form();
+        if(SeraphaeRadianceGeometry.handles(form))return;
+        if(HemorathReliquaryGeometry.handles(form))return;
+        if(PutricielOfferingGeometry.handles(form))return;
+        if(VelorumRimeGeometry.handles(form))return;
         if(AnimusMortemGeometry.handles(form))return;
         if(FerricDuctilisGeometry.handles(form))return;
         if(ThermalGeometry.handles(form))return;

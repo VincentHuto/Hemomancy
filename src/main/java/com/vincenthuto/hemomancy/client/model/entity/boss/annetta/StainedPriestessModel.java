@@ -216,9 +216,9 @@ public class StainedPriestessModel extends HierarchicalModel<StainedPriestessEnt
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		float partial = ageInTicks - entity.tickCount;
 		PriestessCombatRules.Mode mode = entity.getMode();
-		float modeTime = entity.getModeTick() + partial;
+		float modeTime = entity.modeTime(partial);
 		int action = entity.getAction();
-		float actionTime = entity.getActionTick() + partial;
+		float actionTime = entity.actionTime(partial);
 		boolean armed = !entity.getMainHandItem().isEmpty();
 		this.spearShown = armed ? 1.0F : 0.0F;
 		this.spearCharge = 0.0F;

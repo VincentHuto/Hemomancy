@@ -50,6 +50,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -67,6 +68,9 @@ import javax.annotation.Nullable;
  * - DORMANT: approachable, unstable
  * - RESPONSIVE: reacts to player interaction
  * - AWAKENED: player has offended it, combat triggered
+ *
+ * A sarcophagus no relic has named holds no Saint and stays inert. When a trial ends the
+ * Saint's sarcophagus is restored where it stood ({@link #restoreDormant}).
  */
 public class SaintSarcophagusBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 	private static final BloodAccounting.Source OFFERING = BloodAccounting.Source.of("saint_sarcophagus_offering", Category.RITE, false, false);
@@ -263,13 +267,9 @@ public void setPlacedBy(Level level, BlockPos pos, BlockState state,
 					try {
 						sarcophagus.setSaintType(EnumSaintType.valueOf(tag.getString(TAG_SAINT_TYPE)));
 					} catch (IllegalArgumentException ignored) {
-						assignRandomSaint(level, sarcophagus);
+						// an unknown Saint leaves the tomb unnamed until a relic names it
 					}
-				} else {
-					assignRandomSaint(level, sarcophagus);
 				}
-			} else {
-				assignRandomSaint(level, sarcophagus);
 			}
 		}
 		placeFillers(level, pos, state);
@@ -387,6 +387,15 @@ if (heldStack.getItem() instanceof SaintRelicItem relic) {
 	triggerSaintEncounter(worldIn, pos, player, sarcophagus,
 		Component.translatable("message.hemomancy.saint_sarcophagus.relic_summon",
 			relic.getSaintType().getDisplayName()).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+	return InteractionResult.CONSUME;
+}
+
+// No relic has named this tomb: no Saint rests here, and nothing else wakes or opens it.
+if (!sarcophagus.isSaintTypeAssigned()) {
+	player.displayClientMessage(
+		Component.translatable("message.hemomancy.saint_sarcophagus.unassigned")
+			.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+		true);
 	return InteractionResult.CONSUME;
 }
 
@@ -650,9 +659,32 @@ pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5,
 }
 }
 
-private static void assignRandomSaint(Level level, SaintSarcophagusBlockEntity sarcophagus) {
-	EnumSaintType[] saints = EnumSaintType.values();
-	sarcophagus.setSaintType(saints[level.random.nextInt(saints.length)]);
+/**
+ * Closes a Saint back into its tomb when its trial ends: {@code tomb} (the sarcophagus's state before the
+ * encounter cleared it) returns at {@code pos}, holding {@code saint}, dormant, lid closed, unconsecrated, with no
+ * offerings, nothing drawn and no cooldown. Only into air or water, and only with room for the whole tomb, so a
+ * player's building is never overwritten. False when the tomb could not return.
+ */
+public static boolean restoreDormant(Level level, BlockPos pos, BlockState tomb, EnumSaintType saint) {
+	if (!(tomb.getBlock() instanceof SaintSarcophagusBlock block) || !tomb.hasProperty(FACING)) return false;
+	BlockState current = level.getBlockState(pos);
+	boolean water = current.is(Blocks.WATER);
+	if (!current.isAir() && !water) return false;
+	for (BlockPos offset : getRotatedOffsets(tomb.getValue(FACING))) {
+		if (!level.getBlockState(pos.offset(offset)).canBeReplaced()) return false;
+	}
+	// whoever stands where the tomb closes is lifted onto its lid rather than shut inside it
+	AABB footprint = new AABB(pos);
+	for (BlockPos offset : getRotatedOffsets(tomb.getValue(FACING))) footprint = footprint.minmax(new AABB(pos.offset(offset)));
+	for (LivingEntity standing : level.getEntitiesOfClass(LivingEntity.class, footprint)) {
+		standing.teleportTo(standing.getX(), footprint.maxY, standing.getZ());
+	}
+	BlockState restored = tomb.setValue(WATERLOGGED, water);
+	level.setBlockAndUpdate(pos, restored);
+	block.placeFillers(level, pos, restored);
+	if (!(level.getBlockEntity(pos) instanceof SaintSarcophagusBlockEntity sarcophagus)) return false;
+	sarcophagus.restoreDormant(saint);
+	return true;
 }
 
 private static boolean isPlayerAlignedWithSaint(Player player, EnumSaintType saint) {

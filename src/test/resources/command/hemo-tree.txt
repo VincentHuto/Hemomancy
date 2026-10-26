@@ -82,6 +82,11 @@ hemo permission2
       set permission0
         <stage:string(SINGLE_WORD)> suggests executes permission0
           <player:entity(single=true, playersOnly=true)> executes permission0
+  mycophant permission0
+    fight executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    rematch executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
   organs permission0
     get executes permission0
       <player:entity(single=true, playersOnly=true)> executes permission0
@@ -162,6 +167,9 @@ hemo permission2
         <value:float(0.0, 100.0)> executes permission0
           <player:entity(single=true, playersOnly=true)> executes permission0
     reset executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+  vesper permission0
+    fight executes permission0
       <player:entity(single=true, playersOnly=true)> executes permission0
   will permission0
     ambush permission0

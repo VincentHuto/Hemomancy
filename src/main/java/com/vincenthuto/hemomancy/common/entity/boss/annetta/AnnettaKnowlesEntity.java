@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossIntroWindow;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaEncounterRules.Move;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AnnettaDialogueTrees;
@@ -96,7 +99,8 @@ public class AnnettaKnowlesEntity extends Monster {
     private static final int FRANTIC_LINES = 8;
     private static final int ALLY_LINES = 4;
 
-    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.annetta_knowles", BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
+    private final BossIntroWindow harbingerIntro = new BossIntroWindow(AnnettaEncounterRules.HARBINGER_INTRO_TICKS);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.annetta_knowles", BossPresentationIds.FRAME_ANNETTA_KNOWLES, BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
 
     private int phaseOneTicks;
     private float damageTaken;
@@ -371,9 +375,11 @@ public class AnnettaKnowlesEntity extends Monster {
         this.setTarget(player);
         this.phaseOneTicks = 0;
         this.damageTaken = 0.0F;
-        this.moveCooldown = SCREAM_TICKS + 10;
-        this.setAction(ACTION_SCREAM, 0);
+        // her opening: she arms herself and screams, untouchable, and her bar shows once it ends
+        this.harbingerIntro.begin();
         addNearbyPlayersToBossBar(server);
+        this.bossBar.setVisible(false);
+        BossScenes.play(this, BossPresentationIds.SCENE_ANNETTA_KNOWLES);
 
         server.playSound(null, this.blockPosition(), SoundEvents.GENERIC_HURT, SoundSource.HOSTILE, 1.2F, 1.3F);
         server.sendParticles(HemoParticleData.bloodCell(BLOOD), this.getX(), this.getEyeY() - 0.3D, this.getZ(),
@@ -398,6 +404,7 @@ public class AnnettaKnowlesEntity extends Monster {
         infection.setPersistenceRequired();
         infection.beginEmerging();
         if (!server.addFreshEntity(infection)) return;
+        BossScenes.play(infection, BossPresentationIds.SCENE_LATENT_INFECTION);
 
         if (!player.getAbilities().instabuild) {
             brewStack.shrink(1);
@@ -460,7 +467,10 @@ public class AnnettaKnowlesEntity extends Monster {
                 this.setTarget(null);
                 this.getNavigation().stop();
             }
-            case PHASE_ONE -> tickPhaseOne(server);
+            case PHASE_ONE -> {
+                if (harbingerIntro.active()) tickHarbingerIntro(server);
+                else tickPhaseOne(server);
+            }
             case BREAKING -> tickBreak(server);
             case PURGING -> tickPurge(server);
             case CURED_SUPPORT -> tickAlly(server);
@@ -510,6 +520,20 @@ public class AnnettaKnowlesEntity extends Monster {
     }
 
     // ---------------------------------------------------------------- Phase 1
+
+    /** Her opening: she holds her ground facing her foe, screams at the card, then the fight and her bar begin. */
+    private void tickHarbingerIntro(ServerLevel server) {
+        this.getNavigation().stop();
+        this.setDeltaMovement(0.0D, this.getDeltaMovement().y, 0.0D);
+        LivingEntity target = this.getTarget();
+        if (target != null) this.getLookControl().setLookAt(target, 30.0F, 30.0F);
+        if (harbingerIntro.elapsed() == AnnettaEncounterRules.HARBINGER_SCREAM_AT) setAction(ACTION_SCREAM, 0);
+        if (harbingerIntro.tick()) {
+            this.bossBar.setVisible(true);
+            // the old opening screamed at once and moved 40 ticks later; the scream is at 20 now, so she moves soon after
+            this.moveCooldown = 10;
+        }
+    }
 
     private void tickPhaseOne(ServerLevel server) {
         this.phaseOneTicks++;
@@ -753,6 +777,7 @@ public class AnnettaKnowlesEntity extends Monster {
 
     private void startBreak(ServerLevel server) {
         this.setEncounterState(EncounterState.BREAKING);
+        BossScenes.play(this, BossPresentationIds.SCENE_ANNETTA_BREAK_CARD);
         this.setAction(ACTION_NONE, 0);
         this.getNavigation().stop();
         this.setDeltaMovement(Vec3.ZERO);
@@ -878,6 +903,7 @@ public class AnnettaKnowlesEntity extends Monster {
         priestess.setPersistenceRequired();
         priestess.beginEmerging();
         if (!server.addFreshEntity(priestess)) return;
+        BossScenes.play(priestess, BossPresentationIds.SCENE_STAINED_PRIESTESS);
 
         broadcastNearby(server, Component.translatable("hemomancy.annetta.event.mutation")
                 .withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
@@ -1038,6 +1064,7 @@ public class AnnettaKnowlesEntity extends Monster {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) return super.hurt(source, amount);
+        if (harbingerIntro.active()) return false;
         EncounterState state = this.getEncounterState();
         if (state == EncounterState.BREAKING || state == EncounterState.PURGING || state == EncounterState.CURED_SUPPORT) {
             return false;
@@ -1148,6 +1175,7 @@ public class AnnettaKnowlesEntity extends Monster {
         tag.putInt("SceneTick", getSceneTick());
         tag.putInt("PhaseOneTicks", phaseOneTicks);
         tag.putFloat("DamageTaken", damageTaken);
+        harbingerIntro.save(tag, "HarbingerIntro");
         if (infection != null) tag.putUUID("Infection", infection);
         if (purifier != null) tag.putUUID("Purifier", purifier);
         net.minecraft.nbt.ListTag propList = new net.minecraft.nbt.ListTag();
@@ -1162,6 +1190,8 @@ public class AnnettaKnowlesEntity extends Monster {
         this.entityData.set(DATA_SCENE_TICK, tag.getInt("SceneTick"));
         this.phaseOneTicks = tag.getInt("PhaseOneTicks");
         this.damageTaken = tag.getFloat("DamageTaken");
+        harbingerIntro.load(tag, "HarbingerIntro");
+        if (harbingerIntro.active()) this.bossBar.setVisible(false);
         this.infection = tag.hasUUID("Infection") ? tag.getUUID("Infection") : null;
         this.purifier = tag.hasUUID("Purifier") ? tag.getUUID("Purifier") : null;
         this.props.clear();

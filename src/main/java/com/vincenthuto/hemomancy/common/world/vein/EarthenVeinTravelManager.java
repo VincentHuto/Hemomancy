@@ -117,7 +117,17 @@ public final class EarthenVeinTravelManager {
 				.filter(vein -> vein.getUUID().equals(destinationId)).findFirst().orElse(null);
 		if (claimed == null) return;
 		EarthenVeinDestination destination = validateDestination(player, known, claimed, true);
-		if (destination == null) return;
+		if (destination == null) {
+			if (!known.getVeinList().contains(claimed)
+					&& player.level().getBlockEntity(session.sourcePos()) instanceof EarthenVeinBlockEntity source) {
+				List<EarthenVeinDestination> remaining = destinations(known, source,
+						session.sourceDimension(), session.sourcePos());
+				PacketHandler.sendToPlayer(player, new OpenEarthenVeinDisplayPacket(session.nonce(),
+						session.sourceDimension(), session.sourcePos(), remaining));
+				if (remaining.isEmpty()) cancel(player.getUUID(), player.server, true);
+			}
+			return;
+		}
 		int cost = EarthenVeinTravelRules.cost(session.sourcePos(), session.sourceDimension(),
 				destination.position(), destination.dimension());
 		destination = new EarthenVeinDestination(destination.id(), destination.name(), destination.dimension(),
@@ -351,6 +361,9 @@ public final class EarthenVeinTravelManager {
 		if (EarthenVeinDestinationValidation.shouldPrune(target != null,
 				target != null && target.isTemporary(), stented, matchingId)) {
 			known.getVeinList().remove(claimed);
+			if (known.getSelectedVein().getUUID().equals(claimed.getUUID())) {
+				known.setSelectedVein(VeinLocation.BLANK);
+			}
 			KnownManipulationEvents.syncPlayerEvent(player);
 			if (reportFailure) player.displayClientMessage(Component.translatable("message.hemomancy.earthen_vein_travel_manager.that_vein_has_ruptured").withStyle(ChatFormatting.DARK_RED), true);
 			return null;

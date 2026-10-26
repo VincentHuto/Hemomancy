@@ -27,7 +27,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Crimson Tithe — Canon Memory of Saint Hemorath.
- * Doctrine: Judgment / Silence
+ * Tendencies: Animus / Ferric
  *
  * Issues blood through the shared borrowed reserve. Unspent blood is reclaimed
  * at the deadline; spent blood is collected at twice its value.

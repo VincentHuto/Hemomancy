@@ -18,24 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Step 10 (roadmap Phase 9, A-1): a boss replays a synced tick counter through {@code BossReplayClock} and times its
- * moves with {@code BossMoveTimeline}; no class keeps its own replay clock. The renderers that still read a synced
- * counter plus the partial tick are listed until decision A-1b moves them onto the clock.
+ * moves with {@code BossMoveTimeline}; no class keeps its own replay clock, and no boss model, renderer, layer or entity
+ * reads a synced counter plus the partial tick (decision A-1b, done 2026-10-24).
  */
 class BossAnimationClockGuardrailTest {
 	private static final Pattern HAND_CLOCK = Pattern.compile(
 			"tickCount\\s*-\\s*client\\w*Start|Math\\.abs\\([^;]*tickCount[^;]*\\)\\s*>\\s*\\d");
-	private static final Pattern RAW_SYNCED = Pattern.compile("get\\w*Tick\\(\\)\\s*\\+\\s*partial");
-	private static final List<String> BOSS_CLIENT = List.of("client/model/entity/boss/", "client/render/entity/boss/",
-			"client/render/layer/mob/endgame/");
-	/** Raw synced counter plus partial tick, pending decision A-1b. */
-	private static final Set<String> RAW_READERS = Set.of(
-			"client/model/entity/boss/annetta/LatentAnnettaInfectionModel.java",
-			"client/model/entity/boss/annetta/StainedPriestessModel.java",
-			"client/model/entity/boss/endgame/MycophantModel.java",
-			"client/model/entity/boss/endgame/VesperTheEveningStarModel.java",
-			"client/render/entity/boss/annetta/LatentAnnettaInfectionRenderer.java",
-			"client/render/entity/boss/annetta/LatentInfectionLayer.java",
-			"client/render/layer/mob/endgame/VesperMountAbsorptionLayer.java");
+	/** A synced counter ({@code getXTick()} or {@code getXTicks()}) plus the partial tick. */
+	private static final Pattern RAW_SYNCED = Pattern.compile("get\\w*Ticks?\\(\\)\\s*\\+\\s*partial");
+	/** Where boss animation time is read: the client code, and the boss entities' own per-frame getters. */
+	private static final List<String> BOSS_CODE = List.of("client/model/entity/boss/", "client/render/entity/boss/",
+			"client/render/layer/mob/endgame/", "common/entity/boss/");
 
 	@Test
 	void oldNamesAreGone() throws IOException {
@@ -61,15 +54,14 @@ class BossAnimationClockGuardrailTest {
 	}
 
 	@Test
-	void rawSyncedReadersAreListed() throws IOException {
+	void noRawSyncedReaders() throws IOException {
 		Set<String> found = new TreeSet<>();
 		for (Path file : files(RepoPaths.MAIN_JAVA)) {
 			String path = relative(file);
-			if (BOSS_CLIENT.stream().anyMatch(path::startsWith) && RAW_SYNCED.matcher(SourceAssertions.read(file)).find())
+			if (BOSS_CODE.stream().anyMatch(path::startsWith) && RAW_SYNCED.matcher(SourceAssertions.read(file)).find())
 				found.add(path);
 		}
-		assertEquals(new TreeSet<>(RAW_READERS), found,
-				"replay the synced counter with BossReplayClock, or list the reader here under decision A-1b");
+		assertEquals(Set.of(), found, "replay the synced counter with BossReplayClock instead of adding the partial tick");
 	}
 
 	private static String relative(Path file) {

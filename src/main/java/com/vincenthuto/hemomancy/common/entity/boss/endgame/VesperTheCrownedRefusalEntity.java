@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import net.minecraft.sounds.SoundSource;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossIntroWindow;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
@@ -50,6 +54,8 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	private static final EntityDataAccessor<Integer> DATA_BROKEN_ANCHORS = SynchedEntityData.defineId(
 			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_ACTIVE_ANCHOR = SynchedEntityData.defineId(
+			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_ARRIVAL_TICK = SynchedEntityData.defineId(
 			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_TRANSITION_TICK = SynchedEntityData.defineId(
 			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.INT);
@@ -108,6 +114,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	private UUID bloomId;
 	public final AnimationState transformationAnimationState = new AnimationState();
 	private final VesperMountController controller = new VesperMountController(this);
+	private final BossIntroWindow arrival = new BossIntroWindow(VesperCombatRules.ARRIVAL_TICKS);
 	private final java.util.List<Vec3> plannedPoints = new java.util.ArrayList<>();
 	private final java.util.List<String> plannedShapes = new java.util.ArrayList<>();
 	private VesperPuppetRoster roster = new VesperPuppetRoster();
@@ -122,7 +129,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	private Vec3 passDirection = new Vec3(1.0D, 0.0D, 0.0D);
 	private Vec3 diveVelocity = new Vec3(0.0D, -1.25D, 0.0D);
 
-    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.vesper_crowned_refusal", BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_12);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.vesper_crowned_refusal", BossPresentationIds.FRAME_VESPER_CROWNED_REFUSAL, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_12);
 
     public VesperTheCrownedRefusalEntity(EntityType<? extends VesperTheCrownedRefusalEntity> type, Level level) {
         super(type, level);
@@ -145,6 +152,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		builder.define(DATA_BROKEN_ANCHORS, 0);
 		builder.define(DATA_ACTIVE_ANCHOR, -1);
 		builder.define(DATA_TRANSITION_TICK, 0);
+		builder.define(DATA_ARRIVAL_TICK, -1);
 		builder.define(DATA_WOUND_DRAINED, 0.0F);
 		builder.define(DATA_ANCHOR_FLASH_TICKS, 0);
 		builder.define(DATA_CARAPACE_EXPOSED, false);
@@ -276,7 +284,10 @@ public class VesperTheCrownedRefusalEntity extends Monster {
         eveningStar.setTarget(this.getTarget());
 		VesperOrdealManager.copyOrdeal(this, eveningStar);
         eveningStar.finalizeSpawn(server, server.getCurrentDifficultyAt(this.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
-        return server.addFreshEntity(eveningStar);
+        // the cocoon delivers him complete (no awakening): his name over the burst, and he fights at once
+        if (!server.addFreshEntity(eveningStar)) return false;
+        BossScenes.play(eveningStar, BossPresentationIds.SCENE_VESPER_EVENING_STAR);
+        return true;
     }
 
 	private Vec3 dismountLandingPosition() {
@@ -311,6 +322,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		tag.putInt("BrokenThroneAnchors", getBrokenAnchorMask());
 		VesperWoundRules.save(wound, tag);
 		tag.putInt("TransitionTick", getTransitionTick());
+		arrival.save(tag, "Arrival");
 		tag.putInt("AttackStep", attackStep);
 		tag.putInt("LastVesperAttack", lastAttack.ordinal());
 		tag.putInt("CarapaceCooldown", getCarapaceCooldown());
@@ -355,6 +367,9 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		entityData.set(DATA_ACTIVE_ANCHOR, wound == null ? -1 : wound.site().ordinal());
 		syncWound();
 		entityData.set(DATA_TRANSITION_TICK, tag.getInt("TransitionTick"));
+		arrival.load(tag, "Arrival");
+		entityData.set(DATA_ARRIVAL_TICK, arrival.elapsed());
+		if (arrival.active()) bossBar.setVisible(false);
 		attackStep = tag.getInt("AttackStep");
 		lastAttack = VesperPhaseOneAttack.values()[Math.max(0, Math.min(VesperPhaseOneAttack.values().length - 1,
 				tag.getInt("LastVesperAttack")))];
@@ -406,7 +421,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
-		if (getTransitionTick() > 0 || getActiveAnchor() >= 0 || isSubmerged()) return false;
+		if (arrival.active() || getTransitionTick() > 0 || getActiveAnchor() >= 0 || isSubmerged()) return false;
 		amount *= isCarapaceExposed() ? 1.5F : 1.0F;
 		float floor = VesperCombatRules.healthFloor(getMaxHealth(), getBrokenAnchorMask());
 		float allowed = Math.max(0.0F, getHealth() - floor);
@@ -531,6 +546,27 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	public int getBrokenAnchorMask() { return entityData.get(DATA_BROKEN_ANCHORS); }
 	public int getActiveAnchor() { return entityData.get(DATA_ACTIVE_ANCHOR); }
 	public int getTransitionTick() { return entityData.get(DATA_TRANSITION_TICK); }
+	/** Ticks into his arrival, or -1 once he is fighting. */
+	public int getArrivalTick() { return entityData.get(DATA_ARRIVAL_TICK); }
+
+	/** He enters the ordeal arriving: untouchable and still while the mount rears, his bar shown once it settles. */
+	public void beginArrival() {
+		arrival.begin();
+		entityData.set(DATA_ARRIVAL_TICK, 0);
+		bossBar.setVisible(false);
+	}
+
+	private void tickArrival() {
+		getNavigation().stop();
+		setDeltaMovement(0.0D, getDeltaMovement().y, 0.0D);
+		LivingEntity target = getTarget();
+		if (target != null) controller.face(target.position(), VesperMountMoveControl.GROUND_TURN_DEGREES);
+		if (arrival.elapsed() == VesperCombatRules.ARRIVAL_REAR_PEAK && level() instanceof ServerLevel server)
+			server.playSound(null, blockPosition(), SoundInit.ENTITY_VESPER_AMBIENT.get(), SoundSource.HOSTILE, 1.8F, 0.55F);
+		boolean ended = arrival.tick();
+		entityData.set(DATA_ARRIVAL_TICK, arrival.elapsed());
+		if (ended) bossBar.setVisible(true);
+	}
 	/** Drain progress of the open wound, 0..{@link VesperWoundRules#DRAIN_REQUIRED}. */
 	public float getWoundDrained() { return entityData.get(DATA_WOUND_DRAINED); }
 	public int getAnchorFlashTicks() { return entityData.get(DATA_ANCHOR_FLASH_TICKS); }
@@ -566,6 +602,10 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	}
 
 	private void tickEncounter() {
+		if (arrival.active()) {
+			tickArrival();
+			return;
+		}
 		if (burrowCooldown > 0) burrowCooldown--;
 		if (tickCount % 40 == 0) reconcileRoster();
 		if (getCarapaceCooldown() > 0) {
@@ -842,6 +882,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			releaseRestrainedVictim(false);
 			entityData.set(DATA_TRANSITION_TICK, 1);
 			setInvulnerable(true);
+			BossScenes.play(this, BossPresentationIds.SCENE_VESPER_COCOON_CARD);
 			setAttack(VesperPhaseOneAttack.IDLE);
 		}
 	}

@@ -1,11 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath;
 
+import java.util.UUID;
+import net.minecraft.nbt.CompoundTag;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.boss.goal.EmptyPulseGoal;
 import com.vincenthuto.hemomancy.common.entity.boss.goal.HematicCollapseGoal;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -28,24 +30,27 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * Hollow Vessel (Saint Hemorath) a body drained of blood but still animate.
+ * Saint Hemorath, the First Saint: a body drained of blood but still animate.
  * <p>
- * The Vessel does not distinguish between wound and willful sacrifice: every
+ * Hemorath does not distinguish between wound and willful sacrifice: every
  * drop of blood lost by the player whether to damage taken or to hemomantic
  * casting accumulates on the player's blood_debt capability. Periodically,
- * the Vessel discharges that accumulated debt as {@link HematicCollapseGoal}
+ * Hemorath discharges that accumulated debt as {@link HematicCollapseGoal}
  * damage, then zeroes it.
  * <p>
  * Phase 1 (100%50%): slow attacks, standard debt accumulation.
  * Phase 2 (50%0%): faster attacks, shorter Hematic Collapse cadence, and
  * bloodvolume spent is amplified by 1.25Ã— via {@link #onPlayerBloodSpend}.
+ * <p>
+ * He cannot be killed. Overloaded or felled, he is exsanguinated again and returns to his tomb
+ * ({@link SaintTrialEntity#endTrial}); the marrow never stops making blood, so he reforms in time.
  */
 public class HemorathEntity extends SaintTrialEntity {
 
@@ -66,18 +71,30 @@ public class HemorathEntity extends SaintTrialEntity {
 	private static final float SIPHON_HEAL_FRACTION = 0.35F;
 	private static final double PHASE_2_BLOOD_SPEND_BONUS = 0.25D;
 	private static final double PHASE_2_DETECTION_RADIUS = 48.0D;
-	private static final float OVERLOAD_THRESHOLD = 3000.0F;
+	public static final float OVERLOAD_THRESHOLD = 3000.0F;
 	private static final float OVERLOAD_PHASE_2_MULTIPLIER = 1.35F;
+
+	private static final EntityDataAccessor<Integer> DATA_VISUAL_TARGET =
+			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.INT);
 
 	private boolean overloaded;
 	private int overloadTicks;
+	/** Who burst him: they carry the reward when the overload ends. */
+	private Player overloadVictor;
+	/** The victor's id, kept so a reload mid-burst can still find them. */
+	private UUID overloadVictorId;
 
 	public final AnimationState idleAnimationState = new AnimationState();
 	public final AnimationState collapseChargeAnimationState = new AnimationState();
 
 	public HemorathEntity(EntityType<? extends HemorathEntity> type, Level level) {
-		super(type, level, 80, new BossBarBinding("entity.hemomancy.hollow_vessel", BossEvent.BossBarColor.RED,
+		super(type, level, 80, new BossBarBinding("entity.hemomancy.hollow_vessel", BossPresentationIds.FRAME_HEMORATH, BossEvent.BossBarColor.RED,
 				BossEvent.BossBarOverlay.NOTCHED_10));
+	}
+
+	@Override
+	public EnumSaintType saintType() {
+		return EnumSaintType.HEMORATH;
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
@@ -110,6 +127,7 @@ public class HemorathEntity extends SaintTrialEntity {
 		builder.define(DATA_COLLAPSE_CHARGING, false);
 		builder.define(DATA_PHASE, 1);
 		builder.define(DATA_ABSORBED_BLOOD, 0.0F);
+		builder.define(DATA_VISUAL_TARGET, -1);
 	}
 
 	public boolean isCollapseCharging() {
@@ -132,6 +150,12 @@ public class HemorathEntity extends SaintTrialEntity {
 		return this.entityData.get(DATA_ABSORBED_BLOOD);
 	}
 
+	public int getVisualTargetId() { return this.entityData.get(DATA_VISUAL_TARGET); }
+
+	public void setVisualTarget(LivingEntity target) {
+		if (!this.level().isClientSide) this.entityData.set(DATA_VISUAL_TARGET, target == null ? -1 : target.getId());
+	}
+
 	public void addAbsorbedBlood(Player source, double amount) {
 		if (this.level().isClientSide || overloaded || amount <= 0) {
 			return;
@@ -139,6 +163,9 @@ public class HemorathEntity extends SaintTrialEntity {
 		float gained = (float) (amount * (isInPhase2() ? OVERLOAD_PHASE_2_MULTIPLIER : 1.0F));
 		float absorbed = Math.min(OVERLOAD_THRESHOLD, getAbsorbedBlood() + gained);
 		this.entityData.set(DATA_ABSORBED_BLOOD, absorbed);
+		if (source != null && this.level() instanceof ServerLevel server) {
+			HemorathEffects.intake(server, source.position().add(0, 1, 0), this.position().add(0, 2.6, 0));
+		}
 		if (absorbed >= OVERLOAD_THRESHOLD) {
 			triggerOverload(source);
 		} else if (source instanceof ServerPlayer serverPlayer && absorbed >= OVERLOAD_THRESHOLD * 0.75F) {
@@ -159,9 +186,8 @@ public class HemorathEntity extends SaintTrialEntity {
 			float steal = (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) * SIPHON_HEAL_FRACTION);
 			this.heal(steal);
 			if (this.level() instanceof ServerLevel server) {
-				server.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
-						this.getX(), this.getY() + 1.0, this.getZ(),
-						4, 0.3, 0.3, 0.3, 0.1);
+				HemorathEffects.intake(server, target.position().add(0, target.getBbHeight() * .6, 0), this.position().add(0, 2.6, 0));
+				HemorathEffects.burst(server, target.position().add(0, target.getBbHeight() * .6, 0), HemorathVisualRules.MELEE, .7F);
 			}
 		}
 		return dealt;
@@ -179,6 +205,7 @@ public class HemorathEntity extends SaintTrialEntity {
 	public void aiStep() {
 		super.aiStep();
 		if (!this.level().isClientSide) {
+			if (tickRise()) return;
 			tickVisualState();
 			if (overloaded) {
 				tickOverloadDeath();
@@ -193,49 +220,52 @@ public class HemorathEntity extends SaintTrialEntity {
 			}
 			bossBar.trackHealth(this);
 
-			// Ambient soul-drain particles every 10 ticks the vessel seeps residual life
-			if (this.tickCount % 10 == 0 && this.level() instanceof ServerLevel server) {
-				server.sendParticles(ParticleTypes.SOUL,
-						this.getX(), this.getY() + 1.0, this.getZ(),
-						2, 0.4, 0.5, 0.4, 0.01);
-				if (isInPhase2()) {
-					server.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
-							this.getX(), this.getY() + 0.5, this.getZ(),
-							1, 0.3, 0.2, 0.3, 0.02);
-				}
-			}
+
 		}
 	}
 
 	@Override
 	protected boolean holdsVisualState(int visualState) {
-		return visualState == VISUAL_OVERLOAD;
+		return visualState == VISUAL_OVERLOAD || visualState == VISUAL_COLLAPSE_WINDUP
+				|| visualState == VISUAL_EMPTY_PULSE;
+	}
+
+	// the overload is saved so a reload mid-burst still ends the trial instead of leaving a still body
+	@Override
+	public void addAdditionalSaveData(CompoundTag tag) {
+		super.addAdditionalSaveData(tag);
+		if (!overloaded) return;
+		tag.putInt("OverloadTicks", overloadTicks);
+		if (overloadVictorId != null) tag.putUUID("OverloadVictor", overloadVictorId);
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag tag) {
+		super.readAdditionalSaveData(tag);
+		if (!tag.contains("OverloadTicks")) return;
+		overloaded = true;
+		overloadTicks = tag.getInt("OverloadTicks");
+		overloadVictorId = tag.hasUUID("OverloadVictor") ? tag.getUUID("OverloadVictor") : null;
+		this.setVisualState(VISUAL_OVERLOAD, overloadTicks);
 	}
 
 	private void tickOverloadDeath() {
-		if (this.level() instanceof ServerLevel server && overloadTicks % 4 == 0) {
-			server.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
-					this.getX(), this.getY() + 1.1, this.getZ(),
-					18, 0.8, 1.0, 0.8, 0.08);
-			server.sendParticles(ParticleTypes.LARGE_SMOKE,
-					this.getX(), this.getY() + 1.0, this.getZ(),
-					10, 0.7, 0.8, 0.7, 0.05);
-		}
+
 		if (--overloadTicks <= 0) {
+			if (this.level() instanceof ServerLevel server)
+				HemorathEffects.burst(server, this.position().add(0, .6, 0), HemorathVisualRules.EXSANGUINATE, 3.5F);
+			if (overloadVictor == null && overloadVictorId != null) overloadVictor = this.level().getPlayerByUUID(overloadVictorId);
+			endTrial(overloadVictor, null);
 			this.discard();
 		}
 	}
 
 	private void onPhaseTransition() {
+		BossScenes.play(this, BossPresentationIds.SCENE_HEMORATH_EMPTIES_CARD);
 		if (this.level() instanceof ServerLevel server) {
 			server.playSound(null, this.getX(), this.getY(), this.getZ(),
 					SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 2.0F, 0.7F);
-			server.sendParticles(ParticleTypes.LARGE_SMOKE,
-					this.getX(), this.getY() + 1.0, this.getZ(),
-					50, 1.0, 1.0, 1.0, 0.1);
-			server.sendParticles(ParticleTypes.SOUL,
-					this.getX(), this.getY() + 1.0, this.getZ(),
-					30, 0.8, 0.8, 0.8, 0.04);
+			HemorathEffects.burst(server, this.position().add(0, 2.6, 0), HemorathVisualRules.PHASE_BREAK, 2.5F);
 		}
 		// Boss bar signals the phase shift turns purple and renames
 		bossBar.setColor(BossEvent.BossBarColor.PURPLE);
@@ -278,10 +308,15 @@ public class HemorathEntity extends SaintTrialEntity {
 
 	@Override
 	public void die(DamageSource source) {
-		if (!overloaded && !this.level().isClientSide && source.getEntity() instanceof Player player) {
-			awardResiduum(player);
-		}
+		if (this.level() instanceof ServerLevel server)
+			HemorathEffects.burst(server, this.position().add(0, 2, 0), HemorathVisualRules.EXSANGUINATE, 2.5F);
 		super.die(source);
+	}
+
+	@Override
+	protected void tickDeath() {
+		if (++this.deathTime >= 20 && !this.level().isClientSide && !this.isRemoved())
+			this.remove(RemovalReason.KILLED);
 	}
 
 	@Override
@@ -307,7 +342,7 @@ public class HemorathEntity extends SaintTrialEntity {
 	/**
 	 * Hook called from {@code BloodManipulation.performAction} after a cast's
 	 * blood cost has been added to the player's debt. If the player is currently
-	 * engaged with a Hollow Vessel in Phase 2, the spend is amplified by 25%.
+	 * engaged with Hemorath in Phase 2, the spend is amplified by 25%.
 	 */
 	public static void onPlayerBloodSpend(Player player, double amount) {
 		if (player.level().isClientSide) return;
@@ -325,39 +360,44 @@ public class HemorathEntity extends SaintTrialEntity {
 
 	private void triggerOverload(Player source) {
 		overloaded = true;
-		overloadTicks = 36;
+		overloadTicks = HemorathVisualRules.OVERLOAD_TICKS;
+		this.setNoAi(true);
+		this.goalSelector.getAvailableGoals().stream().filter(goal -> goal.isRunning()).forEach(goal -> goal.stop());
+		this.targetSelector.getAvailableGoals().stream().filter(goal -> goal.isRunning()).forEach(goal -> goal.stop());
+		this.setCollapseCharging(false);
 		this.setVisualState(VISUAL_OVERLOAD, overloadTicks);
 		this.setTarget(null);
+		setVisualTarget(null);
 		this.getNavigation().stop();
 		if (this.level() instanceof ServerLevel server) {
 			server.playSound(null, this.getX(), this.getY(), this.getZ(),
 					SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 2.0F, 0.6F);
-			server.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
-					this.getX(), this.getY() + 1.0, this.getZ(),
-					80, 1.2, 1.2, 1.2, 0.18);
-			server.sendParticles(ParticleTypes.LARGE_SMOKE,
-					this.getX(), this.getY() + 1.0, this.getZ(),
-					50, 1.0, 1.0, 1.0, 0.12);
+			HemorathEffects.burst(server, this.position().add(0, 2.6, 0), HemorathVisualRules.PHASE_BREAK, 1.7F);
 		}
 		if (source != null) {
 			source.displayClientMessage(
 					Component.translatable("message.hemomancy.hemorath.hemorath_bursts_exsanguinated_by_the_blood")
 							.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
 					false);
-			awardResiduum(source);
 		}
+		overloadVictor = source;
+		overloadVictorId = source == null ? null : source.getUUID();
 	}
 
-	private void awardResiduum(Player player) {
-		ItemStack drop = new ItemStack(ItemInit.hallowed_residuum_hemorath.get());
-		if (!player.getInventory().add(drop)) {
-			player.drop(drop, false);
-		}
-		player.displayClientMessage(
+	/** His residuum goes straight into the victor's hands. */
+	@Override
+	protected boolean rewardsGoToVictor() {
+		return true;
+	}
+
+	@Override
+	protected void announceTrialEnd(Player victor) {
+		if (victor == null) return;
+		victor.displayClientMessage(
 				Component.translatable("message.hemomancy.hemorath.the_vessel_quiets_you_carry_the")
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 				false);
-		HemoCapabilityAccess.getBloodVolume(player).resetBloodDebt();
+		HemoCapabilityAccess.getBloodVolume(victor).resetBloodDebt();
 	}
 
 }

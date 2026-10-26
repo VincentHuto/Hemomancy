@@ -1,18 +1,16 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.MycophantIntroClientState;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
-import org.joml.Matrix4f;
 
 /**
  * The screen side of the Mycophant taking the player: a soft mycelial edge, hyphae laced across the view (tapered
  * strands with side branches and amber beads, creeping in during the capture, pulling taut and snapping one by one at
  * the waking), heavy eyelids, and the Pulp Bloom's drifting spores. Everything is smooth per-vertex-colour geometry in
- * the GUI render type, drawn inside one managed flush; timing comes from {@link MycophantIntroClientState}.
+ * the GUI render type, drawn inside one managed flush; timing comes from {@link MycophantIntroClientState}. The capture
+ * and waking art belongs to their boss scenes ({@link #renderScene}); the hunt and the bloom draw from the HUD layer
+ * ({@link #renderAmbient}).
  */
 public final class MycophantMyceliumOverlay {
 	private static final int HYPHA_R = 228, HYPHA_G = 216, HYPHA_B = 186;
@@ -23,21 +21,32 @@ public final class MycophantMyceliumOverlay {
 	private MycophantMyceliumOverlay() {
 	}
 
-	public static void render(GuiGraphics graphics, int width, int height, float partial, float time,
+	/** The capture's and the waking's own art, drawn by their boss scenes: the murk, the edge, the fibers, the lids. */
+	public static void renderScene(GuiGraphics graphics, int width, int height, float partial, float time,
 			MycophantIntroClientState state) {
-		Canvas canvas = new Canvas(graphics.bufferSource().getBuffer(RenderType.gui()), graphics.pose().last().pose());
+		GuiCanvas canvas = GuiCanvas.of(graphics);
 		float dim = state.dimAlpha(partial);
 		if (dim > 0.002F) canvas.rect(0, 0, width, height, argb(dim, 4, 6, 3), argb(dim, 4, 6, 3));
-		float edge = state.vignette(partial);
+		float edge = state.sceneVignette(partial);
 		if (edge > 0.002F) vignette(canvas, width, height, edge, time, state.seed(), 10, 15, 7);
 		float fibers = state.fiberAlpha(partial);
 		if (fibers > 0.002F) {
 			for (int f = 0; f < MycophantIntroClientState.FIBERS; f++)
 				fiber(canvas, width, height, f, fibers, state.fiberGrowth(f, partial), state.fiberTension(partial),
 						state.fiberBreak(f, partial), time, state.seed());
-		} else {
-			float watch = state.watch(partial);
-			if (watch > 0.002F) creep(canvas, width, height, watch, time, state.seed());
+		}
+		float open = state.lidOpen(partial);
+		if (open < 0.998F) lids(canvas, width, height, open);
+	}
+
+	/** What plays outside any scene: the hunt's watching creep and the Pulp Bloom veil. */
+	public static void renderAmbient(GuiGraphics graphics, int width, int height, float partial, float time,
+			MycophantIntroClientState state) {
+		GuiCanvas canvas = GuiCanvas.of(graphics);
+		float watch = state.watch(partial);
+		if (watch > 0.002F) {
+			vignette(canvas, width, height, watch, time, state.seed(), 10, 15, 7);
+			if (state.fiberAlpha(partial) <= 0.002F) creep(canvas, width, height, watch, time, state.seed());
 		}
 		float veil = state.bloomVeil(partial);
 		if (veil > 0.002F) {
@@ -45,14 +54,12 @@ public final class MycophantMyceliumOverlay {
 			vignette(canvas, width, height, veil, time, 3, 92, 82, 22);
 			spores(canvas, width, height, veil, time);
 		}
-		float open = state.lidOpen(partial);
-		if (open < 0.998F) lids(canvas, width, height, open);
 	}
 
 	// ------------------------------------------------------------------ edge, lids, spores
 
 	/** A radial fade from a lumpy inner ellipse (clear) to past the corners (dark), in two smooth bands. */
-	private static void vignette(Canvas canvas, int width, int height, float strength, float time, int seed, int r, int g,
+	private static void vignette(GuiCanvas canvas, int width, int height, float strength, float time, int seed, int r, int g,
 			int b) {
 		int segments = 56;
 		float cx = width * 0.5F, cy = height * 0.5F;
@@ -79,7 +86,7 @@ public final class MycophantMyceliumOverlay {
 	 * Heavy eyelids, curved like an eye opening, with a soft edge. Light through them reads blood-dark, not black.
 	 * {@code open} 1 = fully open, 0 = shut.
 	 */
-	private static void lids(Canvas canvas, int width, int height, float open) {
+	private static void lids(GuiCanvas canvas, int width, int height, float open) {
 		int columns = 40;
 		float feather = height * 0.16F;
 		float base = Mth.lerp(open, height * 0.5F + feather, -feather - 4.0F);
@@ -100,13 +107,13 @@ public final class MycophantMyceliumOverlay {
 	}
 
 	/** The Pulp Bloom's spores drifting down through the view and twinkling. */
-	private static void spores(Canvas canvas, int width, int height, float veil, float time) {
+	private static void spores(GuiCanvas canvas, int width, int height, float veil, float time) {
 		for (int i = 0; i < 70; i++) {
 			float x = hash(11, i, 0) * width + Mth.sin(time * 0.05F + i) * 10.0F;
 			float y = Mth.positiveModulo(hash(11, i, 1) * height + time * (0.25F + hash(11, i, 2) * 0.55F), height);
 			float size = 0.8F + (i % 3) * 0.6F;
 			float twinkle = 0.55F + 0.45F * Mth.sin(time * 0.22F + i * 1.3F);
-			mote(canvas, x, y, size, argb(veil * twinkle * 0.85F, 214, 192, 84));
+			canvas.mote(x, y, size, argb(veil * twinkle * 0.85F, 214, 192, 84));
 		}
 	}
 
@@ -116,7 +123,7 @@ public final class MycophantMyceliumOverlay {
 	 * One binding strand between two screen edges. It creeps in from both anchors ({@code growth}), straightens and
 	 * trembles under {@code tension}, and when it breaks its halves recoil toward their anchors, curl and fade.
 	 */
-	private static void fiber(Canvas canvas, int width, int height, int f, float alpha, float growth, float tension,
+	private static void fiber(GuiCanvas canvas, int width, int height, int f, float alpha, float growth, float tension,
 			float snap, float time, int seed) {
 		if (growth <= 0.001F) return;
 		float min = Math.min(width, height);
@@ -158,8 +165,8 @@ public final class MycophantMyceliumOverlay {
 			float branch = (0.05F + hash(seed, f * 2 + k, 9) * 0.06F) * min * Math.min(1.0F, growth * 1.4F);
 			branch(canvas, at0, tangent, turn, branch, width0 * 0.6F, fade, time + f);
 			float bead = width0 * (1.1F + 0.25F * Mth.sin(time * 0.15F + f + k));
-			mote(canvas, at0[0], at0[1], bead * 1.9F, argb(fade * 0.25F, AMBER_R, AMBER_G, AMBER_B));
-			mote(canvas, at0[0], at0[1], bead, argb(fade * 0.9F, AMBER_R, AMBER_G, AMBER_B));
+			canvas.mote(at0[0], at0[1], bead * 1.9F, argb(fade * 0.25F, AMBER_R, AMBER_G, AMBER_B));
+			canvas.mote(at0[0], at0[1], bead, argb(fade * 0.9F, AMBER_R, AMBER_G, AMBER_B));
 		}
 		// a puff of spores where it parts
 		if (snap > 0.0F && snap < 1.0F) {
@@ -167,14 +174,14 @@ public final class MycophantMyceliumOverlay {
 			for (int m = 0; m < 7; m++) {
 				float angle = hash(seed, f * 7 + m, 10) * Mth.TWO_PI;
 				float reach = recoil * (0.04F + hash(seed, f * 7 + m, 11) * 0.06F) * min;
-				mote(canvas, at[0] + Mth.cos(angle) * reach, at[1] + Mth.sin(angle) * reach + snap * snap * 6.0F,
+				canvas.mote(at[0] + Mth.cos(angle) * reach, at[1] + Mth.sin(angle) * reach + snap * snap * 6.0F,
 						1.6F * (1.0F - snap) + 0.4F, argb(alpha * (1.0F - snap), AMBER_R, AMBER_G, AMBER_B));
 			}
 		}
 	}
 
 	/** The hunt's watching: short hyphae creep in from the corners and mid-edges of the view. */
-	private static void creep(Canvas canvas, int width, int height, float watch, float time, int seed) {
+	private static void creep(GuiCanvas canvas, int width, int height, float watch, float time, int seed) {
 		float min = Math.min(width, height);
 		for (int i = 0; i < 6; i++) {
 			float[] from = switch (i) {
@@ -194,7 +201,7 @@ public final class MycophantMyceliumOverlay {
 	}
 
 	/** A tapering side hypha that leaves {@code from} at {@code turn} radians off {@code dir} and bends as it goes. */
-	private static void branch(Canvas canvas, float[] from, float[] dir, float turn, float length, float width0, float alpha,
+	private static void branch(GuiCanvas canvas, float[] from, float[] dir, float turn, float length, float width0, float alpha,
 			float time) {
 		if (length < 1.0F) return;
 		int steps = 10;
@@ -212,8 +219,8 @@ public final class MycophantMyceliumOverlay {
 		}
 		for (int i = 0; i < steps; i++) {
 			float w0 = width0 * (1.0F - (float) i / steps), w1 = width0 * (1.0F - (float) (i + 1) / steps);
-			segment(canvas, xs[i], ys[i], xs[i + 1], ys[i + 1], w0 * 2.4F, w1 * 2.4F, argb(alpha * 0.2F, HALO_R, HALO_G, HALO_B));
-			segment(canvas, xs[i], ys[i], xs[i + 1], ys[i + 1], w0, w1, argb(alpha * 0.85F, HYPHA_R, HYPHA_G, HYPHA_B));
+			canvas.segment(xs[i], ys[i], xs[i + 1], ys[i + 1], w0 * 2.4F, w1 * 2.4F, argb(alpha * 0.2F, HALO_R, HALO_G, HALO_B));
+			canvas.segment(xs[i], ys[i], xs[i + 1], ys[i + 1], w0, w1, argb(alpha * 0.85F, HYPHA_R, HYPHA_G, HYPHA_B));
 		}
 	}
 
@@ -221,7 +228,7 @@ public final class MycophantMyceliumOverlay {
 	 * Draws the curve from {@code t0} to {@code t1} as a tapered ribbon: thicker at the screen anchors, thinning toward
 	 * the middle, and pinched to a point at a free (grown or snapped) end. The free end bends by {@code curl}.
 	 */
-	private static void strand(Canvas canvas, Curve curve, float t0, float t1, float width0, float alpha, boolean freeStart,
+	private static void strand(GuiCanvas canvas, Curve curve, float t0, float t1, float width0, float alpha, boolean freeStart,
 			boolean freeEnd, float curl, float anchor) {
 		if (t1 - t0 < 0.004F) return;
 		float reach = Math.abs(t1 - t0);
@@ -235,26 +242,12 @@ public final class MycophantMyceliumOverlay {
 			if (freeEnd) w *= Math.min(1.0F, (1.0F - local) / 0.22F);
 			if (freeStart) w *= Math.min(1.0F, local / 0.22F);
 			if (prev != null) {
-				segment(canvas, prev[0], prev[1], p[0], p[1], prevW * 2.6F, w * 2.6F, argb(alpha * 0.22F, HALO_R, HALO_G, HALO_B));
-				segment(canvas, prev[0], prev[1], p[0], p[1], prevW, w, argb(alpha * 0.9F, HYPHA_R, HYPHA_G, HYPHA_B));
+				canvas.segment(prev[0], prev[1], p[0], p[1], prevW * 2.6F, w * 2.6F, argb(alpha * 0.22F, HALO_R, HALO_G, HALO_B));
+				canvas.segment(prev[0], prev[1], p[0], p[1], prevW, w, argb(alpha * 0.9F, HYPHA_R, HYPHA_G, HYPHA_B));
 			}
 			prev = p;
 			prevW = w;
 		}
-	}
-
-	private static void segment(Canvas canvas, float x0, float y0, float x1, float y1, float w0, float w1, int color) {
-		float dx = x1 - x0, dy = y1 - y0;
-		float len = Mth.sqrt(dx * dx + dy * dy);
-		if (len < 1.0E-4F) return;
-		float nx = -dy / len * 0.5F, ny = dx / len * 0.5F;
-		canvas.quad(x0 + nx * w0, y0 + ny * w0, color, x0 - nx * w0, y0 - ny * w0, color,
-				x1 - nx * w1, y1 - ny * w1, color, x1 + nx * w1, y1 + ny * w1, color);
-	}
-
-	/** A small soft diamond. */
-	private static void mote(Canvas canvas, float x, float y, float radius, int color) {
-		canvas.quad(x, y - radius, color, x - radius, y, color, x, y + radius, color, x + radius, y, color);
 	}
 
 	private static float[] edgePoint(int width, int height, int side, float u) {
@@ -287,39 +280,11 @@ public final class MycophantMyceliumOverlay {
 		}
 	}
 
-	/** Per-vertex-coloured GUI quads, wound the way {@code GuiGraphics.fill} winds them so culling keeps them. */
-	private record Canvas(VertexConsumer consumer, Matrix4f matrix) {
-		void rect(float x0, float y0, float x1, float y1, int top, int bottom) {
-			quad(x0, y0, top, x0, y1, bottom, x1, y1, bottom, x1, y0, top);
-		}
-
-		void quad(float ax, float ay, int ac, float bx, float by, int bc, float cx, float cy, int cc, float dx, float dy, int dc) {
-			float area = (ax * by - bx * ay) + (bx * cy - cx * by) + (cx * dy - dx * cy) + (dx * ay - ax * dy);
-			if (area > 0.0F) {
-				vertex(ax, ay, ac);
-				vertex(dx, dy, dc);
-				vertex(cx, cy, cc);
-				vertex(bx, by, bc);
-			} else {
-				vertex(ax, ay, ac);
-				vertex(bx, by, bc);
-				vertex(cx, cy, cc);
-				vertex(dx, dy, dc);
-			}
-		}
-
-		private void vertex(float x, float y, int color) {
-			consumer.addVertex(matrix, x, y, 0.0F).setColor(color);
-		}
-	}
-
 	private static int argb(float alpha, int r, int g, int b) {
-		return FastColor.ARGB32.color(Math.round(Mth.clamp(alpha, 0.0F, 1.0F) * 255.0F), r, g, b);
+		return GuiCanvas.argb(alpha, r, g, b);
 	}
 
 	private static float hash(int seed, int a, int b) {
-		int h = seed * 374761393 + a * 668265263 + b * 2147483647;
-		h = (h ^ (h >>> 13)) * 1274126177;
-		return ((h ^ (h >>> 16)) & 0xFFFF) / 65535.0F;
+		return GuiCanvas.hash(seed, a, b);
 	}
 }

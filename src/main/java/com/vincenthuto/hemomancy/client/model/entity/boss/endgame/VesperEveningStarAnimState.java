@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperEveningStarPresentationRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction;
 import net.minecraft.client.model.geom.ModelPart;
@@ -37,6 +38,8 @@ public final class VesperEveningStarAnimState {
 
 	private final BossReplayClock actionClock = new BossReplayClock();
 	private final BossReplayClock stanceClock = new BossReplayClock();
+	private final BossReplayClock downedClock = new BossReplayClock();
+	private final BossReplayClock hoodClock = new BossReplayClock();
 
 	private boolean started;
 	private float lastAge;
@@ -45,6 +48,8 @@ public final class VesperEveningStarAnimState {
 
 	private float actionTime;
 	private float stanceTime;
+	private float downedTime;
+	private float hoodTime = -1.0F;
 
 	// Gait, eased so one lerp hitch never kicks the legs.
 	private float targetRate;
@@ -97,6 +102,11 @@ public final class VesperEveningStarAnimState {
 				entity.getActionTick(), tick, partial, 1);
 		if (action != VesperWeaponAction.NONE) actionTime = Math.min(actionTime, action.durationTicks());
 		stanceTime = stanceClock.sample(entity.getActiveTendency().ordinal(), entity.getStanceTick(), tick, partial, 1);
+		downedTime = downedClock.sample(entity.isAwaitingAbsorption() ? 1 : 0, entity.getDownedTicks(), tick, partial, 1);
+		// -1 until the hood comes off; the replay never runs past the end of the removal
+		int hood = entity.getHoodRemovalTick();
+		hoodTime = hood < 0 ? -1.0F : Math.min(hoodClock.sample(0, hood, tick, partial, 1),
+				VesperEveningStarPresentationRules.HOOD_REMOVAL_TICKS);
 		renderY = (float) Mth.lerp(partial, entity.yOld, entity.getY());
 
 		if (tick != lastTick) {
@@ -283,6 +293,10 @@ public final class VesperEveningStarAnimState {
 
 	public float actionTime() { return actionTime; }
 	public float stanceTime() { return stanceTime; }
+	/** Ticks spent downed, awaiting the blood absorption: the defeat animation's clock. */
+	public float downedTime() { return downedTime; }
+	/** Ticks into the hood removal, or -1 before it starts. */
+	public float hoodTime() { return hoodTime; }
 	public float gaitPhase() { return phase; }
 	public float stride() { return stride * gaitWeight; }
 	public float driveForward() { return forward; }

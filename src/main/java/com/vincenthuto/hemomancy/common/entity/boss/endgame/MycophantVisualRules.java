@@ -10,6 +10,11 @@ public final class MycophantVisualRules {
 		return new double[] { 2.2D, 3.4D, 2.0D };
 	}
 
+	/** Where the Gaze leaves the pulp's eyes, in blocks from her feet: right, up, forward. The server raycasts from here. */
+	public static double[] gazeEye() {
+		return new double[] { 0.0D, 5.2D, 2.6D };
+	}
+
 	/** How far the siphon's tether droops at its middle, in blocks. */
 	public static float tetherSag(float distance) {
 		return Math.min(1.5F, Math.max(0.0F, distance) * 0.12F);

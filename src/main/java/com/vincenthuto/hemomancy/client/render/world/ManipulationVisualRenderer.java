@@ -181,12 +181,21 @@ public final class ManipulationVisualRenderer {
                 solids ? null : buffers.getBuffer(ThermalRenderTypes.CORE), camera, time, partial, solids);
         if (!solids) MycophantSiphonTetherGeometry.collect(world, poses, FLOWS.vertices(LuxUmbraBatch.Material.CRUOR),
                 camera, time, partial);
+        if (!solids) MycophantGazeGeometry.collect(world, poses, FLOWS.vertices(LuxUmbraBatch.Material.LUX), camera, time, partial);
+        if (!solids) VelorumRimeGeometry.collect(world, poses, FLOWS, camera, right, up, partial);
+        if (!solids) PutricielOfferingGeometry.collect(world, poses, FLOWS, camera, right, up, partial);
+        if (!solids) SeraphaeRadianceGeometry.collect(world, poses, FLOWS.vertices(LuxUmbraBatch.Material.LUX),
+                camera, right, up, time, partial);
+        HemorathReliquaryGeometry.collect(world, poses, FLOWS,
+                solids ? buffers.getBuffer(FerricDuctilisRenderTypes.IRON) : FerricDuctilisGeometry.DISCARD,
+                camera, right, up, time, partial, solids);
         for (Cue cue : CUES) {
             var packet = cue.packet;
             if(solids && !FerricDuctilisGeometry.handles(packet.form()) && !LodestoneCollapseGeometry.handles(packet.form())
                     && !LodestoneFieldGeometry.handles(packet.form())
                     && !WeaponConjureGeometry.handles(packet.form()) && !SanguineMendingGeometry.handles(packet.form())
-                    && !ForgedNeedleGeometry.handlesCharge(packet.form()) && !CastImpactGeometry.handles(packet.form()))continue;
+                    && !ForgedNeedleGeometry.handlesCharge(packet.form()) && !HemorathReliquaryGeometry.handles(packet.form())
+                    && !CastImpactGeometry.handles(packet.form()))continue;
             Vec3 from = cue.lastFrom;
             if (!cue.life.retiring() && packet.entityId() >= 0) {
                 var entity = world.getEntity(packet.entityId());
@@ -315,6 +324,28 @@ public final class ManipulationVisualRenderer {
                 float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
                 CruorJavelinGeometry.draw(packet,poses,buffers.getBuffer(ThermalRenderTypes.CORE),FLOWS.vertices(LuxUmbraBatch.Material.CRUOR),
                         camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(VelorumRimeGeometry.handles(packet.form())) {
+                VelorumRimeGeometry.draw(packet, poses, FLOWS.vertices(LuxUmbraBatch.Material.RIME),
+                        FLOWS.vertices(LuxUmbraBatch.Material.UMBRA), camera.subtract(from), right, up, time, age, 1);
+                poses.popPose();continue;
+            }
+            if(PutricielOfferingGeometry.handles(packet.form())) {
+                PutricielOfferingGeometry.draw(packet, poses, FLOWS.vertices(LuxUmbraBatch.Material.MORTEM),
+                        FLOWS.vertices(LuxUmbraBatch.Material.FLAME), camera.subtract(from), right, up, time, age, 1);
+                poses.popPose();continue;
+            }
+            if(HemorathReliquaryGeometry.handles(packet.form())) {
+                HemorathReliquaryGeometry.draw(packet, poses,
+                        solids ? buffers.getBuffer(FerricDuctilisRenderTypes.IRON) : FerricDuctilisGeometry.DISCARD,
+                        FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS), FLOWS.vertices(LuxUmbraBatch.Material.MORTEM), solids,
+                        camera.subtract(from), right, up, time, age, 1);
+                poses.popPose();continue;
+            }
+            if(SeraphaeRadianceGeometry.handles(packet.form())) {
+                SeraphaeRadianceGeometry.draw(packet, poses, FLOWS.vertices(LuxUmbraBatch.Material.LUX),
+                        camera.subtract(from), right, up, time, age, 1);
                 poses.popPose();continue;
             }
             if(RadiantWakeGeometry.handles(packet.form())) {

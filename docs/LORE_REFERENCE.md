@@ -35,7 +35,8 @@ The following settled facts are non-negotiable consistency anchors:
 - The ordinary Unstained cure closes when a Harbinger founds a bloodline. Reaching Degree 5 or joining another bloodline does not close it. Defeating the infection unleashed by Annetta's fatal Harbinger encounter unlocks an exceptional severance route for a founder.
 - A bloodline is founded only by the Degree-5 Bloodline Founding rite. An Unsigned Ledger records or joins a covenant; it does not create one by itself.
 - Pale Silver is refined only from Consecrated Copper. It is never a natural metal and is never refined directly from iron.
-- Hemorath expresses Ferric and Mortem. Seraphae expresses Animus and Lux.
+- The Saints' tendency pairs are fixed: Hemorath is Animus and Ferric, Seraphae is Lux and Ductilis, Putriciel is Mortem and Flammeus, and Velorum is Congeatio and Tenebris. Every Canon Memory takes its Saint's pair.
+- Hemorath is the first Harbinger, not one of the Order's Archons. No Saint can be killed: every encounter returns the Saint to its tomb.
 - Eight canonical Morphling strains are implemented. Older references to twelve describe superseded prototypes.
 
 > **Current Lore-State Snapshot (2026-10-03 audit):**
@@ -46,7 +47,7 @@ The following settled facts are non-negotiable consistency anchors:
 > - **The Chamber of Will is now the Degree 6 inward refuge:** not the external Fungal Dimension, but a private blood-memory chamber whose space and sky react to Archon, Qliphoth, Silent Archon, and Apotheos progression.
 > - **Vesper and The Mycophant now have implemented endgame encounters:** Vesper is the two-phase boss for Archons who refuse fungal dissolution, while The Mycophant stalks Apotheos-aligned Harbingers through the Fungal Gardens before claiming them for the Morphic Nursery.
 > - **Annetta Knowles encounter is partially complete:** the two-route encounter is wired and playable, dedicated Java models/textures are present, and Annetta's Sanguis Lancea has custom held/item rendering. Final animation polish, fuller Phase 1 biological combat identity, and Annetta-specific thrown projectile rendering remain WIP.
-> - Several high-impact lore arcs remain partial in gameplay implementation: broader Fungal Dimension progression, every Saint chamber/world placement (including Hemorath), and fuller boss artwork.
+> - Several high-impact lore arcs remain partial in gameplay implementation: broader Fungal Dimension progression, the per-Saint trial chambers (only one generic mausoleum exists, and it does not generate), each Saint's planned combat overhaul, and fuller boss artwork.
 > - Covenant social structure gained stricter in-game expression: bloodline leadership can now ritually sever members, reinforcing the Order's "chosen-family covenant" framing over biological lineage.
 > - Harbinger outpost recruitment now reflects covenant restraint: a player's bloodline can draw one pledged voice from an outpost and one of each calling, supporting the Order's doctrine of spreading the cause rather than absorbing an entire lodge.
 > - Cerebral scars now read more like internalized mind-maps than worn trinkets: Scar items are burned into memory, Mason's Effigy prepares known scars into a motif, projected blood writes the motif into a dynamic Scar Pattern, and an empty, lit Iron Brazier burns that pattern to set the active scar loadout.
@@ -323,7 +324,7 @@ The Alchemist's First Separation then earns Concentrated Blood. Injected directl
 #### INITIATE 3 — *of the Incarnadine Fane*
 **Lore:** The Incarnadine Fane was founded by Archon Erythravane in the Second Age — the first organized gathering of hemomancers, predating the current Order's structure. Becoming an Initiate means joining a lineage centuries old. The Vicar reveals the Fane's founding and the person of Erythravane. This is when the player first understands they are not discovering a novelty — they are inheriting a tradition. The Vicar also directs them toward the ancient Saints.
 
-**Gameplay:** The **Somatic Loom** (memory weaving) becomes fully active. The Saints system opens: players seek entombed Saints in their Trial Chambers, extract Hallowed Residuum via Consecrated Syringe + Centrifuge, then use it in the Loom with a blank Hematic Memory, stored tendency enzymes, projected blood, and Engram Weaving at the loom to unlock **Canon Memories** — SUMMA-rank manipulations unique to each Saint's blood legacy.
+**Gameplay:** The **Somatic Loom** (memory weaving) becomes fully active. The Saints system opens: players seek entombed Saints in their sarcophagi (dedicated trial chambers are planned), extract Hallowed Residuum via Consecrated Syringe + Centrifuge, then use it in the Loom with a blank Hematic Memory, stored tendency enzymes, projected blood, and Engram Weaving at the loom to unlock **Canon Memories** — SUMMA-rank manipulations unique to each Saint's blood legacy.
 
 #### ADEPT 4 — *of the Sanguine Brotherhood*
 **Lore:** The Sanguine Brotherhood arose during a time of war, when Harbingers began sharing blood pools to sustain each other in battle — the earliest form of the Bloodline system. An Adept has moved beyond solo practice into understanding blood as communal inheritance. Simultaneously, the first **Fungal Whispers** begin — subliminal and barely perceptible. Just seeds of doubt.
@@ -427,6 +428,7 @@ In the Silent Archon state, the chamber should feel less like a living vascular 
 From the Harbinger Vicar's lore branches:
 
 - The **Incarnadine Fane** was founded by **Archon Erythravane** in the Second Age — the first organized gathering of Hemomancers.
+- **Hemorath**, the first Harbinger, came before both the Fane and the Order's structure. The Order inherited his tomb, and the tombs of the three later Saints, from the people who sealed them (§10).
 - The **Sanguine Brotherhood** arose during a time of war, when Harbingers began sharing blood pools to sustain each other in battle — the origin of the Bloodline system.
 - The **Crimson Lodge** documented the link between hemomancy and the mycelial network. This knowledge was kept secret — considered something that must be "arrived at independently" to be understood correctly.
 - The **Hematic Order** itself is described by the Vicar not as a rank, but as a state of being, where "the blood becomes indistinguishable from the blood of the world."
@@ -600,33 +602,453 @@ The implemented **Rite of the Sanguine Eclipse** can trigger a Blood Moon manual
 
 ## 10. The Saints
 
-The Saints are ancient Hemomancers from the world's past whose power grew so extraordinary — or so uncontrolled — that they were entombed rather than buried normally. Their sarcophagi persist, and their bodies retain potent blood essence that can be harvested.
+The Saints are ancient hemomancers whose gifts carried their bodies past ordinary biological limits. Each began with a distinct command over the blood and followed it to an extreme from which there was no simple return. Sainthood is not moral goodness, and a Saint's tomb is not a grave. Each sarcophagus is a relic, a containment site and evidence of what blood can become.
 
-There are **four Saints** in the mod. Which one a player encounters first is somewhat randomized. Each has:
-- A unique **Trial Chamber** structure — a dungeon-like puzzle that must be completed before reaching the sarcophagus
-- A **tendency affinity** — if the player's blood tendency aligns with the saint's thematic affinity, the saint peacefully yields a blood sample; if not, they awaken and attack
-- A unique **boss fight mechanic** if awakened
-- A **special high-level blood memory** that can be crafted from their blood sample
+There are **four Saints**: Hemorath, Seraphae, Putriciel and Velorum. They are not randomly assigned. A sarcophagus holds the Saint it was made for, and an unassigned sarcophagus stays inert until a Saint relic names its occupant.
 
-Players are directed to seek the Saints around **Degree 3–4**, when they are strong enough to attempt the trials.
+**How they are found.** The Vicar directs Initiates toward the Saints around **Degree 3–4** (§6.4a), when they are strong enough to attempt the trials, and the Sanguine Monolith points Adepts toward the Sainted Mausoleums. Each Saint is planned to get a dedicated trial chamber of its own. Only one generic mausoleum exists today (entrance stair, antechamber, trial room, sarcophagus room and treasure room), and it does not generate: its biome tag is empty. Until the per-Saint chambers are built, Saint encounters are reached through the WIP development surface.
 
-**Triggering a boss fight deliberately**: Smearing **Foul Paste** on a sarcophagus will anger the saint and force a fight even if the player had already extracted a sample peacefully.
+**Sampling and waking.** A sarcophagus is first consecrated with blood poured into the bowl at its foot. The player then slides the lid off and draws from the Preserved Corpus with an empty Blood Vial. If the player's dominant blood tendency is one of the Saint's two tendencies, the corpus yields a Consecrated Syringe once, peacefully, and the Vial Centrifuge turns it into that Saint's Hallowed Residuum. If not, the corpus recoils and the Saint wakes to test the player. Smearing **Foul Paste** on the sarcophagus is deliberate desecration: it wakes the Saint whatever the player's alignment, even after a peaceful sample. Pressing a Saint relic to the sarcophagus names that Saint and wakes it.
+
+**Canon Memories.** Hallowed Residuum is the catalyst for each Saint's Canon Memory at the Somatic Loom. Each is a SUMMA-rank manipulation that takes its Saint's tendency pair: Crimson Tithe (Hemorath), Unclosing Eye (Seraphae), Bloom of Rot (Putriciel) and Endless Hour (Velorum).
+
+**No Saint can be killed.** Every encounter ends with the Saint back in its tomb: the sarcophagus is restored in place, closed and dormant. Each Saint has its own reason, given in its entry below. Whatever the ending, the encounter rolls its reward once, from that Saint's loot table: its Hallowed Residuum and one or two Sanguine Quintessence.
 
 **Release scope:** The entire Saints system is modular expansion content. Initial lore may foreshadow the four Saints, but no Saint encounter—including Hemorath—is part of first-release progression. Chambers, environmental storytelling, victory conditions, placement, rewards, Canon memories, balance, and final presentation are reserved for the first major post-release content update.
 
-### 10.1 Hemorath — The First Saint
+| Saint | Title | Tendencies | Canon Memory | Initial gift | Limit exceeded | Condition at entombment |
+|---|---|---|---|---|---|---|
+| **Hemorath** | The First Saint | **Animus + Ferric** | **Crimson Tithe** | Blood absorption and command of the iron in blood | Production, intake and loss of blood | Desiccated, skeletal, insatiable; living marrow drives a ceaseless blood vacuum |
+| **Seraphae** | The Chain Saint | **Lux + Ductilis** | **Unclosing Eye** | Healing through luminous transfusion, including nerve and limb restoration | Cellular growth and nervous excitation | Chained, radiant, dangerously regenerative; even her proximity induces uncontrolled growth |
+| **Putriciel** | The Befouled Saint | **Mortem + Flammeus** | **Bloom of Rot** | Precise cleansing of infected flesh, relics and land through hematic fire | Infection, decomposition and combustion | Fungal overgrowth broken by brief, involuntary returns of cleansing flame |
+| **Velorum** | Saint of the Endless Hour | **Congeatio + Tenebris** | **Endless Hour** | Suppression of blood flow, warmth, metabolism and sensation | Biological stillness and sensory deprivation | Lucid, cold, motionless; presides over a congregation preserved against its will |
 
-**Narrative:** One of the original great Archons of the Hematic Order. Hemorath represents the iron, unchanging, Ferric-tended aspect of blood magic — the belief that the blood can be made permanent, solid, inevitable.
+### 10.1 Ascension and Recognition
 
-**Trial:** The player enters a locked chamber. Their blood is slowly sapped throughout the trial. Four basins must be filled to precisely the correct level — not overflowing, not empty — while blood-construct monsters spawn throughout. Filling all four basins correctly opens the sealed gates to the inner sarcophagus chamber.
+A Saint is made by two separate events: becoming one, and being recognised as one.
 
-**Boss Mechanic:** Hemorath is described as tall, lanky, dry, and hollow-looking — a desiccated but still animate form. His current fight hybridizes blood debt and overload: blood magic cast near him deepens the player's owed blood, especially once he weakens, while also filling Hemorath with absorbed blood. Reckless casting can collapse the player under their own debt, but enough absorbed blood overloads Hemorath until he bursts and exsanguinates — killed by the very thing he sought to master. This is an intentional puzzle fight, not a straightforward damage race.
+1. **Biological ascension.** A hemomancer's blood and body reach an exceptional, irreversible condition that sustains a form of existence that should be impossible. Greed, exploitation, infection or deliberate discipline can bring it about. It requires neither goodness nor religious approval.
+2. **Recognition by the Hematic Order.** The Order later names such a person a Saint because their condition shows an extraordinary expression of blood manipulation. Recognition need not happen while the Saint is alive in any ordinary sense; it may come centuries after entombment.
+3. **Containment and veneration.** The Saint's chamber is a tomb in form but not in function. It holds an active biological danger, preserves a singular source of blood, and offers an object of study and ritual reverence.
 
-### 10.2 Seraphae, the Chain Saint — Bound Radiance
+This is why **Hemorath can be the first Harbinger without the mature Hematic Order existing when his discoveries began**. He predates the Order's structure and Erythravane's Incarnadine Fane. Seraphae, Putriciel and Velorum never belonged to the Order in life. Each was sealed away by their own people, and the Order inherited, preserved and reinterpreted the tombs afterwards.
 
-**Narrative:** Seraphae is the final identity of the figure once called only the Chain Saint: a nurse or healer who discovered she could heal people with a touch. As she healed, her veins began to glow. Plants grew rapidly around her. She could not stop — everything she touched bloomed and grew faster, then faster, until her vessels burned through and she became an uncontrolled force of raw life and creation. She had to be restrained with chains and containment anchors rather than killed, because she could not be killed in a conventional sense.
+**Why the Saints are kept rather than killed:**
 
-**Boss Mechanic:** The chamber floods with light she emits, which burns the player. The player must avoid her light, bind her fragments, activate containment anchors, and strike during condensing windows to restore containment integrity. The victory condition is to chain Seraphae's radiance back into restraint — returning the room to darkness — rather than killing her directly.
+- They cannot be killed. Their altered bodies survive every method used against them, and each returns to its dormant condition after any defeat.
+- Their presence makes uncontrolled exposure dangerous to settlements and caretakers.
+- Their blood is the only source of **Hallowed Residuum**, the catalyst for the Saint-associated Canon Memories.
+- The Order reads their conditions as both warnings and proofs of what blood can do.
+- A trial chamber and sarcophagus therefore serve both **containment** and **initiatory examination**.
+
+In play, a Saint yields a sample to a player whose dominant blood tendency aligns with it and rises against one it rejects. The account above explains why the sarcophagus holds something that remains dangerous and sacred rather than simply dead.
+
+> **Interpretive maxim:** The Saint is not necessarily an example to follow. The Saint is proof of what the blood can become.
+
+### 10.2 Hemorath — The First Saint
+
+*Saint of Iron and Marrow · The Insatiable · The Hollow Sovereign*
+**Tendencies:** Animus + Ferric
+**Canon Memory:** Crimson Tithe
+
+Hemorath is remembered as the first of the Harbingers, a man who discovered that the blood within his body was not merely a substance necessary for life, but something he could command.
+
+His earliest experiments concerned the iron contained within his own blood. Through concentration, he found that he could draw it together, hardening his blood into crude metallic formations beneath his skin. With practice, he learned to move his blood independently of his body, and eventually discovered that he could replenish what he lost by drawing blood directly from other living creatures.
+
+What began as experimentation quickly became an obsession.
+
+Hemorath found that every additional measure of blood strengthened his abilities. His body grew more resilient, his iron formations became larger and harder, and injuries that would have killed an ordinary man became little more than inconveniences. He began draining animals, then men, taking far more than he required simply to discover how much blood his body could hold.
+
+As his power increased, so did his appetite.
+
+Hemorath began consuming blood in extraordinary quantities, swelling his body far beyond its natural proportions. His limbs thickened, his belly distended, and the skin stretched across his body became thin and discoloured. He continued feeding despite the pain, convinced that his body would eventually adapt to whatever quantity he forced into it.
+
+Instead, his flesh began to fail.
+
+His skin split and softened, gradually losing its structure until great portions liquefied and sloughed away. The exposed tissues beneath continued swelling, sustained by the enormous volume of blood circulating through them. Even as his body deteriorated, Hemorath refused to stop.
+
+Eventually, his flesh could no longer support the demands of his blood. The absorption overloaded him. Much of his flesh collapsed and died, leaving little more than a grotesquely enlarged vascular system supported by bone.
+
+Yet Hemorath himself remained alive.
+
+His bone marrow had become so altered by his prolonged manipulation that it continued producing new blood at an impossible rate. The death of his surrounding tissues did nothing to interrupt this process. Instead, his body began compensating by absorbing blood from anything living in his vicinity.
+
+He no longer needed to consciously draw blood from his victims. Their blood simply answered his presence.
+
+The transformation had an unforeseen consequence. No matter how much blood his body produced or absorbed, it could no longer retain it properly. His ruined vessels leaked continuously, and the very iron he had once commanded began accumulating throughout his exposed skeleton.
+
+He became a living circulation without a complete body.
+
+In time, even the tremendous bloating that had defined his transformation disappeared. His remaining tissues contracted and dried, leaving a tall, skeletal figure with a sunken abdomen, hollow cavities, and exposed structures hardened by centuries of iron deposition. Within his bones, however, the marrow continued its ceaseless labour.
+
+He had become insatiable not merely through desire, but through necessity.
+
+The hemomancers who followed him regarded Hemorath with a mixture of reverence and terror. His discoveries formed the foundation of blood absorption and Ferric manipulation, yet his continued existence threatened everyone who approached him.
+
+Attempts to destroy his body proved unsuccessful. Blood spilled against him was absorbed, injuries stimulated further production, and even when starved he continued to draw what little remained within his own ruined tissues.
+
+Eventually, his successors constructed a great stone mausoleum around him, surrounding his resting place with blood basins designed to regulate the quantities he could absorb.
+
+There, deprived of living prey, Hemorath slowly contracted into the desiccated figure preserved within his sarcophagus.
+
+He became known as the First Saint not because he had achieved any particular holiness, but because he demonstrated that blood could sustain life long after the body itself had ceased to function.
+
+To this day, the marrow within his bones continues to produce blood.
+
+And should a living creature draw sufficiently near, the hollow thing within the sarcophagus will once again begin to fill.
+
+**Hemorath at a glance**
+
+- **Original character:** Morally questionable from the outset; curious, acquisitive and increasingly greedy.
+- **Tendencies:** Animus is the living flow his marrow cannot stop producing and drawing in. Ferric is the iron he first commanded, which now hardens his exposed skeleton.
+- **Source of horror:** Appetite becomes a physiological mandate; he can neither retain blood nor stop acquiring it.
+- **Fate:** A grotesquely bloated phase gave way to the present **frail, sunken, desiccated** body.
+- **Environment:** Blood basins, sarcophagus, stained stone, iron deposits, a controlled supply of blood.
+- **Visual direction:** Skeletal proportions and a hollow torso, exposed iron-stiffened anatomy; **not** a permanently obese figure.
+- **Older names:** "Hollow Vessel" was Hemorath's working title. Player text and the loot table now use Hemorath; the second-phase card keeps "The Vessel Empties".
+- **Thematic sentence:** *Hemorath consumed.*
+
+**Appearance:** A tall, hunched and desiccated saint with an exposed rib cage and long skeletal hands. Pale bone and dried crimson cords obscure his bowed face beneath a rusted, spiked iron halo. He carries a tall iron staff hung with chains and reliquary fittings; ruined ivory and crimson vestments trail around his feet. His ribs prise apart as stolen blood fills the hollow frame. The reaching claw draws debt along blood-threaded chains; when the vessel overloads, the rigid posture gives way and the emptied skeleton folds into its ruined vestments.
+
+**Trial / Encounter:** The prototype trial seals the player in a chamber that slowly saps their blood. Four basins must be filled to precisely the correct level, not overflowing and not empty, while blood constructs spawn throughout; filling all four correctly opens the gates to the inner sarcophagus chamber. Waking Hemorath starts a blood-debt and overload fight. Blood the player loses near him, to wounds or to casting, accumulates as blood debt, which he collects as Hematic Collapse damage, and his Empty Pulse inflicts Hemophagy, which cuts healing. Below half health he enters a second phase ("The Vessel Empties"): faster attacks, a shorter Collapse cadence, and blood spending amplified by a quarter. The same blood fills his absorbed-blood meter, so reckless casting can collapse the player under their own debt, while enough of it (3,000 points) overloads him. It is a puzzle fight, not a damage race.
+
+**Ending:** Overload, or wearing his body down, ends the same way: Hemorath bursts and is exsanguinated again, emptied by the thing he sought to master. He does not die. The marrow never stops producing blood, and in time he reforms. The emptied skeleton folds into its vestments, the sarcophagus is restored over him, dormant, and the hollow thing inside begins, slowly, to fill.
+
+### 10.3 Seraphae — The Chain Saint
+
+*Saint of Light and Nerve · The Bound Radiance · The Unclosing Eye*
+**Tendencies:** Lux + Ductilis
+**Canon Memory:** Unclosing Eye
+
+Seraphae was originally a nurse who tended to the sick and wounded in a small settlement. She possessed no formal understanding of blood manipulation and had never considered herself capable of anything beyond ordinary medicine.
+
+Her abilities first manifested while attempting to save a patient suffering from severe blood loss.
+
+With no means of replacing what the patient had lost, Seraphae offered her own blood. As it entered the patient's body, her veins began to emit a faint white light, and the dying man's condition improved with extraordinary speed.
+
+The bleeding stopped, his colour returned, and within hours he had recovered from injuries that should have killed him.
+
+At first, Seraphae believed the event to be a miracle.
+
+She soon discovered that the effect could be repeated. Blood taken from her body retained an extraordinary capacity to stimulate growth and repair in living tissue. Wounds closed, broken bones knitted together, and patients suffering from illness recovered at an unnatural rate.
+
+More remarkable still was the effect her blood had upon those suffering from paralysis.
+
+Patients who had lost the use of their limbs began moving again after receiving her blood. Their damaged nerves appeared to regain function, and muscles that had wasted away gradually strengthened.
+
+As her abilities developed, Seraphae no longer required a conventional transfusion. She could direct her blood into another person through physical contact, stimulating the tissues and nerves within them. During these treatments, the vessels beneath her skin shone with brilliant white light, while brief golden flashes travelled along the nerves of both healer and patient.
+
+Word of her gift spread rapidly.
+
+People travelled considerable distances seeking treatment, and Seraphae willingly exhausted herself to help them. However, as knowledge of her abilities reached those in positions of authority, her work ceased to be entirely voluntary.
+
+She was placed under the supervision of local nobles and physicians, who soon discovered that repeated treatments with her blood could sustain the lives of individuals who should have died years earlier.
+
+The elderly regained strength, the terminally ill survived, and those suffering catastrophic injuries could be kept alive through repeated infusions.
+
+Unwilling to lose such a valuable resource, her keepers began restricting her movements.
+
+Eventually, the nobles had Seraphae restrained in chains, and their physicians subjected her to continuous blood extraction. When her body weakened, they permitted her a brief recovery before beginning again.
+
+For years, she was forced to sustain people whose bodies had long since reached their natural limits.
+
+Yet the more her abilities were exploited, the less predictable they became.
+
+At first, the changes were subtle. Wounds healed with excessive scar tissue, broken bones grew thicker than before, and formerly paralysed patients developed involuntary movements.
+
+Then the growth became violent.
+
+Seraphae's blood no longer distinguished between necessary repair and unchecked proliferation. Small injuries produced swollen masses of tissue. Muscles contracted without instruction. Nerves multiplied through regions of the body where they had no proper function, producing unbearable sensations and continuous convulsions.
+
+Those who received substantial quantities of her blood sometimes suffered such rapid internal growth that their bodies ruptured under the strain.
+
+Others survived, but were left covered in luminous sores, their muscles and nerves continually stimulated by tissues that refused to become still.
+
+Her keepers attempted to reduce the frequency of her treatments, but by then Seraphae's abilities had begun operating independently of her will.
+
+Her own veins glowed continuously, and the radiance spread outward from her body. Plants flourished in her presence, insects multiplied, and living tissue began responding to her proximity alone.
+
+Even approaching her became dangerous.
+
+The chains surrounding her were reinforced, but the light continued escaping. Her body gradually became a mass of uncontrolled vitality, continually growing, repairing, and transforming itself. When portions of her flesh were damaged, they regenerated almost immediately, often returning in distorted and unfamiliar forms.
+
+The people who had once celebrated her as a miracle came to fear her as a living catastrophe.
+
+Unable to kill her, they constructed a mausoleum equipped with heavy restraints and specially prepared containment anchors. Seraphae was chained within its deepest chamber, where her blood and radiance could no longer reach the outside world.
+
+The Hematic Order eventually came to recognise her as the Chain Saint, an extraordinary manifestation of the Lux and Ductilis tendencies whose powers had exceeded the body's capacity to regulate them.
+
+Her imprisonment was preserved rather than disturbed, and the chains surrounding her became objects of reverence in their own right.
+
+Within the mausoleum, Seraphae continues to radiate life.
+
+Her wounds heal as quickly as they form. Her veins shine through her pale flesh, and the nervous impulses travelling through her body never cease.
+
+It is said that she still reaches toward anyone who enters her chamber, compelled by the same instinct that once drove her to help the sick.
+
+But there is no longer any distinction between her desire to heal and the terrible growth that follows.
+
+**Seraphae can no longer allow anything living to remain as it is.**
+
+**Seraphae at a glance**
+
+- **Original character:** A compassionate nurse who genuinely sought to restore life and movement.
+- **Tendencies:** Lux is the white light in her vessels and the mending in her blood. Ductilis is the nerve impulse: the gold flashes along the nerves, the restored movement, and later the convulsions.
+- **Source of horror:** Exploitation turns directed healing into indiscriminate growth and nervous excitation.
+- **Fate:** Chained and bled by the nobles and physicians who kept her, then sealed away by her own people once her blood and presence became dangerous.
+- **Environment:** Heavy chains, containment anchors, mausoleum, inescapable illumination.
+- **Visual direction:** **White** radiance specifically within the blood vessels for Lux; separate **gold/yellow** flashes for Ductilis nerve activity; pale flesh and restraints.
+- **Thematic sentence:** *Seraphae restored.*
+
+**Appearance:** A saintly female figure with broad, tattered feathered wings and ruined, flowing vestments. Her halo and radiance frame a gentle face; visible chains bind her body and wings. The restrained, winged saint remains the defining silhouette even as her light grows unstable. Her wings recoil before tearing open in waves of light; dispersed radiance takes the shape of fraying feather wisps. As containment tightens, braided light runs from the anchors to her wrist restraints, drawing her wings and hands inward.
+
+**Trial / Encounter:** Seraphae's trial room is still WIP. Waking her starts a containment fight, not an execution. The chamber floods with the light she emits, which burns the player. She cycles through fracturing, dispersal and condensing: the player avoids her light, binds the fragments her radiance breaks into, activates the containment anchors, and strikes during condensing windows. Each of these raises containment integrity, which decays if left alone. Full integrity chains her radiance back into restraint and returns the room to darkness.
+
+**Ending:** Seraphae is immortal by nature and can only be contained. When integrity is full, the anchors draw her wings and hands inward, the sarcophagus is restored, and she is chained inside it again, still radiant and still reaching.
+
+### 10.4 Putriciel — The Befouled Saint
+
+*Saint of Rot and Flame · The Failed Absolution · The Everlasting Blight*
+**Tendencies:** Mortem + Flammeus
+**Canon Memory:** Bloom of Rot
+**Pronouns:** he in life; **they** now. Putriciel was a man, but the rot has malformed them into an agender monstrosity.
+
+Putriciel was once a wandering hemomancer who possessed an unusual affinity for fire.
+
+Unlike others who used Flammeus manipulation to burn enemies or destroy obstacles, Putriciel discovered that the heat produced through his blood could be directed with extraordinary precision.
+
+By controlling the temperature and movement of his blood, he could burn away diseased tissue, destroy fungal growths, and cleanse objects that had become contaminated by unnatural biological influences.
+
+His earliest work involved treating infected wounds and destroying diseased material. However, he soon discovered that his abilities extended beyond ordinary infections.
+
+He could cleanse objects that had become overgrown with Erythrocytic Mycelium, remove fungal infestations from buildings, and burn corruption from soil without necessarily destroying the surrounding land.
+
+His tools were censers: hanging vessels in which his blood smouldered, so the cleansing heat could be swung through a room or carried across a field. Smaller things he took into his open hand, holding them out as an offering while the fire worked through them.
+
+These abilities made him highly sought after.
+
+Communities brought him contaminated relics, infected tools, and materials recovered from places where the fungal growth had become particularly aggressive. When an infestation spread across a field or settlement, Putriciel was often summoned to destroy it.
+
+He became known as a purifier, a man capable of restoring things that others considered permanently lost.
+
+Yet Putriciel did not fully understand what his abilities were doing.
+
+His cleansing flames were not simply destroying the biological material they encountered. In order to burn so precisely, he was drawing portions of the infection into his own blood, where his Flammeus manipulation appeared to consume them. Every cleansing fed him a little more of the corruption he removed.
+
+For years, the process seemed harmless.
+
+Eventually, small dark wounds began appearing across his body. They resembled burns that had healed poorly, with thick, leathery surfaces similar to eschar.
+
+Putriciel dismissed them as an unavoidable consequence of his work.
+
+However, the wounds did not heal.
+
+Instead, their edges gradually hardened, and pale fungal tissue began growing beneath them. Small shelf-like protrusions emerged from his back and shoulders, accompanied by discoloured patches of skin and a persistent earthy smell.
+
+At first, he attempted to destroy these growths using the same methods he employed against external infections.
+
+The affected tissue burned away, but the growths returned.
+
+Worse still, each attempt at cleansing himself seemed to drive the infection deeper into his body.
+
+Putriciel continued his work despite his deteriorating condition, believing that he could eventually develop a method of purifying his own blood.
+
+As the years passed, his abilities became increasingly unreliable.
+
+Objects he attempted to cleanse sometimes developed new fungal growths days later. Soil that had appeared restored began producing strange fruiting bodies, and wounds treated with his blood occasionally became infested with unfamiliar organisms.
+
+His flames still destroyed visible infection, but the underlying contamination remained.
+
+Eventually, Putriciel became so thoroughly colonised that his body could no longer distinguish between the infection he sought to destroy and the fungal tissue sustaining his own life. The corruption he had fed on for years overran him.
+
+Somewhere in that change the man was lost. What remained was no longer he; the Order's records call Putriciel they.
+
+The shelf-like growths expanded across their torso, back, and limbs. Their skin took on sickly shades of ochre, pale yellow, and decaying green, while thick fungal structures forced their body into a permanently hunched posture.
+
+Their blood became a medium for the very infection Putriciel had spent a life combating.
+
+Any organic material brought near them began to change. Wood softened and sprouted unfamiliar growths. Plants developed swollen stems and distorted leaves. Living creatures exposed to their blood suffered rapid fungal colonisation, their tissues becoming hosts to aggressive new growth.
+
+Eventually, the infection overwhelmed their conscious control.
+
+Their Flammeus abilities almost entirely disappeared, leaving a shambling source of contamination. Yet fragments of the original will remained buried beneath the proliferating fungal tissue.
+
+At irregular intervals, Putriciel would regain enough awareness to recognise what they had become.
+
+During these moments, they attempted to purge themselves.
+
+Their blood would suddenly ignite, and tremendous waves of heat erupted through their body, burning away the fungal protrusions and consuming the infected tissue surrounding them.
+
+For a brief period, the original form could sometimes be glimpsed beneath the charred remains.
+
+But the cleansing never lasted.
+
+The infection had become too deeply integrated into their biology. The surviving fungal structures absorbed the heat and rapidly regenerated, emerging from the burned tissues in even greater quantities.
+
+Each resurgence left Putriciel less recognisably human than before.
+
+Attempts by others to destroy them through fire proved equally unsuccessful. Flames were absorbed into the network of infected tissue, feeding the dormant Flammeus power within until it erupted outward in violent bursts.
+
+Eventually, those who had once sought the purifier's aid were forced to isolate Putriciel within a fortified mausoleum, surrounded by stone and materials resistant to fungal growth.
+
+The Hematic Order later recognised Putriciel as a Saint, not for the success of the purification, but for the extraordinary transformation that had occurred within that blood.
+
+Putriciel had become a living union of decay and combustion, two opposing biological processes endlessly consuming and renewing one another.
+
+Their resting place remains overgrown with thick fungal shelves, pale moulds, and sickly vegetation.
+
+Most of the time, Putriciel lies almost entirely concealed beneath the growths, the original body barely distinguishable from the surrounding infestation.
+
+Occasionally, the fungal mass begins to tremble.
+
+Heat builds within the chamber, the growths blacken, and the faint outline of a man emerges from beneath the accumulated decay.
+
+For a few moments, Putriciel remembers what the purifier once sought to accomplish.
+
+Then the fire dies.
+
+And the rot begins again.
+
+**Putriciel at a glance**
+
+- **Original character:** A purifier whose blood-fire removed infection from people, objects and places, Erythrocytic Mycelium included.
+- **Tendencies:** Mortem is the rot that colonised them. Flammeus is the purifier's fire, which now surfaces only in brief cleansing eruptions.
+- **Tools:** Censers that carried the cleansing heat, and the open offering hand into which contaminated things were placed.
+- **Source of horror:** Each cleansing quietly drew infection into his blood until it overran him and he became a source of violent new growth.
+- **Fate:** Mostly subsumed by fungus, with fleeting returns of agency expressed as self-cauterising fire.
+- **Environment:** Eschar-like surfaces, pale fungal shelves, infected organic material, a stone-lined containment mausoleum.
+- **Visual direction:** Ochre, olive, mould-green, muted yellow, pale cream, blackened charcoal. **Avoid the predominantly red palette of other infections.** The current model's crimson vestments predate this direction; the palette pass is planned.
+- **Phase direction (planned):** **Rot/infection → dedicated cleansing-fire interval → rot/infection.** Fire should **not** be constantly active through the ordinary infected phases.
+- **Thematic sentence:** *Putriciel purified.*
+
+**Appearance:** A walking reliquary of rot and spoiled offerings. A tall, tarnished open crown rises above a hollow, vine-screened face. Ruined crimson and ivory vestments hang beneath colonies of layered shelf fungi and swollen amber spore sacs. One corrupted hand extends in offering, trailing blood and fungal cords; the other carries an ornate staff hung with dripping censers. Their sacs swell out of rhythm as rot gathers through the ground; the release travels through their shoulders, hands and fungal mantle. When the rot stills, their open offering palm carries five small fungal nodules that light with each absolution. The body recoils beneath an accepted offering, and the final release leaves spores and fading threads where the saint stood.
+
+**Trial / Encounter:** Putriciel's fight is an absolution trial. Every 120 ticks the spore sacs swell and a rot nova releases, dealing Wither damage and setting players alight across an 8-block area (12 blocks, with stronger Wither, below half health). Every 300 ticks the rot stills for 80 ticks: an absolution window. A hit landed while the window is open counts as an absolution and lights one of the five nodules in the offering palm. Lethal damage outside that condition is clamped, so Putriciel cannot simply be beaten down. Five absolutions complete the trial.
+
+**Ending:** The fifth absolution purifies Putriciel, and they rest for a time. The growths blacken, the outline of the man shows for a moment, and they sink back into the restored sarcophagus. It never lasts: the rot always reclaims them.
+
+### 10.5 Velorum — Saint of the Endless Hour
+
+*The Still Saint · The Perfected Flesh*
+**Tendencies:** Congeatio + Tenebris
+**Canon Memory:** Endless Hour
+
+Velorum was once an ascetic belonging to a secluded religious order whose teachings held that the body's natural desires were the source of all human suffering. Hunger, lust, exhaustion, pain, and even the simple need for warmth were considered weaknesses that prevented mankind from achieving a higher state of existence.
+
+After becoming a hemomancer, Velorum discovered that he could manipulate the temperature and circulation of his own blood, slowing his heartbeat and suppressing his body's natural functions. Through years of meditation and experimentation, he learned to remain motionless for weeks without food, sleep, or warmth.
+
+He came to believe he had discovered the means to perfect the human body.
+
+His teachings gradually attracted followers, many of whom willingly submitted themselves to his experiments. Velorum learned to extend his influence into others, slowing their circulation until their bodies became cold and motionless, preserved against hunger, aging, and disease.
+
+But while their bodies remained perfectly still, their minds did not.
+
+His followers described being trapped in an endless darkness, unable to move or speak, with little sense of how much time had passed. Some begged to be released. Others went mad within their motionless bodies.
+
+Velorum dismissed these complaints as the final resistance of an imperfect mind, insisting that true enlightenment required the surrender of every earthly desire, including the desire to move.
+
+As his influence grew, he began preserving people without their consent. He arranged his followers into elaborate formations throughout his monastery, treating their motionless bodies as living monuments to the perfection he believed he had achieved.
+
+Eventually, Velorum subjected himself to his greatest experiment, suppressing his own circulation until his blood barely moved and his body became permanently cold. His flesh grew pale and rigid, frost gathered across his limbs, and the shadows surrounding him deepened until light itself seemed reluctant to enter his presence.
+
+He no longer experienced hunger, exhaustion, or the passing of ordinary bodily time.
+
+Yet his mind remained entirely conscious.
+
+When the remaining members of his order attempted to destroy his work, Velorum extended his influence throughout the monastery, arresting the circulation of everyone within its walls.
+
+Centuries later, he remains seated within his frozen sanctum, surrounded by hundreds of perfectly preserved devotees. Some kneel in prayer, others stand with their arms outstretched, and many remain frozen in the desperate positions they assumed while attempting to escape.
+
+Velorum considers every one of them a success.
+
+Any living creature that approaches him gradually feels its warmth fade and its movements slow. Those who remain too long are condemned to join his congregation, preserved indefinitely within their own bodies.
+
+To Velorum, this is neither imprisonment nor cruelty.
+
+It is perfection.
+
+**Velorum at a glance**
+
+- **Original character:** An ascetic convinced that bodily desire and change caused suffering.
+- **Tendencies:** **Congeatio** suppresses circulation, warmth and metabolism; **Tenebris** isolates awareness and sensation.
+- **Source of horror:** He consciously perfected techniques of stillness and forced that perfection on other people.
+- **Fate:** Lucid and convinced of his righteousness; not a caretaker, not a martyr, and not an accidental casualty of his power.
+- **Environment:** Frozen monastery, unmoving worshippers, long shadows, frost, diminished light.
+- **Visual direction:** Ice-blue and pale frost against black and deep shadow; dignified rigidity rather than frenzy.
+- **Endless Hour is not literal time manipulation.** Time stretches only as the body and senses experience it.
+- **Thematic sentence:** *Velorum preserved.*
+
+**Appearance:** A tall, still figure whose face is hidden by a ragged pale veil. Layered midnight vestments spread into a frost-edged train beneath draped silver chains. A spiked iron halo frames the veiled head, its hanging links crusted with ice. One skeletal hand rises in a crooked invocation; the other grips a tall lantern staff. Blue-white crystals shine inside open lantern cages at the staff's crown and along hanging chains. Cold gathers in fractured seams under his feet before the raised claw releases it as leaning black-ice splinters. Darkness rises in narrow folds around the lantern light, and Silence draws pale threads inward through the crooked hand. He bows beneath a wound without losing the invocation; when the body fails, the veil folds down and the remaining frost falls out of the light.
+
+**Trial / Encounter:** Velorum fights from stillness. Every 100 ticks a frost nova congeals the cold around him, damaging, slowing and briefly rooting players within 10 blocks. Every 160 ticks a Veil of Darkness blinds players within 12 blocks; blood-active players also suffer Nausea as their blood recoils from the silence. Every hit that lands earns him a short burst of Resistance I, so attacks fall into a rhythm around those windows. At a quarter health or less, Silence draws 200 blood every 80 ticks from blood-active players within 8 blocks.
+
+**Ending:** Velorum cannot be killed. When his body fails, the veil folds down, the frost falls out of the light, and he reverts to his dormant state. The sarcophagus is restored and closes over him, and he sits inside it as lucid and as certain as before.
+
+### 10.6 Comparing the Saints
+
+**Gifts, obsessions and transformations**
+
+| Saint | Original motivation | Original capacity | Escalation | Ultimate corruption |
+|---|---|---|---|---|
+| Hemorath | Curiosity that becomes greed, power and consumption | Absorb blood and command its iron | Deliberately consumes more than his body can bear | Cannot stop taking blood, even as it leaks from him |
+| Seraphae | Compassion and restoration | Transfuse glowing, healing blood and restore nerve function | Nobles and physicians chain her and bleed her | Heals with lethal excess; growth and nerve impulses become indiscriminate |
+| Putriciel | Purification and the destruction of blight | Cleanse living tissue, relics and land with controlled fire | Each cleansing draws infection into his own blood | Becomes a fungal infection with momentary eruptions of cleansing will |
+| Velorum | Ascetic discipline and perfection | Suppress circulation and bodily need | Widens self-imposed stillness into a compulsory practice | Preserves people in conscious sensory imprisonment |
+
+**Will and mental state**
+
+| Saint | Awareness and agency after transformation | Tragic or moral distinction |
+|---|---|---|
+| **Hemorath** | Dominated by appetite, which began as greed but became biological necessity | His ruin follows choices already questionable from the start |
+| **Seraphae** | Retains the impulse to help, but the gift acts without restraint | A genuine healer exploited until healing becomes monstrous |
+| **Putriciel** | Largely subsumed by infection; the original will briefly surfaces during fire-cleansing | The purifier repeatedly tries to burn out what they have become |
+| **Velorum** | Lucid, deliberate and convinced of his teaching | He is not out of control; the horror lies in his certainty |
+
+**The four pathological extremes**
+
+| Saint | Core biological process | Perverted endpoint | Short thematic formulation |
+|---|---|---|---|
+| Hemorath | Blood production, circulation, iron | Unending absorption and leakage | **Hemorath consumed.** |
+| Seraphae | Healing, growth, nervous activation | Uncontrolled regeneration and stimulation | **Seraphae restored.** |
+| Putriciel | Cleansing, combustion, decomposition | Blight that survives every purge | **Putriciel purified.** |
+| Velorum | Temperature, metabolism, sensory response | Conscious life without movement or release | **Velorum preserved.** |
+
+**Why each Saint returns to the tomb**
+
+| Saint | How the encounter ends | Why the Saint survives it |
+|---|---|---|
+| Hemorath | Overloaded and exsanguinated, or worn down | The marrow never stops producing blood; he reforms in time |
+| Seraphae | Containment integrity reaches full and she is chained again | She is immortal by nature and can only be contained |
+| Putriciel | The fifth absolution purifies them | They rest for a time, until the rot reclaims them |
+| Velorum | His body fails | He reverts to his dormant state, unchanged |
+
+**Encounter and visual differentiation**
+
+| Saint | Dominant visual language | Environmental storytelling | Fight identity suggested by lore |
+|---|---|---|---|
+| Hemorath | Dry, sunken anatomy; iron-hard bone; restrained blood-red | Basins that meter blood, dry sarcophagus, stains and iron residue | Blood drain, iron, blood debt, hunger and replenishment |
+| Seraphae | Ivory, white-lit veins, distinct golden nerve flashes, chains | Impossibly vigorous growth held back by restraints | Luminous overgrowth, nerve convulsions, dangerous healing |
+| Putriciel | Fungal green, cream, ochre, yellow, eschar-black; little red | Successive fungus and ash layers record repeated failed purges | Infection/rot phases **separated by** a dedicated fire-cleansing phase |
+| Velorum | Pale ice, dark shadow, rigid solemn silhouette | A preserved congregation, a light-starved frozen sanctuary | Slowing circulation, darkness, immobility and the threat of permanent stillness |
+
+> These fight identities are design implications, not a claim that every corresponding attack is implemented. The current encounters are described in each Saint's **Trial / Encounter** paragraph.
+
+### 10.7 Continuity Notes
+
+- **Hemorath is the first Harbinger, not an Archon.** He predates the mature Hematic Order and Erythravane's Fane. Older notes that call him one of the original great Archons, or a purely Ferric Saint of permanence, are superseded.
+- **Do not depict Hemorath only as bloated.** His historical excess produced that condition, but his resting silhouette is frail, skeletal and desiccated. His marrow remains active.
+- **Do not make Seraphae a voluntary villain.** Her tragedy depends on the nobles and physicians who chained and bled her, and on her inability to restrain an originally beneficial gift. Keep white Lux light in the vessels distinct from gold Ductilis flashes along the nerves.
+- **Do not make Putriciel a generic red-fungus fire boss.** Their infection has its own green/yellow/ochre/shelf-fungus palette. Fire is a brief, distinct *cleansing* interlude between infection phases, not a constant appearance. Use he for the living purifier and they for the Saint now.
+- **Do not make Velorum another nurse, plague healer or grieving caretaker,** and do not make him a martyr. His motive is bodily perfection through stillness. He chooses to impose it and remains lucid.
+- **Do not give Velorum literal chronomancy by accident.** Near-time wording such as the Endless Hour or a held moment is fine, but the effect is experienced through arrested circulation, immobility, darkness and sensory deprivation.
+- **No Saint dies.** Every ending returns the Saint to its restored sarcophagus, for the reason in its entry.
+- **No Saint is assigned at random.** A sarcophagus holds the Saint it was built for, or waits inert until a relic names one.
+- **Do not assume canon recognition dates.** Specific centuries, how the Order formally recognised each Saint, and the detailed chronology of the tombs remain open unless separately specified.
+- **Keep the moral contrasts:** Hemorath's greed and Velorum's conviction are conscious moral failings; Seraphae is exploited; Putriciel's attempts at cleansing create and intensify the corruption they sought to stop.
+
+### 10.8 Planned Per-Saint Overhauls
+
+Each Saint will later get its own combat and visual overhaul, and each is planned to get a dedicated trial chamber. The deferred list lives in [the Saint reconciliation spec](superpowers/specs/2026-10-26-saint-reconciliation-design.md) under "Deferred per-Saint work". It covers Hemorath's passive drain and leaking blood meter, Seraphae's growth and nerve hazards, Putriciel's dedicated cleansing interval and palette pass, Velorum's stillness meter and wakeable congregation, and a cleanup of the four Canon Memories. None of it is built yet.
 
 ---
 

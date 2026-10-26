@@ -6,6 +6,9 @@ import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import java.util.*;
 
 public final class VesperCombatRules {
+	/** His arrival: the mount rears over 20..34, holds while it paws, settles by 70; he fights at 80. */
+	public static final int ARRIVAL_TICKS = 80, ARRIVAL_REAR_START = 20, ARRIVAL_REAR_PEAK = 34, ARRIVAL_REAR_HOLD = 56,
+			ARRIVAL_REAR_END = 70;
 	public static final int DEFEAT_ANIMATION_TICKS = 40;
 	public static final int WEAPON_DISSOLVE_TICKS = 28;
 	public static final float DEFEAT_ABSORPTION_REQUIRED = 100.0F;

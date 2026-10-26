@@ -1,6 +1,13 @@
 package com.vincenthuto.hemomancy.client.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.cinematic.BossScene;
+import com.vincenthuto.hemomancy.client.render.cinematic.BossSceneDirector;
+import com.vincenthuto.hemomancy.client.render.cinematic.scene.BossSceneCatalog;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
+import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrameClientState;
+import com.vincenthuto.hemomancy.common.network.boss.BossBarFramePacket;
+import com.vincenthuto.hemomancy.common.network.boss.BossScenePacket;
 import com.vincenthuto.hemomancy.client.render.entity.boss.MycophantGlimpse;
 import com.vincenthuto.hemomancy.client.data.MycophantIntroClientState;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
@@ -108,6 +115,8 @@ public final class ClientboundEffectHandlers {
 		ClientPayloadHandlers.register(PacketHematicMicroscopeViewing.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketLivingStaffMorph.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketMycophantIntro.TYPE, ClientboundEffectHandlers::handle);
+		ClientPayloadHandlers.register(BossBarFramePacket.TYPE, ClientboundEffectHandlers::handle);
+		ClientPayloadHandlers.register(BossScenePacket.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketSpawnVeinSpiderCourier.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncPlayerAnimation.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(ParticleBurstPacket.TYPE, ClientboundEffectHandlers::handle);
@@ -227,14 +236,29 @@ public final class ClientboundEffectHandlers {
 		context.enqueueWork(() -> LivingStaffMorphClientState.start(packet));
 	}
 
+	static void handle(BossBarFramePacket packet, IPayloadContext context) {
+		context.enqueueWork(() -> BossBarFrameClientState.bind(packet.bar(), packet.frame()));
+	}
+
+	static void handle(BossScenePacket packet, IPayloadContext context) {
+		context.enqueueWork(() -> BossSceneDirector.INSTANCE.start(packet.scene(), packet.entityId(), packet.offset()));
+	}
+
 	static void handle(PacketMycophantIntro packet, IPayloadContext context) {
 		context.enqueueWork(() -> {
 			if (packet.kind() == PacketMycophantIntro.GLIMPSE) {
 				MycophantGlimpse.start(packet.seed());
 				return;
 			}
-			if (packet.kind() == PacketMycophantIntro.CLEAR) MycophantGlimpse.clear();
+			if (packet.kind() == PacketMycophantIntro.CLEAR) {
+				MycophantGlimpse.clear();
+				BossScene scene = BossSceneDirector.INSTANCE.scene();
+				if (scene != null && BossSceneCatalog.isMycophantTaking(scene)) BossSceneDirector.INSTANCE.clear();
+			}
 			MycophantIntroClientState.INSTANCE.start(packet.kind(), packet.seed());
+			// the waking and rematch scenes come from the server with the boss; the capture has no boss yet
+			if (packet.kind() == PacketMycophantIntro.CAPTURE)
+				BossSceneDirector.INSTANCE.start(BossPresentationIds.SCENE_MYCOPHANT_CAPTURE, -1, 0);
 		});
 	}
 

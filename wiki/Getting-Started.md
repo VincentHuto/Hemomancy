@@ -44,7 +44,7 @@ still withholds permission. Older Displays elsewhere, including crafted ones, do
 
 Other structures to explore include:
 - **Harbinger Outposts**: Walled overworld compounds with a ritual courtyard, a patrol walk between two walls, profession houses at the four corners, watchtowers, a shared two-story barracks hall, and red banners
-- **Mausoleums**: Underground crypts containing Harbinger artifacts
+- **Mausoleums** (not generating yet): Underground crypts built around a Saint's sarcophagus
 
 The Mortal Display is an ornate pedestal with a crimson aura.
 
@@ -257,12 +257,11 @@ Choose before you spend heavily on a path. Switching back and forth is not a sup
 - Can be looted or joined depending on your path
 
 **Mausoleums** (not generating naturally yet)
-- Underground crypts with Harbinger artifacts
+- One generic underground crypt: a trial room, a Saint's sarcophagus and a treasure room
 - Dangerous but rewarding
-- Often contains Mortal Display and Hematic Memories
 
-**Trial Chambers** (WIP)
-- Special encounter areas for Saints
+**Trial Chambers** (planned)
+- A dedicated encounter area for each Saint
 - Hemorath and the other Saints are reserved together for the first major post-release content update
 - Their chambers, rewards, Canon memories, and final encounter presentation remain WIP until that update
 

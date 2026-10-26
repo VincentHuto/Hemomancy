@@ -1,12 +1,19 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantBroodRules;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.MathUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
@@ -14,6 +21,9 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -125,6 +135,10 @@ public class FunglingEntity extends PathfinderMob {
 
 	public int puffCooldown = 0;
 	private static final int MOTHER_GRACE_TICKS = 40;
+	private static final EntityDataAccessor<Boolean> DATA_GROWN = SynchedEntityData.defineId(FunglingEntity.class,
+			EntityDataSerializers.BOOLEAN);
+	/** The one modifier id a grown brood carries on its size, health and bite. */
+	private static final ResourceLocation GROWN = Hemomancy.rloc("grown_brood");
 	@Nullable private UUID broodMother;
 	private int motherMissingTicks;
 
@@ -182,6 +196,42 @@ public class FunglingEntity extends PathfinderMob {
 		return broodMother != null;
 	}
 
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DATA_GROWN, false);
+	}
+
+	/** A brood fungling its mother finished nursing: grown, it stands bigger, takes more and bites harder. */
+	public boolean isGrown() {
+		return this.entityData.get(DATA_GROWN);
+	}
+
+	/** Grows the fungling (healing it to its new full health) or returns it to an ordinary one. */
+	public void setGrown(boolean grown) {
+		this.entityData.set(DATA_GROWN, grown);
+		if (level().isClientSide) return;
+		applyGrowth(grown);
+		if (grown) setHealth(getMaxHealth());
+	}
+
+	private void applyGrowth(boolean grown) {
+		grow(Attributes.SCALE, MycophantBroodRules.GROWN_SCALE - 1.0D, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, grown);
+		AttributeInstance health = getAttribute(Attributes.MAX_HEALTH);
+		if (health != null) grow(Attributes.MAX_HEALTH, MycophantBroodRules.GROWN_HEALTH - health.getBaseValue(),
+				AttributeModifier.Operation.ADD_VALUE, grown);
+		AttributeInstance bite = getAttribute(Attributes.ATTACK_DAMAGE);
+		if (bite != null) grow(Attributes.ATTACK_DAMAGE, MycophantBroodRules.GROWN_BITE - bite.getBaseValue(),
+				AttributeModifier.Operation.ADD_VALUE, grown);
+	}
+
+	private void grow(Holder<Attribute> attribute, double amount, AttributeModifier.Operation operation, boolean grown) {
+		AttributeInstance instance = getAttribute(attribute);
+		if (instance == null) return;
+		if (grown) instance.addOrReplacePermanentModifier(new AttributeModifier(GROWN, amount, operation));
+		else instance.removeModifier(GROWN);
+	}
+
 	@Nullable
 	private Entity mother() {
 		return broodMother != null && level() instanceof ServerLevel server ? server.getEntity(broodMother) : null;
@@ -202,12 +252,15 @@ public class FunglingEntity extends PathfinderMob {
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 		if (broodMother != null) tag.putUUID("BroodMother", broodMother);
+		if (isGrown()) tag.putBoolean("Grown", true);
 	}
 
 	@Override
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 		setBrood(tag.hasUUID("BroodMother") ? tag.getUUID("BroodMother") : null);
+		// The modifiers come back with the saved attributes; only the flag needs restoring.
+		this.entityData.set(DATA_GROWN, tag.getBoolean("Grown"));
 	}
 
 	public FunglingEntity(EntityType<? extends FunglingEntity> type, Level worldIn) {

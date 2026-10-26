@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentCombatRules.Attack;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -12,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
+import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -57,7 +59,12 @@ public class LatentAnnettaInfectionEntity extends Monster {
     private static final ParticleOptions ICHOR = HemoParticleData.bloodCell(new ParticleColor(214, 150, 48));
     private static final ParticleOptions SPORE = HemoParticleData.sporiticSpore(new ParticleColor(200, 170, 96));
 
-    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.latent_annetta_infection", BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.NOTCHED_10);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.latent_annetta_infection", BossPresentationIds.FRAME_LATENT_INFECTION, BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.NOTCHED_10);
+    // Client clocks: the synced counters arrive on the network's schedule, not every client tick, so the model and its
+    // layers read these instead. They advance with the client's own ticks and resync when the server disagrees;
+    // each read syncs, so the first frame after loading already reads the synced value.
+    private final BossReplayClock actionClock = new BossReplayClock(ACTION_NONE);
+    private final BossReplayClock emergeClock = new BossReplayClock();
 
     @Nullable private UUID curedAnnetta;
     private int cooldown = 30;
@@ -119,6 +126,18 @@ public class LatentAnnettaInfectionEntity extends Monster {
 
     public int getEmergeTick() {
         return this.entityData.get(DATA_EMERGE_TICK);
+    }
+
+    /** Ticks into the current attack, smooth across frames on the client. */
+    public float actionTime(float partialTick) {
+        if (!this.level().isClientSide || AnnettaKnowlesEntity.reviewHoldClock) return getActionTick();
+        return actionClock.sample(getAction(), getActionTick(), this.tickCount, partialTick, 1);
+    }
+
+    /** Ticks into the emergence, smooth across frames on the client; it holds at the end once the thing is out. */
+    public float emergeTime(float partialTick) {
+        if (!this.level().isClientSide || AnnettaKnowlesEntity.reviewHoldClock) return getEmergeTick();
+        return Math.min(LatentCombatRules.EMERGE_END, emergeClock.sample(0, getEmergeTick(), this.tickCount, partialTick, 1));
     }
 
     public boolean isEmerging() {

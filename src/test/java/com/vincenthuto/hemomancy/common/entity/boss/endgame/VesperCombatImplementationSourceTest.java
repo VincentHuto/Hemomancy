@@ -29,7 +29,7 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(crowned.contains("part.yOld = part.getY()"));
 		assertTrue(crowned.contains("part.zOld = part.getZ()"));
 		assertTrue(crowned.contains("if (!spawnEveningStar()) return;"));
-		assertTrue(crowned.contains("return server.addFreshEntity(eveningStar);"));
+		assertTrue(crowned.contains("server.addFreshEntity(eveningStar)"));
 		assertTrue(anchor.contains("anchorHitboxScale"));
 		assertTrue(actions.contains("outlineExposedThroneAnchor"));
 		assertFalse(crowned.contains("tickVesperPattern"));
@@ -228,7 +228,7 @@ final class VesperCombatImplementationSourceTest {
 		Path glowPath = SOURCE.resolve("client/render/layer/mob/endgame/VesperAwakeningGlowLayer.java");
 
 		assertFalse(crowned.contains("eveningStar.beginAwakening()"));
-		assertTrue(evening.contains(": VesperPhaseTransitionRules.AWAKENING_TOTAL_TICKS"));
+		assertTrue(evening.contains("if (!isAwakening()) return VesperPhaseTransitionRules.AWAKENING_TOTAL_TICKS;"));
 		assertTrue(evening.contains("DATA_AWAKENING_TICK"));
 		assertTrue(evening.contains("tickAwakening"));
 		assertTrue(evening.contains("getDefaultDimensions(Pose pose)"));

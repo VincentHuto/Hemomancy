@@ -10,6 +10,11 @@ const OUT_DIR = "src/main/resources/assets/hemomancy/models/entity/bbmodel/bosse
 
 const MODELS = [
   {
+    name: "HemorathModel",
+    source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/hemorath/HemorathModel.java",
+    texture: "textures/entity/boss/hemorath/hemorath.png",
+  },
+  {
     name: "HollowVesselModel",
     source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/HollowVesselModel.java",
     texture: "textures/entity/hollow_vessel/hollow_vessel.png",
@@ -17,7 +22,7 @@ const MODELS = [
   {
     name: "SeraphaeModel",
     source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/seraphae/SeraphaeModel.java",
-    texture: "textures/entity/seraphae/seraphae.png",
+    texture: "textures/entity/boss/seraphae/seraphae.png",
   },
   {
     name: "ContainmentAnchorModel",

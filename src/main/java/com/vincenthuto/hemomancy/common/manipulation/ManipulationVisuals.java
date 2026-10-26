@@ -29,7 +29,8 @@ public final class ManipulationVisuals {
         // Encoded by ordinal: append new forms here.
         PUPPET_DESCEND, PUPPET_UNSPOOL, UMBRAL_REND, LODESTONE_COLLAPSE,
         SEARING_LASH, CRUOR_JAVELIN, RADIANT_WAKE, CONTAGION, NERVE_COMMAND, LODESTONE_FIELD,
-        VESPER_RECALL, CAST_IMPACT, WEAPON_CONJURE, CELL_HAND, AVATAR_MANIFEST
+        VESPER_RECALL, CAST_IMPACT, WEAPON_CONJURE, CELL_HAND, AVATAR_MANIFEST,
+        SERAPHAE_RELIQUARY, HEMORATH_RELIQUARY, PUTRICIEL_OFFERING, VELORUM_RIME
     }
 
     public static void burst(ServerLevel level, Form form, Vec3 from, Vec3 to, double radius, int ticks) {

@@ -845,15 +845,15 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_tithe = MANIPS.register("crimson_tithe",
 			() -> new CrimsonTitheManip("crimson_tithe", 100, 25, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.SUMMA, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
-					.setSecondaryTend(EnumBloodTendency.ANIMUS)
+					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.HEART)
+					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(100)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> unclosing_eye = MANIPS.register("unclosing_eye",
 			() -> new UnclosingEyeManip("unclosing_eye", 350, 20, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
-					.setSecondaryTend(EnumBloodTendency.MORTEM)
+					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(120)
 					.setEntityCast(EntityCasts::unclosingEye)
 					.setDrudgeAction(DrudgeActions::unclosingEye, Component.translatable("manipulation.hemomancy.unclosing_eye.drudge")));
@@ -861,7 +861,7 @@ public class ManipulationInit {
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> bloom_of_rot = MANIPS.register("bloom_of_rot",
 			() -> new BloomOfRotManip("bloom_of_rot", 500, 25, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.MORTEM, EnumVeinSections.BODY)
-					.setSecondaryTend(EnumBloodTendency.ANIMUS)
+					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
 					.setCooldownTicks(80)
 					.setEntityCast(EntityCasts::bloomOfRot)
 					.setDrudgeAction(DrudgeActions::bloomOfRot, Component.translatable("manipulation.hemomancy.bloom_of_rot.drudge")));
@@ -869,7 +869,7 @@ public class ManipulationInit {
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> endless_hour = MANIPS.register("endless_hour",
 			() -> new EndlessHourManip("endless_hour", 600, 30, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY)
-					.setSecondaryTend(EnumBloodTendency.LUX)
+					.setSecondaryTend(EnumBloodTendency.TENEBRIS)
 					.setCooldownTicks(200)
 					.setDrudgeAction(DrudgeActions::endlessHour, Component.translatable("manipulation.hemomancy.endless_hour.drudge")));
 

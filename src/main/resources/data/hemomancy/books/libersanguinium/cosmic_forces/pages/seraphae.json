@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Seraphae",
+  "subtitle": "The Chain Saint",
+  "text": "A nurse in a small settlement who gave her own blood to a dying man and saw her veins shine white as he recovered. Her blood closed wounds, knit bone and woke dead nerves: Lux in the vessels, Ductilis in the gold flashes along the nerves. The nobles and physicians of her district took her into their keeping, chained her, and drained her for years to hold off deaths that were long overdue. Worked that hard, the gift stopped telling repair from growth. Small wounds swelled into masses, nerves spread where they had no use, and some who took her blood ruptured. Then it ran without her will, and standing near her was enough. Her keepers could not kill her. They built a mausoleum of restraints and anchors and chained her in its deepest room, and the Order kept those chains exactly as it found them. She cannot be killed now either. Struck apart, she regrows, and the record's only answer is to draw her back into the chains. She still reaches for whoever enters.",
+  "icon": "hemomancy:saint_relic_seraphae"
+}

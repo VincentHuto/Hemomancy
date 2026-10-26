@@ -367,14 +367,14 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 
 		if (entity.isAwaitingAbsorption()) {
 			applyAuthoredAnimation(VesperTheEveningStarAnimations.DEFEAT,
-					entity.getDownedTicks() + partialTick);
+					state.downedTime());
 			finishPose(entity, state);
 			return;
 		}
 		if (entity.isHoodRemovalActive()) {
 			applyAuthoredAnimation(VesperTheEveningStarAnimations.IDLE, frame);
 			applyAuthoredAnimation(VesperTheEveningStarAnimations.REMOVE_HOOD,
-					entity.getHoodRemovalTick() + partialTick);
+					state.hoodTime());
 			applyHeadTracking(netHeadYaw, headPitch);
 			finishPose(entity, state);
 			return;

@@ -8,6 +8,7 @@ import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -88,7 +89,11 @@ public final class LiberDiscoveryEvents {
 
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("silthmere_glaive"),            LiberEntryDefinitions.SAINTS);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("hallowed_residuum_hemorath"),  LiberEntryDefinitions.HEMORATH);
-		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("hallowed_residuum_putriciel"), LiberEntryDefinitions.SAINTS);
+		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("hallowed_residuum_seraphae"),  LiberEntryDefinitions.SERAPHAE);
+		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("hallowed_residuum_putriciel"), LiberEntryDefinitions.PUTRICIEL);
+		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("hallowed_residuum_velorum"),   LiberEntryDefinitions.VELORUM);
+		for (String saint : new String[] { "hemorath", "seraphae", "putriciel", "velorum" })
+			BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("hallowed_residuum_" + saint), LiberEntryDefinitions.SAINTS);
 
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("consecrated_copper_ingot"),  LiberEntryDefinitions.COPPER_AND_SILVER);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("silver_chalice"),            LiberEntryDefinitions.COPPER_AND_SILVER);
@@ -146,8 +151,13 @@ public final class LiberDiscoveryEvents {
 	@SubscribeEvent
 	public static void onItemPickup(ItemEntityPickupEvent.Post event) {
 		if (!(event.getPlayer() instanceof ServerPlayer player)) return;
-		if (event.getOriginalStack().isEmpty()) return;
-		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(event.getOriginalStack().getItem());
+		unlockForItem(player, event.getOriginalStack());
+	}
+
+	/** Unlocks what picking {@code stack} up would, for items handed straight into an inventory (a Saint's reward). */
+	public static void unlockForItem(ServerPlayer player, ItemStack stack) {
+		if (stack.isEmpty()) return;
+		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
 		Set<ResourceLocation> entries = BookEntryRegistry.entriesForItem(itemId);
 		if (!entries.isEmpty()) {
 			LiberKnowledgeHelper.unlockEntries(player, entries, CommonDiscoverySource.ITEM_PICKUP);

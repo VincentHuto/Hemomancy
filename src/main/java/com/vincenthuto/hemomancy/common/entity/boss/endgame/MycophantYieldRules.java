@@ -12,19 +12,19 @@ public final class MycophantYieldRules {
 		return 120;
 	}
 
-	public static float fold(int t) {
+	public static float fold(float t) {
 		return MycophantSplitRules.window(t, 0, 20);
 	}
 
-	public static float lower(int t) {
+	public static float lower(float t) {
 		return MycophantSplitRules.window(t, 20, 45);
 	}
 
-	public static float offer(int t) {
+	public static float offer(float t) {
 		return MycophantSplitRules.window(t, 40, 75);
 	}
 
-	public static float sink(int t) {
+	public static float sink(float t) {
 		return MycophantSplitRules.window(t, 70, 120);
 	}
 }

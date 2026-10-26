@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -22,6 +23,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
@@ -32,6 +34,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -54,7 +57,8 @@ import java.util.UUID;
  * Mycophant*Rules classes. State is synced for the generated model's animation.
  */
 public class MycophantEntity extends Monster implements BroodMother {
-	private static final BloodAccounting.Source CLAIM = BloodAccounting.Source.of("mycophant_claim", Category.HAZARD, false, false);
+	/** The blood a filled meter or a released cocoon takes (MycophantLastBrood pays through it too). */
+	static final BloodAccounting.Source CLAIM = BloodAccounting.Source.of("mycophant_claim", Category.HAZARD, false, false);
 	private static final BloodAccounting.Source SIPHON = BloodAccounting.Source.of("mycophant_siphon", Category.HAZARD, false, false);
 	private static final EntityDataAccessor<Integer> DATA_STATE = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_STATE_TICK = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
@@ -69,21 +73,29 @@ public class MycophantEntity extends Monster implements BroodMother {
 	private static final EntityDataAccessor<Float> DATA_GLOW = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Float> DATA_CLAIM_METER = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Integer> DATA_YIELD_TICK = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
+	/** How the Last Brood ended (a MycophantLastBroodRules.Outcome ordinal), so the client poses the collapse or the spent stagger; -1 before it ends. */
+	private static final EntityDataAccessor<Integer> DATA_LAST_BROOD_OUTCOME = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_ATTACK_VARIANT = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Float> DATA_GAZE_YAW = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Integer> DATA_HOLD_KIND = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
 
 	/** Review-client hook: a forced pose name, null in play. */
 	public static volatile String reviewHoldPose;
 
 	private final MycophantController controller = new MycophantController(this);
-	private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.mycophant", BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.NOTCHED_12);
+	private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.mycophant", BossPresentationIds.FRAME_MYCOPHANT, BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.NOTCHED_12);
 
 	@Nullable private UUID encounterOwner;
 	private float nectarPressure;
 	private boolean introDone;
 	private boolean splitDone;
+	private boolean lastBroodDone;
 	private boolean bossBarShown;
+	private final MycophantBroodTumors broodTumors = new MycophantBroodTumors(this);
 
-	// the current hold (claim in phase 1, fusion in phase 2)
+	// the current hold (the claim in phase 1, the fusion in phase 2, a claw pin, the Last Brood's cocoon)
 	private int holdHits;
+	private int heldTicks;
 	private boolean holdCastUsed;
 	private int lastOwnerCastTick = -1000;
 	// the siphon latch
@@ -126,6 +138,26 @@ public class MycophantEntity extends Monster implements BroodMother {
 		builder.define(DATA_GLOW, 0.6F);
 		builder.define(DATA_CLAIM_METER, 0.0F);
 		builder.define(DATA_YIELD_TICK, 0);
+		builder.define(DATA_LAST_BROOD_OUTCOME, -1);
+		builder.define(DATA_ATTACK_VARIANT, 0);
+		builder.define(DATA_GAZE_YAW, 0.0F);
+		builder.define(DATA_HOLD_KIND, MycophantHoldKind.SAC.ordinal());
+	}
+
+	/**
+	 * Her body always faces her yaw, on both sides. The vanilla control lets a body that is not moving lag its head and
+	 * then swing round in steps, which reads as a stutter on something this big and puts her front (and the hold point)
+	 * somewhere other than where the server has it.
+	 */
+	@Override
+	protected BodyRotationControl createBodyControl() {
+		return new BodyRotationControl(this) {
+			@Override
+			public void clientTick() {
+				MycophantEntity.this.yBodyRot = MycophantEntity.this.getYRot();
+				MycophantEntity.this.yHeadRot = MycophantEntity.this.getYRot();
+			}
+		};
 	}
 
 	@Override
@@ -150,6 +182,14 @@ public class MycophantEntity extends Monster implements BroodMother {
 	public float getGlowLevel() { return this.entityData.get(DATA_GLOW); }
 	public float getClaimMeter() { return this.entityData.get(DATA_CLAIM_METER); }
 	public int getYieldTick() { return this.entityData.get(DATA_YIELD_TICK); }
+	public int getLastBroodOutcome() { return this.entityData.get(DATA_LAST_BROOD_OUTCOME); }
+	void setLastBroodOutcome(int outcome) { this.entityData.set(DATA_LAST_BROOD_OUTCOME, outcome); }
+	/** Which form of the current move she rolled (the Rake String's two- or three-hit string); 0 for a move without forms. */
+	public int getAttackVariant() { return this.entityData.get(DATA_ATTACK_VARIANT); }
+	/** Where the Gaze's beam points, in degrees of world yaw. */
+	public float getGazeYaw() { return this.entityData.get(DATA_GAZE_YAW); }
+	/** What the current hold is; meaningful only while {@link #isHolding()}. */
+	public MycophantHoldKind getHoldKind() { return MycophantHoldKind.byOrdinal(this.entityData.get(DATA_HOLD_KIND)); }
 	public boolean isSplitComplete() { return getPhase() >= 2; }
 	public boolean isHolding() { return getClaimedId() >= 0; }
 
@@ -159,7 +199,14 @@ public class MycophantEntity extends Monster implements BroodMother {
 	}
 
 	void tickStateClock() { this.entityData.set(DATA_STATE_TICK, getStateTick() + 1); }
-	void setAttack(MycophantAttack attack) { this.entityData.set(DATA_ATTACK, attack.ordinal()); this.entityData.set(DATA_ATTACK_TICK, 0); }
+	void setAttack(MycophantAttack attack) {
+		this.entityData.set(DATA_ATTACK, attack.ordinal());
+		this.entityData.set(DATA_ATTACK_TICK, 0);
+		this.entityData.set(DATA_ATTACK_VARIANT, 0);
+	}
+
+	void setAttackVariant(int variant) { this.entityData.set(DATA_ATTACK_VARIANT, variant); }
+	void setGazeYaw(float yaw) { this.entityData.set(DATA_GAZE_YAW, yaw); }
 	void setAttackTick(int tick) { this.entityData.set(DATA_ATTACK_TICK, tick); }
 	void setPhase(int phase) { this.entityData.set(DATA_PHASE, phase); }
 	void setSplitTick(int tick) { this.entityData.set(DATA_SPLIT_TICK, tick); }
@@ -208,6 +255,11 @@ public class MycophantEntity extends Monster implements BroodMother {
 	void finishIntro() { this.introDone = true; }
 	boolean isSplitDone() { return this.splitDone; }
 	void finishSplit() { this.splitDone = true; }
+	/** The Last Brood plays once per fight; the flag is saved so a reload never repeats it. */
+	boolean isLastBroodDone() { return this.lastBroodDone; }
+	void finishLastBrood() { this.lastBroodDone = true; }
+	/** The brood tumors she has rooted in the Nursery floor (owned fights only). */
+	public MycophantBroodTumors broodTumors() { return this.broodTumors; }
 
 	// ------------------------------------------------------------------ geometry helpers
 
@@ -217,9 +269,19 @@ public class MycophantEntity extends Monster implements BroodMother {
 		return new Vec3(-Mth.sin(yaw), 0.0D, Mth.cos(yaw));
 	}
 
-	/** Where a held player is kept: pressed against the front of the great sac. */
+	/** Where a held player is kept: pressed against the front of the great sac, or under the claw for a pin. */
 	Vec3 holdPoint() {
-		return position().add(forward().scale(2.7D)).add(0.0D, 0.55D, 0.0D);
+		return holdPoint(position(), this.yBodyRot, getHoldKind());
+	}
+
+	/** The sac's hold point for her feet at {@code feet} facing {@code yawDegrees}. */
+	public static Vec3 holdPoint(Vec3 feet, float yawDegrees) {
+		return holdPoint(feet, yawDegrees, MycophantHoldKind.SAC);
+	}
+
+	/** The hold point of {@code kind} for her feet at {@code feet} facing {@code yawDegrees}; the held player's client pins itself here. */
+	public static Vec3 holdPoint(Vec3 feet, float yawDegrees, MycophantHoldKind kind) {
+		return kind.point(feet, yawDegrees);
 	}
 
 	/** World position of a body point given in blocks: right, up, forward relative to her body yaw. */
@@ -248,6 +310,7 @@ public class MycophantEntity extends Monster implements BroodMother {
 		if (reviewHoldPose != null) return;
 		applyPendingRefusal();
 		controller.tick();
+		this.broodTumors.tick((ServerLevel) this.level(), this);
 		tickHold();
 		tickSiphon();
 		tickPressure();
@@ -296,17 +359,25 @@ public class MycophantEntity extends Monster implements BroodMother {
 		return state == MycophantState.INTRO && MycophantIntroRules.invulnerable(getIntroTick(), isRematchIntro());
 	}
 
-	// ------------------------------------------------------------------ holds: the claim and the fusion
+	// ------------------------------------------------------------------ holds: the claim, the fusion, the pin, the cocoon
 
 	/** Takes {@code player} into her arms (phase 1 claim, phase 2 fusion). */
 	void beginHold(ServerPlayer player) {
+		beginHold(player, MycophantHoldKind.SAC);
+	}
+
+	/** Holds {@code player} the way {@code kind} does; only the sac hold has a meter and can be broken. */
+	void beginHold(ServerPlayer player, MycophantHoldKind kind) {
+		// the kind goes out with the id, so the held client never pins to the wrong point
+		this.entityData.set(DATA_HOLD_KIND, kind.ordinal());
 		this.entityData.set(DATA_CLAIMED_ID, player.getId());
 		this.entityData.set(DATA_CLAIM_METER, 0.0F);
 		this.holdHits = 0;
+		this.heldTicks = 0;
 		this.holdCastUsed = false;
 		player.stopUsingItem();
 		this.level().playSound(null, this.blockPosition(), SoundInit.ENTITY_MYCOPHANT_HURT_OTHER.get(), SoundSource.HOSTILE, 1.4F, 0.55F);
-		MycophantMoves.holdBegins(this, player);
+		if (kind == MycophantHoldKind.SAC) MycophantMoves.holdBegins(this, player);
 	}
 
 	@Nullable
@@ -320,16 +391,24 @@ public class MycophantEntity extends Monster implements BroodMother {
 	private void tickHold() {
 		if (!isHolding()) return;
 		ServerPlayer held = heldPlayer();
-		if (held == null || getState() != MycophantState.ATTACK || !getAttack().isEmbrace()) {
+		MycophantHoldKind kind = getHoldKind();
+		// dead, logged out or in another dimension, the held player resolves to null here and the hold lets go at once
+		if (held == null || getState() != MycophantState.ATTACK || !kind.heldThrough(getAttack())) {
 			releaseHold();
 			return;
 		}
+		// the held client pins itself to the same point (MycophantHoldClientEvents); the server only puts back a client
+		// that has fallen out of step, since snapping a player who is already in place shakes them back and forth
 		Vec3 point = holdPoint();
-		if (held.position().distanceToSqr(point) > 0.09D) held.teleportTo(point.x, point.y, point.z);
+		double slack = MycophantClaimRules.holdSlack(this.heldTicks++);
+		if (held.position().distanceToSqr(point) > slack * slack) held.teleportTo(point.x, point.y, point.z);
 		held.setDeltaMovement(Vec3.ZERO);
-		held.hurtMarked = true;
 		// suspended at the hold point, the small drops between re-placements would otherwise add up to a lethal fall
 		held.resetFallDistance();
+		if (!kind.metered()) {
+			if (MycophantHoldKind.shouldRelease(held.isAlive(), this.heldTicks, kind)) holdRanOut(held, kind);
+			return;
+		}
 		float meter = getClaimMeter() + MycophantClaimRules.meterPerTick(getPhase());
 		this.entityData.set(DATA_CLAIM_METER, Math.min(1.0F, meter));
 		setGlow(0.8F + meter * 0.7F);
@@ -352,6 +431,12 @@ public class MycophantEntity extends Monster implements BroodMother {
 			BloodAccounting.pay(held, volume.getMaxBloodVolume() * MycophantClaimRules.bloodDrainFraction(phase), CLAIM);
 		}
 		pushAway(held, 0.9D, 0.35D);
+	}
+
+	/** A pin or a cocoon ran its course: no stagger and no pressure change here. The cocoon's toll is the Last Brood's. */
+	private void holdRanOut(ServerPlayer held, MycophantHoldKind kind) {
+		releaseHold();
+		if (kind == MycophantHoldKind.COCOON) MycophantLastBrood.onCocoonReleased(this, held);
 	}
 
 	/** The player tore free: she reels, and a broken fusion costs her dearly. */
@@ -393,6 +478,8 @@ public class MycophantEntity extends Monster implements BroodMother {
 		if (held != null) held.resetFallDistance();
 		this.entityData.set(DATA_CLAIMED_ID, -1);
 		this.entityData.set(DATA_CLAIM_METER, 0.0F);
+		this.entityData.set(DATA_HOLD_KIND, MycophantHoldKind.SAC.ordinal());
+		this.heldTicks = 0;
 		setGlow(0.6F);
 	}
 
@@ -404,11 +491,12 @@ public class MycophantEntity extends Monster implements BroodMother {
 	}
 
 	/**
-	 * A blood manipulation or Primal Morphling ability from the owner. Cast while held, it tears the player free at once;
-	 * otherwise it opens a short window in which landing a blow on her counts as an empowered break.
+	 * A blood manipulation or Primal Morphling ability from the owner. Cast while held in the sac, it tears the player
+	 * free at once; otherwise it opens a short window in which landing a blow on her counts as an empowered break. A pin
+	 * or a cocoon cannot be broken.
 	 */
 	public void onOwnerCast(ServerPlayer caster) {
-		if (heldPlayer() == caster && MycophantClaimRules.castBreaks(true, false, this.holdCastUsed)) {
+		if (heldPlayer() == caster && getHoldKind().breakable() && MycophantClaimRules.castBreaks(true, false, this.holdCastUsed)) {
 			this.holdCastUsed = true;
 			breakHold(caster, true);
 			return;
@@ -433,6 +521,16 @@ public class MycophantEntity extends Monster implements BroodMother {
 		this.siphonDamageTaken = 0;
 	}
 
+	/** The siphon reaches for a brood fungling she is feeding: the latch is drawn, but nothing is drained. */
+	void nurse(LivingEntity fungling) {
+		setSiphonTargetId(fungling.getId());
+		this.siphonDamageTaken = 0;
+	}
+
+	void stopNursing() {
+		unlatchSiphon();
+	}
+
 	@Nullable
 	ServerPlayer siphonTarget() {
 		int id = getSiphonTargetId();
@@ -442,7 +540,14 @@ public class MycophantEntity extends Monster implements BroodMother {
 	}
 
 	private void tickSiphon() {
-		if (getSiphonTargetId() < 0) return;
+		int id = getSiphonTargetId();
+		if (id < 0) return;
+		Entity latched = this.level().getEntity(id);
+		if (latched != null && !(latched instanceof Player)) {
+			// a nursed fungling: the Nursing move does the feeding, this only lets go of one left behind
+			if (!latched.isAlive() || getState() != MycophantState.ATTACK || getAttack() != MycophantAttack.NURSING) stopNursing();
+			return;
+		}
 		ServerPlayer target = siphonTarget();
 		if (target == null || getAttack() != MycophantAttack.SIPHON_FEED || getState() != MycophantState.ATTACK
 				|| target.distanceTo(this) > MycophantClaimRules.siphonRange() + 2.0D || !this.hasLineOfSight(target)) {
@@ -475,16 +580,23 @@ public class MycophantEntity extends Monster implements BroodMother {
 	@Override
 	public void onBroodLost(FunglingEntity brood, Vec3 where) {
 		if (!isAlive() || getState() == MycophantState.YIELD) return;
-		controller.requestStagger(MycophantControllerRules.griefTicks(), where);
+		controller.requestStagger(MycophantBroodRules.griefTicks(brood.isGrown()), where);
 	}
 
+	/** Takes her brood out of the world, and with it every tumor and Last Brood tendril she left (the fight is over for her). */
 	public void discardBrood() {
 		if (!(this.level() instanceof ServerLevel level)) return;
+		clearLeftovers(level);
 		for (FunglingEntity fungling : level.getEntitiesOfClass(FunglingEntity.class, getBoundingBox().inflate(48.0D),
 				f -> this.getUUID().equals(f.getBroodMother()))) {
 			MycophantMoves.dissolve(level, fungling.position());
 			fungling.discard();
 		}
+	}
+
+	private void clearLeftovers(ServerLevel level) {
+		this.broodTumors.clear(level);
+		MycophantLastBrood.clear(this);
 	}
 
 	int livingBrood() {
@@ -504,7 +616,7 @@ public class MycophantEntity extends Monster implements BroodMother {
 		boolean fromQuarry = fromOwner || (this.encounterOwner == null && attacker instanceof Player);
 		// a manipulation that lands on her (or any blow inside a cast's window) breaks a hold or the guard
 		if (fromQuarry && (withinCastWindow() || isManipulationHit(source))) {
-			if (isHolding() && MycophantClaimRules.castBreaks(false, true, this.holdCastUsed)) {
+			if (isHolding() && getHoldKind().breakable() && MycophantClaimRules.castBreaks(false, true, this.holdCastUsed)) {
 				ServerPlayer held = heldPlayer();
 				this.holdCastUsed = true;
 				if (held != null) breakHold(held, true);
@@ -513,16 +625,28 @@ public class MycophantEntity extends Monster implements BroodMother {
 			}
 			this.lastOwnerCastTick = -1000;
 		}
-		if (controller.isGuarding() && attacker != null) amount = MycophantClaimRules.guardedDamage(amount, angleTo(attacker.position()));
+		// a frontal blow on the guard is mostly turned aside, and she answers it (the riposte)
+		boolean riposte = false;
+		if (controller.isGuarding() && attacker != null) {
+			float guarded = MycophantClaimRules.guardedDamage(amount, angleTo(attacker.position()));
+			riposte = guarded < amount;
+			amount = guarded;
+		}
+		// through the Last Brood she takes half damage and cannot be burned past it into the yielding (/kill still lands)
+		if (getState() == MycophantState.ATTACK && getAttack() == MycophantAttack.LAST_BROOD
+				&& !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY))
+			amount = MycophantLastBroodRules.incoming(amount, getHealth(), getMaxHealth());
 		boolean hurt = super.hurt(source, amount);
 		if (!hurt) return false;
-		if (fromQuarry && isHolding()) {
+		if (riposte) controller.onGuardedHit();
+		if (getState() == MycophantState.ATTACK && getAttack() == MycophantAttack.NURSING) controller.nursingDamage(amount);
+		if (fromQuarry && isHolding() && getHoldKind().breakable()) {
 			if (++this.holdHits >= MycophantClaimRules.hitsToBreak(getPhase())) {
 				ServerPlayer held = heldPlayer();
 				if (held != null) breakHold(held, false);
 			}
 		}
-		if (fromQuarry && getSiphonTargetId() >= 0) {
+		if (fromQuarry && siphonTarget() != null) {
 			this.siphonDamageTaken += Math.round(amount);
 			if (this.siphonDamageTaken >= 6) unlatchSiphon();
 		}
@@ -598,6 +722,8 @@ public class MycophantEntity extends Monster implements BroodMother {
 	@Override
 	public void remove(RemovalReason reason) {
 		if (!this.level().isClientSide) this.bossBar.hideAll();
+		// a chunk unload keeps her tumors (they are saved with her); a kill or a discard takes them
+		if (reason.shouldDestroy() && this.level() instanceof ServerLevel level) clearLeftovers(level);
 		super.remove(reason);
 	}
 
@@ -656,8 +782,10 @@ public class MycophantEntity extends Monster implements BroodMother {
 		if (this.encounterOwner != null) tag.putUUID("MycophantOwner", this.encounterOwner);
 		tag.putFloat("NectarPressure", this.nectarPressure);
 		tag.putBoolean("EnteredPhaseTwo", this.splitDone);
+		tag.putBoolean("LastBroodDone", this.lastBroodDone);
 		tag.putBoolean("IntroDone", this.introDone);
 		tag.putBoolean("RematchIntro", isRematchIntro());
+		this.broodTumors.save(tag);
 	}
 
 	/** Old saves (cocoon keys, no intro flag) resume idle: phase from health, no hold, split done if past half. */
@@ -670,6 +798,8 @@ public class MycophantEntity extends Monster implements BroodMother {
 				tag.contains("IntroDone"), tag.getBoolean("IntroDone"), getHealth(), getMaxHealth());
 		this.splitDone = resume.splitDone();
 		this.introDone = resume.introDone();
+		this.lastBroodDone = tag.getBoolean("LastBroodDone");
+		this.broodTumors.load(tag);
 		setRematchIntro(tag.getBoolean("RematchIntro"));
 		setPhase(resume.phase());
 		if (this.splitDone) setSplitTick(MycophantSplitRules.length());

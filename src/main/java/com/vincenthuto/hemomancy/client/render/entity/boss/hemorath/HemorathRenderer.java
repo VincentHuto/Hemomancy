@@ -1,14 +1,20 @@
 package com.vincenthuto.hemomancy.client.render.entity.boss.hemorath;
 
+import com.vincenthuto.hemomancy.client.render.entity.boss.SaintRiseRender;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathModel;
-import com.vincenthuto.hemomancy.client.render.AnimationTime;
+import com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathAnimState;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathVisualRules;
 import com.vincenthuto.hemomancy.client.render.layer.mob.HemorathOverloadLayer;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 /**
  * Renderer for the Hollow Vessel (Saint Hemorath).
@@ -31,14 +37,22 @@ public class HemorathRenderer extends MobRenderer<HemorathEntity, HemorathModel<
 
 	@Override
 	protected void scale(HemorathEntity entity, PoseStack poseStack, float partialTick) {
-		float base = entity.isInPhase2() ? 2.12F : 2.06F;
-		if (entity.getVisualState() == HemorathEntity.VISUAL_OVERLOAD) {
-			float pulse = 1.0F + (float) Math.sin(AnimationTime.age(entity, partialTick) * 0.6F) * 0.08F;
-			base *= pulse;
-		} else if (entity.isCollapseCharging()) {
-			float pulse = 1.0F + (float) Math.sin(AnimationTime.age(entity, partialTick) * 0.35F) * 0.035F;
-			base *= pulse;
-		}
+		SaintRiseRender.sink(poseStack, entity, partialTick);
+		float base = HemorathVisualRules.scale(entity.isInPhase2());
 		poseStack.scale(base, base, base);
+	}
+
+	@Override
+	public void render(HemorathEntity entity, float yaw, float partial, PoseStack poses, MultiBufferSource buffers, int light) {
+		super.render(entity, yaw, partial, poses, buffers, light);
+		float bodyYaw = Mth.rotLerp(partial, entity.yBodyRotO, entity.yBodyRot);
+		float scale = HemorathVisualRules.scale(entity.isInPhase2());
+		HemorathAnimState.of(entity).attachments(offset(model.core(), bodyYaw, scale),
+				offset(model.claw(), bodyYaw, scale), offset(model.staffHead(), bodyYaw, scale));
+	}
+
+	private static Vec3 offset(Vector3f point, float yaw, float scale) {
+		point.set(-point.x * scale, (1.501F - point.y) * scale, point.z * scale);
+		return new Vec3(point.rotateY((180 - yaw) * Mth.DEG_TO_RAD));
 	}
 }

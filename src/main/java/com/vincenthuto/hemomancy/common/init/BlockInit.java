@@ -141,6 +141,11 @@ public class BlockInit {
 			"escharian_overgrowth_rim", () -> new EscharianOvergrowthBlock(BlockBehaviour.Properties.of()
 					.mapColor(MapColor.TERRACOTTA_WHITE).forceSolidOn().noOcclusion().dynamicShape().noLootTable()
 					.strength(3.5F, 9F).sound(SoundType.NETHERRACK)));
+	/** The Spawn Mother's brood tumor: rooted only by her mortar in an owned fight, so it has no item and no drop. */
+	public static final DeferredHolder<Block, Block> brood_tumor = MODELEDBLOCKS.register("brood_tumor",
+			() -> new BroodTumorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(0.3F)
+					.noLootTable().noOcclusion().lightLevel(state -> 6).sound(SoundType.HONEY_BLOCK)
+					.pushReaction(PushReaction.DESTROY)));
 	public static final DeferredHolder<Block, LiquidBlock> PHLEGETHONTIC_ICHOR_BLOCK = LIQUIDBLOCKS.register(
 			"phlegethontic_ichor_block", () -> new com.vincenthuto.hemomancy.common.block.harbinger.PhlegethonticIchorBlock(
 					FluidInit.PHLEGETHONTIC_ICHOR.get(), BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
@@ -956,7 +961,7 @@ public class BlockInit {
 			"sanguine_conduit", "sanguine_conduit");
 	private static final Set<String> ITEMLESS_BLOCKS = Set.of("attached_gourd_stem", "filler_block",
 			"warp_chair_filler", "abocipher_emitter", "qliphoth_bloom",
-			"escharian_overgrowth", "escharian_overgrowth_rim");
+			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor");
 	private static final Set<String> HIDDEN_BLOCK_ITEMS = Set.of("active_befouling_ash_trail",
 			"active_smouldering_ash_trail", "engram_block");
 

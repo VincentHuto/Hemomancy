@@ -63,7 +63,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "6";
+    public static final String PROTOCOL_VERSION = "11";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -144,6 +144,10 @@ public class PacketHandler {
                 PacketSyncChamberOfWill.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketSyncVesperFightScene.TYPE,
                 PacketSyncVesperFightScene.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.boss.BossBarFramePacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.boss.BossBarFramePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.boss.BossScenePacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.boss.BossScenePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketSyncMycophantFightScene.TYPE,
                 PacketSyncMycophantFightScene.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketMycophantIntro.TYPE,

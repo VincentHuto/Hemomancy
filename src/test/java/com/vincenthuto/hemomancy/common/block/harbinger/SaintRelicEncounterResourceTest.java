@@ -10,7 +10,7 @@ public final class SaintRelicEncounterResourceTest {
 
 	private static final Relic[] RELICS = {
 			new Relic("saint_relic_hemorath", "HEMORATH", "Hemorath's Rib", "minecraft:bone",
-					"hemomancy:vivacious_enzyme", "hemomancy:ruinous_enzyme"),
+					"hemomancy:vivacious_enzyme", "hemomancy:ferric_enzyme"),
 			new Relic("saint_relic_seraphae", "SERAPHAE", "Seraphae's Bound Eye", "minecraft:chain",
 					"hemomancy:incandescent_enzyme", "hemomancy:neurotic_enzyme"),
 			new Relic("saint_relic_putriciel", "PUTRICIEL", "Putriciel's Blighted Heart",

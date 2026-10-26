@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossIntroWindow;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonCombatRules.Move;
 import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -56,7 +59,8 @@ public final class NaeglerophaeonEntity extends Monster {
     private static final EntityDataAccessor<Boolean> ENRAGED = SynchedEntityData.defineId(NaeglerophaeonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DRAINED_STATE = SynchedEntityData.defineId(NaeglerophaeonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Vector3f> MOVE_VECTOR = SynchedEntityData.defineId(NaeglerophaeonEntity.class, EntityDataSerializers.VECTOR3);
-    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.naeglerophaeon", BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
+    private final BossIntroWindow intro = new BossIntroWindow(NaeglerophaeonCombatRules.INTRO_TICKS);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.naeglerophaeon", BossPresentationIds.FRAME_NAEGLEROPHAEON, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
     private final NaeglerophaeonGripPart[] parts = {new NaeglerophaeonGripPart(this)};
     private BlockPos mindOrigin;
     private long mindSeed;
@@ -192,7 +196,7 @@ public final class NaeglerophaeonEntity extends Monster {
     @Override public boolean isPickable() { return super.isPickable() && animationPhase()!=NERVE_TRANSIT; }
     @Override public boolean isInvulnerableTo(DamageSource source) {
         int state=animationPhase();
-        return super.isInvulnerableTo(source) || (state==NERVE_TRANSIT || state==TRANSITION)
+        return super.isInvulnerableTo(source) || (intro.active() || state==NERVE_TRANSIT || state==TRANSITION)
                 && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
     }
     /** Health never skips the Overload finale and cannot reach zero during it. */
@@ -225,6 +229,7 @@ public final class NaeglerophaeonEntity extends Monster {
         if (!(level() instanceof ServerLevel server) || !isAlive()) return;
         if (server.getDifficulty()==Difficulty.PEACEFUL) { release(); discard(); return; }
         bossBar.trackHealth(this);
+        if (intro.active()) { tickIntro(server); return; }
         if (mindOrigin!=null && tickCount%40==0) VagrantMindEncounterData.get(server).position(mindOrigin,getUUID(),blockPosition());
         tickCooldowns();
         tickPendingSparks(server);
@@ -729,6 +734,34 @@ public final class NaeglerophaeonEntity extends Monster {
         } else if(pendingGap==null) pendingGap=gap;
     }
 
+    // ---- Opening ----
+    /** Spawned gathering: hidden inside its node until it comes out, untouchable, its bar shown when it starts hunting. */
+    public void beginIntro() {
+        intro.begin();
+        setInvisible(true);
+        bossBar.setVisible(false);
+    }
+    private void tickIntro(ServerLevel server) {
+        int t=intro.elapsed();
+        stopMoving();
+        if(t<NaeglerophaeonCombatRules.INTRO_EMERGE_AT && t%6==0) NaeglerophaeonEffects.coil(server,core());
+        if(t==NaeglerophaeonCombatRules.INTRO_EMERGE_AT) {
+            setInvisible(false);
+            NaeglerophaeonEffects.blink(server,core().subtract(0,1.5,0),core());
+            phase(NERVE_EMERGE);
+        }
+        if(t>NaeglerophaeonCombatRules.INTRO_EMERGE_AT && level() instanceof ServerLevel) {
+            Player watcher=level().getNearestPlayer(this,48);
+            if(watcher!=null) face(watcher.getEyePosition().subtract(core()));
+        }
+        if(t==NaeglerophaeonCombatRules.INTRO_DISCHARGE_AT) NaeglerophaeonEffects.transition(server,core());
+        if(intro.tick()) {
+            setInvisible(false);
+            bossBar.setVisible(true);
+            phase(IDLE);
+        }
+    }
+
     // ---- Stage transitions ----
     private void beginTransition(ServerLevel server) {
         release();
@@ -738,6 +771,7 @@ public final class NaeglerophaeonEntity extends Monster {
         stopMoving();
         phase(TRANSITION);
         NaeglerophaeonEffects.transition(server,core());
+        BossScenes.play(this,BossPresentationIds.SCENE_NAEGLEROPHAEON_TRANSITION_CARD);
     }
     private void tickTransition(ServerLevel server,long age) {
         stopMoving();
@@ -1097,6 +1131,7 @@ public final class NaeglerophaeonEntity extends Monster {
         tag.putLong("MindSeed",mindSeed); tag.putInt("ZapCooldown",zapCooldown); tag.putInt("GrabCooldown",grabCooldown);
         tag.putLongArray("MindNodes",nodes.stream().mapToLong(BlockPos::asLong).toArray());
         tag.putBoolean("Enraged",enraged); tag.putBoolean("Overloading",overloading); tag.putBoolean("Drained",drained);
+        intro.save(tag,"Intro");
     }
     @Override public void readAdditionalSaveData(CompoundTag tag) {
         // Stage flags first: LivingEntity restores health through setHealth, which honours them.
@@ -1117,6 +1152,11 @@ public final class NaeglerophaeonEntity extends Monster {
         if(drained) { twitchTicks=20; phase(DRAINED); }
         else if(overloading) { overloadCenter=findCenter(); phase(ASCEND); }
         else phase(IDLE);
+        intro.load(tag,"Intro");
+        if(intro.active()) {
+            bossBar.setVisible(false);
+            setInvisible(intro.elapsed()<NaeglerophaeonCombatRules.INTRO_EMERGE_AT);
+        }
     }
     /** Minds saved before node lists were persisted regenerate the same deterministic web. */
     private static List<BlockPos> generatedNodes(BlockPos origin,long seed) {

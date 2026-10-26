@@ -10,6 +10,9 @@ public final class NaeglerophaeonCombatRules {
 	public static final float OVERLOAD_FRACTION = .10F;
 	public static final float OVERLOAD_FLOOR_FRACTION = .01F;
 
+	/** Its opening: lightning gathers in the node, it comes out of it at {@link #INTRO_EMERGE_AT}, and hunts once it ends. */
+	public static final int INTRO_TICKS = 70, INTRO_EMERGE_AT = 30, INTRO_DISCHARGE_AT = 50;
+
 	public static final float ZAP_DAMAGE = 4, DISCHARGE_DAMAGE = 8, LUNGE_DAMAGE = 6, LASH_DAMAGE = 5,
 			SPARK_DAMAGE = 2.5F, CONDUCT_DAMAGE = 4, NOVA_DAMAGE = 7, HOMING_DAMAGE = 3, DRAIN_DAMAGE = 1;
 	public static final double LASH_RADIUS = 5, NOVA_RADIUS = 10, CONDUCT_REACH = 1.5;

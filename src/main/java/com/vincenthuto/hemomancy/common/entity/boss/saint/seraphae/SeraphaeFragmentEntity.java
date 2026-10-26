@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -112,10 +111,7 @@ public class SeraphaeFragmentEntity extends Monster {
 					player.hurtMarked = true;
 				}
 			}
-			// Ambient particles
-			server.sendParticles(ParticleTypes.END_ROD,
-					this.getX(), this.getY() + 0.5, this.getZ(),
-					4, 0.3, 0.4, 0.3, 0.02);
+
 		}
 	}
 
@@ -142,14 +138,17 @@ public class SeraphaeFragmentEntity extends Monster {
 			}
 		}
 		if (this.level() instanceof ServerLevel server) {
-			server.sendParticles(ParticleTypes.FLASH,
-					this.getX(), this.getY() + 0.5, this.getZ(),
-					1, 0.0, 0.0, 0.0, 0.0);
-			server.sendParticles(ParticleTypes.END_ROD,
-					this.getX(), this.getY() + 0.5, this.getZ(),
-					20, 0.5, 0.5, 0.5, 0.08);
+			SeraphaeEffects.burst(server, this.position().add(0, .5, 0), SeraphaeVisualRules.HIT, .7F);
 		}
 		super.die(source);
+	}
+
+	@Override
+	protected void tickDeath() {
+		// Containment already emits its authored burst. Vanilla event 60 would add a mob-poof cloud.
+		if (++this.deathTime >= 20 && !this.level().isClientSide && !this.isRemoved()) {
+			this.remove(RemovalReason.KILLED);
+		}
 	}
 
 	/* ---- persistence / serialisation ---- */

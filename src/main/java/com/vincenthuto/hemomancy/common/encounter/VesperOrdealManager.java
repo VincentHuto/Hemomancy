@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -90,7 +92,7 @@ public final class VesperOrdealManager {
 		player.changeDimension(new DimensionTransition(arenaLevel, destination, Vec3.ZERO,
 				180.0F, 0.0F, DimensionTransition.DO_NOTHING));
 		PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.activate(center));
-		spawnCrownedRefusal(arenaLevel, player, bloom.center().asLong(), bloom.bloomId(), center);
+		spawnCrownedRefusal(arenaLevel, player, bloom.center().asLong(), bloom.bloomId(), center, true);
 		player.displayClientMessage(Component.translatable("message.hemomancy.vesper_ordeal_manager.strike_the_exposed_throne_anchors_when").withStyle(ChatFormatting.DARK_PURPLE), false);
 		return true;
 	}
@@ -260,14 +262,17 @@ public final class VesperOrdealManager {
 		return persisted;
 	}
 
+	/** {@code arriving} plays his arrival: entering the ordeal, not a respawn after a reconnect. */
 	private static void spawnCrownedRefusal(ServerLevel level, ServerPlayer owner, long bloomOrigin,
-			UUID bloomId, BlockPos center) {
+			UUID bloomId, BlockPos center, boolean arriving) {
 		VesperTheCrownedRefusalEntity vesper = EntityInit.vesper_crowned_refusal.get().create(level);
 		if (vesper == null) return;
 		vesper.setOrdeal(owner.getUUID(), bloomOrigin, bloomId);
 		vesper.moveTo(center.getX() + 0.5, center.getY() + 1.0, center.getZ() - 8.5, 0.0F, 0.0F);
 		vesper.setTarget(owner);
-		level.addFreshEntity(vesper);
+		if (arriving) vesper.beginArrival();
+		if (level.addFreshEntity(vesper) && arriving)
+			BossScenes.play(vesper, BossPresentationIds.SCENE_VESPER_CROWNED_REFUSAL);
 	}
 
 	private static void reconcileArenaBoss(ServerLevel level, ServerPlayer owner, BlockPos center) {
@@ -282,7 +287,7 @@ public final class VesperOrdealManager {
 				spawnCrownedRefusal(level, owner,
 						owner.getPersistentData().getLong(ACTIVE_BLOOM_KEY),
 						owner.getPersistentData().hasUUID(ACTIVE_BLOOM_ID_KEY)
-								? owner.getPersistentData().getUUID(ACTIVE_BLOOM_ID_KEY) : null, center);
+								? owner.getPersistentData().getUUID(ACTIVE_BLOOM_ID_KEY) : null, center, false);
 			}
 			default -> {
 			}

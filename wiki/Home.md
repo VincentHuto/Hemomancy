@@ -43,7 +43,7 @@ Players choose between two mutually exclusive paths:
 - **[[Lore and Story]]**: The Fungal Entity, factions, characters, and moral themes
 - **[[Factions]]**: The Hematic Order, The Unstained, and Our Lady of Still Waters
 - **[[The Qliphoth]]**: The Tree of Death and fungal communion
-- **[[Saints and Encounters]]**: Hemorath, the Chain Saint, Annetta Knowles, and trial chambers
+- **[[Saints and Encounters]]**: the four Saints (Hemorath, Seraphae, Putriciel and Velorum), Annetta Knowles, and the planned trial chambers
 
 ### For Modpack Creators
 - **[[Mod Compatibility]]**: Required dependencies, JEI support, and dormant MnA/Curios notes
@@ -81,7 +81,7 @@ Harbingers advance through **eight degrees** of the Hematic Order:
 
 ### Living World
 - **Fungal Biomes**: Find the Sporecrown Thicket, Hyphal Spires, and Fungal Gardens.
-- **Dynamic Structures**: Search Harbinger Outposts, Mausoleums, and hidden trial chambers.
+- **Dynamic Structures**: Search Harbinger Outposts now; Saint mausoleums and trial chambers are planned.
 - **Blood Moons**: Survive a fungal surge while the Pale Lady mounts a costly containment response.
 - **Unique Mobs**: Fight Sanguine Thralls, Morphlings, Blood Constructs, and worse.
 

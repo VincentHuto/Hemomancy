@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.layer.mob.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.MycophantAnimState;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.MycophantModel;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,7 +23,7 @@ public class MycophantSacLayer extends RenderLayer<MycophantEntity, MycophantMod
 	@Override
 	public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, MycophantEntity entity, float limbSwing,
 			float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-		float level = Math.min(1.0F, 0.75F + entity.getGlowLevel() * 0.25F);
+		float level = Math.min(1.0F, 0.75F + MycophantAnimState.of(entity).glow(partialTick) * 0.25F);
 		int color = FastColor.ARGB32.colorFromFloat(1.0F, level, level, level);
 		this.getParentModel().renderSacShell(poseStack, buffer.getBuffer(SAC), packedLight,
 				LivingEntityRenderer.getOverlayCoords(entity, 0.0F), color);

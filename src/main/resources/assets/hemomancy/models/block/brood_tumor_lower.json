@@ -1,0 +1,41 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "hemomancy:block/brood_tumor_side",
+    "side": "hemomancy:block/brood_tumor_side",
+    "bottom": "hemomancy:block/brood_tumor_bottom"
+  },
+  "elements": [
+    {
+      "from": [1, 0, 1],
+      "to": [15, 16, 15],
+      "faces": {
+        "north": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "east": { "texture": "#side" },
+        "west": { "texture": "#side" },
+        "down": { "texture": "#bottom", "cullface": "down" }
+      }
+    },
+    {
+      "from": [0, 2, 2],
+      "to": [16, 12, 14],
+      "faces": {
+        "east": { "texture": "#side" },
+        "west": { "texture": "#side" },
+        "up": { "texture": "#side" },
+        "down": { "texture": "#bottom" }
+      }
+    },
+    {
+      "from": [2, 2, 0],
+      "to": [14, 12, 16],
+      "faces": {
+        "north": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "up": { "texture": "#side" },
+        "down": { "texture": "#bottom" }
+      }
+    }
+  ]
+}

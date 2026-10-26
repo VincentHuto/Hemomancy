@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
@@ -40,12 +39,15 @@ final class MycophantMoves {
 			case RUSHING_EMBRACE, FUSION_EMBRACE -> embrace(level, boss, controller, attack, tick, stage, commit, quarry);
 			case SIPHON_FEED -> siphon(level, boss, controller, tick, stage, commit, quarry);
 			case PLUCK -> pluck(level, boss, stage, commit, quarry);
-			case CLAW_RAKE -> rake(level, boss, stage, tick, commit, quarry);
 			case BROOD_CALL -> brood(level, boss, stage, tick, commit, quarry);
 			case NECTAR_SURGE -> surge(level, boss, stage, tick, commit);
 			case WING_GUARD -> guard(level, boss, controller, stage, tick, commit);
 			case WING_SWEEP -> sweep(level, boss, stage, tick, commit, quarry);
 			case PULP_BLOOM -> bloom(level, boss, stage, tick, commit, quarry);
+			case RAKE_STRING, BROOD_SETTLE, CLAW_PIN, TAIL_LASH, HAND_SWEEP -> MycophantClawMoves.tick(level, boss, controller, attack, tick, stage, commit, quarry);
+			case VENT_BLOOM, SIPHON_SPIT, SPORE_MORTAR, NURSING -> MycophantRangedMoves.tick(level, boss, controller, attack, tick, stage, commit, quarry);
+			case HYPHAE_LANCES, LATTICE_NET, GAZE -> MycophantWingMoves.tick(level, boss, controller, attack, tick, stage, commit, quarry);
+			case LAST_BROOD -> MycophantLastBrood.tick(level, boss, controller, attack, tick, stage, commit, quarry);
 			case NONE -> { }
 		}
 	}
@@ -142,7 +144,7 @@ final class MycophantMoves {
 		BossTelegraphs.glow(level, target.position().add(0.0D, 1.1D, 0.0D), CRIMSON, 3, 0.25D);
 	}
 
-	// ------------------------------------------------------------------ hand, claws, vents, wings, pulp
+	// ------------------------------------------------------------------ hand, brood, vents, wings, pulp (the claws are MycophantClawMoves)
 
 	private static void pluck(ServerLevel level, MycophantEntity boss, BossMoveTimeline.Stage stage, boolean commit,
 			@Nullable LivingEntity quarry) {
@@ -158,25 +160,6 @@ final class MycophantMoves {
 		quarry.setDeltaMovement(toward.x, 0.5D, toward.z);
 		quarry.hurtMarked = true;
 		BossTelegraphs.bloodCells(level, quarry.position().add(0.0D, 1.0D, 0.0D), CRIMSON, 10, 0.4D, 0.1D);
-	}
-
-	private static void rake(ServerLevel level, MycophantEntity boss, BossMoveTimeline.Stage stage, int tick,
-			boolean commit, @Nullable LivingEntity quarry) {
-		if (stage == BossMoveTimeline.Stage.WINDUP) {
-			if (tick % 4 == 0) BossTelegraphs.cone(level, boss.position(), boss.forward(), 6.0D, 80.0D, CRIMSON);
-			return;
-		}
-		if (!commit) return;
-		Vec3 claw = boss.bodyPoint(1.6D, 0.6D, 3.2D);
-		PacketHandler.sendClawSlash(claw, boss.forward(), CRIMSON, false, 2.2F, 48.0D, level);
-		BossTelegraphs.bloodCells(level, boss.bodyPoint(0.0D, 0.1D, 3.8D), CRIMSON, 18, 1.4D, 0.12D);
-		level.playSound(null, boss.blockPosition(), SoundInit.ENTITY_MYCOPHANT_HURT_OTHER.get(), SoundSource.HOSTILE, 1.4F, 0.8F);
-		if (quarry != null && quarry.distanceTo(boss) <= 6.5D && boss.angleTo(quarry.position()) <= 40.0D) {
-			if (!strike(boss, quarry, 10.0F)) return;
-			Vec3 push = quarry.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D).normalize().scale(1.0D);
-			quarry.push(push.x, 0.35D, push.z);
-			quarry.hurtMarked = true;
-		}
 	}
 
 	private static void brood(ServerLevel level, MycophantEntity boss, BossMoveTimeline.Stage stage, int tick,
@@ -271,7 +254,7 @@ final class MycophantMoves {
 	}
 
 	/** Lands a blow; true only if the quarry is still here to be pushed (a lethal blow expels an owner at once). */
-	private static boolean strike(MycophantEntity boss, LivingEntity quarry, float damage) {
+	static boolean strike(MycophantEntity boss, LivingEntity quarry, float damage) {
 		quarry.hurt(boss.damageSources().mobAttack(boss), damage);
 		return quarry.isAlive() && quarry.level() == boss.level();
 	}

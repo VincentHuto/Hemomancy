@@ -319,24 +319,35 @@ A massive fungal tree structure summoned at high degree.
 
 ### The Saints
 
-These are powerful entities tied to specific trials. Two are implemented:
+Four ancient hemomancers whose blood outgrew their bodies. Their own people sealed them in tombs, and the Hematic Order inherited and keeps those tombs. Sainthood marks what the blood became, not virtue. All four have prototype encounters behind the post-release Saints boundary, and none of them can be killed: every fight returns the Saint to its sarcophagus. See [Saints and Encounters](Saints-and-Encounters.md) for how they are found.
 
-**Saint Hemorath**
-- First Saint prototype, retained as WIP for the post-release Saints update
-- Trial chamber encounter
-- Guardian of blood secrets
-- Rewards unique items and lore
+**Hemorath, the First Saint** (Animus + Ferric)
+- The first Harbinger, older than the Order's structure and Erythravane's Fane. He learned to harden the iron in his blood and to draw blood from other creatures, then fed until the absorption overloaded his body
+- His flesh failed, but his marrow never stopped producing blood. What remains is a desiccated, skeletal saint who pulls in the blood of anything living nearby and cannot keep it
+- A hunched skeletal saint with exposed ribs, a rusted spiked halo, face-obscuring cords, a chained iron staff, and trailing ivory/crimson vestments
+- His reaching claw draws debt along blood-threaded iron links. Pressure opens the individual ribs, and overload folds the emptied skeleton down into its tattered robes.
+- Overloaded, he is exsanguinated again; in time the marrow fills him and he reforms
 
-**The Chain Saint**
-- Second Saint, designed but WIP
-- Associated with binding and covenant
-- Trial chamber encounter planned
-- Unique mechanics involving chains
+**Seraphae, the Chain Saint** (Lux + Ductilis)
+- A village nurse whose blood shone white and healed wounds and paralysed nerves. Nobles and physicians chained her and bled her for years to keep the dying alive
+- The exploited gift turned into violent, indiscriminate growth and convulsing nerves. Her own people, unable to kill her, chained her in a mausoleum with containment anchors
+- A saintly female figure with broad, tattered feathered wings, ruined flowing vestments, a halo, and visible chains
+- Her wings recoil and spread as radiance fractures into feather wisps. During condensing, lit anchor seals draw braided tethers to her wrists and the wings fold inward.
+- She is immortal and can only be contained again, through fragments, anchors, and condensing windows
 
-**Saints 3 & 4**
-- Planned but not yet designed
-- Will represent other aspects of hemomancy
-- More trial chambers to discover
+**Putriciel, the Befouled Saint** (Mortem + Flammeus)
+- A wandering purifier who burned infection, Erythrocytic Mycelium included, out of people, relics and land with censers and an open, offering hand
+- Every cleansing drew corruption into his own blood. Eschar wounds and shelf fungus followed until the rot overran him. The man was malformed into an agender monstrosity, and Putriciel is "they" now
+- A walking reliquary with an open crown, hollow face, fungal shelves, amber spore sacs, and ruined crimson/ivory vestments
+- Spore sacs swell before the rot nova; censer trails and the fungal mantle follow their motion. Five palm-rooted offering nodes light with absolution, while the final release leaves fading spores and threads.
+- Five absolutions purify them, and they rest for a time before the rot reclaims them
+
+**Velorum, Saint of the Endless Hour** (Congeatio + Tenebris)
+- An ascetic who taught that bodily need causes suffering. He learned to still his own blood, then forced that stillness on his congregation, who stayed conscious inside their frozen bodies
+- Lucid and certain, he sits in a frozen sanctum among hundreds of preserved devotees and calls every one of them a success
+- A tall veiled saint of shadow and frost, with a spiked halo, midnight robes, draped silver chains, a raised skeletal claw, and an ice-lit lantern staff. Pale shredded sleeves and a frost-edged train frame the dark vestments.
+- Frost gathers through fractured ground seams and releases in sharp blue-black ice. Lanterns, chains and the torn veil follow the invocation; wounds bow his head while Silence draws inward through the claw.
+- Defeat only returns him to his dormant stillness
 
 ---
 
@@ -405,7 +416,9 @@ The Spawn Mother: the hivemind's brood cultivator and the mother of every Erythr
 **Encounter:**
 - You wake bound in her Morphic Nursery as she tends her brood, back turned; she turns, roars and rushes to embrace you
 - First she tries to take you back like a stray child: holds against her gestation sac, a feeding siphon, brood that herd you to her
+- She answers wherever you stand: claws and a crushing belly up close, a tail and spore vents behind her, spit, egg mortars and a nursed brood at range
 - At half health her skull splits over a flowering face of eyes and hyphae wings grow: she tries to join with you as an equal
+- Her wings drive lances and nets, her many eyes sweep a burning gaze, and near the end she opens her gestation sac to take you in
 - Survive every claim and she yields, offers you her Tendril, and the hive names you its heir
 
 At Apotheos, Harbingers face a choice:

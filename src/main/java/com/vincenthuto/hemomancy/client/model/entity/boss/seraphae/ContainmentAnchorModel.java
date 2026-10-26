@@ -61,7 +61,8 @@ public class ContainmentAnchorModel extends EntityModel<ContainmentAnchorEntity>
     @Override
     public void setupAnim(ContainmentAnchorEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
                           float netHeadYaw, float headPitch) {
-        this.crown.yRot = entity.isActive() ? ageInTicks * 0.18F : 0.0F;
+        this.crown.yRot = ageInTicks * .025F;
+        this.crown.y = 5 + (float) Math.sin(ageInTicks * .09F) * (entity.isActive() ? .35F : .1F);
         this.chains.yRot = -this.crown.yRot * 0.5F;
     }
 
