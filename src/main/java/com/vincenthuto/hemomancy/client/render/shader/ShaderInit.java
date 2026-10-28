@@ -114,6 +114,7 @@ public class ShaderInit {
     public static ShaderHolder MANIPULATION_ANIMUS_MODEL = new ShaderHolder(Hemomancy.rloc("world/manipulation_animus_model"),
             DefaultVertexFormat.NEW_ENTITY, "HemoTime", "ColorModulator");
     public static ShaderHolder MANIPULATION_MORTEM = thermal("mortem");
+    public static ShaderHolder MANIPULATION_PUTRICIEL_ROT = thermal("putriciel_rot");
     public static ShaderHolder MANIPULATION_INFECTION = new ShaderHolder(Hemomancy.rloc("world/manipulation_infection"),
             DefaultVertexFormat.NEW_ENTITY, "HemoTime", "ColorModulator");
     public static ShaderHolder MANIPULATION_FERRIC = thermal("ferric");
@@ -231,6 +232,7 @@ public class ShaderInit {
         registerShader(event, MANIPULATION_ANIMUS.createInstance(provider));
         registerShader(event, MANIPULATION_ANIMUS_MODEL.createInstance(provider));
         registerShader(event, MANIPULATION_MORTEM.createInstance(provider));
+        registerShader(event, MANIPULATION_PUTRICIEL_ROT.createInstance(provider));
         registerShader(event, MANIPULATION_INFECTION.createInstance(provider));
         registerShader(event, MANIPULATION_FERRIC.createInstance(provider));
         registerShader(event, MANIPULATION_DUCTILIS.createInstance(provider));

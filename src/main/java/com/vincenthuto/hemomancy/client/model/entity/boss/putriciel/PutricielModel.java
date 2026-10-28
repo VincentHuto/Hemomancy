@@ -170,6 +170,18 @@ public class PutricielModel<T extends PutricielEntity> extends HierarchicalModel
 	protected final ModelPart rootTrail5;
 	protected final ModelPart rootTrail6;
 	protected final ModelPart rootTrail7;
+	protected final ModelPart growthMushroom0;
+	protected final ModelPart growthMushroom0Cap;
+	protected final ModelPart rotDrip0;
+	protected final ModelPart growthMushroom1;
+	protected final ModelPart growthMushroom1Cap;
+	protected final ModelPart rotDrip1;
+	protected final ModelPart growthMushroom2;
+	protected final ModelPart growthMushroom2Cap;
+	protected final ModelPart rotDrip2;
+	protected final ModelPart growthMushroom3;
+	protected final ModelPart growthMushroom3Cap;
+	protected final ModelPart rotDrip3;
 
 	public PutricielModel(ModelPart root) {
 		this.root = root.getChild("root");
@@ -320,6 +332,18 @@ public class PutricielModel<T extends PutricielEntity> extends HierarchicalModel
 		this.rootTrail5 = this.groundRoots.getChild("root_trail_5");
 		this.rootTrail6 = this.groundRoots.getChild("root_trail_6");
 		this.rootTrail7 = this.groundRoots.getChild("root_trail_7");
+		this.growthMushroom0 = this.backColony.getChild("growth_mushroom_0");
+		this.growthMushroom0Cap = this.growthMushroom0.getChild("growth_mushroom_0_cap");
+		this.rotDrip0 = this.backColony.getChild("rot_drip_0");
+		this.growthMushroom1 = this.backColony.getChild("growth_mushroom_1");
+		this.growthMushroom1Cap = this.growthMushroom1.getChild("growth_mushroom_1_cap");
+		this.rotDrip1 = this.backColony.getChild("rot_drip_1");
+		this.growthMushroom2 = this.backColony.getChild("growth_mushroom_2");
+		this.growthMushroom2Cap = this.growthMushroom2.getChild("growth_mushroom_2_cap");
+		this.rotDrip2 = this.backColony.getChild("rot_drip_2");
+		this.growthMushroom3 = this.backColony.getChild("growth_mushroom_3");
+		this.growthMushroom3Cap = this.growthMushroom3.getChild("growth_mushroom_3_cap");
+		this.rotDrip3 = this.backColony.getChild("rot_drip_3");
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -1094,6 +1118,58 @@ public class PutricielModel<T extends PutricielEntity> extends HierarchicalModel
 				.texOffs(149, 174).addBox(-0.5F, -0.25F, 0.0F, 1.0F, 0.5F, 4.0F, new CubeDeformation(0.0F))
 				.texOffs(160, 174).addBox(-0.75F, -0.25F, 2.5F, 1.5F, 0.5F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.0F, 0.0F, 1.75F, 0.0F, 5.4978F, 0.0F));
 
+		PartDefinition growthMushroom0 = backColony.addOrReplaceChild("growth_mushroom_0", CubeListBuilder.create()
+				.texOffs(168, 174).addBox(-0.25F, -3.0F, -0.25F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(-3.0F, -5.0F, 4.0F));
+
+		growthMushroom0.addOrReplaceChild("growth_mushroom_0_cap", CubeListBuilder.create()
+				.texOffs(171, 174).addBox(-1.5F, -0.5F, -1.25F, 3.0F, 0.75F, 2.5F, new CubeDeformation(0.0F))
+				.texOffs(183, 174).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 0.5F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(192, 174).addBox(-1.0F, 0.25F, -1.0F, 2.0F, 0.25F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(201, 174).addBox(-0.5F, 0.25F, 0.25F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -3.0F, 0.0F));
+
+		backColony.addOrReplaceChild("rot_drip_0", CubeListBuilder.create()
+				.texOffs(206, 174).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 3.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(209, 174).addBox(-0.5F, 3.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(-3.0F, -4.0F, 4.0F));
+
+		PartDefinition growthMushroom1 = backColony.addOrReplaceChild("growth_mushroom_1", CubeListBuilder.create()
+				.texOffs(214, 174).addBox(-0.25F, -3.5F, -0.25F, 0.5F, 3.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(3.0F, -2.0F, 4.0F));
+
+		growthMushroom1.addOrReplaceChild("growth_mushroom_1_cap", CubeListBuilder.create()
+				.texOffs(217, 174).addBox(-1.5F, -0.5F, -1.25F, 3.0F, 0.75F, 2.5F, new CubeDeformation(0.0F))
+				.texOffs(229, 174).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 0.5F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(238, 174).addBox(-1.0F, 0.25F, -1.0F, 2.0F, 0.25F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(247, 174).addBox(-0.5F, 0.25F, 0.25F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -3.5F, 0.0F));
+
+		backColony.addOrReplaceChild("rot_drip_1", CubeListBuilder.create()
+				.texOffs(252, 174).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 4.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(0, 181).addBox(-0.5F, 4.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(3.0F, -1.0F, 4.0F));
+
+		PartDefinition growthMushroom2 = backColony.addOrReplaceChild("growth_mushroom_2", CubeListBuilder.create()
+				.texOffs(5, 181).addBox(-0.25F, -4.0F, -0.25F, 0.5F, 4.0F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(-4.0F, 3.0F, 3.5F));
+
+		growthMushroom2.addOrReplaceChild("growth_mushroom_2_cap", CubeListBuilder.create()
+				.texOffs(8, 181).addBox(-1.5F, -0.5F, -1.25F, 3.0F, 0.75F, 2.5F, new CubeDeformation(0.0F))
+				.texOffs(20, 181).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 0.5F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(29, 181).addBox(-1.0F, 0.25F, -1.0F, 2.0F, 0.25F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(38, 181).addBox(-0.5F, 0.25F, 0.25F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.0F, 0.0F));
+
+		backColony.addOrReplaceChild("rot_drip_2", CubeListBuilder.create()
+				.texOffs(43, 181).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 5.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(46, 181).addBox(-0.5F, 5.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(-4.0F, 4.0F, 3.5F));
+
+		PartDefinition growthMushroom3 = backColony.addOrReplaceChild("growth_mushroom_3", CubeListBuilder.create()
+				.texOffs(51, 181).addBox(-0.25F, -4.5F, -0.25F, 0.5F, 4.5F, 0.5F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, 6.0F, 4.0F));
+
+		growthMushroom3.addOrReplaceChild("growth_mushroom_3_cap", CubeListBuilder.create()
+				.texOffs(54, 181).addBox(-1.5F, -0.5F, -1.25F, 3.0F, 0.75F, 2.5F, new CubeDeformation(0.0F))
+				.texOffs(66, 181).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 0.5F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(75, 181).addBox(-1.0F, 0.25F, -1.0F, 2.0F, 0.25F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(84, 181).addBox(-0.5F, 0.25F, 0.25F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.5F, 0.0F));
+
+		backColony.addOrReplaceChild("rot_drip_3", CubeListBuilder.create()
+				.texOffs(89, 181).addBox(-0.25F, 0.0F, -0.25F, 0.5F, 6.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(92, 181).addBox(-0.5F, 6.0F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, 7.0F, 4.0F));
+
 		return LayerDefinition.create(meshdefinition, 256, 256);
 	}
 
@@ -1108,6 +1184,16 @@ public class PutricielModel<T extends PutricielEntity> extends HierarchicalModel
         motion.update(entity, AnimationTime.partialTick());
         pose(entity.getVisualState(), entity.isAbsolved(), entity.getAbsolutionCount(), motion.visual(),
                 motion.window(), motion.nova(), motion.release(), age, yaw, pitch, stride, movement, entity.getAttackAnim(AnimationTime.partialTick()));
+        var secondary = com.vincenthuto.hemomancy.common.entity.boss.saint.SaintAttackPattern.byId(entity.getSecondaryMove());
+        if (secondary != null) {
+            var cast = secondary.motion(entity.secondaryTime(AnimationTime.partialTick()));
+            leftArm.yRot += cast.gather() * .5F - cast.strike() * 1.2F;
+            rightArm.xRot -= cast.gather() * .65F;
+            rightForearm.xRot -= cast.strike() * .4F;
+            backColony.xRot += cast.gather() * .08F - cast.strike() * .15F;
+            staffChainLeft.zRot += cast.strike() * .35F;
+            staffChainRight.zRot -= cast.strike() * .3F;
+        }
     }
 
     void pose(int visual, boolean absolved, int count, float remaining, float age, float yaw, float pitch) {
@@ -1122,7 +1208,8 @@ public class PutricielModel<T extends PutricielEntity> extends HierarchicalModel
         float breath = Mth.sin(age * .065F);
         float gather = action.gather(), release = action.release(), offer = action.offering(), flinch = action.flinch();
         float swipe = Mth.sin(Mth.sqrt(attack) * Mth.PI);
-        chest.xRot += breath * .018F + gather * .23F - release * .3F + offer * .12F + flinch * .25F;
+        float cleansing = absolved ? (Mth.sin((80 - window) * .31F) + 1) * .5F * offer : 0;
+        chest.xRot += breath * .018F + gather * .23F - release * .3F + offer * .12F + flinch * .25F + cleansing * .07F;
         chest.zRot += Mth.sin(age * .13F) * gather * .025F - swipe * .12F;
         head.yRot += Mth.clamp(yaw, -25, 25) * Mth.DEG_TO_RAD;
         head.xRot += Mth.clamp(pitch, -20, 20) * Mth.DEG_TO_RAD + gather * .12F - release * .22F + offer * .15F + flinch * .22F;
@@ -1166,6 +1253,14 @@ public class PutricielModel<T extends PutricielEntity> extends HierarchicalModel
         leftMantle.xRot += Mth.sin(age * .07F) * .018F - release * .08F;
         rightMantle.xRot += Mth.sin(age * .07F + 1.4F) * .018F - release * .08F;
         backColony.xRot += Mth.sin(age * .06F) * .012F - release * .045F;
+        for (int i = 0; i < 4; i++) {
+            var colony = backColony.getChild("growth_mushroom_" + i);
+            float growth = 1 + gather * (.16F + i * .025F) - offer * .18F - cleansing * .12F;
+            colony.xScale = colony.zScale = growth;
+            colony.yScale = growth + Mth.sin(age * .045F + i) * .025F;
+            var drip = backColony.getChild("rot_drip_" + i);
+            drip.yScale = .8F + (Mth.sin(age * .08F - i * 1.3F) + 1) * .2F;
+        }
         for (int i = 0; i < 14; i++) {
             var strip = hips.getChild("robe_panel_" + i);
             strip.xRot += Mth.sin(age * .07F - i * .7F) * (.018F + movement * .025F)

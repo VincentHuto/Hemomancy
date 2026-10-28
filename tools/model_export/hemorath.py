@@ -200,6 +200,18 @@ def saint():
         r.part(name + '_bend', name, (0, 0, length - .5), (0, 15 if i % 2 else -15, 0))
         r.cube(name + '_bend', (-width / 2, -.25, 0, width, .5, 3.5), material)
         r.cube(name + '_bend', (-.5, -.25, 3.5, 1, .5, 1.5), material)
+    # Iron erupts through the skeleton in irregular scabs, never as a suit of armour.
+    for i, (parent, x, y, z) in enumerate((('left_arm', 0, 3, -1),
+            ('right_arm', 0, 5, -1), ('left_forearm', 0, 2, -.75),
+            ('right_forearm', 0, 5, -.75), ('left_shin', 0, 2, -.75),
+            ('right_shin', 0, 4, -.75), ('head', 2, -3, -1.75),
+            ('left_rib_2', 2, 0, -2.5), ('right_rib_5', -2, 0, -2.5))):
+        name = f'iron_growth_{i}'
+        r.part(name, parent, (x, y, z), (-12, 0, (i % 3 - 1) * 13))
+        r.cube(name, (-.75, -.75, -.25, 1.5, 2, .5), 'iron')
+        r.cube(name, (-.5, -1, -.5, 1, 1.25, .5), 'iron')
+        r.cube(name, (-.25, -2.75, -.5, .5, 2, .5), 'iron')
+        r.cube(name, (-.25, -3.5, -.5, .25, .75, .25), 'iron')
     world = kit.transforms(r)
     for part in r.parts:
         if 'shoulder_chain' in part['name'] and '_link_' not in part['name']:

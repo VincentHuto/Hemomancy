@@ -8925,5 +8925,17 @@
   "entity.hemomancy.temporary_coagulum": "Temporary Coagulum",
   "item.hemomancy.spawn_egg_phlegethosoma": "Phlegethosoma Spawn Egg",
   "boss.hemomancy.phlegethosoma.name": "Phlegethosoma",
-  "boss.hemomancy.phlegethosoma.epithet": "The Arterial Fluke"
+  "boss.hemomancy.phlegethosoma.epithet": "The Arterial Fluke",
+  "blood_source.hemomancy.hemorath_marrow_siphon": "Hemorath's marrow siphon",
+  "message.hemomancy.seraphae.growth_warning": "The wound is closed. Her light keeps growing. Leave her reach.",
+  "message.hemomancy.seraphae.excess_growth": "New nerves convulse beneath your skin.",
+  "message.hemomancy.velorum.stillness_pressure": "Stillness: %s%%. Keep moving; strike Velorum to break his concentration.",
+  "message.hemomancy.saint_pattern.iron_rake": "Iron Rake: step between the marked lanes.",
+  "message.hemomancy.saint_pattern.marrow_rupture": "Marrow Rupture: jump the outward blood wave.",
+  "message.hemomancy.saint_pattern.nerve_lance": "Nerve Lance: leave the marked line before it fires.",
+  "message.hemomancy.saint_pattern.regrowth_knot": "Regrowth Knot: her light has rooted here. Leave the circle.",
+  "message.hemomancy.saint_pattern.spore_garden": "Spore Garden: move clear of the three growing colonies.",
+  "message.hemomancy.saint_pattern.censer_sweep": "Censer Sweep: leave the fan before the rot lashes across it.",
+  "message.hemomancy.saint_pattern.frozen_advance": "Frozen Advance: step between the lanes or jump the approaching frost.",
+  "message.hemomancy.saint_pattern.shadow_cross": "Shadow Cross: move diagonally out of the marked arms."
 }

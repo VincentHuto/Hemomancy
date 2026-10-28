@@ -13,6 +13,11 @@ public final class SeraphaeEffects {
 
     private SeraphaeEffects() {}
 
+    public static void transfuse(ServerLevel level, Vec3 from, Vec3 to) {
+        ManipulationVisuals.burst(level, ManipulationVisuals.Form.SERAPHAE_RELIQUARY,
+                from, to, .6, SeraphaeVisualRules.BURST_TICKS, SeraphaeVisualRules.TRANSFUSION);
+    }
+
     public static void burst(ServerLevel level, Vec3 at, int kind, float radius) {
         int life = kind == SeraphaeVisualRules.SEALED ? SeraphaeVisualRules.SEAL_TICKS : SeraphaeVisualRules.BURST_TICKS;
         ManipulationVisuals.burst(level, ManipulationVisuals.Form.SERAPHAE_RELIQUARY, at, at, radius, life, kind);

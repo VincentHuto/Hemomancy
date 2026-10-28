@@ -23,12 +23,24 @@ Hallowed Residuum is the catalyst for the Saint's Canon Memory at the Somatic Lo
 
 No Saint can be killed. Every fight ends with the Saint returned to its tomb and the sarcophagus restored, closed and dormant. Each ending rolls the Saint's reward once: its Hallowed Residuum and one or two Sanguine Quintessence.
 
-- **Hemorath** feeds on the blood you lose near him, by wounds or by casting, and collects it as debt. The same blood fills him, so spend enough and he overloads and bursts. He is exsanguinated, not killed: his marrow never stops making blood, and in time he reforms.
-- **Seraphae** floods her chamber with burning light. Bind her fragments, light the containment anchors and strike while she condenses until she is chained again. She is immortal and can only be contained.
-- **Putriciel** releases rot novas, then briefly stills. Land five hits during those absolution windows. The fifth purifies them, and they rest for a time before the rot reclaims them.
-- **Velorum** roots you with frost, blinds you with darkness, hardens briefly after every hit, and drains blood when weakened. Defeat returns him to his dormant stillness.
+- **Hemorath** drains nearby blood and collects wounds and casting as debt. His stored blood leaks, so overload means feeding him faster than he empties. Watch the outer ring before his reaching siphon. He is exsanguinated, not killed: his marrow never stops making blood, and in time he reforms.
+- **Seraphae** heals wounds through luminous transfusions, then keeps growing tissue after the wound is closed. Leave her nerve reach before repeated excess growth causes convulsions. Dispersed nerve impulses arrive in regular waves. Bind her fragments, light the containment anchors and strike while she condenses until she is chained again.
+- **Putriciel** releases Withering rot novas without fire. During absolution, novas stop and cleansing flame pulses close to their body after a warning. Time five hits between those burning pulses. The fifth purifies them, and they rest for a time before the rot reclaims them.
+- **Velorum** builds stillness around players who stand near him; movement resists it. A landed strike can briefly interrupt his powers and release the pressure, with a cooldown before the next interruption. Outside that opening, frost, darkness, hit resistance and low-health blood drain preserve his attack rhythm. Defeat returns him to dormant stillness.
 
-Each Saint will later get its own full combat and visual overhaul; the current fights are the generic versions.
+The models now follow the reconciled lore: iron erupts through Hemorath's bones;
+Seraphae's wings branch into exposed luminous nerves; Putriciel carries growing
+fungal colonies and dripping olive rot, with cleansing flame during absolution;
+Velorum wears a plain dark hood and knotted monastic cord. The next attack pass adds Hemorath's leaking blood absorption and close siphon, Seraphae's healing and dangerous excess growth, Putriciel's close-range cleansing pulses, and Velorum's stillness pressure. Keep moving near Velorum; a landed strike can interrupt his powers briefly before the opening goes on cooldown. Trial chambers and a rescuable frozen congregation remain planned.
+
+## Secondary attacks
+
+Warnings commit to their first position or direction. Moving afterward does not drag the attack after you.
+
+- **Hemorath:** step between Iron Rake's three lanes; jump Marrow Rupture or leave its outer circle.
+- **Seraphae:** sidestep Nerve Lance and leave the circles where Regrowth Knots take root.
+- **Putriciel:** leave Spore Garden's three colonies and move behind Censer Sweep's forward fan. These rot attacks stop during cleansing.
+- **Velorum:** use Frozen Advance's lane gaps or jump its approaching fronts; leave Shadow Cross diagonally.
 
 ## Annetta Knowles
 

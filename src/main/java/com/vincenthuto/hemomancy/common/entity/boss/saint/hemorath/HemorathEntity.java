@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath;
 
 import java.util.UUID;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import net.minecraft.nbt.CompoundTag;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
@@ -78,6 +81,10 @@ public class HemorathEntity extends SaintTrialEntity {
 			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.INT);
 
 	private boolean overloaded;
+	private static final BloodAccounting.Source MARROW_SIPHON = BloodAccounting.Source.of("hemorath_marrow_siphon", Category.HAZARD, false, false);
+	private static final EntityDataAccessor<Integer> DATA_SIPHON_UNTIL = SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_SIPHON_RELEASE = SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.INT);
+	private int siphonAge;
 	private int overloadTicks;
 	/** Who burst him: they carry the reward when the overload ends. */
 	private Player overloadVictor;
@@ -128,6 +135,39 @@ public class HemorathEntity extends SaintTrialEntity {
 		builder.define(DATA_PHASE, 1);
 		builder.define(DATA_ABSORBED_BLOOD, 0.0F);
 		builder.define(DATA_VISUAL_TARGET, -1);
+		builder.define(DATA_SIPHON_UNTIL, HemorathSiphonRules.CYCLE);
+		builder.define(DATA_SIPHON_RELEASE, 0);
+	}
+
+	public int getSiphonUntil() { return entityData.get(DATA_SIPHON_UNTIL); }
+	public int getSiphonRelease() { return entityData.get(DATA_SIPHON_RELEASE); }
+
+	private void tickMarrowSiphon(ServerLevel server) {
+		entityData.set(DATA_ABSORBED_BLOOD, HemorathSiphonRules.leak(getAbsorbedBlood()));
+		int until = HemorathSiphonRules.CYCLE - ++siphonAge % HemorathSiphonRules.CYCLE;
+		entityData.set(DATA_SIPHON_UNTIL, until);
+		entityData.set(DATA_SIPHON_RELEASE, Math.max(0, getSiphonRelease() - 1));
+		boolean pulse = until == HemorathSiphonRules.CYCLE;
+		if (!pulse && siphonAge % HemorathSiphonRules.AURA_INTERVAL != 0) return;
+		double radius = pulse ? HemorathSiphonRules.SIPHON_RADIUS : HemorathSiphonRules.AURA_RADIUS;
+		if (pulse) {
+			entityData.set(DATA_SIPHON_RELEASE, HemorathSiphonRules.RELEASE);
+			HemorathEffects.burst(server, position(), HemorathVisualRules.SIPHON, (float) radius);
+		}
+		for (Player player : server.getEntitiesOfClass(Player.class, getBoundingBox().inflate(radius),
+				p -> ManipulationCombatHelper.canHarmFor(this, p) && distanceToSqr(p) <= radius * radius && hasLineOfSight(p))) {
+			var volume = HemoCapabilityAccess.getBloodVolume(player);
+			if (volume.isActive()) {
+				var payment = BloodAccounting.payUpkeep(player, pulse ? HemorathSiphonRules.SIPHON_BLOOD : HemorathSiphonRules.AURA_BLOOD,
+						MARROW_SIPHON, pulse ? HemorathSiphonRules.CYCLE : HemorathSiphonRules.AURA_INTERVAL, false);
+				if (payment.paid() > 0) addAbsorbedBlood(player, payment.paid());
+				else player.hurt(damageSources().magic(), pulse ? 2 : 1);
+			} else {
+				player.hurt(damageSources().magic(), pulse ? 2 : 1);
+				HemorathEffects.intake(server, player.position().add(0, 1, 0), position().add(0, 2.6, 0));
+			}
+			if (overloaded) break;
+		}
 	}
 
 	public boolean isCollapseCharging() {
@@ -206,11 +246,16 @@ public class HemorathEntity extends SaintTrialEntity {
 		super.aiStep();
 		if (!this.level().isClientSide) {
 			if (tickRise()) return;
+			if (!isAlive()) return;
 			tickVisualState();
 			if (overloaded) {
+				tickSecondaryAttacks(false);
 				tickOverloadDeath();
 				return;
 			}
+			tickMarrowSiphon((ServerLevel) level());
+			if (overloaded) return;
+			tickSecondaryAttacks(true);
 			int desiredPhase = this.getHealth() <= this.getMaxHealth() * PHASE_2_HEALTH_FRACTION ? 2 : 1;
 			if (desiredPhase != getPhase()) {
 				this.entityData.set(DATA_PHASE, desiredPhase);
@@ -359,6 +404,7 @@ public class HemorathEntity extends SaintTrialEntity {
 	}
 
 	private void triggerOverload(Player source) {
+		tickSecondaryAttacks(false);
 		overloaded = true;
 		overloadTicks = HemorathVisualRules.OVERLOAD_TICKS;
 		this.setNoAi(true);

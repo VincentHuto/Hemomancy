@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.model.entity.boss.phlegethosoma;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.phlegethosoma.PhlegethosomaSwimmingRules;
 import net.minecraft.client.model.EntityModel;
@@ -155,7 +156,7 @@ public final class PhlegethosomaModel extends EntityModel<PhlegethosomaEntity> {
         if (entity.action() == PhlegethosomaEntity.Action.LUNGE && attackTime >= 20 && attackTime < 28) movement = 1;
         root.xRot = (entity.isIchorSwimming() || entity.isBreachAttack()) ? entity.swimPitch() : 0;
         root.y += entity.isIchorSwimming() ? Mth.sin(age * .17F) * .5F : 0;
-        if (entity.introTime() >= 0) head.xRot = -.15F * Mth.sin(entity.introTime() / 60F * Mth.PI);
+        if (entity.introTime() >= 0) head.xRot = -.15F * Mth.sin(entity.introTime() / (float) PhlegethosomaCombatRules.INTRO_TICKS * Mth.PI);
         head.yRot = Mth.clamp(yaw * Mth.DEG_TO_RAD, -.3F, .3F);
         for (int i = 0; i < segments.length; i++) {
             ModelPart segment = segments[i];

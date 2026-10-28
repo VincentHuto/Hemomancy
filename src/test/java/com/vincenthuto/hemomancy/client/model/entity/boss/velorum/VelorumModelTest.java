@@ -125,10 +125,11 @@ class VelorumModelTest {
     }
 
     @Test
-    void veilHaloAndLanternsFrameAnArticulatedClaw() {
+    void monasticHoodAndLanternsFrameAnArticulatedClaw() {
         var chest = VelorumModel.createBodyLayer().bakeRoot().getChild("root").getChild("hips").getChild("chest");
         var head = chest.getChild("head");
-        assertTrue(head.getChild("face_veil").getAllParts().mapToInt(p -> p.cubes.size()).sum() >= 8);
+        assertEquals(0, head.getChild("face_veil").getAllParts().mapToInt(p -> p.cubes.size()).sum());
+        assertEquals(3, head.getChild("monastic_hood").cubes.size());
         assertNotNull(head.getChild("halo").getChild("halo_segment_0"));
         var claw = chest.getChild("right_arm").getChild("right_forearm").getChild("right_hand");
         assertNotNull(claw.getChild("right_finger_0").getChild("right_finger_0_tip"));

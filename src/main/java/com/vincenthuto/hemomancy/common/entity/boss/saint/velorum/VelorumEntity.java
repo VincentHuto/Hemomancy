@@ -2,6 +2,12 @@ package com.vincenthuto.hemomancy.common.entity.boss.saint.velorum;
 
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import net.minecraft.network.chat.Component;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.UUID;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import net.minecraft.ChatFormatting;
@@ -99,6 +105,11 @@ public class VelorumEntity extends SaintTrialEntity {
     public final AnimationState martyrdomAnimationState = new AnimationState();
 
     private int stillGuardTimer = 0;
+    private static final EntityDataAccessor<Integer> DATA_STILLNESS_PRESSURE = SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_STILLNESS_BREAK = SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
+    private record Exposure(int pressure, Vec3 position) {}
+    private final Map<UUID, Exposure> stillness = new HashMap<>();
+    private int stillnessBreakCooldown;
 
     // ── constructor ───────────────────────────────────────────────────────
 
@@ -143,6 +154,8 @@ public class VelorumEntity extends SaintTrialEntity {
         builder.define(DATA_VEIL_RELEASE, 0);
         builder.define(DATA_DRAIN_RELEASE, 0);
         builder.define(DATA_STILL_GUARD_TICKS, 0);
+        builder.define(DATA_STILLNESS_PRESSURE, 0);
+        builder.define(DATA_STILLNESS_BREAK, 0);
 
     }
 
@@ -164,6 +177,36 @@ public class VelorumEntity extends SaintTrialEntity {
     public int getMartyrdomTicks() { return this.entityData.get(DATA_STILL_GUARD_TICKS); }
 
     public boolean isSilencePhase() { return getHealth() <= getMaxHealth() * SILENCE_PHASE_THRESHOLD; }
+    public int getStillnessPressure() { return entityData.get(DATA_STILLNESS_PRESSURE); }
+    public int getStillnessBreakTicks() { return entityData.get(DATA_STILLNESS_BREAK); }
+
+    private void tickStillness(ServerLevel server) {
+        if (stillnessBreakCooldown > 0) stillnessBreakCooldown--;
+        int broken = Math.max(0, getStillnessBreakTicks() - 1);
+        entityData.set(DATA_STILLNESS_BREAK, broken);
+        var present = new HashSet<UUID>();
+        int maximum = 0;
+        for (Player player : server.getEntitiesOfClass(Player.class, getBoundingBox().inflate(VelorumStillnessRules.RADIUS),
+                p -> ManipulationCombatHelper.canHarmFor(this, p) && distanceToSqr(p) <= VelorumStillnessRules.RADIUS * VelorumStillnessRules.RADIUS
+                        && hasLineOfSight(p))) {
+            present.add(player.getUUID());
+            Exposure before = stillness.getOrDefault(player.getUUID(), new Exposure(0, player.position()));
+            boolean moving = player.position().distanceToSqr(before.position()) > .0025;
+            int pressure = VelorumStillnessRules.next(before.pressure(), moving, broken > 0);
+            stillness.put(player.getUUID(), new Exposure(pressure, player.position()));
+            maximum = Math.max(maximum, pressure);
+            if (tickCount % 20 == 0 && pressure > 0) {
+                player.displayClientMessage(Component.translatable("message.hemomancy.velorum.stillness_pressure", pressure), true);
+                if (VelorumStillnessRules.rooted(pressure) && broken == 0) {
+                    if (player.isSleeping()) player.stopSleepInBed(true, true);
+                    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 6, false, false, true));
+                    VelorumEffects.burst(server, player.position(), VelorumVisualRules.STILLNESS, .8F);
+                }
+            }
+        }
+        stillness.keySet().retainAll(present);
+        entityData.set(DATA_STILLNESS_PRESSURE, maximum);
+    }
 
     // ── main tick ─────────────────────────────────────────────────────────
 
@@ -181,9 +224,12 @@ public class VelorumEntity extends SaintTrialEntity {
         if (!isAlive()) return;
         ServerLevel server = (ServerLevel) this.level();
         tickVisualState();
-        this.entityData.set(DATA_FROST_UNTIL, FROST_NOVA_INTERVAL - Math.floorMod(tickCount, FROST_NOVA_INTERVAL));
-        this.entityData.set(DATA_VEIL_UNTIL, DARKNESS_INTERVAL - Math.floorMod(tickCount, DARKNESS_INTERVAL));
-        this.entityData.set(DATA_DRAIN_UNTIL, isSilencePhase() ? SILENCE_DRAIN_INTERVAL - Math.floorMod(tickCount, SILENCE_DRAIN_INTERVAL) : SILENCE_DRAIN_INTERVAL);
+        tickStillness(server);
+        tickSecondaryAttacks(getStillnessBreakTicks()==0);
+        boolean interrupted = getStillnessBreakTicks() > 0;
+        this.entityData.set(DATA_FROST_UNTIL, interrupted ? FROST_NOVA_INTERVAL : FROST_NOVA_INTERVAL - Math.floorMod(tickCount, FROST_NOVA_INTERVAL));
+        this.entityData.set(DATA_VEIL_UNTIL, interrupted ? DARKNESS_INTERVAL : DARKNESS_INTERVAL - Math.floorMod(tickCount, DARKNESS_INTERVAL));
+        this.entityData.set(DATA_DRAIN_UNTIL, !interrupted && isSilencePhase() ? SILENCE_DRAIN_INTERVAL - Math.floorMod(tickCount, SILENCE_DRAIN_INTERVAL) : SILENCE_DRAIN_INTERVAL);
         if (getFrostRelease() > 0) this.entityData.set(DATA_FROST_RELEASE, getFrostRelease() - 1);
         if (getVeilRelease() > 0) this.entityData.set(DATA_VEIL_RELEASE, getVeilRelease() - 1);
         if (getDrainRelease() > 0) this.entityData.set(DATA_DRAIN_RELEASE, getDrainRelease() - 1);
@@ -199,18 +245,18 @@ public class VelorumEntity extends SaintTrialEntity {
         }
 
         // Frost nova
-        if (this.tickCount % FROST_NOVA_INTERVAL == 0) {
+        if (getStillnessBreakTicks() == 0 && this.tickCount % FROST_NOVA_INTERVAL == 0) {
             fireFrostNova(server);
         }
 
         // Veil of darkness
-        if (this.tickCount % DARKNESS_INTERVAL == 0) {
+        if (getStillnessBreakTicks() == 0 && this.tickCount % DARKNESS_INTERVAL == 0) {
             fireVeilOfDarkness(server);
         }
 
         // Silence drain at low HP
         boolean inSilencePhase = isSilencePhase();
-        if (inSilencePhase && this.tickCount % SILENCE_DRAIN_INTERVAL == 0) {
+        if (getStillnessBreakTicks() == 0 && inSilencePhase && this.tickCount % SILENCE_DRAIN_INTERVAL == 0) {
             fireSilenceDrain(server);
         }
 
@@ -273,7 +319,21 @@ public class VelorumEntity extends SaintTrialEntity {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
-        if (hurt && !this.level().isClientSide) {
+        if (hurt && !level().isClientSide && isAlive() && source.getEntity() instanceof Player && stillnessBreakCooldown == 0) {
+            stillnessBreakCooldown = VelorumStillnessRules.BREAK_COOLDOWN;
+            entityData.set(DATA_STILLNESS_BREAK, VelorumStillnessRules.BREAK_TICKS);
+            tickSecondaryAttacks(false);
+            entityData.set(DATA_FROST_RELEASE, 0);
+            entityData.set(DATA_VEIL_RELEASE, 0);
+            entityData.set(DATA_DRAIN_RELEASE, 0);
+            setStillGuard(false);
+            stillGuardTimer = 0;
+            entityData.set(DATA_STILL_GUARD_TICKS, 0);
+            removeEffect(MobEffects.DAMAGE_RESISTANCE);
+            VelorumEffects.burst((ServerLevel) level(), position().add(0, 1, 0), VelorumVisualRules.STILLNESS_BREAK, 3);
+            return true;
+        }
+        if (hurt && !this.level().isClientSide && isAlive() && getStillnessBreakTicks() == 0) {
             // Grant brief resistance — the Saint stills around the wound
             this.addEffect(new MobEffectInstance(
                     MobEffects.DAMAGE_RESISTANCE, STILL_GUARD_DURATION,

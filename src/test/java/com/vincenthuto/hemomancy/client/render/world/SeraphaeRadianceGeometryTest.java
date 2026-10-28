@@ -25,7 +25,7 @@ class SeraphaeRadianceGeometryTest {
     }
 
     @Test void impactCaptureAndVictoryCuesFrayInsteadOfLeavingResidue() {
-        for (int kind = 1; kind <= 6; kind++) for (float age : new float[]{0, 1, 8, 16, 23, 44}) {
+        for (int kind = 1; kind <= 8; kind++) for (float age : new float[]{0, 1, 8, 16, 23, 44}) {
             int life = kind == SeraphaeVisualRules.SEALED ? 44 : 24;
             Capture mesh = new Capture();
             var packet = new ManipulationVisualPacket(Form.SERAPHAE_RELIQUARY, -1, Vec3.ZERO, new Vec3(5, 1, 0), 2, life, kind);

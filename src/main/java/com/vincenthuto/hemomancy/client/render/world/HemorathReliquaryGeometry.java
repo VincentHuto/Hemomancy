@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Hollow iron and spent blood: physical links in the Ferric pass, then sorted blood/Mortem shells and cores. */
+/** Hollow iron and circulating blood: Ferric links and layered Animus pressure. */
 final class HemorathReliquaryGeometry {
     private static final int TINT = 0xFFFFFF, CORE = 0xFFD2C4, CLOT = 0x7A1020;
     private static final Vec3 UP = new Vec3(0, 1, 0);
@@ -42,8 +42,14 @@ final class HemorathReliquaryGeometry {
             Frame frame = new Frame(boss.getVisualState(), motion.remaining(), AnimationTime.age(boss, partial),
                     boss.getId(), boss.isInPhase2(), boss.isCollapseCharging(),
                     HemorathVisualRules.storedPressure(boss.getAbsorbedBlood()), motion.core(), motion.claw(), motion.staff());
-            VertexConsumer blood = flows.vertices(LuxUmbraBatch.Material.ANIMUS), shade = flows.vertices(LuxUmbraBatch.Material.MORTEM);
+            VertexConsumer blood = flows.vertices(LuxUmbraBatch.Material.ANIMUS), shade = blood;
             if (!solids) body(p, blood, shade, eye, right, up, frame);
+            if (!solids && boss.getVisualState() != HemorathEntity.VISUAL_OVERLOAD) {
+                double warning = motion.siphon();
+                ring(p, blood, 6, .05, eye, boss.getId(), .025, TINT, .14F);
+                if (warning > .01) ring(p, blood, 12, .06, eye, boss.getId() + 3,
+                        .045 + warning * .05, TINT, (float) warning * .75F);
+            }
             var target = level.getEntity(boss.getVisualTargetId());
             if (target != null && boss.getVisualState() == HemorathEntity.VISUAL_COLLAPSE_WINDUP
                     && (rise < 0 || rise >= SaintRise.TICKS)) {
@@ -172,6 +178,17 @@ final class HemorathReliquaryGeometry {
                 double a = i * Math.PI / 3 + seed, travel = HemoEasing.easeOutCubic(age / 14.0);
                 Vec3 at = new Vec3(Math.cos(a) * r * travel, Math.sin(travel * Math.PI) * .65, Math.sin(a) * r * travel);
                 link(p, iron, at, new Vec3(.13 * fade, .08 * fade, 0), new Vec3(0, .07 * fade, .06 * fade), seed + i);
+            }
+            return;
+        }
+        if (kind == HemorathVisualRules.SIPHON) {
+            double radius = r * (1 - HemoEasing.easeOutCubic(age / packet.ticks()));
+            ring(p, blood, Math.max(.04, radius), .08, camera, seed, .08, TINT, fade);
+            for (int i = 0; i < 8; i++) {
+                double a = i * Math.PI / 4;
+                Vec3 at = new Vec3(Math.cos(a) * radius, .1, Math.sin(a) * radius);
+                ribbonPath(p, blood, List.of(at, at.scale(.5).add(0, .25, 0), new Vec3(0, 1.4, 0)),
+                        camera, .04, .006, RIBBON, seed + i, TINT, fade * .7F);
             }
             return;
         }

@@ -114,7 +114,7 @@ def saint():
         arm(r, side, sign)
     # Scalloped chains crossing the dark vestments; individual links remain open.
     r.part('pectoral_chains', 'chest')
-    for row in range(3):
+    for row in range(1):
         for i in range(7):
             x = -3 + i
             y = snap(-4 + row * 2 + (3 - abs(x)) * .6)
@@ -152,6 +152,16 @@ def saint():
         r.part(name, 'head', (sign * 2.5, -5, 0), (-4, 0, -sign * 9))
         r.cube(name, (-.5, -.5, -2, 1, 10, 4), 'veil')
         r.cube(name, (-.5, 9.5, 0, .5, 2.5, 2), 'veil')
+    # Deep, plain hood and a knotted rope replace the courtly silhouette.
+    r.part('monastic_hood', 'head', (0, -3, .5))
+    r.cube('monastic_hood', (-3, -4.5, -2.75, 6, 1.5, 5.5), 'mantle')
+    for sign in (-1, 1):
+        r.cube('monastic_hood', (sign * 2.5 - .5, -3, -2.75, 1, 7, 5), 'mantle')
+    r.part('knotted_cord', 'hips', (0, -1, -2.75))
+    r.cube('knotted_cord', (-3, -.25, -.25, 6, .5, .5), 'cord')
+    r.cube('knotted_cord', (-.5, -.5, -.5, 1, 1, 1), 'cord')
+    for i in range(2):
+        r.cube('knotted_cord', (-.75 + i, .5, -.25, .5, 6 + i, .5), 'cord')
     r.part('halo', 'head', (0, -3.5, 3))
     for i in range(20):
         angle = math.radians(i * 18)
@@ -183,7 +193,7 @@ def saint():
         r.part(name + '_train', name, (0, 15.5, 0), (12, 0, 0))
         r.cube(name + '_train', (-1.75, 0, 0, 3.5, 12, .5), material)
         for j in range(3):
-            r.cube(name + '_train', (-1.75 + j * 1.25, 11, 0, .75, 1.25 + (j % 2), .5), material)
+            r.cube(name + '_train', (-1 + j * .75, 5, 0, .5, 1 + (j % 2) * .5, .5), material)
         if i % 2 == 0:
             icicle(r, name, -1, 11, -.25, 3.5)
     r.part('hem_frost', pivot=(0, 23.5, 0))
@@ -207,6 +217,12 @@ def saint():
     r.cube('staff', (-.25, -5, -.25, 4, .5, .5), 'iron')
     chain(r, 'pendant_chain', 'staff', (3.5, -5, 0), 9)
     lantern(r, 'pendant_lantern', 'pendant_chain', (0, 17.5, 0), True)
+    # Retain animated nodes but strip the ornamental veil and pectoral metalwork.
+    for part in r.parts:
+        if part['name'].startswith(('veil_strip_', 'chest_link_')) or part['name'] == 'breast_reliquary':
+            part['cubes'].clear()
+        if part['name'].startswith('halo_segment_'):
+            part['cubes'] = part['cubes'][:1]
     for part in r.parts:
         assert all(snap(v) == v for v in part['pivot']), part['name']
         for cube in part['cubes']:
@@ -242,8 +258,8 @@ def paint(cube, t, glow=False):
     elif mat == 'void':
         rgb = (10, 12, 23)
     else:
-        pale = mat == 'veil'
-        rgb = (199, 201, 215) if pale else ((35, 36, 63) if mat == 'shadow' else (47, 50, 79))
+        pale = mat == 'cord'
+        rgb = (199, 201, 215) if pale else ((25, 28, 35) if mat == 'shadow' else (40, 43, 51))
         rgb = add(rgb, (-12, -4, 4, -2)[u % 4] + noise)
         if t['side'] and (u == 0 or u == t['fw'] - 1):
             rgb = (156, 166, 192) if pale else (80, 90, 127)

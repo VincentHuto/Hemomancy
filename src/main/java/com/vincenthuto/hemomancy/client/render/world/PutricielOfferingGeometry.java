@@ -35,7 +35,7 @@ final class PutricielOfferingGeometry {
             Vec3 floor = Vec3.atBottomCenterOf(boss.blockPosition()).subtract(at);
             p.pushPose();
             p.translate(at.x - camera.x, at.y - camera.y, at.z - camera.z);
-            body(p, batch.vertices(LuxUmbraBatch.Material.MORTEM), batch.vertices(LuxUmbraBatch.Material.FLAME),
+            body(p, batch.vertices(LuxUmbraBatch.Material.PUTRICIEL_ROT), batch.vertices(LuxUmbraBatch.Material.FLAME),
                     camera.subtract(at), right, up, new Frame(boss.getVisualState(), motion.visual(), boss.isAbsolved(),
                             motion.window(), motion.nova(), motion.release(), boss.getAbsolutionCount(), boss.isEscalated(), AnimationTime.age(boss, partial),
                             boss.getId(), motion.core(), motion.palm(), motion.sacs(), motion.censers(), floor));
@@ -44,10 +44,19 @@ final class PutricielOfferingGeometry {
     }
 
     static void body(PoseStack p, VertexConsumer rot, VertexConsumer fire, Vec3 camera, Vec3 right, Vec3 up, Frame f) {
+        fire = f.absolved() ? fire : FerricDuctilisGeometry.DISCARD;
         var action = PutricielVisualRules.pose(f.visual(), f.absolved(), f.count(), f.remaining(), f.window(), f.nova(), f.release());
         float heat = Math.max(action.gather(), action.release());
         for (int i = 0; i < f.sacs().length; i++) {
             Vec3 sac = f.sacs()[i];
+            double drip = (f.age() * .018 + i * .23) % 1;
+            ribbonPath(p, rot, List.of(sac, sac.add(.03, -.25, 0), sac.add(.05, -.6 - drip * .3, 0)),
+                    camera, .035, .008, RIBBON, f.seed() + i, TINT, (float) (1 - drip) * .65F);
+            if (f.absolved()) {
+                double flicker = .2 + .08 * Math.sin(f.age() * .3 + i * 2.4);
+                ribbonPath(p, fire, List.of(sac, sac.add(.04, flicker, 0), sac.add(-.03, flicker * 2, .02)),
+                        camera, .045, .005, WISP, f.seed() + i, CORE, action.offering() * .8F);
+            }
             for (int n = 0; n < 3; n++) {
                 double t = (f.age() * .012 + i * .27 + n / 3.0) % 1;
                 double a = i * 2.4 + n * 1.7 + t * 1.4;
@@ -79,6 +88,7 @@ final class PutricielOfferingGeometry {
             }
         }
         if (f.absolved()) {
+            ground(p, fire, f.floor().add(0, .05, 0), 3, RIPPLE, f.seed(), CORE, .35F + action.offering() * .4F);
             Vec3 palm = f.palm().add(0, .12, 0);
             for (int i = 0; i < PutricielVisualRules.ABSOLUTIONS_NEEDED; i++) {
                 double a = i * Math.PI * 2 / PutricielVisualRules.ABSOLUTIONS_NEEDED;
@@ -114,10 +124,23 @@ final class PutricielOfferingGeometry {
 
     static void draw(ManipulationVisualPacket packet, PoseStack p, VertexConsumer rot, VertexConsumer fire,
                      Vec3 camera, Vec3 right, Vec3 up, double time, float age, float alpha) {
+        // Bursts describe rot dispersal; cleansing is drawn only by the active window above.
+        boolean cleansing = packet.count() == PutricielVisualRules.CLEANSE;
+        if (!cleansing) fire = rot;
         float fade = alpha * PutricielVisualRules.fade(age, packet.ticks());
         if (fade <= 0) return;
         int kind = packet.count(), seed = Math.floorMod(packet.from().hashCode(), 113);
         double r = packet.radius();
+        if (cleansing) {
+            ground(p, fire, new Vec3(0, -.95, 0), r, RIPPLE, seed, CORE, fade * .8F);
+            for (int i = 0; i < 8; i++) {
+                double a = i * Math.PI / 4;
+                Vec3 root = new Vec3(Math.cos(a) * r * .5, -.7, Math.sin(a) * r * .5);
+                ribbonPath(p, fire, List.of(root, root.add(.06, .45, -.03), root.add(-.03, 1, .04)),
+                        camera, .07 * fade, .006, WISP, seed + i, CORE, fade);
+            }
+            return;
+        }
         if (kind == PutricielVisualRules.NOVA) {
             double extent = r + .5;
             square(p, rot, Vec3.ZERO, extent, camera, .2 * fade, seed, fade * .65F);

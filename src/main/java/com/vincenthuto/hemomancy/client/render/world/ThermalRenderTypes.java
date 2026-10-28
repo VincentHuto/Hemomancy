@@ -31,6 +31,7 @@ public final class ThermalRenderTypes {
             case DUCTILIS -> FerricDuctilisRenderTypes.NERVES;
             case ANIMUS -> AnimusMortemRenderTypes.ANIMUS;
             case MORTEM -> AnimusMortemRenderTypes.MORTEM;
+            case PUTRICIEL_ROT -> AnimusMortemRenderTypes.PUTRICIEL_ROT;
             case RIME -> RIME;
         };
     }

@@ -4,19 +4,34 @@
         var motion=VelorumAnimState.of(entity);
         motion.update(entity,AnimationTime.partialTick());
         pose(motion.phase(),age,yaw,pitch,entity.getAttackAnim(AnimationTime.partialTick()),
-                movement,(float)com.vincenthuto.hemomancy.common.util.HemoEasing.smoothstep(entity.deathTime/18.0));
+                movement,(float)com.vincenthuto.hemomancy.common.util.HemoEasing.smoothstep(entity.deathTime/18.0),motion.pressure(),motion.release());
+        var secondary = com.vincenthuto.hemomancy.common.entity.boss.saint.SaintAttackPattern.byId(entity.getSecondaryMove());
+        if (secondary != null) {
+            var cast = secondary.motion(entity.secondaryTime(AnimationTime.partialTick()));
+            rightArm.xRot -= cast.gather() * .65F;
+            rightForearm.yRot += cast.strike() * .7F;
+            rightHand.xRot -= cast.gather() * .2F;
+            head.xRot += cast.gather() * .08F - cast.strike() * .12F;
+            setRotationFromMatrix(rightSleeve,armInverse(chest,rightArm,rightForearm,null));
+            setRotationFromMatrix(clawIce,armInverse(chest,rightArm,rightForearm,rightHand));
+        }
     }
     void pose(int visual,boolean martyrdom,float remaining,float age,float yaw,float pitch) {
         pose(VelorumVisualRules.legacy(visual,martyrdom,remaining),age,yaw,pitch,0,0,0);
     }
     void pose(VelorumVisualRules.Phase phase,float age,float yaw,float pitch,float attack,float movement,float death) {
+        pose(phase,age,yaw,pitch,attack,movement,death,0,0);
+    }
+    void pose(VelorumVisualRules.Phase phase,float age,float yaw,float pitch,float attack,float movement,float death,float pressure,float release) {
         root.getAllParts().forEach(ModelPart::resetPose);
         var action=VelorumVisualRules.pose(phase);
         float life=1-death,gather=action.gather()*life,frost=action.frost()*life;
         float veil=action.veil()*life,drain=action.silence()*life,martyr=action.martyr()*life;
         float breath=Mth.sin(age*.045F),swipe=Mth.sin(Mth.sqrt(attack)*Mth.PI)*life;
+        float opening = release > 0 ? (float)com.vincenthuto.hemomancy.common.util.HemoEasing.smoothstep((60-release)/8)
+                *(float)com.vincenthuto.hemomancy.common.util.HemoEasing.smoothstep(release/12) : 0;
         hips.y+=death*3;
-        chest.xRot+=breath*.014F+gather*.16F-frost*.23F+drain*.12F+martyr*.14F+death*.55F;
+        chest.xRot+=breath*.014F+gather*.16F-frost*.23F+drain*.12F+martyr*.14F+death*.55F+opening*.25F;
         chest.zRot+=Mth.sin(age*.06F)*veil*.025F-swipe*.08F;
         head.yRot+=Mth.clamp(yaw,-20,20)*Mth.DEG_TO_RAD;
         head.xRot+=Mth.clamp(pitch,-15,15)*Mth.DEG_TO_RAD+gather*.08F-frost*.15F+veil*.17F+martyr*.2F+death*.25F;
@@ -24,6 +39,9 @@
         rightArm.zRot+=gather*.15F+frost*.28F+veil*.4F;
         rightForearm.xRot-=drain*.6F+swipe*.3F;
         rightHand.xRot-=drain*.23F;
+        rightArm.xRot-=pressure*.35F*(1-opening);
+        rightHand.zRot+=pressure*.2F*(1-opening);
+        head.xRot+=pressure*.08F+opening*.15F;
         leftArm.xRot-=gather*.04F;
         for(int i=0;i<4;i++) {
             var finger=rightHand.getChild("right_finger_"+i);

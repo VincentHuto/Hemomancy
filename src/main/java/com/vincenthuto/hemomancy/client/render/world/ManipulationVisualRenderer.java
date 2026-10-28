@@ -103,7 +103,7 @@ public final class ManipulationVisualRenderer {
                 com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperRecallRules.HAUL_TICK
                 && (entity==null || !entity.isAlive()))return level.getGameTime()-cue.life.born<packet.ticks();
         if(entity==null || !entity.isAlive())return false;
-        cue.lastFrom=entity.position();
+        if(!SaintPatternGeometry.handles(packet))cue.lastFrom=entity.position();
         if(packet.form().name().endsWith("_CHARGE"))cue.lastFrom=cue.lastFrom.add(0,entity.getEyeHeight(),0);
         // Remote entities do not synchronize their full effect map to this client.
         if(entity==Minecraft.getInstance().player && entity instanceof net.minecraft.world.entity.LivingEntity living) {
@@ -204,7 +204,7 @@ public final class ManipulationVisualRenderer {
                 if (entity==null && !VesperRecallGeometry.handles(packet.form())) continue;
                 if (entity!=null) {
                     if(AnimusMortemGeometry.handles(packet.form()) && entity.isInvisible())continue;
-                    from = entity.getPosition(partial);
+                    from = SaintPatternGeometry.handles(packet)?packet.from():entity.getPosition(partial);
                     if (packet.form().name().endsWith("_CHARGE")) from = from.add(0,entity.getEyeHeight(),0);
                     cue.lastFrom=from;
                     if ((packet.form()==ManipulationVisuals.Form.IRON_HEART || packet.form()==ManipulationVisuals.Form.BLACK_HEART
@@ -326,20 +326,27 @@ public final class ManipulationVisualRenderer {
                         camera.subtract(from),right,up,time,age,opacity);
                 poses.popPose();continue;
             }
+            if(SaintPatternGeometry.handles(packet)) {
+                if(!cue.life.retiring())SaintPatternGeometry.draw(packet,poses,
+                        solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,
+                        FLOWS.vertices(SaintPatternGeometry.material(packet)),FLOWS.vertices(SaintPatternGeometry.accent(packet)),
+                        solids,camera.subtract(from),right,up,age);
+                poses.popPose();continue;
+            }
             if(VelorumRimeGeometry.handles(packet.form())) {
                 VelorumRimeGeometry.draw(packet, poses, FLOWS.vertices(LuxUmbraBatch.Material.RIME),
                         FLOWS.vertices(LuxUmbraBatch.Material.UMBRA), camera.subtract(from), right, up, time, age, 1);
                 poses.popPose();continue;
             }
             if(PutricielOfferingGeometry.handles(packet.form())) {
-                PutricielOfferingGeometry.draw(packet, poses, FLOWS.vertices(LuxUmbraBatch.Material.MORTEM),
+                PutricielOfferingGeometry.draw(packet, poses, FLOWS.vertices(LuxUmbraBatch.Material.PUTRICIEL_ROT),
                         FLOWS.vertices(LuxUmbraBatch.Material.FLAME), camera.subtract(from), right, up, time, age, 1);
                 poses.popPose();continue;
             }
             if(HemorathReliquaryGeometry.handles(packet.form())) {
                 HemorathReliquaryGeometry.draw(packet, poses,
                         solids ? buffers.getBuffer(FerricDuctilisRenderTypes.IRON) : FerricDuctilisGeometry.DISCARD,
-                        FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS), FLOWS.vertices(LuxUmbraBatch.Material.MORTEM), solids,
+                        FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS), FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS), solids,
                         camera.subtract(from), right, up, time, age, 1);
                 poses.popPose();continue;
             }

@@ -18,7 +18,7 @@ import java.util.List;
 
 /** Faceted ice and open shadow seams; neither replaces the server's actual status or hit test. */
 final class VelorumRimeGeometry {
-    private static final int TINT=0xFFFFFF, CORE=0xFFD2C4;
+    private static final int TINT=0xFFFFFF, CORE=0xDCE8F2;
     record Frame(VelorumVisualRules.Phase phase,float age,int seed,Vec3 core,Vec3 claw,Vec3[] lanterns,Vec3 floor) {}
     private VelorumRimeGeometry() {}
     static boolean handles(Form form){return form==Form.VELORUM_RIME;}
@@ -31,6 +31,17 @@ final class VelorumRimeGeometry {
             p.pushPose();p.translate(at.x-camera.x,at.y-camera.y,at.z-camera.z);
             body(p,batch.vertices(LuxUmbraBatch.Material.RIME),batch.vertices(LuxUmbraBatch.Material.UMBRA),camera.subtract(at),right,up,
                     new Frame(motion.phase(),AnimationTime.age(boss,partial),boss.getId(),motion.core(),motion.claw(),motion.lanterns(),Vec3.atBottomCenterOf(boss.blockPosition()).subtract(at)));
+            float pressure = motion.pressure();
+            if (pressure > 0 && motion.release() <= 0) {
+                ground(p, batch.vertices(LuxUmbraBatch.Material.UMBRA), new Vec3(0, .035, 0), 12,
+                        RIPPLE, boss.getId(), TINT, .12F + pressure * .45F);
+                for (int i = 0; i < 6; i++) {
+                    double a = i * Math.PI / 3;
+                    Vec3 edge = new Vec3(Math.cos(a) * 12, .05, Math.sin(a) * 12);
+                    ribbonPath(p, batch.vertices(LuxUmbraBatch.Material.RIME), List.of(edge, edge.scale(.5), motion.core()),
+                            camera.subtract(at), .012, .003, RIBBON, boss.getId() + i, TINT, pressure * .4F);
+                }
+            }
             p.popPose();
         }
     }
@@ -41,7 +52,7 @@ final class VelorumRimeGeometry {
             Vec3 lantern=f.lanterns()[i];
             card(p,ice,lantern,right,up,.065+pressure*.025,.1+pressure*.04,WISP,f.seed()+i,TINT,.7F);
             for(int n=0;n<2;n++) {
-                double a=f.age()*.017+i*2+n*Math.PI;
+                double a=i*2+n*Math.PI;
                 Vec3 frost=lantern.add(Math.cos(a)*.14,-.1-n*.16,Math.sin(a)*.14);
                 spire(p,ice,frost,.018,.1,new Vec3(.015,0,0),f.seed()+n,.6F);
             }
@@ -123,6 +134,16 @@ final class VelorumRimeGeometry {
             ribbonPath(p,shade,List.of(Vec3.ZERO,end.scale(.5).add(0,-.25,0),end),camera,.16,.055,BEAM,seed,TINT,fade*.4F);
             ribbonPath(p,ice,List.of(tail,head),camera,.04,.012,RIBBON,seed,TINT,fade);
             card(p,ice,head,right,up,.07,.1,WISP,seed,CORE,fade);
+            return;
+        }
+        if(kind==VelorumVisualRules.STILLNESS || kind==VelorumVisualRules.STILLNESS_BREAK) {
+            boolean broken = kind == VelorumVisualRules.STILLNESS_BREAK;
+            for(int i=0;i<8;i++) {
+                double a=i*Math.PI/4;
+                double spread=broken?HemoEasing.easeOutCubic(age/12):1-HemoEasing.easeOutCubic(age/18);
+                Vec3 at=new Vec3(Math.cos(a)*radius*spread,broken?-.5:.1,Math.sin(a)*radius*spread);
+                spire(p,ice,at,.035*fade,(broken?.15:.6)*fade,new Vec3(0,0,.03),seed+i,fade);
+            }
             return;
         }
         if(kind==VelorumVisualRules.MELEE) {

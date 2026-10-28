@@ -44,6 +44,10 @@ public final class HemorathFightClientReview {
     private static int capturedScene = -1, capturedTick = -1, closing, rewardsBefore, overloadAt = -1;
     private static MinecraftServer server;
     private static ServerPlayer player;
+    private static ServerPlayer secondaryVictim;
+    private static io.netty.channel.embedded.EmbeddedChannel secondaryChannel;
+    private static boolean rakeSeen,ruptureSeen,stageForced;
+    private static int preparation;
     private static HemorathEntity boss;
     private static Husk target;
     private static Goal goal;
@@ -65,7 +69,7 @@ public final class HemorathFightClientReview {
             report = mc.gameDirectory.toPath().resolve("operator/hemorath-fight-review.json");
             var id = mc.player.getUUID();
             server.execute(() -> {
-                try { player = server.getPlayerList().getPlayer(id); setup(); }
+                try { player = server.getPlayerList().getPlayer(id); prepare(); }
                 catch (Exception error) { fail(error); }
             });
         }
@@ -85,8 +89,18 @@ public final class HemorathFightClientReview {
         }
     }
 
-    private static void setup() {
+    private static void prepare() {
         if (player == null) throw new IllegalStateException("Review player is missing");
+        ServerLevel level=player.serverLevel();
+        stageForced = !level.getForcedChunks().contains(net.minecraft.world.level.ChunkPos.asLong(106,32));
+        if(stageForced)level.setChunkForced(106,32,true);
+        player.setGameMode(GameType.SPECTATOR);
+        player.teleportTo(level,1700.5,201.5,511,0,0);
+        // Entity loading follows chunk loading. Retire stale actors after both have settled.
+        preparation=40;
+    }
+
+    private static void setup() {
         ServerLevel level = player.serverLevel();
         for (int x = 1680; x <= 1720; x += 8) for (int z = 500; z <= 536; z += 8)
             level.getChunkAt(new BlockPos(x, 200, z));
@@ -112,14 +126,34 @@ public final class HemorathFightClientReview {
         target.setNoAi(true); target.setPersistenceRequired();
         target.moveTo(1697.5, 200, 516.5, 0, 0);
         level.addFreshEntity(boss); level.addFreshEntity(target);
+        var cookie=net.minecraft.server.network.CommonListenerCookie.createInitial(
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(),"MarrowTarget"),false);
+        secondaryVictim=new ServerPlayer(server,level,cookie.gameProfile(),cookie.clientInformation());
+        var connection=new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND);
+        secondaryChannel=new io.netty.channel.embedded.EmbeddedChannel(connection);
+        new net.minecraft.server.network.ServerGamePacketListenerImpl(server,connection,secondaryVictim,cookie) {
+            @Override public void send(net.minecraft.network.protocol.Packet<?> packet) {}
+        };
+        secondaryVictim.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(1000);
+        secondaryVictim.setHealth(1000);secondaryVictim.moveTo(1706.5,200,520.5,0,0);level.addNewPlayer(secondaryVictim);
         scene = 0; tick = 0;
         Hemomancy.LOGGER.info("HEMORATH_FIGHT_REVIEW started with Minimal particles");
     }
 
     @SubscribeEvent
     public static void server(ServerTickEvent.Post event) {
-        if (!Boolean.getBoolean("hemomancy.hemorathFightReview") || event.getServer() != server || scene < 0 || done) return;
+        if (!Boolean.getBoolean("hemomancy.hemorathFightReview") || event.getServer() != server || done) return;
+        if(preparation>0) {
+            if(--preparation==0) {try{setup();}catch(Exception error){fail(error);}}
+            return;
+        }
+        if(scene<0)return;
         try {
+            if(secondaryVictim!=null && !secondaryVictim.isRemoved())secondaryVictim.doTick();
+            var secondary=com.vincenthuto.hemomancy.common.entity.boss.saint.SaintAttackPattern.byId(boss.getSecondaryMove());
+            if(secondary!=null && boss.getSecondaryTicks()<=secondary.duration()-secondary.windup()) {
+                rakeSeen|=secondary.id()==1;ruptureSeen|=secondary.id()==2;
+            }
             if (tick == 0) enter();
             if (goal != null) {
                 if (goal.canContinueToUse()) { if (tick % 2 == 0) goal.tick(); }
@@ -147,7 +181,11 @@ public final class HemorathFightClientReview {
                 if (goal != null && !stopped) goal.stop();
                 goal = null; stopped = false;
                 if (++scene >= SCENES.length) {
+                    if(!rakeSeen || !ruptureSeen)throw new IllegalStateException("Missing secondary rake or rupture");
+                    RESULTS.addProperty("iron_rake",rakeSeen);RESULTS.addProperty("marrow_rupture",ruptureSeen);
                     target.discard();
+                    if(stageForced)player.serverLevel().setChunkForced(106,32,false);
+                    secondaryVictim.discard();secondaryChannel.finishAndReleaseAll();
                     RESULTS.addProperty("passed", true);
                     writeReport(); done = true;
                     Hemomancy.LOGGER.info("HEMORATH_FIGHT_REVIEW_OK {}", RESULTS);
@@ -189,7 +227,10 @@ public final class HemorathFightClientReview {
             default -> true;
         };
         RESULTS.addProperty(SCENES[scene], pass);
-        if (!pass) throw new IllegalStateException("Failed review contract: " + SCENES[scene]);
+        if (!pass) throw new IllegalStateException("Failed review contract: " + SCENES[scene]
+                + " overloadAt=" + overloadAt + " removed=" + boss.isRemoved() + "/" + boss.getRemovalReason()
+                + " hemophagy=" + target.hasEffect(EffectInit.hemophagy) + " rewards=" + residuumCount()
+                + "/" + rewardsBefore + " blood=" + boss.getAbsorbedBlood() + " secondary=" + boss.getSecondaryMove());
     }
 
     private static int residuumCount() {
@@ -201,7 +242,10 @@ public final class HemorathFightClientReview {
         RESULTS.addProperty("passed", false); RESULTS.addProperty("error", error.toString());
         Hemomancy.LOGGER.error("HEMORATH_FIGHT_REVIEW_FAILED", error);
         if (boss != null) boss.discard();
+        if(stageForced && player!=null)player.serverLevel().setChunkForced(106,32,false);
         if (target != null) target.discard();
+        if (secondaryVictim != null) secondaryVictim.discard();
+        if (secondaryChannel != null) secondaryChannel.finishAndReleaseAll();
         writeReport(); done = true;
     }
 

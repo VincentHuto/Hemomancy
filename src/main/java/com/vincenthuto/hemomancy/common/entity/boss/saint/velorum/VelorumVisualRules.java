@@ -9,6 +9,7 @@ public final class VelorumVisualRules {
     public static final int FROST_RELEASE=18, VEIL_RELEASE=22, DRAIN_RELEASE=20, MARTYRDOM=40;
     public static final int FROST_WARNING=24, VEIL_WARNING=20, DRAIN_WARNING=16;
     public static final int FROST=1, VEIL=2, DRAIN=3, MARTYR=4, REST=5, MELEE=6;
+    public static final int STILLNESS=7, STILLNESS_BREAK=8;
     public static final int BURST_TICKS=32, VEIL_TICKS=60, REST_TICKS=40;
     public record Phase(float frostUntil,float frostRelease,float veilUntil,float veilRelease,
                         float drainUntil,float drainRelease,float martyr) {}

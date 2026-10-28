@@ -208,6 +208,12 @@ def saint():
         r.part(name, 'ground_roots', (snap(math.sin(a) * 3), 0, snap(math.cos(a) * 2.5)), (0, i * 45, 0))
         r.cube(name, (-.5, -.25, 0, 1, .5, 3 + (i % 3)), 'root')
         r.cube(name, (-.75, -.25, 2.5, 1.5, .5, 2), 'blood_cloth')
+    for i, (x, y, z) in enumerate(((-3, -5, 4), (3, -2, 4), (-4, 3, 3.5), (2, 6, 4))):
+        mushroom(r, f'growth_mushroom_{i}', 'back_colony', (x, y, z), 3 + i * .5)
+        name = f'rot_drip_{i}'
+        r.part(name, 'back_colony', (x, y + 1, z))
+        r.cube(name, (-.25, 0, -.25, .5, 3 + i, .5), 'blood')
+        r.cube(name, (-.5, 3 + i, -.5, 1, 1, 1), 'blood')
     for part in r.parts:
         assert all(snap(v) == v for v in part['pivot']), part['name']
         for cube in part['cubes']:
@@ -227,7 +233,7 @@ def paint(cube, t, glow=False):
         if cells < .29:
             rgb = (118, 100, 49)
         if t['n'] > .94 and cells < .57:
-            rgb = (119, 48, 36)
+            rgb = (84, 73, 33)
         lit = cells > .66 and t['n'] > .58
         if t['n'] > .93:
             rgb = (242, 226, 167)
@@ -239,7 +245,7 @@ def paint(cube, t, glow=False):
             if radius > .83:
                 rgb = (169, 141, 79)
         else:
-            rgb = (133, 24, 36) if radius < .8 else (188, 63, 66)
+            rgb = (82, 76, 39) if radius < .8 else (164, 148, 91)
             if t['n'] > .9:
                 rgb = (220, 184, 146)
         rgb = add(rgb, n)
@@ -249,7 +255,7 @@ def paint(cube, t, glow=False):
         decay = kit.smooth(t['gx'], t['gy'], t['gz'], scale=1.5, seed=3)
         rgb = add(mix((62, 66, 33), (105, 88, 47), decay), n)
         if t['n'] > .94:
-            rgb = (120, 43, 37)
+            rgb = (78, 70, 34)
     elif mat == 'iron':
         patina = kit.smooth(t['gx'], t['gy'], t['gz'], scale=2, seed=7)
         rgb = mix((61, 62, 29), (176, 133, 51), patina)
@@ -264,20 +270,20 @@ def paint(cube, t, glow=False):
         if u == 0:
             rgb = (126, 108, 68)
     elif mat in ('blood', 'root'):
-        rgb = add((111, 18, 29) if mat == 'blood' else (80, 70, 32), n)
+        rgb = add((66, 62, 29) if mat == 'blood' else (80, 70, 32), n)
         if u == 0:
             rgb = add(rgb, 18)
-        lit = mat == 'blood' and v % 19 == 0
+        lit = False
     elif mat == 'offering':
         rgb, lit = (208, 61, 30), True
     else:
         pale = mat == 'ivory_cloth'
-        rgb = (214, 197, 163) if pale else (106, 21, 35)
+        rgb = (214, 197, 163) if pale else (63, 60, 36)
         rgb = add(rgb, (-16, -4, 5, -6)[u % 4] + n)
         if t['side'] and v > t['fh'] - 4:
             rgb = mix(rgb, (91, 72, 38) if pale else (47, 25, 22), .5)
         if pale and (u + v // 4) % 11 == 0:
-            rgb = (116, 44, 36)
+            rgb = (78, 72, 39)
         elif u == t['fw'] - 1:
             rgb = (149, 122, 56)
     return (*rgb, 255) if not glow else ((255, 233, 145, 255) if lit else (0, 0, 0, 0))

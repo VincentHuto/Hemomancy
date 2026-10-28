@@ -40,8 +40,8 @@ import java.util.UUID;
 /** Opt-in native review of the real nova and two full, naturally timed absolution windows. */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class PutricielFightClientReview {
-    private static final String[] SCENES={"idle","rot_nova","escalated_nova","melee","offering_opens","absolution_hits","offering_closes","next_window","saint_rests"};
-    private static final int[] LENGTHS={40,60,60,40,120,60,40,280,70};
+    private static final String[] SCENES={"idle","rot_nova","escalated_nova","melee","offering_opens","absolution_hits","offering_closes","next_window","saint_rests","secondary_patterns"};
+    private static final int[] LENGTHS={40,60,60,40,120,60,40,280,70,640};
     private static final AABB STAGE=new AABB(1780,198,540,1821,215,581);
     private static final JsonObject RESULTS=new JsonObject();
     private static MinecraftServer server;
@@ -51,7 +51,8 @@ public final class PutricielFightClientReview {
     private static EmbeddedChannel channel;
     private static volatile int scene=-1,tick;
     private static volatile boolean done;
-    private static boolean launched,hitDuringNova,novaDuringHit;
+    private static boolean launched,cleansingObserved;
+    private static boolean gardenSeen,sweepSeen;
     private static int capturedScene=-1,capturedTick=-1,closing,rewardsBefore,originalFov;
     private static boolean originalPause;
     private static ParticleStatus originalParticles;
@@ -111,12 +112,20 @@ public final class PutricielFightClientReview {
     @SubscribeEvent public static void server(ServerTickEvent.Post event) {
         if(!Boolean.getBoolean("hemomancy.putricielFightReview") || event.getServer()!=server || scene<0 || done)return;
         try {
+            if(victim!=null && !victim.isRemoved())victim.doTick();
             if(tick==0)enter();
+            var secondary=com.vincenthuto.hemomancy.common.entity.boss.saint.SaintAttackPattern.byId(boss.getSecondaryMove());
+            if(secondary!=null && boss.getSecondaryTicks()<=secondary.duration()-secondary.windup()) {
+                gardenSeen|=secondary.id()==5;sweepSeen|=secondary.id()==6;
+            }
+            if(scene==9) {
+                victim.setHealth(100);victim.teleportTo(boss.getX()+6,200,boss.getZ());
+            }
             if(scene==3 && tick==6){boss.swing(InteractionHand.MAIN_HAND,true);boss.doHurtTarget(husk);}
-            if(scene==5 && boss.getNovaReleaseTicks()==18 && boss.getVisualState()==PutricielEntity.VISUAL_ABSOLUTION_HIT)
-                novaDuringHit=true;
+            if(boss.isAbsolved() && boss.getNovaReleaseTicks()>0)
+                throw new IllegalStateException("Rot nova overlapped the dedicated cleansing interval");
+            if(scene==4 && victim.isOnFire())cleansingObserved=true;
             if(scene==5 && (tick==5 || tick==41 || tick==47)) {
-                if(boss.getNovaReleaseTicks()>0)hitDuringNova=true;
                 absolve();
             }
             if(scene==8 && (tick==5 || tick==25))absolve();
@@ -125,6 +134,8 @@ public final class PutricielFightClientReview {
             if(++tick>=LENGTHS[scene]) {
                 verify();
                 if(++scene>=SCENES.length) {
+                    if(!gardenSeen || !sweepSeen)throw new IllegalStateException("Missing secondary garden or sweep");
+                    RESULTS.addProperty("spore_garden",gardenSeen);RESULTS.addProperty("censer_sweep",sweepSeen);
                     cleanup();RESULTS.addProperty("passed",true);write();done=true;
                     Hemomancy.LOGGER.info("PUTRICIEL_FIGHT_REVIEW_OK {}",RESULTS);
                 }else tick=0;
@@ -132,6 +143,13 @@ public final class PutricielFightClientReview {
         }catch(Exception error){fail(error);}
     }
     private static void enter() {
+        if(scene==9) {
+            boss=EntityInit.putriciel.get().create(observer.serverLevel());
+            if(boss==null)throw new IllegalStateException("Missing secondary actor");
+            boss.setNoAi(true);boss.setPersistenceRequired();boss.moveTo(1800.5,200,560.5,180,0);
+            observer.serverLevel().addFreshEntity(boss);
+            victim.removeAllEffects();victim.clearFire();victim.setHealth(100);
+        }
         if(scene==1 || scene==2) {
             boss.tickCount=96;
             victim.removeAllEffects();victim.clearFire();victim.setHealth(100);victim.invulnerableTime=0;
@@ -139,7 +157,9 @@ public final class PutricielFightClientReview {
             victim.teleportTo(boss.getX()+offset,200,boss.getZ()+offset);
             if(scene==2)boss.setHealth(160);
         }
-        if(scene==3){victim.discard();husk.setHealth(husk.getMaxHealth());}
+        if(scene==3){victim.teleportTo(boss.getX()+30,200,boss.getZ());husk.setHealth(husk.getMaxHealth());}
+        if(scene==4){victim.clearFire();victim.removeAllEffects();victim.setHealth(100);victim.teleportTo(boss.getX()+2,200,boss.getZ());}
+        if(scene==6){victim.setHealth(100);victim.teleportTo(boss.getX()+6,200,boss.getZ());}
     }
     private static void absolve() {
         if(!boss.isAbsolved())throw new IllegalStateException("Expected a naturally open absolution window");
@@ -151,11 +171,13 @@ public final class PutricielFightClientReview {
             case 1,2 -> victim.getHealth()<100 && victim.hasEffect(MobEffects.WITHER)
                     && !victim.getEffect(MobEffects.WITHER).isVisible()
                     && victim.getEffect(MobEffects.WITHER).getAmplifier()==(scene==2?1:0)
-                    && victim.getRemainingFireTicks()>0;
+                    && victim.getRemainingFireTicks()<=0;
             case 3 -> husk.getHealth()<husk.getMaxHealth();
-            case 4,7 -> boss.isAbsolved();
-            case 5 -> boss.getAbsolutionCount()==3 && !boss.isRemoved() && hitDuringNova && novaDuringHit;
+            case 4 -> boss.isAbsolved() && cleansingObserved;
+            case 7 -> boss.isAbsolved();
+            case 5 -> boss.getAbsolutionCount()==3 && !boss.isRemoved() && boss.getNovaReleaseTicks()==0;
             case 6 -> !boss.isAbsolved() && boss.getAbsolutionCount()==3;
+            case 9 -> gardenSeen && sweepSeen;
             case 8 -> boss.isRemoved() && boss.getAbsolutionCount()==5 && residuumCount()==rewardsBefore+1;
             default -> true;
         };

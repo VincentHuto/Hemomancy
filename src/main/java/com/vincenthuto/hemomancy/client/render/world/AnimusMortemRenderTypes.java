@@ -11,6 +11,7 @@ public final class AnimusMortemRenderTypes {
     private static final SchoolRenderTypes.Clock CLOCK = new SchoolRenderTypes.Clock();
     public static final RenderType ANIMUS=create("living_blood",ShaderInit.MANIPULATION_ANIMUS,false);
     public static final RenderType MORTEM=create("blood_decay",ShaderInit.MANIPULATION_MORTEM,false);
+    public static final RenderType PUTRICIEL_ROT=create("putriciel_rot",ShaderInit.MANIPULATION_PUTRICIEL_ROT,false);
     public static final RenderType INFECTION=create("blood_infection",ShaderInit.MANIPULATION_INFECTION,true);
     public static final RenderType AVATAR=create("living_blood_avatar",ShaderInit.MANIPULATION_ANIMUS_MODEL,true);
     /** Living blood that writes depth, for streams fixed in the world: translucent water drawn later then sorts behind it. */

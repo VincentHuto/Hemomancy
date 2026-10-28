@@ -9,6 +9,7 @@ public final class PutricielVisualRules {
     public static final int ABSOLUTION_CYCLE = 300, ABSOLUTION_WINDOW = 80, ABSOLUTIONS_NEEDED = 5;
     public static final int HIT_TICKS = 14, BURST_TICKS = 32, REST_TICKS = 40;
     public static final int NOVA = 1, OPEN = 2, CLOSE = 3, ABSOLVE = 4, REST = 5, MELEE = 6;
+    public static final int CLEANSE = 7;
     public static final float SCALE = 1.4F;
     public record Pose(float gather, float release, float offering, float flinch, float spores) {}
     private PutricielVisualRules() {}

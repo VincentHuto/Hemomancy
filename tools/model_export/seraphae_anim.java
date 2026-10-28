@@ -5,6 +5,18 @@
 		SeraphaeAnimState motion = SeraphaeAnimState.of(entity);
 		motion.update(entity, AnimationTime.partialTick());
 		pose(entity.getSeraphaeState(), motion.remaining(), ageInTicks, netHeadYaw, headPitch);
+		var secondary = com.vincenthuto.hemomancy.common.entity.boss.saint.SaintAttackPattern.byId(entity.getSecondaryMove());
+		if (secondary != null) {
+			var cast = secondary.motion(entity.secondaryTime(AnimationTime.partialTick()));
+			rightArm.xRot -= cast.gather() * 1.1F;
+			leftArm.xRot -= cast.gather() * .6F;
+			rightForearm.yRot += cast.strike() * .6F;
+			leftWing.yRot += cast.gather() * .3F;
+			rightWing.yRot -= cast.gather() * .3F;
+			head.xRot += cast.strike() * .15F;
+			hangChain(leftChain, leftArm, leftForearm, 0);
+			hangChain(rightChain, rightArm, rightForearm, 0);
+		}
 	}
 
 	/** Absolute poses reset every joint, including secondary feather waves and restraints. */
@@ -30,6 +42,12 @@
 		rightForearm.yRot -= fold * .23F;
 		leftHand.zRot += Mth.sin(age * .15F) * strain * .08F;
 		rightHand.zRot -= Mth.sin(age * .15F + 1) * strain * .08F;
+		if (state == SeraphaeState.STABLE) {
+			leftArm.xRot -= strain * .7F;
+			rightArm.xRot -= strain * .7F;
+			leftForearm.xRot -= strain * .3F;
+			rightForearm.xRot -= strain * .3F;
+		}
 		for (int side = -1; side <= 1; side += 2) {
 			ModelPart wing = side == 1 ? leftWing : rightWing;
 			ModelPart outer = side == 1 ? leftWingOuter : rightWingOuter;

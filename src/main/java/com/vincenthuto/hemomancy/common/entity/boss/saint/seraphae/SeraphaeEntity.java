@@ -4,6 +4,13 @@ import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.UUID;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -107,8 +114,6 @@ public class SeraphaeEntity extends SaintTrialEntity {
 	// ── escalation thresholds ─────────────────────────────────────────
 	/** Below this integrity, spawn rate & hazards increase. */
 	private static final float ESCALATION_THRESHOLD = 25.0F;
-	/** Chance per player per tick-scan of receiving wisp damage in DISPERSED state. */
-	private static final float DISPERSED_DAMAGE_CHANCE = 0.3F;
 
 	// ── animation states ──────────────────────────────────────────────
 	public final AnimationState idleAnimationState = new AnimationState();
@@ -119,6 +124,7 @@ public class SeraphaeEntity extends SaintTrialEntity {
 	private int stateTimer = STABLE_DURATION;
 	private boolean anchorsPlaced;
 	private boolean defeated;
+	private final Map<UUID, Integer> excessGrowth = new HashMap<>();
 
 	// ── constructor ───────────────────────────────────────────────────
 
@@ -226,7 +232,7 @@ public class SeraphaeEntity extends SaintTrialEntity {
 	public void aiStep() {
 		super.aiStep();
 
-		if (this.level().isClientSide || tickRise() || defeated) return;
+		if (this.level().isClientSide || tickRise() || defeated || !isAlive()) return;
 
 		ServerLevel server = (ServerLevel) this.level();
 
@@ -267,6 +273,7 @@ public class SeraphaeEntity extends SaintTrialEntity {
 
 		// Per-state behaviour
 		tickState(server);
+		tickSecondaryAttacks(getSeraphaeState()==SeraphaeState.STABLE);
 
 		// Boss bar shows integrity progress
 		bossBar.setProgress(getContainmentIntegrity() / MAX_INTEGRITY);
@@ -345,13 +352,35 @@ public class SeraphaeEntity extends SaintTrialEntity {
 	// ── per-state tick behaviour ──────────────────────────────────────
 
 	private void tickState(ServerLevel server) {
-		// The state mesh carries the radiance, feather wisps and anchor tethers, even on Minimal particles.
-		if (getSeraphaeState() != SeraphaeState.DISPERSED || this.tickCount % 30 != 0) return;
-		for (Player player : server.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(ARENA_RADIUS))) {
-			if (server.random.nextFloat() < DISPERSED_DAMAGE_CHANCE) {
-				player.hurt(this.damageSources().magic(), 1.5F);
-				SeraphaeEffects.burst(server, player.position().add(0, 1, 0), SeraphaeVisualRules.HAZARD, .6F);
+		var state = getSeraphaeState();
+		var nearby = server.getEntitiesOfClass(Player.class, getBoundingBox().inflate(SeraphaeGrowthRules.REACH),
+				p -> ManipulationCombatHelper.canHarmFor(this, p) && distanceToSqr(p) <= SeraphaeGrowthRules.REACH * SeraphaeGrowthRules.REACH
+						&& hasLineOfSight(p));
+		var present = new HashSet<UUID>();
+		for (Player player : nearby) present.add(player.getUUID());
+		excessGrowth.keySet().retainAll(present);
+		int elapsed = state.duration() - getStateTimer();
+		boolean transfuse = state == SeraphaeState.STABLE && elapsed > 0 && elapsed % SeraphaeGrowthRules.CYCLE == 0;
+		boolean convulse = state == SeraphaeState.DISPERSED && elapsed > 0 && elapsed % 40 == 0;
+		if (!transfuse && !convulse) return;
+		for (Player player : nearby) {
+			float healing = SeraphaeGrowthRules.healing(player.getHealth(), player.getMaxHealth());
+			if (transfuse && healing > 0) {
+				player.heal(healing);
+				excessGrowth.remove(player.getUUID());
+				SeraphaeEffects.transfuse(server, position().add(0, 1.5, 0), player.position().add(0, 1, 0));
+				continue;
 			}
+			int growth = excessGrowth.merge(player.getUUID(), 1, Integer::sum);
+			SeraphaeEffects.transfuse(server, position().add(0, 1.5, 0), player.position().add(0, 1, 0));
+			if (convulse || SeraphaeGrowthRules.convulses(growth)) {
+				excessGrowth.remove(player.getUUID());
+				player.hurt(damageSources().magic(), 3);
+				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20, 3, false, false, true));
+				player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 0, false, false, true));
+				SeraphaeEffects.burst(server, player.position().add(0, 1, 0), SeraphaeVisualRules.CONVULSION, .8F);
+				player.displayClientMessage(Component.translatable("message.hemomancy.seraphae.excess_growth"), true);
+			} else player.displayClientMessage(Component.translatable("message.hemomancy.seraphae.growth_warning"), true);
 		}
 	}
 

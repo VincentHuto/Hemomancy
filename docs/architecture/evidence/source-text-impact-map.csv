@@ -1519,6 +1519,7 @@ src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTendenc
 src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTendencyDefenseIntegrationSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ferric/BloodNeedleManip.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperWingedFlightPersistenceSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/encounter/VesperOrdealManager.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperWingedFlightPersistenceSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/common/entity/boss/phlegethosoma/PhlegethosomaSwimmingRulesTest.java,junit,src/main/resources/assets/hemomancy/models/entity/bbmodel/bosses/PhlegethosomaModel.bbmodel,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/CrimsonDoeVenousStriderResourceTest.java,main,src/main/java,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/CrimsonDoeVenousStriderResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/CrimsonDoeVenousStriderResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java,java,base-dir

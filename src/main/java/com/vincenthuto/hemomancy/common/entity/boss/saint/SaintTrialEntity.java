@@ -76,6 +76,10 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint {
 	@Nullable
 	private BlockState tombState;
 	private boolean trialEnded;
+	private static final EntityDataAccessor<Integer> DATA_SECONDARY_MOVE = SynchedEntityData.defineId(SaintTrialEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_SECONDARY_TICKS = SynchedEntityData.defineId(SaintTrialEntity.class, EntityDataSerializers.INT);
+	private final SaintSecondaryAttacks secondary = new SaintSecondaryAttacks();
+	private final BossReplayClock secondaryClock = new BossReplayClock();
 
 	protected SaintTrialEntity(EntityType<? extends SaintTrialEntity> type, Level level, int xpReward,
 			BossBarBinding bossBar) {
@@ -94,10 +98,23 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint {
 		builder.define(DATA_VISUAL_STATE, VISUAL_NONE);
 		builder.define(DATA_VISUAL_TICKS, 0);
 		builder.define(DATA_RISE_TICK, -1);
+		builder.define(DATA_SECONDARY_MOVE, 0);
+		builder.define(DATA_SECONDARY_TICKS, 0);
 	}
+
+	void secondaryState(int move,int ticks) {
+		entityData.set(DATA_SECONDARY_MOVE,move);entityData.set(DATA_SECONDARY_TICKS,Math.max(0,ticks));
+	}
+	public int getSecondaryMove(){return entityData.get(DATA_SECONDARY_MOVE);}
+	public int getSecondaryTicks(){return entityData.get(DATA_SECONDARY_TICKS);}
+	public float secondaryTime(float partial) {
+		return secondaryClock.sample(getSecondaryMove(),getSecondaryTicks(),tickCount,partial,-1);
+	}
+	protected final void tickSecondaryAttacks(boolean allowed) {secondary.tick(this,allowed && !rising());}
 
 	@Override
 	public void beginRise() {
+		secondary.cancel(this);
 		rise.begin();
 		this.entityData.set(DATA_RISE_TICK, 0);
 		bossBar.setVisible(false);
@@ -263,6 +280,7 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint {
 	protected final void endTrial(@Nullable Player victor, @Nullable DamageSource cause) {
 		if (trialEnded || !(this.level() instanceof ServerLevel server)) return;
 		trialEnded = true;
+		secondary.cancel(this);
 		Player recipient = victor != null && victor.isAlive() ? victor
 				: server.getNearestPlayer(this.getX(), this.getY(), this.getZ(), REWARD_RANGE,
 						entity -> entity.isAlive() && !entity.isSpectator());

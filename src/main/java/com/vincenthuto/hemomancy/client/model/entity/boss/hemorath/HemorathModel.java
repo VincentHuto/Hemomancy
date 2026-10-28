@@ -231,6 +231,15 @@ public class HemorathModel<T extends HemorathEntity> extends HierarchicalModel<T
 	protected final ModelPart train7Bend;
 	protected final ModelPart train8;
 	protected final ModelPart train8Bend;
+	protected final ModelPart ironGrowth0;
+	protected final ModelPart ironGrowth1;
+	protected final ModelPart ironGrowth2;
+	protected final ModelPart ironGrowth3;
+	protected final ModelPart ironGrowth4;
+	protected final ModelPart ironGrowth5;
+	protected final ModelPart ironGrowth6;
+	protected final ModelPart ironGrowth7;
+	protected final ModelPart ironGrowth8;
 
 	public HemorathModel(ModelPart root) {
 		this.root = root.getChild("root");
@@ -442,6 +451,15 @@ public class HemorathModel<T extends HemorathEntity> extends HierarchicalModel<T
 		this.train7Bend = this.train7.getChild("train_7_bend");
 		this.train8 = this.train.getChild("train_8");
 		this.train8Bend = this.train8.getChild("train_8_bend");
+		this.ironGrowth0 = this.leftArm.getChild("iron_growth_0");
+		this.ironGrowth1 = this.rightArm.getChild("iron_growth_1");
+		this.ironGrowth2 = this.leftForearm.getChild("iron_growth_2");
+		this.ironGrowth3 = this.rightForearm.getChild("iron_growth_3");
+		this.ironGrowth4 = this.leftShin.getChild("iron_growth_4");
+		this.ironGrowth5 = this.rightShin.getChild("iron_growth_5");
+		this.ironGrowth6 = this.head.getChild("iron_growth_6");
+		this.ironGrowth7 = this.leftRib2.getChild("iron_growth_7");
+		this.ironGrowth8 = this.rightRib5.getChild("iron_growth_8");
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -471,7 +489,7 @@ public class HemorathModel<T extends HemorathEntity> extends HierarchicalModel<T
 				.texOffs(77, 0).addBox(3.0F, 0.0F, -1.5F, 0.75F, 0.5F, 3.5F, new CubeDeformation(0.0F))
 				.texOffs(87, 0).addBox(0.5F, 0.0F, -2.25F, 3.0F, 0.5F, 0.75F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -5.25F, 0.0F, 0.0F, 0.0F, 0.1047F));
 
-		ribcage.addOrReplaceChild("left_rib_2", CubeListBuilder.create()
+		PartDefinition leftRib2 = ribcage.addOrReplaceChild("left_rib_2", CubeListBuilder.create()
 				.texOffs(96, 0).addBox(0.5F, 0.0F, 1.25F, 3.0F, 0.5F, 0.75F, new CubeDeformation(0.0F))
 				.texOffs(105, 0).addBox(3.0F, 0.0F, -1.5F, 0.75F, 0.5F, 3.5F, new CubeDeformation(0.0F))
 				.texOffs(115, 0).addBox(0.5F, 0.0F, -2.25F, 3.0F, 0.5F, 0.75F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -4.0F, 0.0F, 0.0F, 0.0F, 0.1222F));
@@ -690,7 +708,7 @@ public class HemorathModel<T extends HemorathEntity> extends HierarchicalModel<T
 				.texOffs(92, 41).addBox(-3.5F, 0.0F, -1.5F, 0.75F, 0.5F, 3.5F, new CubeDeformation(0.0F))
 				.texOffs(102, 41).addBox(-3.25F, 0.0F, -2.25F, 2.75F, 0.5F, 0.75F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.5F, 0.0F, 0.0F, 0.0F, -0.1571F));
 
-		ribcage.addOrReplaceChild("right_rib_5", CubeListBuilder.create()
+		PartDefinition rightRib5 = ribcage.addOrReplaceChild("right_rib_5", CubeListBuilder.create()
 				.texOffs(110, 41).addBox(-3.0F, 0.0F, 1.25F, 2.5F, 0.5F, 0.75F, new CubeDeformation(0.0F))
 				.texOffs(118, 41).addBox(-3.25F, 0.0F, -1.5F, 0.75F, 0.5F, 3.5F, new CubeDeformation(0.0F))
 				.texOffs(0, 46).addBox(-3.0F, 0.0F, -2.25F, 2.5F, 0.5F, 0.75F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -0.25F, 0.0F, 0.0F, 0.0F, -0.1745F));
@@ -1165,14 +1183,14 @@ public class HemorathModel<T extends HemorathEntity> extends HierarchicalModel<T
 		PartDefinition leftLeg = hips.addOrReplaceChild("left_leg", CubeListBuilder.create()
 				.texOffs(53, 145).addBox(-0.5F, -0.25F, -0.5F, 1.0F, 6.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.5F, 0.0F, 0.0F, 0.0F, 0.0F, -0.0698F));
 
-		leftLeg.addOrReplaceChild("left_shin", CubeListBuilder.create()
+		PartDefinition leftShin = leftLeg.addOrReplaceChild("left_shin", CubeListBuilder.create()
 				.texOffs(58, 145).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
 				.texOffs(63, 145).addBox(-0.75F, 5.25F, -2.0F, 1.5F, 1.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, 0.0F, 0.0524F, 0.0F, 0.0F));
 
 		PartDefinition rightLeg = hips.addOrReplaceChild("right_leg", CubeListBuilder.create()
 				.texOffs(73, 145).addBox(-0.5F, -0.25F, -0.5F, 1.0F, 6.5F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.5F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0698F));
 
-		rightLeg.addOrReplaceChild("right_shin", CubeListBuilder.create()
+		PartDefinition rightShin = rightLeg.addOrReplaceChild("right_shin", CubeListBuilder.create()
 				.texOffs(78, 145).addBox(-0.5F, -0.5F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
 				.texOffs(83, 145).addBox(-0.75F, 5.25F, -2.0F, 1.5F, 1.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 6.0F, 0.0F, 0.0524F, 0.0F, 0.0F));
 
@@ -1365,6 +1383,60 @@ public class HemorathModel<T extends HemorathEntity> extends HierarchicalModel<T
 				.texOffs(13, 221).addBox(-1.25F, -0.25F, 0.0F, 2.5F, 0.5F, 3.5F, new CubeDeformation(0.0F))
 				.texOffs(26, 221).addBox(-0.5F, -0.25F, 3.5F, 1.0F, 0.5F, 1.5F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 3.0F, 0.0F, -0.2618F, 0.0F));
 
+		leftArm.addOrReplaceChild("iron_growth_0", CubeListBuilder.create()
+				.texOffs(32, 221).addBox(-0.75F, -0.75F, -0.25F, 1.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(37, 221).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.25F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(41, 221).addBox(-0.25F, -2.75F, -0.5F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(44, 221).addBox(-0.25F, -3.5F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 3.0F, -1.0F, -0.2094F, 0.0F, -0.2269F));
+
+		rightArm.addOrReplaceChild("iron_growth_1", CubeListBuilder.create()
+				.texOffs(46, 221).addBox(-0.75F, -0.75F, -0.25F, 1.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(51, 221).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.25F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(55, 221).addBox(-0.25F, -2.75F, -0.5F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(58, 221).addBox(-0.25F, -3.5F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.0F, -1.0F, -0.2094F, 0.0F, 0.0F));
+
+		leftForearm.addOrReplaceChild("iron_growth_2", CubeListBuilder.create()
+				.texOffs(60, 221).addBox(-0.75F, -0.75F, -0.25F, 1.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(65, 221).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.25F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(69, 221).addBox(-0.25F, -2.75F, -0.5F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(72, 221).addBox(-0.25F, -3.5F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0F, -0.75F, -0.2094F, 0.0F, 0.2269F));
+
+		rightForearm.addOrReplaceChild("iron_growth_3", CubeListBuilder.create()
+				.texOffs(74, 221).addBox(-0.75F, -0.75F, -0.25F, 1.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(79, 221).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.25F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(83, 221).addBox(-0.25F, -2.75F, -0.5F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(86, 221).addBox(-0.25F, -3.5F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 5.0F, -0.75F, -0.2094F, 0.0F, -0.2269F));
+
+		leftShin.addOrReplaceChild("iron_growth_4", CubeListBuilder.create()
+				.texOffs(88, 221).addBox(-0.75F, -0.75F, -0.25F, 1.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(93, 221).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.25F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(97, 221).addBox(-0.25F, -2.75F, -0.5F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(100, 221).addBox(-0.25F, -3.5F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.0F, -0.75F, -0.2094F, 0.0F, 0.0F));
+
+		rightShin.addOrReplaceChild("iron_growth_5", CubeListBuilder.create()
+				.texOffs(102, 221).addBox(-0.75F, -0.75F, -0.25F, 1.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(107, 221).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.25F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(111, 221).addBox(-0.25F, -2.75F, -0.5F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(114, 221).addBox(-0.25F, -3.5F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 4.0F, -0.75F, -0.2094F, 0.0F, 0.2269F));
+
+		head.addOrReplaceChild("iron_growth_6", CubeListBuilder.create()
+				.texOffs(116, 221).addBox(-0.75F, -0.75F, -0.25F, 1.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(121, 221).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.25F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(125, 221).addBox(-0.25F, -2.75F, -0.5F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(0, 226).addBox(-0.25F, -3.5F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, -3.0F, -1.75F, -0.2094F, 0.0F, -0.2269F));
+
+		leftRib2.addOrReplaceChild("iron_growth_7", CubeListBuilder.create()
+				.texOffs(2, 226).addBox(-0.75F, -0.75F, -0.25F, 1.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(7, 226).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.25F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(11, 226).addBox(-0.25F, -2.75F, -0.5F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(14, 226).addBox(-0.25F, -3.5F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, 0.0F, -2.5F, -0.2094F, 0.0F, 0.0F));
+
+		rightRib5.addOrReplaceChild("iron_growth_8", CubeListBuilder.create()
+				.texOffs(16, 226).addBox(-0.75F, -0.75F, -0.25F, 1.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(21, 226).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 1.25F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(25, 226).addBox(-0.25F, -2.75F, -0.5F, 0.5F, 2.0F, 0.5F, new CubeDeformation(0.0F))
+				.texOffs(28, 226).addBox(-0.25F, -3.5F, -0.5F, 0.25F, 0.75F, 0.25F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.0F, 0.0F, -2.5F, -0.2094F, 0.0F, 0.2269F));
+
 		return LayerDefinition.create(meshdefinition, 128, 256);
 	}
 
@@ -1382,9 +1454,24 @@ public class HemorathModel<T extends HemorathEntity> extends HierarchicalModel<T
 				limbSwing, limbSwingAmount, netHeadYaw, headPitch);
 		float attack = entity.getAttackAnim(AnimationTime.partialTick());
 		float swipe = Mth.sin(Mth.sqrt(attack) * Mth.PI);
+		float siphon = motion.siphon();
+		rightArm.xRot -= siphon * .95F;
+		rightForearm.yRot -= siphon * .35F;
+		rightHand.xRot -= siphon * .3F;
+		head.xRot -= siphon * .12F;
+		for (ModelPart growth : new ModelPart[]{ironGrowth0, ironGrowth1, ironGrowth2, ironGrowth3,
+				ironGrowth4, ironGrowth5, ironGrowth6, ironGrowth7, ironGrowth8}) growth.zScale = 1 + siphon * .45F;
 		rightArm.xRot -= swipe * .8F;
 		rightForearm.xRot -= swipe * .4F;
 		rightHand.zRot -= swipe * .3F;
+		var secondary = com.vincenthuto.hemomancy.common.entity.boss.saint.SaintAttackPattern.byId(entity.getSecondaryMove());
+		if (secondary != null) {
+			var cast = secondary.motion(entity.secondaryTime(AnimationTime.partialTick()));
+			rightArm.xRot += -cast.gather() * 1.1F + cast.strike() * 1.6F;
+			rightForearm.xRot -= cast.gather() * .5F;
+			rightHand.zRot += cast.strike() * .45F;
+			hips.y += cast.gather() * 1.5F - cast.strike();
+		}
 	}
 
 	void pose(int visual, boolean charging, boolean phase2, float remaining, float age,

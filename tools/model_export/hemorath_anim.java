@@ -8,9 +8,24 @@
 				limbSwing, limbSwingAmount, netHeadYaw, headPitch);
 		float attack = entity.getAttackAnim(AnimationTime.partialTick());
 		float swipe = Mth.sin(Mth.sqrt(attack) * Mth.PI);
+		float siphon = motion.siphon();
+		rightArm.xRot -= siphon * .95F;
+		rightForearm.yRot -= siphon * .35F;
+		rightHand.xRot -= siphon * .3F;
+		head.xRot -= siphon * .12F;
+		for (ModelPart growth : new ModelPart[]{ironGrowth0, ironGrowth1, ironGrowth2, ironGrowth3,
+				ironGrowth4, ironGrowth5, ironGrowth6, ironGrowth7, ironGrowth8}) growth.zScale = 1 + siphon * .45F;
 		rightArm.xRot -= swipe * .8F;
 		rightForearm.xRot -= swipe * .4F;
 		rightHand.zRot -= swipe * .3F;
+		var secondary = com.vincenthuto.hemomancy.common.entity.boss.saint.SaintAttackPattern.byId(entity.getSecondaryMove());
+		if (secondary != null) {
+			var cast = secondary.motion(entity.secondaryTime(AnimationTime.partialTick()));
+			rightArm.xRot += -cast.gather() * 1.1F + cast.strike() * 1.6F;
+			rightForearm.xRot -= cast.gather() * .5F;
+			rightHand.zRot += cast.strike() * .45F;
+			hips.y += cast.gather() * 1.5F - cast.strike();
+		}
 	}
 
 	void pose(int visual, boolean charging, boolean phase2, float remaining, float age,

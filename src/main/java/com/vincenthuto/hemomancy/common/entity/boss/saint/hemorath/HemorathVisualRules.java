@@ -12,6 +12,7 @@ public final class HemorathVisualRules {
     public static final double PULSE_RADIUS = 6;
     public static final int DEBT_HIT = 1, PULSE_RELEASE = 2, PHASE_BREAK = 3, INTAKE = 4, EXSANGUINATE = 5, MELEE = 6;
     public static final int BURST_TICKS = 24, FINALE_TICKS = 32;
+    public static final int SIPHON = 7;
 
     public record Pose(float lift, float reach, float bow, float recoil, float ribs, float slump, float pressure) {}
 

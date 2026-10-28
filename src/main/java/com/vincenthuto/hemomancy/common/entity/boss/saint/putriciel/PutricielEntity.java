@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel;
 
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -173,24 +174,34 @@ public class PutricielEntity extends SaintTrialEntity {
         }
 
         if (tickRise()) return;
-        if (defeated) return;
+        if (defeated || !isAlive()) return;
         ServerLevel server = (ServerLevel) this.level();
         tickVisualState();
         if (getNovaReleaseTicks() > 0) this.entityData.set(DATA_NOVA_RELEASE, getNovaReleaseTicks() - 1);
 
         bossBar.setProgress((float) getAbsolutionCount() / ABSOLUTIONS_NEEDED);
 
-        this.entityData.set(DATA_NOVA_TIMER, ROT_NOVA_INTERVAL - Math.floorMod(this.tickCount, ROT_NOVA_INTERVAL));
+        this.entityData.set(DATA_NOVA_TIMER, isAbsolved() ? ROT_NOVA_INTERVAL : ROT_NOVA_INTERVAL - Math.floorMod(this.tickCount, ROT_NOVA_INTERVAL));
 
         // Rot nova pulse
-        if (this.tickCount % ROT_NOVA_INTERVAL == 0) {
+        if (!isAbsolved() && this.tickCount % ROT_NOVA_INTERVAL == 0) {
             fireRotNova(server);
         }
 
+        tickSecondaryAttacks(!isAbsolved());
         // Absolution cycle
         if (isAbsolved()) {
             absolveWindowTimer--;
             this.entityData.set(DATA_ABSOLUTION_TIMER, Math.max(0, absolveWindowTimer));
+            if (PutricielCleansingRules.burns(absolveWindowTimer)) {
+                for (Player player : server.getEntitiesOfClass(Player.class, getBoundingBox().inflate(PutricielCleansingRules.RADIUS),
+                        p -> ManipulationCombatHelper.canHarmFor(this, p)
+                                && distanceToSqr(p) <= PutricielCleansingRules.RADIUS * PutricielCleansingRules.RADIUS && hasLineOfSight(p))) {
+                    CrimsonFireHelper.igniteCrimson(player, 2);
+                    player.hurt(damageSources().magic(), 2);
+                }
+                PutricielEffects.burst(server, position().add(0, 1, 0), PutricielVisualRules.CLEANSE, (float) PutricielCleansingRules.RADIUS);
+            }
             if (absolveWindowTimer <= 0) {
                 endAbsolutionWindow(server);
             }
@@ -216,15 +227,16 @@ public class PutricielEntity extends SaintTrialEntity {
                 SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 1.5F, 0.8F);
 
         for (Player player : server.getEntitiesOfClass(Player.class,
-                new AABB(this.blockPosition()).inflate(radius))) {
+                new AABB(this.blockPosition()).inflate(radius), p -> ManipulationCombatHelper.canHarmFor(this, p))) {
             player.hurt(this.damageSources().magic(), ROT_NOVA_DAMAGE);
             player.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, witherAmp, false, false, true));
-            CrimsonFireHelper.igniteCrimson(player, 3);
         }
     }
 
     private void openAbsolutionWindow(ServerLevel server) {
         setAbsolved(true);
+        tickSecondaryAttacks(false);
+        this.entityData.set(DATA_NOVA_RELEASE, 0);
         absolveWindowTimer = ABSOLUTION_WINDOW_DURATION;
         this.entityData.set(DATA_ABSOLUTION_TIMER, absolveWindowTimer);
         absolveCycleTimer = ABSOLUTION_CYCLE;
@@ -286,6 +298,7 @@ public class PutricielEntity extends SaintTrialEntity {
 
     @Override
     public boolean doHurtTarget(Entity target) {
+        if (isAbsolved()) return false;
         boolean hit = super.doHurtTarget(target);
         if (hit && this.level() instanceof ServerLevel server)
             PutricielEffects.burst(server, target.position().add(0, target.getBbHeight() * .6, 0), PutricielVisualRules.MELEE, .8F);

@@ -2,7 +2,7 @@
 
 Run python tools/model_export/seraphae.py --preview to regenerate the Java model,
 embedded-texture Blockbench project, base/emissive atlases, and posed review sheet.
-An ethereal female saint in ruined vestments, with broad tattered feathered wings.
+An ethereal female saint in ruined vestments, with open branching nervous projections.
 Iron binds her wrists, waist, and wing roots; gold light leaks through the seams.
 """
 import argparse
@@ -49,7 +49,7 @@ def wings(r, side, sign):
     r.cube(f'{side}_wing_shoulder', (-1.25, -1, -.75, 2.5, 13, 1.5), 'wing_bone')
     r.cube(wing, (-2, -.5, -1.25, 4, 1, 2.5), 'iron')
     r.cube(wing, (-2, 2, -1.25, 4, 1, 2.5), 'iron')
-    # The inner feathers overlap like a real wing, with unequal torn vanes below.
+    # Unequal nerve trunks radiate from the restrained roots.
     for i, length in enumerate((10, 13, 17, 19, 20, 19)):
         name = f'{side}_inner_feather_{i}'
         r.part(name, wing, (sign * (1.5 + i * 1.5), -i, 1 + i * .75), (0, 0, -sign * 14))
@@ -59,25 +59,32 @@ def wings(r, side, sign):
     r.part(outer, wing, (sign * 10, -7, 0), (0, -sign * 6, 0))
     r.part(f'{side}_wing_wrist', outer, rotation=(0, 0, -sign * 55))
     r.cube(f'{side}_wing_wrist', (-.75, -1, -.5, 1.5, 12, 1), 'wing_bone')
-    # Broad primaries fan out along the second joint, ending in ragged, broken tips.
+    # Long axons branch beyond the outer joint.
     for i, length in enumerate((20, 19, 18, 16, 14, 11, 8)):
         name = f'{side}_primary_{i}'
         r.part(name, outer, (sign * i * 1.5, i * .75, 1 + i * .75), (0, 0, -sign * (18 + i * 4)))
         if side == 'right' and i in (2, 5):
             length -= 3
         feather(r, name, length, i + 6)
-    # A shorter overlapping tier covers the wing arm and gives the upper edge volume.
+    # Short axon fans leave negative space around the main trunks.
     for i in range(5):
         name = f'{side}_covert_{i}'
         r.part(name, wing, (sign * (1.5 + i * 2), -i * 1.25, -.75 + i * .25), (0, 0, -sign * 26))
-        r.cube(name, (-1.5, -1, -.25, 3, 6, .75), 'feather', feather=i)
-        r.cube(name, (-.75, 5, -.25, 1.5, 2, .75), 'feather', feather=i)
+        feather(r, name, 7 + i, i)
 
 
 def feather(r, name, length, index):
-    r.cube(name, (-1.25, 0, -.25, 2.5, length - 4, .5), 'feather', feather=index)
-    r.cube(name, (-1.25, length - 4, -.25, 1.25, 2 if index % 3 else 3.5, .5), 'feather', feather=index)
-    r.cube(name, (0, length - 4, -.25, 1, 4 if index % 4 else 2.5, .5), 'feather', feather=index)
+    # Preserve the animated joint names; geometry is an axon with branching dendrites.
+    r.cube(name, (-.25, 0, -.25, .5, length, .5), 'nerve')
+    for j in range(3):
+        y = snap(length * (.25 + j * .22))
+        for sign in (-1, 1):
+            branch = f'{name}_axon_{j}_{"left" if sign < 0 else "right"}'
+            r.part(branch, name, (0, y, 0), (0, sign * 12, sign * (35 + index % 3 * 9)))
+            reach = snap(2.5 + j * .75 + index % 2)
+            r.cube(branch, (0, 0, -.25, .25, reach, .5), 'nerve')
+            r.cube(branch, (0, reach, -.25, .25, 1, .25), 'core')
+    r.cube(name, (-.5, snap(length * .5), -.5, 1, .75, 1), 'radiance')
 
 
 def saint():
@@ -203,22 +210,11 @@ def paint(cube, t, glow=False):
             rgb = (183, 160, 103)
         if mat == 'hem' and (u + v * 2) % 7 < 2:
             rgb = (121, 107, 87)
-    elif mat == 'feather':
-        index = cube.get('feather', 0)
-        rgb = add((228, 227, 215), n + (index % 3 - 1) * 5)
-        if abs(x) < .3:
-            rgb = (250, 243, 210)
-        elif (int(y * 2) + int(abs(x) * 2)) % 5 == 0:
-            rgb = (196, 198, 187)
-        if abs(x) > .9:
-            rgb = (177, 177, 160)
-        if y > 10 and abs(x) > .5 and (int(y * 2) + index * 3) % 17 < 2:
-            return (0, 0, 0, 0)
-        if y > 14:
-            rgb = mix(rgb, (146, 133, 107), .32)
-        lit = abs(x) < .3 and 2 < y < 7 and index % 4 == 0
-    elif mat == 'wing_bone':
-        rgb = add((201, 198, 176), n)
+    elif mat in ('nerve', 'wing_bone'):
+        rgb = add((158, 130, 122), n)
+        channel = u == 0 or (v + cube.get('feather', 0)) % 9 < 2
+        if channel:
+            rgb, lit = (255, 250, 230), True
     elif mat == 'hair':
         rgb = add((201, 191, 153), n)
         if u % 4 == 0:

@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Restrained Lux: feather frays, broken radiance and braided containment, sorted in the shared school batch. */
+/** Restrained Lux: branching nerves, white vessels and gold impulses in the shared school batch. */
 final class SeraphaeRadianceGeometry {
     private static final int TINT = 0xFFFFFF, CORE = 0xFFD2C4, CLOT = 0x7A1020;
     private static final Vec3 UP = new Vec3(0, 1, 0);
@@ -73,6 +73,10 @@ final class SeraphaeRadianceGeometry {
         float age = frame.age(), elapsed = SeraphaeVisualRules.elapsed(state, frame.remaining());
         int seed = frame.seed();
         boolean dispersed = state == SeraphaeState.DISPERSED;
+        if (dispersed || state == SeraphaeState.STABLE && elapsed % 80 >= 56) {
+            float warning = dispersed ? .25F + SeraphaeVisualRules.burstOpacity(elapsed % 40, 40) * .35F : pose.strain();
+            ground(p, v, new Vec3(0, .04, 0), 10, RIPPLE, seed, TINT, warning * .6F);
+        }
         if (!dispersed) {
             Vec3 heart = new Vec3(0, 1.55 + pose.lift(), 0);
             card(p, v, heart, right, up, .2, .45, WISP, seed, TINT, .1F + pose.strain() * .08F);
@@ -109,15 +113,19 @@ final class SeraphaeRadianceGeometry {
         }
     }
 
-    /** A tapered feather-shaped wisp with a pale quill and a dark trailing split. */
+    /** An exposed white axon with forked gold impulses; no feather vane. */
     private static void feather(PoseStack p, VertexConsumer v, Vec3 at, Vec3 drift, Vec3 camera, Vec3 right, Vec3 up,
                                 double time, int seed, float alpha) {
         float flicker = .72F + .2F * (float) Math.sin(time * .13 + seed * 1.7);
         Vec3 tail = at.add(drift), middle = at.lerp(tail, .5).add(0, .06, 0);
-        ribbonPath(p, v, List.of(at, middle, tail), camera, .12, .015, WISP, seed, TINT, alpha * .26F * flicker);
+        ribbonPath(p, v, List.of(at, middle, tail), camera, .035, .006, WISP, seed, TINT, alpha * .26F * flicker);
         ribbonPath(p, v, List.of(at, middle, tail), camera, .018, .003, RIBBON, seed + 1, CORE, alpha * .8F);
-        ribbonPath(p, v, List.of(middle.add(.025, 0, 0), tail.add(.04, .1, 0)), camera,
-                .025, .004, SLASH, seed + 2, CLOT, alpha * .45F);
+        float impulse = (float) Math.pow(Math.max(0, Math.sin(time * .32 - seed * .7)), 6);
+        for (int side : new int[]{-1, 1}) {
+            Vec3 fork = middle.add(right.scale(side * .14)).add(0, .12, 0);
+            ribbonPath(p, v, List.of(middle, fork, fork.add(drift.scale(.35))), camera,
+                    .012, .003, RIBBON, seed + 2, 0xFFD563, alpha * (.25F + impulse * .7F));
+        }
         card(p, v, at, right, up, .04, .065, FOCUS, seed + 3, CORE, alpha * .65F);
     }
 
@@ -186,6 +194,28 @@ final class SeraphaeRadianceGeometry {
         if (fade <= 0) return;
         int seed = Math.floorMod(packet.from().hashCode(), 113), kind = packet.count();
         double radius = packet.radius(), grow = HemoEasing.easeOutCubic(age / 9.0);
+        if (kind == SeraphaeVisualRules.TRANSFUSION) {
+            Vec3 end = packet.to().subtract(packet.from());
+            double travel = HemoEasing.smoothstep(age / 12);
+            Vec3 head = end.scale(travel), root = end.scale(Math.max(0, travel - .4));
+            ribbonPath(p, v, List.of(root, root.lerp(head, .5).add(0, .08, 0), head), camera,
+                    .025, .006, RIBBON, seed, TINT, fade);
+            for (int i = 0; i < 3; i++) {
+                Vec3 fork = head.add(right.scale((i - 1) * .18)).add(0, .12 * (i % 2), 0);
+                ribbonPath(p, v, List.of(head, fork, fork.add(0, -.18, 0)), camera,
+                        .012, .003, RIBBON, seed + i, 0xFFD563, fade);
+            }
+            return;
+        }
+        if (kind == SeraphaeVisualRules.CONVULSION) {
+            for (int i = 0; i < 6; i++) {
+                double a = i * Math.PI / 3;
+                Vec3 low = new Vec3(Math.cos(a) * .2, -.7, Math.sin(a) * .2);
+                ribbonPath(p, v, List.of(low, low.add(.1, .45, -.08), low.add(-.06, .8, .06), low.add(0, 1.2, 0)),
+                        camera, .025, .004, RIBBON, seed + i, 0xFFD563, fade);
+            }
+            return;
+        }
         if (kind == SeraphaeVisualRules.CAPTURE) {
             Vec3 end = packet.to().subtract(packet.from());
             float travel = HemoEasing.smoothstep(age / 18);

@@ -63,7 +63,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "14";
+    public static final String PROTOCOL_VERSION = "16";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────

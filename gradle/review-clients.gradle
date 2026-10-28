@@ -14,6 +14,7 @@ def review = [1280, 720]
 def velorumFightReview = gradleOr('velorumFightReview', 'false') == 'true'
 def putricielFightReview = gradleOr('putricielFightReview', 'false') == 'true'
 def hemorathFightReview = gradleOr('hemorathFightReview', 'false') == 'true'
+def seraphaeFightReview = gradleOr('seraphaeFightReview', 'false') == 'true'
 
 def reviewClients = [
     phlegethosomaReviewClient: [dir: 'build/phlegethosoma-client', user: 'FlukeReview', size: review, props: ['hemomancy.phlegethosomaReview': 'true']],
@@ -67,10 +68,12 @@ def reviewClients = [
     infusionReviewClient: [dir: 'build/infusion-client-review', user: 'InfusionReview', size: review,
                            props: ['hemomancy.infusionReview': 'true']],
     bossPresentationReviewClient: [dir: 'build/boss-presentation-review', user: 'BossReview', size: review,
-                                    args: velorumFightReview ? ['--quickPlaySingleplayer', gradleOr('velorumReviewWorld', 'BossPresentationReview')] :
+                                    args: seraphaeFightReview ? ['--quickPlaySingleplayer', gradleOr('seraphaeReviewWorld', 'BossPresentationReview')] :
+                                            velorumFightReview ? ['--quickPlaySingleplayer', gradleOr('velorumReviewWorld', 'BossPresentationReview')] :
                                             putricielFightReview ? ['--quickPlaySingleplayer', gradleOr('putricielReviewWorld', 'BossPresentationReview')] :
                                             hemorathFightReview ? ['--quickPlaySingleplayer', gradleOr('hemorathReviewWorld', 'BossPresentationReview')] : [],
-                                    props: ['hemomancy.bossPresentationReview': (hemorathFightReview || putricielFightReview || velorumFightReview) ? 'false' : 'true',
+                                    props: ['hemomancy.bossPresentationReview': (seraphaeFightReview || hemorathFightReview || putricielFightReview || velorumFightReview) ? 'false' : 'true',
+                                            'hemomancy.seraphaeFightReview': seraphaeFightReview.toString(),
                                             'hemomancy.putricielFightReview': putricielFightReview.toString(),
                                             'hemomancy.velorumFightReview': velorumFightReview.toString(),
                                             'hemomancy.hemorathFightReview': hemorathFightReview.toString(),

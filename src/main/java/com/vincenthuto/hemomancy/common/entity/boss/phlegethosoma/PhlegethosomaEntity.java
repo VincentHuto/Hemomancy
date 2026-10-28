@@ -96,7 +96,7 @@ public final class PhlegethosomaEntity extends Monster {
         if(intro.active()) { if(isIchorSwimming())setDeltaMovement(Vec3.ZERO);intro.tick();entityData.set(INTRO,intro.elapsed());bar.setVisible(!intro.active());return; }
         int nextPhase=PhlegethosomaCombatRules.phase(phase(),getHealth(),getMaxHealth());
         if(nextPhase>phase()) {
-            entityData.set(PHASE,nextPhase);getAttribute(Attributes.ARMOR).setBaseValue(nextPhase==3?0:3);
+            entityData.set(PHASE,nextPhase);bar.setColor(PhlegethosomaCombatRules.barColor(nextPhase));getAttribute(Attributes.ARMOR).setBaseValue(nextPhase==3?0:3);
             if(isBreachAttack())breach.returnToPool();else change(Action.RECOVERY);playSound(SoundEvents.SLIME_DEATH,1,.5F);return;
         }
         LivingEntity target=getTarget();
@@ -316,7 +316,7 @@ public final class PhlegethosomaEntity extends Monster {
         if(home!=null)tag.putLong("FlukeHome",home.asLong());intro.save(tag,"FlukeIntro");
     }
     @Override public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);entityData.set(PHASE,Math.clamp(tag.getInt("FlukePhase"),1,3));introduced=tag.getBoolean("FlukeIntroduced");
+        super.readAdditionalSaveData(tag);entityData.set(PHASE,Math.clamp(tag.getInt("FlukePhase"),1,3));bar.setColor(PhlegethosomaCombatRules.barColor(phase()));introduced=tag.getBoolean("FlukeIntroduced");
         if(tag.contains("FlukeHome"))home=BlockPos.of(tag.getLong("FlukeHome"));intro.load(tag,"FlukeIntro");
         getAttribute(Attributes.ARMOR).setBaseValue(phase()==3?0:phase()==2?3:6);change(Action.RECOVERY);
     }

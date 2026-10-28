@@ -10,6 +10,7 @@ public final class SeraphaeVisualRules {
     public static final int RESTORE_TICKS = 28;
     public static final int HIT = 1, FRACTURE_BURST = 2, DISPERSE_BURST = 3, CAPTURE = 4, SEALED = 5, HAZARD = 6;
     public static final int BURST_TICKS = 24, SEAL_TICKS = 44;
+    public static final int TRANSFUSION = 7, CONVULSION = 8;
     public static final float MODEL_SCALE = 1.22F;
 
     public record Pose(float spread, float fold, float recoil, float strain, float lift, float glow) {}
@@ -24,7 +25,14 @@ public final class SeraphaeVisualRules {
         float t = elapsed(state, remaining);
         float breath = (float) Math.sin(age * .075F);
         return switch (state) {
-            case STABLE -> new Pose(0, 1 - HemoEasing.smoothstep(t / RESTORE_TICKS), 0, 0, 0, .32F + breath * .07F);
+            case STABLE -> {
+                float cycle = t % SeraphaeGrowthRules.CYCLE;
+                float gather = HemoEasing.smoothstep((cycle - 56) / SeraphaeGrowthRules.WARNING);
+                float release = t >= SeraphaeGrowthRules.CYCLE ? HemoEasing.pulse(cycle, 3, SeraphaeGrowthRules.RELEASE) : 0;
+                float power = Math.max(gather, release);
+                yield new Pose(power * .4F, (1 - HemoEasing.smoothstep(t / RESTORE_TICKS)) * (1 - power),
+                        release * .2F, power * .7F, power * .06F, .32F + breath * .07F + power * .5F);
+            }
             case FRACTURING -> {
                 float spread = (float) HemoEasing.easeInOutCubic((t - FRACTURE.windup()) / 44.0);
                 float recoil = HemoEasing.pulse(t, 8, 28);

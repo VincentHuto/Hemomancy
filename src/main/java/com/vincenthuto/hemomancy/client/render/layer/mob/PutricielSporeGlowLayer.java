@@ -32,9 +32,9 @@ public class PutricielSporeGlowLayer<T extends PutricielEntity> extends RenderLa
         var action = PutricielVisualRules.pose(entity.getVisualState(), entity.isAbsolved(), entity.getAbsolutionCount(),
                 motion.visual(), motion.window(), motion.nova(), motion.release());
         float pulse = (Mth.sin(age * .11F) + 1) * .5F;
-        float heat = Math.max(action.gather(), action.release());
+        float heat = action.offering();
         int alpha = (int) Math.min(255, 85 + pulse * 40 + heat * 130 + action.offering() * 90 + action.flinch() * 60);
-        int color = FastColor.ARGB32.color(alpha, 255, (int) (215 - heat * 115), (int) (125 - heat * 65));
+        int color = FastColor.ARGB32.color(alpha, 255, (int) (235 - heat * 25), (int) (170 - heat * 45));
         getParentModel().renderToBuffer(poseStack, buffer.getBuffer(GLOW), 0x00F000F0,
                 OverlayTexture.NO_OVERLAY, color);
     }

@@ -23,7 +23,7 @@ class HemorathReliquaryGeometryTest {
     }
 
     @Test void burstsIntakeAndFinaleExpireWithoutGenericMoteResidue() {
-        for (int kind = 1; kind <= 6; kind++) for (float age : new float[]{0, 1, 6, 12, 23, 32})
+        for (int kind = 1; kind <= 7; kind++) for (float age : new float[]{0, 1, 6, 12, 23, 32})
             for (boolean solids : new boolean[]{true, false}) {
                 Capture mesh = new Capture();
                 var packet = new ManipulationVisualPacket(Form.HEMORATH_RELIQUARY, -1, Vec3.ZERO, new Vec3(4, 2, 0), 3, 32, kind);

@@ -21,7 +21,7 @@ class VelorumRimeGeometryTest {
         }
     }
     @Test void spikesAndEveryBurstRetireWithoutInvalidVertices() {
-        for(int kind=1;kind<=6;kind++)for(float age:new float[]{0,1,8,20,39,40}) {
+        for(int kind=1;kind<=8;kind++)for(float age:new float[]{0,1,8,20,39,40}) {
             var mesh=new Capture();
             var packet=new ManipulationVisualPacket(Form.VELORUM_RIME,-1,Vec3.ZERO,new Vec3(8,2,0),10,40,kind);
             VelorumRimeGeometry.draw(packet,new PoseStack(),mesh,mesh,CAMERA,RIGHT,UP,100+age,age,1);

@@ -42,8 +42,8 @@ import java.util.UUID;
 /** Opt-in native review of the real nova and nova, veil, resistance and blood drain, including concurrent casts. */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class VelorumFightClientReview {
-    private static final String[] SCENES={"idle","frost_nova","veil_of_darkness","melee","martyrdom","silence_drain","concurrent_casts","rest"};
-    private static final int[] LENGTHS={40,60,60,35,55,60,60,70};
+    private static final String[] SCENES={"idle","frost_nova","veil_of_darkness","melee","stillness_break","silence_drain","concurrent_casts","secondary_patterns","rest"};
+    private static final int[] LENGTHS={40,60,60,35,55,60,60,300,70};
     private static final AABB STAGE=new AABB(1880,198,580,1921,215,621);
     private static final JsonObject RESULTS=new JsonObject();
     private static MinecraftServer server;
@@ -54,6 +54,7 @@ public final class VelorumFightClientReview {
     private static volatile int scene=-1,tick;
     private static volatile boolean done;
     private static boolean launched,rootChecked,drainChecked,concurrentChecked,martyrChecked;
+    private static boolean advanceSeen,crossSeen;
     private static int capturedScene=-1,capturedTick=-1,closing,rewardsBefore,originalFov;
     private static boolean originalPause;
     private static ParticleStatus originalParticles;
@@ -113,6 +114,10 @@ public final class VelorumFightClientReview {
             if(victim!=null && !victim.isRemoved())victim.doTick();
             if(inactive!=null && !inactive.isRemoved())inactive.doTick();
             if(tick==0)enter();
+            var secondary=com.vincenthuto.hemomancy.common.entity.boss.saint.SaintAttackPattern.byId(boss.getSecondaryMove());
+            if(secondary!=null && boss.getSecondaryTicks()<=secondary.duration()-secondary.windup()) {
+                advanceSeen|=secondary.id()==7;crossSeen|=secondary.id()==8;
+            }
             if(scene==3 && tick==6){boss.swing(InteractionHand.MAIN_HAND,true);boss.doHurtTarget(husk);}
             if(scene==4 && tick==6)hit();
             if(scene==6 && tick==20)hit();
@@ -126,11 +131,11 @@ public final class VelorumFightClientReview {
                 drainChecked=paid.isPresent() && paid.get().appliedPerTick()==-200 && dormantUntouched;
                 if(!drainChecked)throw new IllegalStateException("Drain did not charge exactly 200 active blood only");
             }
-            if(scene==4 && tick==8)martyrChecked=boss.isMartyrdom() && boss.hasEffect(MobEffects.DAMAGE_RESISTANCE)
-                    && boss.getEffect(MobEffects.DAMAGE_RESISTANCE).getAmplifier()==0 && !boss.getEffect(MobEffects.DAMAGE_RESISTANCE).isVisible();
+            if(scene==4 && tick==8)martyrChecked=boss.getStillnessBreakTicks()>0 && !boss.isMartyrdom()
+                    && !boss.hasEffect(MobEffects.DAMAGE_RESISTANCE);
             if(scene==6 && boss.getFrostRelease()==18)
                 concurrentChecked=boss.getVeilRelease()==22 && boss.getDrainRelease()==20 && boss.getMartyrdomTicks()>0;
-            if(scene==7 && tick==6){boss.setHealth(1);boss.invulnerableTime=0;boss.hurt(boss.damageSources().playerAttack(observer),10000);}
+            if(scene==8 && tick==6){boss.setHealth(1);boss.invulnerableTime=0;boss.hurt(boss.damageSources().playerAttack(observer),10000);}
             if(++tick>=LENGTHS[scene]) {
                 verify();
                 if(++scene>=SCENES.length) {
@@ -170,10 +175,11 @@ public final class VelorumFightClientReview {
                     && !victim.getEffect(MobEffects.BLINDNESS).isVisible() && victim.hasEffect(MobEffects.CONFUSION)
                     && !victim.getEffect(MobEffects.CONFUSION).isVisible() && !inactive.hasEffect(MobEffects.CONFUSION);
             case 3 -> husk.getHealth()<husk.getMaxHealth();
-            case 4 -> martyrChecked && !boss.isMartyrdom() && !boss.hasEffect(MobEffects.DAMAGE_RESISTANCE);
+            case 4 -> martyrChecked && boss.getStillnessBreakTicks()>0 && !boss.isMartyrdom() && !boss.hasEffect(MobEffects.DAMAGE_RESISTANCE);
             case 5 -> drainChecked;
             case 6 -> concurrentChecked && drainChecked;
-            case 7 -> boss.isRemoved() && residuumCount()==rewardsBefore+1;
+            case 7 -> advanceSeen && crossSeen;
+            case 8 -> boss.isRemoved() && residuumCount()==rewardsBefore+1;
             default -> true;
         };
         RESULTS.addProperty(SCENES[scene],pass);
