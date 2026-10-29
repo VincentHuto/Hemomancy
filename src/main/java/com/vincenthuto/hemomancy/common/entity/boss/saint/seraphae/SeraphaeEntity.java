@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -42,6 +43,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
@@ -108,6 +110,8 @@ public class SeraphaeEntity extends SaintTrialEntity {
 
 	/** Arena radius for fragment/anchor detection. */
 	private static final double ARENA_RADIUS = 32.0;
+	/** Ticks between checks that all her anchors still stand. */
+	private static final int ANCHOR_CHECK_INTERVAL = 100;
 
 	// ── escalation thresholds ─────────────────────────────────────────
 	/** Below this integrity, spawn rate & hazards increase. */
@@ -240,10 +244,12 @@ public class SeraphaeEntity extends SaintTrialEntity {
 			return;
 		}
 
-		// One-time anchor placement
+		// Anchors wake once; any let go since (an anchor that lost sight of her let go) wake again.
 		if (!anchorsPlaced) {
 			placeAnchors(server);
 			anchorsPlaced = true;
+		} else if (this.tickCount % ANCHOR_CHECK_INTERVAL == 0) {
+			replaceMissingAnchors(server);
 		}
 
 		// ── containment decay ──
@@ -453,6 +459,29 @@ public class SeraphaeEntity extends SaintTrialEntity {
 				new AABB(centre).inflate(ARENA_RADIUS), a -> !this.getUUID().equals(a.getParentId()) && a.isOrphan(server))) {
 			stray.discard();
 		}
+		wakeAnchors(server, centre, 0);
+	}
+
+	/**
+	 * An anchor that cannot find her (she wandered out of loaded range while a player stood by it) lets go and stands
+	 * its block back up; once she is back, she wakes it again. Only while every chunk of the arena has its entities
+	 * loaded, so an anchor that is merely unloaded is never doubled.
+	 */
+	private void replaceMissingAnchors(ServerLevel server) {
+		AABB arena = arena();
+		for (int cx = SectionPos.blockToSectionCoord(arena.minX); cx <= SectionPos.blockToSectionCoord(arena.maxX); cx++) {
+			for (int cz = SectionPos.blockToSectionCoord(arena.minZ); cz <= SectionPos.blockToSectionCoord(arena.maxZ); cz++) {
+				if (!server.areEntitiesLoaded(ChunkPos.asLong(cx, cz))) return;
+			}
+		}
+		int standing = server.getEntitiesOfClass(ContainmentAnchorEntity.class, arena,
+				a -> a.isAlive() && this.getUUID().equals(a.getParentId())).size();
+		if (standing < SeraphaeAnchorRules.ANCHOR_COUNT) {
+			wakeAnchors(server, getTombPos() != null ? getTombPos() : this.blockPosition(), standing);
+		}
+	}
+
+	private void wakeAnchors(ServerLevel server, BlockPos centre, int standing) {
 		List<BlockPos> dormant = new ArrayList<>();
 		int across = SeraphaeAnchorRules.HORIZONTAL_REACH, up = SeraphaeAnchorRules.VERTICAL_REACH;
 		for (BlockPos pos : BlockPos.betweenClosed(centre.offset(-across, -up, -across), centre.offset(across, up, across))) {
@@ -461,7 +490,7 @@ public class SeraphaeEntity extends SaintTrialEntity {
 			}
 		}
 		Vec3 heart = this.position().add(0, 1.5, 0);
-		for (SeraphaeAnchorRules.Placement placement : SeraphaeAnchorRules.placements(centre, this.position(), dormant)) {
+		for (SeraphaeAnchorRules.Placement placement : SeraphaeAnchorRules.placements(centre, this.position(), dormant, standing)) {
 			ContainmentAnchorEntity anchor = EntityInit.containment_anchor.get().create(server);
 			if (anchor == null) continue;
 			Vec3 at = placement.position();
@@ -478,8 +507,7 @@ public class SeraphaeEntity extends SaintTrialEntity {
 
 	/** Lets go of her anchors and fragments; each woken anchor stands its block back up as it goes. */
 	private void releaseArena(ServerLevel server) {
-		AABB arena = new AABB(this.blockPosition()).inflate(ARENA_RADIUS);
-		if (getTombPos() != null) arena = arena.minmax(new AABB(getTombPos()).inflate(ARENA_RADIUS));
+		AABB arena = arena();
 		for (ContainmentAnchorEntity anchor : server.getEntitiesOfClass(ContainmentAnchorEntity.class, arena,
 				a -> this.getUUID().equals(a.getParentId()))) {
 			anchor.discard();
@@ -488,6 +516,12 @@ public class SeraphaeEntity extends SaintTrialEntity {
 				f -> this.getUUID().equals(f.getParentId()))) {
 			frag.discard();
 		}
+	}
+
+	/** Round her and her tomb: where her anchors and fragments are. */
+	private AABB arena() {
+		AABB arena = new AABB(this.blockPosition()).inflate(ARENA_RADIUS);
+		return getTombPos() != null ? arena.minmax(new AABB(getTombPos()).inflate(ARENA_RADIUS)) : arena;
 	}
 
 	/** However she leaves for good (contained, a {@code /kill}, a discard), her arena goes with her; not when unloaded. */

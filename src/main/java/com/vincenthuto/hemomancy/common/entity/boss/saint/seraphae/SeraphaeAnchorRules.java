@@ -54,11 +54,21 @@ public final class SeraphaeAnchorRules {
 	 * shortfall takes the old ring slots round {@code seraphae} in order, so a Seraphae with no chamber gets the ring.
 	 */
 	public static List<Placement> placements(BlockPos centre, Vec3 seraphae, Collection<BlockPos> candidates) {
-		List<Placement> placements = new ArrayList<>(ANCHOR_COUNT);
+		return placements(centre, seraphae, candidates, 0);
+	}
+
+	/**
+	 * The anchors she still lacks while {@code standing} of hers stand: woken block anchors first, then ring slots
+	 * from slot {@code standing} on, so the fight never holds more than {@link #ANCHOR_COUNT}.
+	 */
+	public static List<Placement> placements(BlockPos centre, Vec3 seraphae, Collection<BlockPos> candidates, int standing) {
+		int wanted = Math.max(0, ANCHOR_COUNT - standing);
+		List<Placement> placements = new ArrayList<>(wanted);
 		for (BlockPos home : wakeable(centre, candidates)) {
+			if (placements.size() == wanted) break;
 			placements.add(new Placement(Vec3.atBottomCenterOf(home), home));
 		}
-		for (int slot = placements.size(); slot < ANCHOR_COUNT; slot++) {
+		for (int slot = standing + placements.size(); slot < ANCHOR_COUNT; slot++) {
 			placements.add(new Placement(ringSlot(seraphae, slot), null));
 		}
 		return placements;

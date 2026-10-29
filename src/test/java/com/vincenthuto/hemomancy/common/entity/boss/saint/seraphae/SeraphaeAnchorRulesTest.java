@@ -74,6 +74,17 @@ class SeraphaeAnchorRulesTest {
         }
     }
 
+    @Test void aRefillWakesOnlyWhatIsMissing() {
+        // Three stand; the one let go stood its block back up, so it is the only dormant anchor left.
+        var placements = SeraphaeAnchorRules.placements(TOMB, HER, List.of(TOMB.offset(3, 0, 4)), 3);
+        assertEquals(1, placements.size());
+        assertEquals(TOMB.offset(3, 0, 4), placements.get(0).home());
+        // With no block to wake, the missing anchor takes the ring slot after those standing.
+        var ring = SeraphaeAnchorRules.placements(TOMB, HER, List.of(), 3);
+        assertEquals(List.of(new SeraphaeAnchorRules.Placement(SeraphaeAnchorRules.ringSlot(HER, 3), null)), ring);
+        assertEquals(List.of(), SeraphaeAnchorRules.placements(TOMB, HER, chamber(), 4));
+    }
+
     @Test void neverMoreThanFourWake() {
         var many = new ArrayList<BlockPos>();
         for (int x = -3; x <= 3; x++) many.add(TOMB.offset(x, 0, 2));
