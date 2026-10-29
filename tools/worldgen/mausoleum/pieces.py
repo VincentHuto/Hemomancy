@@ -241,6 +241,8 @@ def treasure_room(room, c, rng, cx):
 
 
 DESCENT_PILASTERS = (1, 5, 9, 13, 17)
+# The vault springs here: the top landing stands at 8, so its edges keep four courses of headroom under the cornice.
+DESCENT_SPRING = 12
 
 
 def descent_walk(x):
@@ -257,13 +259,14 @@ def descent(saint):
     walls banded with bone, onto the landing before the crypt gallery. Centre line z=5."""
     c = crypt(saint)
     rng = random.Random('descent/' + saint)
-    room = Room(19, 14, 11)
+    v = DESCENT_SPRING
+    room = Room(19, v + 4, 11)
     for x in range(19):
         for z in range(11):
             room.set(x, 0, z, c['floor'])
-            for y in range(1, 10):
+            for y in range(1, v):
                 room.set(x, y, z, field(rng, c))
-            for y in range(10, 14):
+            for y in range(v, v + 4):
                 room.set(x, y, z, c['vault'])
     for x in range(1, 18):
         walk = descent_walk(x)
@@ -279,23 +282,23 @@ def descent(saint):
                 floor = c['inlay'] if z in (2, 8) else c['runner'] if z == 5 else \
                     c['floor_alt'] if rng.random() < 0.12 else c['floor']
                 room.set(x, 0, z, floor)
-            for y in range(walk, 10):
+            for y in range(walk, v):
                 room.set(x, y, z, AIR)
-        room.set(x, 10, 2, c['vault_stairs'], stairs('north', 'top'))
-        room.set(x, 10, 8, c['vault_stairs'], stairs('south', 'top'))
+        room.set(x, v, 2, c['vault_stairs'], stairs('north', 'top'))
+        room.set(x, v, 8, c['vault_stairs'], stairs('south', 'top'))
         for z in range(3, 8):
-            room.set(x, 10, z, AIR)
-        room.set(x, 11, 3, c['vault_stairs'], stairs('north', 'top'))
-        room.set(x, 11, 7, c['vault_stairs'], stairs('south', 'top'))
+            room.set(x, v, z, AIR)
+        room.set(x, v + 1, 3, c['vault_stairs'], stairs('north', 'top'))
+        room.set(x, v + 1, 7, c['vault_stairs'], stairs('south', 'top'))
         for z in (4, 5, 6):
-            room.set(x, 11, z, AIR)
-        room.set(x, 12, 4, c['vault_stairs'], stairs('north', 'top'))
-        room.set(x, 12, 5, AIR)
-        room.set(x, 12, 6, c['vault_stairs'], stairs('south', 'top'))
+            room.set(x, v + 1, z, AIR)
+        room.set(x, v + 2, 4, c['vault_stairs'], stairs('north', 'top'))
+        room.set(x, v + 2, 5, AIR)
+        room.set(x, v + 2, 6, c['vault_stairs'], stairs('south', 'top'))
         for plane, recess in ((1, 0), (9, 10)):
             room.set(x, walk, plane, c['base'])
-            room.set(x, 9, plane, c['trim'])
-            for y in (3, 6):
+            room.set(x, v - 1, plane, c['trim'])
+            for y in (3, 6, 9):
                 if y <= walk:
                     continue
                 roll = rng.random()
@@ -312,18 +315,18 @@ def descent(saint):
         walk = descent_walk(p)
         for z in (2, 8):
             room.set(p, walk, z, c['base'])
-            for y in range(walk + 1, 9):
+            for y in range(walk + 1, v - 1):
                 room.set(p, y, z, c['trim'])
-            room.set(p, 9, z, c['accent'])
-        room.set(p, 10, 2, c['trim_stairs'], stairs('north', 'top'))
-        room.set(p, 10, 8, c['trim_stairs'], stairs('south', 'top'))
-        room.set(p, 11, 3, c['trim_stairs'], stairs('north', 'top'))
-        room.set(p, 11, 7, c['trim_stairs'], stairs('south', 'top'))
-        room.set(p, 12, 4, c['trim_stairs'], stairs('north', 'top'))
-        room.set(p, 12, 5, c['accent'])
-        room.set(p, 12, 6, c['trim_stairs'], stairs('south', 'top'))
+            room.set(p, v - 1, z, c['accent'])
+        room.set(p, v, 2, c['trim_stairs'], stairs('north', 'top'))
+        room.set(p, v, 8, c['trim_stairs'], stairs('south', 'top'))
+        room.set(p, v + 1, 3, c['trim_stairs'], stairs('north', 'top'))
+        room.set(p, v + 1, 7, c['trim_stairs'], stairs('south', 'top'))
+        room.set(p, v + 2, 4, c['trim_stairs'], stairs('north', 'top'))
+        room.set(p, v + 2, 5, c['accent'])
+        room.set(p, v + 2, 6, c['trim_stairs'], stairs('south', 'top'))
     for x in (3, 7, 11, 15):
-        room.set(x, 13, 5, c['light'])
+        room.set(x, v + 3, 5, c['light'])
     for x in (11, 15):
         kit.wall_light(room, c, x, 5, 1, 'south')
         kit.wall_light(room, c, x, 5, 9, 'north')

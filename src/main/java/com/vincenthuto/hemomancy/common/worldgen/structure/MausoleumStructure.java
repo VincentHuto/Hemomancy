@@ -18,6 +18,8 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
+import net.minecraft.world.level.levelgen.structure.pools.JigsawJunction;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -74,10 +76,28 @@ public class MausoleumStructure extends HemoJigsawStructure {
 		if (rise.getAsInt() == 0) return Optional.of(stub);
 		int by = rise.getAsInt();
 		return Optional.of(new GenerationStub(centre.above(by), builder -> {
-			stub.generator().ifLeft(generator -> generator.accept(builder))
-					.ifRight(built -> built.build().pieces().forEach(builder::addPiece));
-			builder.offsetPiecesVertically(by);
+			StructurePiecesBuilder laid = new StructurePiecesBuilder();
+			stub.generator().ifLeft(generator -> generator.accept(laid))
+					.ifRight(built -> built.build().pieces().forEach(laid::addPiece));
+			for (StructurePiece piece : laid.build().pieces()) {
+				piece.move(0, by, 0);
+				if (piece instanceof PoolElementStructurePiece pool) raiseJunctions(pool, by);
+				builder.addPiece(piece);
+			}
 		}));
+	}
+
+	/**
+	 * Jigsaw junctions hold absolute ground heights that {@link StructurePiece#move} leaves behind; the beardifier
+	 * blends terrain toward them, so they rise with their piece.
+	 */
+	private static void raiseJunctions(PoolElementStructurePiece piece, int by) {
+		List<JigsawJunction> junctions = piece.getJunctions();
+		List<JigsawJunction> raised = junctions.stream().map(junction -> new JigsawJunction(junction.getSourceX(),
+				junction.getSourceGroundY() + by, junction.getSourceZ(), junction.getDeltaY(),
+				junction.getDestProjection())).toList();
+		junctions.clear();
+		junctions.addAll(raised);
 	}
 
 	private static int firstFree(GenerationContext context, int x, int z) {
