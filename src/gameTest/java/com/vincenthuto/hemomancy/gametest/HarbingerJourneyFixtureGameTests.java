@@ -2063,9 +2063,11 @@ public final class HarbingerJourneyFixtureGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	// The structure rises four blocks over its platform: it is built inside a full-size template so the grid never
+	// spaces a neighbouring test's barrier wall into it.
+	@GameTest(templateNamespace = "hemomancy", template = CLEAN_TEMPLATE, timeoutTicks = 40)
 	public static void centrifugeJourneySpawnsCompleteReadyStructure(GameTestHelper helper) {
-		withFixture(helper, HemoJourneyStage.CENTRIFUGE_PREPARED, (origin, player) -> {
+		withFixture(helper, HemoJourneyStage.CENTRIFUGE_PREPARED, new BlockPos(14, 5, 14), (origin, player) -> {
 			BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(helper.getLevel(),
 					Hemomancy.rloc("blood_structure/vial_centrifuge"));
 			helper.assertTrue(recipe != null, "Vial Centrifuge recipe must load");
@@ -2745,9 +2747,14 @@ public final class HarbingerJourneyFixtureGameTests {
 	}
 
 	private static void withFixture(GameTestHelper helper, HemoJourneyStage stage, FixtureAssertion assertion) {
+		withFixture(helper, stage, new BlockPos(14, 10, 14), assertion);
+	}
+
+	private static void withFixture(GameTestHelper helper, HemoJourneyStage stage, BlockPos relativeOrigin,
+			FixtureAssertion assertion) {
 		ServerPlayer player = stage == HemoJourneyStage.SANGUINE_INITIATION
 				? connectedTestPlayer(helper) : detachedTestPlayer(helper);
-		BlockPos origin = helper.absolutePos(new BlockPos(14, 10, 14));
+		BlockPos origin = helper.absolutePos(relativeOrigin);
 		try {
 			invoke("prepare", player, stage, origin);
 			assertion.check(origin, player);

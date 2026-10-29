@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationU
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -152,11 +153,20 @@ public final class ScriptoriumOperationCharacterisationGameTests {
 			record("after " + button);
 		}
 
+		// The menu syncs raw registry ids, which shift whenever a dev mod on the run classpath adds or drops an
+		// enchantment; the fingerprint records the enchantment's name instead.
+		private String enchantment(int id) {
+			if (id < 0) return String.valueOf(id);
+			var registry = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+			var key = registry.getKey(registry.byId(id));
+			return key == null ? "?" + id : key.toString();
+		}
+
 		void record(String label) {
 			StringBuilder data = new StringBuilder();
 			for (int offer = 0; offer < 3; offer++) {
 				data.append(" offer").append(offer).append("=").append(menu.offerCost(offer))
-						.append("/t").append(menu.targetId(offer)).append("/c").append(menu.clueId(offer))
+						.append("/t").append(enchantment(menu.targetId(offer))).append("/c").append(enchantment(menu.clueId(offer)))
 						.append("@").append(menu.clueLevel(offer)).append("/e[");
 				for (int tube = 0; tube < 8; tube++) data.append(tube == 0 ? "" : ",").append(menu.enzymeCost(offer, tube));
 				data.append("]");

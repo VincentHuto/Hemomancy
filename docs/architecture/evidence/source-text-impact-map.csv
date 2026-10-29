@@ -169,6 +169,7 @@ src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,src/test,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,tools/model_export,tool,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,tools/review,tool,exact-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,tools/worldgen/mausoleum,tool,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/ResourceLocationStyleGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/Hemomancy.java,java,by-name
 src/test/java/com/vincenthuto/hemomancy/architecture/RiteKindGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/RiteKindGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteActivation.java,java,exact
