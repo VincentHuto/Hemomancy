@@ -55,7 +55,7 @@ public final class FungalGardenTravelHelper {
 	/** The value the old Archon choice key held for a path, for the recipe gates that still name the key. */
 	public static String legacyArchonChoice(EnumArchonPath path) {
 		return switch (path) {
-			case SILENT_ARCHON -> ARCHON_CHOICE_SILENCE;
+			case SILENTIUM -> ARCHON_CHOICE_SILENCE;
 			case APOTHEOS, APOTHEOS_PENDING -> ARCHON_CHOICE_APOTHEOS;
 			default -> "";
 		};
@@ -104,6 +104,14 @@ public final class FungalGardenTravelHelper {
 				return InteractionResult.SUCCESS;
 			}
 
+			FungalProjectionRules.TravelKind travel = FungalProjectionRules.travelKind(
+					degreeState.hasWitnessedFungalRevelation(), degree, degreeState.hasFungalSpineGranted(),
+					degreeState.getArchonPath());
+			if (travel == FungalProjectionRules.TravelKind.REFUSED) {
+				player.displayClientMessage(Component.translatable("message.hemomancy.fungal_garden_travel_helper.the_spine_will_not_carry_you").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), true);
+				return InteractionResult.SUCCESS;
+			}
+
 			if (!drainTravelBlood(player)) {
 				player.displayClientMessage(
 						Component.translatable("message.hemomancy.fungal_garden_travel_helper.your_veins_run_too_thin_to").withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -112,8 +120,7 @@ public final class FungalGardenTravelHelper {
 			}
 
 			storeReturnPosition(player);
-			if (FungalProjectionRules.shouldStartProjection(
-					degreeState.hasWitnessedFungalRevelation(), degree, degreeState.hasFungalSpineGranted())) {
+			if (travel == FungalProjectionRules.TravelKind.FIRST_PROJECTION) {
 				startFirstProjection(player);
 			} else {
 				performFungalGardensTravel(player);

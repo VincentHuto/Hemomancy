@@ -1,0 +1,80 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    256
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/saint_sarcophagus",
+    "particle": "hemomancy:block/polished_venous_stone"
+  },
+  "elements": [
+    {
+      "name": "head_vein",
+      "from": [
+        3.925,
+        8.925,
+        0
+      ],
+      "to": [
+        12.075,
+        15.075,
+        4.075
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            11.75,
+            9.6875,
+            12.875,
+            10.125
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            10.25,
+            0.53268,
+            10.6875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            1.46732,
+            10.25,
+            2.0,
+            10.6875
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            1.75,
+            9.92116,
+            2.875,
+            10.1875
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            2.875,
+            9.6875,
+            4.0,
+            9.95384
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  ]
+}

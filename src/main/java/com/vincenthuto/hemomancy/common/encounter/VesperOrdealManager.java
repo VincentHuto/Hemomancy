@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.SilentiumAscensionRules;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTwoCombat;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
@@ -168,18 +168,9 @@ public final class VesperOrdealManager {
 
 		boolean firstVictory = !HarbingerAdvancementGranter.hasAdvancement(owner,
 				HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
-		var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
-		if (ProgressionGates.isDegree(degree, 7) && degree.getArchonPath() == EnumArchonPath.SILENT_PENDING) {
-			degree.setArchonPath(EnumArchonPath.SILENT_ARCHON);
-			InitiatoryDegreeEvents.syncDegree(owner, degree);
-		}
 		blooms.sealBloom(bloom);
 		HarbingerAdvancementGranter.grantIfNotDone(owner, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
-		if (firstVictory) {
-			var persisted = memoryClaims(owner);
-			persisted.putBoolean(PENDING_MEMORY_KEY, true);
-			owner.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
-		}
+		if (firstVictory) queueMemoryClaim(owner);
 		PacketHandler.sendToPlayer(owner, PacketSyncVesperFightScene.clearScene());
 		owner.getPersistentData().remove(ACTIVE_BLOOM_KEY);
 		owner.getPersistentData().remove(ACTIVE_BLOOM_ID_KEY);
@@ -244,6 +235,30 @@ public final class VesperOrdealManager {
 	}
 
 	public record FlightArena(double centerX, double floorY, double centerZ) {
+	}
+
+	/**
+	 * Vesper's memory is the only way to Silentium, so the Silence that beat him and lost it may ask its sealed scar
+	 * for it again: never while it is carried, pending or already drawn in.
+	 */
+	public static boolean reissueLostMemory(ServerPlayer owner) {
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
+		boolean carried = owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) > 0;
+		if (!SilentiumAscensionRules.shouldReissueMemory(degree.getDegreeNumber(), degree.getArchonPath(),
+				HarbingerAdvancementGranter.hasAdvancement(owner, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED),
+				HemoCapabilityAccess.getLivingStaffProgress(owner).isVesperMemoryAwakened(), carried,
+				memoryClaims(owner).getBoolean(PENDING_MEMORY_KEY))) {
+			return false;
+		}
+		queueMemoryClaim(owner);
+		givePendingMemory(owner);
+		return true;
+	}
+
+	private static void queueMemoryClaim(ServerPlayer owner) {
+		var persisted = memoryClaims(owner);
+		persisted.putBoolean(PENDING_MEMORY_KEY, true);
+		owner.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
 	}
 
 	private static void givePendingMemory(ServerPlayer owner) {

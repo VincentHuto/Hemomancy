@@ -1,6 +1,8 @@
 
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.world.entity.player.Player;
 
@@ -29,9 +31,9 @@ public record ItemInquiryContext(
         flags[0] = progress.hasBegunPurification();
         flags[1] = progress.hasClarityUnlocked();
         boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player).isActive();
-        boolean silent = player.getPersistentData().getBoolean("hemomancy.silent_archon")
-                || player.getPersistentData().getBoolean("silent_archon");
+        EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath();
         return new ItemInquiryContext(degree, unstained[0], unstained[1], flags[1], activeBlood,
-                flags[0], silent, degree >= 8);
+                flags[0], HarbingerPathPermissions.isSilentium(degree, path),
+                HarbingerPathPermissions.isApotheos(degree, path));
     }
 }

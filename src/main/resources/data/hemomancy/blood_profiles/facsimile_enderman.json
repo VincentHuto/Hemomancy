@@ -1,0 +1,10 @@
+{
+  "tendencies": [
+    "tenebris"
+  ],
+  "properties": [
+    "hemomancy:blood_properties/ender",
+    "hemomancy:fungal"
+  ],
+  "requires_living_syringe": true
+}

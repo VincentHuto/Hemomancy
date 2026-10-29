@@ -483,11 +483,11 @@ public final class HemoJourneyChecks {
 						&& bloom.dimension().equals(HemoJourneyFixtures.fixtureLevel(player).dimension().location().toString())
 						&& blooms.getState(bloom).isSealedTrophy()
 						&& !VesperOrdealManager.isActive(player)
-						&& HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() == 7
-						&& HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENT_ARCHON
+						&& HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() == 8
+						&& HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENTIUM
 						&& HarbingerAdvancementGranter.hasAdvancement(player,
 								HarbingerAdvancementGranter.ADV_VESPER_DEFEATED),
-						"Defeat Vesper through this Bloom's refusal portal and return as Silent Archon.");
+						"Defeat Vesper through this Bloom's refusal portal, then draw his memory in through a lit Iron Brazier to become Silentium.");
 			}
 			case COMPLETE -> { return new HemoJourneyResult(true, stage, "Journey checkpoints complete; ready to restore the snapshot."); }
 		}

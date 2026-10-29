@@ -58,6 +58,7 @@
     "MixinListeningScar"
   ],
   "client": [
+    "MixinApotheosSense",
     "MixinScriptoriumItemRenderer",
     "CastingHandRendererInvoker",
     "MixinCamera",

@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.plant;
 
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.neoforged.neoforge.common.ItemAbilities;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -133,6 +137,19 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
         return InteractionResult.SUCCESS;
       }
 
+      /** An axe scrapes corpse wax off an unharvested bog body; it regrows like any harvest. */
+      private void scrapeWax(BlockState state, Level worldIn, BlockPos pos, Player player, ItemStack axe,
+          InteractionHand hand) {
+        worldIn.setBlock(pos, state.setValue(HARVESTED, true), 10);
+        worldIn.playSound(player, pos, SoundEvents.AXE_SCRAPE, SoundSource.BLOCKS, 1.0F, 0.8F);
+        worldIn.levelEvent(player, 3004, pos, 0);
+        if (!worldIn.isClientSide) {
+          axe.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+          worldIn.addFreshEntity(new ItemEntity(worldIn, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5,
+              new ItemStack(ItemInit.adipocere.get())));
+        }
+      }
+
       private void harvestWithScalpel(BlockState state, Level worldIn, BlockPos pos, Player player) {
         if (!state.getValue(HARVESTED)) {
           BlockState newState = state.setValue(HARVESTED, true);
@@ -162,6 +179,10 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
         if (stack.is(ItemInit.vivianite_scalpel.get())) {
           harvestWithScalpel(state, worldIn, pos, player);
           return ItemInteractionResult.sidedSuccess(true);
+        }
+        if (stack.canPerformAction(ItemAbilities.AXE_SCRAPE) && !state.getValue(HARVESTED)) {
+          scrapeWax(state, worldIn, pos, player, stack, handIn);
+          return ItemInteractionResult.sidedSuccess(worldIn.isClientSide);
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
       }

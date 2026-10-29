@@ -1,0 +1,22 @@
+{
+  "parent": "hemomancy:block/frozen_drip_end_0",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        160,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    }
+  }
+}

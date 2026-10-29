@@ -46,7 +46,8 @@ public class InitiatoryDegreeEvents {
 		if (degree.getArchonPath() == EnumArchonPath.NONE && !legacyChoice.isBlank()) {
 			degree.setFungalRevelationWitnessed(true);
 			if (FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(legacyChoice)) {
-				degree.setArchonPath(EnumArchonPath.SILENT_ARCHON);
+				degree.setArchonPath(ProgressionGates.hasDegree(degree, 8)
+						? EnumArchonPath.SILENTIUM : EnumArchonPath.SILENT_PENDING);
 			} else if (FungalGardenTravelHelper.ARCHON_CHOICE_APOTHEOS.equals(legacyChoice)) {
 				degree.setArchonPath(ProgressionGates.hasDegree(degree, 8)
 						? EnumArchonPath.APOTHEOS : EnumArchonPath.APOTHEOS_PENDING);

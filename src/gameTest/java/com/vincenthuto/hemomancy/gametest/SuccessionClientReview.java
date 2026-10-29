@@ -253,7 +253,7 @@ public final class SuccessionClientReview {
         var path = com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.valueOf(state);
         var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
         degree.setDegreeNumber(path == com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS
-                || path == com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_ARCHON ? 8 : 7);
+                || path == com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENTIUM ? 8 : 7);
         degree.setArchonPath(path);
         com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents.syncDegree(player, degree);
         player.getInventory().selected = 0;

@@ -89,20 +89,41 @@ The **Orb of Perspective** is a reusable late-game focus crafted from four Monol
 
 - **Rite:** Archon Rite
 - **Theme:** Hematic Order; the practitioner approaches the truth the Lodge could not fully state
+- Every Degree-7 player is an Archon. It is a full stage, not a stepping stone; each path below ends at an equal Degree-8 rank.
 - **Core progression:** shatter the Sanguine Monolith, grow the Qliphoth, consume all nine pomes, and receive the Fungal Spine
-- The first Spine use is a two-minute consciousness projection. Forced return presents the endgame response.
-- **Pruning:** sever the owned Bloom, enter its owner-only Chamber wound, and defeat both Vesper phases to remain Degree 7 as a Silent Archon. Failed attempts are retryable; victory seals the severed Bloom as a trophy.
+- The first Spine use is a two-minute consciousness projection. Forced return presents the endgame response. This is the only time an Archon sees the Fungal Gardens dimension.
+- **Pruning:** sever the owned Bloom, enter its owner-only Chamber wound, and defeat both Vesper phases. Failed attempts are retryable; victory seals the severed Bloom as a trophy and leaves you Vesper's memory. Drawing it in through a lit Iron Brazier makes you Degree 8 Silentium.
 - **Apotheosis:** unlock the hidden eighth rite.
 
-### Degree 8: Apotheos
+### Degree 8: Apotheos or Silentium
+
+The eighth Degree has two equal ranks. Each has a home domain and a costly way into the other's.
+
+| | Apotheos | Silentium |
+|---|---|---|
+| How | Rite of Apotheosis | Pruning (the Severance of your own Qliphoth tree), both Vesper phases, then absorbing the Memory of Vesper |
+| Home | The Fungal Gardens: physical travel at will by Spine or Podium | The Saint mausoleums: complete the Chapels, then open the ring door with your blood for a proper Saint fight and a whole Hallowed Residuum |
+| Trespass | Shatter a mausoleum's ring door: an enraged Saint, a residuum fragment, and hallowed ground that burns spore load, then health | The Rite of Possession: walk the Gardens as a facsimile of a surrogate, guarded only by Concentration; ejection leaves you Mind Broken |
+
+Mausoleum outer halls stay open to every Harbinger from about Degree 3–4; only the warded threshold, Chapels and Saint fights need Degree 8. Unstained and unaligned players never enter the Gardens dimension. The Overworld Fungal Gardens biome is a separate place anyone can walk.
+
+#### Apotheos
 
 - **Rite:** Apotheosis
 - **Requirements:** Degree 7, Qliphoth Communion, the ninth-pome Spine, completed revelation, and the Apotheos response
 - **Theme:** transcendence and fungal fruiting
 - **Core progression:** Apotheos-scale Chamber state, Primal Morphlings, and the Mycophant consequence
+- **The Apotheos body:** you no longer eat. Hunger holds at 17, so you can sprint but never regenerate naturally. Spore load gathers in the Fungal Gardens and replaces the food bar: burn 25 of it with the Burn Spores key (U) for an instant heal, or crouch still on fungal ground inside the Gardens to regrow. Inside the Gardens potions and milk are refused too; the Morphic Tonic, made by throwing a Bloody Jug into a morphic nectar pool, is the one remedy.
 - **First Mycophant reward:** The unique Tendril waits for inventory space if your pack is full. Its pending claim survives death and retries on login or after you free a slot; later victories give repeat rewards instead.
 
-Silent Archon is never Degree 8. It is the flagged Degree-7 refusal state earned only after successful Pruning and the two-phase Vesper ordeal.
+#### Silentium
+
+- **Route:** choose Silence after the first projection, prune the owned Bloom, defeat both Vesper phases, then draw the Memory of Vesper in through a lit Iron Brazier
+- **Theme:** refusal kept by will; the Archon cuts the antenna that tied them to the hive
+- **Gardens access:** possession only, never in the body
+- **Mausoleums:** the ring door answers a Silentium, and hallowed ground tolerates them
+
+Only an Apotheos travels to the Fungal Gardens in the body after the first projection.
 
 ---
 
@@ -249,8 +270,8 @@ At Degree 5 (Illuminatus) and higher, you can found and manage a **bloodline**, 
 - Social standing within the Order
 - Practical aid in survival and progression
 
-### Bloodline Severance
-As Archon, you can ritually sever members who betray the covenant. Severance resets their degree and breaks all blood ties.
+### Severing Bloodline Members
+As Archon, you can ritually sever members who betray the covenant. Being cut from the bloodline resets their degree and breaks all blood ties. (This is not the Severance, which is an Archon's own cut of their Qliphoth tree.)
 
 ---
 
@@ -419,7 +440,7 @@ In Creative mode, right-click the Ghastly Alembic, Resonant Forge, Hematic Armat
 - JEI integration for upgrade paths
 
 **Silent Archon Vestments** (Endgame)
-- Archon-only armor
+- Silentium-only armor (Degree 8)
 - Massive bonuses to all blood systems
 - Intimidation effect on enemies
 - Visual indicator of your status
@@ -534,10 +555,10 @@ The **Qliphoth** is a massive fungal structure that grows after performing Qliph
 - Fungal Whispers intensify dramatically
 
 ### Refusing the Qliphoth
-- Choose Silence after the first Fungal Spine projection; this records pending refusal, not victory, and leaves you at Degree 7
+- Choose Silence after the first Fungal Spine projection; this records pending refusal, not victory, and leaves you at Degree 7 until Vesper's memory is drawn in
 - Strike the base of the owned spent Bloom with a base Living Weapon form, not the untransformed Staff, to shape the temporary Living Sickle
 - Cut the Bloom again to open Vesper's retryable wound
-- Defeat Vesper, then absorb his Memory through the Iron Brazier to permanently unlock `conjure_sickle`
+- Defeat Vesper, then absorb his Memory through the Iron Brazier to permanently unlock `conjure_sickle` and become Degree 8 Silentium
 
 ---
 

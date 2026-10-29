@@ -1,0 +1,312 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/blood_gutter",
+    "particle": "minecraft:block/deepslate_tiles",
+    "tiles": "minecraft:block/deepslate_tiles",
+    "stone": "hemomancy:block/polished_venous_stone",
+    "blood": "hemomancy:block/blood_still"
+  },
+  "elements": [
+    {
+      "name": "tile",
+      "from": [
+        4,
+        8,
+        12
+      ],
+      "to": [
+        12,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            0,
+            12,
+            8
+          ],
+          "texture": "#tiles"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            4,
+            8
+          ],
+          "texture": "#tiles"
+        },
+        "south": {
+          "uv": [
+            4,
+            0,
+            12,
+            8
+          ],
+          "texture": "#tiles",
+          "cullface": "south"
+        },
+        "west": {
+          "uv": [
+            12,
+            0,
+            16,
+            8
+          ],
+          "texture": "#tiles"
+        },
+        "up": {
+          "uv": [
+            4,
+            12,
+            12,
+            16
+          ],
+          "texture": "#tiles",
+          "cullface": "up"
+        },
+        "down": {
+          "uv": [
+            4,
+            0,
+            12,
+            4
+          ],
+          "texture": "#tiles"
+        }
+      }
+    },
+    {
+      "name": "lip_pit",
+      "from": [
+        5,
+        8,
+        11
+      ],
+      "to": [
+        11,
+        12,
+        12
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            4,
+            4,
+            5,
+            8
+          ],
+          "texture": "#stone"
+        },
+        "south": {
+          "uv": [
+            5,
+            4,
+            11,
+            8
+          ],
+          "texture": "#stone"
+        },
+        "west": {
+          "uv": [
+            11,
+            4,
+            12,
+            8
+          ],
+          "texture": "#stone"
+        },
+        "up": {
+          "uv": [
+            5,
+            11,
+            11,
+            12
+          ],
+          "texture": "#stone"
+        },
+        "down": {
+          "uv": [
+            5,
+            4,
+            11,
+            5
+          ],
+          "texture": "#stone"
+        }
+      }
+    },
+    {
+      "name": "lip_wall",
+      "from": [
+        5,
+        12,
+        11
+      ],
+      "to": [
+        11,
+        15,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            1,
+            11,
+            4
+          ],
+          "texture": "#stone"
+        },
+        "east": {
+          "uv": [
+            4,
+            1,
+            5,
+            4
+          ],
+          "texture": "#stone"
+        },
+        "south": {
+          "uv": [
+            5,
+            1,
+            11,
+            4
+          ],
+          "texture": "#stone"
+        },
+        "west": {
+          "uv": [
+            11,
+            1,
+            12,
+            4
+          ],
+          "texture": "#stone"
+        },
+        "up": {
+          "uv": [
+            5,
+            11,
+            11,
+            12
+          ],
+          "texture": "#stone"
+        },
+        "down": {
+          "uv": [
+            5,
+            4,
+            11,
+            5
+          ],
+          "texture": "#stone"
+        }
+      }
+    },
+    {
+      "name": "lip_pit",
+      "from": [
+        5,
+        8,
+        11
+      ],
+      "to": [
+        11,
+        12,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.5,
+            0.0,
+            9.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "lip_lip",
+      "from": [
+        5,
+        15,
+        11
+      ],
+      "to": [
+        11,
+        16,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.75,
+            9.0,
+            1.5,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            1.5,
+            9.0,
+            2.25,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            11.5,
+            9.5,
+            11.625,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            11.625,
+            9.5,
+            11.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            2.25,
+            9.0,
+            3.0,
+            9.5
+          ],
+          "texture": "#atlas",
+          "cullface": "up"
+        },
+        "down": {
+          "uv": [
+            3.0,
+            9.0,
+            3.75,
+            9.5
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

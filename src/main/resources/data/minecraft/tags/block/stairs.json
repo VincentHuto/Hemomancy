@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:bone_brick_stairs",
+    "hemomancy:hematic_iron_plating_stairs",
+    "hemomancy:charred_planks_stairs",
+    "hemomancy:rimed_deepslate_brick_stairs",
+    "hemomancy:dark_lacquer_planks_stairs"
+  ]
+}

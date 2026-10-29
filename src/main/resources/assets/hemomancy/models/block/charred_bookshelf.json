@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "hemomancy:block/charred_planks",
+    "side": "hemomancy:block/charred_bookshelf"
+  }
+}

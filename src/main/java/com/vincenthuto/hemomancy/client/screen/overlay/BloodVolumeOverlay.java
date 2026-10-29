@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeTitles;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -239,8 +241,11 @@ public class BloodVolumeOverlay {
         int pomeProgress = HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed();
         pomeProgress = Mth.clamp(pomeProgress, 0, 9);
 
-        int degreeNumber = Mth.clamp(HemoCapabilityAccess.getPlayerDegreeNumber(player), 0, 8);
-        if (degreeNumber >= 8) {
+        int actualDegree = Mth.clamp(HemoCapabilityAccess.getPlayerDegreeNumber(player), 0, 8);
+        EnumArchonPath archonPath = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath();
+        // The vessel's eighth-degree art belongs to the Apotheos; a Silentium keeps the seventh vessel.
+        int degreeNumber = archonPath == EnumArchonPath.APOTHEOS ? actualDegree : Math.min(actualDegree, 7);
+        if (actualDegree >= 8) {
             pomeProgress = 9;
         }
         boolean isApotheos = degreeNumber >= 8;
@@ -264,7 +269,7 @@ public class BloodVolumeOverlay {
 
         RenderSystem.disableBlend();
 
-        drawScaledCenteredString(gfx, fr, Component.translatable("hemomancy.degree." + degreeNumber),
+        drawScaledCenteredString(gfx, fr, DegreeTitles.title(actualDegree, archonPath),
                 centerX, posY  +125, 0xFFD9A29A, 0.55f);
         String volText = String.format("%.0f", vol);
         int textX = centerX - (fr.width(volText) / 2);

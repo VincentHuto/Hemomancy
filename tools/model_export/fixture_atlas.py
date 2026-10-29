@@ -280,3 +280,28 @@ def preview(elements, atlas, title, out_name, lift=0, size=360, scale=15):
     sheet.convert('RGB').save(out)
     print(out)
     return out
+
+
+def preview_pair(left, right, title, out_name, lift=0, size=360, scale=15,
+                 views=((0, 10), (35, 25), (90, 10), (180, 25), (-60, 55))):
+    """Two variants compared view by view: each of `left` / `right` is (elements, atlas); top row left, bottom right."""
+    rows = []
+    for elements, atlas in (left, right):
+        texture = np.array(Image.open(ASSETS / f'textures/block/{atlas}.png').convert('RGBA'))
+        model = copy.deepcopy(elements)
+        for el in model:
+            el['from'][1] -= lift
+            el['to'][1] -= lift
+            if 'rotation' in el:
+                el['rotation']['origin'][1] -= lift
+        rows.append([render(model, {'atlas': texture}, yaw, pitch, size, scale) for yaw, pitch in views])
+    sheet = Image.new('RGBA', (size * len(views), size * 2 + 30), (30, 24, 28, 255))
+    for r, tiles in enumerate(rows):
+        for i, t in enumerate(tiles):
+            sheet.paste(t, (size * i, 30 + size * r))
+    ImageDraw.Draw(sheet).text((10, 8), title, fill=(220, 200, 200))
+    out = ROOT / f'build/model-previews/{out_name}.png'
+    out.parent.mkdir(parents=True, exist_ok=True)
+    sheet.convert('RGB').save(out)
+    print(out)
+    return out

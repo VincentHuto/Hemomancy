@@ -1,0 +1,46 @@
+{
+  "type": "minecraft:simple_block",
+  "config": {
+    "to_place": {
+      "type": "minecraft:weighted_state_provider",
+      "entries": [
+        {
+          "weight": 1,
+          "data": {
+            "Name": "hemomancy:recollection_cyst",
+            "Properties": {
+              "saint": "0"
+            }
+          }
+        },
+        {
+          "weight": 1,
+          "data": {
+            "Name": "hemomancy:recollection_cyst",
+            "Properties": {
+              "saint": "1"
+            }
+          }
+        },
+        {
+          "weight": 1,
+          "data": {
+            "Name": "hemomancy:recollection_cyst",
+            "Properties": {
+              "saint": "2"
+            }
+          }
+        },
+        {
+          "weight": 1,
+          "data": {
+            "Name": "hemomancy:recollection_cyst",
+            "Properties": {
+              "saint": "3"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

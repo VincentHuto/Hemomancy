@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPossession;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSporeLoad;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -117,6 +120,17 @@ public final class PlayerStateSync {
 				ClinicalBloodKnowledge::sync),
 		LAST_DEATH_MEMORY(HemoAttachmentTypes.LAST_DEATH_MEMORY, PacketSyncLastDeathMemory.class, ALWAYS,
 				HematicMemoryToolEvents::syncLastDeathMemory),
+		SPORE_LOAD(HemoAttachmentTypes.SPORE_LOAD, PacketSyncSporeLoad.class, ALWAYS,
+				player -> HemoCapabilityAccess.getSporeLoad(player).sync(player, true),
+				player -> HemoCapabilityAccess.getSporeLoad(player).isSyncDirty()),
+		POSSESSION(HemoAttachmentTypes.POSSESSION, PacketSyncPossession.class, ALWAYS,
+				player -> {
+					// Never possessed: say so without giving every player an empty attachment.
+					if (HemoCapabilityAccess.hasPossession(player)) HemoCapabilityAccess.getPossession(player).sync(player, true);
+					else PacketHandler.sendToPlayer(player, PacketSyncPossession.none(player.getId()));
+				},
+				player -> HemoCapabilityAccess.hasPossession(player)
+						&& HemoCapabilityAccess.getPossession(player).isSyncDirty()),
 		POWER_GUARDRAILS(HemoAttachmentTypes.POWER_GUARDRAILS, PacketSyncManipulationHearts.class, ALWAYS,
 				ManipulationReactiveEvents::syncHearts);
 

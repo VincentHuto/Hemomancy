@@ -7,15 +7,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class SilentArchonCommandRulesTest {
 	@Test
-	void pendingAndCompleteForceDegreeSevenWhileClearOnlyRemovesThePath() {
+	void pendingForcesDegreeSevenCompleteForcesEightAndClearOnlyRemovesThePath() {
 		SilentArchonCommandRules.Transition pending = SilentArchonCommandRules.transition("pending", 3);
 		assertEquals(7, pending.degreeNumber());
 		assertEquals(EnumArchonPath.SILENT_PENDING, pending.archonPath());
 		assertFalse(pending.clearLegacyChoice());
 
 		SilentArchonCommandRules.Transition complete = SilentArchonCommandRules.transition("complete", 5);
-		assertEquals(7, complete.degreeNumber());
-		assertEquals(EnumArchonPath.SILENT_ARCHON, complete.archonPath());
+		assertEquals(8, complete.degreeNumber());
+		assertEquals(EnumArchonPath.SILENTIUM, complete.archonPath());
 		assertFalse(complete.clearLegacyChoice());
 
 		SilentArchonCommandRules.Transition cleared = SilentArchonCommandRules.transition("clear", 7);

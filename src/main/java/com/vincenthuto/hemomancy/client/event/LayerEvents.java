@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.event;
 
+import com.vincenthuto.hemomancy.client.model.entity.mob.monster.HunterFungusModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.monster.AntibodyModel;
 import com.vincenthuto.hemomancy.client.render.outpouring.CastVeinsLayer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.*;
@@ -62,7 +64,7 @@ public class LayerEvents {
 	public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
 		event.registerLayerDefinition(MyelinBorerModel.LAYER_LOCATION, MyelinBorerModel::createBodyLayer);
 		event.registerLayerDefinition(MortarboundModel.LAYER_LOCATION, MortarboundModel::createBodyLayer);
-		event.registerLayerDefinition(AbhorentThoughtModel.abhorent_thought, AbhorentThoughtModel::createBodyLayer);
+		event.registerLayerDefinition(AbhorrentThoughtModel.abhorrent_thought, AbhorrentThoughtModel::createBodyLayer);
 		event.registerLayerDefinition(LivingBladeHandTameModel.living_blade_tame,
 				LivingBladeHandTameModel::createLayers);
 		event.registerLayerDefinition(LivingBladeUnleashedModel.living_blade_unleashed,
@@ -178,6 +180,8 @@ public class LayerEvents {
                 com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.IceFishMesh::create);
 		event.registerLayerDefinition(MnemonicWhaleModel.LAYER_LOCATION, MnemonicWhaleModel::createBodyLayer);
 		event.registerLayerDefinition(BrinedVotaryModel.LAYER_LOCATION, BrinedVotaryModel::createBodyLayer);
+        event.registerLayerDefinition(AntibodyModel.LAYER_LOCATION, AntibodyModel::createBodyLayer);
+        event.registerLayerDefinition(HunterFungusModel.LAYER_LOCATION, HunterFungusModel::createBodyLayer);
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
 		event.registerLayerDefinition(LanternTickModel.LAYER_LOCATION, LanternTickModel::createBodyLayer);
 		event.registerLayerDefinition(PrismCuttleModel.LAYER_LOCATION, PrismCuttleModel::createBodyLayer);
@@ -390,6 +394,7 @@ public class LayerEvents {
             livingRenderer.addLayer(new BloodVialInjectionLayer(livingRenderer));
             livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.player.CastingAnimationLayer(livingRenderer));
             livingRenderer.addLayer(new CastVeinsLayer(livingRenderer));
+            livingRenderer.addLayer(new HallowedBurnLayer(livingRenderer));
             livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.player.HematicMicroscopeLayer(livingRenderer));
 			livingRenderer.addLayer(new SilentArchonArmorOverlayLayer(livingRenderer));
 			livingRenderer.addLayer(new EdaciousBloodLustWingLayer(livingRenderer));

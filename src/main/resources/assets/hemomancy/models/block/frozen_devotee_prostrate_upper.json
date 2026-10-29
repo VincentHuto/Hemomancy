@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    512
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/frozen_devotee",
+    "particle": "hemomancy:block/frozen_devotee"
+  },
+  "elements": []
+}

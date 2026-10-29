@@ -44,6 +44,7 @@
     [
       "hemomancy:fungal_floor",
       "hemomancy:morphic_pool",
+      "hemomancy:rendering_pool",
       "hemomancy:hyphae_tendril",
       "hemomancy:mushroom/canopy_mushrooms_sparse",
       "hemomancy:huge_fungus",
@@ -55,7 +56,8 @@
       "hemomancy:bleeding_hearts",
       "hemomancy:patch_hyphae",
       "hemomancy:small_infected_fungus",
-      "hemomancy:stink_horns"
+      "hemomancy:stink_horns",
+      "hemomancy:gill_curtain"
     ],
     []
   ],
@@ -68,12 +70,30 @@
         "weight": 10,
         "minCount": 2,
         "maxCount": 4
+      },
+      {
+        "type": "hemomancy:facsimile_horse",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "hemomancy:facsimile_donkey",
+        "weight": 4,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "hemomancy:facsimile_wolf",
+        "weight": 5,
+        "minCount": 2,
+        "maxCount": 4
       }
     ],
     "misc": [],
     "monster": [
       {
-        "type": "hemomancy:abhorent_thought",
+        "type": "hemomancy:abhorrent_thought",
         "weight": 10,
         "minCount": 1,
         "maxCount": 3
@@ -81,6 +101,12 @@
       {
         "type": "hemomancy:fargone",
         "weight": 8,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "hemomancy:hunter_fungus",
+        "weight": 6,
         "minCount": 1,
         "maxCount": 2
       }

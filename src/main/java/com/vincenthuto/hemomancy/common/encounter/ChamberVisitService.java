@@ -193,6 +193,7 @@ public final class ChamberVisitService {
 
 	private static boolean canStartVisit(ServerPlayer player) {
 		return !isActive(player) && !FungalGardenTravelHelper.isProjectionActive(player)
+				&& !com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.isPossessing(player)
 				&& !player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)
 				&& player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) != null;
 	}

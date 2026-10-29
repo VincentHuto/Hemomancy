@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonTrialEvents;
@@ -38,6 +40,8 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/degree_7_archon");
 	public static final ResourceLocation ADV_DEGREE_8_APOTHEOS =
 			Hemomancy.rloc("hemomancy/degree_8_apotheos");
+	public static final ResourceLocation ADV_DEGREE_8_SILENTIUM =
+			Hemomancy.rloc("hemomancy/degree_8_silentium");
 
 	// ── Order function milestones ──────────────────────────────────────────────
 	public static final ResourceLocation ADV_BLOOD_IS_BOUND =
@@ -245,8 +249,10 @@ public final class HarbingerAdvancementGranter {
 	 * @param degree The degree number (1–8) the player has just reached.
 	 */
 	public static void grantDegree(ServerPlayer player, int degree) {
+		boolean silentium = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENTIUM;
 		for (int i = 1; i <= degree && i <= DEGREE_ADVANCEMENTS.length; i++) {
-			grantIfNotDone(player, DEGREE_ADVANCEMENTS[i - 1]);
+			// The eighth degree is recorded under the path that reached it.
+			grantIfNotDone(player, i == 8 && silentium ? ADV_DEGREE_8_SILENTIUM : DEGREE_ADVANCEMENTS[i - 1]);
 		}
 		LiberKnowledgeHelper.unlockForDegree(player, degree);
 		PuppeteerSummonTrialEvents.awardOrdealRecipes(player, degree);

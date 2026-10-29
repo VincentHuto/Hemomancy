@@ -8,8 +8,11 @@ import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -35,6 +38,39 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 	private boolean isConsecrated = false;
 	private int offeringBloodVolume = 0;
 	private boolean sampleYielded = false;
+	/** How the ring door before this tomb was opened; the Saint fights accordingly (Section 8). */
+	private DoorMode doorMode = DoorMode.NONE;
+	private final java.util.List<String> skippedChapels = new java.util.ArrayList<>();
+	/** A structure places the tomb without a placer, so its fillers grow on its first tick. */
+	private boolean fillersPlaced = false;
+
+	public enum DoorMode { NONE, PROPER, FORCED }
+
+	public DoorMode doorMode() {
+		return doorMode;
+	}
+
+	public java.util.List<String> skippedChapels() {
+		return java.util.List.copyOf(skippedChapels);
+	}
+
+	/** The first opening of the ring door is what the tomb remembers. */
+	public void recordDoor(DoorMode mode, java.util.List<com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelRules.Kind> skipped) {
+		if (doorMode != DoorMode.NONE) return;
+		doorMode = mode;
+		skippedChapels.clear();
+		skipped.forEach(kind -> skippedChapels.add(kind.name()));
+		setChanged();
+	}
+
+	public boolean fillersPlaced() {
+		return fillersPlaced;
+	}
+
+	public void markFillersPlaced() {
+		fillersPlaced = true;
+		setChanged();
+	}
 
 	// Client-side animation
 	public float lidAngle = 0.0F;
@@ -196,6 +232,19 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 		return tag;
 	}
 
+	/**
+	 * The baked tomb wears the palette of the Saint at rest in it (its block model reads this block entity as its
+	 * section is meshed), so a tomb a relic newly names, or that takes back another Saint, re-meshes on the client.
+	 */
+	@Override
+	public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket packet,
+			HolderLookup.Provider provider) {
+		EnumSaintType before = saintType;
+		super.onDataPacket(connection, packet, provider);
+		if (saintType != before && level != null)
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+	}
+
 	@Override
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 		super.saveAdditional(tag, provider);
@@ -208,6 +257,11 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 		tag.putInt("OfferingBloodVolume", offeringBloodVolume);
 		tag.putBoolean("SaintTypeAssigned", saintType != null);
 		tag.putBoolean("SampleYielded", sampleYielded);
+		tag.putString("DoorMode", doorMode.name());
+		net.minecraft.nbt.ListTag skipped = new net.minecraft.nbt.ListTag();
+		skippedChapels.forEach(kind -> skipped.add(net.minecraft.nbt.StringTag.valueOf(kind)));
+		tag.put("SkippedChapels", skipped);
+		tag.putBoolean("FillersPlaced", fillersPlaced);
 	}
 
 	@Override
@@ -233,6 +287,16 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 		cooldownTicks = tag.getInt("CooldownTicks");
 		isOpen = tag.getBoolean("IsOpen");
 		isConsecrated = tag.getBoolean("IsConsecrated");
+		try {
+			doorMode = tag.contains("DoorMode") ? DoorMode.valueOf(tag.getString("DoorMode")) : DoorMode.NONE;
+		} catch (IllegalArgumentException unknown) {
+			doorMode = DoorMode.NONE;
+		}
+		skippedChapels.clear();
+		for (net.minecraft.nbt.Tag kind : tag.getList("SkippedChapels", net.minecraft.nbt.Tag.TAG_STRING)) {
+			skippedChapels.add(kind.getAsString());
+		}
+		fillersPlaced = !tag.contains("FillersPlaced") || tag.getBoolean("FillersPlaced");
 		offeringBloodVolume = tag.getInt("OfferingBloodVolume");
 		sampleYielded = tag.getBoolean("SampleYielded");
 	}

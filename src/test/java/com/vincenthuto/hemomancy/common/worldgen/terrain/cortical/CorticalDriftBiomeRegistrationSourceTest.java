@@ -73,15 +73,15 @@ class CorticalDriftBiomeRegistrationSourceTest {
 		assertEquals(1, monsters.size(), "the Cortical Drift should only configure its cable-native monster");
 		assertEquals("hemomancy:myelin_borer", monsters.get(0).getAsJsonObject().get("type").getAsString(),
 				"the biome JSON's only monster spawner should be the Myelin Borer");
-		assertFalse(monsters.toString().contains("hemomancy:abhorent_thought"),
-				"Abhorent Thought must not spawn in Cortical Drift");
+		assertFalse(monsters.toString().contains("hemomancy:abhorrent_thought"),
+				"Abhorrent Thought must not spawn in Cortical Drift");
 
 		String source = biomeInit();
 		int builderStart = source.indexOf("private static Biome corticalDrift(");
 		int builderEnd = source.indexOf("public static void commonSetup", builderStart);
 		String builder = source.substring(builderStart, builderEnd);
-		assertFalse(builder.contains("EntityInit.abhorent_thought"),
-				"the corticalDrift() builder should also exclude Abhorent Thought");
+		assertFalse(builder.contains("EntityInit.abhorrent_thought"),
+				"the corticalDrift() builder should also exclude Abhorrent Thought");
 		assertTrue(builder.contains("EntityInit.myelin_borer"),
 				"the corticalDrift() builder should retain Myelin Borer");
 

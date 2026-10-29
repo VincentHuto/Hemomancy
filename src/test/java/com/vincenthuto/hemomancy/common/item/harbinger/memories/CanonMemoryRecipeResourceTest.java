@@ -33,6 +33,9 @@ final class CanonMemoryRecipeResourceTest {
 			assertEquals("hemomancy:hallowed_residuum_" + saintId,
 					recipe.getAsJsonArray("catalysts").get(0).getAsJsonObject().get("item").getAsString(),
 					memory + " is woven from " + saintId + "'s residuum");
+			assertEquals("hemomancy:recollection_" + saintId,
+					recipe.getAsJsonArray("catalysts").get(1).getAsJsonObject().get("item").getAsString(),
+					memory + " also needs the Gardens' Recollection of " + saintId);
 
 			Set<String> enzymes = new TreeSet<>();
 			recipe.getAsJsonObject("enzymes").entrySet().forEach(entry -> {

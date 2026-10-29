@@ -9,7 +9,10 @@ public final class VenousWallResourceTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 	private static final String[] WALL_IDS = {
 			"venous_stone_wall",
-			"polished_venous_stone_brick_wall"
+			"polished_venous_stone_brick_wall",
+			"bone_brick_wall",
+			"hematic_iron_plating_wall",
+			"polished_venous_stone_wall"
 	};
 
 	private VenousWallResourceTest() {

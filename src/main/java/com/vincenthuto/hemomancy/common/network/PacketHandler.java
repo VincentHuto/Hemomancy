@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.network;
 
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPossession;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSporeLoad;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.bestiary.PacketRequestSpecimenBestiary;
@@ -63,7 +65,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "16";
+    public static final String PROTOCOL_VERSION = "20";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -94,6 +96,9 @@ public class PacketHandler {
                 PhlegethonticCurrentPacket::handle);
         net.playToClient(PacketSyncStationUpgrades.TYPE, PacketSyncStationUpgrades.STREAM_CODEC,
                 PacketSyncStationUpgrades::handle);
+        net.playToClient(PacketSyncSporeLoad.TYPE, PacketSyncSporeLoad.STREAM_CODEC, PacketSyncSporeLoad::handle);
+        net.playToClient(PacketSyncPossession.TYPE, PacketSyncPossession.STREAM_CODEC, PacketSyncPossession::handle);
+        net.playToServer(BurnSporeLoadKeyPacket.TYPE, BurnSporeLoadKeyPacket.STREAM_CODEC, BurnSporeLoadKeyPacket::handle);
         net.playToServer(com.vincenthuto.hemomancy.common.network.succession.ResidentsRequestPacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.succession.ResidentsRequestPacket.STREAM_CODEC,
                 com.vincenthuto.hemomancy.common.network.succession.ResidentsRequestPacket::handle);
@@ -147,6 +152,8 @@ public class PacketHandler {
                 PacketSyncVesperFightScene.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(com.vincenthuto.hemomancy.common.network.boss.BossBarFramePacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.boss.BossBarFramePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.mausoleum.WardStrikePacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.mausoleum.WardStrikePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(com.vincenthuto.hemomancy.common.network.boss.BossScenePacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.boss.BossScenePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketSyncMycophantFightScene.TYPE,
@@ -484,6 +491,12 @@ public class PacketHandler {
     public static <P extends CustomPacketPayload> void sendNear(ServerLevel level, double x, double y, double z,
             double radius, P payload) {
         PacketDistributor.sendToPlayersNear(level, null, x, y, z, radius, payload);
+    }
+
+    /** As {@link #sendNear}, leaving out {@code excluded} (who has been sent their own copy). */
+    public static <P extends CustomPacketPayload> void sendNear(ServerLevel level, @javax.annotation.Nullable ServerPlayer excluded,
+            double x, double y, double z, double radius, P payload) {
+        PacketDistributor.sendToPlayersNear(level, excluded, x, y, z, radius, payload);
     }
 
     /** Server to every player tracking {@code entity}, and to the entity itself when it is a player. */

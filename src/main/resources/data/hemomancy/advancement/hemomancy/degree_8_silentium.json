@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:memory_of_vesper"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.degree_8_silentium.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.degree_8_silentium.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_7_archon",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

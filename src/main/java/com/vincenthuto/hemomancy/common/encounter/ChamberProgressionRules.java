@@ -12,8 +12,8 @@ public final class ChamberProgressionRules {
 	}
 
 	public static State stateFor(Facts facts) {
-		if (facts.degree() >= 8) return new State(3, "apotheos");
-		if (facts.silentArchon() && facts.degree() >= 7) return new State(2, "silent_archon");
+		if (facts.apotheos()) return new State(3, "apotheos");
+		if (facts.silentium()) return new State(3, "silent_archon");
 		if (facts.qliphothStarted()) return new State(2, "qliphoth_communion");
 		if (facts.degree() >= 7) return new State(1, "archon_revelation");
 		if (facts.firstScarLearned()) return new State(0, "mnemonic_lowtide");
@@ -26,8 +26,8 @@ public final class ChamberProgressionRules {
 		if (facts.firstScarLearned()) themes.add("mnemonic_lowtide");
 		if (facts.degree() >= 7) themes.add("archon_revelation");
 		if (facts.qliphothStarted()) themes.add("qliphoth_communion");
-		if (facts.silentArchon() && facts.degree() >= 7) themes.add("silent_archon");
-		if (facts.degree() >= 8) themes.add("apotheos");
+		if (facts.silentium()) themes.add("silent_archon");
+		if (facts.apotheos()) themes.add("apotheos");
 		return List.copyOf(themes);
 	}
 
@@ -41,8 +41,9 @@ public final class ChamberProgressionRules {
 		return BASE_RADIUS + Math.max(0, Math.min(MAX_TIER, tier)) * 2;
 	}
 
+	/** {@code silentium} and {@code apotheos} are the two finished eighth-degree paths. */
 	public record Facts(int degree, boolean firstScarLearned, boolean qliphothStarted,
-			boolean silentArchon) {
+			boolean silentium, boolean apotheos) {
 	}
 
 	public record State(int tier, String theme) {

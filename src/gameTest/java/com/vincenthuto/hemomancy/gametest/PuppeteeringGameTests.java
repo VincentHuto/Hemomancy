@@ -258,8 +258,8 @@ public final class PuppeteeringGameTests {
 		try {
 			PuppeteerSummonDefinition definition = learnVulture(owner);
 			var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
-			degree.setDegreeNumber(7);
-			degree.setArchonPath(EnumArchonPath.SILENT_ARCHON);
+			degree.setDegreeNumber(8);
+			degree.setArchonPath(EnumArchonPath.SILENTIUM);
 			ItemStack crossbar = attunedCrossbar(owner, 100);
 			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
 

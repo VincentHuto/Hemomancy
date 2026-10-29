@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:bone_block"
+    }
+  },
+  "result": {
+    "id": "hemomancy:bone_bricks",
+    "count": 4
+  }
+}

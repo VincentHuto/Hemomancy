@@ -1,0 +1,90 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/blood_gutter",
+    "particle": "minecraft:block/deepslate_tiles",
+    "tiles": "minecraft:block/deepslate_tiles",
+    "stone": "hemomancy:block/polished_venous_stone",
+    "blood": "hemomancy:block/blood_still"
+  },
+  "elements": [
+    {
+      "name": "film",
+      "from": [
+        5,
+        12.1,
+        5
+      ],
+      "to": [
+        11,
+        12.11,
+        7
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            0.0,
+            8.0,
+            0.75,
+            9.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "film",
+      "from": [
+        5,
+        12.1,
+        9
+      ],
+      "to": [
+        11,
+        12.11,
+        11
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            0.75,
+            8.0,
+            1.5,
+            9.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "film_runnel",
+      "from": [
+        5,
+        11.1,
+        7
+      ],
+      "to": [
+        11,
+        11.11,
+        9
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            1.5,
+            8.0,
+            2.25,
+            9.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "hemomancy:block/rimed_deepslate_bricks_top_2",
+    "side": "hemomancy:block/rimed_deepslate_bricks_2",
+    "bottom": "minecraft:block/deepslate_bricks"
+  }
+}

@@ -29,10 +29,19 @@ public final class HarbingerSaintEncounterHooks {
 		BlockState tomb = level.getBlockState(pos);
 		if (tomb.getBlock() instanceof SaintSarcophagusBlock) boss.bindTomb(pos, tomb);
 
-		// on the floor the sarcophagus stood on (it is cleared right after): the Saint rises out of that floor
-		boss.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
-				level.random.nextFloat() * 360.0F, 0.0F);
+		// at the middle of the floor the sarcophagus stood on (it is cleared right after): the Saint rises out of it,
+		// facing out of the foot end toward whoever came to the bowl
+		double[] centre = tomb.getBlock() instanceof SaintSarcophagusBlock
+				? SaintSarcophagusBlock.tombCentre(tomb.getValue(SaintSarcophagusBlock.FACING), 0) : new double[]{0.5, 0, 0.5};
+		float facing = tomb.getBlock() instanceof SaintSarcophagusBlock
+				? tomb.getValue(SaintSarcophagusBlock.FACING).toYRot() : level.random.nextFloat() * 360.0F;
+		boss.moveTo(pos.getX() + centre[0], pos.getY(), pos.getZ() + centre[2], facing, 0.0F);
 		boss.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null);
+		if (level.getBlockEntity(pos) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity record) {
+			boss.setAwakening(SaintEnrageRules.effectiveMode(record.doorMode().name(),
+					com.vincenthuto.hemomancy.common.event.ApotheosBodyEvents.isApotheos(sourcePlayer)), record.skippedChapels(),
+					record.doorMode().name());
+		}
 		boss.setPersistenceRequired();
 		boss.setCustomName(Component.translatable("message.hemomancy.saint.saint_s", saintType.getDisplayName()));
 		boss.setCustomNameVisible(true);

@@ -1,0 +1,18 @@
+{
+  "type": "hemomancy:rendering",
+  "input": {
+    "item": "minecraft:bone"
+  },
+  "results": [
+    {
+      "id": "hemomancy:ruinous_enzyme",
+      "count": 1,
+      "chance": 0.25
+    },
+    {
+      "id": "minecraft:bone_meal",
+      "count": 2
+    }
+  ],
+  "render_time": 100
+}

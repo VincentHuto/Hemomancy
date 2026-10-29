@@ -53,32 +53,32 @@
       }
     ]
   },
-  "entity.abhorent_thought.ambient": {
+  "entity.abhorrent_thought.ambient": {
     "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.abhorent_thought.ambient",
+    "subtitle": "subtitle.hemomancy.entity.abhorrent_thought.ambient",
     "sounds": [
       {
-        "name": "hemomancy:entity/abhorent_thought/ambient",
+        "name": "hemomancy:entity/abhorrent_thought/ambient",
         "stream": true
       }
     ]
   },
-  "entity.abhorent_thought.hurt": {
+  "entity.abhorrent_thought.hurt": {
     "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.abhorent_thought.hurt",
+    "subtitle": "subtitle.hemomancy.entity.abhorrent_thought.hurt",
     "sounds": [
       {
-        "name": "hemomancy:entity/abhorent_thought/hurt",
+        "name": "hemomancy:entity/abhorrent_thought/hurt",
         "stream": true
       }
     ]
   },
-  "entity.abhorent_thought.death": {
+  "entity.abhorrent_thought.death": {
     "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.abhorent_thought.death",
+    "subtitle": "subtitle.hemomancy.entity.abhorrent_thought.death",
     "sounds": [
       {
-        "name": "hemomancy:entity/abhorent_thought/death",
+        "name": "hemomancy:entity/abhorrent_thought/death",
         "stream": true
       }
     ]
@@ -728,7 +728,7 @@
     "subtitle": "subtitle.hemomancy.entity.will.ambient",
     "sounds": [
       {
-        "name": "hemomancy:entity/abhorent_thought/ambient",
+        "name": "hemomancy:entity/abhorrent_thought/ambient",
         "stream": true
       }
     ]
@@ -738,7 +738,7 @@
     "subtitle": "subtitle.hemomancy.entity.will.hurt",
     "sounds": [
       {
-        "name": "hemomancy:entity/abhorent_thought/hurt",
+        "name": "hemomancy:entity/abhorrent_thought/hurt",
         "stream": true
       }
     ]
@@ -748,7 +748,7 @@
     "subtitle": "subtitle.hemomancy.entity.will.dissolve",
     "sounds": [
       {
-        "name": "hemomancy:entity/abhorent_thought/death",
+        "name": "hemomancy:entity/abhorrent_thought/death",
         "stream": true
       }
     ]
@@ -758,7 +758,7 @@
     "subtitle": "subtitle.hemomancy.entity.will.materialize",
     "sounds": [
       {
-        "name": "hemomancy:entity/abhorent_thought/summon",
+        "name": "hemomancy:entity/abhorrent_thought/summon",
         "stream": true
       }
     ]
@@ -768,7 +768,7 @@
     "subtitle": "subtitle.hemomancy.entity.will.falter",
     "sounds": [
       {
-        "name": "hemomancy:entity/abhorent_thought/hurt",
+        "name": "hemomancy:entity/abhorrent_thought/hurt",
         "stream": true
       }
     ]
@@ -778,7 +778,7 @@
     "subtitle": "subtitle.hemomancy.entity.will.presence_sting",
     "sounds": [
       {
-        "name": "hemomancy:entity/abhorent_thought/summon",
+        "name": "hemomancy:entity/abhorrent_thought/summon",
         "stream": true
       }
     ]
@@ -1372,5 +1372,13 @@
   "rite.ambient.drone": {"subtitle": "subtitle.hemomancy.rite.ambient.drone", "sounds": [{"name": "minecraft:ambient.crimson_forest.loop", "type": "event", "pitch": 0.7}]},
   "rite.ambient.heartbeat": {"subtitle": "subtitle.hemomancy.rite.ambient.heartbeat", "sounds": [{"name": "minecraft:entity.warden.heartbeat", "type": "event", "pitch": 0.8}]},
   "rite.ambient.storm": {"subtitle": "subtitle.hemomancy.rite.ambient.storm", "sounds": [{"name": "minecraft:ambient.basalt_deltas.loop", "type": "event", "pitch": 0.8}]},
+  "mausoleum.hemorath.heartbeat": {"subtitle": "subtitle.hemomancy.mausoleum.hemorath.heartbeat", "sounds": [{"name": "minecraft:entity.warden.heartbeat", "type": "event", "pitch": 0.7}]},
+  "mausoleum.hemorath.drip": {"subtitle": "subtitle.hemomancy.mausoleum.hemorath.drip", "sounds": [{"name": "minecraft:block.pointed_dripstone.drip_lava", "type": "event", "pitch": 0.75, "weight": 2}, {"name": "minecraft:block.pointed_dripstone.drip_water", "type": "event", "pitch": 0.7, "weight": 2}, {"name": "minecraft:block.pointed_dripstone.drip_lava_into_cauldron", "type": "event", "pitch": 0.8}]},
+  "mausoleum.seraphae.choir": {"subtitle": "subtitle.hemomancy.mausoleum.seraphae.choir", "sounds": [{"name": "minecraft:block.beacon.ambient", "type": "event", "pitch": 0.6}]},
+  "mausoleum.seraphae.anchor_tick": {"subtitle": "subtitle.hemomancy.mausoleum.seraphae.anchor_tick", "sounds": [{"name": "minecraft:block.chain.hit", "type": "event", "pitch": 1.6, "volume": 0.7, "weight": 2}, {"name": "minecraft:block.comparator.click", "type": "event", "pitch": 0.7, "volume": 0.6}]},
+  "mausoleum.putriciel.crackle": {"subtitle": "subtitle.hemomancy.mausoleum.putriciel.crackle", "sounds": [{"name": "minecraft:block.campfire.crackle", "type": "event", "pitch": 0.9, "weight": 3}, {"name": "minecraft:block.fire.ambient", "type": "event", "pitch": 0.8, "volume": 0.6}]},
+  "mausoleum.putriciel.creak": {"subtitle": "subtitle.hemomancy.mausoleum.putriciel.creak", "sounds": [{"name": "minecraft:block.mangrove_roots.hit", "type": "event", "pitch": 0.6, "weight": 2}, {"name": "minecraft:block.mangrove_roots.break", "type": "event", "pitch": 0.6, "volume": 0.5}, {"name": "minecraft:block.mud.step", "type": "event", "pitch": 0.65, "volume": 0.8}]},
+  "mausoleum.putriciel.flare": {"subtitle": "subtitle.hemomancy.mausoleum.putriciel.flare", "sounds": [{"name": "minecraft:entity.blaze.shoot", "type": "event", "pitch": 0.55, "weight": 2}, {"name": "minecraft:item.firecharge.use", "type": "event", "pitch": 0.6}, {"name": "minecraft:block.fire.extinguish", "type": "event", "pitch": 0.6, "volume": 0.7}]},
+  "mausoleum.velorum.creak": {"subtitle": "subtitle.hemomancy.mausoleum.velorum.creak", "sounds": [{"name": "minecraft:block.glass.step", "type": "event", "pitch": 0.55, "weight": 2}, {"name": "minecraft:block.glass.hit", "type": "event", "pitch": 0.55, "volume": 0.8}, {"name": "minecraft:block.amethyst_cluster.step", "type": "event", "pitch": 0.55, "volume": 0.6}]},
   "rite.ring_open": {"subtitle": "subtitle.hemomancy.rite.ring_open", "sounds": [{"name": "minecraft:entity.warden.roar", "type": "event", "pitch": 0.7, "volume": 0.9}]}
 }

@@ -1,0 +1,14 @@
+{
+  "type": "hemomancy:rendering",
+  "input": {
+    "item": "minecraft:glowstone_dust"
+  },
+  "results": [
+    {
+      "id": "hemomancy:incandescent_enzyme",
+      "count": 1,
+      "chance": 0.25
+    }
+  ],
+  "render_time": 100
+}

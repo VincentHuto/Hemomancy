@@ -17,7 +17,8 @@ public final class StructurePlacementChecks {
 	private static final int MAX_LAND_STRUCTURE_HEIGHT = 150;
 	private static final int MAX_ALLOWED_WATER_DEPTH = 2;
 	private static final int MAX_ALLOWED_SWAMP_WATER_DEPTH = 8;
-	private static final int MAUSOLEUM_FOOTPRINT_RADIUS = 32;
+	/** The farthest a mausoleum piece reaches from its entrance's centre (80, measured by the generator's layout check). */
+	private static final int MAUSOLEUM_FOOTPRINT_RADIUS = 80;
 	private static final int MAUSOLEUM_SAMPLE_STEP = 16;
 	private static final int MAX_MAUSOLEUM_SURFACE_VARIATION = 10;
 	private static final int OUTPOST_RADIUS = 28;

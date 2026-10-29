@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "hemomancy:polished_venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:polished_venous_stone_wall",
+    "count": 6
+  }
+}

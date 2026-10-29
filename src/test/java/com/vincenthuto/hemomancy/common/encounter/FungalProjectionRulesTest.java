@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,23 @@ public final class FungalProjectionRulesTest {
 		FungalWhisperVignetteOverlay.setProjectionState(true, 20, 20);
 		FungalWhisperVignetteOverlay.clear();
 		assertFalse("logout clears the projection", FungalWhisperVignetteOverlay.isProjectionActive());
+	}
+
+	@Test
+	void onlyTheApotheosTravelsInTheBody() {
+		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.FIRST_PROJECTION,
+				FungalProjectionRules.travelKind(false, 7, true, EnumArchonPath.NONE));
+		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.PHYSICAL,
+				FungalProjectionRules.travelKind(true, 8, true, EnumArchonPath.APOTHEOS));
+		for (EnumArchonPath path : new EnumArchonPath[] {EnumArchonPath.NONE, EnumArchonPath.SILENT_PENDING,
+				EnumArchonPath.APOTHEOS_PENDING}) {
+			org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.REFUSED,
+					FungalProjectionRules.travelKind(true, 7, true, path), path.name());
+		}
+		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.REFUSED,
+				FungalProjectionRules.travelKind(true, 8, true, EnumArchonPath.SILENTIUM));
+		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.REFUSED,
+				FungalProjectionRules.travelKind(false, 6, true, EnumArchonPath.NONE));
 	}
 
 	public static void main(String[] args) {

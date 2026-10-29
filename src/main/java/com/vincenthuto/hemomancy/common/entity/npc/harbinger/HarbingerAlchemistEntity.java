@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
@@ -116,7 +117,8 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.e
         } else {
             ItemStack held = serverPlayer.getMainHandItem();
             RedTaxonomySample heldRedTaxonomySample = degree >= 2 ? findHeldRedTaxonomySample(held) : null;
-            tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
+            tree = HarbingerAlchemistDialogueTrees.forDegree(HarbingerPathPermissions.greetingDegree(degree,
+                    HemoCapabilityAccess.getInitiatoryDegree(serverPlayer).getArchonPath()), this.getId(), canShowRecruitment(player, this),
                     isNpcInPlayerBloodline(player, this), heldRedTaxonomySample,
                     degree >= 2 ? findHeldSpecimenJar(held) : null, FirstSeparationAssignment.canBrief(serverPlayer),
                     FirstSeparationAssignment.canClaim(serverPlayer), BodyAnswersAssignment.canBrief(serverPlayer),

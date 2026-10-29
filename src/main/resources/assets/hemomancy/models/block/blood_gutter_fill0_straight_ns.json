@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/blood_gutter",
+    "particle": "minecraft:block/deepslate_tiles",
+    "tiles": "minecraft:block/deepslate_tiles",
+    "stone": "hemomancy:block/polished_venous_stone",
+    "blood": "hemomancy:block/blood_still"
+  },
+  "elements": [
+    {
+      "name": "residue",
+      "from": [
+        7,
+        11.1,
+        5
+      ],
+      "to": [
+        9,
+        11.11,
+        11
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            3.5,
+            0.0,
+            3.75,
+            3.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

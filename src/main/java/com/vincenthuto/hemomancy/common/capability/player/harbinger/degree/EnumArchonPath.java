@@ -4,7 +4,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.degree;
 public enum EnumArchonPath {
 	NONE,
 	SILENT_PENDING,
-	SILENT_ARCHON,
+	SILENTIUM,
 	APOTHEOS_PENDING,
 	APOTHEOS;
 

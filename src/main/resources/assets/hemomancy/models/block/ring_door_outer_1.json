@@ -1,0 +1,261 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    256
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/ring_door",
+    "particle": "hemomancy:block/polished_venous_stone"
+  },
+  "elements": [
+    {
+      "name": "outer_ringstone",
+      "from": [
+        -2.0,
+        2.8283,
+        1.5
+      ],
+      "to": [
+        1.0,
+        13.1717,
+        4.0
+      ],
+      "rotation": {
+        "angle": -45.0,
+        "axis": "z",
+        "origin": [
+          24.0,
+          8.0,
+          1.5
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            14.125,
+            7.9375,
+            14.5,
+            8.625
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            14.5,
+            7.9375,
+            14.875,
+            8.625
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            14.875,
+            7.9375,
+            15.25,
+            8.625
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "outer_ringstone",
+      "from": [
+        -2.0,
+        2.8283,
+        1.56
+      ],
+      "to": [
+        1.0,
+        13.1717,
+        4.0
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [
+          24.0,
+          8.0,
+          1.56
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            15.25,
+            7.9375,
+            15.625,
+            8.625
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            15.625,
+            7.9375,
+            16.0,
+            8.625
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            0.0,
+            8.75,
+            0.375,
+            9.4375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "outer_ringstone",
+      "from": [
+        -2.0,
+        2.8283,
+        1.5
+      ],
+      "to": [
+        1.0,
+        13.1717,
+        4.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.375,
+            8.75,
+            0.75,
+            9.4375
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.75,
+            8.75,
+            1.125,
+            9.4375
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            1.125,
+            8.75,
+            1.5,
+            9.4375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "outer_ringstone",
+      "from": [
+        -2.0,
+        2.8283,
+        1.56
+      ],
+      "to": [
+        1.0,
+        13.1717,
+        4.0
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "z",
+        "origin": [
+          24.0,
+          8.0,
+          1.56
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            1.5,
+            8.75,
+            1.875,
+            9.4375
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            1.875,
+            8.75,
+            2.25,
+            9.4375
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            2.25,
+            8.75,
+            2.625,
+            9.4375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "outer_ringstone",
+      "from": [
+        -2.0,
+        2.8283,
+        1.5
+      ],
+      "to": [
+        1.0,
+        13.1717,
+        4.0
+      ],
+      "rotation": {
+        "angle": 45.0,
+        "axis": "z",
+        "origin": [
+          24.0,
+          8.0,
+          1.5
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            2.625,
+            8.75,
+            3.0,
+            9.4375
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.0,
+            8.75,
+            3.375,
+            9.4375
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.375,
+            8.75,
+            3.75,
+            9.4375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

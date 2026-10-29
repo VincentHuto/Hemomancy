@@ -40,6 +40,8 @@ class CombatTargetingGuardrailTest {
 					new Allowed(1, "Summon AI: canDefendAgainst holds its owner rules")),
 			entry(COMMON + "entity/summon/PhantasmalEchoEntity.java",
 					new Allowed(3, "Summon AI and the echo's own smoke; canAttack holds its owner rules")),
+			entry(COMMON + "world/GardensNetwork.java",
+					new Allowed(1, "The Gardens' network turns its own monsters on a heard footstep; there is no caster")),
 			entry(COMMON + "item/harbinger/memory/HematicMemoryToolEvents.java",
 					new Allowed(1, "Husk Effigy AI retargeting (HuskEffigyRules)")),
 			entry(COMMON + "rite/unstained/PaleConsecrationEvents.java",

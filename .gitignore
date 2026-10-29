@@ -81,8 +81,13 @@ __pycache__/
 !/docs/harbinger_progression_redesign/
 !/docs/harbinger_progression_redesign/**
 
-# tools/ holds local editors and art pipelines. Only the model generators that tests read and the review launchers are tracked.
+# tools/ holds local editors and art pipelines. Only the model generators that tests read, the review launchers and the mausoleum generator are tracked.
 /tools/*
 !/tools/model_export/
 !/tools/review/
+# The Saint mausoleum structure generator writes the mausoleum templates, which are never hand-edited.
+!/tools/worldgen/
+/tools/worldgen/*
+!/tools/worldgen/mausoleum/
+!/tools/worldgen/mausoleum_complexes.py
 .ignore

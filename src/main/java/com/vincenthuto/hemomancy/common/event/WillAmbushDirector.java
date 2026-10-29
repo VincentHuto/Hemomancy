@@ -127,6 +127,9 @@ public final class WillAmbushDirector {
 			chance *= 1.0D + HemoConfigValues.get(HemoServerConfig.WILL_BLOOD_DRUNKENNESS_MULTIPLIER_PER_AMPLIFIER, 0.5D)
 					* (drunkenness.getAmplifier() + 1);
 		}
+		if (player.hasEffect(EffectInit.mind_broken)) {
+			chance *= 2.0D;
+		}
 		if (state.getHeraldUntilGameTime() > server.getGameTime()) {
 			chance *= HemoConfigValues.get(HemoServerConfig.WILL_HERALD_MULTIPLIER, 4.0D);
 		}

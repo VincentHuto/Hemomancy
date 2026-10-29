@@ -291,7 +291,7 @@ test under `src/test/java/.../architecture/` is listed here.
 | Tooling | `PrivateTestHelperRatchetTest` | 2 | Private test helper copies only fall |
 | Tooling | `SourceTreeHygieneTest` | 3, 5 | No empty sources or subscribers; mixin list matches |
 | Rendering | `HemorathPresentationGuardrailTest` | 10 | Boss and attack goals emit no vanilla particles; Ferric links and blood effects use the shared world passes |
-| Rendering | `PutricielPresentationGuardrailTest` | Putriciel | Bespoke rot-fire offering geometry and no vanilla fight particles |
+| Rendering | `PutricielPresentationGuardrailTest` | Putriciel | Bespoke rot-fire offering geometry, no vanilla fight particles, and pyres burning the Flammeus shader fire (`PyreFlames`) |
 | Rendering | `VelorumPresentationGuardrailTest` | Velorum | Shared rime and shadow pipeline; no vanilla fight particles |
 | Rendering | `SeraphaePresentationGuardrailTest` | 10 | No vanilla particles in the saint, fragments or anchors; dedicated radiance uses the shared Lux batch |
 | Tooling | `ArchitectureStandardsIndexTest` | 13 | Every guardrail above is listed |

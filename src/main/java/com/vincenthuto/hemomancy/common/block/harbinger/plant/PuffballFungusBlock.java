@@ -1,5 +1,17 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.plant;
 
+import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hemomancy.common.world.GardensNetworkRules;
+import com.vincenthuto.hemomancy.common.world.FungalGardensPlaces;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hemomancy.common.event.ApotheosBodyEvents;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import net.minecraft.core.BlockPos;
@@ -22,6 +34,8 @@ import net.neoforged.neoforge.common.util.TriState;
 
 
 public class PuffballFungusBlock extends FlowerBlock {
+	private static final ParticleColor ABSORBED = new ParticleColor(226, 206, 200);
+	private static final ParticleColor BURST = new ParticleColor(150, 40, 58);
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
@@ -67,5 +81,27 @@ public class PuffballFungusBlock extends FlowerBlock {
 					|| pLevel.getBlockState(blockpos).getBlock() == BlockInit.erythrocytic_mycelium.get();
 			}
 		return this.mayPlaceOn(pLevel.getBlockState(blockpos), pLevel, blockpos);
+	}
+
+	/** In the Gardens dimension a puffball answers a body: an Apotheos draws its spores in, anyone else is choked by them. */
+	@Override
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+		if (level.isClientSide || !(entity instanceof ServerPlayer player) || !player.isAlive() || player.isSpectator()
+				|| player.isCreative()) return;
+		var outcome = GardensNetworkRules.puffball(ApotheosBodyEvents.isApotheos(player),
+				FungalGardensPlaces.inDimension(level));
+		if (outcome == GardensNetworkRules.PuffballOutcome.NONE) return;
+		ServerLevel server = (ServerLevel) level;
+		if (outcome == GardensNetworkRules.PuffballOutcome.ABSORB) {
+			HemoCapabilityAccess.getSporeLoad(player).add(3f);
+			server.sendParticles(HemoParticleData.sporiticSpore(ABSORBED), pos.getX() + 0.5, pos.getY() + 0.3,
+					pos.getZ() + 0.5, 12, 0.2, 0.2, 0.2, 0.02);
+		} else {
+			player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 120, 0));
+			player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0));
+			server.sendParticles(HemoParticleData.sporiticSpore(BURST), pos.getX() + 0.5, pos.getY() + 0.4,
+					pos.getZ() + 0.5, 40, 0.6, 0.5, 0.6, 0.04);
+		}
+		level.removeBlock(pos, false);
 	}
 }

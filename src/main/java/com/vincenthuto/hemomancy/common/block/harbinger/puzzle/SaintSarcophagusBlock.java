@@ -82,25 +82,12 @@ private static final double BLOOD_COST_PER_OFFERING = 100.0;
 private static final String TAG_SAINT_TYPE = "SaintType";
 
 /**
- * Base filler offsets defined for SOUTH facing.
- * 1-wide (X: 0), 3-deep (Z: -1,0,1), 2-tall (Y: 0,1).
- * These get rotated based on the block's actual facing direction.
- */
-private static final BlockPos[] BASE_FILLER_OFFSETS = new BlockPos[] {
-		// Y=0 layer (excluding origin 0,0,0)
-		new BlockPos(0, 0, -1),
-		new BlockPos(0, 0,  1),
-		// Y=1 layer
-		new BlockPos(0, 1, -1),
-		new BlockPos(0, 1,  0),
-		new BlockPos(0, 1,  1),
-};
-
-/**
- * Returns the filler offsets rotated for the given facing direction.
+ * The filler cells of a tomb two blocks wide and four long, centred on this block's x: three columns (the side ones
+ * half full), two storeys, four cells from the foot to the head. Generated north-facing into
+ * {@link SarcophagusGeometry#FILLERS} and turned to the facing the same way as the model.
  */
 private static BlockPos[] getRotatedOffsets(Direction facing) {
-	return HorizontalFacingRotationHelper.rotateSouthOffsetsReversed(BASE_FILLER_OFFSETS, facing);
+	return HorizontalFacingRotationHelper.rotateNorthOffsets(SarcophagusGeometry.FILLERS, facing);
 }
 
 public SaintSarcophagusBlock(Properties properties) {
@@ -112,7 +99,7 @@ this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.
 @Override
 public BlockPos[] getFillerOffsets() {
 	// Fallback — prefer the facing-aware overrides below
-	return BASE_FILLER_OFFSETS;
+	return SarcophagusGeometry.FILLERS;
 }
 
 @Override
@@ -137,6 +124,9 @@ public void removeFillers(Level level, BlockPos mainPos) {
 		for (BlockPos offset : getRotatedOffsets(dir)) {
 			BlockPos fillerPos = mainPos.offset(offset);
 			BlockState fillerState = level.getBlockState(fillerPos);
+			// a neighbouring multiblock's filler can stand in another rotation's cell
+			if (level.getBlockEntity(fillerPos) instanceof com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity filler
+					&& filler.getMainBlockPos() != null && !filler.getMainBlockPos().equals(mainPos)) continue;
 			if (fillerState.is(com.vincenthuto.hemomancy.common.init.BlockInit.filler_block.get())) {
 				if (fillerState.getValue(FillerBlock.WATERLOGGED)) {
 					level.setBlockAndUpdate(fillerPos, Blocks.WATER.defaultBlockState());
@@ -150,15 +140,8 @@ public void removeFillers(Level level, BlockPos mainPos) {
 
 @Override
 public boolean canPlaceMultiBlock(Level level, BlockPos mainPos) {
-	// We don't know the facing yet at canPlace time, so we check from getStateForPlacement
-	// This default checks the SOUTH orientation as a fallback
-	for (BlockPos offset : BASE_FILLER_OFFSETS) {
-		BlockPos fillerPos = mainPos.offset(offset);
-		if (!level.getBlockState(fillerPos).canBeReplaced()) {
-			return false;
-		}
-	}
-	return true;
+	// The facing is not known yet; getStateForPlacement checks the facing it will use
+	return canPlaceMultiBlock(level, mainPos, Direction.NORTH);
 }
 
 /**
@@ -298,6 +281,10 @@ SaintSarcophagusBlockEntity.clientTick(lvl, pos, st, sarcophagus);
 } else {
 return (lvl, pos, st, be) -> {
 if (be instanceof SaintSarcophagusBlockEntity sarcophagus) {
+if (!sarcophagus.fillersPlaced()) {
+	placeFillers(lvl, pos, st);
+	sarcophagus.markFillersPlaced();
+}
 sarcophagus.tick();
 // Spawn continuous flame & glow particles when consecrated
 if (sarcophagus.isConsecrated() && lvl instanceof ServerLevel serverLevel) {
@@ -519,9 +506,10 @@ showSarcophagusInfo(player, sarcophagus);
 if (sarcophagus.getCorpusState() == EnumCorpusState.DORMANT) {
 worldIn.playSound(null, pos, SoundEvents.SCULK_SENSOR_PLACE, SoundSource.BLOCKS, 0.4f, 0.6f);
 if (worldIn instanceof ServerLevel serverLevel) {
+double[] over = tombCentre(state.getValue(FACING), 26);
 serverLevel.sendParticles(HemoParticleData.darkGlow(CORPUS),
-pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5,
-6, 0.3, 0.3, 0.3, 0.01);
+pos.getX() + over[0], pos.getY() + over[1], pos.getZ() + over[2],
+6, 0.6, 0.2, 0.6, 0.01);
 }
 }
 return InteractionResult.CONSUME;
@@ -643,20 +631,26 @@ Component.translatable("message.hemomancy.saint_sarcophagus.the_corpus_yields_it
 .withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 false);
 worldIn.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 1.2f);
-spawnAmbienceParticles(worldIn, pos);
+spawnAmbienceParticles(worldIn, pos, worldIn.getBlockState(pos).getValue(FACING));
 sarcophagus.setSampleYielded(true);
 }
 
-private void spawnAmbienceParticles(Level worldIn, BlockPos pos) {
+private void spawnAmbienceParticles(Level worldIn, BlockPos pos, Direction facing) {
 if (worldIn instanceof ServerLevel serverLevel) {
 // The corpus's blood lifts out of the tomb after it yields.
+double[] corpus = tombCentre(facing, 16);
 serverLevel.sendParticles(HemoParticleData.bloodCell(CORPUS),
-pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-15, 0.4, 0.3, 0.4, 0.02);
+pos.getX() + corpus[0], pos.getY() + corpus[1], pos.getZ() + corpus[2],
+15, 0.6, 0.3, 0.6, 0.02);
 serverLevel.sendParticles(HemoParticleData.glow(GLOW),
-pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5,
-6, 0.4, 0.2, 0.4, 0.0);
+pos.getX() + corpus[0], pos.getY() + corpus[1] + 0.1, pos.getZ() + corpus[2],
+6, 0.6, 0.2, 0.6, 0.0);
 }
+}
+
+/** World offset from the main block of the tomb's centre line at {@code y} pixels: over the corpus and the gisant. */
+public static double[] tombCentre(Direction facing, double y) {
+	return SarcophagusGeometry.point(facing, SarcophagusGeometry.CENTRE_X, y, SarcophagusGeometry.CENTRE_Z);
 }
 
 /**

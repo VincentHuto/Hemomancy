@@ -1,0 +1,100 @@
+{
+  "variants": {
+    "length=short": [
+      {
+        "model": "hemomancy:block/hanging_icicle_short_0"
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_short_0",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_short_0",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_short_0",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_short_1"
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_short_1",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_short_1",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_short_1",
+        "y": 270
+      }
+    ],
+    "length=base": [
+      {
+        "model": "hemomancy:block/hanging_icicle_base_0"
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_base_0",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_base_0",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_base_0",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_base_1"
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_base_1",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_base_1",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_base_1",
+        "y": 270
+      }
+    ],
+    "length=tip": [
+      {
+        "model": "hemomancy:block/hanging_icicle_tip_0"
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_tip_0",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_tip_0",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_tip_0",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_tip_1"
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_tip_1",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_tip_1",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/hanging_icicle_tip_1",
+        "y": 270
+      }
+    ]
+  }
+}

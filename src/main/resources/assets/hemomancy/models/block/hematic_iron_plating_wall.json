@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "hemomancy:block/hematic_iron_plating"
+  }
+}

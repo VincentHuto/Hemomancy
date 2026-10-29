@@ -1,0 +1,243 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    256
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/ring_door",
+    "particle": "hemomancy:block/polished_venous_stone"
+  },
+  "elements": [
+    {
+      "name": "lintel",
+      "from": [
+        -16,
+        26,
+        0
+      ],
+      "to": [
+        0,
+        32,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.0,
+            11.125,
+            5.0,
+            11.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.0,
+            11.125,
+            7.0,
+            11.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            4.0,
+            1.0,
+            6.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "lintel",
+      "from": [
+        0,
+        26,
+        0
+      ],
+      "to": [
+        16,
+        32,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.0,
+            11.125,
+            9.0,
+            11.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            9.0,
+            11.125,
+            11.0,
+            11.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            6.0,
+            1.0,
+            8.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "lintel",
+      "from": [
+        16,
+        26,
+        0
+      ],
+      "to": [
+        32,
+        32,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.0,
+            11.125,
+            13.0,
+            11.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            13.0,
+            11.125,
+            15.0,
+            11.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            8.0,
+            1.0,
+            10.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "keystone_surround",
+      "from": [
+        1,
+        23,
+        -1
+      ],
+      "to": [
+        15,
+        32,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.25,
+            9.4375,
+            10.0,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            5.25,
+            10.0625,
+            5.375,
+            10.625
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            5.375,
+            10.0625,
+            5.5,
+            10.625
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            4.0,
+            14.8125,
+            5.75,
+            14.875
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "keystone",
+      "from": [
+        2,
+        24,
+        -1.5
+      ],
+      "to": [
+        14,
+        32,
+        -1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.5,
+            10.0625,
+            13.0,
+            10.5625
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.5,
+            10.625,
+            4.625,
+            11.125
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            4.625,
+            10.625,
+            4.75,
+            11.125
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            5.75,
+            14.8125,
+            7.25,
+            14.875
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

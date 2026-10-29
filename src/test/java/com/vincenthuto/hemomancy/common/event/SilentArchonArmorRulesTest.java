@@ -5,27 +5,27 @@ public final class SilentArchonArmorRulesTest {
 	}
 
 	public static void main(String[] args) {
-		silentDegreeSevenCanRefuseLethalDamage();
+		silentiumCanRefuseLethalDamage();
 		gatesRejectApotheosMissingChoiceCooldownAndBlood();
 		leavesPlayerBarelyAliveAndStartsLongCooldown();
 	}
 
-	private static void silentDegreeSevenCanRefuseLethalDamage() {
-		assertTrue("silent archon at degree seven qualifies",
-				SilentArchonArmorRules.canRefuseDeath(true, 7, "silent", 4000, 3000, 2000, 0));
+	private static void silentiumCanRefuseLethalDamage() {
+		assertTrue("a Silentium at degree eight qualifies",
+				SilentArchonArmorRules.canRefuseDeath(true, 8, "silent", 4000, 3000, 2000, 0));
 	}
 
 	private static void gatesRejectApotheosMissingChoiceCooldownAndBlood() {
 		assertFalse("full set required",
-				SilentArchonArmorRules.canRefuseDeath(false, 7, "silent", 4000, 3000, 2000, 0));
-		assertFalse("degree eight apotheos players are excluded",
-				SilentArchonArmorRules.canRefuseDeath(true, 8, "silent", 4000, 3000, 2000, 0));
+				SilentArchonArmorRules.canRefuseDeath(false, 8, "silent", 4000, 3000, 2000, 0));
+		assertFalse("a degree-seven Silence is not yet Silentium",
+				SilentArchonArmorRules.canRefuseDeath(true, 7, "silent", 4000, 3000, 2000, 0));
 		assertFalse("silent choice is required",
-				SilentArchonArmorRules.canRefuseDeath(true, 7, "apotheos", 4000, 3000, 2000, 0));
+				SilentArchonArmorRules.canRefuseDeath(true, 8, "apotheos", 4000, 3000, 2000, 0));
 		assertFalse("enough player blood is required",
-				SilentArchonArmorRules.canRefuseDeath(true, 7, "silent", 2000, 3000, 2000, 0));
+				SilentArchonArmorRules.canRefuseDeath(true, 8, "silent", 2000, 3000, 2000, 0));
 		assertFalse("cooldown blocks activation",
-				SilentArchonArmorRules.canRefuseDeath(true, 7, "silent", 4000, 3000, 2000, 2100));
+				SilentArchonArmorRules.canRefuseDeath(true, 8, "silent", 4000, 3000, 2000, 2100));
 	}
 
 	private static void leavesPlayerBarelyAliveAndStartsLongCooldown() {

@@ -47,7 +47,25 @@ public final class HemoDamageTypes {
 	public static final ResourceKey<DamageType> ENDLESS_HOUR_DEBT =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("endless_hour_debt"));
 
+	/** A Gardens gill snapping shut on a stranger. */
+	public static final ResourceKey<DamageType> GILL_BITE =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("gill_bite"));
+
+	/** A Saint's consecrated ground rejecting an Apotheos body. */
+	public static final ResourceKey<DamageType> HALLOWED_BURN =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("hallowed_burn"));
+
 	private HemoDamageTypes() {
+	}
+
+	public static DamageSource hallowedBurn(Level level) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(HALLOWED_BURN));
+	}
+
+	public static DamageSource gillBite(Level level) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(GILL_BITE));
 	}
 
 	public static DamageSource phantasmalEcho(Level level, @Nullable Entity directEntity,

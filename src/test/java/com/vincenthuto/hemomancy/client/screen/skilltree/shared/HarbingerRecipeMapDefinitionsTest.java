@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class HarbingerRecipeMapDefinitionsTest {
 	@Test
 	void everyBuiltInHarbingerEntryHasAnAuthoredFamily() {
-		assertEquals(54, HarbingerRecipeMapDefinitions.ritePaths().size());
+		assertEquals(56, HarbingerRecipeMapDefinitions.ritePaths().size());
 		// 8 floorless Blood Structures and 20 Working crafts.
 		assertEquals(28, HarbingerRecipeMapDefinitions.craftingPaths().size());
 		assertEquals(4, HarbingerRecipeMapDefinitions.puppetryPaths().size());

@@ -2765,8 +2765,9 @@ public final class ClinicalBloodProgressionGameTests {
                     "The open refusal stage must not pass before Vesper victory");
             blooms.severBloom(bloom);
             blooms.sealBloom(bloom);
+            HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(8);
             HemoCapabilityAccess.getInitiatoryDegree(actor).setArchonPath(
-                    com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_ARCHON);
+                    com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENTIUM);
             HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
             actor.getPersistentData().putBoolean("hemomancy:vesper_memory_pending", true);
             h.assertTrue(HemoJourneyChecks.verify(actor, HemoJourneyStage.SILENT_REFUSAL, origin).passed(),
@@ -4497,9 +4498,10 @@ public final class ClinicalBloodProgressionGameTests {
         degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_PENDING);
         h.assertTrue(com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior.claimedWillBonusCap(p) == 0,
                 "Pending refusal received the Silent Archon summon cap");
-        degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_ARCHON);
+        degree.setDegreeNumber(8);
+        degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENTIUM);
         h.assertTrue(com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior.claimedWillBonusCap(p) == 1,
-                "Proven Silent Archon did not receive the configured summon cap");
+                "A Silentium did not receive the configured summon cap");
         degree.setDegreeNumber(8);
         degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS);
         h.assertTrue(com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior.claimedWillBonusCap(p) == 0,

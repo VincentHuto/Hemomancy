@@ -1,0 +1,49 @@
+{
+  "variants": {
+    "facing=north,flame=pale": {
+      "model": "hemomancy:block/reliquary_sconce"
+    },
+    "facing=north,flame=crimson": {
+      "model": "hemomancy:block/reliquary_sconce_crimson"
+    },
+    "facing=north,flame=smoulder": {
+      "model": "hemomancy:block/reliquary_sconce_smoulder"
+    },
+    "facing=east,flame=pale": {
+      "model": "hemomancy:block/reliquary_sconce",
+      "y": 90
+    },
+    "facing=east,flame=crimson": {
+      "model": "hemomancy:block/reliquary_sconce_crimson",
+      "y": 90
+    },
+    "facing=east,flame=smoulder": {
+      "model": "hemomancy:block/reliquary_sconce_smoulder",
+      "y": 90
+    },
+    "facing=south,flame=pale": {
+      "model": "hemomancy:block/reliquary_sconce",
+      "y": 180
+    },
+    "facing=south,flame=crimson": {
+      "model": "hemomancy:block/reliquary_sconce_crimson",
+      "y": 180
+    },
+    "facing=south,flame=smoulder": {
+      "model": "hemomancy:block/reliquary_sconce_smoulder",
+      "y": 180
+    },
+    "facing=west,flame=pale": {
+      "model": "hemomancy:block/reliquary_sconce",
+      "y": 270
+    },
+    "facing=west,flame=crimson": {
+      "model": "hemomancy:block/reliquary_sconce_crimson",
+      "y": 270
+    },
+    "facing=west,flame=smoulder": {
+      "model": "hemomancy:block/reliquary_sconce_smoulder",
+      "y": 270
+    }
+  }
+}

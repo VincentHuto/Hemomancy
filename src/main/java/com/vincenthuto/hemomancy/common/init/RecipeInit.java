@@ -44,6 +44,9 @@ public class RecipeInit {
 	public static final DeferredHolder<RecipeType<?>, RecipeType<MorphicNectarRecipe>> morphic_nectar_recipe_type = RECIPE_TYPES
 			.register("morphic_nectar", () -> RecipeType.simple(Hemomancy.rloc("morphic_nectar")));
 
+	public static final DeferredHolder<RecipeType<?>, RecipeType<RenderingRecipe>> rendering_recipe_type = RECIPE_TYPES
+			.register("rendering", () -> RecipeType.simple(Hemomancy.rloc("rendering")));
+
 	public static final DeferredHolder<RecipeType<?>, RecipeType<WhiteHumorPurificationRecipe>> white_humor_purification_recipe_type = RECIPE_TYPES
 			.register("white_humor_purification", () -> RecipeType.simple(Hemomancy.rloc("white_humor_purification")));
 
@@ -90,6 +93,9 @@ public class RecipeInit {
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> morphic_nectar_serializer = SERIALIZERS
 			.register("morphic_nectar", MorphicNectarRecipeSerializer::new);
+
+	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> rendering_serializer = SERIALIZERS
+			.register("rendering", RenderingRecipeSerializer::new);
 
 	public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> white_humor_purification_serializer = SERIALIZERS
 			.register("white_humor_purification", WhiteHumorPurificationRecipeSerializer::new);

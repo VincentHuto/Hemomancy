@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "half=lower,snapped=false": {
+      "model": "hemomancy:block/containment_anchor_block_lower"
+    },
+    "half=lower,snapped=true": {
+      "model": "hemomancy:block/containment_anchor_block_lower_snapped"
+    },
+    "half=upper,snapped=false": {
+      "model": "hemomancy:block/containment_anchor_block_upper"
+    },
+    "half=upper,snapped=true": {
+      "model": "hemomancy:block/containment_anchor_block_upper_snapped"
+    }
+  }
+}

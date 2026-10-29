@@ -1,0 +1,13 @@
+{
+  "type": "hemomancy:rendering",
+  "input": {
+    "item": "hemomancy:spore_sac"
+  },
+  "results": [
+    {
+      "id": "hemomancy:recycled_enzyme",
+      "count": 1
+    }
+  ],
+  "render_time": 100
+}

@@ -72,14 +72,21 @@ public class FungalWhisperEvents {
 		if ((player.tickCount + stagger) % interval != 0) return;
 
 		// Choose a variant based on the player's tick count for variety
-		int variant = (int) ((player.tickCount / interval) % VARIANT_COUNT);
-		var memo = FungalWhisperDialogueTrees.memoForDegree(degree, variant);
-		if (!FungalWhisperDialogueTrees.shouldOfferMemoWhisper(player, memo)) return;
+		triggerWhisper(serverPlayer, (int) ((player.tickCount / interval) % VARIANT_COUNT));
+	}
 
-		DialogueTree tree = FungalWhisperDialogueTrees.forDegree(degree, variant);
+	/** Offers the degree's whisper now, if the memo is still due; returns whether one was sent. */
+	public static boolean triggerWhisper(ServerPlayer serverPlayer, int variant) {
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
+		if (degree < 4 || !HemoCapabilityAccess.getBloodVolume(serverPlayer).isActive()) return false;
+		var memo = FungalWhisperDialogueTrees.memoForDegree(degree, Math.floorMod(variant, VARIANT_COUNT));
+		if (!FungalWhisperDialogueTrees.shouldOfferMemoWhisper(serverPlayer, memo)) return false;
+
+		DialogueTree tree = FungalWhisperDialogueTrees.forDegree(degree, Math.floorMod(variant, VARIANT_COUNT));
 
 		HemoCapabilityAccess.getWillAmbushState(serverPlayer)
 				.setHeraldUntilGameTime(serverPlayer.level().getGameTime() + 2400L);
 		PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
+		return true;
 	}
 }

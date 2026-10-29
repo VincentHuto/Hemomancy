@@ -18,7 +18,11 @@ public final class ArchonPathRiteSourceTest {
 		assertContains(pruning, "EnumArchonPath.SILENT_PENDING");
 		assertContains(pruning, "data.severBloom(bloom)");
 		assertContains(pruning, "root.getUUID(BLOOM_ID_KEY).equals(bloom.bloomId())");
-		assertContains(ordeal, "EnumArchonPath.SILENT_ARCHON");
+		assertContains(ordeal, "EnumArchonPath.SILENT_PENDING");
+		assertNotContains(ordeal, "EnumArchonPath.SILENTIUM");
+		String graft = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java");
+		assertContains(graft, "SilentiumAscensionRules.canAbsorbVesperMemory");
+		assertContains(graft, "DegreeProgression.advance(player, 8, EnumArchonPath.SILENTIUM)");
 		assertContains(ordeal, "ADV_VESPER_DEFEATED");
 		assertNotContains(rites, "completePruningOfQliphoth");
 		assertContains(rites, "EnumArchonPath.APOTHEOS");

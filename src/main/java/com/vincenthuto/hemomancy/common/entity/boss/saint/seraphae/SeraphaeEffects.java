@@ -30,4 +30,10 @@ public final class SeraphaeEffects {
         ManipulationVisuals.burst(level, ManipulationVisuals.Form.SERAPHAE_RELIQUARY,
                 from, to, .7, SeraphaeVisualRules.BURST_TICKS, SeraphaeVisualRules.CAPTURE);
     }
+
+    /** A block anchor wakes into a fight anchor: her chain reaches it from {@code from} and its seal lights. */
+    public static void wake(ServerLevel level, Vec3 from, Vec3 anchor) {
+        bind(level, from, anchor.add(0, .8, 0));
+        burst(level, anchor.add(0, .8, 0), SeraphaeVisualRules.CAPTURE, .9F);
+    }
 }

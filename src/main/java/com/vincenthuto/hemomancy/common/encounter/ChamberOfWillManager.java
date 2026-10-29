@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBloc
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairStructureRules;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -327,7 +328,8 @@ public class ChamberOfWillManager extends SavedData {
 
 		return new ChamberProgressionRules.Facts(degree,
 				HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(player), qliphothStarted,
-                archonPath == EnumArchonPath.SILENT_ARCHON);
+                HarbingerPathPermissions.isSilentium(degree, archonPath),
+                HarbingerPathPermissions.isApotheos(degree, archonPath));
     }
 
     public List<ResourceLocation> availableSkyThemes(ServerPlayer player) {

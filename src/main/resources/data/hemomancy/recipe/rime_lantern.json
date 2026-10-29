@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    " I ",
+    "ISI",
+    " I "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:ice"
+    },
+    "S": {
+      "item": "minecraft:sea_lantern"
+    }
+  },
+  "result": {
+    "id": "hemomancy:rime_lantern",
+    "count": 1
+  }
+}

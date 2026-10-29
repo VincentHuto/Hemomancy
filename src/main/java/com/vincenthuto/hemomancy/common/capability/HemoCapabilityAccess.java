@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.Possession;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.spore.SporeLoad;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree;
@@ -115,6 +117,30 @@ public static Optional<IBloodVolume> getBloodVolume(BlockEntity be) {
 
 public static Optional<IBloodVolume> getBloodVolume(ItemStack stack) {
     return Optional.ofNullable(stack.getCapability(HemoCapabilityKeys.ITEM_BLOOD_VOLUME));
+}
+
+public static SporeLoad getSporeLoad(Player player) {
+    return player.getData(HemoAttachmentTypes.SPORE_LOAD);
+}
+
+public static Possession getPossession(Player player) {
+    return player.getData(HemoAttachmentTypes.POSSESSION);
+}
+
+/** Whether the player has ever held a possession attachment (reading it would create one). */
+public static boolean hasPossession(Player player) {
+    return player.hasData(HemoAttachmentTypes.POSSESSION);
+}
+
+/** Whether the player is possessing, without creating the attachment for everyone who never has. */
+public static boolean isPossessing(Player player) {
+    return player.hasData(HemoAttachmentTypes.POSSESSION) && player.getData(HemoAttachmentTypes.POSSESSION).active();
+}
+
+/** The form the player's will walks in, or null; read without creating the attachment. */
+@javax.annotation.Nullable
+public static com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateForm possessionForm(Player player) {
+    return player.hasData(HemoAttachmentTypes.POSSESSION) ? player.getData(HemoAttachmentTypes.POSSESSION).form() : null;
 }
 
 public static PowerGuardrailState getPowerGuardrails(Player player) {

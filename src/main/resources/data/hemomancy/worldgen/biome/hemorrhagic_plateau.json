@@ -28,12 +28,18 @@
         "weight": 5,
         "minCount": 1,
         "maxCount": 2
+      },
+      {
+        "type": "hemomancy:facsimile_golem",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 1
       }
     ],
     "misc": [],
     "monster": [
       {
-        "type": "hemomancy:abhorent_thought",
+        "type": "hemomancy:abhorrent_thought",
         "weight": 6,
         "minCount": 1,
         "maxCount": 2
@@ -43,6 +49,12 @@
         "weight": 3,
         "minCount": 1,
         "maxCount": 1
+      },
+      {
+        "type": "hemomancy:facsimile_blaze",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 2
       }
     ],
     "underground_water_creature": [],

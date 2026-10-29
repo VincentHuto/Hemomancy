@@ -48,7 +48,7 @@
  "monster": [
     
       {
-        "type": "hemomancy:abhorent_thought",
+        "type": "hemomancy:abhorrent_thought",
         "weight": 10,
         "minCount": 8,
         "maxCount": 8

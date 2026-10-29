@@ -20,6 +20,15 @@
     "hemomancy:witness_organ",
     "hemomancy:nerve_fiber",
     "hemomancy:nerve_bundle",
-    "hemomancy:harbinger_escritoire"
+    "hemomancy:harbinger_escritoire",
+    "hemomancy:charred_planks",
+    "hemomancy:charred_planks_stairs",
+    "hemomancy:charred_planks_slab",
+    "hemomancy:charred_log",
+    "hemomancy:charred_bookshelf",
+    "hemomancy:spore_shelf",
+    "hemomancy:dark_lacquer_planks",
+    "hemomancy:dark_lacquer_planks_stairs",
+    "hemomancy:dark_lacquer_planks_slab"
   ]
 }

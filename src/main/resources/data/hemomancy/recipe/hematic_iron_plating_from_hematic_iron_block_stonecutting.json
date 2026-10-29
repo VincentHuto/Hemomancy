@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "hemomancy:hematic_iron_block"
+  },
+  "result": {
+    "id": "hemomancy:hematic_iron_plating",
+    "count": 1
+  }
+}

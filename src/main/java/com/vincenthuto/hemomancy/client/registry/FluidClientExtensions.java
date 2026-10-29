@@ -53,6 +53,21 @@ final class FluidClientExtensions {
 		}, FluidInit.MORPHIC_NECTAR_TYPE.get());
 
 		event.registerFluidType(new IClientFluidTypeExtensions() {
+			private static final ResourceLocation STILL = Hemomancy.rloc("block/rendering_bile_still");
+			private static final ResourceLocation FLOW = Hemomancy.rloc("block/rendering_bile_flow");
+			private static final ResourceLocation OVERLAY = Hemomancy.rloc("block/rendering_bile_overlay");
+			private static final ResourceLocation CAMERA_OVERLAY =
+					Hemomancy.rloc("textures/block/rendering_bile_overlay.png");
+
+			@Override public ResourceLocation getStillTexture() { return STILL; }
+			@Override public ResourceLocation getFlowingTexture() { return FLOW; }
+			@Override public ResourceLocation getOverlayTexture() { return OVERLAY; }
+			@Override public ResourceLocation getRenderOverlayTexture(Minecraft mc) { return CAMERA_OVERLAY; }
+			// The textures carry the ochre colour; a light translucency only.
+			@Override public int getTintColor() { return 0xDDFFFFFF; }
+		}, FluidInit.RENDERING_BILE_TYPE.get());
+
+		event.registerFluidType(new IClientFluidTypeExtensions() {
 			private static final ResourceLocation STILL =
 					Hemomancy.rloc("block/white_humor_still");
 			private static final ResourceLocation FLOW =

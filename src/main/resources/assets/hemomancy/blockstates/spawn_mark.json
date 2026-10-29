@@ -1,0 +1,40 @@
+{
+  "variants": {
+    "due=false,style=venous,wave=0": {
+      "model": "hemomancy:block/spawn_mark_0"
+    },
+    "due=false,style=ash,wave=0": {
+      "model": "hemomancy:block/spawn_mark_ash_0"
+    },
+    "due=true,style=venous,wave=0": {
+      "model": "hemomancy:block/spawn_mark_0_due"
+    },
+    "due=true,style=ash,wave=0": {
+      "model": "hemomancy:block/spawn_mark_ash_0_due"
+    },
+    "due=false,style=venous,wave=1": {
+      "model": "hemomancy:block/spawn_mark_1"
+    },
+    "due=false,style=ash,wave=1": {
+      "model": "hemomancy:block/spawn_mark_ash_1"
+    },
+    "due=true,style=venous,wave=1": {
+      "model": "hemomancy:block/spawn_mark_1_due"
+    },
+    "due=true,style=ash,wave=1": {
+      "model": "hemomancy:block/spawn_mark_ash_1_due"
+    },
+    "due=false,style=venous,wave=2": {
+      "model": "hemomancy:block/spawn_mark_2"
+    },
+    "due=false,style=ash,wave=2": {
+      "model": "hemomancy:block/spawn_mark_ash_2"
+    },
+    "due=true,style=venous,wave=2": {
+      "model": "hemomancy:block/spawn_mark_2_due"
+    },
+    "due=true,style=ash,wave=2": {
+      "model": "hemomancy:block/spawn_mark_ash_2_due"
+    }
+  }
+}

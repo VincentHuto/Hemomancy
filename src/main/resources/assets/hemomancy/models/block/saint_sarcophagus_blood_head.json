@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    256
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/saint_sarcophagus",
+    "particle": "hemomancy:block/polished_venous_stone"
+  },
+  "elements": []
+}

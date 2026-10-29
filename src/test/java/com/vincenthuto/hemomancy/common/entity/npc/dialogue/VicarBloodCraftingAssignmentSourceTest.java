@@ -24,7 +24,7 @@ public final class VicarBloodCraftingAssignmentSourceTest {
 		assertContains("Vicar explains absorption", vicar, "hemomancy.vicar.blood_crafting.absorption");
 		assertContains("Vicar explains projection", vicar, "hemomancy.vicar.blood_crafting.projection");
 		assertContains("Vicar explains structure requirements", vicar, "hemomancy.vicar.blood_crafting.structure");
-		assertContains("Vicar dialogue is selected by player degree", vicarEntity, "forDegree(degree");
+		assertContains("Vicar dialogue is selected by player degree and path", vicarEntity, "forDegree(HarbingerPathPermissions.greetingDegree(degree");
 
 		assertContains("5000 ml milestone exists", advancements, "ADV_VESSEL_FILLED");
 		assertContains("Blood volume awards 5000 ml milestone", blood, "ADV_VESSEL_FILLED");

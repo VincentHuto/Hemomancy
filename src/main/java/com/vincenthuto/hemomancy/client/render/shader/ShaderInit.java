@@ -47,6 +47,15 @@ public class ShaderInit {
 			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "BlockSeed", "FinalizeProgress", "CrackShare",
 			"VeinOrigin", "VeinNormal", "VeinAnchor");
 
+	/** The consecrated ward over a Saint's mausoleum: runes on the stone, the threshold sheet, strikes. */
+	public static ShaderHolder MAUSOLEUM_WARD = new ShaderHolder(Hemomancy.rloc("world/mausoleum_ward"),
+			DefaultVertexFormat.BLOCK, "HemoTime", "WardColor", "WardRadius", "PlayerOffset", "FocusOffset",
+			"Strike0", "Strike1", "Strike2", "Strike3", "StrikePower", "StrikeKind", "WardBody");
+
+	/** The same ward burning into an Apotheos on hallowed ground, drawn over the player model. */
+	public static ShaderHolder MAUSOLEUM_WARD_BODY = new ShaderHolder(Hemomancy.rloc("world/mausoleum_ward"),
+			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "WardBody");
+
 	public static ShaderHolder BLOOD_STRUCTURE_WARP_ENTITY = new ShaderHolder(
 			Hemomancy.rloc("world/blood_structure_warp"),
 			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "Progress", "BlockSeed", "WiggleAmp",
@@ -211,6 +220,8 @@ public class ShaderInit {
         registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP_ENTITY.createInstance(provider));
         registerShader(event, BLOOD_INFUSION_VEINS.createInstance(provider));
+        registerShader(event, MAUSOLEUM_WARD.createInstance(provider));
+        registerShader(event, MAUSOLEUM_WARD_BODY.createInstance(provider));
         registerShader(event, VESPER_WOUND_DRAW.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));
         registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));

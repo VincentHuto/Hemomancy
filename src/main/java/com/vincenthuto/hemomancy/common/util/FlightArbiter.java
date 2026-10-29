@@ -23,7 +23,9 @@ public final class FlightArbiter {
 		/** Silent Slipping: lifts the player into flight at once. */
 		SILENT_SLIPPING(0.035F, true, true),
 		/** The Elytra effect: hover flight while airborne and out of water. A creative player's speed resets. */
-		ELYTRA_EFFECT(Float.NaN, false, false);
+		ELYTRA_EFFECT(Float.NaN, false, false),
+		/** A possessing Silentium in a winged facsimile (bat, blaze): lifted into flight at once. */
+		POSSESSION(0.04F, true, true);
 
 		private final float flyingSpeed;
 		private final boolean liftsIntoFlight;

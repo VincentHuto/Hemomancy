@@ -1,5 +1,18 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import com.vincenthuto.hemomancy.common.entity.PossessionEchoEntity;
+import net.minecraft.world.entity.monster.Monster;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.HunterFungusEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.AntibodyEntity;
+import net.minecraft.world.entity.Mob;
+import com.vincenthuto.hemomancy.common.entity.mob.facsimile.FacsimileSpiderEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.facsimile.FacsimileWolfEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.facsimile.FacsimileDonkeyEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.facsimile.FacsimileHorseEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.facsimile.FacsimileGolemEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.facsimile.FacsimileBlazeEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.facsimile.FacsimileEndermanEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.facsimile.FacsimileBatEntity;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentAnnettaInfectionEntity;
@@ -419,11 +432,11 @@ public class EntityInit {
             () -> EntityType.Builder.of(ThirsterEntity::new, MobCategory.MONSTER).sized(1F, 1.8F)
                     .build(Hemomancy.rloc("thirster").toString()));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<AbhorentThoughtEntity>> abhorent_thought = ENTITY_TYPES
-            .register("abhorent_thought",
-                    () -> EntityType.Builder.of(AbhorentThoughtEntity::new, MobCategory.MONSTER)
+    public static final DeferredHolder<EntityType<?>, EntityType<AbhorrentThoughtEntity>> abhorrent_thought = ENTITY_TYPES
+            .register("abhorrent_thought",
+                    () -> EntityType.Builder.of(AbhorrentThoughtEntity::new, MobCategory.MONSTER)
                             .sized(1.5f, 3.25F)
-                            .build(Hemomancy.rloc("abhorent_thought").toString()));
+                            .build(Hemomancy.rloc("abhorrent_thought").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ErythromyceliumEruptusEntity>> erythromycelium_eruptus = ENTITY_TYPES
             .register("erythromycelium_eruptus",
@@ -644,6 +657,48 @@ public class EntityInit {
             "morphling_polyp",
             () -> EntityType.Builder.of(MorphlingPolypEntity::new, MobCategory.MONSTER)
                     .sized(1F, 1F).build(Hemomancy.rloc("morphling_polyp").toString()));
+
+    /** The Gardens' immune response: summoned against one body the network reads as foreign (GardensNetwork). */
+    public static final DeferredHolder<EntityType<?>, EntityType<AntibodyEntity>> antibody = ENTITY_TYPES.register("antibody",
+            () -> EntityType.Builder.of(AntibodyEntity::new, MobCategory.MONSTER).sized(0.6F, 0.9F).clientTrackingRange(8)
+                    .build(Hemomancy.rloc("antibody").toString()));
+
+    /** The shadow a possessing Silentium leaves at the rite: no hitbox, never hurt (PossessionService). */
+    public static final DeferredHolder<EntityType<?>, EntityType<PossessionEchoEntity>> possession_echo = ENTITY_TYPES.register("possession_echo",
+            () -> EntityType.Builder.<PossessionEchoEntity>of(PossessionEchoEntity::new, MobCategory.MISC).sized(0.6F, 1.8F)
+                    .clientTrackingRange(10).noSummon().fireImmune()
+                    .build(Hemomancy.rloc("possession_echo").toString()));
+
+    /** The network's hunters: converge on a stranger's heard footsteps (GardensNetwork). */
+    public static final DeferredHolder<EntityType<?>, EntityType<HunterFungusEntity>> hunter_fungus = ENTITY_TYPES.register("hunter_fungus",
+            () -> EntityType.Builder.of(HunterFungusEntity::new, MobCategory.MONSTER).sized(0.9F, 0.9F).clientTrackingRange(8)
+                    .build(Hemomancy.rloc("hunter_fungus").toString()));
+
+    // The Gardens' warped copies of Earth creatures (the Archive's fauna; Section 4 possesses them).
+    public static final DeferredHolder<EntityType<?>, EntityType<FacsimileBatEntity>> facsimile_bat = ENTITY_TYPES.register("facsimile_bat",
+            () -> EntityType.Builder.of(FacsimileBatEntity::new, MobCategory.AMBIENT).sized(0.5F, 0.9F).clientTrackingRange(8)
+                    .build(Hemomancy.rloc("facsimile_bat").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<FacsimileEndermanEntity>> facsimile_enderman = ENTITY_TYPES.register("facsimile_enderman",
+            () -> EntityType.Builder.of(FacsimileEndermanEntity::new, MobCategory.MONSTER).sized(0.6F, 2.9F).clientTrackingRange(8)
+                    .build(Hemomancy.rloc("facsimile_enderman").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<FacsimileBlazeEntity>> facsimile_blaze = ENTITY_TYPES.register("facsimile_blaze",
+            () -> EntityType.Builder.of(FacsimileBlazeEntity::new, MobCategory.MONSTER).sized(0.6F, 1.8F).fireImmune().clientTrackingRange(8)
+                    .build(Hemomancy.rloc("facsimile_blaze").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<FacsimileGolemEntity>> facsimile_golem = ENTITY_TYPES.register("facsimile_golem",
+            () -> EntityType.Builder.of(FacsimileGolemEntity::new, MobCategory.CREATURE).sized(1.4F, 2.7F).clientTrackingRange(8)
+                    .build(Hemomancy.rloc("facsimile_golem").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<FacsimileHorseEntity>> facsimile_horse = ENTITY_TYPES.register("facsimile_horse",
+            () -> EntityType.Builder.of(FacsimileHorseEntity::new, MobCategory.CREATURE).sized(1.3964844F, 1.6F).clientTrackingRange(8)
+                    .build(Hemomancy.rloc("facsimile_horse").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<FacsimileDonkeyEntity>> facsimile_donkey = ENTITY_TYPES.register("facsimile_donkey",
+            () -> EntityType.Builder.of(FacsimileDonkeyEntity::new, MobCategory.CREATURE).sized(1.3964844F, 1.5F).clientTrackingRange(8)
+                    .build(Hemomancy.rloc("facsimile_donkey").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<FacsimileWolfEntity>> facsimile_wolf = ENTITY_TYPES.register("facsimile_wolf",
+            () -> EntityType.Builder.of(FacsimileWolfEntity::new, MobCategory.CREATURE).sized(0.6F, 0.85F).clientTrackingRange(8)
+                    .build(Hemomancy.rloc("facsimile_wolf").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<FacsimileSpiderEntity>> facsimile_spider = ENTITY_TYPES.register("facsimile_spider",
+            () -> EntityType.Builder.of(FacsimileSpiderEntity::new, MobCategory.MONSTER).sized(1.4F, 0.9F).clientTrackingRange(8)
+                    .build(Hemomancy.rloc("facsimile_spider").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<FunglingEntity>> fungling = ENTITY_TYPES.register("fungling",
             () -> EntityType.Builder.of(FunglingEntity::new, MobCategory.CREATURE).sized(1F, 1F)
@@ -970,8 +1025,8 @@ public class EntityInit {
         event.register(EntityInit.fargone.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FargoneEntity::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(EntityInit.abhorent_thought.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbhorentThoughtEntity::checkMonsterSpawnRules,
+        event.register(EntityInit.abhorrent_thought.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbhorrentThoughtEntity::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.desiccant.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DesiccantEntity::canSpawnHere,
@@ -1037,6 +1092,33 @@ public class EntityInit {
         event.register(EntityInit.venom_rib_centipede.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VenomRibCentipedeEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.facsimile_bat.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FacsimileBatEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.facsimile_enderman.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.facsimile_blaze.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.facsimile_golem.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.facsimile_horse.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.facsimile_donkey.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.facsimile_wolf.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.facsimile_spider.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.hunter_fungus.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkAnyLightMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.fungling.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FunglingEntity::checkMobSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
@@ -1068,6 +1150,16 @@ public class EntityInit {
         event.put(EntityInit.bog_revenant.get(), BogRevenantEntity.setAttributes().build());
         event.put(EntityInit.fargone.get(), FargoneEntity.setAttributes().build());
         event.put(EntityInit.fungling.get(), FargoneEntity.setAttributes().build());
+        event.put(EntityInit.antibody.get(), AntibodyEntity.setAttributes().build());
+        event.put(EntityInit.hunter_fungus.get(), HunterFungusEntity.setAttributes().build());
+        event.put(EntityInit.facsimile_bat.get(), FacsimileBatEntity.setAttributes().build());
+        event.put(EntityInit.facsimile_enderman.get(), FacsimileEndermanEntity.setAttributes().build());
+        event.put(EntityInit.facsimile_blaze.get(), FacsimileBlazeEntity.setAttributes().build());
+        event.put(EntityInit.facsimile_golem.get(), FacsimileGolemEntity.setAttributes().build());
+        event.put(EntityInit.facsimile_horse.get(), FacsimileHorseEntity.setAttributes().build());
+        event.put(EntityInit.facsimile_donkey.get(), FacsimileDonkeyEntity.setAttributes().build());
+        event.put(EntityInit.facsimile_wolf.get(), FacsimileWolfEntity.setAttributes().build());
+        event.put(EntityInit.facsimile_spider.get(), FacsimileSpiderEntity.setAttributes().build());
         event.put(EntityInit.thirster.get(), ThirsterEntity.setAttributes().build());
         event.put(EntityInit.chitinite.get(), ChitiniteEntity.setAttributes().build());
         event.put(EntityInit.fervent_chitinite.get(), ChitiniteEntity.setAttributes().build());
@@ -1090,7 +1182,7 @@ public class EntityInit {
         event.put(vampire_squid.get(), PelagicAnimal.attributes(8, 0.16).build());
         event.put(EntityInit.hemolymphopoda.get(), HemolymphopodaEntity.setAttributes().build());
         event.put(EntityInit.lantern_tick.get(), LanternTickEntity.setAttributes().build());
-        event.put(EntityInit.abhorent_thought.get(), AbhorentThoughtEntity.setAttributes().build());
+        event.put(EntityInit.abhorrent_thought.get(), AbhorrentThoughtEntity.setAttributes().build());
         event.put(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusEntity.setAttributes().build());
         event.put(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerEntity.setAttributes().build());
         event.put(EntityInit.will.get(), WillEntity.setAttributes().build());

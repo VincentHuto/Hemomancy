@@ -42,6 +42,7 @@ import com.vincenthuto.hemomancy.client.screen.overlay.WillPresenceOverlay;
 import com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects;
 import com.vincenthuto.hemomancy.client.sound.ClairaudiographSounds;
 import com.vincenthuto.hemomancy.client.data.EarthenVeinTravelClientState;
+import com.vincenthuto.hemomancy.client.data.MausoleumWardClientState;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.network.AntecedentEffectPacket;
 import com.vincenthuto.hemomancy.common.network.CastingAnimationPacket;
@@ -75,6 +76,7 @@ import com.vincenthuto.hemomancy.common.network.particle.SpawnClawSlashPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnSanguineOmenEffectPacket;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSpawnVeinSpiderCourier;
 import com.vincenthuto.hemomancy.common.network.vein.EarthenVeinTravelVisualPacket;
+import com.vincenthuto.hemomancy.common.network.mausoleum.WardStrikePacket;
 import com.vincenthuto.hemomancy.common.network.will.WillPresenceCuePacket;
 import net.minecraft.sounds.SoundSource;
 import net.neoforged.api.distmarker.Dist;
@@ -125,6 +127,7 @@ public final class ClientboundEffectHandlers {
 		ClientPayloadHandlers.register(SpawnClawSlashPacket.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(SpawnSanguineOmenEffectPacket.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(SyncBloodBindingTendrilS2CPacket.TYPE, ClientboundEffectHandlers::handle);
+		ClientPayloadHandlers.register(WardStrikePacket.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(WillPresenceCuePacket.TYPE, ClientboundEffectHandlers::handle);
 	}
 
@@ -304,6 +307,10 @@ public final class ClientboundEffectHandlers {
 	static void handle(SyncBloodBindingTendrilS2CPacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> BloodBindingTendrilClientState.start(packet.casterId(), packet.targetId(),
 				packet.durationTicks(), packet.seed()));
+	}
+
+	static void handle(WardStrikePacket packet, IPayloadContext context) {
+		context.enqueueWork(() -> MausoleumWardClientState.accept(packet));
 	}
 
 	static void handle(final WillPresenceCuePacket msg, final IPayloadContext context) {

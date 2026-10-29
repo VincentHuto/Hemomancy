@@ -2,7 +2,9 @@ package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeProgression;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.SilentiumAscensionRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantResult;
@@ -18,7 +20,6 @@ import com.vincenthuto.hemomancy.common.rite.BrazierItemAbsorptionRite;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRite;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRites;
 import com.vincenthuto.hemomancy.common.util.HemoText;
-import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -100,9 +101,11 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 		ServerPlayer player = channel.player();
 		LivingWeaponForm form = plan.form();
 		if (plan.vesperMemory()) {
-			if (!awakenVesperMemory(level, player)) {
+			if (!checkVesperMemory(level, player) || !awakenVesperMemory(level, player)) {
 				return Completion.kept(false);
 			}
+			// Drawing the memory in is the ascension: the Silence becomes Silentium.
+			DegreeProgression.advance(player, 8, EnumArchonPath.SILENTIUM);
 		} else {
 			MemoryGrantResult result = LivingWeaponMemoryUnlocks.grantFormMemory(player, form);
 			if (!result.success()) {
@@ -138,10 +141,10 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.vesper_s_refusal_is_already_disciplined"));
 			return false;
 		}
-		boolean earnedRefusal = (ProgressionGates.isDegree(player, 7)
-						&& HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENT_ARCHON)
-				&& HarbingerAdvancementGranter.hasAdvancement(player,
-						HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		boolean earnedRefusal = SilentiumAscensionRules.canAbsorbVesperMemory(degree.getDegreeNumber(),
+				degree.getArchonPath(), HarbingerAdvancementGranter.hasAdvancement(player,
+						HarbingerAdvancementGranter.ADV_VESPER_DEFEATED));
 		if (!earnedRefusal) {
 			messageEverySecond(level, player, Component.translatable("message.hemomancy.living_weapon_graft_rite.vesper_s_memory_answers_only_the"));
 			return false;

@@ -1,0 +1,184 @@
+{
+  "variants": {
+    "facing=north,part=lower,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_lower"
+    },
+    "facing=north,part=lower,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_lower"
+    },
+    "facing=north,part=lower,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_lower"
+    },
+    "facing=north,part=lower,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_lower"
+    },
+    "facing=north,part=middle,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_middle"
+    },
+    "facing=north,part=middle,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_middle"
+    },
+    "facing=north,part=middle,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_middle"
+    },
+    "facing=north,part=middle,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_middle"
+    },
+    "facing=north,part=upper,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_upper"
+    },
+    "facing=north,part=upper,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_upper"
+    },
+    "facing=north,part=upper,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_upper"
+    },
+    "facing=north,part=upper,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_upper"
+    },
+    "facing=east,part=lower,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_lower",
+      "y": 90
+    },
+    "facing=east,part=lower,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_lower",
+      "y": 90
+    },
+    "facing=east,part=lower,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_lower",
+      "y": 90
+    },
+    "facing=east,part=lower,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_lower",
+      "y": 90
+    },
+    "facing=east,part=middle,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_middle",
+      "y": 90
+    },
+    "facing=east,part=middle,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_middle",
+      "y": 90
+    },
+    "facing=east,part=middle,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_middle",
+      "y": 90
+    },
+    "facing=east,part=middle,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_middle",
+      "y": 90
+    },
+    "facing=east,part=upper,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_upper",
+      "y": 90
+    },
+    "facing=east,part=upper,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_upper",
+      "y": 90
+    },
+    "facing=east,part=upper,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_upper",
+      "y": 90
+    },
+    "facing=east,part=upper,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_upper",
+      "y": 90
+    },
+    "facing=south,part=lower,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_lower",
+      "y": 180
+    },
+    "facing=south,part=lower,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_lower",
+      "y": 180
+    },
+    "facing=south,part=lower,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_lower",
+      "y": 180
+    },
+    "facing=south,part=lower,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_lower",
+      "y": 180
+    },
+    "facing=south,part=middle,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_middle",
+      "y": 180
+    },
+    "facing=south,part=middle,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_middle",
+      "y": 180
+    },
+    "facing=south,part=middle,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_middle",
+      "y": 180
+    },
+    "facing=south,part=middle,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_middle",
+      "y": 180
+    },
+    "facing=south,part=upper,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_upper",
+      "y": 180
+    },
+    "facing=south,part=upper,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_upper",
+      "y": 180
+    },
+    "facing=south,part=upper,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_upper",
+      "y": 180
+    },
+    "facing=south,part=upper,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_upper",
+      "y": 180
+    },
+    "facing=west,part=lower,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_lower",
+      "y": 270
+    },
+    "facing=west,part=lower,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_lower",
+      "y": 270
+    },
+    "facing=west,part=lower,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_lower",
+      "y": 270
+    },
+    "facing=west,part=lower,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_lower",
+      "y": 270
+    },
+    "facing=west,part=middle,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_middle",
+      "y": 270
+    },
+    "facing=west,part=middle,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_middle",
+      "y": 270
+    },
+    "facing=west,part=middle,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_middle",
+      "y": 270
+    },
+    "facing=west,part=middle,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_middle",
+      "y": 270
+    },
+    "facing=west,part=upper,style=venous": {
+      "model": "hemomancy:block/pulse_pylon_upper",
+      "y": 270
+    },
+    "facing=west,part=upper,style=anchor": {
+      "model": "hemomancy:block/pulse_pylon_anchor_upper",
+      "y": 270
+    },
+    "facing=west,part=upper,style=pyre": {
+      "model": "hemomancy:block/pulse_pylon_pyre_upper",
+      "y": 270
+    },
+    "facing=west,part=upper,style=frost": {
+      "model": "hemomancy:block/pulse_pylon_frost_upper",
+      "y": 270
+    }
+  }
+}

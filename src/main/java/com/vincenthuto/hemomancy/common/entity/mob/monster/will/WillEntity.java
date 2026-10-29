@@ -632,7 +632,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 		WillBendRules.HeldItemKind held = stack.getItem() instanceof MarionetteCrossbarItem
 				? WillBendRules.HeldItemKind.MARIONETTE_CROSSBAR
 				: WillBendRules.HeldItemKind.EMPTY_OR_STAFF;
-		boolean silent = HarbingerPathPermissions.isProvenSilentArchon(
+		boolean silent = HarbingerPathPermissions.isSilentium(
 						HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber(), HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath());
 		int cap = BoundSummonBehavior.totalActiveCap(serverPlayer);
 		boolean capAvailable = MarionetteCrossbarItem.activeSummonsForOwner(player).size() < cap;

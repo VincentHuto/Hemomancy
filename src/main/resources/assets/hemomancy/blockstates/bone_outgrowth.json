@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "hemomancy:block/bone_outgrowth"
+    },
+    "facing=down": {
+      "model": "hemomancy:block/bone_outgrowth",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "hemomancy:block/bone_outgrowth",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/bone_outgrowth",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/bone_outgrowth",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "hemomancy:block/bone_outgrowth",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

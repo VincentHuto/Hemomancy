@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "hemomancy:rimed_deepslate_bricks"
+    }
+  },
+  "result": {
+    "id": "hemomancy:rimed_deepslate_brick_wall",
+    "count": 6
+  }
+}

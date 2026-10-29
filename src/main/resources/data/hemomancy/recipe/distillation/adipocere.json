@@ -1,0 +1,15 @@
+{
+  "type": "hemomancy:distillation_recipe",
+  "ingredient": {
+    "item": "minecraft:honeycomb"
+  },
+  "catalyst": {
+    "item": "hemomancy:ruinous_enzyme"
+  },
+  "consume_catalyst": true,
+  "result": "hemomancy:adipocere",
+  "count": 1,
+  "experience": 0.3,
+  "cookingtime": 160,
+  "id": "hemomancy:distillation/adipocere"
+}

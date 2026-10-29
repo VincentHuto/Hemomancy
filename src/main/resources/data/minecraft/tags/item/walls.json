@@ -2,6 +2,10 @@
   "replace": false,
   "values": [
     "hemomancy:venous_stone_wall",
-    "hemomancy:polished_venous_stone_brick_wall"
+    "hemomancy:polished_venous_stone_brick_wall",
+    "hemomancy:bone_brick_wall",
+    "hemomancy:hematic_iron_plating_wall",
+    "hemomancy:polished_venous_stone_wall",
+    "hemomancy:rimed_deepslate_brick_wall"
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "hemomancy:bone_bricks"
+  },
+  "result": {
+    "id": "hemomancy:chiseled_bone_bricks",
+    "count": 1
+  }
+}

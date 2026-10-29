@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:bone_brick_slab",
+    "hemomancy:hematic_iron_plating_slab",
+    "hemomancy:charred_planks_slab",
+    "hemomancy:rimed_deepslate_brick_slab",
+    "hemomancy:dark_lacquer_planks_slab"
+  ]
+}

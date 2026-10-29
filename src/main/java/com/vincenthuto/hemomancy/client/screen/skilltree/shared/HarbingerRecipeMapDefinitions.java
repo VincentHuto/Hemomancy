@@ -63,7 +63,7 @@ public final class HarbingerRecipeMapDefinitions {
 				"druse_crystallization");
 		registerRites("Bloodline", "bloodline_recall", "hematic_unbinding", "bloodline_founding", "scarlet_summons",
 				"covenant_vigil");
-		registerRites("Ancestral", "ancestral_communion");
+		registerRites("Ancestral", "ancestral_communion", "possession_rite", "visitation_rite");
 
 		registerCrafting("Floorless Crafts", "dried_gourd", "hematic_iron_block", "iron_brazier", "liber_sanguinum",
 				"living_staff", "vial_centrifuge", "ghastly_alembic", "hematic_stake");
@@ -94,6 +94,8 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/hematic_unbinding", () -> new ItemStack(ItemInit.hematic_suture_needle.get()));
 		iconRites("cardinal_rite/scarlet_summons", () -> new ItemStack(ItemInit.blood_thrall_effigy.get()));
 		iconRites("cardinal_rite/covenant_vigil", () -> new ItemStack(BlockInit.sanguine_vigil.get()));
+		iconRites("cardinal_rite/possession_rite", () -> new ItemStack(ItemInit.thread_of_will.get()));
+		iconRites("cardinal_rite/visitation_rite", () -> new ItemStack(BlockInit.heart_node.get()));
 		iconRites("cardinal_rite/sanguine_dominion", () -> new ItemStack(BlockInit.covenant_throne.get()));
 
 		iconRites("cardinal_rite/sanguine_attunement", () -> new ItemStack(ItemInit.charm_of_vascularium.get()));

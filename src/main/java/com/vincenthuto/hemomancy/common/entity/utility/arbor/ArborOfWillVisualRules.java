@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.utility.arbor;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+
 /** Pure presentation rules for Degree, skill, Pome, and Apotheosis states. */
 public final class ArborOfWillVisualRules {
 	private ArborOfWillVisualRules() {
@@ -10,6 +12,11 @@ public final class ArborOfWillVisualRules {
 		DORMANT_BUD,
 		RIPE_FRUIT,
 		CLOSED_CALYX
+	}
+
+	/** The degree the Arbor shows: only the Apotheos grows the eighth crown; a Silentium keeps the seventh. */
+	public static int visualDegree(int degree, EnumArchonPath path) {
+		return path == EnumArchonPath.APOTHEOS ? degree : Math.min(degree, 7);
 	}
 
 	public static double treeHeight(int degree) {

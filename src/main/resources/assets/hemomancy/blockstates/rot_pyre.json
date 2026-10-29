@@ -1,0 +1,38 @@
+{
+  "variants": {
+    "lit=false": [
+      {
+        "model": "hemomancy:block/rot_pyre"
+      },
+      {
+        "model": "hemomancy:block/rot_pyre",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rot_pyre",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rot_pyre",
+        "y": 270
+      }
+    ],
+    "lit=true": [
+      {
+        "model": "hemomancy:block/rot_pyre_lit"
+      },
+      {
+        "model": "hemomancy:block/rot_pyre_lit",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rot_pyre_lit",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rot_pyre_lit",
+        "y": 270
+      }
+    ]
+  }
+}

@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.command;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeTitles;
 import com.mojang.brigadier.arguments.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
@@ -42,8 +42,7 @@ final class DegreeSubcommand {
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
 				;
 		int num = degree.getDegreeNumber();
-		EnumInitiatoryDegree enumDeg = EnumInitiatoryDegree.byNumber(num);
-		Component title = enumDeg != null ? enumDeg.displayName() : Component.translatable("hemomancy.degree.0");
+		Component title = DegreeTitles.title(num, degree.getArchonPath());
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.translatable("commands.hemomancy.degree.degree").withStyle(ChatFormatting.GRAY))
@@ -59,8 +58,7 @@ final class DegreeSubcommand {
 		degree.setDegreeNumber(degreeNum);
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		boolean resetUnstained = degreeNum > 0 && PathMutualExclusionHelper.resetUnstainedProgress(player);
-		EnumInitiatoryDegree enumDeg = EnumInitiatoryDegree.byNumber(degreeNum);
-		Component title = enumDeg != null ? enumDeg.displayName() : Component.translatable("hemomancy.degree.0");
+		Component title = DegreeTitles.title(degreeNum, degree.getArchonPath());
 		source.sendSuccess(() -> Component.translatable("commands.hemomancy.degree.set_degree_to",
 				Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD),
 				Component.translatable("commands.hemomancy.degree.number_title", degreeNum, title)

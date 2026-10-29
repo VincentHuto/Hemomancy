@@ -25,6 +25,7 @@ public final class ClientSessionEvents {
     @SubscribeEvent
     public static void onClientPlayerLogin(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingIn event) {
         ClientManipulationCooldowns.clear();
+        PossessionClientEvents.clear();
         NaeglerophaeonCaptureOverlay.clear();
         CircusPerceptionOverlay.clear();
         QliphothBloomClientData.clear();
@@ -36,6 +37,7 @@ public final class ClientSessionEvents {
         com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData.clearClient();
         com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData.clearClient();
         ClientManipulationCooldowns.clear();
+        PossessionClientEvents.clear();
         NaeglerophaeonCaptureOverlay.clear();
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
@@ -89,6 +91,10 @@ public final class ClientSessionEvents {
         com.vincenthuto.hemomancy.client.model.entity.boss.putriciel.PutricielAnimState.clear();
         com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumAnimState.clear();
         com.vincenthuto.hemomancy.client.data.CardinalRiteStaffPlantingClientState.clear();
+        MausoleumWardClientState.clear();
+        MausoleumWardRenderer.clear();
+        com.vincenthuto.hemomancy.client.sound.MausoleumAmbience.clear();
+        com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.WardAnchors.clearClient();
     }
 
     @SubscribeEvent

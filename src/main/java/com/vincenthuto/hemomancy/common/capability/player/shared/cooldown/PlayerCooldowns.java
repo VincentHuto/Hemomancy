@@ -25,6 +25,7 @@ public class PlayerCooldowns implements INBTSerializable<CompoundTag> {
 	public static final String PRISMATIC_FLASH = "prismatic_flash";
 	public static final String SCAR_PULSE = "scar_pulse";
 	public static final String SCRIPTORIUM_BACKLASH = "scriptorium_backlash";
+	public static final String SPORE_BURN = "spore_burn";
 	/** Followed by the armour set ability id. */
 	public static final String ARMOR_SET_ABILITY_PREFIX = "armor_set_ability:";
 

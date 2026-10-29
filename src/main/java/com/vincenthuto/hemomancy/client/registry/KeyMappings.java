@@ -44,6 +44,8 @@ public final class KeyMappings {
             "key.hemomancy.category");
     public static final KeyMapping toggleGourd = new KeyMapping("key.hemomancy.togglegourd.desc", GLFW.GLFW_KEY_H,
             "key.hemomancy.category");
+    public static final KeyMapping burnSpores = new KeyMapping("key.hemomancy.burnspores.desc", GLFW.GLFW_KEY_U,
+            "key.hemomancy.category");
     public static final KeyMapping openMorphlingJarViewer = new KeyMapping("key.hemomancy.openmorphlingjar.desc",
             GLFW.GLFW_KEY_N, "key.hemomancy.category");
     public static final KeyMapping bloodBallDrop = new KeyMapping("key.hemomancy.bloodballdrop.desc", GLFW.GLFW_KEY_V,
@@ -67,6 +69,7 @@ public final class KeyMappings {
     @SubscribeEvent
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(bloodFormation);
+        event.register(burnSpores);
         event.register(bloodCrafting);
         event.register(bloodDraw);
         event.register(cycleSelectedManip);

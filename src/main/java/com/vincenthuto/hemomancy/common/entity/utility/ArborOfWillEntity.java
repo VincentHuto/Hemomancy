@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.utility;
 
+import com.vincenthuto.hemomancy.common.entity.utility.arbor.ArborOfWillVisualRules;
 import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -44,7 +45,8 @@ public final class ArborOfWillEntity extends Entity {
 
     public void configure(ServerPlayer owner, int chamberRadius, int pomes) {
         OWNER.set(this, owner.getUUID());
-        entityData.set(DEGREE, HemoCapabilityAccess.getPlayerDegreeNumber(owner));
+        entityData.set(DEGREE, ArborOfWillVisualRules.visualDegree(HemoCapabilityAccess.getPlayerDegreeNumber(owner),
+                HemoCapabilityAccess.getInitiatoryDegree(owner).getArchonPath()));
         entityData.set(POMES, Math.max(0, Math.min(9, pomes)));
         entityData.set(CHAMBER_RADIUS, Math.max(3, chamberRadius));
     }

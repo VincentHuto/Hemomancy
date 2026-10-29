@@ -33,6 +33,9 @@ public final class RegistrationConsistencyGameTests {
 	public static void singularFolderItemTagsAreLoaded(GameTestHelper helper) {
 		assertTagged(helper, ItemTags.WALLS, "venous_stone_wall");
 		assertTagged(helper, ItemTags.WALLS, "polished_venous_stone_brick_wall");
+		assertTagged(helper, ItemTags.WALLS, "bone_brick_wall");
+		assertTagged(helper, ItemTags.WALLS, "hematic_iron_plating_wall");
+		assertTagged(helper, ItemTags.WALLS, "polished_venous_stone_wall");
 		assertTagged(helper, ItemTags.SMALL_FLOWERS, "bleeding_heart");
 		assertTagged(helper, KNAPPERS, "hematic_iron_knapper");
 		helper.succeed();

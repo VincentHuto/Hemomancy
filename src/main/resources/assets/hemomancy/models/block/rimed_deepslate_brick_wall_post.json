@@ -1,0 +1,81 @@
+{
+  "parent": "minecraft:block/template_wall_post",
+  "textures": {
+    "top": "hemomancy:block/rimed_deepslate_bricks_top",
+    "side": "hemomancy:block/rimed_deepslate_bricks",
+    "bottom": "minecraft:block/deepslate_bricks",
+    "particle": "hemomancy:block/rimed_deepslate_bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        0,
+        4
+      ],
+      "to": [
+        12,
+        16,
+        12
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#bottom",
+          "cullface": "down"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#top",
+          "cullface": "up"
+        },
+        "north": {
+          "uv": [
+            4,
+            0,
+            12,
+            16
+          ],
+          "texture": "#side"
+        },
+        "south": {
+          "uv": [
+            4,
+            0,
+            12,
+            16
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            4,
+            0,
+            12,
+            16
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            4,
+            0,
+            12,
+            16
+          ],
+          "texture": "#side"
+        }
+      }
+    }
+  ]
+}

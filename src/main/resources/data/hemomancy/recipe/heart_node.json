@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "hemomancy:bleeding_heart"
+    },
+    {
+      "item": "hemomancy:spore_sac"
+    },
+    {
+      "item": "hemomancy:spore_sac"
+    },
+    {
+      "item": "hemomancy:spore_sac"
+    },
+    {
+      "item": "hemomancy:spore_sac"
+    },
+    {
+      "item": "hemomancy:conscious_mass"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:heart_node",
+    "count": 1
+  }
+}

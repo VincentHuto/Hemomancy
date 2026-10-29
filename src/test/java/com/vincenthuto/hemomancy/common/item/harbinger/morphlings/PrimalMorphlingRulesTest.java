@@ -10,13 +10,13 @@ public final class PrimalMorphlingRulesTest {
 		assertTrue("primal marker grants primal maturity",
 				PrimalMorphlingRules.isPrimalMaturity(100.0f, true));
 		assertTrue("apex apotheos player can primalize",
-				PrimalMorphlingRules.canPrimalize(4, false, 8));
+				PrimalMorphlingRules.canPrimalize(4, false, true));
 		assertFalse("non-apex morphling cannot primalize",
-				PrimalMorphlingRules.canPrimalize(3, false, 8));
+				PrimalMorphlingRules.canPrimalize(3, false, true));
 		assertFalse("apex morphling cannot primalize before apotheos",
-				PrimalMorphlingRules.canPrimalize(4, false, 7));
+				PrimalMorphlingRules.canPrimalize(4, false, false));
 		assertFalse("already primal morphling cannot primalize again",
-				PrimalMorphlingRules.canPrimalize(5, true, 8));
+				PrimalMorphlingRules.canPrimalize(5, true, true));
 		assertEquals("primal morphogenesis reduces morphic strain duration", 154,
 				PrimalMorphlingRules.morphicStrainDuration(220, 3));
 		assertDouble("primal morphogenesis improves primal bonus scaling", 1.15,

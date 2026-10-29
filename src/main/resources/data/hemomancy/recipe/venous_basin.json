@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "S S",
+    "ISI",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "hemomancy:polished_venous_stone"
+    },
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    }
+  },
+  "result": {
+    "id": "hemomancy:venous_basin"
+  }
+}

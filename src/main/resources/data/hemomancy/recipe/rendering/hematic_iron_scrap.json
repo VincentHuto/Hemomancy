@@ -1,0 +1,14 @@
+{
+  "type": "hemomancy:rendering",
+  "input": {
+    "item": "hemomancy:hematic_iron_scrap"
+  },
+  "results": [
+    {
+      "id": "hemomancy:ferric_enzyme",
+      "count": 1,
+      "chance": 0.5
+    }
+  ],
+  "render_time": 100
+}

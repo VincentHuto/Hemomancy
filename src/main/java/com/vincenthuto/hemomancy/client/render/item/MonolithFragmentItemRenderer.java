@@ -95,7 +95,7 @@ public class MonolithFragmentItemRenderer extends BlockEntityWithoutLevelRendere
 			return new CarrierVisualState(0.0f, 0.0f);
 		}
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(mc.player);
-		boolean burden = MonolithFragmentBurdenRules.shouldBurdenCarrier(degree.getDegreeNumber());
+		boolean burden = MonolithFragmentBurdenRules.shouldBurdenCarrier(degree.getArchonPath());
 		return new CarrierVisualState(burden ? 1.0f : 0.0f, 0.0f);
 	}
 

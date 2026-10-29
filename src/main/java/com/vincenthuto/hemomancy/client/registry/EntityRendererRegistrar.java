@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.client.registry;
 
+import com.vincenthuto.hemomancy.client.render.entity.PossessionEchoRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.monster.HunterFungusRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.monster.AntibodyRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.facsimile.FacsimileRenderers;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.npc.*;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
@@ -38,6 +42,7 @@ import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.*;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.PhlebotomistsCabinetRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.PhlebotomistsFieldCaseRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.plant.GourdvineTapRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle.RingDoorRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle.SaintSarcophagusRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.rite.IronBrazierRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.rite.SuspendedBloodCrystalRenderer;
@@ -102,6 +107,17 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.bog_revenant.get(), BogRevenantRenderer::new);
         event.registerEntityRenderer(EntityInit.fargone.get(), FargoneRenderer::new);
         event.registerEntityRenderer(EntityInit.thirster.get(), ThirsterRenderer::new);
+        event.registerEntityRenderer(EntityInit.facsimile_bat.get(), FacsimileRenderers.Bat::new);
+        event.registerEntityRenderer(EntityInit.facsimile_enderman.get(), FacsimileRenderers.Enderman::new);
+        event.registerEntityRenderer(EntityInit.facsimile_blaze.get(), FacsimileRenderers.Blaze::new);
+        event.registerEntityRenderer(EntityInit.facsimile_golem.get(), FacsimileRenderers.Golem::new);
+        event.registerEntityRenderer(EntityInit.facsimile_horse.get(), FacsimileRenderers.HorseFacsimile::new);
+        event.registerEntityRenderer(EntityInit.facsimile_donkey.get(), FacsimileRenderers.DonkeyFacsimile::new);
+        event.registerEntityRenderer(EntityInit.facsimile_wolf.get(), FacsimileRenderers.Wolf::new);
+        event.registerEntityRenderer(EntityInit.facsimile_spider.get(), FacsimileRenderers.SpiderFacsimile::new);
+        event.registerEntityRenderer(EntityInit.antibody.get(), AntibodyRenderer::new);
+        event.registerEntityRenderer(EntityInit.possession_echo.get(), PossessionEchoRenderer::new);
+        event.registerEntityRenderer(EntityInit.hunter_fungus.get(), HunterFungusRenderer::new);
         event.registerEntityRenderer(EntityInit.fungling.get(), FunglingRenderer::new);
         event.registerEntityRenderer(EntityInit.tooth_pecks.get(), ToothPecksRenderer::new);
         event.registerEntityRenderer(EntityInit.myelin_borer.get(), MyelinBorerRenderer::new);
@@ -123,7 +139,7 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.sanguine_hound.get(), SanguineHoundRenderer::new);
         event.registerEntityRenderer(EntityInit.lump_of_thought.get(), LumpOfThoughtRenderer::new);
         event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
-        event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);
+        event.registerEntityRenderer(EntityInit.abhorrent_thought.get(), AbhorrentThoughtRenderer::new);
         event.registerEntityRenderer(EntityInit.barbed_urchin.get(), BarbedUrchinRenderer::new);
         event.registerEntityRenderer(EntityInit.chalybeate_snail.get(), ChalybeateSnailRenderer::new);
         event.registerEntityRenderer(EntityInit.blood_lantern_jelly.get(), BloodLanternJellyRenderer::new);
@@ -285,6 +301,13 @@ public final class EntityRendererRegistrar {
                 QliphothBloomBlockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.saint_sarcophagus.get(),
                 SaintSarcophagusRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.ring_door.get(), RingDoorRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.offering_stand.get(),
+                com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle.OfferingStandRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.pulse_pylon.get(),
+                com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle.PulsePylonRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.rot_pyre.get(),
+                com.vincenthuto.hemomancy.client.render.tile.harbinger.decoration.RotPyreRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.altar_of_cleansing.get(),
                 AltarOfCleansingRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.sanguine_monolith.get(),

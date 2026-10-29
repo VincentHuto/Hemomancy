@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "hemomancy:block/ward_anchor" },
+    "facing=east": { "model": "hemomancy:block/ward_anchor" },
+    "facing=south": { "model": "hemomancy:block/ward_anchor" },
+    "facing=west": { "model": "hemomancy:block/ward_anchor" }
+  }
+}

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class RepositoryTextEncodingTest {
 	private static final List<String> ROOTS = List.of("src/main", "src/test", "src/gameTest", "docs", "wiki",
-			"tools/model_export", "tools/review");
+			"tools/model_export", "tools/review", "tools/worldgen/mausoleum");
 	private static final Set<String> TEXT_EXTENSIONS = Set.of("java", "json", "md", "mcmeta", "properties", "toml",
 			"txt", "fsh", "vsh", "glsl", "py", "yml", "csv", "mjs", "gradle", "ps1");
 

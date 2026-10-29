@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "hemomancy:hematic_iron_plating"
+    }
+  },
+  "result": {
+    "id": "hemomancy:hematic_iron_plating_slab",
+    "count": 6
+  }
+}

@@ -21,9 +21,11 @@ class ArchonEndingDialogueTest {
     void returnedRevelationExplainsThatBothAnswersStillRequireCompletion() throws Exception {
         JsonObject language = language();
         String requirements = language.get("hemomancy.whisper.core_witness.line3").getAsString().toLowerCase();
-        for (String detail : List.of("your own bloom", "both", "vesper", "rite of apotheos")) {
+        for (String detail : List.of("your own bloom", "both", "vesper", "memory", "silentium",
+                "eighth degree", "rite of apotheos")) {
             assertTrue(requirements.contains(detail), "The decision omits " + detail);
         }
+        assertTrue(!requirements.contains("seventh degree"), "Silence is no longer a seventh-Degree end");
         assertTrue(!language.get("hemomancy.whisper.core_witness.option.silence")
                 .getAsString().toLowerCase().contains("go home"), "Refusal is not a completed ending");
     }
@@ -33,9 +35,11 @@ class ArchonEndingDialogueTest {
         String confirmation = language().get("hemomancy.dialogue.event.archon_choice_silence")
                 .getAsString().toLowerCase();
         for (String detail : List.of("not yet", "base living weapon", "bloom", "temporary living sickle",
-                "second", "wound", "both", "vesper", "seventh degree")) {
+                "second", "wound", "both", "vesper", "memory", "iron brazier", "living staff", "silentium",
+                "eighth degree")) {
             assertTrue(confirmation.contains(detail), "Pending-refusal guidance omits " + detail);
         }
+        assertTrue(!confirmation.contains("seventh degree"), "Silence is no longer a seventh-Degree end");
     }
 
     private static JsonObject language() throws Exception {
@@ -48,15 +52,26 @@ class ArchonEndingDialogueTest {
         DialogueTree tree = tree();
         assertResponse(tree, "vicar", 7, EnumArchonPath.NONE, "undecided");
         assertResponse(tree, "vicar", 7, EnumArchonPath.SILENT_PENDING, "silent_pending");
-        assertResponse(tree, "vicar", 7, EnumArchonPath.SILENT_ARCHON, "silent_archon");
+        assertResponse(tree, "vicar", 8, EnumArchonPath.SILENTIUM, "silent_archon");
         assertResponse(tree, "vicar", 7, EnumArchonPath.APOTHEOS_PENDING, "apotheos_pending");
         assertResponse(tree, "vicar", 8, EnumArchonPath.APOTHEOS, "apotheos");
         for (String npc : List.of("alchemist", "artificer", "mnemonist")) {
             assertResponse(tree, npc, 7, EnumArchonPath.NONE, "undecided");
             assertResponse(tree, npc, 7, EnumArchonPath.SILENT_PENDING, "silent_pending");
-            assertResponse(tree, npc, 7, EnumArchonPath.SILENT_ARCHON, "silent_archon");
+            assertResponse(tree, npc, 8, EnumArchonPath.SILENTIUM, "silent_archon");
             assertResponse(tree, npc, 7, EnumArchonPath.APOTHEOS_PENDING, "apotheos_pending");
             assertResponse(tree, npc, 8, EnumArchonPath.APOTHEOS, "apotheos");
+        }
+    }
+
+    @Test
+    void aBeatenVesperPointsTheTeachersAtTheBrazier() {
+        DialogueTree tree = tree();
+        for (String npc : List.of("vicar", "alchemist", "artificer", "mnemonist")) {
+            DialogueTree result = DialogueHubFactory.withArchonAcknowledgment(tree, npc, 7,
+                    EnumArchonPath.SILENT_PENDING, true);
+            assertEquals(List.of("greeting", "hemomancy.dialogue.ending." + npc + ".silent_absorb"),
+                    result.getStartNode().lines());
         }
     }
 
@@ -64,7 +79,7 @@ class ArchonEndingDialogueTest {
     void lowerDegreesAndOtherNpcsKeepTheirDialogue() {
         DialogueTree tree = tree();
         assertSame(tree, DialogueHubFactory.withArchonAcknowledgment(tree, "vicar", 6, EnumArchonPath.NONE));
-        assertSame(tree, DialogueHubFactory.withArchonAcknowledgment(tree, "hermit", 7, EnumArchonPath.SILENT_ARCHON));
+        assertSame(tree, DialogueHubFactory.withArchonAcknowledgment(tree, "hermit", 8, EnumArchonPath.SILENTIUM));
     }
 
     @Test
@@ -72,7 +87,7 @@ class ArchonEndingDialogueTest {
         JsonObject language = JsonParser.parseString(Files.readString(
                 Path.of("src/main/resources/assets/hemomancy/lang/en_us.json"))).getAsJsonObject();
         for (String npc : List.of("vicar", "alchemist", "artificer", "mnemonist")) {
-            for (String state : List.of("undecided", "silent_pending", "silent_archon",
+            for (String state : List.of("undecided", "silent_pending", "silent_absorb", "silent_archon",
                     "apotheos_pending", "apotheos")) {
                 String key = "hemomancy.dialogue.ending." + npc + "." + state;
                 assertTrue(language.has(key) && !language.get(key).getAsString().isBlank(), key);

@@ -14,6 +14,9 @@ public final class BuildingBlockResourceCoverageTest {
 			"pale_silver_bars",
 			"venous_stone_wall",
 			"polished_venous_stone_brick_wall",
+			"bone_brick_wall",
+			"hematic_iron_plating_wall",
+			"polished_venous_stone_wall",
 			"hematic_iron_door",
 			"hematic_iron_trapdoor"
 	};

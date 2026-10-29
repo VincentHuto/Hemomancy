@@ -1,0 +1,315 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:translucent",
+  "ambientocclusion": false,
+  "texture_size": [
+    64,
+    64
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/hanging_icicle",
+    "particle": "hemomancy:block/hanging_icicle"
+  },
+  "elements": [
+    {
+      "name": "shaft0",
+      "from": [
+        6.5,
+        12.0,
+        6.5
+      ],
+      "to": [
+        9.5,
+        16.0,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.5,
+            3.25,
+            2.25,
+            4.25
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.25,
+            3.25,
+            3.0,
+            4.25
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.0,
+            3.25,
+            3.75,
+            4.25
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.75,
+            3.25,
+            4.5,
+            4.25
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.5,
+            5.0,
+            8.25,
+            5.75
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "shaft1",
+      "from": [
+        7.0,
+        7.0,
+        7.0
+      ],
+      "to": [
+        9.0,
+        12.0,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            1.75,
+            8.0,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            8.0,
+            1.75,
+            8.5,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            8.5,
+            1.75,
+            9.0,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            9.0,
+            1.75,
+            9.5,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            0.5,
+            7.25,
+            1.0,
+            7.75
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "shaft2",
+      "from": [
+        7.25,
+        4.0,
+        7.25
+      ],
+      "to": [
+        8.75,
+        7.0,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9.5,
+            5.75,
+            10.0,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            10.0,
+            5.75,
+            10.5,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            10.5,
+            5.75,
+            11.0,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            11.0,
+            5.75,
+            11.5,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            1.0,
+            7.25,
+            1.5,
+            7.75
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "shaft3",
+      "from": [
+        7.5,
+        2.0,
+        7.5
+      ],
+      "to": [
+        8.5,
+        4.0,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            14.5,
+            7.25,
+            14.75,
+            7.75
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            14.75,
+            7.25,
+            15.0,
+            7.75
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            15.0,
+            7.25,
+            15.25,
+            7.75
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            15.25,
+            7.25,
+            15.5,
+            7.75
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            8.0,
+            8.5,
+            8.25,
+            8.75
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "shaft4",
+      "from": [
+        7.75,
+        1.0,
+        7.75
+      ],
+      "to": [
+        8.25,
+        2.0,
+        8.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.25,
+            8.5,
+            8.5,
+            8.75
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            8.5,
+            8.5,
+            8.75,
+            8.75
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            8.75,
+            8.5,
+            9.0,
+            8.75
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            9.0,
+            8.5,
+            9.25,
+            8.75
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.25,
+            8.5,
+            9.5,
+            8.75
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

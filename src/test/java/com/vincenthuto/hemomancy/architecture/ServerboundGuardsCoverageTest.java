@@ -60,7 +60,8 @@ class ServerboundGuardsCoverageTest {
 			Map.entry("UpdateCurrentMemoryPacket", "Selects from the sender's own known muscle memories."),
 			Map.entry("UpdateSelectedStillArtPacket", "Selects from the sender's own unlocked Still Arts."),
 			Map.entry("UseManipKeyPacket", "BloodManipulation.tryPerformAction holds the cast gates; the reported charge is clamped by ManipulationCastingRules."),
-			Map.entry("UseStillArtKeyPacket", "StillArt.performAction holds the gates."));
+			Map.entry("UseStillArtKeyPacket", "StillArt.performAction holds the gates."),
+			Map.entry("BurnSporeLoadKeyPacket", "Acts on the sender's own spore load; SporeLoadService checks the gates."));
 
 	@Test
 	void everyServerboundPayloadIsGuardedOrExplained() throws Exception {

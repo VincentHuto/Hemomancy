@@ -43,6 +43,7 @@ class SessionStateRegistryTest {
 			"common/event/ChamberVisitEvents.java", "returns the player from an interrupted Chamber visit",
 			"common/capability/player/harbinger/morphling/EquippedMorphlingEvents.java", "persists the equipped morphling",
 			"common/event/FungalProjectionEvents.java", "forces a projection back to its body",
+			"common/event/PossessionEvents.java", "returns a possessing will to its body",
 			"common/item/harbinger/tool/living/LivingStaffWeaponFormEvents.java", "restores the staff's held form",
 			"common/item/harbinger/tool/living/LivingTorchChannelEvents.java", "stops a breathing channel",
 			"common/entity/summon/puppeteer/PuppeteerCommandEvents.java", "rotates the owner's puppet session",

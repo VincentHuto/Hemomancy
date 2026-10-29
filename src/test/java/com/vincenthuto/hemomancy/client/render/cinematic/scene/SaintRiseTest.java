@@ -62,8 +62,9 @@ class SaintRiseTest {
 					path + " checks the rise before its own health rules");
 		}
 		String hooks = SourceAssertions.readMainJava("common/entity/boss/saint/HarbingerSaintEncounterHooks.java");
-		assertTrue(hooks.contains("boss.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5"),
+		assertTrue(hooks.contains("boss.moveTo(pos.getX() + centre[0], pos.getY(), pos.getZ() + centre[2]"),
 				"it rises from the floor the sarcophagus stood on, not from its lid");
+		assertTrue(hooks.contains("SaintSarcophagusBlock.tombCentre("), "it rises at the middle of the tomb");
 	}
 
 	@Test

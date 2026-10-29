@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.utility.arbor;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,5 +62,12 @@ class ArborOfWillVisualRulesTest {
 		assertTrue(ArborOfWillVisualRules.minimumFoliage(1, 0) >= 0.4, "even a young Arbor carries real leaves");
 		assertTrue(ArborOfWillVisualRules.minimumFoliage(7, 0) >= 0.75, "a grown Arbor reads full before skills fill it");
 		assertTrue(ArborOfWillVisualRules.minimumFoliage(7, 9) <= 0.1, "nine Pomes still leave it nearly skeletal");
+	}
+
+	@Test
+	void onlyTheApotheosArborGrowsPastTheSeventhWhorl() {
+		assertEquals(8, ArborOfWillVisualRules.visualDegree(8, EnumArchonPath.APOTHEOS));
+		assertEquals(7, ArborOfWillVisualRules.visualDegree(8, EnumArchonPath.SILENTIUM));
+		assertEquals(5, ArborOfWillVisualRules.visualDegree(5, EnumArchonPath.NONE));
 	}
 }

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "hemomancy:hallowed_residuum_fragment_velorum"
+    },
+    {
+      "item": "hemomancy:hallowed_residuum_fragment_velorum"
+    },
+    {
+      "item": "hemomancy:hallowed_residuum_fragment_velorum"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:hallowed_residuum_velorum",
+    "count": 1
+  }
+}

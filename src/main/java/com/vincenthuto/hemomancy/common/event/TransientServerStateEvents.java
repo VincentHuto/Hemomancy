@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.world.GardensNetwork;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.BloodwoodGrowthHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
@@ -137,6 +138,9 @@ public final class TransientServerStateEvents {
 		FoundingFaneEvents.clearSessionState();
 		BloodFlowLedger.clearSessionState();
 		CorticalArchipelagoFeature.clearSessionState();
+		GardensNetwork.clearSessionState();
+		com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.WardAnchors.clearServer();
+		MausoleumEvents.clearSessionState();
 	}
 
 	/** Ends one player's session state. Teardowns that cancel, restore or move something run before plain removals. */
@@ -169,5 +173,7 @@ public final class TransientServerStateEvents {
 		BloodlineChatRateLimit.logout(player);
 		BloodFlowLedger.logout(player);
 		SporiticThuribleEvents.logout(player);
+		GardensNetwork.logout(player);
+		MausoleumEvents.logout(player);
 	}
 }

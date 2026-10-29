@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "TIT",
+    "TST"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:deepslate_tiles"
+    },
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "S": {
+      "item": "hemomancy:polished_venous_stone"
+    }
+  },
+  "result": {
+    "id": "hemomancy:blood_gutter",
+    "count": 4
+  }
+}

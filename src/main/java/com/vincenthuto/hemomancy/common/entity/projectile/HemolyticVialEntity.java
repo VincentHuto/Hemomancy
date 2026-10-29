@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FargoneEntity;
-import com.vincenthuto.hemomancy.common.entity.mob.monster.AbhorentThoughtEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.AbhorrentThoughtEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.IBloodConstruct;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -71,7 +71,7 @@ public class HemolyticVialEntity extends ThrowableItemProjectile {
         for (LivingEntity target : targets) {
             if (target == getOwner()) continue;
 
-            if (target instanceof IBloodConstruct || target instanceof AbhorentThoughtEntity || target instanceof FargoneEntity) {
+            if (target instanceof IBloodConstruct || target instanceof AbhorrentThoughtEntity || target instanceof FargoneEntity) {
                 target.hurt(target.damageSources().magic(), CONSTRUCT_DAMAGE);
                 target.addEffect(new MobEffectInstance(EffectInit.hemolysis, 400, 1));
             } else if (isHarbingerPlayer(target)) {

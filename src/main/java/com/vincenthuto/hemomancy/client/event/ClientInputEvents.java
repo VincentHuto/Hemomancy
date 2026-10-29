@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.event;
 
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BurnSporeLoadKeyPacket;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.*;
 import com.vincenthuto.hemomancy.client.registry.KeyMappings;
@@ -103,6 +104,9 @@ public final class ClientInputEvents {
         }
         if (KeyMappings.toggleGourd.consumeClick()) {
             PacketHandler.sendToServer(new ToggleGourdKeyPacket());
+        }
+        if (KeyMappings.burnSpores.consumeClick()) {
+            PacketHandler.sendToServer(new BurnSporeLoadKeyPacket());
         }
         if (KeyMappings.bloodBallDrop.consumeClick()) {
             BloodBallClientData.drop();

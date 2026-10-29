@@ -330,6 +330,7 @@ public class VelorumEntity extends SaintTrialEntity {
             stillGuardTimer = 0;
             entityData.set(DATA_STILL_GUARD_TICKS, 0);
             removeEffect(MobEffects.DAMAGE_RESISTANCE);
+            reapplyEnrageEffects();
             VelorumEffects.burst((ServerLevel) level(), position().add(0, 1, 0), VelorumVisualRules.STILLNESS_BREAK, 3);
             return true;
         }

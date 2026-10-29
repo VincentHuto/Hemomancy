@@ -10,12 +10,15 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
+import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.MausoleumWardRules;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Locale;
 import java.util.function.Supplier;
 
 /**
@@ -768,6 +771,116 @@ public final class HemoRenderTypes {
 						.setWriteMaskState(RenderType.COLOR_WRITE)
 						.setCullState(RenderType.NO_CULL)
 						.setLightmapState(RenderType.LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/** A strike for the ward shader: camera-relative origin, life from 0 to 1, flash strength, and a threshold flag. */
+	public record WardStrike(float x, float y, float z, float life, float power, boolean threshold) {
+		public static final WardStrike NONE = new WardStrike(0.0F, 0.0F, 0.0F, 1.0F, 0.0F, false);
+	}
+
+	/**
+	 * What the ward shader reads for one Saint's frame: animation time, the ward colour (0xRRGGBB), the camera-relative
+	 * local player and crosshair focus, and up to four strikes ({@link WardStrike#NONE} for an empty slot).
+	 */
+	public record MausoleumWardUniforms(float time, int wardColor, float playerX, float playerY, float playerZ,
+			float focusX, float focusY, float focusZ, WardStrike strike0, WardStrike strike1, WardStrike strike2,
+			WardStrike strike3) {
+	}
+
+	/**
+	 * The consecrated ward over one Saint's mausoleum: its ward faces, threshold sheet and struck faces all go into this
+	 * one type, told apart by vertex colour (see {@code shaders/core/world/mausoleum_ward.fsh}), so a Saint's ward is one
+	 * draw a frame.
+	 */
+	public static RenderType mausoleumWard(EnumSaintType saint, MausoleumWardUniforms uniforms) {
+		return MAUSOLEUM_WARD_TYPES.get(saint, uniforms);
+	}
+
+	private static final SeededRenderTypes<EnumSaintType, MausoleumWardUniforms, RenderType> MAUSOLEUM_WARD_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createMausoleumWard);
+
+	private static RenderType createMausoleumWard(EnumSaintType saint, Supplier<MausoleumWardUniforms> values) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"mausoleum_ward_uniforms",
+				() -> {
+					MausoleumWardUniforms u = values.get();
+					ShaderInstance shader = ShaderInit.MAUSOLEUM_WARD.getInstance().get();
+					setUniform(shader, "HemoTime", u.time());
+					setRgbUniform(shader, "WardColor", u.wardColor());
+					setUniform(shader, "WardRadius", MausoleumWardRules.WARD_RADIUS);
+					setUniform(shader, "PlayerOffset", u.playerX(), u.playerY(), u.playerZ());
+					setUniform(shader, "FocusOffset", u.focusX(), u.focusY(), u.focusZ());
+					setStrike(shader, "Strike0", u.strike0());
+					setStrike(shader, "Strike1", u.strike1());
+					setStrike(shader, "Strike2", u.strike2());
+					setStrike(shader, "Strike3", u.strike3());
+					setUniform(shader, "StrikePower", u.strike0().power(), u.strike1().power(), u.strike2().power(),
+							u.strike3().power());
+					setUniform(shader, "StrikeKind", u.strike0().threshold() ? 1.0F : 0.0F,
+							u.strike1().threshold() ? 1.0F : 0.0F, u.strike2().threshold() ? 1.0F : 0.0F,
+							u.strike3().threshold() ? 1.0F : 0.0F);
+					setUniform(shader, "WardBody", 0.0F);
+				},
+				() -> {
+				});
+		return RenderType.create("mausoleum_ward_" + saint.name().toLowerCase(Locale.ROOT),
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 4096, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MAUSOLEUM_WARD.getShard())
+						.setTextureState(new RenderStateShard.TextureStateShard(ABOCIPHER_FONT_TEXTURE, false, false))
+						.setTexturingState(uniforms)
+						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	private static void setStrike(ShaderInstance shader, String name, WardStrike strike) {
+		setUniform(shader, name, strike.x(), strike.y(), strike.z(), strike.life());
+	}
+
+	/**
+	 * The ward burning into an Apotheos on hallowed ground, drawn over the player model with its {@code skin}: charred
+	 * hyphae and crawling runes, in the same shader as the ward on the stone. Vertex rgb is the ward colour and alpha
+	 * the burn.
+	 */
+	public static RenderType hallowedBurn(ResourceLocation skin, float time) {
+		return HALLOWED_BURN_TYPES.get(skin, time);
+	}
+
+	private static final SeededRenderTypes<ResourceLocation, Float, RenderType> HALLOWED_BURN_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createHallowedBurn);
+
+	private static RenderType createHallowedBurn(ResourceLocation skin, Supplier<Float> time) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"hallowed_burn_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.MAUSOLEUM_WARD_BODY.getInstance().get();
+					setUniform(shader, "HemoTime", time.get());
+					setUniform(shader, "WardBody", 1.0F);
+				},
+				() -> {
+				});
+		return RenderType.create("hallowed_burn",
+				DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MAUSOLEUM_WARD_BODY.getShard())
+						.setTextureState(RenderStateShard.MultiTextureStateShard.builder()
+								.add(ABOCIPHER_FONT_TEXTURE, false, false)
+								.add(skin, false, false)
+								.build())
+						.setTexturingState(uniforms)
+						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.setOverlayState(RenderType.NO_OVERLAY)
 						.createCompositeState(false));
 	}
 

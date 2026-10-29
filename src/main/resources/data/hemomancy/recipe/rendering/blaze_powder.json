@@ -1,0 +1,14 @@
+{
+  "type": "hemomancy:rendering",
+  "input": {
+    "item": "minecraft:blaze_powder"
+  },
+  "results": [
+    {
+      "id": "hemomancy:fervent_enzyme",
+      "count": 1,
+      "chance": 0.5
+    }
+  ],
+  "render_time": 100
+}

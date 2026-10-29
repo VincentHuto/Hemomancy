@@ -93,9 +93,10 @@ public final class PlayerMigrationGameTests {
 			var silentGate = new ArmatureUpgradeRecipe.PersistentDataGate(FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
 					FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE);
 			login(player);
-			helper.assertTrue(silentGate.matches(player), "The Silent Archon armour gate, which names the old key, must pass through the path");
+			helper.assertTrue(!silentGate.matches(player),
+					"A degree-7 Silent choice is still pending, so the Silentium armour gate must stay shut");
 			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
-			helper.assertTrue(degree.getArchonPath() == EnumArchonPath.SILENT_ARCHON
+			helper.assertTrue(degree.getArchonPath() == EnumArchonPath.SILENT_PENDING
 					&& degree.hasWitnessedFungalRevelation()
 					&& !player.getPersistentData().contains(FungalGardenTravelHelper.ARCHON_CHOICE_KEY),
 					"The Silent root key was not migrated and cleared");

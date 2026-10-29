@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "hemomancy:block/infected_cap",
+    "top": "hemomancy:block/infected_cap",
+    "side": "hemomancy:block/infected_cap"
+  }
+}

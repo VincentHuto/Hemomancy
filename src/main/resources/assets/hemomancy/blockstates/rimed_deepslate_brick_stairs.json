@@ -1,0 +1,624 @@
+{
+  "variants": {
+    "facing=east,half=bottom,shape=straight": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_2"
+      }
+    ],
+    "facing=east,half=bottom,shape=inner_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_1",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_2",
+        "y": 270,
+        "uvlock": true
+      }
+    ],
+    "facing=east,half=bottom,shape=inner_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_2"
+      }
+    ],
+    "facing=east,half=bottom,shape=outer_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_1",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_2",
+        "y": 270,
+        "uvlock": true
+      }
+    ],
+    "facing=east,half=bottom,shape=outer_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_2"
+      }
+    ],
+    "facing=east,half=top,shape=straight": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top_2"
+      }
+    ],
+    "facing=east,half=top,shape=inner_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_2"
+      }
+    ],
+    "facing=east,half=top,shape=inner_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_1",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_2",
+        "y": 90,
+        "uvlock": true
+      }
+    ],
+    "facing=east,half=top,shape=outer_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_2"
+      }
+    ],
+    "facing=east,half=top,shape=outer_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_1",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_2",
+        "y": 90,
+        "uvlock": true
+      }
+    ],
+    "facing=north,half=bottom,shape=straight": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_1",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_2",
+        "y": 270,
+        "uvlock": true
+      }
+    ],
+    "facing=north,half=bottom,shape=inner_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_1",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_2",
+        "y": 180,
+        "uvlock": true
+      }
+    ],
+    "facing=north,half=bottom,shape=inner_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_1",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_2",
+        "y": 270,
+        "uvlock": true
+      }
+    ],
+    "facing=north,half=bottom,shape=outer_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_1",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_2",
+        "y": 180,
+        "uvlock": true
+      }
+    ],
+    "facing=north,half=bottom,shape=outer_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_1",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_2",
+        "y": 270,
+        "uvlock": true
+      }
+    ],
+    "facing=north,half=top,shape=straight": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top_1",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top_2",
+        "y": 270,
+        "uvlock": true
+      }
+    ],
+    "facing=north,half=top,shape=inner_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_1",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_2",
+        "y": 270,
+        "uvlock": true
+      }
+    ],
+    "facing=north,half=top,shape=inner_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_2"
+      }
+    ],
+    "facing=north,half=top,shape=outer_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_1",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_2",
+        "y": 270,
+        "uvlock": true
+      }
+    ],
+    "facing=north,half=top,shape=outer_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_2"
+      }
+    ],
+    "facing=south,half=bottom,shape=straight": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_1",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_2",
+        "y": 90,
+        "uvlock": true
+      }
+    ],
+    "facing=south,half=bottom,shape=inner_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_2"
+      }
+    ],
+    "facing=south,half=bottom,shape=inner_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_1",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_2",
+        "y": 90,
+        "uvlock": true
+      }
+    ],
+    "facing=south,half=bottom,shape=outer_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_2"
+      }
+    ],
+    "facing=south,half=bottom,shape=outer_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_1",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_2",
+        "y": 90,
+        "uvlock": true
+      }
+    ],
+    "facing=south,half=top,shape=straight": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top_1",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top_2",
+        "y": 90,
+        "uvlock": true
+      }
+    ],
+    "facing=south,half=top,shape=inner_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_1",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_2",
+        "y": 90,
+        "uvlock": true
+      }
+    ],
+    "facing=south,half=top,shape=inner_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_1",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_2",
+        "y": 180,
+        "uvlock": true
+      }
+    ],
+    "facing=south,half=top,shape=outer_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_1",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_2",
+        "y": 90,
+        "uvlock": true
+      }
+    ],
+    "facing=south,half=top,shape=outer_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_1",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_2",
+        "y": 180,
+        "uvlock": true
+      }
+    ],
+    "facing=west,half=bottom,shape=straight": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_1",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_2",
+        "y": 180,
+        "uvlock": true
+      }
+    ],
+    "facing=west,half=bottom,shape=inner_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_1",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_2",
+        "y": 90,
+        "uvlock": true
+      }
+    ],
+    "facing=west,half=bottom,shape=inner_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_1",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_2",
+        "y": 180,
+        "uvlock": true
+      }
+    ],
+    "facing=west,half=bottom,shape=outer_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_1",
+        "y": 90,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_2",
+        "y": 90,
+        "uvlock": true
+      }
+    ],
+    "facing=west,half=bottom,shape=outer_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_1",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_2",
+        "y": 180,
+        "uvlock": true
+      }
+    ],
+    "facing=west,half=top,shape=straight": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top_1",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_top_2",
+        "y": 180,
+        "uvlock": true
+      }
+    ],
+    "facing=west,half=top,shape=inner_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_1",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_2",
+        "y": 180,
+        "uvlock": true
+      }
+    ],
+    "facing=west,half=top,shape=inner_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_1",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_inner_top_2",
+        "y": 270,
+        "uvlock": true
+      }
+    ],
+    "facing=west,half=top,shape=outer_left": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_1",
+        "y": 180,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_2",
+        "y": 180,
+        "uvlock": true
+      }
+    ],
+    "facing=west,half=top,shape=outer_right": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_1",
+        "y": 270,
+        "uvlock": true
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_stairs_outer_top_2",
+        "y": 270,
+        "uvlock": true
+      }
+    ]
+  }
+}

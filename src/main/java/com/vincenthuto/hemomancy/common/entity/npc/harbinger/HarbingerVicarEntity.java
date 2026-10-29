@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
@@ -195,7 +196,8 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
         Player player = serverPlayer;
         int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
         if (isPurifying(serverPlayer)) return HarbingerVicarDialogueTrees.purifying(this.getId());
-        DialogueTree tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
+        DialogueTree tree = HarbingerVicarDialogueTrees.forDegree(HarbingerPathPermissions.greetingDegree(degree,
+                HemoCapabilityAccess.getInitiatoryDegree(serverPlayer).getArchonPath()), this.getId(), canShowRecruitment(player, this),
                 isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(serverPlayer),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),

@@ -35,7 +35,6 @@
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueHubFactory.java	player root keys not yet moved into an attachment (S-1)
 3	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerRecruitmentRules.java	entity, item-entity or NPC marker data, not player state
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PendingWhispers.java	legacy inbox root key, read once by the pending_whispers migration (sunset 2027-04-23); the revelation-choice root flag
-2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/inquiry/ItemInquiryContext.java	player root keys not yet moved into an attachment (S-1)
 4	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/FungalWhisperDialogueEvents.java	player root keys not yet moved into an attachment (S-1)
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/MnemonistDialogueEvents.java	player root keys not yet moved into an attachment (S-1)
 1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerMnemonistEntity.java	player root keys not yet moved into an attachment (S-1)
@@ -49,6 +48,7 @@
 1	src/main/java/com/vincenthuto/hemomancy/common/entity/weave/WeaveDamageEvents.java	player root keys not yet moved into an attachment (S-1)
 2	src/main/java/com/vincenthuto/hemomancy/common/event/FungalProjectionEvents.java	player root keys not yet moved into an attachment (S-1)
 6	src/main/java/com/vincenthuto/hemomancy/common/event/MorphicNectarEvents.java	entity, item-entity or NPC marker data, not player state
+2	src/main/java/com/vincenthuto/hemomancy/common/event/RenderingPoolEvents.java	item-entity rendering progress, not player state
 2	src/main/java/com/vincenthuto/hemomancy/common/event/WhiteHumorPurificationEvents.java	entity, item-entity or NPC marker data, not player state
 5	src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/ChamberOfWillEvents.java	entity, item-entity or NPC marker data, not player state
 1	src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/FoundingFaneEvents.java	entity, item-entity or NPC marker data, not player state

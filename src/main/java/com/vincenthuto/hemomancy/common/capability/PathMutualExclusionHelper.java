@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
@@ -40,15 +43,25 @@ public final class PathMutualExclusionHelper {
 		boolean hadProgress = ProgressionGates.hasDegree(degree, 1)
 				|| degree.isQliphothCommunionDone()
 				|| degree.getTotalPomesConsumed() > 0
-				|| degree.getPomeEmpowermentExpiry() > 0L;
+				|| degree.getPomeEmpowermentExpiry() > 0L
+				|| degree.getArchonPath() != EnumArchonPath.NONE
+				|| degree.hasFungalSpineGranted();
 		if (!hadProgress) {
 			return false;
 		}
 		degree.setDegreeNumber(0);
 		degree.resetPomeCommunion();
+		clearEndgame(degree, HemoCapabilityAccess.getLivingStaffProgress(player));
 		InitiatoryDegreeEvents.syncDegree(player, degree);
+		LivingStaffBondHelper.syncProgress(player);
 		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(0));
 		return true;
+	}
+
+	/** The endgame path and Vesper's absorbed memory go together, so a cured player can earn either path again. */
+	static void clearEndgame(IInitiatoryDegree degree, ILivingStaffProgress staff) {
+		degree.resetEndgameState();
+		staff.setVesperMemoryAwakened(false);
 	}
 
 	public static boolean resetUnstainedProgress(ServerPlayer player) {

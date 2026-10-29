@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "hemomancy:block/blood_basin" }
+    "": {
+      "model": "hemomancy:block/blood_basin"
+    }
   }
 }

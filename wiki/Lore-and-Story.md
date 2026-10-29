@@ -221,10 +221,10 @@ The **Chamber of Will** is a high-degree Harbinger refuge unlocked at Degree 6 t
 The "Flesh Beyond": first witnessed at Degree 7 when the ninth Qliphoth Pome grants the **Fungal Spine**, before either endgame rite.
 
 **What It Is:**
-- **Astral projection**, not physical teleportation
-- You perceive the Entity's local "surface"
-- Your body remains in the world
-- You have no physical form there
+- A three-dimensional **projection** of the higher-dimensional Entity, cast into the space above the world where it touches ours; the dimension is its cross-section, not a container for it
+- The first visit is an **astral projection**, not physical teleportation: your body remains in the world and you have no physical form there
+- That first visit is the only one a Degree-7 Archon makes. Afterwards an Apotheos travels there in the body, a Silentium only by possessing one of its facsimiles, and no one else ever enters
+- The Overworld Fungal Gardens biome is a different place, open to anyone
 
 **What You See:**
 - Massive sphere of meat, flesh, pulsing biology
@@ -300,9 +300,10 @@ A massive fungal tree structure summoned at high degree.
 - Requirement for Rite of Apotheos
 - Whispers intensify dramatically after
 
-**Removal:**
-- Silent refusal cut made directly with the Living Sickle
-- Closes void-bloom, tree withers
+**Severance:**
+- The tree is the Archon's own will and an antenna to the hive
+- The Silent refusal cut, made with the temporary Living Sickle in the Rite of Pruning, is the Severance: an ego death that cuts the Archon's ties to the hivemind
+- The cut opens the Bloom as Vesper's wound; victory over Vesper seals it as an inert trophy
 - Stops whispers from that tree
 - Doesn't undo Communion progress
 
@@ -322,7 +323,7 @@ A massive fungal tree structure summoned at high degree.
 Four ancient hemomancers whose blood outgrew their bodies. Their own people sealed them in tombs, and the Hematic Order inherited and keeps those tombs. Sainthood marks what the blood became, not virtue. All four have prototype encounters behind the post-release Saints boundary, and none of them can be killed: every fight returns the Saint to its sarcophagus. See [Saints and Encounters](Saints-and-Encounters.md) for how they are found.
 
 **Hemorath, the First Saint** (Animus + Ferric)
-- The first Harbinger, older than the Order's structure and Erythravane's Fane. He learned to harden the iron in his blood and to draw blood from other creatures, then fed until the absorption overloaded his body
+- One of the first and most powerful Hemomancers, older than the Order's structure and Erythravane's Fane, and never a true Harbinger. Erythravane was the first Vicar and Archon. He learned to harden the iron in his blood and to draw blood from other creatures, then fed until the absorption overloaded his body
 - His flesh failed, but his marrow never stopped producing blood. What remains is a desiccated, skeletal saint who pulls in the blood of anything living nearby and cannot keep it
 - A hunched skeletal saint with exposed ribs, a rusted spiked halo, face-obscuring cords, a chained iron staff, and trailing ivory/crimson vestments
 - His reaching claw draws debt along blood-threaded iron links. Pressure opens the individual ribs, and overload folds the emptied skeleton down into its tattered robes.

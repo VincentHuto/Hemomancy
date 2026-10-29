@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
@@ -26,13 +27,20 @@ public final class DialogueHubFactory {
 		}
 		if (degree >= 7) {
 			EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath();
-			tree = withArchonAcknowledgment(tree, npcId, degree, path);
+			tree = withArchonAcknowledgment(tree, npcId, degree, path,
+					HarbingerAdvancementGranter.hasAdvancement(player, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED));
 		}
 		return decorate(tree, npcId, HemoCapabilityAccess.dialogueKnowledge(player));
 	}
 
 	static DialogueTree withArchonAcknowledgment(DialogueTree tree, String npcId, int degree,
 			EnumArchonPath path) {
+		return withArchonAcknowledgment(tree, npcId, degree, path, false);
+	}
+
+	/** A Silence that has beaten Vesper but not drawn in his memory is sent to the brazier. */
+	static DialogueTree withArchonAcknowledgment(DialogueTree tree, String npcId, int degree,
+			EnumArchonPath path, boolean vesperDefeated) {
 		if (degree < 7 || !Set.of("vicar", "alchemist", "artificer", "mnemonist").contains(npcId)) {
 			return tree;
 		}
@@ -40,8 +48,8 @@ public final class DialogueHubFactory {
 		if (root == null) return tree;
 		String state = switch (path) {
 			case NONE -> "undecided";
-			case SILENT_PENDING -> "silent_pending";
-			case SILENT_ARCHON -> "silent_archon";
+			case SILENT_PENDING -> vesperDefeated ? "silent_absorb" : "silent_pending";
+			case SILENTIUM -> "silent_archon";
 			case APOTHEOS_PENDING -> "apotheos_pending";
 			case APOTHEOS -> "apotheos";
 		};

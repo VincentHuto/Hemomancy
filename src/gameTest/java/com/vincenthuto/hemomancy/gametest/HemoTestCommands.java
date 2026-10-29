@@ -61,6 +61,7 @@ public final class HemoTestCommands {
 										.then(Commands.literal("next").executes(context -> circusJourneyNext(context.getSource())))
 										.then(Commands.literal("status").executes(context -> circusJourneyStatus(context.getSource())))
 										.then(Commands.literal("reset").executes(context -> circusJourneyReset(context.getSource())))))
+						.then(MausoleumTestCommand.build())
 						.then(Commands.literal("clear").executes(context -> clear(context.getSource())))));
 	}
 

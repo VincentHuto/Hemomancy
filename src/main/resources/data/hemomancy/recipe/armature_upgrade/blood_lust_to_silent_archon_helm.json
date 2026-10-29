@@ -1,6 +1,6 @@
 {
   "type": "hemomancy:armature_upgrade",
-  "required_degree": 7,
+  "required_degree": 8,
   "armor_slot": "head",
   "base": [
     { "item": "hemomancy:blood_lust_helm" },

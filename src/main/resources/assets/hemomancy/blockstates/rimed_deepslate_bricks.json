@@ -1,0 +1,51 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_1",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_1",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_1",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_2"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_2",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_2",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_2",
+        "y": 270
+      }
+    ]
+  }
+}

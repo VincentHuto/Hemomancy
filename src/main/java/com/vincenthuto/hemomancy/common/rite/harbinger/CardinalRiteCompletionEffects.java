@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.encounter.VisitationService;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionService;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
@@ -218,9 +220,28 @@ public final class CardinalRiteCompletionEffects {
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		});
 		effect("cardinal_rite/chamber_of_will", ctx -> ChamberVisitService.beginRiteVisit(ctx.caster()));
+		register("cardinal_rite/visitation_rite",
+				(ctx, stage) -> VisitationService.refusal(ctx.caster()),
+				ctx -> VisitationService.visit(ctx.caster()));
+		register("cardinal_rite/possession_rite",
+				(ctx, stage) -> PossessionService.refusal(ctx.caster(),
+						PossessionService.findSurrogate(ctx.level(), riteBounds(ctx), ctx.center())),
+				ctx -> {
+					AABB bounds = riteBounds(ctx);
+					var surrogate = PossessionService.findSurrogate(ctx.level(), bounds, ctx.center());
+					return surrogate != null && PossessionService.begin(ctx.level(), ctx.caster(), surrogate, bounds);
+				});
 	}
 
 	private CardinalRiteCompletionEffects() {
+	}
+
+	/** The rite space: the floor's footprint or the ritual leash, whichever reaches further. */
+	private static AABB riteBounds(Context ctx) {
+		double radius = ctx.rite() == null ? CardinalRiteBoundaryLeashRules.ritualRadius(1)
+				: Math.max(CardinalRiteBoundaryLeashRules.ritualRadius(ctx.rite().getRiteSize()),
+						CardinalRiteFootprintResolver.radius(ctx.rite(), ctx.recipe()));
+		return new AABB(ctx.center()).inflate(radius, 4.0, radius);
 	}
 
 	private static void effect(String path, Consumer<Context> apply) {

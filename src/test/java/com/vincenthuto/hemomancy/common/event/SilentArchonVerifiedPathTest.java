@@ -13,27 +13,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SilentArchonVerifiedPathTest {
     @Test
-    void onlyProvenSilentArchonReceivesExclusivePowers() {
-        assertFalse(HarbingerPathPermissions.isProvenSilentArchon(7, EnumArchonPath.NONE));
-        assertFalse(HarbingerPathPermissions.isProvenSilentArchon(7, EnumArchonPath.SILENT_PENDING));
-        assertFalse(HarbingerPathPermissions.isProvenSilentArchon(7, EnumArchonPath.APOTHEOS_PENDING));
-        assertFalse(HarbingerPathPermissions.isProvenSilentArchon(8, EnumArchonPath.APOTHEOS));
-        assertTrue(HarbingerPathPermissions.isProvenSilentArchon(7, EnumArchonPath.SILENT_ARCHON));
+    void onlyASilentiumReceivesExclusivePowers() {
+        assertFalse(HarbingerPathPermissions.isSilentium(7, EnumArchonPath.NONE));
+        assertFalse(HarbingerPathPermissions.isSilentium(7, EnumArchonPath.SILENT_PENDING));
+        assertFalse(HarbingerPathPermissions.isSilentium(7, EnumArchonPath.APOTHEOS_PENDING));
+        assertFalse(HarbingerPathPermissions.isSilentium(8, EnumArchonPath.APOTHEOS));
+        assertFalse(HarbingerPathPermissions.isSilentium(7, EnumArchonPath.SILENTIUM));
+        assertTrue(HarbingerPathPermissions.isSilentium(8, EnumArchonPath.SILENTIUM));
 
         assertFalse(SilentArchonArmorRules.canRefuseDeath(true, 7, EnumArchonPath.SILENT_PENDING,
                 4000, 3000, 2000, 0));
-        assertTrue(SilentArchonArmorRules.canRefuseDeath(true, 7, EnumArchonPath.SILENT_ARCHON,
+        assertTrue(SilentArchonArmorRules.canRefuseDeath(true, 8, EnumArchonPath.SILENTIUM,
                 4000, 3000, 2000, 0));
-        assertTrue(SilentArchonArmorRules.canRefuseDeath(true, 7, "silent",
+        assertTrue(SilentArchonArmorRules.canRefuseDeath(true, 8, "silent",
                 4000, 3000, 2000, 0));
 
         assertEquals(56, commandeerCost(EnumArchonPath.SILENT_PENDING));
-        assertEquals(28, commandeerCost(EnumArchonPath.SILENT_ARCHON));
+        assertEquals(28, commandeerCost(EnumArchonPath.SILENTIUM));
     }
 
     private static int commandeerCost(EnumArchonPath path) {
         return WillBendRules.resolve(WillOrigin.BROKEN, WillPhase.FALTERING, 7,
                 WillBendRules.HeldItemKind.MARIONETTE_CROSSBAR, false, true,
-                HarbingerPathPermissions.isProvenSilentArchon(7, path)).threadCost();
+                HarbingerPathPermissions.isSilentium(8, path)).threadCost();
     }
 }

@@ -1,0 +1,51 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "hemomancy:block/packed_ash"
+      },
+      {
+        "model": "hemomancy:block/packed_ash",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/packed_ash",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/packed_ash",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/packed_ash_1"
+      },
+      {
+        "model": "hemomancy:block/packed_ash_1",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/packed_ash_1",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/packed_ash_1",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/packed_ash_2"
+      },
+      {
+        "model": "hemomancy:block/packed_ash_2",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/packed_ash_2",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/packed_ash_2",
+        "y": 270
+      }
+    ]
+  }
+}

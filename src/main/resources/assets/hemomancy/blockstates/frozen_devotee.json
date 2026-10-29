@@ -1,0 +1,454 @@
+{
+  "variants": {
+    "facing=north,half=lower,head=forward,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower"
+    },
+    "facing=north,half=lower,head=forward,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower"
+    },
+    "facing=north,half=lower,head=forward,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower"
+    },
+    "facing=north,half=lower,head=forward,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower"
+    },
+    "facing=north,half=lower,head=forward,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower"
+    },
+    "facing=north,half=lower,head=left,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower_left"
+    },
+    "facing=north,half=lower,head=left,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower_left"
+    },
+    "facing=north,half=lower,head=left,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower_left"
+    },
+    "facing=north,half=lower,head=left,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower_left"
+    },
+    "facing=north,half=lower,head=left,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower"
+    },
+    "facing=north,half=lower,head=right,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower_right"
+    },
+    "facing=north,half=lower,head=right,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower_right"
+    },
+    "facing=north,half=lower,head=right,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower_right"
+    },
+    "facing=north,half=lower,head=right,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower_right"
+    },
+    "facing=north,half=lower,head=right,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower"
+    },
+    "facing=north,half=upper,head=forward,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper"
+    },
+    "facing=north,half=upper,head=forward,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper"
+    },
+    "facing=north,half=upper,head=forward,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper"
+    },
+    "facing=north,half=upper,head=forward,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper"
+    },
+    "facing=north,half=upper,head=forward,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper"
+    },
+    "facing=north,half=upper,head=left,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper_left"
+    },
+    "facing=north,half=upper,head=left,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper_left"
+    },
+    "facing=north,half=upper,head=left,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper_left"
+    },
+    "facing=north,half=upper,head=left,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper"
+    },
+    "facing=north,half=upper,head=left,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper_left"
+    },
+    "facing=north,half=upper,head=right,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper_right"
+    },
+    "facing=north,half=upper,head=right,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper_right"
+    },
+    "facing=north,half=upper,head=right,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper_right"
+    },
+    "facing=north,half=upper,head=right,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper"
+    },
+    "facing=north,half=upper,head=right,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper_right"
+    },
+    "facing=east,half=lower,head=forward,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower",
+      "y": 90
+    },
+    "facing=east,half=lower,head=forward,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower",
+      "y": 90
+    },
+    "facing=east,half=lower,head=forward,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower",
+      "y": 90
+    },
+    "facing=east,half=lower,head=forward,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower",
+      "y": 90
+    },
+    "facing=east,half=lower,head=forward,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 90
+    },
+    "facing=east,half=lower,head=left,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower_left",
+      "y": 90
+    },
+    "facing=east,half=lower,head=left,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower_left",
+      "y": 90
+    },
+    "facing=east,half=lower,head=left,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower_left",
+      "y": 90
+    },
+    "facing=east,half=lower,head=left,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower_left",
+      "y": 90
+    },
+    "facing=east,half=lower,head=left,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 90
+    },
+    "facing=east,half=lower,head=right,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower_right",
+      "y": 90
+    },
+    "facing=east,half=lower,head=right,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower_right",
+      "y": 90
+    },
+    "facing=east,half=lower,head=right,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower_right",
+      "y": 90
+    },
+    "facing=east,half=lower,head=right,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower_right",
+      "y": 90
+    },
+    "facing=east,half=lower,head=right,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 90
+    },
+    "facing=east,half=upper,head=forward,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper",
+      "y": 90
+    },
+    "facing=east,half=upper,head=forward,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper",
+      "y": 90
+    },
+    "facing=east,half=upper,head=forward,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper",
+      "y": 90
+    },
+    "facing=east,half=upper,head=forward,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper",
+      "y": 90
+    },
+    "facing=east,half=upper,head=forward,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper",
+      "y": 90
+    },
+    "facing=east,half=upper,head=left,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper_left",
+      "y": 90
+    },
+    "facing=east,half=upper,head=left,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper_left",
+      "y": 90
+    },
+    "facing=east,half=upper,head=left,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper_left",
+      "y": 90
+    },
+    "facing=east,half=upper,head=left,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper",
+      "y": 90
+    },
+    "facing=east,half=upper,head=left,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper_left",
+      "y": 90
+    },
+    "facing=east,half=upper,head=right,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper_right",
+      "y": 90
+    },
+    "facing=east,half=upper,head=right,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper_right",
+      "y": 90
+    },
+    "facing=east,half=upper,head=right,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper_right",
+      "y": 90
+    },
+    "facing=east,half=upper,head=right,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper",
+      "y": 90
+    },
+    "facing=east,half=upper,head=right,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper_right",
+      "y": 90
+    },
+    "facing=south,half=lower,head=forward,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower",
+      "y": 180
+    },
+    "facing=south,half=lower,head=forward,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower",
+      "y": 180
+    },
+    "facing=south,half=lower,head=forward,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower",
+      "y": 180
+    },
+    "facing=south,half=lower,head=forward,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower",
+      "y": 180
+    },
+    "facing=south,half=lower,head=forward,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 180
+    },
+    "facing=south,half=lower,head=left,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower_left",
+      "y": 180
+    },
+    "facing=south,half=lower,head=left,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower_left",
+      "y": 180
+    },
+    "facing=south,half=lower,head=left,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower_left",
+      "y": 180
+    },
+    "facing=south,half=lower,head=left,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower_left",
+      "y": 180
+    },
+    "facing=south,half=lower,head=left,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 180
+    },
+    "facing=south,half=lower,head=right,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower_right",
+      "y": 180
+    },
+    "facing=south,half=lower,head=right,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower_right",
+      "y": 180
+    },
+    "facing=south,half=lower,head=right,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower_right",
+      "y": 180
+    },
+    "facing=south,half=lower,head=right,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower_right",
+      "y": 180
+    },
+    "facing=south,half=lower,head=right,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 180
+    },
+    "facing=south,half=upper,head=forward,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper",
+      "y": 180
+    },
+    "facing=south,half=upper,head=forward,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper",
+      "y": 180
+    },
+    "facing=south,half=upper,head=forward,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper",
+      "y": 180
+    },
+    "facing=south,half=upper,head=forward,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper",
+      "y": 180
+    },
+    "facing=south,half=upper,head=forward,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper",
+      "y": 180
+    },
+    "facing=south,half=upper,head=left,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper_left",
+      "y": 180
+    },
+    "facing=south,half=upper,head=left,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper_left",
+      "y": 180
+    },
+    "facing=south,half=upper,head=left,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper_left",
+      "y": 180
+    },
+    "facing=south,half=upper,head=left,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper",
+      "y": 180
+    },
+    "facing=south,half=upper,head=left,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper_left",
+      "y": 180
+    },
+    "facing=south,half=upper,head=right,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper_right",
+      "y": 180
+    },
+    "facing=south,half=upper,head=right,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper_right",
+      "y": 180
+    },
+    "facing=south,half=upper,head=right,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper_right",
+      "y": 180
+    },
+    "facing=south,half=upper,head=right,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper",
+      "y": 180
+    },
+    "facing=south,half=upper,head=right,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper_right",
+      "y": 180
+    },
+    "facing=west,half=lower,head=forward,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower",
+      "y": 270
+    },
+    "facing=west,half=lower,head=forward,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower",
+      "y": 270
+    },
+    "facing=west,half=lower,head=forward,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower",
+      "y": 270
+    },
+    "facing=west,half=lower,head=forward,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower",
+      "y": 270
+    },
+    "facing=west,half=lower,head=forward,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 270
+    },
+    "facing=west,half=lower,head=left,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower_left",
+      "y": 270
+    },
+    "facing=west,half=lower,head=left,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower_left",
+      "y": 270
+    },
+    "facing=west,half=lower,head=left,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower_left",
+      "y": 270
+    },
+    "facing=west,half=lower,head=left,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower_left",
+      "y": 270
+    },
+    "facing=west,half=lower,head=left,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 270
+    },
+    "facing=west,half=lower,head=right,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_lower_right",
+      "y": 270
+    },
+    "facing=west,half=lower,head=right,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_lower_right",
+      "y": 270
+    },
+    "facing=west,half=lower,head=right,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_lower_right",
+      "y": 270
+    },
+    "facing=west,half=lower,head=right,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_lower_right",
+      "y": 270
+    },
+    "facing=west,half=lower,head=right,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 270
+    },
+    "facing=west,half=upper,head=forward,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper",
+      "y": 270
+    },
+    "facing=west,half=upper,head=forward,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper",
+      "y": 270
+    },
+    "facing=west,half=upper,head=forward,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper",
+      "y": 270
+    },
+    "facing=west,half=upper,head=forward,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper",
+      "y": 270
+    },
+    "facing=west,half=upper,head=forward,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper",
+      "y": 270
+    },
+    "facing=west,half=upper,head=left,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper_left",
+      "y": 270
+    },
+    "facing=west,half=upper,head=left,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper_left",
+      "y": 270
+    },
+    "facing=west,half=upper,head=left,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper_left",
+      "y": 270
+    },
+    "facing=west,half=upper,head=left,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper",
+      "y": 270
+    },
+    "facing=west,half=upper,head=left,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper_left",
+      "y": 270
+    },
+    "facing=west,half=upper,head=right,pose=0": {
+      "model": "hemomancy:block/frozen_devotee_kneeling_upper_right",
+      "y": 270
+    },
+    "facing=west,half=upper,head=right,pose=1": {
+      "model": "hemomancy:block/frozen_devotee_bowed_upper_right",
+      "y": 270
+    },
+    "facing=west,half=upper,head=right,pose=2": {
+      "model": "hemomancy:block/frozen_devotee_reaching_upper_right",
+      "y": 270
+    },
+    "facing=west,half=upper,head=right,pose=3": {
+      "model": "hemomancy:block/frozen_devotee_prostrate_upper",
+      "y": 270
+    },
+    "facing=west,half=upper,head=right,pose=4": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper_right",
+      "y": 270
+    }
+  }
+}

@@ -42,13 +42,13 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ITEM_LIVING_TORCH_BREATH_LOOP = registerSoundEvent(
 			"item.living_torch.breath_loop");
 
-	// ===== Abhorent Thought (psychic nightmare) =====
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABHORENT_THOUGHT_AMBIENT = registerSoundEvent(
-			"entity.abhorent_thought.ambient");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABHORENT_THOUGHT_HURT = registerSoundEvent(
-			"entity.abhorent_thought.hurt");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABHORENT_THOUGHT_DEATH = registerSoundEvent(
-			"entity.abhorent_thought.death");
+	// ===== Abhorrent Thought (psychic nightmare) =====
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABHORRENT_THOUGHT_AMBIENT = registerSoundEvent(
+			"entity.abhorrent_thought.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABHORRENT_THOUGHT_HURT = registerSoundEvent(
+			"entity.abhorrent_thought.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABHORRENT_THOUGHT_DEATH = registerSoundEvent(
+			"entity.abhorrent_thought.death");
 
 	// ===== Animals =====
 
@@ -406,5 +406,18 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_AMBIENT_DRONE = registerSoundEvent("rite.ambient.drone");
 	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_AMBIENT_HEARTBEAT = registerSoundEvent("rite.ambient.heartbeat");
 	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_AMBIENT_STORM = registerSoundEvent("rite.ambient.storm");
+
+	// Mausoleum ambience. Hemorath's complex beats slower and louder the deeper the listener goes; both alias vanilla.
+	public static final DeferredHolder<SoundEvent, SoundEvent> MAUSOLEUM_HEMORATH_HEARTBEAT = registerSoundEvent("mausoleum.hemorath.heartbeat");
+	public static final DeferredHolder<SoundEvent, SoundEvent> MAUSOLEUM_HEMORATH_DRIP = registerSoundEvent("mausoleum.hemorath.drip");
+	// Seraphae's containment hums with a faint choir that swells as the listener goes down; her anchors tick.
+	public static final DeferredHolder<SoundEvent, SoundEvent> MAUSOLEUM_SERAPHAE_CHOIR = registerSoundEvent("mausoleum.seraphae.choir");
+	public static final DeferredHolder<SoundEvent, SoundEvent> MAUSOLEUM_SERAPHAE_ANCHOR_TICK = registerSoundEvent("mausoleum.seraphae.anchor_tick");
+	// Putriciel's halls crackle where they burned and creak wet where they rotted; far off, now and then, a pyre flares.
+	public static final DeferredHolder<SoundEvent, SoundEvent> MAUSOLEUM_PUTRICIEL_CRACKLE = registerSoundEvent("mausoleum.putriciel.crackle");
+	public static final DeferredHolder<SoundEvent, SoundEvent> MAUSOLEUM_PUTRICIEL_CREAK = registerSoundEvent("mausoleum.putriciel.creak");
+	public static final DeferredHolder<SoundEvent, SoundEvent> MAUSOLEUM_PUTRICIEL_FLARE = registerSoundEvent("mausoleum.putriciel.flare");
+	// Velorum's monastery is near silent: once in a long while the ice creaks somewhere in the walls.
+	public static final DeferredHolder<SoundEvent, SoundEvent> MAUSOLEUM_VELORUM_CREAK = registerSoundEvent("mausoleum.velorum.creak");
 
 }

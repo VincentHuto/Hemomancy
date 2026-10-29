@@ -63,6 +63,7 @@ src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTes
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/DrudgeActions.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationCombatHelper.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/unstained/PaleConsecrationEvents.java,java,base-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/world/GardensNetwork.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/compat/curios,java,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/compat/mna,java,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/CommonClientIsolationTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,helper
@@ -138,8 +139,11 @@ src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrai
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerStateSyncTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/manip/KnownManipulationEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerStateSyncTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/event/StationUpgradeEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/PrivateTestHelperRatchetTest.java,junit,src/test/java,other,exact-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/PutricielPresentationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/decoration/RotPyreRenderer.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/PutricielPresentationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/puzzle/PulsePylonRenderer.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/PutricielPresentationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/ManipulationMotes.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/PutricielPresentationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/ManipulationVisualRenderer.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/PutricielPresentationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/PyreFlames.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/PutricielPresentationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/boss/saint/putriciel/PutricielEntity.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/RecipeSerializerGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/recipe,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/RecipeSerializerGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/recipe/CopyBloodGourdRecipe.java,java,by-name
@@ -1153,6 +1157,12 @@ src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/StationT
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/StationTierPersistenceResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/HematicArmatureBlock.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/StationTierPersistenceResourceTest.java,junit,src/main/resources/assets/hemomancy/blockstates,resource,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/StationTierPersistenceResourceTest.java,junit,src/main/resources/data/hemomancy/loot_table/blocks,resource,exact-dir
+src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/PutricielFireResourceTest.java,junit,src/main/resources/assets/hemomancy/blockstates,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/PutricielFireResourceTest.java,junit,src/main/resources/assets/hemomancy/blockstates/pulse_pylon.json,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/PutricielFireResourceTest.java,junit,src/main/resources/assets/hemomancy/models,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/PutricielFireResourceTest.java,junit,src/main/resources/assets/hemomancy/models/block,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/PutricielFireResourceTest.java,junit,src/main/resources/assets/hemomancy/models/block/rot_pyre.json,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/puzzle/SarcophagusPaletteTest.java,junit,src/main/resources/assets/hemomancy/textures/block/saint_sarcophagus.png,resource,by-name
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierMountCallSitesSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy,java,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierMountCallSitesSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/entity/npc/SuccessionBrazierLabels.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierMountCallSitesSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/rite/IronBrazierRenderer.java,java,base-dir
@@ -1623,6 +1633,11 @@ src/test/java/com/vincenthuto/hemomancy/common/entity/mob/arthropod/VenomRibCent
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/arthropod/VenomRibCentipedeRulesTest.java,main,src/main/resources/assets/hemomancy/models/item,resource,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/arthropod/VenomRibCentipedeRulesTest.java,main,src/main/resources/data/hemomancy/neoforge/biome_modifier/add_venom_rib_centipede.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/arthropod/VenomRibCentipedeRulesTest.java,main,src/main/resources/data/hemomancy/tags/worldgen/biome/venom_rib_centipede_spawnlist.json,resource,exact
+src/test/java/com/vincenthuto/hemomancy/common/entity/mob/facsimile/FacsimileResourcesTest.java,junit,src/main/resources/assets/hemomancy/lang/en_us.json,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/entity/mob/facsimile/FacsimileResourcesTest.java,junit,src/main/resources/assets/hemomancy/textures/entity/facsimile,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/entity/mob/facsimile/FacsimileResourcesTest.java,junit,src/main/resources/data/hemomancy/blood_profiles,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/entity/mob/facsimile/FacsimileResourcesTest.java,junit,src/main/resources/data/hemomancy/loot_table/entities,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/entity/mob/facsimile/FacsimileResourcesTest.java,junit,src/main/resources/data/hemomancy/worldgen/biome/fungal_gardens.json,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/BloodDrunkPuppeteerBehaviorSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/entity/mob/monster/EnthralledDollRenderer.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/BloodDrunkPuppeteerBehaviorSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/world/PuppeteerThreadRenderer.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/BloodDrunkPuppeteerBehaviorSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/BloodDrunkPuppeteerEntity.java,java,exact
@@ -2176,6 +2191,9 @@ src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/HarbingerArmorText
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/HarbingerArmorTextureResourceTest.java,main,src/main/resources/data/hemomancy/recipe/monolith_imbued_cloth.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/MemoryOfVesperItemSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/RecipeInit.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/MemoryOfVesperItemSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/MemoryOfVesperItem.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/MorphicTonicRecipeResourceTest.java,junit,src/main/resources/assets/hemomancy/models/item/morphic_tonic.json,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/MorphicTonicRecipeResourceTest.java,junit,src/main/resources/assets/hemomancy/textures/item/morphic_tonic.png,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/MorphicTonicRecipeResourceTest.java,junit,src/main/resources/data/hemomancy/recipe/morphic_nectar/bloody_jug_to_morphic_tonic.json,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/OrbOfPerspectiveResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/ChamberOfWillEvents.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/OrbOfPerspectiveResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/OrbOfPerspectiveResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/OrbOfPerspectiveItem.java,java,exact
@@ -3092,6 +3110,7 @@ src/test/java/com/vincenthuto/hemomancy/common/recipe/PuppeteerCardinalOrdealRes
 src/test/java/com/vincenthuto/hemomancy/common/recipe/PuppeteerCardinalOrdealResourceTest.java,junit,src/main/resources/assets/hemomancy/textures/item,resource,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/recipe/PuppeteerCardinalOrdealResourceTest.java,junit,src/main/resources/data/hemomancy/recipe,resource,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/recipe/PuppeteerCardinalOrdealResourceTest.java,junit,tools/skill_tree_editor/src/server/recipeMapParser.ts,tool,exact
+src/test/java/com/vincenthuto/hemomancy/common/recipe/RenderingRecipeResourceTest.java,junit,src/main/resources/data/hemomancy/recipe/rendering,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/recipe/ScarRecipeTierMetadataTest.java,junit,src/main/resources/data/hemomancy/recipe/scar,resource,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/recipe/WorkingCraftPlayerCopyTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsData.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/recipe/WorkingCraftPlayerCopyTest.java,junit,src/main/resources/assets/hemomancy/lang/en_us.json,resource,exact
@@ -3197,6 +3216,7 @@ src/test/java/com/vincenthuto/hemomancy/common/rite/ArchonPathRiteSourceTest.jav
 src/test/java/com/vincenthuto/hemomancy/common/rite/ArchonPathRiteSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/VicarDialogueEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/common/rite/ArchonPathRiteSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/VoyagerDialogueEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/common/rite/ArchonPathRiteSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/ZealotDialogueEvents.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/common/rite/ArchonPathRiteSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/rite/ArchonPathRiteSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingSicklePruning.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/rite/ArchonPathRiteSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/rite/ArchonPathRiteSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java,java,exact
@@ -3322,6 +3342,8 @@ src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.
 src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.java,junit,src/main/resources/hemomancy.mixins.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/util/SpecimenJarDataRulesTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/SpecimenJarBlock.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/util/SpecimenJarDataRulesTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tile/functional/SpecimenJarData.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/common/world/GardensNetworkRespondersTagTest.java,junit,src/main/resources/data/hemomancy/tags/entity_type/gardens_network_responders.json,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/world/HeartNodeSavedDataTest.java,junit,src/main/resources/data/minecraft/tags/block,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/world/fold/FoldTransformTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/world/fold/FoldedHallwayManager.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/world/fold/FoldTransformTest.java,main,src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinEntity.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/world/fold/NonEuclideanHallwayPlacementSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/decoration/NonEuclideanHallwayBlock.java,java,exact
@@ -3349,6 +3371,8 @@ src/test/java/com/vincenthuto/hemomancy/common/worldgen/FungalGardensTerrainCohe
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/FungalGardensTerrainCoherenceTest.java,junit,src/main/resources/data/hemomancy/worldgen/density_function/fungal/ridges.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/FungalGardensTerrainCoherenceTest.java,junit,src/main/resources/data/hemomancy/worldgen/density_function/fungal/temperature.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/InfestedVenousStoneModelTest.java,junit,src/main/resources/assets/hemomancy/blockstates/infested_venous_stone.json,resource,exact
+src/test/java/com/vincenthuto/hemomancy/common/worldgen/MausoleumComplexResourceTest.java,junit,src/main/resources/data/hemomancy/worldgen/template_pool/mausoleum,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/worldgen/MausoleumLayout.java,none,src/main/resources/data/hemomancy/worldgen/template_pool,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/NaeglerophaeonResourcesTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/endgame/NaeglerophaeonBlockModel.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/NaeglerophaeonResourcesTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/worldgen/NaeglerophaeonResourcesTest.java,junit,src/main/resources/assets/hemomancy/entity_geometry/naeglerophaeon_cube_geometry.json,resource,exact

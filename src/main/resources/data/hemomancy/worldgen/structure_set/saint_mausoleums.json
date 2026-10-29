@@ -1,0 +1,26 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:mausoleum_hemorath",
+      "weight": 1
+    },
+    {
+      "structure": "hemomancy:mausoleum_seraphae",
+      "weight": 1
+    },
+    {
+      "structure": "hemomancy:mausoleum_putriciel",
+      "weight": 1
+    },
+    {
+      "structure": "hemomancy:mausoleum_velorum",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 40,
+    "separation": 12,
+    "salt": 581274903
+  }
+}

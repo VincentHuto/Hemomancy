@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "hemomancy:hallowed_residuum_fragment_putriciel"
+    },
+    {
+      "item": "hemomancy:hallowed_residuum_fragment_putriciel"
+    },
+    {
+      "item": "hemomancy:hallowed_residuum_fragment_putriciel"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:hallowed_residuum_putriciel",
+    "count": 1
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "hemomancy:bone_bricks"
+  },
+  "result": {
+    "id": "hemomancy:bone_brick_wall",
+    "count": 1
+  }
+}

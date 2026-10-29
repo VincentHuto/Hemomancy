@@ -1,0 +1,14 @@
+{
+  "type": "hemomancy:rendering",
+  "input": {
+    "item": "minecraft:spider_eye"
+  },
+  "results": [
+    {
+      "id": "hemomancy:neurotic_enzyme",
+      "count": 1,
+      "chance": 0.5
+    }
+  ],
+  "render_time": 100
+}

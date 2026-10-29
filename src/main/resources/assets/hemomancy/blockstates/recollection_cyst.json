@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "saint=0": {
+      "model": "hemomancy:block/recollection_cyst_0"
+    },
+    "saint=1": {
+      "model": "hemomancy:block/recollection_cyst_1"
+    },
+    "saint=2": {
+      "model": "hemomancy:block/recollection_cyst_2"
+    },
+    "saint=3": {
+      "model": "hemomancy:block/recollection_cyst_3"
+    }
+  }
+}

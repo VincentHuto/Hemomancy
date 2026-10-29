@@ -1,0 +1,544 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_centre"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "north": "true",
+            "south": "false"
+          },
+          {
+            "north": "false",
+            "south": "true"
+          },
+          {
+            "east": "true",
+            "west": "false"
+          },
+          {
+            "east": "false",
+            "west": "true"
+          },
+          {
+            "north": "true",
+            "east": "true",
+            "south": "true",
+            "west": "true"
+          },
+          {
+            "north": "false",
+            "east": "false",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_sump"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "south": "true",
+        "east": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_straight_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "south": "false",
+        "east": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_straight_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_arm_north"
+      }
+    },
+    {
+      "when": {
+        "north": "false"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_side_north"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_arm_east"
+      }
+    },
+    {
+      "when": {
+        "east": "false"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_side_east"
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_arm_south"
+      }
+    },
+    {
+      "when": {
+        "south": "false"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_side_south"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_arm_west"
+      }
+    },
+    {
+      "when": {
+        "west": "false"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_side_west"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "north": "true",
+            "south": "false",
+            "fill": "0"
+          },
+          {
+            "north": "false",
+            "south": "true",
+            "fill": "0"
+          },
+          {
+            "east": "true",
+            "west": "false",
+            "fill": "0"
+          },
+          {
+            "east": "false",
+            "west": "true",
+            "fill": "0"
+          },
+          {
+            "north": "true",
+            "east": "true",
+            "south": "true",
+            "west": "true",
+            "fill": "0"
+          },
+          {
+            "north": "false",
+            "east": "false",
+            "south": "false",
+            "west": "false",
+            "fill": "0"
+          }
+        ]
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill0_sump"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "south": "true",
+        "east": "false",
+        "west": "false",
+        "fill": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill0_straight_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "south": "false",
+        "east": "true",
+        "west": "true",
+        "fill": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill0_straight_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "fill": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill0_north"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "fill": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill0_east"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "fill": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill0_south"
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "fill": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill0_west"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "north": "true",
+            "south": "false",
+            "fill": "1"
+          },
+          {
+            "north": "false",
+            "south": "true",
+            "fill": "1"
+          },
+          {
+            "east": "true",
+            "west": "false",
+            "fill": "1"
+          },
+          {
+            "east": "false",
+            "west": "true",
+            "fill": "1"
+          },
+          {
+            "north": "true",
+            "east": "true",
+            "south": "true",
+            "west": "true",
+            "fill": "1"
+          },
+          {
+            "north": "false",
+            "east": "false",
+            "south": "false",
+            "west": "false",
+            "fill": "1"
+          }
+        ]
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill1_sump"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "south": "true",
+        "east": "false",
+        "west": "false",
+        "fill": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill1_straight_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "south": "false",
+        "east": "true",
+        "west": "true",
+        "fill": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill1_straight_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "fill": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill1_north"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "fill": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill1_east"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "fill": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill1_south"
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "fill": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill1_west"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "north": "true",
+            "south": "false",
+            "fill": "2"
+          },
+          {
+            "north": "false",
+            "south": "true",
+            "fill": "2"
+          },
+          {
+            "east": "true",
+            "west": "false",
+            "fill": "2"
+          },
+          {
+            "east": "false",
+            "west": "true",
+            "fill": "2"
+          },
+          {
+            "north": "true",
+            "east": "true",
+            "south": "true",
+            "west": "true",
+            "fill": "2"
+          },
+          {
+            "north": "false",
+            "east": "false",
+            "south": "false",
+            "west": "false",
+            "fill": "2"
+          }
+        ]
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill2_sump"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "south": "true",
+        "east": "false",
+        "west": "false",
+        "fill": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill2_straight_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "south": "false",
+        "east": "true",
+        "west": "true",
+        "fill": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill2_straight_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "fill": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill2_north"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "fill": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill2_east"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "fill": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill2_south"
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "fill": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill2_west"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "north": "true",
+            "south": "false",
+            "fill": "3"
+          },
+          {
+            "north": "false",
+            "south": "true",
+            "fill": "3"
+          },
+          {
+            "east": "true",
+            "west": "false",
+            "fill": "3"
+          },
+          {
+            "east": "false",
+            "west": "true",
+            "fill": "3"
+          },
+          {
+            "north": "true",
+            "east": "true",
+            "south": "true",
+            "west": "true",
+            "fill": "3"
+          },
+          {
+            "north": "false",
+            "east": "false",
+            "south": "false",
+            "west": "false",
+            "fill": "3"
+          }
+        ]
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill3_sump"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "south": "true",
+        "east": "false",
+        "west": "false",
+        "fill": "3"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill3_straight_ns"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "south": "false",
+        "east": "true",
+        "west": "true",
+        "fill": "3"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill3_straight_ew"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "fill": "3"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill3_north"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "fill": "3"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill3_east"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "fill": "3"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill3_south"
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "fill": "3"
+      },
+      "apply": {
+        "model": "hemomancy:block/blood_gutter_fill3_west"
+      }
+    }
+  ]
+}

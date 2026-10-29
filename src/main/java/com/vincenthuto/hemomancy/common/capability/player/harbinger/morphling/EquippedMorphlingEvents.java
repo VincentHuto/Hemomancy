@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling;
 
+import com.vincenthuto.hemomancy.common.event.ApotheosBodyEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.spore.ApotheosBodyRules;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -94,8 +96,8 @@ public class EquippedMorphlingEvents {
 			if (morphCap.hasMorphling()) MorphlingCombat.tick(morphling, player, equippedStack);
 			return;
 		}
-		boolean symbiotic = SkillPointHelper.isTechniqueEnabled(player,
-				SkillPointInit.skill_symbiotic_metabolism);
+		boolean symbiotic = ApotheosBodyRules.symbioticSplit(SkillPointHelper.isTechniqueEnabled(player,
+				SkillPointInit.skill_symbiotic_metabolism), ApotheosBodyEvents.isApotheos(player));
 		boolean starving = MorphlingItem.hungerState(equippedStack, player.level().getGameTime())
 				== com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingHungerRules.HungerState.STARVING;
 		MorphlingMetabolismRules.Upkeep metabolic = MorphlingMetabolismRules.splitUpkeep(symbiotic,

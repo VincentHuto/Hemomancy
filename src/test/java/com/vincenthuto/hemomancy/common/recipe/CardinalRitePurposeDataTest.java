@@ -45,7 +45,8 @@ final class CardinalRitePurposeDataTest {
 			Map.entry("druse_crystallization", "making"),
 			Map.entry("bloodline_founding", "bond"), Map.entry("bloodline_recall", "bond"),
 			Map.entry("hematic_unbinding", "bond"), Map.entry("scarlet_summons", "bond"),
-			Map.entry("covenant_vigil", "bond"), Map.entry("ancestral_communion", "bond"));
+			Map.entry("covenant_vigil", "bond"), Map.entry("ancestral_communion", "bond"),
+			Map.entry("possession_rite", "bond"), Map.entry("visitation_rite", "bond"));
 	private static final Set<String> SPECIAL = Set.of("apotheos_rite", "bloom_of_qliphoth", "ancestral_communion");
 
 	@Test

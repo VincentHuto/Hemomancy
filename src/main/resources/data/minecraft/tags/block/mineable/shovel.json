@@ -5,6 +5,8 @@
     "hemomancy:erythrocytic_dirt",
     "hemomancy:erythrocytic_mycelium",
     "hemomancy:mycelium_erythrocytic_dirt",
-    "hemomancy:myelin_sheath"
+    "hemomancy:myelin_sheath",
+    "hemomancy:packed_ash",
+    "hemomancy:sodden_mud_bricks"
   ]
 }

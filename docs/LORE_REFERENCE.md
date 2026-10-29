@@ -31,18 +31,20 @@ The following settled facts are non-negotiable consistency anchors:
 - Annetta's canonical creature is the Tooth Peck. Tooth Pecks seek active infection, but Annetta never understands what they detect in her. Chthonians remain a separate termite ecology and have no role in the encounter.
 - Verdigris Aura is the early Purity defense; Silver Ward is its advanced Clarity form.
 - The ninth and final Qliphoth Pome grants the Fungal Spine. The first Fungal Spine visit is a two-minute consciousness projection: the player can move and run but has no accessible items or armor, and an accelerating red vignette warns of forced return to the physical body.
-- After that forced return, the Rite of Pruning leaves the player at Degree 7 as a Silent Archon, while the Rite of Apotheosis alone advances the player to Degree 8 Apotheos.
+- After that forced return, the eighth Degree splits into two equal ends. The Rite of Apotheosis makes the player Degree 8 Apotheos. The Rite of Pruning, victory over Vesper and absorbing his memory make the player Degree 8 Silentium (colloquially, a silent archon).
 - The ordinary Unstained cure closes when a Harbinger founds a bloodline. Reaching Degree 5 or joining another bloodline does not close it. Defeating the infection unleashed by Annetta's fatal Harbinger encounter unlocks an exceptional severance route for a founder.
 - A bloodline is founded only by the Degree-5 Bloodline Founding rite. An Unsigned Ledger records or joins a covenant; it does not create one by itself.
 - Pale Silver is refined only from Consecrated Copper. It is never a natural metal and is never refined directly from iron.
 - The Saints' tendency pairs are fixed: Hemorath is Animus and Ferric, Seraphae is Lux and Ductilis, Putriciel is Mortem and Flammeus, and Velorum is Congeatio and Tenebris. Every Canon Memory takes its Saint's pair.
-- Hemorath is the first Harbinger, not one of the Order's Archons. No Saint can be killed: every encounter returns the Saint to its tomb.
+- Hemorath was one of the first and most powerful Hemomancers, but never a true Harbinger and never one of the Order's Archons. Erythravane was the first Vicar and the first Archon. No Saint can be killed: every encounter returns the Saint to its tomb.
+- Degree 7 is Archon for everyone, a full stage rather than a stepping stone. The Fungal Gardens dimension is reached in the body only by an Apotheos, by a Silentium only through possession, and by a Degree-7 Archon only once, in the first forced projection.
+- **Severance** is the player's own act: cutting their Qliphoth tree in the Rite of Pruning. It is an ego death and a cut with the hive, not a place.
 - Eight canonical Morphling strains are implemented. Older references to twelve describe superseded prototypes.
 
 > **Current Lore-State Snapshot (2026-10-03 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - **Memory Weaving now reads as a physical Somatic Loom rite:** blank Hematic Memories, catalyst patterns, enzyme-dye reservoirs, projected blood, and an engram of recalled fragments threaded home all make refined manipulation learning feel like wrestling dormant biology into a chosen shape rather than selecting a recipe from a menu.
-> - Qliphoth Communion now has a clearer in-game rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and a Silent Archon's Living Arsenal must become the sickle that wounds it.
+> - Qliphoth Communion now has a clearer in-game rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and an Archon who chooses silence must turn their Living Arsenal into the sickle that wounds it.
 > - Blood Moons now visibly match their lore state in the sky: the red lunar face and fungal-vein overlay express a fungal surge, while pale effects represent the Lady's containment response.
 > - **The Chamber of Will is now the Degree 6 inward refuge:** not the external Fungal Dimension, but a private blood-memory chamber whose space and sky react to Archon, Qliphoth, Silent Archon, and Apotheos progression.
 > - **Vesper and The Mycophant now have implemented endgame encounters:** Vesper is the two-phase boss for Archons who refuse fungal dissolution, while The Mycophant stalks Apotheos-aligned Harbingers through the Fungal Gardens before claiming them for the Morphic Nursery.
@@ -128,7 +130,11 @@ At Archon (Degree 7), consuming the ninth and final Qliphoth Pome causes a **Fun
 
 ### 3.1 What It Is
 
-The player is **not physically transported**. Their body remains in the world. What happens is closer to an **astral projection** or a forced expansion of consciousness — the fungal infection within them is now advanced enough to let them perceive the Entity's local "surface." They have no body in this place. If they look down, there is nothing there.
+The Fungal Gardens are a **projection**. The higher-dimensional Entity (§2.1) is reaching down into real space, and the dimension is the three-dimensional shape of that touch, cast into the space above the player's world. The dimension does not contain the being. It is the being's cross-section where it meets ours, which is why the world and moon hang in its sky. The Overworld's Fungal Gardens biome is a different place: an infection zone on the ground that anyone can walk.
+
+On the first visit the player is **not physically transported**. Their body remains in the world. What happens is closer to an **astral projection** or a forced expansion of consciousness — the fungal infection within them is now advanced enough to let them perceive the Entity's local "surface." They have no body in this place. If they look down, there is nothing there.
+
+That first projection is the only visit a Degree-7 Archon ever makes. Afterwards the paths part. An **Apotheos** travels in the flesh, at will, through the Spine or a Fungal Podium: the Gardens treat that body as part of the organism. A **Silentium** never goes bodily. They force their will into one of the Gardens' own facsimiles through the Rite of Possession and are thrown out, Mind Broken, if the organism breaks their concentration. Unstained and unaligned players never enter.
 
 What they encounter:
 - A vast **spherical mass of flesh, meat, and pulsing biology**
@@ -136,6 +142,7 @@ What they encounter:
 - A low, uneven living floor where exposed hemorrhagic crust has grown over with erythrocytic soil, calcified hyphae, and mycelial mats rather than lying as bare stone
 - Bulb-nodes on the tendrils that eventually break off like seeds, falling back toward the world as spores
 - Alien, bizarre creatures that exist nowhere else — beings that are not infected Earth-life but genuinely alien life forms native to the Entity's substrate
+- **Facsimiles**: the organism's own attempts to rebuild the Earth creatures it consumed (bats, wolves, golems and more), gotten grossly wrong. They are not infected animals either. The hive keeps what it digests, and "studies" is the closest human word for what it does with it; its reasons are not human reasons.
 - **Constant Fungal Whispers**, nearly harassing in frequency, saying things like *"This is what you wanted. This is what you were working toward. Is it not?"*
 
 Everything here is hostile, even to an Archon. The player is a babe in the woods.
@@ -144,7 +151,7 @@ Everything here is hostile, even to an Archon. The player is a babe in the woods
 
 The first visit lasts roughly two minutes. The projection can move and run, but carries no accessible inventory, armor, or physical equipment. An increasingly rapid red vignette is the body's warning; when time expires, consciousness is forced back without item loss. Later visits use the Spine as a normal return-thread after the player has answered the revelation.
 
-Upon forced return, the player faces a choice: reject the Bloom directly with the Living Sickle and remain Degree 7 as a **Silent Archon**, or perform the **Rite of Apotheosis** to pursue Degree 8 **Apotheos**. This choice is the mod's deepest opt-in.
+Upon forced return, the player faces a choice between two equal ends of the eighth Degree. They can perform the **Rite of Apotheosis** and become **Apotheos**, letting the hivemind in. Or they can choose silence: cut their own Bloom with the Living Sickle in the **Rite of Pruning**, defeat Vesper, and take the Memory of Vesper in by force to become **Silentium** (colloquially, a silent archon). Both ascend by taking something in. This choice is the mod's deepest opt-in.
 
 ### 3.3 Transcendence (Late/DLC Content)
 
@@ -303,7 +310,7 @@ Most Harbingers — most outposts, most individual groups — only ever reach **
 | 5 | Illuminatus of the Crimson Lodge |
 | 6 | Sanctified of the Bloodline Covenant |
 | 7 | Archon of the Hematic Order |
-| — | (The Silence — no formal title) |
+| 8 | Apotheos of the Hematic Order, or Silentium of the Hematic Order (two equal ends) |
 
 ### 6.4a Degree Themes
 
@@ -317,14 +324,14 @@ The Alchemist's First Separation then earns Concentrated Blood. Injected directl
 **Gameplay:** Blood as a living resource. The Vicar teaches Blood Absorption and Blood Projection at this stage: fill the vessel, then spend stored blood into blood-structure recipes. The first Neophyte assignment asks the player to carry 5000 ml, project blood into a Liber Sanguinium, and harden a Hematic Iron Block. The **Vial Centrifuge** is introduced as the first blood-processing station, separating sampled vials into tendency enzymes and storing 250 mL of blood per completed spin. First Humilis-rank blood manipulations become unlockable. Core loop: fill blood, spend blood, craft with projection, cast manipulations.
 
 #### VOTARY 2 — *of the Hematic Covenant*
-**Lore:** A Votary has taken a vow — not to the Order as an institution but to the Covenant as a compact between practitioners. The difference between someone who was bitten and someone who *chose to stay bitten*. The Vicar introduces the eight blood tendencies: Animus/Vivacious, Flammeus/Fervent, Ductilis/Neurotic, Lux/Incandescent, Mortem/Ruinous, Congeatio/Frigid, Ferric, and Tenebris/Umbral. The Fungal Podium may be encountered as an unreadable Lodge apparatus, but it cannot open the Fungal Gardens until a Degree-7 Archon has received the ninth-pome Fungal Spine.
+**Lore:** A Votary has taken a vow — not to the Order as an institution but to the Covenant as a compact between practitioners. The difference between someone who was bitten and someone who *chose to stay bitten*. The Vicar introduces the eight blood tendencies: Animus/Vivacious, Flammeus/Fervent, Ductilis/Neurotic, Lux/Incandescent, Mortem/Ruinous, Congeatio/Frigid, Ferric, and Tenebris/Umbral. The Fungal Podium may be encountered as an unreadable Lodge apparatus, but it carries no one into the Fungal Gardens except an Apotheos, long after the ninth-pome Fungal Spine.
 
 **Gameplay:** The **Ghastly Alembic** and the wider tendency system become available. Players distill organic inputs into concentrated alchemical compounds while continuing the Living Syringe + Vial Rack workflow. The Alchemist's D2 work now runs on two formal tracks: Red Taxonomy field specimens and the Eightfold Centrifuge enzyme record, which asks the player to obtain all eight enzyme expressions without consuming them. A quieter Living Bestiary runs alongside those assignments: specimen jars can bring Hemomancy fauna, including wild Morphling Polyps, to the Alchemist for record-and-return study or surrender. Captured polyps introduce morphling layer families early through wild-bound morphlings, while the Degree 5 Incubator remains the full cultivation path. Tendency alignment scores begin shifting toward chosen affinities. The Blood Tendency UI is fully revealed. Humilis and Mediocritas manipulations from the chosen tendency line become craftable. More involved blood-structure crafting continues to open from here: Basic-tier multiblock patterns are available early, Advanced patterns unlock at Degree 4 (Adept), and Grand-tier patterns requiring sustained Blood Conduit flow unlock at Degree 5 (Illuminatus).
 
 #### INITIATE 3 — *of the Incarnadine Fane*
-**Lore:** The Incarnadine Fane was founded by Archon Erythravane in the Second Age — the first organized gathering of hemomancers, predating the current Order's structure. Becoming an Initiate means joining a lineage centuries old. The Vicar reveals the Fane's founding and the person of Erythravane. This is when the player first understands they are not discovering a novelty — they are inheriting a tradition. The Vicar also directs them toward the ancient Saints.
+**Lore:** The Incarnadine Fane was founded by Archon Erythravane in the Second Age — the first organized gathering of hemomancers, predating the current Order's structure. Erythravane was the first Vicar as well as the first Archon; every Vicar since holds the office Erythravane first held. Becoming an Initiate means joining a lineage centuries old. The Vicar reveals the Fane's founding and the person of Erythravane. This is when the player first understands they are not discovering a novelty — they are inheriting a tradition. The Vicar also directs them toward the Saints' mausoleums, whose outer halls an Initiate can already walk.
 
-**Gameplay:** The **Somatic Loom** (memory weaving) becomes fully active. The Saints system opens: players seek entombed Saints in their sarcophagi (dedicated trial chambers are planned), extract Hallowed Residuum via Consecrated Syringe + Centrifuge, then use it in the Loom with a blank Hematic Memory, stored tendency enzymes, projected blood, and Engram Weaving at the loom to unlock **Canon Memories** — SUMMA-rank manipulations unique to each Saint's blood legacy.
+**Gameplay:** The **Somatic Loom** (memory weaving) becomes fully active. The Saints system opens: players explore the outer halls of the Saints' mausoleums, whose trials and loot open from about Degree 3–4, while the ward past the threshold, the Chapels and the Saint itself wait for Degree 8. Players extract Hallowed Residuum via Consecrated Syringe + Centrifuge, then use it in the Loom with a blank Hematic Memory, stored tendency enzymes, projected blood, and Engram Weaving at the loom to unlock **Canon Memories** — SUMMA-rank manipulations unique to each Saint's blood legacy.
 
 #### ADEPT 4 — *of the Sanguine Brotherhood*
 **Lore:** The Sanguine Brotherhood arose during a time of war, when Harbingers began sharing blood pools to sustain each other in battle — the earliest form of the Bloodline system. An Adept has moved beyond solo practice into understanding blood as communal inheritance. Simultaneously, the first **Fungal Whispers** begin — subliminal and barely perceptible. Just seeds of doubt.
@@ -344,12 +351,18 @@ The Alchemist's First Separation then earns Concentrated Blood. Injected directl
 #### ARCHON 7 — *of the Hematic Order*
 **Lore:** The Archon is told what no one below this degree ever hears: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* The Fungal Whispers deliver the complete revelation: the Order was never a human institution. Every degree was a stage of sporulation. The Vicar kneels. And then, quietly: the Sanguine Monolith begins to feel wrong. Hollow. Like something has been waiting inside it.
 
-**Gameplay:** **Qliphoth Communion** — the endgame sequence. Shatter the Sanguine Monolith; perform the Bloom of the Qliphoth rite; collect and eat all nine Qliphoth Pomes; choose Silence; reshape any base Living Weapon into the temporary sickle and cut the Bloom open. Completing Communion also unlocks the Apotheos rite choice. **Fungal Scars** are implemented as a fourth scar family through Mycelial Crucible cultivation rather than the older Fungal Gardens harvesting plan; they alter the player's relationship to the mycelial network rather than deepening tendency alignment. Deeper Apotheos-tier fungal scar concepts remain planned design space.
+The Vicar's line now reads straight rather than ironically. Silentium is an eighth Degree, and the Hush that the Apotheosis floor rehearses is the other. The Vicar does not say which silence he means.
 
-#### APOTHEOS 8 — *of the Hematic Order*
-**Lore:** Not an ascension to godhood — a *completion of the sporulation cycle*. Apotheosis is chosen only after the ninth Pome has produced the Spine and the first temporary projection has returned the player to their body.
+Every Degree-7 player is an Archon, and Archon is a full stage with its own work, not a waiting room for the eighth.
 
-**Gameplay:** The first Spine use is a forced two-minute projection with no accessible equipment and an accelerating red vignette. The choice opens after automatic return. Pruning establishes Silent Archon at Degree 7; Apotheosis alone advances to Degree 8.
+**Gameplay:** **Qliphoth Communion** — the endgame sequence. Shatter the Sanguine Monolith; perform the Bloom of the Qliphoth rite; collect and eat all nine Qliphoth Pomes, the ninth of which tears the Fungal Spine free; endure the first forced projection; then choose. Choosing Silence leads to the Rite of Pruning: reshape any base Living Weapon into the temporary sickle and cut the Bloom open. Choosing the eighth Degree opens the Rite of Apotheosis. **Fungal Scars** are implemented as a fourth scar family through Mycelial Crucible cultivation rather than the older Fungal Gardens harvesting plan; they alter the player's relationship to the mycelial network rather than deepening tendency alignment. Deeper Apotheos-tier fungal scar concepts remain planned design space.
+
+#### APOTHEOS 8 or SILENTIUM 8 — *of the Hematic Order*
+**Lore:** The eighth Degree has two equal ends, and both are chosen only after the ninth Pome has produced the Spine and the first temporary projection has returned the player to their body. Apotheosis is not an ascension to godhood — it is a *completion of the sporulation cycle*: the Apotheos lets the hivemind in. Silentium is the opposite act. The Archon cuts their own Qliphoth tree, the antenna that tied them to the hive, then takes Vesper's memory in by force. Both ascend by taking something in.
+
+Each end has a home. The Fungal Gardens are the Apotheos's: they walk there in the body and the organism treats them as its own. The Saints' mausoleums are the Silentium's: the Saints' residue tolerates a will that has cut its antenna, and only a Silentium can wake a Saint properly. Each can trespass into the other's home at a cost. The choice decides where a player belongs, not what they may see.
+
+**Gameplay:** The first Spine use is a forced two-minute projection with no accessible equipment and an accelerating red vignette. The choice opens after automatic return. Pruning, Vesper's defeat and the absorption of his memory make a Silentium; Apotheosis makes an Apotheos. Both are Degree 8.
 
 ### 6.4b Endgame Bosses: Refusal and Fruiting
 
@@ -385,9 +398,9 @@ All station upgrades share the same Cardinal ritual grammar: offerings, anchors,
 
 The ladder is a degree ladder with sidegrade forks. Hematic Iron is the first chosen shell: iron taught to carry blood. Barbed, Chitinite, and Prismatic armor are the Initiate's animal-tier answers to danger: venomous retaliation, ferric shelter, and blinding display. Each should feel like a blended ecology rather than a costume from one creature. Barbed borrows from urchin, centipede, and Desiccant; the Desiccant contribution is the Telson, a sting-bulb that swells red while drinking blood. Chitinite borrows from chitinites, Chthonians, and Chalybeate Snails; Prismatic borrows from Prism Cuttle, Lantern Ticks, and Blood Drunk Puppeteers. Blood Lust is the Crimson Lodge's combat vestment, but it is controlled hunger rather than mindless berserker rage. Its masks are small vows and martial tells, not separate doctrines.
 
-Silent Archon Vestments are different. They are cloth and armor mixed after the Archon refuses Apotheos, made with Monolith Imbued Cloth and the memory-burden of the shattered Crimson Lodestone. Their theme is refusal that still costs blood: survival through discipline, not transcendence. They should never read as the "good" end of the Harbinger path, only as a human-scaled way to continue carrying the infection without surrendering wholly to it.
+Silent Archon Vestments are different. They are cloth and armor mixed once the Archon's refusal of Apotheos has ended in Silentium, made with Monolith Imbued Cloth and the memory-burden of the shattered Crimson Lodestone. Their theme is refusal that still costs blood: survival through discipline, not transcendence. They should never read as the "good" end of the Harbinger path, only as a human-scaled way to continue carrying the infection without surrendering wholly to it.
 
-The Silent Archon route exists because refusing Apotheos is not ignorance or simple fear. The Archon has witnessed the fungal revelation and either cannot speak of it, is cursed into silence by it, or chooses exile rather than becoming another mouth of the hive. "Silent" names the madness, restraint, and refusal that follow the truth. The monolith-themed gear should make that refusal visible: the Monolith is a reflection of the player's will, and wrapping the body in its shattered remnants means the player has become their own fixed will through the ultimate rejection of the revelation. Their blood still works, but by sheer will rather than obedience; at this point the Harbinger's selfhood is strong enough to overpower even the influence of the fungal source.
+The Silent Archon route, which ends at the eighth Degree in Silentium, exists because refusing Apotheos is not ignorance or simple fear. The Archon has witnessed the fungal revelation and either cannot speak of it, is cursed into silence by it, or chooses exile rather than becoming another mouth of the hive. "Silent" names the madness, restraint, and refusal that follow the truth. The monolith-themed gear should make that refusal visible: the Monolith is a reflection of the player's will, and wrapping the body in its shattered remnants means the player has become their own fixed will through the ultimate rejection of the revelation. Their blood still works, but by sheer will rather than obedience; at this point the Harbinger's selfhood is strong enough to overpower even the influence of the fungal source.
 
 The curse of silence should remain deliberately ambiguous. It may be self-imposed discipline, trauma, exile, madness, or a final kick in the teeth from the hive mind, but the result is the same: no one who reaches the truth can verbally speak it plainly to those below them. This is one reason the Harbingers can still exist and recruit without the whole Order collapsing under forewarning. Most Harbingers never reach Degree 5 and found a bloodline as a Vicar-level practitioner, let alone Degree 6 or higher. By the end of Degree 6 and the beginning of Degree 7, the player is already approaching the scale of a Harbinger Saint; beyond that, they are a living myth. Silent Archons cannot tell the warning, and Apotheos bodies no longer resemble ordinary Harbingers or meaningfully interact with mere mortals.
 
@@ -427,8 +440,8 @@ In the Silent Archon state, the chamber should feel less like a living vascular 
 
 From the Harbinger Vicar's lore branches:
 
-- The **Incarnadine Fane** was founded by **Archon Erythravane** in the Second Age — the first organized gathering of Hemomancers.
-- **Hemorath**, the first Harbinger, came before both the Fane and the Order's structure. The Order inherited his tomb, and the tombs of the three later Saints, from the people who sealed them (§10).
+- The **Incarnadine Fane** was founded by **Archon Erythravane** in the Second Age — the first organized gathering of Hemomancers. Erythravane was the first Vicar and the first Archon.
+- **Hemorath**, one of the first and most powerful Hemomancers, came before both the Fane and the Order's structure and was never a true Harbinger. His successors and students feared they would be lost to bloodlust as he was, and that fear shaped the tradition Erythravane later organised into the Hematic Order. The Order inherited his tomb, and the tombs of the three later Saints, from the people who sealed them (§10).
 - The **Sanguine Brotherhood** arose during a time of war, when Harbingers began sharing blood pools to sustain each other in battle — the origin of the Bloodline system.
 - The **Crimson Lodge** documented the link between hemomancy and the mycelial network. This knowledge was kept secret — considered something that must be "arrived at independently" to be understood correctly.
 - The **Hematic Order** itself is described by the Vicar not as a rank, but as a state of being, where "the blood becomes indistinguishable from the blood of the world."
@@ -606,7 +619,13 @@ The Saints are ancient hemomancers whose gifts carried their bodies past ordinar
 
 There are **four Saints**: Hemorath, Seraphae, Putriciel and Velorum. They are not randomly assigned. A sarcophagus holds the Saint it was made for, and an unassigned sarcophagus stays inert until a Saint relic names its occupant.
 
-**How they are found.** The Vicar directs Initiates toward the Saints around **Degree 3–4** (§6.4a), when they are strong enough to attempt the trials, and the Sanguine Monolith points Adepts toward the Sainted Mausoleums. Each Saint is planned to get a dedicated trial chamber of its own. Only one generic mausoleum exists today (entrance stair, antechamber, trial room, sarcophagus room and treasure room), and it does not generate: its biome tag is empty. Until the per-Saint chambers are built, Saint encounters are reached through the WIP development surface.
+**How they are found.** Each Saint rests in its own mausoleum complex, built to that Saint's palette and history. The Vicar directs Initiates toward the Saints around **Degree 3–4** (§6.4a), and the Sanguine Monolith points Adepts toward the Sainted Mausoleums, but what that sends them to is the outer halls: the entrance, the antechamber and the outer trial chambers with their early loot. A ward across the threshold turns back anyone below Degree 8. Beyond it lie three Chapels, the ring door and the Saint's own chamber. The Saint fights are Degree-8 content. The older generic mausoleum stays in the data but no longer generates.
+
+**Walking the life backwards.** A complex is read from the Saint's rest back toward who they were: the chamber is where it all began, not only where the body lies. Each Chapel is drawn from a deed in the Saint's life. A **Beholding** replays a memory that must be watched correctly. A **Litany** hides the order of offerings in an Abocipher inscription. The **Downfall** is the Saint's fall to the power of Hemomancy, fought as a gauntlet. A **Repose** asks for stillness under threat. Each completed Chapel lights a node on the ring door.
+
+**Opening the chamber.** A Silentium who has lit every node projects into the ring door and connects them with their own blood. The rings fill, the door falls away, and the Saint wakes properly. An Apotheos can instead drive hyphae into the stone and shatter the door at any time, skipping every Chapel. The Saint then wakes enraged, carrying the power of each Chapel the player did not complete: skip the Downfall and it fights with its fall; skip the Repose and it never pauses. The player is fighting the sum of what they refused to see, and a forced awakening yields only a fragment of Hallowed Residuum.
+
+**Hallowed ground.** A mausoleum's ground is consecrated, not holy. Every Saint fell to the power of Hemomancy, and that fall was their downfall. Their residue lashes out against the hive's reach wherever they rest. The rejection is aimed at the hive's will, not at fungal matter: the growth in the tombs and the Saints' own infection are untouched. What the ground refuses is a body the hive speaks through. An Apotheos burns there, first through spore load and then through flesh. A Silentium is tolerated, having cut the antenna to the hive. Lower Harbingers in the outer halls are too faint a signal to provoke it.
 
 **Sampling and waking.** A sarcophagus is first consecrated with blood poured into the bowl at its foot. The player then slides the lid off and draws from the Preserved Corpus with an empty Blood Vial. If the player's dominant blood tendency is one of the Saint's two tendencies, the corpus yields a Consecrated Syringe once, peacefully, and the Vial Centrifuge turns it into that Saint's Hallowed Residuum. If not, the corpus recoils and the Saint wakes to test the player. Smearing **Foul Paste** on the sarcophagus is deliberate desecration: it wakes the Saint whatever the player's alignment, even after a peaceful sample. Pressing a Saint relic to the sarcophagus names that Saint and wakes it.
 
@@ -631,7 +650,7 @@ A Saint is made by two separate events: becoming one, and being recognised as on
 2. **Recognition by the Hematic Order.** The Order later names such a person a Saint because their condition shows an extraordinary expression of blood manipulation. Recognition need not happen while the Saint is alive in any ordinary sense; it may come centuries after entombment.
 3. **Containment and veneration.** The Saint's chamber is a tomb in form but not in function. It holds an active biological danger, preserves a singular source of blood, and offers an object of study and ritual reverence.
 
-This is why **Hemorath can be the first Harbinger without the mature Hematic Order existing when his discoveries began**. He predates the Order's structure and Erythravane's Incarnadine Fane. Seraphae, Putriciel and Velorum never belonged to the Order in life. Each was sealed away by their own people, and the Order inherited, preserved and reinterpreted the tombs afterwards.
+This is why **Hemorath can be a Saint of the Order without ever having been a Harbinger**. He was one of the first and most powerful Hemomancers, and he predates the Order's structure and Erythravane's Incarnadine Fane. Seraphae, Putriciel and Velorum never belonged to the Order in life. Each was sealed away by their own people, and the Order inherited, preserved and reinterpreted the tombs afterwards.
 
 **Why the Saints are kept rather than killed:**
 
@@ -651,7 +670,7 @@ In play, a Saint yields a sample to a player whose dominant blood tendency align
 **Tendencies:** Animus + Ferric
 **Canon Memory:** Crimson Tithe
 
-Hemorath is remembered as the first of the Harbingers, a man who discovered that the blood within his body was not merely a substance necessary for life, but something he could command.
+Hemorath is remembered as one of the first and most powerful of the Hemomancers, a man who discovered that the blood within his body was not merely a substance necessary for life, but something he could command. He was never a true Harbinger: the Order that would later name him a Saint did not yet exist.
 
 His earliest experiments concerned the iron contained within his own blood. Through concentration, he found that he could draw it together, hardening his blood into crude metallic formations beneath his skin. With practice, he learned to move his blood independently of his body, and eventually discovered that he could replenish what he lost by drawing blood directly from other living creatures.
 
@@ -683,7 +702,7 @@ In time, even the tremendous bloating that had defined his transformation disapp
 
 He had become insatiable not merely through desire, but through necessity.
 
-The hemomancers who followed him regarded Hemorath with a mixture of reverence and terror. His discoveries formed the foundation of blood absorption and Ferric manipulation, yet his continued existence threatened everyone who approached him.
+The hemomancers who followed him regarded Hemorath with a mixture of reverence and terror. His discoveries formed the foundation of blood absorption and Ferric manipulation, yet his continued existence threatened everyone who approached him. His successors and students feared they would be lost to bloodlust as he was, and that fear shaped the discipline that Erythravane, the first Vicar and Archon, later organised into the Hematic Order.
 
 Attempts to destroy his body proved unsuccessful. Blood spilled against him was absorbed, injuries stimulated further production, and even when starved he continued to draw what little remained within his own ruined tissues.
 
@@ -1035,7 +1054,9 @@ It is perfection.
 
 ### 10.7 Continuity Notes
 
-- **Hemorath is the first Harbinger, not an Archon.** He predates the mature Hematic Order and Erythravane's Fane. Older notes that call him one of the original great Archons, or a purely Ferric Saint of permanence, are superseded.
+- **Hemorath is a powerful early Hemomancer, never a true Harbinger and not an Archon.** He predates the mature Hematic Order and Erythravane's Fane; Erythravane was the first Vicar and the first Archon. Older notes that call Hemorath the first Harbinger, one of the original great Archons, or a purely Ferric Saint of permanence are superseded.
+- **No martyrdom framing.** No Saint is a martyr, and no mausoleum room is a penance. The fall each Chapel recalls is the Saint's downfall to the power of Hemomancy.
+- **Mausoleums are consecrated, not holy.** Hallowed ground is the Saints' own residue rejecting the hive's will, not divine favour.
 - **Do not depict Hemorath only as bloated.** His historical excess produced that condition, but his resting silhouette is frail, skeletal and desiccated. His marrow remains active.
 - **Do not make Seraphae a voluntary villain.** Her tragedy depends on the nobles and physicians who chained and bled her, and on her inability to restrain an originally beneficial gift. Keep white Lux light in the vessels distinct from gold Ductilis flashes along the nerves.
 - **Do not make Putriciel a generic red-fungus fire boss.** Their infection has its own green/yellow/ochre/shelf-fungus palette. Fire is a brief, distinct *cleansing* interlude between infection phases, not a constant appearance. Use he for the living purifier and they for the Saint now.
@@ -1048,7 +1069,7 @@ It is perfection.
 
 ### 10.8 Planned Per-Saint Overhauls
 
-Each Saint will later get its own combat and visual overhaul, and each is planned to get a dedicated trial chamber. The deferred list lives in [the Saint reconciliation spec](superpowers/specs/2026-10-26-saint-reconciliation-design.md) under "Deferred per-Saint work". It covers Hemorath's passive drain and leaking blood meter, Seraphae's growth and nerve hazards, Putriciel's dedicated cleansing interval and palette pass, Velorum's stillness meter and wakeable congregation, and a cleanup of the four Canon Memories. None of it is built yet.
+The deferred list lives in [the Saint reconciliation spec](superpowers/specs/2026-10-26-saint-reconciliation-design.md) under "Deferred per-Saint work". Much of it is now built: Hemorath's passive drain and leaking blood meter, Seraphae's growth and nerve hazards, Putriciel's dedicated cleansing interval, and Velorum's stillness meter arrived with the Saint power pass, and each Saint now has its own mausoleum complex with Chapels, a ring door and hallowed ground. Still open: Velorum's wakeable congregation (which fights beside a Silentium who woke him properly and against an Apotheos who forced the door), Hemorath's swelling as an enraged fight goes on, and the Saints' gifts. Those gifts will replace the four Canon Memories, each rediscovered by weaving the Saint's Hallowed Residuum with a Recollection recovered from the Gardens' Archive.
 
 ---
 
@@ -1091,13 +1112,15 @@ In Kabbalistic tradition, the **Sephiroth** are the ten attributes/emanations of
 
 Hemomancy draws on this concept not as good-versus-evil but as complementary forces. The **Qliphoth Tree** summoned by the Bloom of the Qliphoth ritual is not an evil thing. Fungi are the cleanup crew of life — they are not bad because they consume the dead, just as ravens and vultures are not evil for doing the same. They simply occupy the other side of the cycle.
 
+The tree is **will and antenna** at once. It manifests the Archon's own will, grown out of the Monolith's fragment and fed by their blood, and it is also a beacon to the hivemind, the place where the hive's signal reaches them. That is why cutting it means so much. **Severance** is the Archon deliberately cutting their own tree in the Rite of Pruning: a physical ego death that severs their ties to the hivemind as a whole and sets them on Vesper's path. Severance is an act, not a location.
+
 The Qliphoth Tree:
 - Provides **blood volume regeneration** and enhanced regen auras in its area
 - Produces **Qliphoth Pome** fruits — void-dark fruits grown around a crystallized blood core. Each pome is one of nine husks of the Qliphoth. Eating one causes a brief expansion of awareness into the void-register — perceived from the outside as darkness — alongside a surge of blood power and reduced manipulation costs. Nine pomes drop from a single tree's lifecycle, each corresponding to one of the nine corrupted shells of the Qliphoth system. Consuming the ninth pome from one bloom completes Communion and forces the Fungal Spine from the Archon before either endgame rite.
 - Whispers through those fruits in a personal register — the voice naming the husk feels directed to the current bearer, not to the crowd at large.
 - **Must be summoned through the Bloom of the Qliphoth rite**: the rite registers the owner and nine-pome lifecycle. Placing a Bloom block alone does not establish that bond or begin Communion. This is a blood-memory relationship, not a divine prohibition.
 - Grows with slight random variation each time (no two trees are identical)
-- Cannot be felled by ordinary hands. After Communion and the choice of Silence, any of the seven base Living Weapons can hook inward into a temporary Living Sickle. Its deliberate second cut opens the owned Bloom as Vesper's wound rather than deleting the tree.
+- Cannot be felled by ordinary hands. After Communion and the choice of Silence, any of the seven base Living Weapons can hook inward into a temporary Living Sickle. Its deliberate second cut opens the owned Bloom as Vesper's wound rather than deleting the tree. That cut is the Severance.
 
 **The three special floors.** The rites that stand apart are not laid on the common floors.
 - The **inverted tree**, for the Bloom: Calcified Hyphae ground walked by hyphae paths, with nine husk-lights on three pillars, one for each Pome to come. The floor is drawn as the tree it will raise, upside down, its roots already reaching past the edge.
@@ -1153,7 +1176,7 @@ Each faction's relationship with materials reflects their worldview.
 | **Crimson Lacquer** | Crimson Lodge | A ritual finish rather than a simple paint: blood-crystal polish, ferric powder, and salve sealing Barbed or Chitinite ancestry into the disciplined hunger of Blood Lust. |
 | **Chalybeate Sclerite** | Harbingers | Iron-sulfide armor scale from deep vent snails; a Ferric ocean expression of the same living-mineral philosophy behind hematic iron. It is best taken by careful knapping from a withdrawn living animal, not by slaughter. |
 | **Monolith Imbued Cloth** | Silent Archons | Cloth threaded with Monolith Fragment burden and enthralling filament. It belongs to Archons who reject Apotheos: not purity, not victory, but the decision to keep wearing the truth without dissolving into it. |
-| **Memory of Vesper** | Silent Archons | Guaranteed loot-table drop from Vesper's Evening Star phase. It is burned directly in the Iron Brazier and drawn into the existing Living Staff, permanently teaching the inherited `conjure_sickle` form and strengthening Vesper focus. |
+| **Memory of Vesper** | Silent Archons | Guaranteed loot-table drop from Vesper's Evening Star phase. It is burned directly in the Iron Brazier and drawn into the existing Living Staff, permanently teaching the inherited `conjure_sickle` form and strengthening Vesper focus. Taking it in is what makes the Archon a Degree-8 Silentium. |
 | **Mycophant Tendril** | Apotheos Harbingers | Guaranteed loot-table drop from The Mycophant and Charm of Vascularium rune-slot reward. It symbolizes chosen mycelial embodiment and visibly fungalizes the whole player while equipped. |
 | **Erythrocoral Fragment** | Harbingers | Warm-ocean fungal-coral tissue: a Vivacious expression of hemomancy as ecology rather than conquest. It supports spore craft through careful shearing, not reef-clearing extraction. |
 | **Vivianite** | Harbingers | A blood-adjacent mineral idiom used by the Order for specialist craft and instrument work; treated as part of Harbinger material culture rather than neutral trade stock. |
@@ -1273,7 +1296,7 @@ Form comes from the Vacant Effigy, vocation from consenting donor blood, affilia
 
 ## The Antecedent: the First Incursion
 
-Sculk is evidence of an older strategy by the intelligence behind the modern incursion. Its surviving ecology is acoustic, territorial, contiguous, and fed by local death. Modern Erythromycelium keeps intelligent hosts mobile, then has them cultivate and spread it. The connection is strategic, not anatomical. Sculk is not primitive Apotheos, crimson sculk, or a ninth tendency. The city's last listeners kept a damaged specimen so they could watch for coordinated response beyond the cut. The archive vessel answers an unresolved trace that the Clairaudiograph can separate from sound.
+Sculk is evidence of an older strategy by the intelligence behind the modern incursion: the hive's first attempt to infect the world. It failed and stagnated. The Antecedent Inquiry tells that history, and it has no bearing on the present state of the world or on Degree 7 and 8 progression; neither the Fungal Gardens nor the Archon's choice touches sculk. Its surviving ecology is acoustic, territorial, contiguous, and fed by local death. Modern Erythromycelium keeps intelligent hosts mobile, then has them cultivate and spread it. The connection is strategic, not anatomical. Sculk is not primitive Apotheos, crimson sculk, or a ninth tendency. The city's last listeners kept a damaged specimen so they could watch for coordinated response beyond the cut. The archive vessel answers an unresolved trace that the Clairaudiograph can separate from sound.
 
 The Alchemist runs the experiment. The Vicar interprets what it may mean. Their dialogue stays qualified until the evidence supports recognition. The optional Archon epilogue acknowledges a changed approach without explaining the Entity's origin or exactly what the cut was. See [Antecedent Inquiry](../wiki/Antecedent-Inquiry.md).
 
@@ -1281,7 +1304,7 @@ The Alchemist runs the experiment. The Vicar interprets what it may mean. Their 
 
 The First Incursion left an ecology that depends on contiguous growth, local death, and acoustic disturbance. Its remnants can feed and react after the connection to something beyond them has been cut. Continued biological activity does not prove that coordinated direction has returned. That distinction is why the Last Listeners preserved the lower specimen and recorded its failures instead of finishing its destruction.
 
-The modern incursion uses a different arrangement: intelligent, mobile hosts learn to cultivate and carry Erythromycelium. The Vicar recognizes a change in method by the same intelligence. This does not establish a common blood chemistry or make every sculk response a conscious act. Keep the Entity's origin, the exact nature of the severance, and the full history of the builders unresolved. The Warden is not an early Apotheos, and Incertae is not a ninth tendency.
+The modern incursion uses a different arrangement: intelligent, mobile hosts learn to cultivate and carry Erythromycelium. The Vicar recognizes a change in method by the same intelligence. This does not establish a common blood chemistry or make every sculk response a conscious act. Keep the Entity's origin, the exact nature of the cut that silenced the First Incursion, and the full history of the builders unresolved. That ancient cut is not **Severance**, which names only an Archon cutting their own Qliphoth tree (§12); write it as "the cut" or "the silencing" so the two never blur. The Warden is not an early Apotheos, and Incertae is not a ninth tendency.
 
 ### The evidence the player handles
 

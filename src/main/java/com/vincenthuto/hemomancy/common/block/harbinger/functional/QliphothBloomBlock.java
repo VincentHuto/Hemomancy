@@ -169,6 +169,11 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 			return InteractionResult.SUCCESS;
 		}
 		if (bloomState.isSealedTrophy()) {
+			if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer
+					&& VesperOrdealManager.reissueLostMemory(serverPlayer)) {
+				player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_bloom_block.the_scar_gives_back_his_memory").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+				return InteractionResult.SUCCESS;
+			}
 			player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_bloom_block.the_severed_scar_is_still_your").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			return InteractionResult.SUCCESS;
 		}
@@ -222,7 +227,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 					case NONE -> "message.hemomancy.qliphoth_bloom_block.spine_visit_the_gardens_lost_it";
 					case SILENT_PENDING -> "message.hemomancy.qliphoth_bloom_block.your_refusal_awaits_its_act_sever";
 					case APOTHEOS_PENDING -> "message.hemomancy.qliphoth_bloom_block.the_tree_has_fulfilled_its_nine";
-					case SILENT_ARCHON, APOTHEOS -> "message.hemomancy.qliphoth_bloom_block.the_nine_husk_covenant_is_complete";
+					case SILENTIUM, APOTHEOS -> "message.hemomancy.qliphoth_bloom_block.the_nine_husk_covenant_is_complete";
 				});
 			}
 			player.displayClientMessage(message.copy()

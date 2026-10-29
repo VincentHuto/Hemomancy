@@ -73,7 +73,15 @@ public class BaseFeatureInit {
 			new SilverBellsTowerFeature(NoneFeatureConfiguration.CODEC));
 
 	public static final Feature<NoneFeatureConfiguration> MORPHIC_POOL = register("morphic_pool",
-			new MorphicPoolFeature(NoneFeatureConfiguration.CODEC));
+			new MorphicPoolFeature(NoneFeatureConfiguration.CODEC,
+					() -> BlockInit.MORPHIC_NECTAR_BLOCK.get().defaultBlockState(),
+					() -> BlockInit.sporite_crystal.get().defaultBlockState()));
+
+	/** The Fringe's rendering pools: the morphic pool's basin, filled with bile and rimmed with calcified hyphae. */
+	public static final Feature<NoneFeatureConfiguration> RENDERING_POOL = register("rendering_pool",
+			new MorphicPoolFeature(NoneFeatureConfiguration.CODEC,
+					() -> BlockInit.RENDERING_BILE_BLOCK.get().defaultBlockState(),
+					() -> BlockInit.calcified_hyphae.get().defaultBlockState()));
 
 	public static final Feature<NoneFeatureConfiguration> TOOTH_GEODE = register("tooth_geode",
 			new ToothGeodeFeature(NoneFeatureConfiguration.CODEC));

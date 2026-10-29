@@ -90,7 +90,7 @@ public class BiomeInit {
 		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 		// Dangerous hostile mobs - this is the treacherous biome
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
-				new MobSpawnSettings.SpawnerData(EntityInit.abhorent_thought.get(), 10, 1, 2));
+				new MobSpawnSettings.SpawnerData(EntityInit.abhorrent_thought.get(), 10, 1, 2));
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
 				new MobSpawnSettings.SpawnerData(EntityInit.thirster.get(), 10, 1, 3));
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
@@ -365,7 +365,7 @@ public class BiomeInit {
 		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 		// Surface predators of the exposed plateau
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
-				new MobSpawnSettings.SpawnerData(EntityInit.abhorent_thought.get(), 6, 1, 2));
+				new MobSpawnSettings.SpawnerData(EntityInit.abhorrent_thought.get(), 6, 1, 2));
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
 				new MobSpawnSettings.SpawnerData(EntityInit.blood_drunk_puppeteer.get(), 8, 1, 1));
 		spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.GHAST, 10, 1, 1));

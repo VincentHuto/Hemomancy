@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": {
+      "item": "hemomancy:bone_brick_slab"
+    }
+  },
+  "result": {
+    "id": "hemomancy:chiseled_bone_bricks"
+  }
+}

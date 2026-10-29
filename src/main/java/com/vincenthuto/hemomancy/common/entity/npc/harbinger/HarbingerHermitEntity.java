@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -374,7 +375,8 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
     @Override
     public DialogueTree progressionDialogue(ServerPlayer player) {
         IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
-        return HarbingerHermitDialogueTrees.forDegree(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+        return HarbingerHermitDialogueTrees.forDegree(HarbingerPathPermissions.greetingDegree(
+                HemoCapabilityAccess.getPlayerDegreeNumber(player), HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath()),
                 volume != null && volume.isActive(), TempleOathRules.hasClaimedHeartFrom(player, this.getUUID()),
                 this.getId());
     }

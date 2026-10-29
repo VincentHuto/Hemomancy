@@ -12,7 +12,7 @@ public final class EntityLootTableCoverageResourceTest {
 	private static final Pattern MIN_PATTERN = Pattern.compile("\"min\"\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)");
 
 	private static final GuaranteedDrop[] GUARANTEED_MATERIAL_DROPS = {
-			new GuaranteedDrop("abhorent_thought", "hemomancy:sanguine_formation"),
+			new GuaranteedDrop("abhorrent_thought", "hemomancy:sanguine_formation"),
 			new GuaranteedDrop("barbed_urchin", "hemomancy:calcified_blood_spine"),
 			new GuaranteedDrop("blood_drunk_puppeteer", "hemomancy:puppeteering_thread"),
 			new GuaranteedDrop("blood_thrall", "hemomancy:sanguine_formation"),

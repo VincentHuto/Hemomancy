@@ -65,6 +65,7 @@ public final class WorldEffectDispatcher {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             MnemonicBlueprintRenderer.render(event);
             float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
+            MausoleumWardRenderer.render(event.getPoseStack(), partialTick);
             CircusPerceptionOverlay.renderWorld(event.getPoseStack(), partialTick);
             VesperFightFloorRenderer.renderFadingPerimeter(event);
             VesperFightFloorRenderer.renderFissures(event.getPoseStack(), partialTick);

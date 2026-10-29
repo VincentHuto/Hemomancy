@@ -339,6 +339,12 @@ public class EffectInit {
             () -> new Potion("potion_of_mnemonic_whispers",
                     new MobEffectInstance(mnemonic_whispers, MnemonicPotionRules.WHISPERS_DURATION_TICKS, 0)));
 
+    /** A Silentium snapped out of a possession: no cure, the possession rite's cooldown. */
+    public static final DeferredHolder<MobEffect, MobEffect> mind_broken = EFFECTS.register("mind_broken",
+            () -> new com.vincenthuto.hemomancy.common.effect.MindBrokenEffect(MobEffectCategory.HARMFUL, 0x4A2A5E)
+                    .addAttributeModifier(Attributes.ATTACK_DAMAGE, Hemomancy.rloc("mind_broken_attack"), -2.0,
+                            AttributeModifier.Operation.ADD_VALUE));
+
     public static final DeferredHolder<MobEffect, MobEffect> mnemonic_screams = EFFECTS.register("mnemonic_screams",
             () -> new MnemonicScreamsEffect(MobEffectCategory.HARMFUL, 0x3F102B));
 

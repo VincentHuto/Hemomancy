@@ -126,6 +126,7 @@ public final class LiberDiscoveryEvents {
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_6_SANCTIFIED, LiberEntryDefinitions.DEGREES);
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_7_ARCHON,    LiberEntryDefinitions.ENTITY);
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_8_APOTHEOS,  LiberEntryDefinitions.TRUTH);
+		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_8_SILENTIUM, LiberEntryDefinitions.TRUTH);
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_LESSON, LiberEntryDefinitions.SCAR_PRACTICE);
 		// Harbinger milestone advancements
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_BLOOD_IS_BOUND,                LiberEntryDefinitions.BLOOD_MEMORIES);

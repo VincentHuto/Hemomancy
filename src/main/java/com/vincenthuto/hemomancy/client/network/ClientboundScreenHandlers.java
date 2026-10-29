@@ -115,7 +115,8 @@ public final class ClientboundScreenHandlers {
 				msg.artificerProgressSteps(),
 				msg.foundedBloodline(), msg.foundingFaneEstablished(), msg.chamberReturned(),
 				msg.covenantThroneBound(), msg.covenantVigilCompleted(), msg.livingCovenantComplete(),
-				msg.pomesConsumed(), msg.qliphothCommunionComplete(), msg.archonPath(), msg.severedPortalOpen()));
+				msg.pomesConsumed(), msg.qliphothCommunionComplete(), msg.archonPath(), msg.severedPortalOpen(),
+				msg.vesperDefeated()));
 	}
 
 	static void handle(final OpenInscriptionPacket msg, final IPayloadContext ctx) {

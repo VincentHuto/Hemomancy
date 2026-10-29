@@ -3,6 +3,18 @@ package com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
+import com.vincenthuto.hemomancy.common.block.harbinger.decoration.RotPyreBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.decoration.SporeShelfBlock;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielChamberLightingRules.Light;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielChamberLightingRules.Phase;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -28,6 +40,10 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Putriciel — The Befouled Saint.
@@ -91,6 +107,9 @@ public class PutricielEntity extends SaintTrialEntity {
     private int absolveCycleTimer = ABSOLUTION_CYCLE;
     private int absolveWindowTimer = 0;
     private boolean defeated = false;
+    /** The chamber's pyres and spore shelves, found on the fight's first tick; {@code null} until then. */
+    @Nullable
+    private List<BlockPos> chamberLights;
 
     // ── constructor ───────────────────────────────────────────────────────
 
@@ -176,6 +195,7 @@ public class PutricielEntity extends SaintTrialEntity {
         if (tickRise()) return;
         if (defeated || !isAlive()) return;
         ServerLevel server = (ServerLevel) this.level();
+        if (chamberLights == null) applyChamberLighting(server, Phase.of(isAbsolved()), false);
         tickVisualState();
         if (getNovaReleaseTicks() > 0) this.entityData.set(DATA_NOVA_RELEASE, getNovaReleaseTicks() - 1);
 
@@ -233,13 +253,15 @@ public class PutricielEntity extends SaintTrialEntity {
         }
     }
 
-    private void openAbsolutionWindow(ServerLevel server) {
+    /** Opens the absolution window; protected so a GameTest can drive the phases. */
+    protected void openAbsolutionWindow(ServerLevel server) {
         setAbsolved(true);
         tickSecondaryAttacks(false);
         this.entityData.set(DATA_NOVA_RELEASE, 0);
         absolveWindowTimer = ABSOLUTION_WINDOW_DURATION;
         this.entityData.set(DATA_ABSOLUTION_TIMER, absolveWindowTimer);
         absolveCycleTimer = ABSOLUTION_CYCLE;
+        applyChamberLighting(server, Phase.ROT, true);
 
         PutricielEffects.burst(server, this.position().add(0, 1.8, 0), PutricielVisualRules.OPEN, 2);
         server.playSound(null, this.getX(), this.getY(), this.getZ(),
@@ -248,8 +270,10 @@ public class PutricielEntity extends SaintTrialEntity {
         broadcastMessage("message.hemomancy.putriciel.the_rot_stills_absolve_him_now", ChatFormatting.GREEN);
     }
 
-    private void endAbsolutionWindow(ServerLevel server) {
+    /** Closes the absolution window; protected so a GameTest can drive the phases. */
+    protected void endAbsolutionWindow(ServerLevel server) {
         setAbsolved(false);
+        applyChamberLighting(server, Phase.BURNING, true);
         PutricielEffects.burst(server, this.position().add(0, 1.8, 0), PutricielVisualRules.CLOSE, 2);
         absolveWindowTimer = 0;
         this.entityData.set(DATA_ABSOLUTION_TIMER, 0);
@@ -257,6 +281,65 @@ public class PutricielEntity extends SaintTrialEntity {
         server.playSound(null, this.getX(), this.getY(), this.getZ(),
                 SoundEvents.BEACON_DEACTIVATE, SoundSource.HOSTILE, 1.0F, 0.9F);
         broadcastMessage("message.hemomancy.putriciel.the_window_closes", ChatFormatting.DARK_GREEN);
+    }
+
+    // ── chamber lighting ──────────────────────────────────────────────────
+
+    /**
+     * Sets the chamber's lights for {@code phase} ({@link PutricielChamberLightingRules}): burning, the Rot Pyres are
+     * lit and the Spore Shelves dim; in the absolution window the pyres gutter and the shelves bloom. The lights are
+     * found once, on first use; each is checked to still be its block before it is set, and unloaded ones are left.
+     */
+    private void applyChamberLighting(ServerLevel server, Phase phase, boolean effects) {
+        if (chamberLights == null) chamberLights = scanChamberLights(server);
+        for (BlockPos pos : chamberLights) {
+            if (!server.isLoaded(pos)) continue;
+            BlockState state = server.getBlockState(pos);
+            Light light = lightOf(state);
+            if (light == null) continue;
+            BooleanProperty property = light == Light.PYRE ? RotPyreBlock.LIT : SporeShelfBlock.BLOOM;
+            boolean on = PutricielChamberLightingRules.on(light, phase);
+            if (state.getValue(property) == on) continue;
+            server.setBlock(pos, state.setValue(property, on), Block.UPDATE_ALL);
+            if (effects) PutricielEffects.lightShift(server, pos, light, on);
+        }
+    }
+
+    /** Every pyre and shelf in his chamber (round where he stands, with no tomb), in loaded chunks. */
+    private List<BlockPos> scanChamberLights(ServerLevel server) {
+        BlockPos tomb = getTombPos();
+        BlockState tombState = getTombState();
+        Direction facing = tombState == null ? null
+                : tombState.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).orElse(null);
+        BlockPos home = this.blockPosition();
+        BoundingBox box = PutricielChamberLightingRules.scanBox(tomb, facing, home);
+        List<BlockPos> found = new ArrayList<>();
+        for (BlockPos pos : BlockPos.betweenClosed(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ())) {
+            if (server.isLoaded(pos) && PutricielChamberLightingRules.inArea(tomb, facing, home, pos)
+                    && lightOf(server.getBlockState(pos)) != null) {
+                found.add(pos.immutable());
+            }
+        }
+        return List.copyOf(found);
+    }
+
+    @Nullable
+    private static Light lightOf(BlockState state) {
+        if (state.is(BlockInit.rot_pyre.get()) && state.hasProperty(RotPyreBlock.LIT)) return Light.PYRE;
+        if (state.is(BlockInit.spore_shelf.get()) && state.hasProperty(SporeShelfBlock.BLOOM)) return Light.SHELF;
+        return null;
+    }
+
+    /**
+     * However he leaves the level (absolved, a {@code /kill}, a discard, or unloaded with the window open), the
+     * chamber goes back to burning: pyres lit, shelves dim.
+     */
+    @Override
+    public void onRemovedFromLevel() {
+        if (chamberLights != null && this.level() instanceof ServerLevel server) {
+            applyChamberLighting(server, Phase.BURNING, false);
+        }
+        super.onRemovedFromLevel();
     }
 
     // ── victory condition via damage during absolution window ─────────────

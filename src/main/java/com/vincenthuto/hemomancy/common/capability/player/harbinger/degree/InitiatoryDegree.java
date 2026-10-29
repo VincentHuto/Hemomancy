@@ -130,6 +130,16 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	}
 
 	@Override
+	public void resetEndgameState() {
+		archonPath = EnumArchonPath.NONE;
+		fungalRevelationWitnessed = false;
+		fungalSpineGranted = false;
+		mycophantExposureTicks = 0;
+		mycophantRetryCooldownTicks = 0;
+		mycophantDefeated = false;
+	}
+
+	@Override
 	public long getPomeEmpowermentExpiry() { return pomeEmpowermentExpiry; }
 
 	@Override

@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "hemomancy:block/healed_calcite"
+      },
+      {
+        "model": "hemomancy:block/healed_calcite_1"
+      },
+      {
+        "model": "hemomancy:block/healed_calcite_2"
+      }
+    ]
+  }
+}

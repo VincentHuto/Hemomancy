@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "charred=false,facing=north,half=lower": {
+      "model": "hemomancy:block/litany_stone_lower"
+    },
+    "charred=true,facing=north,half=lower": {
+      "model": "hemomancy:block/litany_stone_charred_lower"
+    },
+    "charred=false,facing=north,half=upper": {
+      "model": "hemomancy:block/litany_stone_upper"
+    },
+    "charred=true,facing=north,half=upper": {
+      "model": "hemomancy:block/litany_stone_charred_upper"
+    },
+    "charred=false,facing=east,half=lower": {
+      "model": "hemomancy:block/litany_stone_lower",
+      "y": 90
+    },
+    "charred=true,facing=east,half=lower": {
+      "model": "hemomancy:block/litany_stone_charred_lower",
+      "y": 90
+    },
+    "charred=false,facing=east,half=upper": {
+      "model": "hemomancy:block/litany_stone_upper",
+      "y": 90
+    },
+    "charred=true,facing=east,half=upper": {
+      "model": "hemomancy:block/litany_stone_charred_upper",
+      "y": 90
+    },
+    "charred=false,facing=south,half=lower": {
+      "model": "hemomancy:block/litany_stone_lower",
+      "y": 180
+    },
+    "charred=true,facing=south,half=lower": {
+      "model": "hemomancy:block/litany_stone_charred_lower",
+      "y": 180
+    },
+    "charred=false,facing=south,half=upper": {
+      "model": "hemomancy:block/litany_stone_upper",
+      "y": 180
+    },
+    "charred=true,facing=south,half=upper": {
+      "model": "hemomancy:block/litany_stone_charred_upper",
+      "y": 180
+    },
+    "charred=false,facing=west,half=lower": {
+      "model": "hemomancy:block/litany_stone_lower",
+      "y": 270
+    },
+    "charred=true,facing=west,half=lower": {
+      "model": "hemomancy:block/litany_stone_charred_lower",
+      "y": 270
+    },
+    "charred=false,facing=west,half=upper": {
+      "model": "hemomancy:block/litany_stone_upper",
+      "y": 270
+    },
+    "charred=true,facing=west,half=upper": {
+      "model": "hemomancy:block/litany_stone_charred_upper",
+      "y": 270
+    }
+  }
+}

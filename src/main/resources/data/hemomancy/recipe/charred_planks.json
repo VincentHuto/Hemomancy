@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    {
+      "item": "hemomancy:charred_log"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:charred_planks",
+    "count": 4
+  }
+}

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
+import java.util.function.Supplier;
 import com.mojang.serialization.Codec;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -31,24 +32,21 @@ public class MorphicPoolFeature extends Feature<NoneFeatureConfiguration> {
 
 	private static final ResourceKey<Level> FUNGAL_GARDENS_DIMENSION = ResourceKey.create(Registries.DIMENSION,
 			Hemomancy.rloc("fungal_gardens"));
-	private static BlockState NECTAR;
-	private static BlockState SPORITE;
-	private static boolean resolved = false;
+	private final Supplier<BlockState> fluid;
+	private final Supplier<BlockState> rim;
 
-	private static void ensureResolved() {
-		if (resolved) return;
-		NECTAR = BlockInit.MORPHIC_NECTAR_BLOCK.get().defaultBlockState();
-		SPORITE = BlockInit.sporite_crystal.get().defaultBlockState();
-		resolved = true;
-	}
-
-	public MorphicPoolFeature(Codec<NoneFeatureConfiguration> codec) {
+	/** The basin is shared: morphic pools fill it with nectar and sporite, rendering pools with bile and hyphae. */
+	public MorphicPoolFeature(Codec<NoneFeatureConfiguration> codec, Supplier<BlockState> fluid,
+			Supplier<BlockState> rim) {
 		super(codec);
+		this.fluid = fluid;
+		this.rim = rim;
 	}
 
 	@Override
 	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
-		ensureResolved();
+		BlockState basin = fluid.get();
+		BlockState ring = rim.get();
 
 		WorldGenLevel level = ctx.level();
 		if (!level.getLevel().dimension().equals(FUNGAL_GARDENS_DIMENSION)) {
@@ -87,25 +85,25 @@ public class MorphicPoolFeature extends Feature<NoneFeatureConfiguration> {
 				if (dist < 0.78f) {
 					// Inner basin — fill surface + one block below with nectar source
 					if (isReplaceableByPool(level.getBlockState(mutable))) {
-						level.setBlock(mutable, NECTAR, 2);
+						level.setBlock(mutable, basin, 2);
 						placed++;
 					}
 					mutable.move(0, -1, 0);
 					if (isReplaceableByPool(level.getBlockState(mutable))) {
-						level.setBlock(mutable, NECTAR, 2);
+						level.setBlock(mutable, basin, 2);
 					}
 
 				} else if (dist < 1.0f) {
 					// Rim — dense ring of sporite crystals
 					if (isReplaceableByPool(level.getBlockState(mutable))) {
-						level.setBlock(mutable, SPORITE, 2);
+						level.setBlock(mutable, ring, 2);
 						placed++;
 					}
 
 				} else if (dist < 1.4f && random.nextInt(5) == 0) {
 					// Outer scatter — occasional crystal clusters beyond the rim
 					if (isReplaceableByPool(level.getBlockState(mutable))) {
-						level.setBlock(mutable, SPORITE, 2);
+						level.setBlock(mutable, ring, 2);
 						placed++;
 					}
 				}
@@ -143,6 +141,7 @@ public class MorphicPoolFeature extends Feature<NoneFeatureConfiguration> {
 				|| b == BlockInit.conscious_mass.get()
 				|| b == BlockInit.hemorrhagic_crust.get()
 				|| b == BlockInit.calcified_hyphae.get()
-				|| b == BlockInit.MORPHIC_NECTAR_BLOCK.get();
+				|| b == BlockInit.MORPHIC_NECTAR_BLOCK.get()
+				|| b == BlockInit.RENDERING_BILE_BLOCK.get();
 	}
 }

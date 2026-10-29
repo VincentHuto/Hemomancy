@@ -173,6 +173,7 @@ public final class CreativeTabInit {
 				&& item != ItemInit.active_befouling_ash.get()
 				&& item != ItemInit.active_smouldering_ash.get()
 				&& item != ItemInit.living_weapon_graft.get()
+				&& item != ItemInit.thread_of_will.get()
 				&& item != ItemInit.living_sickle.get()
 				&& item != ItemInit.synaptic_step.get()
 				&& item != ItemInit.memory_conjure_living_staff.get()

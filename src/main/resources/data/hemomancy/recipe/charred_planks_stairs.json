@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "wooden_stairs",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "hemomancy:charred_planks"
+    }
+  },
+  "result": {
+    "id": "hemomancy:charred_planks_stairs",
+    "count": 4
+  }
+}

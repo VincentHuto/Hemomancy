@@ -25,7 +25,7 @@ public class MonolithFragmentItem extends Item {
 		if (level.getGameTime() % MonolithFragmentBurdenRules.BURDEN_CHECK_INTERVAL_TICKS != 0) {
 			return;
 		}
-		if (MonolithFragmentBurdenRules.shouldBurdenCarrier(HemoCapabilityAccess.getPlayerDegreeNumber(player))) {
+		if (MonolithFragmentBurdenRules.shouldBurdenCarrier(HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath())) {
 			applyApotheosBurden(player);
 		}
 	}

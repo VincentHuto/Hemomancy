@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "hemomancy:block/sodden_mud_bricks"
+      },
+      {
+        "model": "hemomancy:block/sodden_mud_bricks_1"
+      },
+      {
+        "model": "hemomancy:block/sodden_mud_bricks_2"
+      }
+    ]
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "variants": {
+    "facing=north,half=lower,lit=false,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower"
+    },
+    "facing=north,half=lower,lit=false,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower"
+    },
+    "facing=north,half=lower,lit=true,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower"
+    },
+    "facing=north,half=lower,lit=true,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower"
+    },
+    "facing=north,half=upper,lit=false,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper"
+    },
+    "facing=north,half=upper,lit=false,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper"
+    },
+    "facing=north,half=upper,lit=true,turn=left": {
+      "model": "hemomancy:block/witness_devotee_upper_lit_left"
+    },
+    "facing=north,half=upper,lit=true,turn=right": {
+      "model": "hemomancy:block/witness_devotee_upper_lit_right"
+    },
+    "facing=east,half=lower,lit=false,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 90
+    },
+    "facing=east,half=lower,lit=false,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 90
+    },
+    "facing=east,half=lower,lit=true,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 90
+    },
+    "facing=east,half=lower,lit=true,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 90
+    },
+    "facing=east,half=upper,lit=false,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper",
+      "y": 90
+    },
+    "facing=east,half=upper,lit=false,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper",
+      "y": 90
+    },
+    "facing=east,half=upper,lit=true,turn=left": {
+      "model": "hemomancy:block/witness_devotee_upper_lit_left",
+      "y": 90
+    },
+    "facing=east,half=upper,lit=true,turn=right": {
+      "model": "hemomancy:block/witness_devotee_upper_lit_right",
+      "y": 90
+    },
+    "facing=south,half=lower,lit=false,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 180
+    },
+    "facing=south,half=lower,lit=false,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 180
+    },
+    "facing=south,half=lower,lit=true,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 180
+    },
+    "facing=south,half=lower,lit=true,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 180
+    },
+    "facing=south,half=upper,lit=false,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper",
+      "y": 180
+    },
+    "facing=south,half=upper,lit=false,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper",
+      "y": 180
+    },
+    "facing=south,half=upper,lit=true,turn=left": {
+      "model": "hemomancy:block/witness_devotee_upper_lit_left",
+      "y": 180
+    },
+    "facing=south,half=upper,lit=true,turn=right": {
+      "model": "hemomancy:block/witness_devotee_upper_lit_right",
+      "y": 180
+    },
+    "facing=west,half=lower,lit=false,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 270
+    },
+    "facing=west,half=lower,lit=false,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 270
+    },
+    "facing=west,half=lower,lit=true,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 270
+    },
+    "facing=west,half=lower,lit=true,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_lower",
+      "y": 270
+    },
+    "facing=west,half=upper,lit=false,turn=left": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper",
+      "y": 270
+    },
+    "facing=west,half=upper,lit=false,turn=right": {
+      "model": "hemomancy:block/frozen_devotee_striding_upper",
+      "y": 270
+    },
+    "facing=west,half=upper,lit=true,turn=left": {
+      "model": "hemomancy:block/witness_devotee_upper_lit_left",
+      "y": 270
+    },
+    "facing=west,half=upper,lit=true,turn=right": {
+      "model": "hemomancy:block/witness_devotee_upper_lit_right",
+      "y": 270
+    }
+  }
+}

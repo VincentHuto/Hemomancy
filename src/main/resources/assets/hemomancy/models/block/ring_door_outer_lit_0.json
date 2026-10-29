@@ -1,0 +1,80 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    256
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/ring_door",
+    "particle": "hemomancy:block/polished_venous_stone"
+  },
+  "elements": [
+    {
+      "name": "outer_node_glow",
+      "from": [
+        5.85,
+        -15.15,
+        0.3
+      ],
+      "to": [
+        10.15,
+        -10.85,
+        0.45
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.75,
+            11.5625,
+            12.375,
+            11.875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.875,
+            12.25,
+            3.0,
+            12.5625
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.0,
+            12.25,
+            3.125,
+            12.5625
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            14.75,
+            14.875,
+            15.375,
+            14.9375
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            15.375,
+            14.875,
+            16.0,
+            14.9375
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  ]
+}

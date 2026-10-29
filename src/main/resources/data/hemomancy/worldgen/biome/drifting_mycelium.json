@@ -39,7 +39,7 @@
     "misc": [],
     "monster": [
       {
-        "type": "hemomancy:abhorent_thought",
+        "type": "hemomancy:abhorrent_thought",
         "weight": 15,
         "minCount": 1,
         "maxCount": 3
@@ -53,6 +53,18 @@
       {
         "type": "hemomancy:chthonian",
         "weight": 6,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "hemomancy:facsimile_enderman",
+        "weight": 4,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "hemomancy:hunter_fungus",
+        "weight": 5,
         "minCount": 1,
         "maxCount": 2
       }
@@ -86,6 +98,7 @@
     [
       "hemomancy:fungal_floor",
       "hemomancy:morphic_pool",
+      "hemomancy:rendering_pool",
       "hemomancy:hyphae_tendril",
       "hemomancy:mushroom/canopy_mushrooms_sparse",
       "hemomancy:huge_fungus",
@@ -98,7 +111,8 @@
       "hemomancy:bleeding_hearts",
       "hemomancy:patch_hyphae",
       "hemomancy:small_infected_fungus",
-      "hemomancy:ghost_pipes"
+      "hemomancy:ghost_pipes",
+      "hemomancy:gill_curtain"
     ],
     []
   ]

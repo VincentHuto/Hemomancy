@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.FluidInit;
@@ -185,8 +186,8 @@ public class MorphicNectarEvents {
 		AABB area = itemEntity.getBoundingBox().inflate(8.0);
 		List<ServerPlayer> players = level.getEntitiesOfClass(ServerPlayer.class, area, ServerPlayer::isAlive);
 		for (ServerPlayer player : players) {
-			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-			if (PrimalMorphlingRules.canPrimalize(maturity, primalized, degree)) {
+			boolean apotheos = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.APOTHEOS;
+			if (PrimalMorphlingRules.canPrimalize(maturity, primalized, apotheos)) {
 				return player;
 			}
 		}

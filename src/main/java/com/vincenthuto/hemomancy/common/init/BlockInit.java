@@ -166,6 +166,21 @@ public class BlockInit {
 							.liquid()
 							.sound(SoundType.EMPTY)));
 
+	public static final DeferredHolder<Block, LiquidBlock> RENDERING_BILE_BLOCK = LIQUIDBLOCKS.register(
+			"rendering_bile_block",
+			() -> new LiquidBlock(
+					FluidInit.RENDERING_BILE.get(),
+					BlockBehaviour.Properties.of()
+							.mapColor(MapColor.TERRACOTTA_YELLOW)
+							.replaceable()
+							.noCollission()
+							.strength(100f)
+							.pushReaction(PushReaction.DESTROY)
+							.noLootTable()
+							.liquid()
+							.lightLevel(state -> 2)
+							.sound(SoundType.EMPTY)));
+
 	public static final DeferredHolder<Block, LiquidBlock> WHITE_HUMOR_BLOCK = LIQUIDBLOCKS.register(
 			"white_humor_block",
 			() -> new LiquidBlock(
@@ -321,6 +336,9 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> polished_venous_stone_stairs = STAIRBLOCKS.register(
 			("polished_venous_stone_stairs"), () -> new StairBlock(Blocks.STONE.defaultBlockState(),
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+	public static final DeferredHolder<Block, Block> polished_venous_stone_wall = BASEBLOCKS.register(
+			"polished_venous_stone_wall",
+			() -> new HemoWallBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 	public static final DeferredHolder<Block, Block> chiseled_polished_venous_stone = BASEBLOCKS.register(
 			"chiseled_polished_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -339,6 +357,24 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> cracked_polished_venous_stone_bricks = BASEBLOCKS.register(
 			"cracked_polished_venous_stone_bricks",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+
+	public static final DeferredHolder<Block, Block> bone_bricks = BASEBLOCKS.register("bone_bricks",
+			() -> new Block(boneBrickProperties()));
+	public static final DeferredHolder<Block, Block> cracked_bone_bricks = BASEBLOCKS.register("cracked_bone_bricks",
+			() -> new Block(boneBrickProperties()));
+	public static final DeferredHolder<Block, Block> chiseled_bone_bricks = BASEBLOCKS.register("chiseled_bone_bricks",
+			() -> new Block(boneBrickProperties()));
+	public static final DeferredHolder<Block, Block> bone_brick_stairs = STAIRBLOCKS.register("bone_brick_stairs",
+			() -> new StairBlock(Blocks.BONE_BLOCK.defaultBlockState(), boneBrickProperties()));
+	public static final DeferredHolder<Block, Block> bone_brick_slab = SLABBLOCKS.register("bone_brick_slab",
+			() -> new SlabBlock(boneBrickProperties()));
+	public static final DeferredHolder<Block, Block> bone_brick_wall = BASEBLOCKS.register("bone_brick_wall",
+			() -> new HemoWallBlock(boneBrickProperties()));
+
+	private static BlockBehaviour.Properties boneBrickProperties() {
+		return BlockBehaviour.Properties.of().mapColor(MapColor.SAND).requiresCorrectToolForDrops()
+				.strength(2.0F, 6.0F).sound(SoundType.BONE_BLOCK);
+	}
 
 	public static final DeferredHolder<Block, Block> infested_venous_stone = BASEBLOCKS.register("infested_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -464,6 +500,101 @@ public class BlockInit {
 			.register("chiseled_hematic_iron_block", () -> new Block(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)));
 
+	public static final DeferredHolder<Block, Block> hematic_iron_plating = BASEBLOCKS.register("hematic_iron_plating",
+			() -> new Block(hematicIronPlatingProperties()));
+	public static final DeferredHolder<Block, Block> hematic_iron_plating_stairs = STAIRBLOCKS.register(
+			"hematic_iron_plating_stairs",
+			() -> new StairBlock(Blocks.IRON_BLOCK.defaultBlockState(), hematicIronPlatingProperties()));
+	public static final DeferredHolder<Block, Block> hematic_iron_plating_slab = SLABBLOCKS.register(
+			"hematic_iron_plating_slab", () -> new SlabBlock(hematicIronPlatingProperties()));
+	public static final DeferredHolder<Block, Block> hematic_iron_plating_wall = BASEBLOCKS.register(
+			"hematic_iron_plating_wall", () -> new HemoWallBlock(hematicIronPlatingProperties()));
+
+	private static BlockBehaviour.Properties hematicIronPlatingProperties() {
+		return BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(5.0F, 6.0F)
+				.sound(SoundType.METAL);
+	}
+
+	/** Seraphae's grown stone: quartz bricks and calcite where her healing reached. Textures and models from
+	 * tools/model_export/seraphae_growth.py. */
+	public static final DeferredHolder<Block, Block> healed_quartz_bricks = BASEBLOCKS.register("healed_quartz_bricks",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ)
+					.instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(0.8F)
+					.sound(SoundType.STONE)));
+	public static final DeferredHolder<Block, Block> healed_calcite = BASEBLOCKS.register("healed_calcite",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_WHITE)
+					.instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(0.75F)
+					.sound(SoundType.CALCITE)));
+	/** Healed quartz whose growth glows from inside; the growth layer of its model is drawn full-bright. */
+	public static final DeferredHolder<Block, Block> radiant_healed_quartz = BASEBLOCKS.register("radiant_healed_quartz",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ)
+					.instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(0.8F)
+					.sound(SoundType.STONE).lightLevel(state -> 12)));
+
+	/** Putriciel's burned and rotten materials: ash floors, charred wood and soft wet mud brick. Textures and
+	 * models from tools/model_export/putriciel_materials.py. */
+	public static final DeferredHolder<Block, Block> packed_ash = BASEBLOCKS.register("packed_ash",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
+					.instrument(NoteBlockInstrument.BASEDRUM).strength(0.6F).sound(SoundType.SOUL_SOIL)));
+	public static final DeferredHolder<Block, Block> charred_planks = BASEBLOCKS.register("charred_planks",
+			() -> new Block(charredWoodProperties()));
+	public static final DeferredHolder<Block, Block> charred_planks_slab = SLABBLOCKS.register("charred_planks_slab",
+			() -> new SlabBlock(charredWoodProperties()));
+	public static final DeferredHolder<Block, Block> charred_planks_stairs = STAIRBLOCKS.register(
+			"charred_planks_stairs",
+			() -> new StairBlock(Blocks.DARK_OAK_PLANKS.defaultBlockState(), charredWoodProperties()));
+	public static final DeferredHolder<Block, Block> charred_log = COLUMNBLOCKS.register("charred_log",
+			() -> new RotatedPillarBlock(charredWoodProperties()));
+	/** A bookshelf burned half to ash. Drops a little charcoal, itself with Silk Touch; no enchanting power. */
+	public static final DeferredHolder<Block, Block> charred_bookshelf = BASEBLOCKS.register("charred_bookshelf",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
+					.instrument(NoteBlockInstrument.BASS).strength(1.5F).sound(SoundType.WOOD)));
+	/** Mud brick gone soft and wet: sinks underfoot (14 px collision, as vanilla mud) and slows like soul sand. */
+	public static final DeferredHolder<Block, Block> sodden_mud_bricks = BASEBLOCKS.register("sodden_mud_bricks",
+			() -> new MudBlock(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BROWN)
+					.strength(1.0F, 3.0F).speedFactor(0.4F).sound(SoundType.MUD).isValidSpawn(Blocks::always)
+					.isRedstoneConductor((state, level, pos) -> true).isViewBlocking((state, level, pos) -> true)
+					.isSuffocating((state, level, pos) -> true)));
+
+	private static BlockBehaviour.Properties charredWoodProperties() {
+		return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).instrument(NoteBlockInstrument.BASS)
+				.strength(2.0F, 3.0F).sound(SoundType.WOOD);
+	}
+
+	/** Velorum's monastery materials: rimed deepslate trim, the rime lantern and dark lacquered wood. Textures and
+	 * models from tools/model_export/velorum_materials.py. */
+	public static final DeferredHolder<Block, Block> rimed_deepslate_bricks = BASEBLOCKS.register(
+			"rimed_deepslate_bricks", () -> new Block(rimedDeepslateProperties()));
+	public static final DeferredHolder<Block, Block> rimed_deepslate_brick_wall = BASEBLOCKS.register(
+			"rimed_deepslate_brick_wall", () -> new HemoWallBlock(rimedDeepslateProperties().forceSolidOn()));
+	public static final DeferredHolder<Block, Block> rimed_deepslate_brick_slab = SLABBLOCKS.register(
+			"rimed_deepslate_brick_slab", () -> new SlabBlock(rimedDeepslateProperties()));
+	public static final DeferredHolder<Block, Block> rimed_deepslate_brick_stairs = STAIRBLOCKS.register(
+			"rimed_deepslate_brick_stairs",
+			() -> new StairBlock(Blocks.DEEPSLATE_BRICKS.defaultBlockState(), rimedDeepslateProperties()));
+	/** A pale blue-white light seen through a clear-ice shell; it never melts. */
+	public static final DeferredHolder<Block, Block> rime_lantern = BASEBLOCKS.register("rime_lantern",
+			() -> new TransparentBlock(BlockBehaviour.Properties.of().mapColor(MapColor.ICE)
+					.instrument(NoteBlockInstrument.HAT).strength(0.5F).sound(SoundType.GLASS).lightLevel(state -> 11)
+					.noOcclusion().isValidSpawn(Blocks::never).isRedstoneConductor((state, level, pos) -> false)
+					.isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false)));
+	public static final DeferredHolder<Block, Block> dark_lacquer_planks = BASEBLOCKS.register("dark_lacquer_planks",
+			() -> new Block(darkLacquerProperties()));
+	public static final DeferredHolder<Block, Block> dark_lacquer_planks_slab = SLABBLOCKS.register(
+			"dark_lacquer_planks_slab", () -> new SlabBlock(darkLacquerProperties()));
+	public static final DeferredHolder<Block, Block> dark_lacquer_planks_stairs = STAIRBLOCKS.register(
+			"dark_lacquer_planks_stairs",
+			() -> new StairBlock(Blocks.DARK_OAK_PLANKS.defaultBlockState(), darkLacquerProperties()));
+
+	private static BlockBehaviour.Properties rimedDeepslateProperties() {
+		return BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_BRICKS);
+	}
+
+	private static BlockBehaviour.Properties darkLacquerProperties() {
+		return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).instrument(NoteBlockInstrument.BASS)
+				.strength(2.0F, 3.0F).sound(SoundType.WOOD);
+	}
+
 	public static final DeferredHolder<Block, Block> hematic_iron_bars = BASEBLOCKS.register("hematic_iron_bars",
 			() -> new HematicIronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS)));
 
@@ -518,6 +649,150 @@ public class BlockInit {
 			() -> new PuffballFungusBlock(MobEffects.SATURATION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
+	/** A Gardens cap grown into a bridge by an Apotheos; withers on its own, so it has no item and no drop. */
+	public static final DeferredHolder<Block, Block> cap_bridge = MODELEDBLOCKS.register("cap_bridge",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.plant.CapBridgeBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).strength(0.5f).noLootTable().noOcclusion().sound(SoundType.FUNGUS)
+					.pushReaction(PushReaction.DESTROY)));
+	/** Hanging lamellae: open for an Apotheos, they bite and snap shut on anyone else. */
+	public static final DeferredHolder<Block, Block> fungal_gill = MODELEDBLOCKS.register("fungal_gill",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.plant.FungalGillBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.TERRACOTTA_WHITE).strength(0.4f).noOcclusion().sound(SoundType.WART_BLOCK)
+					.pushReaction(PushReaction.DESTROY).isViewBlocking((state, level, pos) -> false)
+					.isSuffocating((state, level, pos) -> false)));
+	/** An Apotheos's heart-node: planted in the Gardens, it grows their private sanctum and holds their spawn. */
+	public static final DeferredHolder<Block, Block> heart_node = MODELEDBLOCKS.register("heart_node",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.functional.HeartNodeBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).strength(2.0f, 3600000f).noOcclusion().sound(SoundType.WART_BLOCK)
+					.lightLevel(state -> 5).pushReaction(PushReaction.BLOCK)));
+	/** A dead Apotheos's gear, grown over at the death point; only the owner opens it. No item. */
+	public static final DeferredHolder<Block, Block> fruiting_body_cache = MODELEDBLOCKS.register("fruiting_body_cache",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.functional.FruitingBodyCacheBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.TERRACOTTA_WHITE).strength(-1.0f, 3600000f).noOcclusion().noLootTable()
+					.sound(SoundType.WART_BLOCK).lightLevel(state -> 3).pushReaction(PushReaction.BLOCK)));
+	/**
+	 * A Saint mausoleum's ward anchor, buried in the threshold hall's wall: it holds the ward's region for the client
+	 * and the threshold the eighth degree alone may cross. Invisible, no hitbox, unbreakable; no item.
+	 */
+	public static final DeferredHolder<Block, Block> ward_anchor = MODELEDBLOCKS.register("ward_anchor",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.WardAnchorBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.NONE).strength(-1.0f, 3600000f).noLootTable().noOcclusion().noCollission()
+					.sound(SoundType.DEEPSLATE_BRICKS).pushReaction(PushReaction.BLOCK)));
+	/**
+	 * The ring door before a Saint's chamber, the controller of a five-by-five multiblock: a Silentium opens it, an
+	 * Apotheos shatters it. Unbreakable; no item.
+	 */
+	public static final DeferredHolder<Block, Block> ring_door = MODELEDBLOCKS.register("ring_door",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(-1.0f, 3600000f)
+					.noLootTable().noOcclusion().sound(SoundType.DEEPSLATE_BRICKS).lightLevel(state -> 3).pushReaction(PushReaction.BLOCK)));
+	/** A Chapel's focus in a Saint mausoleum: its trial lights a node on the ring door. Unbreakable; no item. */
+	public static final DeferredHolder<Block, Block> chapel_focus = MODELEDBLOCKS.register("chapel_focus",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelFocusBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(-1.0f, 3600000f)
+					.noLootTable().noOcclusion().sound(SoundType.DEEPSLATE_BRICKS).lightLevel(state -> 6)
+					.pushReaction(PushReaction.BLOCK)));
+	// Mausoleum set pieces (Track 6). Trial pieces are unbreakable like the focus; the dressing breaks and drops
+	// nothing. None has an item.
+	/** One of Velorum's frozen congregation, two tall, in one of four poses. */
+	public static final DeferredHolder<Block, Block> frozen_devotee = MODELEDBLOCKS.register("frozen_devotee",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.FrozenDevoteeBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.ICE).strength(2.0f, 6.0f).noLootTable().noOcclusion().sound(SoundType.GLASS)
+					.pushReaction(PushReaction.BLOCK)));
+	/** A Beholding witness: its eye lights when the memory touches it. */
+	public static final DeferredHolder<Block, Block> witness_stone = MODELEDBLOCKS.register("witness_stone",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.WitnessStoneBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_GRAY).strength(-1.0f, 3600000f).noLootTable().noOcclusion()
+					.sound(SoundType.DEEPSLATE_BRICKS).pushReaction(PushReaction.BLOCK)
+					.lightLevel(state -> state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.WitnessStoneBlock.LIT) ? 7 : 0)));
+	/** Velorum's Beholding witness: one of the Procession who turns its head and opens its eyes when lit. */
+	public static final DeferredHolder<Block, Block> witness_devotee = MODELEDBLOCKS.register("witness_devotee",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.WitnessDevoteeBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.ICE).strength(-1.0f, 3600000f).noLootTable().noOcclusion()
+					.sound(SoundType.GLASS).pushReaction(PushReaction.BLOCK)
+					.lightLevel(state -> state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.WitnessDevoteeBlock.LIT) ? 7 : 0)));
+	/** A Litany's standing stone, two tall, the Litany carved in Abocipher on its face. */
+	public static final DeferredHolder<Block, Block> litany_stone = MODELEDBLOCKS.register("litany_stone",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.LitanyStoneBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_GRAY).strength(-1.0f, 3600000f).noLootTable().noOcclusion()
+					.sound(SoundType.DEEPSLATE_BRICKS).pushReaction(PushReaction.BLOCK)));
+	/** A Litany's offering stand, holding one of the candidates. */
+	public static final DeferredHolder<Block, Block> offering_stand = MODELEDBLOCKS.register("offering_stand",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.OfferingStandBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.TERRACOTTA_WHITE).strength(-1.0f, 3600000f).noLootTable().noOcclusion()
+					.sound(SoundType.BONE_BLOCK).pushReaction(PushReaction.BLOCK)));
+	/** A Repose pylon, three tall; its head charges before each pulse. */
+	public static final DeferredHolder<Block, Block> pulse_pylon = MODELEDBLOCKS.register("pulse_pylon",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.PulsePylonBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_GRAY).strength(-1.0f, 3600000f).noLootTable().noOcclusion()
+					.sound(SoundType.DEEPSLATE_BRICKS).pushReaction(PushReaction.BLOCK)
+					.lightLevel(state -> 2 + state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.PulsePylonBlock.CHARGE) * 3)));
+	/** A Downfall seal in the floor, which a wave of the fall rises from. */
+	public static final DeferredHolder<Block, Block> spawn_mark = MODELEDBLOCKS.register("spawn_mark",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SpawnMarkBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_GRAY).strength(-1.0f, 3600000f).noLootTable().noOcclusion().noCollission()
+					.sound(SoundType.DEEPSLATE_BRICKS).pushReaction(PushReaction.BLOCK)
+					.lightLevel(state -> state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SpawnMarkBlock.DUE) ? 4 : 0)));
+	/** A containment anchor in its dormant, built form: Seraphae's chain pylon as architecture. Two tall. */
+	public static final DeferredHolder<Block, Block> containment_anchor_block = MODELEDBLOCKS.register("containment_anchor_block",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.ContainmentAnchorBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.QUARTZ).strength(3.0f, 9.0f).noLootTable().noOcclusion().sound(SoundType.STONE)
+					.pushReaction(PushReaction.BLOCK)));
+	/** Bone spurs grown out of a block face where Seraphae's healing reached; placed like an amethyst cluster. */
+	public static final DeferredHolder<Block, Block> bone_outgrowth = MODELEDBLOCKS.register("bone_outgrowth",
+			() -> new BoneOutgrowthBlock(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
+					.requiresCorrectToolForDrops().strength(1.0F).noOcclusion().sound(SoundType.BONE_BLOCK)
+					.pushReaction(PushReaction.DESTROY)));
+	/** Bracket fungus on a wall in Putriciel's overgrown bands; its gills glow faint green, brighter in bloom. */
+	public static final DeferredHolder<Block, Block> spore_shelf = MODELEDBLOCKS.register("spore_shelf",
+			() -> new SporeShelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_YELLOW)
+					.strength(0.5F).noOcclusion().noCollission().sound(SoundType.FUNGUS)
+					.pushReaction(PushReaction.DESTROY).lightLevel(SporeShelfBlock::lightLevel)));
+	/** Icicles hanging from Velorum's vaults: a short cluster, or the base and tip of a two-cell icicle. */
+	public static final DeferredHolder<Block, Block> hanging_icicle = MODELEDBLOCKS.register("hanging_icicle",
+			() -> new HangingIcicleBlock(BlockBehaviour.Properties.of().mapColor(MapColor.ICE).strength(0.5F)
+					.noOcclusion().noCollission().sound(SoundType.GLASS).pushReaction(PushReaction.DESTROY)));
+	/** Runoff frozen down a wall face in Velorum's monastery, in vertical runs down the pilasters. */
+	public static final DeferredHolder<Block, Block> frozen_drip = MODELEDBLOCKS.register("frozen_drip",
+			() -> new FrozenDripBlock(BlockBehaviour.Properties.of().mapColor(MapColor.ICE).strength(0.5F)
+					.noOcclusion().noCollission().sound(SoundType.GLASS).pushReaction(PushReaction.DESTROY)));
+	/** Putriciel's bone pyre. */
+	public static final DeferredHolder<Block, Block> rot_pyre = MODELEDBLOCKS.register("rot_pyre",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.RotPyreBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.TERRACOTTA_WHITE).strength(1.0f, 3.0f).noLootTable().noOcclusion()
+					.sound(SoundType.BONE_BLOCK).pushReaction(PushReaction.BLOCK)
+					.lightLevel(state -> state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.decoration.RotPyreBlock.LIT) ? 10 : 0)));
+	/** A loculus's sealed front: a bone-framed lacquer plate. */
+	public static final DeferredHolder<Block, Block> sealed_niche = MODELEDBLOCKS.register("sealed_niche",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.NicheFrontBlock(
+					com.vincenthuto.hemomancy.common.block.harbinger.decoration.NicheFrontBlock.SEALED,
+					BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_WHITE).strength(2.0f, 6.0f).noLootTable()
+							.noOcclusion().sound(SoundType.BONE_BLOCK).pushReaction(PushReaction.BLOCK)));
+	/** A loculus's opened front: the frame and a shelf lip over the recess behind. */
+	public static final DeferredHolder<Block, Block> opened_niche = MODELEDBLOCKS.register("opened_niche",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.NicheFrontBlock(
+					com.vincenthuto.hemomancy.common.block.harbinger.decoration.NicheFrontBlock.OPENED,
+					BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_WHITE).strength(2.0f, 6.0f).noLootTable()
+							.noOcclusion().sound(SoundType.BONE_BLOCK).pushReaction(PushReaction.BLOCK)));
+	/** The mausoleums' wall light: a hematic-iron sconce burning bone oil. */
+	public static final DeferredHolder<Block, Block> reliquary_sconce = MODELEDBLOCKS.register("reliquary_sconce",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.ReliquarySconceBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).strength(1.5f, 6.0f).noLootTable().noOcclusion().noCollission()
+					.sound(SoundType.LANTERN).pushReaction(PushReaction.DESTROY)
+					.lightLevel(state -> state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.decoration.ReliquarySconceBlock.FLAME).light())));
+	/** Hemorath's floor gutter: a deepslate-tile floor with a blood channel cut in it, dry to full. */
+	public static final DeferredHolder<Block, Block> blood_gutter = MODELEDBLOCKS.register("blood_gutter",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.BloodGutterBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.DEEPSLATE).requiresCorrectToolForDrops().strength(3.5f, 6.0f)
+					.sound(SoundType.DEEPSLATE_TILES)));
+	/** Hemorath's standing hall basin: venous stone banded in hematic iron, a spout on its facing side. */
+	public static final DeferredHolder<Block, Block> venous_basin = MODELEDBLOCKS.register("venous_basin",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.VenousBasinBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).requiresCorrectToolForDrops().strength(2.0f, 6.0f).noOcclusion()
+					.sound(SoundType.STONE)));
+	/** A cyst in the Gardens' Archive holding one Saint's Recollection. No item; it withers when drawn. */
+	public static final DeferredHolder<Block, Block> recollection_cyst = MODELEDBLOCKS.register("recollection_cyst",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.plant.RecollectionCystBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.TERRACOTTA_WHITE).strength(0.6f).noLootTable().noOcclusion().noCollission()
+					.sound(SoundType.AMETHYST_CLUSTER).lightLevel(state -> 7).pushReaction(PushReaction.DESTROY)));
 	public static final DeferredHolder<Block, Block> potted_puffball_fungus = POTTEDBLOCKS.register("potted_puffball_fungus",
 			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.puffball_fungus,
 					BlockBehaviour.Properties.of().noCollission()));
@@ -871,7 +1146,7 @@ public class BlockInit {
 
 	public static final DeferredHolder<Block, Block> blood_basin = MODELEDBLOCKS.register("blood_basin",
 			() -> new BloodBasinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(2.0F, 6.0F).sound(SoundType.STONE)));
+					.strength(2.0F, 6.0F).sound(SoundType.STONE).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> offering_gate = SPECIALBLOCKS.register("offering_gate",
 			() -> new OfferingGateBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
@@ -965,7 +1240,9 @@ public class BlockInit {
 			"sanguine_conduit", "sanguine_conduit");
 	private static final Set<String> ITEMLESS_BLOCKS = Set.of("attached_gourd_stem", "filler_block",
 			"warp_chair_filler", "abocipher_emitter", "qliphoth_bloom",
-			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion");
+			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "chapel_focus", "recollection_cyst",
+			"frozen_devotee", "witness_stone", "witness_devotee", "litany_stone", "offering_stand", "pulse_pylon", "spawn_mark",
+			"containment_anchor_block", "rot_pyre", "sealed_niche", "opened_niche", "reliquary_sconce");
 	private static final Set<String> HIDDEN_BLOCK_ITEMS = Set.of("active_befouling_ash_trail",
 			"active_smouldering_ash_trail", "engram_block");
 

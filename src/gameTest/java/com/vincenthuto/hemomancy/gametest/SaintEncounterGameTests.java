@@ -2,11 +2,15 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.block.harbinger.decoration.ContainmentAnchorBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.decoration.RotPyreBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.decoration.SporeShelfBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SaintSarcophagusBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.ContainmentAnchorEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeState;
@@ -24,6 +28,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -33,8 +38,11 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -250,6 +258,166 @@ public final class SaintEncounterGameTests {
 			boss.discard();
 			player.discard();
 		}
+	}
+
+	/**
+	 * In her chamber the fight's anchors wake from the four whole block anchors round the tomb (R1): each stands on its
+	 * block's cell, the block clears while it stands, and it is built again when the anchor goes, unless the cell is
+	 * taken. Snapped anchors and anchors out of reach stay as they are.
+	 */
+	@GameTest(templateNamespace = "hemomancy", template = "empty", timeoutTicks = 40)
+	public static void seraphaeWakesTheChambersBlockAnchorsAndRestoresThem(GameTestHelper helper) {
+		BlockPos tomb = helper.absolutePos(TOMB);
+		BlockPos[] fight = { tomb.offset(-2, 1, -6), tomb.offset(-2, 1, 6), tomb.offset(3, 0, -4), tomb.offset(3, 0, 4) };
+		BlockPos snapped = tomb.offset(0, 0, -3);
+		BlockPos aisle = tomb.offset(11, 0, 0);
+		SeraphaeEntity boss = EntityInit.seraphae.get().create(helper.getLevel());
+		helper.assertTrue(boss != null, "Seraphae could not be created");
+		try {
+			BlockState state = clearTombSpace(helper, tomb);
+			for (BlockPos pos : fight) placeAnchorBlock(helper, pos, false);
+			placeAnchorBlock(helper, snapped, true);
+			placeAnchorBlock(helper, aisle, false);
+			boss.setPos(Vec3.atBottomCenterOf(tomb));
+			boss.bindTomb(tomb, state);
+			boss.aiStep();
+
+			var anchors = helper.getLevel().getEntitiesOfClass(ContainmentAnchorEntity.class, new AABB(tomb).inflate(32),
+					anchor -> boss.getUUID().equals(anchor.getParentId()));
+			helper.assertTrue(anchors.size() == 4, "Seraphae did not wake four anchors: " + anchors.size());
+			for (BlockPos pos : fight) {
+				helper.assertTrue(anchors.stream().anyMatch(anchor -> pos.equals(anchor.getHome())
+						&& anchor.position().equals(Vec3.atBottomCenterOf(pos))), "No fight anchor stands on the block anchor at " + pos);
+				helper.assertTrue(helper.getLevel().getBlockState(pos).isAir() && helper.getLevel().getBlockState(pos.above()).isAir(),
+						"The woken block anchor at " + pos + " did not clear");
+			}
+			helper.assertTrue(isWholeAnchor(helper, snapped, true), "A snapped anchor woke");
+			helper.assertTrue(isWholeAnchor(helper, aisle, false), "An anchor out of reach woke");
+
+			// one cell is taken while its anchor stands: that block stays gone; the rest come back when she goes
+			BlockPos taken = fight[0];
+			helper.getLevel().setBlock(taken, Blocks.STONE.defaultBlockState(), 3);
+			boss.discard();
+			helper.assertTrue(helper.getLevel().getEntitiesOfClass(ContainmentAnchorEntity.class, new AABB(tomb).inflate(32),
+					anchor -> boss.getUUID().equals(anchor.getParentId())).isEmpty(), "Seraphae's anchors outlived her");
+			for (int i = 1; i < fight.length; i++) {
+				helper.assertTrue(isWholeAnchor(helper, fight[i], false), "The block anchor at " + fight[i] + " was not restored");
+			}
+			helper.assertTrue(helper.getLevel().getBlockState(taken).is(Blocks.STONE)
+					&& helper.getLevel().getBlockState(taken.above()).isAir(), "An anchor was restored over a taken cell");
+			helper.succeed();
+		} finally {
+			boss.discard();
+		}
+	}
+
+	/**
+	 * Putriciel's phases light his chamber: burning, its Rot Pyres are lit and its Spore Shelves dim; the absolution
+	 * window gutters the pyres and blooms the shelves, and closing it turns them back. However he goes, the chamber is
+	 * left burning, except a cell taken since. The tomb faces east from the template's west edge, so the chamber's box
+	 * (37 x 17 x 27 round it) stays inside this test's spacing; which lights fall outside the box is
+	 * {@code PutricielChamberLightingRulesTest}'s.
+	 */
+	@GameTest(templateNamespace = "hemomancy", template = "empty", timeoutTicks = 40)
+	public static void putricielsPhasesAlternateTheChambersPyresAndSporeShelves(GameTestHelper helper) {
+		BlockPos tomb = helper.absolutePos(new BlockPos(4, 2, 12));
+		// the dais corners ahead of the tomb's foot, and two shelves further down the hall
+		BlockPos[] pyres = { tomb.offset(4, 0, -3), tomb.offset(4, 0, 3) };
+		BlockPos[] shelves = { tomb.offset(9, 2, -6), tomb.offset(9, 2, 6) };
+		DrivenPutriciel boss = new DrivenPutriciel(helper.getLevel());
+		try {
+			for (BlockPos pos : BlockPos.betweenClosed(tomb.offset(-2, 0, -2), tomb.offset(2, 2, 2))) {
+				helper.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+			}
+			BlockState state = BlockInit.saint_sarcophagus.get().defaultBlockState().setValue(SaintSarcophagusBlock.FACING, Direction.EAST);
+			for (BlockPos pos : pyres) placePyre(helper, pos);
+			for (BlockPos pos : shelves) placeShelf(helper, pos);
+			boss.setPos(Vec3.atBottomCenterOf(tomb));
+			boss.bindTomb(tomb, state);
+			helper.assertTrue(helper.getLevel().addFreshEntity(boss), "Putriciel could not be added");
+			boss.aiStep(); // the fight's first tick finds the lights; burning leaves them as they stand
+			assertChamberLighting(helper, pyres, shelves, true, "at the fight's start");
+
+			boss.open();
+			assertChamberLighting(helper, pyres, shelves, false, "in the absolution window");
+			boss.close();
+			assertChamberLighting(helper, pyres, shelves, true, "after the window closed");
+
+			// he goes with the window open and one shelf's cell taken: the rest of the chamber is left burning
+			boss.open();
+			BlockPos taken = shelves[0];
+			helper.getLevel().setBlock(taken, Blocks.STONE.defaultBlockState(), 3);
+			boss.discard();
+			for (BlockPos pos : pyres) helper.assertTrue(isPyre(helper, pos, true), "The pyre at " + pos + " was not relit");
+			helper.assertTrue(isShelf(helper, shelves[1], false), "The shelf at " + shelves[1] + " was left in bloom");
+			helper.assertTrue(helper.getLevel().getBlockState(taken).is(Blocks.STONE), "A taken cell was overwritten");
+			helper.succeed();
+		} finally {
+			boss.discard();
+		}
+	}
+
+	/** Putriciel with his absolution window opened and closed on demand. */
+	private static final class DrivenPutriciel extends PutricielEntity {
+		DrivenPutriciel(Level level) {
+			super(EntityInit.putriciel.get(), level);
+		}
+
+		void open() {
+			openAbsolutionWindow((ServerLevel) level());
+		}
+
+		void close() {
+			endAbsolutionWindow((ServerLevel) level());
+		}
+	}
+
+	private static void assertChamberLighting(GameTestHelper helper, BlockPos[] pyres, BlockPos[] shelves, boolean burning,
+			String when) {
+		for (BlockPos pos : pyres) {
+			helper.assertTrue(isPyre(helper, pos, burning), "The pyre at " + pos + " is not " + (burning ? "lit" : "guttered") + " " + when);
+		}
+		for (BlockPos pos : shelves) {
+			helper.assertTrue(isShelf(helper, pos, !burning), "The shelf at " + pos + " is not " + (burning ? "dim" : "in bloom") + " " + when);
+		}
+	}
+
+	private static void placePyre(GameTestHelper helper, BlockPos pos) {
+		helper.getLevel().setBlock(pos, BlockInit.rot_pyre.get().defaultBlockState().setValue(RotPyreBlock.LIT, true), 3);
+	}
+
+	/** A dim shelf with stone at its back, in case it hangs from a wall. */
+	private static void placeShelf(GameTestHelper helper, BlockPos pos) {
+		BlockState shelf = BlockInit.spore_shelf.get().defaultBlockState().setValue(SporeShelfBlock.BLOOM, false);
+		shelf.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING)
+				.ifPresent(facing -> helper.getLevel().setBlock(pos.relative(facing.getOpposite()), Blocks.STONE.defaultBlockState(), 3));
+		helper.getLevel().setBlock(pos, shelf, 3);
+	}
+
+	private static boolean isPyre(GameTestHelper helper, BlockPos pos, boolean lit) {
+		BlockState state = helper.getLevel().getBlockState(pos);
+		return state.is(BlockInit.rot_pyre.get()) && state.getValue(RotPyreBlock.LIT) == lit;
+	}
+
+	private static boolean isShelf(GameTestHelper helper, BlockPos pos, boolean bloom) {
+		BlockState state = helper.getLevel().getBlockState(pos);
+		return state.is(BlockInit.spore_shelf.get()) && state.getValue(SporeShelfBlock.BLOOM) == bloom;
+	}
+
+	private static void placeAnchorBlock(GameTestHelper helper, BlockPos lower, boolean snapped) {
+		BlockState anchor = BlockInit.containment_anchor_block.get().defaultBlockState()
+				.setValue(ContainmentAnchorBlock.SNAPPED, snapped);
+		helper.getLevel().setBlock(lower, anchor.setValue(ContainmentAnchorBlock.HALF, DoubleBlockHalf.LOWER), 3);
+		helper.getLevel().setBlock(lower.above(), anchor.setValue(ContainmentAnchorBlock.HALF, DoubleBlockHalf.UPPER), 3);
+	}
+
+	private static boolean isWholeAnchor(GameTestHelper helper, BlockPos lower, boolean snapped) {
+		BlockState bottom = helper.getLevel().getBlockState(lower);
+		BlockState top = helper.getLevel().getBlockState(lower.above());
+		return bottom.is(BlockInit.containment_anchor_block.get()) && top.is(BlockInit.containment_anchor_block.get())
+				&& bottom.getValue(ContainmentAnchorBlock.HALF) == DoubleBlockHalf.LOWER
+				&& top.getValue(ContainmentAnchorBlock.HALF) == DoubleBlockHalf.UPPER
+				&& bottom.getValue(ContainmentAnchorBlock.SNAPPED) == snapped;
 	}
 
 	/** A south-facing sarcophagus with no Saint, placed the way the world places it (block, then fillers). */

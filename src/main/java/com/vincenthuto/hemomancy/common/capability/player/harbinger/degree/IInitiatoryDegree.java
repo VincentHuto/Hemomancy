@@ -79,6 +79,9 @@ public interface IInitiatoryDegree {
 	/** Clears pome counters, per-bloom progress, and the Communion completion flag. */
 	void resetPomeCommunion();
 
+	/** Clears the endgame path, the Spine and its revelation, and the Mycophant hunt. */
+	void resetEndgameState();
+
 	// ── Qliphoth Pome empowerment ──────────────────────────────────────────────
 
 	/**

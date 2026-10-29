@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:moss_block",
+    "minecraft:moss_carpet",
+    "minecraft:hanging_roots",
+    "hemomancy:sodden_mud_bricks",
+    "hemomancy:spore_shelf",
+    "hemomancy:infected_cap",
+    "hemomancy:fruiting_infected_cap",
+    "hemomancy:hyphae_block"
+  ]
+}

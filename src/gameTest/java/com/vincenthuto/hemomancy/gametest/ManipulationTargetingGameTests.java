@@ -38,7 +38,7 @@ import java.util.UUID;
 public final class ManipulationTargetingGameTests {
     private static final String EMPTY = "bastion/mobs/empty";
 
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_targeting")
+    @GameTest(templateNamespace = Hemomancy.MOD_ID, template = "empty", batch = "manipulation_targeting")
     public static void aimedRayStopsAtWallAndGlassButPassesOpening(GameTestHelper h) {
         ServerPlayer p = player(h);
         var target = EntityType.ZOMBIE.create(h.getLevel());
@@ -263,7 +263,7 @@ public final class ManipulationTargetingGameTests {
         h.succeed();
     }
 
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_targeting")
+    @GameTest(templateNamespace = Hemomancy.MOD_ID, template = "empty", batch = "manipulation_targeting")
     public static void teleportRejectsUnsafeOrBrightDestinationBeforePayment(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {

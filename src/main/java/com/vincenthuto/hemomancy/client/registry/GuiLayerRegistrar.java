@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.registry;
 
+import com.vincenthuto.hemomancy.client.screen.overlay.ConcentrationOverlay;
+import com.vincenthuto.hemomancy.client.screen.overlay.SporeLoadOverlay;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.event.*;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
@@ -22,9 +24,14 @@ public final class GuiLayerRegistrar {
     public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
         // Vanilla's action bar is one line and runs off the screen; this one wraps long messages.
         event.replaceLayer(VanillaGuiLayers.OVERLAY_MESSAGE, ActionBarOverlay::render);
+        // An Apotheos's spore bar sits where the food bar is hidden for them (ApotheosHudEvents).
+        event.registerAbove(VanillaGuiLayers.FOOD_LEVEL, Hemomancy.rloc("spore_load"), (graphics, deltaTracker) ->
+                SporeLoadOverlay.render(graphics, graphics.guiWidth(), graphics.guiHeight()));
         // Full-screen effects under the whole HUD, vanilla's camera overlays included.
         event.registerBelowAll(Hemomancy.rloc("screen_effects"), (graphics, deltaTracker) ->
                 ScreenOverlayEvents.renderUnderHud(graphics));
+        event.registerAboveAll(Hemomancy.rloc("concentration"), (graphics, deltaTracker) ->
+                ConcentrationOverlay.render(graphics, graphics.guiWidth(), graphics.guiHeight()));
         event.registerAboveAll(Hemomancy.rloc("ironhearted"), (graphics, deltaTracker) ->
                 IronheartedOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
         event.registerAboveAll(Hemomancy.rloc("blackhearted"), (graphics, deltaTracker) ->

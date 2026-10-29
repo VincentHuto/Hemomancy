@@ -39,17 +39,18 @@ class PlayerAnimationGuardrailTest {
 			"PlayerAnimationRegistry.applyThirdPersonPose", Set.of("mixin/core/MixinHumanoidModel.java"));
 
 	/** First-person hand renderers and their priorities. */
-	private static final Map<String, String> HAND_PRIORITIES = Map.of(
-			"client/event/CardinalRiteStaffPlantingClientEvents.java", "HIGHEST",
-			"client/event/LivingStaffMorphClientEvents.java", "HIGHEST",
-			"client/event/BloodVialInjectionClientEvents.java", "HIGH",
-			"client/event/HematicMicroscopeClientEvents.java", "HIGH",
-			"client/event/LivingTorchClientEvents.java", "NORMAL",
-			"client/event/FungalProjectionClientEvents.java", "NORMAL",
-			"client/event/AxonalTransductionClient.java", "NORMAL",
-			"client/render/layer/player/EquippedMorphlingHandRenderer.java", "LOW",
-			"client/event/CastingAnimationClientEvents.java", "LOWEST",
-			"client/render/item/harbinger/HeldWeaponPose.java", "LOWEST");
+	private static final Map<String, String> HAND_PRIORITIES = Map.ofEntries(
+			Map.entry("client/event/CardinalRiteStaffPlantingClientEvents.java", "HIGHEST"),
+			Map.entry("client/event/LivingStaffMorphClientEvents.java", "HIGHEST"),
+			Map.entry("client/event/BloodVialInjectionClientEvents.java", "HIGH"),
+			Map.entry("client/event/HematicMicroscopeClientEvents.java", "HIGH"),
+			Map.entry("client/event/LivingTorchClientEvents.java", "NORMAL"),
+			Map.entry("client/event/FungalProjectionClientEvents.java", "NORMAL"),
+			Map.entry("client/event/PossessionClientEvents.java", "NORMAL"),
+			Map.entry("client/event/AxonalTransductionClient.java", "NORMAL"),
+			Map.entry("client/render/layer/player/EquippedMorphlingHandRenderer.java", "LOW"),
+			Map.entry("client/event/CastingAnimationClientEvents.java", "LOWEST"),
+			Map.entry("client/render/item/harbinger/HeldWeaponPose.java", "LOWEST"));
 
 	@Test
 	void posesApplyThroughTheRegistry() throws IOException {

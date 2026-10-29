@@ -1,0 +1,408 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/blood_gutter",
+    "particle": "minecraft:block/deepslate_tiles",
+    "tiles": "minecraft:block/deepslate_tiles",
+    "stone": "hemomancy:block/polished_venous_stone",
+    "blood": "hemomancy:block/blood_still"
+  },
+  "elements": [
+    {
+      "name": "grate_frame",
+      "from": [
+        5,
+        11,
+        5
+      ],
+      "to": [
+        11,
+        12,
+        6
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            7.75,
+            8.0,
+            8.5,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.5,
+            8.0,
+            9.25,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.25,
+            8.0,
+            10.0,
+            8.5
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "grate_frame",
+      "from": [
+        5,
+        11,
+        10
+      ],
+      "to": [
+        11,
+        12,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10.0,
+            8.0,
+            10.75,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            10.75,
+            8.0,
+            11.5,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            11.5,
+            8.0,
+            12.25,
+            8.5
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "grate_frame",
+      "from": [
+        5,
+        11,
+        6
+      ],
+      "to": [
+        6,
+        12,
+        10
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            5.25,
+            9.0,
+            5.75,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            12.0,
+            0.0,
+            12.125,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            12.125,
+            0.0,
+            12.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "grate_frame",
+      "from": [
+        10,
+        11,
+        6
+      ],
+      "to": [
+        11,
+        12,
+        10
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            5.75,
+            9.0,
+            6.25,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            12.25,
+            0.0,
+            12.375,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            12.375,
+            0.0,
+            12.5,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "grate_bar",
+      "from": [
+        7.5,
+        11.25,
+        6
+      ],
+      "to": [
+        8.5,
+        11.75,
+        10
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            6.25,
+            9.0,
+            6.75,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.75,
+            9.0,
+            7.25,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            12.5,
+            0.0,
+            12.625,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            12.625,
+            0.0,
+            12.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "grate_bar",
+      "from": [
+        6,
+        11.25,
+        7.5
+      ],
+      "to": [
+        7.5,
+        11.75,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.5,
+            9.5,
+            3.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            3.75,
+            9.5,
+            4.0,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            4.0,
+            9.5,
+            4.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            4.25,
+            9.5,
+            4.5,
+            10.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "grate_bar",
+      "from": [
+        8.5,
+        11.25,
+        7.5
+      ],
+      "to": [
+        10,
+        11.75,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4.5,
+            9.5,
+            4.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.75,
+            9.5,
+            5.0,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            5.0,
+            9.5,
+            5.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            5.25,
+            9.5,
+            5.5,
+            10.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "grate_boss",
+      "from": [
+        7,
+        11,
+        7
+      ],
+      "to": [
+        9,
+        12,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.5,
+            9.5,
+            5.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.75,
+            9.5,
+            6.0,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            6.0,
+            9.5,
+            6.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.25,
+            9.5,
+            6.5,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            7.25,
+            8.0,
+            7.5,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.5,
+            8.0,
+            7.75,
+            9.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

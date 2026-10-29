@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "hemomancy:block/charred_log_top",
+    "side": "hemomancy:block/charred_log"
+  }
+}

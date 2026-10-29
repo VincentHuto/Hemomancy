@@ -28,17 +28,21 @@ public final class SarcophagusClientReview {
     private static int ticks;
     private static int shot;
     private static BlockPos row;
-    /** x offset, facing, offerings, consecrated and open, corpus state. */
+    /** x offset, facing, offerings, consecrated and open, corpus state. Each tomb is 2 wide and 4 long. */
     private static final Object[][] PLACEMENTS = {{0, Direction.NORTH, 2, false, EnumCorpusState.DORMANT},
-            {5, Direction.EAST, 3, true, EnumCorpusState.RESPONSIVE},
-            {10, Direction.SOUTH, 3, true, EnumCorpusState.AWAKENED},
-            {15, Direction.WEST, 0, false, EnumCorpusState.DORMANT}};
-    /** Eye offset from the north sarcophagus, then the point looked at; the last pose shows the hotbar. */
+            {8, Direction.EAST, 3, true, EnumCorpusState.RESPONSIVE},
+            {16, Direction.SOUTH, 3, true, EnumCorpusState.AWAKENED},
+            {24, Direction.WEST, 0, false, EnumCorpusState.DORMANT}};
+    /**
+     * Eye offset from the north sarcophagus, then the point looked at; the last pose shows the hotbar. In order: the
+     * row; standing (eye 1.62) beside the sealed north tomb; its foot end and bowl; the east tomb's foot end, then over
+     * its open corpus from the side away from the lid; the south tomb from its lid side and its foot; the unlit west
+     * tomb; the hotbar.
+     */
     private static final double[][] SHOTS = {
-            {7.5, 5.5, -8.5, 7.5, .3, .5}, {-2.2, 1.9, -3.6, .5, .55, -.5}, {-2.4, 3.3, 1.8, .5, .9, .5},
-            {5.5, 3.6, -2.6, 5.5, .6, .5}, {13.4, 3.2, .5, 10.5, .6, .5}, {11.3, 2.4, -1.1, 10.5, .55, -.4},
-            {11.5, 2.0, 2.8, 10.5, .5, 1.6}, {15.5, 1.6, -3.4, 15.5, .6, .5}, {7.5, 2.2, -5.0, 7.5, .8, .5}};
-
+            {12, 7.5, -13, 12, .3, .5}, {-3.2, 1.62, -1.5, .5, .9, 1.5}, {.5, 2.2, -5.5, .5, .8, .5},
+            {12.8, 2.4, .5, 8.5, .8, .5}, {8.0, 3.9, -3.2, 7.5, .8, .5}, {12.6, 3.4, .5, 16, .9, .5},
+            {16.5, 2.1, 5.6, 16.5, .8, .5}, {19.5, 1.8, .5, 24, .8, .5}, {12, 2.2, -6, 12, .8, .5}};
     @SubscribeEvent
     public static void tick(ClientTickEvent.Post event) {
         if (!Boolean.getBoolean("hemomancy.sarcophagusReview")) return;
@@ -58,7 +62,7 @@ public final class SarcophagusClientReview {
                 for (String cmd : new String[]{"gamemode spectator", "time set 6000", "gamerule doDaylightCycle false",
                         "weather clear", "gamerule doMobSpawning false"})
                     server.getCommands().performPrefixedCommand(source, cmd);
-                for (BlockPos pos : BlockPos.betweenClosed(row.offset(-6, -1, -10), row.offset(20, 6, 6)))
+                for (BlockPos pos : BlockPos.betweenClosed(row.offset(-8, -1, -14), row.offset(30, 8, 8)))
                     level.setBlock(pos, pos.getY() < row.getY() ? BlockInit.polished_venous_stone_bricks.get().defaultBlockState()
                             : Blocks.AIR.defaultBlockState(), 2);
                 var block = (SaintSarcophagusBlock) BlockInit.saint_sarcophagus.get();

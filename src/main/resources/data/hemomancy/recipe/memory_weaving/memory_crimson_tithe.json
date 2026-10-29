@@ -3,6 +3,9 @@
     "catalysts":  [
                       {
                           "item":  "hemomancy:hallowed_residuum_hemorath"
+                      },
+                      {
+                          "item":  "hemomancy:recollection_hemorath"
                       }
                   ],
     "enzymes":  {

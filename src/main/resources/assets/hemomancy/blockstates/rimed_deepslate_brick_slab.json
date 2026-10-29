@@ -1,0 +1,145 @@
+{
+  "variants": {
+    "type=bottom": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_1",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_1",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_1",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_2"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_2",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_2",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_2",
+        "y": 270
+      }
+    ],
+    "type=top": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top_1",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top_1",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top_1",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top_2"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top_2",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top_2",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_brick_slab_top_2",
+        "y": 270
+      }
+    ],
+    "type=double": [
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_1"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_1",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_1",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_1",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_2"
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_2",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_2",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/rimed_deepslate_bricks_2",
+        "y": 270
+      }
+    ]
+  }
+}

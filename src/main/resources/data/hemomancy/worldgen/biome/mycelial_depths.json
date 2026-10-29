@@ -32,6 +32,12 @@
         "weight": 20,
         "minCount": 3,
         "maxCount": 8
+      },
+      {
+        "type": "hemomancy:facsimile_bat",
+        "weight": 8,
+        "minCount": 2,
+        "maxCount": 4
       }
     ],
     "axolotls": [],
@@ -43,6 +49,24 @@
         "weight": 8,
         "minCount": 1,
         "maxCount": 2
+      },
+      {
+        "type": "hemomancy:facsimile_spider",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "hemomancy:facsimile_enderman",
+        "weight": 3,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "hemomancy:hunter_fungus",
+        "weight": 4,
+        "minCount": 1,
+        "maxCount": 1
       }
     ],
     "underground_water_creature": [],
@@ -78,7 +102,9 @@
     [],
     [
       "hemomancy:ghost_pipes",
-      "hemomancy:sporite_crystal_cluster"
+      "hemomancy:sporite_crystal_cluster",
+      "hemomancy:gill_curtain",
+      "hemomancy:recollection_cyst"
     ],
     []
   ]

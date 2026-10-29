@@ -384,7 +384,7 @@ public final class BoundSummonBehavior {
 	}
 
 	public static int claimedWillBonusCap(Player owner) {
-		boolean silentArchon = HarbingerPathPermissions.isProvenSilentArchon(
+		boolean silentArchon = HarbingerPathPermissions.isSilentium(
 						HemoCapabilityAccess.getInitiatoryDegree(owner).getDegreeNumber(), HemoCapabilityAccess.getInitiatoryDegree(owner).getArchonPath());
 		if (!silentArchon) {
 			return 0;

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "style=stand": {
+      "model": "hemomancy:block/offering_stand"
+    },
+    "style=bowl": {
+      "model": "hemomancy:block/offering_stand_bowl"
+    }
+  }
+}

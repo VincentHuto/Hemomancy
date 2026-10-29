@@ -32,6 +32,7 @@
 9	src/main/java/com/vincenthuto/hemomancy/common/rite/WorkingCraftRecipeRules.java	Working craft recipe validation reasons, logged at load
 1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/EarthenVeinBlockEntity.java	internal name of a temporary vein, never a destination
 3	src/main/java/com/vincenthuto/hemomancy/common/worldgen/feature/EscharianOvergrowthFeature.java	worldgen phase names, logged only
+1	src/main/java/com/vincenthuto/hemomancy/common/worldgen/structure/MausoleumStructure.java	template-name pattern, never shown
 1	src/main/java/com/vincenthuto/hemomancy/config/HemoClientConfig.java	config file comments
 7	src/main/java/com/vincenthuto/hemomancy/config/HemoMnAConfig.java	config file comments
 5	src/main/java/com/vincenthuto/hemomancy/config/HemoServerConfig.java	config file comments

@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "hemomancy:block/radiant_healed_quartz"
+      },
+      {
+        "model": "hemomancy:block/radiant_healed_quartz_1"
+      },
+      {
+        "model": "hemomancy:block/radiant_healed_quartz_2"
+      }
+    ]
+  }
+}

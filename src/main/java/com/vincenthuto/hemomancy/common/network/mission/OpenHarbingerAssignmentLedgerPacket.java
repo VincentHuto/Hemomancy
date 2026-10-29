@@ -77,7 +77,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean livingCovenantComplete,
 		int pomesConsumed,
 		boolean qliphothCommunionComplete,
-		EnumArchonPath archonPath, boolean severedPortalOpen) implements CustomPacketPayload {
+		EnumArchonPath archonPath, boolean severedPortalOpen, boolean vesperDefeated) implements CustomPacketPayload {
 	public static final Type<OpenHarbingerAssignmentLedgerPacket> TYPE =
 			new Type<>(Hemomancy.rloc("open_harbinger_assignment_ledger"));
 	public static final StreamCodec<FriendlyByteBuf, OpenHarbingerAssignmentLedgerPacket> STREAM_CODEC =
@@ -158,6 +158,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.qliphothCommunionComplete);
 		buf.writeEnum(msg.archonPath);
 		buf.writeBoolean(msg.severedPortalOpen);
+		buf.writeBoolean(msg.vesperDefeated);
 	}
 
 	public static OpenHarbingerAssignmentLedgerPacket decode(FriendlyByteBuf buf) {
@@ -226,6 +227,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readVarInt(),
 				buf.readBoolean(),
 				buf.readEnum(EnumArchonPath.class),
+				buf.readBoolean(),
 				buf.readBoolean());
 	}
 

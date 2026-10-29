@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.Possession;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.spore.SporeLoad;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
@@ -71,6 +73,16 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOOD_VOLUME =
             ATTACHMENT_TYPES.register("blood_volume",
                     () -> AttachmentType.serializable(BloodVolume::new).copyOnDeath().build());
+
+    /** A Silentium's possession: copied on death so a visit that ends badly can still be put right. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Possession>> POSSESSION =
+            ATTACHMENT_TYPES.register("possession",
+                    () -> AttachmentType.serializable(Possession::new).copyOnDeath().build());
+
+    /** Not copied on death: a respawned Apotheos starts with no spores. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<SporeLoad>> SPORE_LOAD =
+            ATTACHMENT_TYPES.register("spore_load",
+                    () -> AttachmentType.serializable(SporeLoad::new).build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<PowerGuardrailState>> POWER_GUARDRAILS =
             ATTACHMENT_TYPES.register("power_guardrails",

@@ -9,12 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 final class ChamberProgressionRulesTest {
 	@Test
 	void mapsEveryProgressionTierAndRadius() {
-		assertState(facts(0, false, false, false), 0, "will_default", 4);
-		assertState(facts(4, true, false, false), 0, "mnemonic_lowtide", 4);
-		assertState(facts(7, false, false, false), 1, "archon_revelation", 6);
-		assertState(facts(6, false, true, false), 2, "qliphoth_communion", 8);
-		assertState(facts(7, false, false, true), 2, "silent_archon", 8);
-		assertState(facts(8, false, false, false), 3, "apotheos", 10);
+		assertState(facts(0, false, false, false, false), 0, "will_default", 4);
+		assertState(facts(4, true, false, false, false), 0, "mnemonic_lowtide", 4);
+		assertState(facts(7, false, false, false, false), 1, "archon_revelation", 6);
+		assertState(facts(6, false, true, false, false), 2, "qliphoth_communion", 8);
+		assertState(facts(8, false, true, true, false), 3, "silent_archon", 10);
+		assertState(facts(8, false, true, false, true), 3, "apotheos", 10);
 	}
 
 	@Test
@@ -37,27 +37,30 @@ final class ChamberProgressionRulesTest {
 	@Test
 	void availableThemesAreStableFilteredAndExcludeEncounters() {
 		assertEquals(List.of("will_default"),
-				ChamberProgressionRules.availableThemes(facts(0, false, false, false)));
+				ChamberProgressionRules.availableThemes(facts(0, false, false, false, false)));
 		assertEquals(List.of("will_default", "mnemonic_lowtide", "archon_revelation",
-					"qliphoth_communion", "silent_archon", "apotheos"),
-				ChamberProgressionRules.availableThemes(facts(8, true, true, true)));
-		assertFalse(ChamberProgressionRules.availableThemes(facts(8, true, true, true))
+					"qliphoth_communion", "silent_archon"),
+				ChamberProgressionRules.availableThemes(facts(8, true, true, true, false)));
+		assertEquals(List.of("will_default", "mnemonic_lowtide", "archon_revelation",
+					"qliphoth_communion", "apotheos"),
+				ChamberProgressionRules.availableThemes(facts(8, true, true, false, true)));
+		assertFalse(ChamberProgressionRules.availableThemes(facts(8, true, true, false, true))
 				.contains("vesper_fight"));
-		assertFalse(ChamberProgressionRules.availableThemes(facts(8, true, true, true))
+		assertFalse(ChamberProgressionRules.availableThemes(facts(8, true, true, false, true))
 				.contains("mycophant_nursery"));
 	}
 
 	@Test
 	void lowtideUnlocksFromLearningFirstScarRatherThanDegreeSix() {
 		assertEquals(List.of("will_default", "mnemonic_lowtide"),
-				ChamberProgressionRules.availableThemes(facts(4, true, false, false)));
+				ChamberProgressionRules.availableThemes(facts(4, true, false, false, false)));
 		assertEquals(List.of("will_default"),
-				ChamberProgressionRules.availableThemes(facts(6, false, false, false)));
+				ChamberProgressionRules.availableThemes(facts(6, false, false, false, false)));
 	}
 
 	private static ChamberProgressionRules.Facts facts(int degree, boolean veinMason,
-			boolean qliphothStarted, boolean silentArchon) {
-		return new ChamberProgressionRules.Facts(degree, veinMason, qliphothStarted, silentArchon);
+			boolean qliphothStarted, boolean silentium, boolean apotheos) {
+		return new ChamberProgressionRules.Facts(degree, veinMason, qliphothStarted, silentium, apotheos);
 	}
 
 	private static void assertState(ChamberProgressionRules.Facts facts, int tier,

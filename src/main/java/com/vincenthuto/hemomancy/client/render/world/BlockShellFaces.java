@@ -14,7 +14,8 @@ import java.util.function.Predicate;
 /**
  * Emits the outward faces of a set of blocks as one connected shell, with
  * corner-averaged normals so the warp shader swells it smoothly. Shared by the
- * floorless structure feed and the Working floor swallowing its craft.
+ * floorless structure feed and the Working floor swallowing its craft; the
+ * mausoleum ward draws single faces it has already found through {@link #emitFace}.
  */
 final class BlockShellFaces {
 	private static final float UV_SCALE = 0.37f;
@@ -41,6 +42,16 @@ final class BlockShellFaces {
 				emitUnitFace(consumer, pose, direction, positions, pos, camera, color);
 			}
 		}
+	}
+
+	/**
+	 * One unit face of {@code pos} with a flat normal, for a caller that keeps its own set of visible faces. UVs are
+	 * the world face coordinate times the shell's UV scale, as for the shell.
+	 */
+	static void emitFace(VertexConsumer consumer, PoseStack.Pose pose, BlockPos pos, Direction direction, Vec3 camera,
+			int color) {
+		emitFace(consumer, pose, direction, facePlane(pos, direction), faceU(pos, direction), faceV(pos, direction),
+				1, 1, null, camera, color);
 	}
 
 	private static void emitExposedFaces(VertexConsumer consumer, PoseStack.Pose pose, Direction direction,
@@ -103,37 +114,37 @@ final class BlockShellFaces {
 					x(u1, camera), y(surface, camera), z(v1, camera), texU1, texV1,
 					x(u1, camera), y(surface, camera), z(v0, camera), texU1, texV0,
 					x(u0, camera), y(surface, camera), z(v0, camera), texU0, texV0,
-					positions, camera, color);
+					direction, positions, camera, color);
 			case UP -> emitQuad(consumer, pose,
 					x(u0, camera), y(surface, camera), z(v0, camera), texU0, texV0,
 					x(u1, camera), y(surface, camera), z(v0, camera), texU1, texV0,
 					x(u1, camera), y(surface, camera), z(v1, camera), texU1, texV1,
 					x(u0, camera), y(surface, camera), z(v1, camera), texU0, texV1,
-					positions, camera, color);
+					direction, positions, camera, color);
 			case NORTH -> emitQuad(consumer, pose,
 					x(u1, camera), y(v0, camera), z(surface, camera), texU1, texV0,
 					x(u0, camera), y(v0, camera), z(surface, camera), texU0, texV0,
 					x(u0, camera), y(v1, camera), z(surface, camera), texU0, texV1,
 					x(u1, camera), y(v1, camera), z(surface, camera), texU1, texV1,
-					positions, camera, color);
+					direction, positions, camera, color);
 			case SOUTH -> emitQuad(consumer, pose,
 					x(u0, camera), y(v0, camera), z(surface, camera), texU0, texV0,
 					x(u1, camera), y(v0, camera), z(surface, camera), texU1, texV0,
 					x(u1, camera), y(v1, camera), z(surface, camera), texU1, texV1,
 					x(u0, camera), y(v1, camera), z(surface, camera), texU0, texV1,
-					positions, camera, color);
+					direction, positions, camera, color);
 			case WEST -> emitQuad(consumer, pose,
 					x(surface, camera), y(v0, camera), z(u0, camera), texU0, texV0,
 					x(surface, camera), y(v0, camera), z(u1, camera), texU1, texV0,
 					x(surface, camera), y(v1, camera), z(u1, camera), texU1, texV1,
 					x(surface, camera), y(v1, camera), z(u0, camera), texU0, texV1,
-					positions, camera, color);
+					direction, positions, camera, color);
 			case EAST -> emitQuad(consumer, pose,
 					x(surface, camera), y(v0, camera), z(u1, camera), texU1, texV0,
 					x(surface, camera), y(v0, camera), z(u0, camera), texU0, texV0,
 					x(surface, camera), y(v1, camera), z(u0, camera), texU0, texV1,
 					x(surface, camera), y(v1, camera), z(u1, camera), texU1, texV1,
-					positions, camera, color);
+					direction, positions, camera, color);
 		}
 	}
 
@@ -142,16 +153,17 @@ final class BlockShellFaces {
 			float x2, float y2, float z2, float u2, float v2,
 			float x3, float y3, float z3, float u3, float v3,
 			float x4, float y4, float z4, float u4, float v4,
-			Set<BlockPos> positions, Vec3 camera, int color) {
-		emitVertex(consumer, pose, x1, y1, z1, u1, v1, positions, camera, color);
-		emitVertex(consumer, pose, x2, y2, z2, u2, v2, positions, camera, color);
-		emitVertex(consumer, pose, x3, y3, z3, u3, v3, positions, camera, color);
-		emitVertex(consumer, pose, x4, y4, z4, u4, v4, positions, camera, color);
+			Direction direction, Set<BlockPos> positions, Vec3 camera, int color) {
+		emitVertex(consumer, pose, x1, y1, z1, u1, v1, direction, positions, camera, color);
+		emitVertex(consumer, pose, x2, y2, z2, u2, v2, direction, positions, camera, color);
+		emitVertex(consumer, pose, x3, y3, z3, u3, v3, direction, positions, camera, color);
+		emitVertex(consumer, pose, x4, y4, z4, u4, v4, direction, positions, camera, color);
 	}
 
+	/** With {@code positions} null the face stands alone and takes its own flat normal. */
 	private static void emitVertex(VertexConsumer consumer, PoseStack.Pose pose, float x, float y, float z,
-			float u, float v, Set<BlockPos> positions, Vec3 camera, int color) {
-		Vector3f normal = cornerNormal(positions,
+			float u, float v, Direction direction, Set<BlockPos> positions, Vec3 camera, int color) {
+		Vector3f normal = positions == null ? direction.step() : cornerNormal(positions,
 				(int) Math.round(x + camera.x),
 				(int) Math.round(y + camera.y),
 				(int) Math.round(z + camera.z));

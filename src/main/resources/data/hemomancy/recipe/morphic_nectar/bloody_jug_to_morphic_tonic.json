@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:morphic_nectar",
+  "input": {
+    "item": "hemomancy:bloody_jug"
+  },
+  "result": {
+    "id": "hemomancy:morphic_tonic",
+    "count": 1
+  },
+  "transform_time": 100
+}

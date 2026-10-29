@@ -1,0 +1,80 @@
+{
+  "variants": {
+    "end=false,facing=north": [
+      {
+        "model": "hemomancy:block/frozen_drip_sheet_0"
+      },
+      {
+        "model": "hemomancy:block/frozen_drip_sheet_1"
+      }
+    ],
+    "end=false,facing=east": [
+      {
+        "model": "hemomancy:block/frozen_drip_sheet_0",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/frozen_drip_sheet_1",
+        "y": 90
+      }
+    ],
+    "end=false,facing=south": [
+      {
+        "model": "hemomancy:block/frozen_drip_sheet_0",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/frozen_drip_sheet_1",
+        "y": 180
+      }
+    ],
+    "end=false,facing=west": [
+      {
+        "model": "hemomancy:block/frozen_drip_sheet_0",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/frozen_drip_sheet_1",
+        "y": 270
+      }
+    ],
+    "end=true,facing=north": [
+      {
+        "model": "hemomancy:block/frozen_drip_end_0"
+      },
+      {
+        "model": "hemomancy:block/frozen_drip_end_1"
+      }
+    ],
+    "end=true,facing=east": [
+      {
+        "model": "hemomancy:block/frozen_drip_end_0",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/frozen_drip_end_1",
+        "y": 90
+      }
+    ],
+    "end=true,facing=south": [
+      {
+        "model": "hemomancy:block/frozen_drip_end_0",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/frozen_drip_end_1",
+        "y": 180
+      }
+    ],
+    "end=true,facing=west": [
+      {
+        "model": "hemomancy:block/frozen_drip_end_0",
+        "y": 270
+      },
+      {
+        "model": "hemomancy:block/frozen_drip_end_1",
+        "y": 270
+      }
+    ]
+  }
+}

@@ -29,6 +29,8 @@ public final class ClientSetupRegistrar {
             ItemBlockRenderTypes.setRenderLayer(BlockInit.frozen_cruor.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(FluidInit.WHITE_HUMOR_FLOWING.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(FluidInit.RENDERING_BILE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(FluidInit.RENDERING_BILE_FLOWING.get(), RenderType.translucent());
         });
         BloodVolumeOverlay.instance = new BloodVolumeOverlay();
         EquippedMorphlingOverlay.instance = new EquippedMorphlingOverlay();

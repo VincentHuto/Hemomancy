@@ -1,0 +1,63 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "lesser",
+  "purpose": "bond",
+  "required_degree": 8,
+  "riteName": "Rite of Possession",
+  "riteDescription": "A Silentium forces their will onto a piece of the organism. Drag a surrogate into the rite space and still it there; the will walks the Gardens in its facsimile while an echo waits at the rite.",
+  "floor": "hemomancy:communion_lesser",
+  "brazier_signature": [],
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      }
+    ],
+    "support_sockets": [
+      {
+        "x": 4,
+        "y": 0,
+        "z": 0,
+        "suggested_sigil": "bastion",
+        "required": true
+      }
+    ],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 300,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "storm",
+      "lightning": true,
+      "dome": false
+    },
+    "failure": "fragile_damage"
+  }
+}

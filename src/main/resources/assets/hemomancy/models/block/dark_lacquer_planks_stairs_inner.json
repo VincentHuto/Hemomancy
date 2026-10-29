@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "hemomancy:block/dark_lacquer_planks",
+    "top": "hemomancy:block/dark_lacquer_planks",
+    "side": "hemomancy:block/dark_lacquer_planks"
+  }
+}

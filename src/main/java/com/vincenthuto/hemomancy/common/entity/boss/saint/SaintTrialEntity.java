@@ -159,6 +159,11 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint {
 		super.addAdditionalSaveData(tag);
 		rise.save(tag, "SaintRise");
 		tag.putBoolean(TAG_TRIAL_ENDED, trialEnded);
+		tag.putString("SaintAwakening", awakening);
+		tag.putString("SaintTombRecord", tombRecord);
+		net.minecraft.nbt.ListTag skipped = new net.minecraft.nbt.ListTag();
+		skippedChapels.forEach(kind -> skipped.add(net.minecraft.nbt.StringTag.valueOf(kind)));
+		tag.put("SaintSkippedChapels", skipped);
 		if (tombPos != null && tombState != null) {
 			tag.putLong(TAG_TOMB_POS, tombPos.asLong());
 			tag.put(TAG_TOMB_STATE, NbtUtils.writeBlockState(tombState));
@@ -172,6 +177,13 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint {
 		this.entityData.set(DATA_RISE_TICK, rise.elapsed());
 		if (rise.active()) bossBar.setVisible(false);
 		trialEnded = tag.getBoolean(TAG_TRIAL_ENDED);
+		// The enrage's modifiers and effects were saved with the entity; only the record is read back.
+		if (tag.contains("SaintAwakening")) awakening = tag.getString("SaintAwakening");
+		if (tag.contains("SaintTombRecord")) tombRecord = tag.getString("SaintTombRecord");
+		skippedChapels.clear();
+		for (net.minecraft.nbt.Tag kind : tag.getList("SaintSkippedChapels", net.minecraft.nbt.Tag.TAG_STRING)) {
+			skippedChapels.add(kind.getAsString());
+		}
 		if (tag.contains(TAG_TOMB_POS) && tag.contains(TAG_TOMB_STATE)) {
 			tombPos = BlockPos.of(tag.getLong(TAG_TOMB_POS));
 			tombState = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
@@ -257,6 +269,73 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint {
 	 * Remembers the sarcophagus this Saint rose from (its position and block state, before the encounter clears it),
 	 * so that the ending can close the Saint back into it.
 	 */
+	/** How this Saint was woken: through a ring door opened properly, shattered (enraged), or neither. */
+	private String awakening = "NONE";
+	/** The tomb's own door record when the Saint rose (the awakening may be inferred from who woke it). */
+	private String tombRecord = "NONE";
+	private final java.util.List<String> skippedChapels = new java.util.ArrayList<>();
+
+	public String awakening() {
+		return awakening;
+	}
+
+	/**
+	 * Wakes the Saint as its ring door was opened. A forced awakening enrages it once: harder and faster, with the
+	 * deed of every skipped Chapel.
+	 */
+	public void setAwakening(String mode, java.util.List<String> skipped) {
+		setAwakening(mode, skipped, mode);
+	}
+
+	public void setAwakening(String mode, java.util.List<String> skipped, String rawRecord) {
+		awakening = mode;
+		tombRecord = rawRecord;
+		skippedChapels.clear();
+		skippedChapels.addAll(skipped);
+		if (!SaintEnrageRules.enraged(mode)) return;
+		java.util.List<com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelRules.Kind> kinds = new java.util.ArrayList<>();
+		for (String name : skipped) {
+			try {
+				kinds.add(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelRules.Kind.valueOf(name));
+			} catch (IllegalArgumentException ignored) {
+				// an unknown Chapel lends nothing
+			}
+		}
+		var add = net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL;
+		com.vincenthuto.hemomancy.common.util.AttributeModifiers.syncPermanent(getAttribute(
+				net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE), Hemomancy.rloc("saint_enrage_damage"),
+				SaintEnrageRules.damageBonus(), add, true);
+		com.vincenthuto.hemomancy.common.util.AttributeModifiers.syncPermanent(getAttribute(
+				net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED), Hemomancy.rloc("saint_enrage_speed"),
+				SaintEnrageRules.speedBonus(kinds), add, true);
+		double health = SaintEnrageRules.healthBonus(kinds);
+		com.vincenthuto.hemomancy.common.util.AttributeModifiers.syncPermanent(getAttribute(
+				net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH), Hemomancy.rloc("saint_enrage_fall"),
+				health, add, health > 0);
+		setHealth(getMaxHealth());
+		if (SaintEnrageRules.resists(kinds)) {
+			addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE,
+					net.minecraft.world.effect.MobEffectInstance.INFINITE_DURATION, 0, false, false));
+		}
+		if (SaintEnrageRules.regenerates(kinds)) {
+			addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION,
+					net.minecraft.world.effect.MobEffectInstance.INFINITE_DURATION, 0, false, false));
+		}
+	}
+
+	/** Puts back the enrage's lasting effects after a Saint's own mechanic clears them (Velorum's stillness break). */
+	protected void reapplyEnrageEffects() {
+		if (!SaintEnrageRules.enraged(awakening)) return;
+		if (skippedChapels.contains("BEHOLDING")) {
+			addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE,
+					net.minecraft.world.effect.MobEffectInstance.INFINITE_DURATION, 0, false, false));
+		}
+		if (skippedChapels.contains("LITANY")) {
+			addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION,
+					net.minecraft.world.effect.MobEffectInstance.INFINITE_DURATION, 0, false, false));
+		}
+	}
+
 	public void bindTomb(BlockPos pos, BlockState sarcophagus) {
 		this.tombPos = pos.immutable();
 		this.tombState = sarcophagus;
@@ -265,6 +344,12 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint {
 	@Nullable
 	public BlockPos getTombPos() {
 		return tombPos;
+	}
+
+	/** The sarcophagus the Saint rose from, as it stood (its facing turns the chamber round it); {@code null} with no tomb. */
+	@Nullable
+	public BlockState getTombState() {
+		return tombState;
 	}
 
 	/** True once {@link #endTrial} has run: the rewards are given and the tomb is closed. */
@@ -326,7 +411,8 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint {
 			params = params.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, recipient).withLuck(recipient.getLuck());
 		}
 		LootTable table = server.getServer().reloadableRegistries().getLootTable(this.getType().getDefaultLootTable());
-		for (ItemStack reward : table.getRandomItems(params.create(LootContextParamSets.ENTITY))) {
+		for (ItemStack rolled : table.getRandomItems(params.create(LootContextParamSets.ENTITY))) {
+			ItemStack reward = SaintEnrageRules.fragmentOnly(awakening) ? fragmentOf(rolled) : rolled;
 			// a reward handed into the inventory is never picked up, so it unlocks its Liber pages here
 			if (recipient instanceof ServerPlayer player) LiberDiscoveryEvents.unlockForItem(player, reward);
 			if (recipient != null && rewardsGoToVictor()) {
@@ -361,11 +447,38 @@ public abstract class SaintTrialEntity extends Monster implements RisingSaint {
 		return false;
 	}
 
+	/** A forced fight leaves only a fragment where a whole Hallowed Residuum would have been. */
+	private static ItemStack fragmentOf(ItemStack rolled) {
+		var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(rolled.getItem());
+		if (!id.getNamespace().equals(Hemomancy.MOD_ID) || !id.getPath().startsWith("hallowed_residuum_")
+				|| id.getPath().startsWith("hallowed_residuum_fragment_")) return rolled;
+		var fragment = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(Hemomancy.rloc(
+				id.getPath().replace("hallowed_residuum_", "hallowed_residuum_fragment_")));
+		return fragment == net.minecraft.world.item.Items.AIR ? rolled : new ItemStack(fragment, rolled.getCount());
+	}
+
 	private void returnToTomb(ServerLevel server) {
 		if (tombPos == null || tombState == null) return;
 		if (!SaintSarcophagusBlock.restoreDormant(server, tombPos, tombState, saintType())) {
 			Hemomancy.LOGGER.warn("Saint {} could not return to its tomb at {}: the space is occupied", saintType(), tombPos);
 			return;
+		}
+		// The door stays as it was opened: a tomb behind a shattered door wakes enraged again.
+		if (server.getBlockEntity(tombPos) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity tomb
+				&& SaintEnrageRules.recordToKeep(tombRecord) != null) {
+			java.util.List<com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelRules.Kind> kinds = new java.util.ArrayList<>();
+			for (String name : skippedChapels) {
+				try {
+					kinds.add(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelRules.Kind.valueOf(name));
+				} catch (IllegalArgumentException ignored) {
+					// unknown names are dropped
+				}
+			}
+			try {
+				tomb.recordDoor(com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode.valueOf(tombRecord), kinds);
+			} catch (IllegalArgumentException unknown) {
+				// an unreadable record is not written back
+			}
 		}
 		broadcast(Component.translatable("message.hemomancy.saint.returns_to_tomb", saintType().getDisplayName())
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));

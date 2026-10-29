@@ -1,0 +1,159 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    256
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/ring_door",
+    "particle": "hemomancy:block/polished_venous_stone"
+  },
+  "elements": [
+    {
+      "name": "outer_ringstone",
+      "from": [
+        2.8283,
+        -2.0,
+        1.56
+      ],
+      "to": [
+        13.1717,
+        1.0,
+        4.0
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [
+          8.0,
+          24.0,
+          1.56
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            6.875,
+            13.1875,
+            8.25,
+            13.375
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.25,
+            13.1875,
+            9.625,
+            13.375
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.625,
+            13.1875,
+            11.0,
+            13.375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "outer_ringstone",
+      "from": [
+        2.8283,
+        -2.0,
+        1.5
+      ],
+      "to": [
+        13.1717,
+        1.0,
+        4.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.0,
+            13.1875,
+            12.375,
+            13.375
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            12.375,
+            13.1875,
+            13.75,
+            13.375
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            13.75,
+            13.1875,
+            15.125,
+            13.375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "outer_ringstone",
+      "from": [
+        2.8283,
+        -2.0,
+        1.56
+      ],
+      "to": [
+        13.1717,
+        1.0,
+        4.0
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "z",
+        "origin": [
+          8.0,
+          24.0,
+          1.56
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            13.375,
+            1.375,
+            13.5625
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            1.375,
+            13.375,
+            2.75,
+            13.5625
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            2.75,
+            13.375,
+            4.125,
+            13.5625
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

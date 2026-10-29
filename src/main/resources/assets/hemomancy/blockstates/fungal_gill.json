@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=true": {
+      "model": "hemomancy:block/fungal_gill"
+    },
+    "open=false": {
+      "model": "hemomancy:block/fungal_gill_shut"
+    }
+  }
+}

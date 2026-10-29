@@ -139,6 +139,7 @@ public class KnownManipulationEvents {
 	 */
 	public static void onManipulationUsed(ServerPlayer player, BloodManipulation manip, float rewardScale) {
 		com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager.onCast(player);
+		com.vincenthuto.hemomancy.common.world.GardensNetwork.onCast(player);
 		// 1. Vascular strain on the manip's associated vein section
 		VascularSystemEvents.applyManipStrain(player, manip);
 

@@ -57,6 +57,33 @@ public class FluidInit {
 			.levelDecreasePerBlock(1)
 			.block(BlockInit.MORPHIC_NECTAR_BLOCK);
 
+	// ---- Rendering Bile ----
+
+	/** The rendering pools' bile: breaks an Apotheos's offerings down into enzymes. No bucket. */
+	public static final DeferredHolder<FluidType, FluidType> RENDERING_BILE_TYPE = FLUID_TYPES.register(
+			"rendering_bile",
+			() -> new FluidType(FluidType.Properties.create()
+					.density(1300)
+					.viscosity(4000)
+					.lightLevel(2)));
+
+	public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> RENDERING_BILE =
+			FLUIDS.register("rendering_bile",
+					() -> new BaseFlowingFluid.Source(FluidInit.RENDERING_BILE_PROPS));
+
+	public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> RENDERING_BILE_FLOWING =
+			FLUIDS.register("rendering_bile_flowing",
+					() -> new BaseFlowingFluid.Flowing(FluidInit.RENDERING_BILE_PROPS));
+
+	public static final BaseFlowingFluid.Properties RENDERING_BILE_PROPS =
+			new BaseFlowingFluid.Properties(
+					RENDERING_BILE_TYPE,
+					RENDERING_BILE,
+					RENDERING_BILE_FLOWING)
+			.slopeFindDistance(2)
+			.levelDecreasePerBlock(2)
+			.block(BlockInit.RENDERING_BILE_BLOCK);
+
 	// ---- White Humor ----
 
 	public static final DeferredHolder<FluidType, FluidType> WHITE_HUMOR_TYPE = FLUID_TYPES.register(

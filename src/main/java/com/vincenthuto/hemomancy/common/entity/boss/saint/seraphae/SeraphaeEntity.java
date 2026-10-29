@@ -7,12 +7,15 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -102,11 +105,6 @@ public class SeraphaeEntity extends SaintTrialEntity {
 	private static final int MAX_FRAGMENTS = 6;
 	/** Maximum fragments when escalation is active. */
 	private static final int MAX_ESCALATED_FRAGMENTS = 8;
-
-	/** Number of containment anchors placed on encounter start. */
-	private static final int ANCHOR_COUNT = 4;
-	/** Radius for anchor placement around the boss spawn. */
-	private static final double ANCHOR_RADIUS = 10.0;
 
 	/** Arena radius for fragment/anchor detection. */
 	private static final double ARENA_RADIUS = 32.0;
@@ -443,19 +441,62 @@ public class SeraphaeEntity extends SaintTrialEntity {
 
 	// ── anchor placement ──────────────────────────────────────────────
 
+	/**
+	 * Wakes the fight's anchors: the nearest whole, unsnapped block anchors round her tomb (or round her, with no tomb)
+	 * stand up as fight anchors where they stood, and any the chamber lacks ring her as before
+	 * ({@link SeraphaeAnchorRules}).
+	 */
 	private void placeAnchors(ServerLevel server) {
-		for (int i = 0; i < ANCHOR_COUNT; i++) {
+		BlockPos centre = getTombPos() != null ? getTombPos() : this.blockPosition();
+		// Anchors an earlier Seraphae left behind while they lay unloaded stand their blocks back up first.
+		for (ContainmentAnchorEntity stray : server.getEntitiesOfClass(ContainmentAnchorEntity.class,
+				new AABB(centre).inflate(ARENA_RADIUS), a -> !this.getUUID().equals(a.getParentId()) && a.isOrphan(server))) {
+			stray.discard();
+		}
+		List<BlockPos> dormant = new ArrayList<>();
+		int across = SeraphaeAnchorRules.HORIZONTAL_REACH, up = SeraphaeAnchorRules.VERTICAL_REACH;
+		for (BlockPos pos : BlockPos.betweenClosed(centre.offset(-across, -up, -across), centre.offset(across, up, across))) {
+			if (SeraphaeAnchorRules.inReach(centre, pos) && ContainmentAnchorEntity.isDormantAnchor(server, pos)) {
+				dormant.add(pos.immutable());
+			}
+		}
+		Vec3 heart = this.position().add(0, 1.5, 0);
+		for (SeraphaeAnchorRules.Placement placement : SeraphaeAnchorRules.placements(centre, this.position(), dormant)) {
 			ContainmentAnchorEntity anchor = EntityInit.containment_anchor.get().create(server);
 			if (anchor == null) continue;
-
-			double angle = i * 2.0 * Math.PI / ANCHOR_COUNT;
-			double ax = this.getX() + Math.cos(angle) * ANCHOR_RADIUS;
-			double az = this.getZ() + Math.sin(angle) * ANCHOR_RADIUS;
-
-			anchor.moveTo(ax, this.getY(), az, 0, 0);
+			Vec3 at = placement.position();
+			anchor.moveTo(at.x, at.y, at.z, 0, 0);
 			anchor.setParentId(this.getUUID());
-			server.addFreshEntity(anchor);
+			// The block clears only once its anchor is in the level, so a refused spawn never takes it.
+			if (server.addFreshEntity(anchor) && placement.home() != null) {
+				anchor.wakeFrom(placement.home());
+				SeraphaeEffects.wake(server, heart, at);
+				server.playSound(null, at.x, at.y, at.z, SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.HOSTILE, 1.2F, 1.3F);
+			}
 		}
+	}
+
+	/** Lets go of her anchors and fragments; each woken anchor stands its block back up as it goes. */
+	private void releaseArena(ServerLevel server) {
+		AABB arena = new AABB(this.blockPosition()).inflate(ARENA_RADIUS);
+		if (getTombPos() != null) arena = arena.minmax(new AABB(getTombPos()).inflate(ARENA_RADIUS));
+		for (ContainmentAnchorEntity anchor : server.getEntitiesOfClass(ContainmentAnchorEntity.class, arena,
+				a -> this.getUUID().equals(a.getParentId()))) {
+			anchor.discard();
+		}
+		for (SeraphaeFragmentEntity frag : server.getEntitiesOfClass(SeraphaeFragmentEntity.class, arena,
+				f -> this.getUUID().equals(f.getParentId()))) {
+			frag.discard();
+		}
+	}
+
+	/** However she leaves for good (contained, a {@code /kill}, a discard), her arena goes with her; not when unloaded. */
+	@Override
+	public void remove(RemovalReason reason) {
+		if (reason.shouldDestroy() && this.level() instanceof ServerLevel server) {
+			releaseArena(server);
+		}
+		super.remove(reason);
 	}
 
 	// ── win / lose conditions ─────────────────────────────────────────
@@ -473,21 +514,8 @@ public class SeraphaeEntity extends SaintTrialEntity {
 		// Reward the nearest player and chain her back into her tomb
 		endTrial(null, null);
 
-		// Clean up anchors
-		for (ContainmentAnchorEntity anchor : server.getEntitiesOfClass(
-				ContainmentAnchorEntity.class,
-				new AABB(this.blockPosition()).inflate(ARENA_RADIUS),
-				a -> this.getUUID().equals(a.getParentId()))) {
-			anchor.discard();
-		}
-		// Clean up remaining fragments
-		for (SeraphaeFragmentEntity frag : server.getEntitiesOfClass(
-				SeraphaeFragmentEntity.class,
-				new AABB(this.blockPosition()).inflate(ARENA_RADIUS),
-				f -> this.getUUID().equals(f.getParentId()))) {
-			frag.discard();
-		}
-
+		// Her anchors (their blocks stand again) and fragments go with her
+		releaseArena(server);
 		this.discard();
 	}
 

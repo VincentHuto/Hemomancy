@@ -9,7 +9,7 @@ public final class SilentArchonCommandRules {
 	public static Transition transition(String state, int currentDegree) {
 		return switch (state) {
 			case "pending" -> new Transition(7, EnumArchonPath.SILENT_PENDING, false);
-			case "complete" -> new Transition(7, EnumArchonPath.SILENT_ARCHON, false);
+			case "complete" -> new Transition(8, EnumArchonPath.SILENTIUM, false);
 			case "clear" -> new Transition(currentDegree, EnumArchonPath.NONE, true);
 			default -> throw new IllegalArgumentException("Unknown Silent Archon state: " + state);
 		};

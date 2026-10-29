@@ -72,6 +72,15 @@ public abstract class HemoJigsawStructure extends Structure {
 				jigsaw.projectStartToHeightmap());
 	}
 
+	/**
+	 * The pieces natural generation would lay out if the ground's first free block were {@code surface}: the same start
+	 * height and rotation, without the site check or the heightmap lookup. Review clients and dev commands place a
+	 * structure exactly where it would sit on that ground.
+	 */
+	public Optional<GenerationStub> assembleOnSurface(GenerationContext context, BlockPos surface) {
+		return addPieces(context, surface.above(sampleStartHeight(context)), Optional.empty());
+	}
+
 	protected int sampleStartHeight(GenerationContext context) {
 		return jigsaw.startHeight().sample(context.random(),
 				new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor()));

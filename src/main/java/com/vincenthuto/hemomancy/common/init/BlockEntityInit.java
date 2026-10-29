@@ -93,6 +93,46 @@ public class BlockEntityInit {
 			.register("sanguine_condenser", () -> BlockEntityType.Builder
 					.of(SanguineCondenserBlockEntity::new, BlockInit.sanguine_condenser.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.WardAnchorBlockEntity>> ward_anchor = TILES
+			.register("ward_anchor", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.WardAnchorBlockEntity::new,
+							BlockInit.ward_anchor.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.ChapelFocusBlockEntity>> chapel_focus = TILES
+			.register("chapel_focus", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.ChapelFocusBlockEntity::new,
+							BlockInit.chapel_focus.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity>> ring_door = TILES
+			.register("ring_door", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity::new,
+							BlockInit.ring_door.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.OfferingStandBlockEntity>> offering_stand = TILES
+			.register("offering_stand", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.OfferingStandBlockEntity::new,
+							BlockInit.offering_stand.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.PulsePylonBlockEntity>> pulse_pylon = TILES
+			.register("pulse_pylon", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.PulsePylonBlockEntity::new,
+							BlockInit.pulse_pylon.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.decoration.RotPyreBlockEntity>> rot_pyre = TILES
+			.register("rot_pyre", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.decoration.RotPyreBlockEntity::new,
+							BlockInit.rot_pyre.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity>> heart_node = TILES
+			.register("heart_node", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity::new,
+							BlockInit.heart_node.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.FruitingBodyCacheBlockEntity>> fruiting_body_cache = TILES
+			.register("fruiting_body_cache", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.FruitingBodyCacheBlockEntity::new,
+							BlockInit.fruiting_body_cache.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.CovenantThroneBlockEntity>> covenant_throne = TILES
 			.register("covenant_throne", () -> BlockEntityType.Builder
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.CovenantThroneBlockEntity::new,
