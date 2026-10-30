@@ -65,6 +65,8 @@ public final class WorldEffectDispatcher {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             MnemonicBlueprintRenderer.render(event);
             float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
+            // The heart-node spread lies on the ground, so it goes first: the ward and every rite visual draw over it.
+            HeartNodeSpreadRenderer.render(event.getPoseStack(), partialTick);
             MausoleumWardRenderer.render(event.getPoseStack(), partialTick);
             CircusPerceptionOverlay.renderWorld(event.getPoseStack(), partialTick);
             VesperFightFloorRenderer.renderFadingPerimeter(event);
@@ -87,6 +89,8 @@ public final class WorldEffectDispatcher {
             OculifloraRevealRenderer.render(event.getPoseStack(), partialTick);
             BloodBallRenderer.render(event.getPoseStack(), partialTick);
             SanguineMonolithShatterRenderer.render(event.getPoseStack(), partialTick);
+            PossessionSceneRenderer.render(event.getPoseStack(), partialTick);
+            HeartNodeMomentRenderer.render(event.getPoseStack(), partialTick);
             ClawSlashRenderer.render(event.getPoseStack(), partialTick);
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);
             HematicSutureLinkRenderer.render(event.getPoseStack(), partialTick);

@@ -660,11 +660,24 @@ public class BlockInit {
 					.mapColor(MapColor.TERRACOTTA_WHITE).strength(0.4f).noOcclusion().sound(SoundType.WART_BLOCK)
 					.pushReaction(PushReaction.DESTROY).isViewBlocking((state, level, pos) -> false)
 					.isSuffocating((state, level, pos) -> false)));
-	/** An Apotheos's heart-node: planted in the Gardens, it grows their private sanctum and holds their spawn. */
+	/**
+	 * An Apotheos's heart-node: planted in the Gardens, it grows their private sanctum and holds their spawn. Forced
+	 * solid, so a fluid can't flow into its small shape and wash it away (which would drop it and wither the sanctum).
+	 */
 	public static final DeferredHolder<Block, Block> heart_node = MODELEDBLOCKS.register("heart_node",
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.functional.HeartNodeBlock(BlockBehaviour.Properties.of()
-					.mapColor(MapColor.COLOR_RED).strength(2.0f, 3600000f).noOcclusion().sound(SoundType.WART_BLOCK)
+					.mapColor(MapColor.COLOR_RED).strength(2.0f, 3600000f).noOcclusion().forceSolidOn().sound(SoundType.WART_BLOCK)
 					.lightLevel(state -> 5).pushReaction(PushReaction.BLOCK)));
+	/**
+	 * A heart-node's Mycelial Synapse: a Blood Structure that extends its owner's envelope. Raised only from its
+	 * formation; its hidden item is the recipe's face and cannot place it. Owner-instant, drops its inputs. Forced
+	 * solid like the heart-node, so no fluid washes it off its face.
+	 */
+	public static final DeferredHolder<Block, Block> mycelial_synapse = MODELEDBLOCKS.register("mycelial_synapse",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.functional.MycelialSynapseBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).instabreak().noOcclusion().forceSolidOn().sound(SoundType.WART_BLOCK)
+					.lightLevel(state -> state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.functional.MycelialSynapseBlock.WITHERED) ? 0 : 4)
+					.pushReaction(PushReaction.BLOCK)));
 	/** A dead Apotheos's gear, grown over at the death point; only the owner opens it. No item. */
 	public static final DeferredHolder<Block, Block> fruiting_body_cache = MODELEDBLOCKS.register("fruiting_body_cache",
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.functional.FruitingBodyCacheBlock(BlockBehaviour.Properties.of()
@@ -778,6 +791,11 @@ public class BlockInit {
 					.mapColor(MapColor.COLOR_RED).strength(1.5f, 6.0f).noLootTable().noOcclusion().noCollission()
 					.sound(SoundType.LANTERN).pushReaction(PushReaction.DESTROY)
 					.lightLevel(state -> state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.decoration.ReliquarySconceBlock.FLAME).light())));
+	/** Corpse wax on a wall: grown by the decoration pass in old dark rooms, or crafted from four adipocere for decor. */
+	public static final DeferredHolder<Block, Block> adipocere_crust = MODELEDBLOCKS.register("adipocere_crust",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.plant.AdipocereCrustBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.TERRACOTTA_WHITE).strength(0.3f).noOcclusion().noCollission()
+					.sound(SoundType.HONEY_BLOCK).pushReaction(PushReaction.DESTROY)));
 	/** Hemorath's floor gutter: a deepslate-tile floor with a blood channel cut in it, dry to full. */
 	public static final DeferredHolder<Block, Block> blood_gutter = MODELEDBLOCKS.register("blood_gutter",
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.BloodGutterBlock(BlockBehaviour.Properties.of()
@@ -1244,7 +1262,7 @@ public class BlockInit {
 			"frozen_devotee", "witness_stone", "witness_devotee", "litany_stone", "offering_stand", "pulse_pylon", "spawn_mark",
 			"containment_anchor_block", "rot_pyre", "sealed_niche", "opened_niche", "reliquary_sconce");
 	private static final Set<String> HIDDEN_BLOCK_ITEMS = Set.of("active_befouling_ash_trail",
-			"active_smouldering_ash_trail", "engram_block");
+			"active_smouldering_ash_trail", "engram_block", "mycelial_synapse");
 
 	public static BlockItemDecision itemDecision(ResourceLocation blockId) {
 		String path = blockId.getPath();

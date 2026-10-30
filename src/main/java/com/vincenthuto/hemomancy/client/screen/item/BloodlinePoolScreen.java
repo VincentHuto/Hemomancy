@@ -29,15 +29,50 @@ import com.vincenthuto.hemomancy.common.util.HemoText;
 
 /**
  * A standalone screen that lets the player view their bloodline's shared blood pool,
- * donate blood (lump or trickle), and configure auto-draw settings.
+ * donate blood (lump or trickle), and configure auto-draw settings. The left column holds the pool in three titled
+ * panels on one grid (each row an action on the left, then a label and field lined up on the right); the right column
+ * holds the fane map with the fane-facing buttons under it.
  */
 public class BloodlinePoolScreen extends Screen {
 
-	private static final int GUI_WIDTH = 340;
-	private static final int GUI_HEIGHT = 336;
+	// Layout, in unscaled pixels.
+	private static final int GUI_WIDTH = 520;
+	private static final int GUI_HEIGHT = 320;
 	private static final int SCREEN_PADDING = 8;
+	private static final int EDGE = 16;
+	private static final int LEFT_WIDTH = 320;
+	private static final int RIGHT_X = EDGE + LEFT_WIDTH + 10;
+	private static final int RIGHT_WIDTH = GUI_WIDTH - RIGHT_X - EDGE;
+	private static final int CONTENT_TOP = 36;
+	private static final int POOL_TOP = CONTENT_TOP;
+	private static final int POOL_HEIGHT = 104;
+	private static final int TITHE_TOP = POOL_TOP + POOL_HEIGHT + 6;
+	private static final int TITHE_HEIGHT = 86;
+	private static final int KIN_TOP = TITHE_TOP + TITHE_HEIGHT + 6;
+	private static final int KIN_HEIGHT = 66;
+	private static final int CONTENT_BOTTOM = KIN_TOP + KIN_HEIGHT;
+	/** A panel's first row sits under its heading; rows step by {@code ROW_STEP}. */
+	private static final int FIRST_ROW = 18;
+	private static final int ROW = 18;
+	private static final int ROW_STEP = 22;
+	private static final int INSET = 8;
+	private static final int ACTION_WIDTH = 116;
+	private static final int FIELD_WIDTH = 78;
+	private static final int FIELD_X = EDGE + LEFT_WIDTH - INSET - FIELD_WIDTH;
+	private static final int SEND_WIDTH = 64;
+	private static final int BANISH_WIDTH = 72;
+	private static final int RESIDENTS_TOP = CONTENT_BOTTOM - ROW;
+	private static final int FANE_SIGHT_TOP = RESIDENTS_TOP - ROW_STEP;
+
+	private static final int PANEL_FILL = 0xC0080203;
+	private static final int PANEL_EDGE = 0xFF6A1218;
+	private static final int HEADING = 0xFFFF8A8A;
+	private static final int TEXT = 0xFFFFD9D0;
+	private static final int LABEL = 0xFFCC9A9A;
+	private static final int MUTED = 0xFFAA7A7A;
 
 	private final VeinBackgroundRenderer veins = new VeinBackgroundRenderer(VeinBackgroundRenderer.Style.CRIMSON);
+	private FaneMapPanel faneMap;
 	private float currentLayoutScale = 1.0F;
 	private int currentGuiWidth = GUI_WIDTH;
 	private int currentGuiHeight = GUI_HEIGHT;
@@ -59,6 +94,8 @@ public class BloodlinePoolScreen extends Screen {
 	private Button kickNextButton;
 	private Button kickMemberButton;
 	private int kickTargetIndex;
+	/** False outside a bloodline: the pool's controls are shown but have nothing to act on. */
+	private boolean poolActive = true;
 
 	// Cached capability data
 	private boolean trickleEnabled;
@@ -80,36 +117,27 @@ public class BloodlinePoolScreen extends Screen {
 	protected void init() {
 		super.init();
 		updateScaledLayout();
-
-		addRenderableWidget(Button.builder(Component.translatable("hemomancy.succession.residents"),
-                button -> SuccessionResidentsScreen.open(this)).bounds(guiLeft + currentGuiWidth - scaled(90), guiTop + scaled(8), scaled(80), widgetHeight(18)).build());
+		faneMap = new FaneMapPanel(this.font);
 
 		// Read current settings from capability
 		LocalPlayer player = Minecraft.getInstance().player;
+		Bloodline line = Bloodline.NOBLOODLINE;
 		if (player != null) {
 			var vol = HemoCapabilityAccess.getBloodVolume(player);
 			trickleEnabled = vol.isTrickleEnabled();
 			trickleRate = vol.getTrickleRate();
 			autoDrawEnabled = vol.isAutoDrawEnabled();
 			autoDrawThreshold = vol.getAutoDrawThreshold();
+			line = vol.getBloodLine();
 		}
 
-		int widgetX = guiLeft + scaled(16);
-		int widgetW = Math.max(120, currentGuiWidth - scaled(32));
-		int y = guiTop + scaled(156);
+		// ── Tithes: lump offering, trickle, recall ──
+		int left = EDGE + INSET;
+		int offerRow = TITHE_TOP + FIRST_ROW;
+		int trickleRow = offerRow + ROW_STEP;
+		int recallRow = trickleRow + ROW_STEP;
 
-		// ── Lump Donate Section ──
-		int donateButtonW = Math.max(64, scaled(70));
-		int fieldGap = scaled(6);
-		donateAmountField = new CenteredEditBox(this.font, widgetX, y, Math.max(48, widgetW - donateButtonW - fieldGap),
-				widgetHeight(20), Component.translatable("screen.hemomancy.bloodline_pool.amount"));
-		styleEditBox(donateAmountField);
-		donateAmountField.setMaxLength(7);
-		donateAmountField.setValue("100");
-		donateAmountField.setFilter(s -> s.isEmpty() || s.matches("\\d*\\.?\\d*"));
-		addRenderableWidget(donateAmountField);
-
-		donateButton = new RitualButton(widgetX + widgetW - donateButtonW, y, donateButtonW, widgetHeight(18),
+		donateButton = new RitualButton(px(left), py(offerRow), scaled(ACTION_WIDTH), widgetHeight(ROW),
 				Component.translatable("screen.hemomancy.bloodline_pool.donate"), btn -> {
 			try {
 				double amount = Double.parseDouble(donateAmountField.getValue());
@@ -122,68 +150,46 @@ public class BloodlinePoolScreen extends Screen {
 			}
 		});
 		addRenderableWidget(donateButton);
+		donateAmountField = field(FIELD_X, offerRow, FIELD_WIDTH, "screen.hemomancy.bloodline_pool.amount");
+		donateAmountField.setMaxLength(7);
+		donateAmountField.setValue("100");
+		donateAmountField.setFilter(s -> s.isEmpty() || s.matches("\\d*\\.?\\d*"));
 
-		y += scaled(30);
-
-		// ── Trickle Donation Section ──
-		trickleToggleButton = new ToggleRitualButton(widgetX, y, scaled(126), widgetHeight(18),
+		trickleToggleButton = new ToggleRitualButton(px(left), py(trickleRow), scaled(ACTION_WIDTH), widgetHeight(ROW),
 				Component.translatable("screen.hemomancy.bloodline_pool.trickle_tithe"), trickleEnabled, selected -> {
 			trickleEnabled = selected;
 			sendPoolSettings();
 		});
 		addRenderableWidget(trickleToggleButton);
-
-		trickleRateField = new CenteredEditBox(this.font, widgetX + scaled(226), y, scaled(58), widgetHeight(18),
-				Component.translatable("screen.hemomancy.bloodline_pool.rate"));
-		styleEditBox(trickleRateField);
+		trickleRateField = field(FIELD_X, trickleRow, FIELD_WIDTH, "screen.hemomancy.bloodline_pool.rate");
 		trickleRateField.setMaxLength(6);
 		trickleRateField.setValue(String.format("%.2f", trickleRate));
 		trickleRateField.setFilter(s -> s.isEmpty() || s.matches("\\d*\\.?\\d*"));
 		trickleRateField.setResponder(value -> sendPoolSettings());
-		addRenderableWidget(trickleRateField);
 
-		y += scaled(26);
-
-		// ── Auto-Draw Section ──
-		autoDrawToggleButton = new ToggleRitualButton(widgetX, y, scaled(126), widgetHeight(18),
+		autoDrawToggleButton = new ToggleRitualButton(px(left), py(recallRow), scaled(ACTION_WIDTH), widgetHeight(ROW),
 				Component.translatable("screen.hemomancy.bloodline_pool.blood_recall"), autoDrawEnabled, selected -> {
 			autoDrawEnabled = selected;
 			sendPoolSettings();
 		});
 		addRenderableWidget(autoDrawToggleButton);
-
-		autoDrawThresholdField = new CenteredEditBox(this.font, widgetX + scaled(226), y, scaled(58), widgetHeight(18),
-				Component.translatable("screen.hemomancy.bloodline_pool.threshold"));
-		styleEditBox(autoDrawThresholdField);
+		autoDrawThresholdField = field(FIELD_X, recallRow, FIELD_WIDTH, "screen.hemomancy.bloodline_pool.threshold");
 		autoDrawThresholdField.setMaxLength(4);
 		autoDrawThresholdField.setValue(String.format("%.0f", autoDrawThreshold * 100));
 		autoDrawThresholdField.setFilter(s -> s.isEmpty() || s.matches("\\d*\\.?\\d*"));
 		autoDrawThresholdField.setResponder(value -> sendPoolSettings());
-		addRenderableWidget(autoDrawThresholdField);
 
-		y += scaled(26);
-
-		// ── Fane Sight Button ──
-		faneSightButton = new RitualButton(widgetX, y, widgetW, widgetHeight(20),
-				faneSightLabel(FaneBoundaryClientData.viewMode()), btn -> {
-			FaneBoundaryClientData.ViewMode mode = FaneBoundaryClientData.cycleViewMode();
-			btn.setMessage(faneSightLabel(mode));
-		});
-		addRenderableWidget(faneSightButton);
-
-		y += scaled(36);
-
-		// ── Bloodline Message Section ──
-		int sendButtonW = Math.max(48, scaled(54));
-		messageField = new CenteredEditBox(this.font, widgetX, y, Math.max(58, widgetW - sendButtonW - fieldGap),
-				widgetHeight(20), Component.translatable("screen.hemomancy.bloodline_pool.message"));
-		styleEditBox(messageField);
+		// ── Bloodline: message, then the Progenitor's banish row ──
+		int messageRow = KIN_TOP + FIRST_ROW;
+		int banishRow = messageRow + ROW_STEP;
+		int right = EDGE + LEFT_WIDTH - INSET;
+		messageField = field(left, messageRow, LEFT_WIDTH - INSET * 2 - SEND_WIDTH - 6,
+				"screen.hemomancy.bloodline_pool.message");
 		messageField.setMaxLength(256);
 		messageField.setHint(Component.empty());
-		addRenderableWidget(messageField);
 
-		sendMessageButton = new RitualButton(widgetX + widgetW - sendButtonW, y, sendButtonW, widgetHeight(18),
-				Component.translatable("screen.hemomancy.bloodline_pool.send"), btn -> {
+		sendMessageButton = new RitualButton(px(right - SEND_WIDTH), py(messageRow), scaled(SEND_WIDTH),
+				widgetHeight(ROW), Component.translatable("screen.hemomancy.bloodline_pool.send"), btn -> {
 			String msg = messageField.getValue().trim();
 			if (!msg.isEmpty()) {
 				PacketHandler.sendToServer(new PacketBloodlineMessage(msg));
@@ -192,49 +198,77 @@ public class BloodlinePoolScreen extends Screen {
 		});
 		addRenderableWidget(sendMessageButton);
 
-		y += scaled(28);
-
-		// ── Leader Member Management ──
-		if (player != null) {
+		if (player != null && line.isValid() && player.getUUID().equals(line.getLeaderUUID())) {
 			final LocalPlayer localPlayer = player;
-			final int kickRowY = y;
-			final int kickPrevX = widgetX;
-			final int kickButtonX = widgetX + widgetW - scaled(66);
-			final int kickButtonW = scaled(66);
-			var vol = HemoCapabilityAccess.getBloodVolume(player);
-			Bloodline line = vol.getBloodLine();
-			if (line.isValid() && localPlayer.getUUID().equals(line.getLeaderUUID())) {
-				kickPrevButton = new RitualButton(kickPrevX, kickRowY, widgetHeight(18), widgetHeight(18),
-						Component.literal("<"), btn -> {
-					int size = getKickableMembers(localPlayer).size();
-					if (size > 0) {
-						kickTargetIndex = (kickTargetIndex - 1 + size) % size;
-					}
-				});
-				addRenderableWidget(kickPrevButton);
+			kickPrevButton = new RitualButton(px(left), py(banishRow), widgetHeight(ROW), widgetHeight(ROW),
+					Component.literal("<"), btn -> {
+				int size = getKickableMembers(localPlayer).size();
+				if (size > 0) {
+					kickTargetIndex = (kickTargetIndex - 1 + size) % size;
+				}
+			});
+			addRenderableWidget(kickPrevButton);
 
-				kickNextButton = new RitualButton(widgetX + scaled(34), kickRowY, widgetHeight(18), widgetHeight(18),
-						Component.literal(">"), btn -> {
-					int size = getKickableMembers(localPlayer).size();
-					if (size > 0) {
-						kickTargetIndex = (kickTargetIndex + 1) % size;
-					}
-				});
-				addRenderableWidget(kickNextButton);
+			kickNextButton = new RitualButton(px(left + ROW + 4), py(banishRow), widgetHeight(ROW), widgetHeight(ROW),
+					Component.literal(">"), btn -> {
+				int size = getKickableMembers(localPlayer).size();
+				if (size > 0) {
+					kickTargetIndex = (kickTargetIndex + 1) % size;
+				}
+			});
+			addRenderableWidget(kickNextButton);
 
-				kickMemberButton = new RitualButton(kickButtonX, kickRowY, kickButtonW, widgetHeight(18),
-						Component.translatable("screen.hemomancy.bloodline_pool.banish"), btn -> {
-					List<UUID> kickable = getKickableMembers(localPlayer);
-					if (!kickable.isEmpty()) {
-						int idx = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
-						PacketHandler.sendToServer(new PacketKickBloodlinePlayer(kickable.get(idx)));
-						PacketHandler.sendToServer(new PacketRequestPoolData());
-						kickTargetIndex = 0;
-					}
-				});
-				addRenderableWidget(kickMemberButton);
+			kickMemberButton = new RitualButton(px(right - BANISH_WIDTH), py(banishRow), scaled(BANISH_WIDTH),
+					widgetHeight(ROW), Component.translatable("screen.hemomancy.bloodline_pool.banish"), btn -> {
+				List<UUID> kickable = getKickableMembers(localPlayer);
+				if (!kickable.isEmpty()) {
+					int idx = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
+					PacketHandler.sendToServer(new PacketKickBloodlinePlayer(kickable.get(idx)));
+					PacketHandler.sendToServer(new PacketRequestPoolData());
+					kickTargetIndex = 0;
+				}
+			});
+			addRenderableWidget(kickMemberButton);
+		}
+
+		// ── Right column: the fane's own buttons under its map ──
+		faneSightButton = new RitualButton(px(RIGHT_X), py(FANE_SIGHT_TOP), scaled(RIGHT_WIDTH), widgetHeight(ROW),
+				faneSightLabel(FaneBoundaryClientData.viewMode()), btn -> {
+			FaneBoundaryClientData.ViewMode mode = FaneBoundaryClientData.cycleViewMode();
+			btn.setMessage(faneSightLabel(mode));
+		});
+		addRenderableWidget(faneSightButton);
+		addRenderableWidget(new RitualButton(px(RIGHT_X), py(RESIDENTS_TOP), scaled(RIGHT_WIDTH), widgetHeight(ROW),
+				Component.translatable("hemomancy.succession.residents"), btn -> SuccessionResidentsScreen.open(this)));
+
+		// Outside a bloodline the pool controls have nothing to act on.
+		poolActive = line.isValid();
+		if (!poolActive) {
+			donateButton.active = false;
+			trickleToggleButton.active = false;
+			autoDrawToggleButton.active = false;
+			sendMessageButton.active = false;
+			for (EditBox box : new EditBox[] {donateAmountField, trickleRateField, autoDrawThresholdField, messageField}) {
+				box.setEditable(false);
 			}
 		}
+	}
+
+	/** A field that fills one grid cell; its drawn frame is the cell, so it lines up with the buttons beside it. */
+	private EditBox field(int x, int y, int width, String key) {
+		EditBox box = new CenteredEditBox(this.font, px(x) + 2, py(y) + 2, scaled(width) - 4, widgetHeight(ROW) - 4,
+				Component.translatable(key));
+		styleEditBox(box);
+		addRenderableWidget(box);
+		return box;
+	}
+
+	private int px(int x) {
+		return guiLeft + scaled(x);
+	}
+
+	private int py(int y) {
+		return guiTop + scaled(y);
 	}
 
 	private void styleEditBox(EditBox editBox) {
@@ -301,8 +335,6 @@ public class BloodlinePoolScreen extends Screen {
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
 		// Do NOT call renderBackground() — it applies blur. This is not a pause screen.
 
-		int centerX = guiLeft + currentGuiWidth / 2;
-
 		// Animated vein background
 		animTime += 0.016f; // ~60 FPS approximation
 		veins.draw(graphics, guiLeft, guiTop, currentGuiWidth, currentGuiHeight, animTime);
@@ -311,13 +343,27 @@ public class BloodlinePoolScreen extends Screen {
 		ScreenDrawUtils.drawBorder(graphics, guiLeft, guiTop, currentGuiWidth, currentGuiHeight, 0xFF330808, 0xFF220606);
 		drawCornerSigils(graphics, guiLeft, guiTop, currentGuiWidth, currentGuiHeight);
 
-		// Title
-		graphics.drawCenteredString(this.font, this.title, centerX, guiTop + scaled(6), 0xFFFF6A75);
+		// Title, then the bloodline's name under it
+		int centerX = guiLeft + currentGuiWidth / 2;
+		graphics.drawCenteredString(this.font, this.title, centerX, py(8), 0xFFFF6A75);
 
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
+		Bloodline bloodline = volume.getBloodLine();
+		graphics.drawCenteredString(this.font, bloodline.isValid()
+				? Component.literal(bloodline.getName()).withStyle(s -> s.withColor(0xFFDD6666).withBold(true))
+				: Component.translatable("screen.hemomancy.bloodline_pool.you_are_not_in_a_bloodline")
+						.withStyle(s -> s.withColor(0xFFAA4444)), centerX, py(20), 0xFFFFFFFF);
 
-		renderBloodlineDetails(graphics, player, HemoCapabilityAccess.getBloodVolume(player), centerX, partialTick);
+		panel(graphics, EDGE, POOL_TOP, LEFT_WIDTH, POOL_HEIGHT, "screen.hemomancy.bloodline_pool.section.pool");
+		panel(graphics, EDGE, TITHE_TOP, LEFT_WIDTH, TITHE_HEIGHT, "screen.hemomancy.bloodline_pool.section.tithes");
+		panel(graphics, EDGE, KIN_TOP, LEFT_WIDTH, KIN_HEIGHT, "screen.hemomancy.bloodline_pool.section.bloodline");
+		renderPool(graphics, volume, partialTick);
+		renderTitheLabels(graphics);
+		renderBanishRow(graphics, player, bloodline);
+		List<Component> mapTooltip = new ArrayList<>();
+		renderFaneMap(graphics, bloodline, mouseX, mouseY, partialTick, mapTooltip);
 
 		// Render widgets on top
 		renderEditBoxFrame(graphics, donateAmountField);
@@ -331,86 +377,90 @@ public class BloodlinePoolScreen extends Screen {
 		renderCenteredEditBoxText(graphics, messageField,
 				Component.translatable("screen.hemomancy.bloodline_pool.send_to_bloodline").getString());
 		renderVesselTooltip(graphics, mouseX, mouseY);
+		if (!mapTooltip.isEmpty()) graphics.renderComponentTooltip(this.font, mapTooltip, mouseX, mouseY);
 	}
 
-	private void renderBloodlineDetails(GuiGraphics graphics, LocalPlayer player, IBloodVolume volume, int centerX, float partialTick) {
-		Bloodline bloodline = volume.getBloodLine();
+	/** A titled panel, matching the fane map's. */
+	private void panel(GuiGraphics graphics, int x, int y, int w, int h, String headingKey) {
+		int left = px(x), top = py(y);
+		graphics.fill(left, top, left + scaled(w), top + scaled(h), PANEL_FILL);
+		ScreenDrawUtils.drawSimpleBorder(graphics, left, top, scaled(w), scaled(h), PANEL_EDGE);
+		graphics.drawString(this.font, Component.translatable(headingKey), left + 5, top + 5, HEADING, true);
+	}
 
-		if (!bloodline.isValid()) {
-			graphics.drawCenteredString(this.font,
-					Component.translatable("screen.hemomancy.bloodline_pool.you_are_not_in_a_bloodline"),
-					centerX, guiTop + scaled(40), 0xFFAA4444);
-			return;
-		}
-
-		int y = guiTop + scaled(22);
-
-		// Bloodline name
-		graphics.drawCenteredString(this.font,
-				Component.literal(bloodline.getName()).withStyle(s -> s.withColor(0xFFDD6666).withBold(true)),
-				centerX, y, 0xFFFFFFFF);
-		y += scaled(14);
-
-		// Member count
-		graphics.drawCenteredString(this.font,
-				HemoText.translatable("screen.hemomancy.bloodline_pool.members", BloodlinePoolClientData.getMemberCount()),
-				centerX, y, 0xFFAAAAAA);
-		y += scaled(14);
-
-		// Pool volume reservoir
+	/** The shared pool's sphere, and beside it the player's own vessel and the bloodline's size. */
+	private void renderPool(GuiGraphics graphics, IBloodVolume volume, float partialTick) {
 		float poolVol = BloodlinePoolClientData.getPoolVolume();
 		float poolMax = BloodlinePoolClientData.getPoolMax();
 		float ratio = poolMax > 0 ? Mth.clamp(poolVol / poolMax, 0f, 1f) : 0f;
-
 		String poolText = Component.translatable("screen.hemomancy.bloodline_pool.pool_volume_ml",
 				formatPoolVolume(poolVol), String.format("%.0f", poolMax)).getString();
-		int reservoirCenterX = centerX + scaled(18);
-		int reservoirCenterY = guiTop + scaled(92);
-		renderBloodSphere(graphics, reservoirCenterX, reservoirCenterY, scaled(44), ratio, poolText, partialTick);
+		renderBloodSphere(graphics, px(EDGE + 100), py(POOL_TOP + 58), scaled(36), ratio, poolText, partialTick);
 
-		renderVesselBloodBar(graphics, reservoirCenterX - scaled(86), reservoirCenterY - scaled(26),
-				volume.getBloodVolume(), volume.getMaxBloodVolume());
+		int barX = EDGE + 172, barY = POOL_TOP + FIRST_ROW + 4;
+		renderVesselBloodBar(graphics, px(barX), py(barY), volume.getBloodVolume(), volume.getMaxBloodVolume());
+		int textX = px(barX + 16);
+		graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.vessel"), textX,
+				py(barY + 2), LABEL, false);
+		graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.pool_volume_ml",
+				formatPoolVolume((float) volume.getBloodVolume()), String.format("%.0f", volume.getMaxBloodVolume())),
+				textX, py(barY + 14), TEXT, false);
+		graphics.drawString(this.font, HemoText.translatable("screen.hemomancy.bloodline_pool.members",
+				BloodlinePoolClientData.getMemberCount()), textX, py(barY + 38), MUTED, false);
+	}
 
-		// Label for donate field
-		graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.offer_ml"), donateAmountField.getX(), donateAmountField.getY() - scaled(14),
-				0xFFFF8A8A,
-				true);
-
-		// Trickle rate label
-		graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.rate_label"), trickleRateField.getX() - scaled(42),
-				trickleRateField.getY() + scaled(5), 0xFFFF8A8A, true);
-
-		// Auto-draw threshold label
-		graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.threshold_percent_label"), autoDrawThresholdField.getX() - scaled(86),
-				autoDrawThresholdField.getY() + scaled(5), 0xFFFF8A8A, true);
-
-		// Bloodline message label
-		graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.bloodline_message_label"), messageField.getX(),
-				messageField.getY() - scaled(14), 0xFFFF8A8A, true);
-
-		if (kickMemberButton != null) {
-			List<UUID> kickable = getKickableMembers(player);
-			int targetX = kickNextButton.getX() + kickNextButton.getWidth() + scaled(6);
-			int targetW = Math.max(48, kickMemberButton.getX() - targetX - scaled(6));
-			renderRitualPanel(graphics, targetX, kickMemberButton.getY(), targetW, kickMemberButton.getHeight(),
-					0xFF050101, 0xFF6A1218);
-			if (kickable.isEmpty()) {
-				drawCenteredFittingString(graphics, this.font,
-						Component.translatable("screen.hemomancy.bloodline_pool.no_player_members").getString(), targetX + targetW / 2,
-						kickMemberButton.getY() + scaled(5), targetW - scaled(6), 0xFFAA6666, false);
-				kickMemberButton.active = false;
-				kickPrevButton.active = false;
-				kickNextButton.active = false;
-			} else {
-				kickMemberButton.active = true;
-				kickPrevButton.active = true;
-				kickNextButton.active = true;
-				kickTargetIndex = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
-				String shortTarget = resolvePlayerName(kickable.get(kickTargetIndex));
-				drawCenteredFittingString(graphics, this.font, shortTarget, targetX + targetW / 2,
-						kickMemberButton.getY() + scaled(5), targetW - scaled(6), 0xFFFFC8C8, false);
-			}
+	/** Each field's label, right-aligned against it, centred on the row. */
+	private void renderTitheLabels(GuiGraphics graphics) {
+		String[] keys = {"screen.hemomancy.bloodline_pool.offer_ml", "screen.hemomancy.bloodline_pool.rate_label",
+				"screen.hemomancy.bloodline_pool.threshold_percent_label"};
+		int labelRight = px(FIELD_X) - scaled(6);
+		for (int i = 0; i < keys.length; i++) {
+			Component label = Component.translatable(keys[i]);
+			int y = py(TITHE_TOP + FIRST_ROW + i * ROW_STEP) + (widgetHeight(ROW) - 8) / 2;
+			graphics.drawString(this.font, label, labelRight - this.font.width(label), y, LABEL, false);
 		}
+	}
+
+	/** The Progenitor picks a member to banish; everyone else sees who leads the line. */
+	private void renderBanishRow(GuiGraphics graphics, LocalPlayer player, Bloodline bloodline) {
+		int rowY = py(KIN_TOP + FIRST_ROW + ROW_STEP);
+		if (kickMemberButton == null) {
+			if (bloodline.isValid()) {
+				graphics.drawString(this.font, Component.translatable("screen.hemomancy.bloodline_pool.progenitor",
+						resolvePlayerName(bloodline.getLeaderUUID())), px(EDGE + INSET),
+						rowY + (widgetHeight(ROW) - 8) / 2, MUTED, false);
+			}
+			return;
+		}
+		List<UUID> kickable = getKickableMembers(player);
+		int targetX = kickNextButton.getX() + kickNextButton.getWidth() + scaled(6);
+		int targetW = Math.max(48, kickMemberButton.getX() - targetX - scaled(6));
+		renderRitualPanel(graphics, targetX, rowY, targetW, kickMemberButton.getHeight(), 0xFF050101, PANEL_EDGE);
+		boolean any = !kickable.isEmpty();
+		kickMemberButton.active = any;
+		kickPrevButton.active = any;
+		kickNextButton.active = any;
+		String target;
+		int colour;
+		if (any) {
+			kickTargetIndex = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
+			target = resolvePlayerName(kickable.get(kickTargetIndex));
+			colour = 0xFFFFC8C8;
+		} else {
+			target = Component.translatable("screen.hemomancy.bloodline_pool.no_player_members").getString();
+			colour = 0xFFAA6666;
+		}
+		drawCenteredFittingString(graphics, this.font, target, targetX + targetW / 2,
+				rowY + (kickMemberButton.getHeight() - 8) / 2, targetW - scaled(6), colour, false);
+	}
+
+	/** The fane map, filling the right column above Fane Sight and Residents. */
+	private void renderFaneMap(GuiGraphics graphics, Bloodline bloodline, int mouseX, int mouseY, float partialTick,
+			List<Component> tooltip) {
+		int top = py(CONTENT_TOP);
+		int h = py(FANE_SIGHT_TOP) - scaled(6) - top;
+		faneMap.render(graphics, px(RIGHT_X), top, scaled(RIGHT_WIDTH), h,
+				bloodline.isValid() ? bloodline.getLeaderUUID() : null, mouseX, mouseY, partialTick, tooltip);
 	}
 
 	// ───── Color Lerp for Pool Bar ─────
@@ -508,7 +558,7 @@ public class BloodlinePoolScreen extends Screen {
 		String value = editBox.getValue();
 		boolean showingHint = value.isEmpty() && !editBox.isFocused();
 		String text = showingHint ? hint : value;
-		int color = showingHint ? 0xFF7A4C4C : 0xFFFFD9D0;
+		int color = showingHint || !poolActive ? 0xFF7A4C4C : 0xFFFFD9D0;
 		drawCenteredFittingString(graphics, this.font, text, editBox.getX() + editBox.getWidth() / 2,
 				editBox.getY() + (editBox.getHeight() - 8) / 2, editBox.getWidth() - scaled(8), color, true);
 		if (editBox.isFocused() && (int) (animTime * 2.0F) % 2 == 0) {

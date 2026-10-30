@@ -8,6 +8,10 @@ import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentatio
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrameClientState;
 import com.vincenthuto.hemomancy.common.network.boss.BossBarFramePacket;
 import com.vincenthuto.hemomancy.common.network.boss.BossScenePacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PossessionScenePacket;
+import com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeMomentPacket;
+import com.vincenthuto.hemomancy.client.render.world.HeartNodeMomentRenderer;
+import com.vincenthuto.hemomancy.client.data.PossessionSceneClientState;
 import com.vincenthuto.hemomancy.client.render.entity.boss.MycophantGlimpse;
 import com.vincenthuto.hemomancy.client.data.MycophantIntroClientState;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
@@ -119,6 +123,8 @@ public final class ClientboundEffectHandlers {
 		ClientPayloadHandlers.register(PacketMycophantIntro.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(BossBarFramePacket.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(BossScenePacket.TYPE, ClientboundEffectHandlers::handle);
+		ClientPayloadHandlers.register(PossessionScenePacket.TYPE, ClientboundEffectHandlers::handle);
+		ClientPayloadHandlers.register(HeartNodeMomentPacket.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketSpawnVeinSpiderCourier.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncPlayerAnimation.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(ParticleBurstPacket.TYPE, ClientboundEffectHandlers::handle);
@@ -241,6 +247,14 @@ public final class ClientboundEffectHandlers {
 
 	static void handle(BossBarFramePacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> BossBarFrameClientState.bind(packet.bar(), packet.frame()));
+	}
+
+	static void handle(HeartNodeMomentPacket packet, IPayloadContext context) {
+		context.enqueueWork(() -> HeartNodeMomentRenderer.start(packet));
+	}
+
+	static void handle(PossessionScenePacket packet, IPayloadContext context) {
+		context.enqueueWork(() -> PossessionSceneClientState.start(packet));
 	}
 
 	static void handle(BossScenePacket packet, IPayloadContext context) {

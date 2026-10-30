@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.entity.mob.facsimile;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.facsimile.FacsimileModels;
 import net.minecraft.client.model.HorseModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -13,7 +14,9 @@ import net.minecraft.client.renderer.entity.IronGolemRenderer;
 import net.minecraft.client.renderer.entity.SpiderRenderer;
 import net.minecraft.client.renderer.entity.WolfRenderer;
 import net.minecraft.client.renderer.entity.layers.HorseMarkingLayer;
+import net.minecraft.client.renderer.entity.layers.IronGolemCrackinessLayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.horse.Donkey;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.animal.horse.Variant;
@@ -24,7 +27,8 @@ import java.util.Map;
 
 /**
  * Vanilla renderers wearing a facsimile's skew: each swaps in its {@link FacsimileModels} model and adds the fungal
- * growth layer. Vanilla textures are read where they live; none is copied.
+ * growth layer. Vanilla textures are read where they live; none is copied. The blaze and golem wear the hive's own
+ * skins instead (crimson char, hematic iron), from {@code tools/model_export/facsimile_crimson_textures.py}.
  */
 public final class FacsimileRenderers {
 	private FacsimileRenderers() {}
@@ -45,19 +49,37 @@ public final class FacsimileRenderers {
 		}
 	}
 
+	/** Burns crimson: its own charred skin, not vanilla's yellow. */
 	public static class Blaze extends BlazeRenderer {
+		private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/facsimile/facsimile_blaze.png");
+
 		public Blaze(EntityRendererProvider.Context context) {
 			super(context);
 			model = new FacsimileModels.FacsimileBlazeModel(context.bakeLayer(ModelLayers.BLAZE));
 			addLayer(new FacsimileGrowthLayer<>(this, FacsimileRenderTypes.BLAZE));
 		}
+
+		@Override
+		public ResourceLocation getTextureLocation(net.minecraft.world.entity.monster.Blaze entity) {
+			return TEXTURE;
+		}
 	}
 
+	/** Hematic iron, not iron grey; its cracks show crimson. The poppy layer stays (it only shows when offered). */
 	public static class Golem extends IronGolemRenderer {
+		private static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/facsimile/facsimile_golem.png");
+
 		public Golem(EntityRendererProvider.Context context) {
 			super(context);
 			model = new FacsimileModels.FacsimileGolemModel(context.bakeLayer(ModelLayers.IRON_GOLEM));
+			layers.removeIf(layer -> layer instanceof IronGolemCrackinessLayer);
+			layers.add(0, new FacsimileGolemCrackLayer(this));
 			addLayer(new FacsimileGrowthLayer<>(this, FacsimileRenderTypes.GOLEM));
+		}
+
+		@Override
+		public ResourceLocation getTextureLocation(IronGolem entity) {
+			return TEXTURE;
 		}
 	}
 

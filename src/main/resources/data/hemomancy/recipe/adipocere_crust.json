@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "AA",
+    "AA"
+  ],
+  "key": {
+    "A": {
+      "item": "hemomancy:adipocere"
+    }
+  },
+  "result": {
+    "id": "hemomancy:adipocere_crust"
+  }
+}

@@ -61,6 +61,15 @@ public final class SurrogateLedger extends SavedData {
 		setDirty();
 	}
 
+	/** Every body still held for {@code owner}. */
+	public java.util.List<UUID> heldBy(UUID owner) {
+		java.util.List<UUID> held = new java.util.ArrayList<>();
+		entries.forEach((body, entry) -> {
+			if (entry.verdict() == Verdict.HELD && entry.owner().equals(owner)) held.add(body);
+		});
+		return held;
+	}
+
 	public void forget(UUID body) {
 		if (entries.remove(body) != null) setDirty();
 	}

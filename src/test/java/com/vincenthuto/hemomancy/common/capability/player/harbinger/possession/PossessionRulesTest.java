@@ -68,6 +68,20 @@ class PossessionRulesTest {
 	}
 
 	@Test
+	void brazierOfferingsTuneThePossessionByEffectId() {
+		PossessionRules.Offerings offerings = PossessionRules.Offerings.of(
+				java.util.List.of(PossessionRules.REGEN, PossessionRules.MAX_CONCENTRATION, "unknown"));
+
+		assertTrue(offerings.regen());
+		assertFalse(offerings.shell());
+		assertFalse(offerings.totem());
+		assertEquals(SurrogateForm.WOLF.pool() + 3, offerings.pool(SurrogateForm.WOLF));
+		assertEquals(0, offerings.shellHits());
+		assertEquals(SurrogateForm.WOLF.pool(), PossessionRules.Offerings.NONE.pool(SurrogateForm.WOLF));
+		assertEquals(3, PossessionRules.Offerings.of(java.util.List.of(PossessionRules.SHELL)).shellHits());
+	}
+
+	@Test
 	void theGolemCanStillClimbABlock() {
 		assertTrue(SurrogateForm.GOLEM.jump() >= -0.1, "a 0.42 jump cut by 40% cannot clear one block");
 	}

@@ -55,14 +55,20 @@
     "MixinVigilShrieker",
     "MixinVigilCatalyst",
     "MixinVigilFixtureRemoval",
-    "MixinListeningScar"
+    "MixinListeningScar",
+    "BlazeChargeInvoker",
+    "MixinFacsimileBlazeEmbers"
   ],
   "client": [
     "MixinApotheosSense",
     "MixinScriptoriumItemRenderer",
     "CastingHandRendererInvoker",
+    "CreativePickerMenuInvoker",
+    "CreativeScreenAccessor",
+    "MixinCreativeTabSections",
     "MixinCamera",
     "MixinCapeLayer",
+    "MixinClientLevel",
     "MixinEntityRenderDispatcher",
     "MixinGameRenderer",
     "MixinHumanoidArmorLayer",

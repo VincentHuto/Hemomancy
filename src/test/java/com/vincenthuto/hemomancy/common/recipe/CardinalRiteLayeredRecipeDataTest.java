@@ -63,7 +63,10 @@ final class CardinalRiteLayeredRecipeDataTest {
 				if (recipe.has("unstained") && recipe.get("unstained").getAsBoolean()) continue;
 				assertTrue(recipe.has("floor"), path + " must name its minimum floor");
 				assertFalse(recipe.has("pattern"), path + " must not retain a whole-rite pattern");
-				assertTrue(recipe.has("brazier_signature"), path + " must define its selector");
+				// A rite that reads its braziers for optional offerings selects on floor and medium alone.
+				assertTrue(recipe.has("brazier_signature") ^ recipe.has("optional_offerings"),
+						path + " must define one selector");
+				if (!recipe.has("brazier_signature")) continue;
 				for (JsonElement element : recipe.getAsJsonArray("brazier_signature")) {
 					assertFalse(element.getAsJsonObject().has("consume_on_success"),
 							path + " must exercise the consume-by-default offering contract");
@@ -106,7 +109,8 @@ final class CardinalRiteLayeredRecipeDataTest {
 				// A larger floor of the same style also accepts a smaller rite, so rites collide by style.
 				String floor = recipe.get("floor").getAsString();
 				String selector = floor.substring(0, floor.lastIndexOf('_')) + "|"
-						+ recipe.getAsJsonArray("brazier_signature") + "|"
+						+ (recipe.has("optional_offerings") ? "optional " + recipe.getAsJsonArray("optional_offerings")
+								: recipe.getAsJsonArray("brazier_signature")) + "|"
 						+ (recipe.has("medium") ? recipe.get("medium") : "no medium") + "|"
 						+ (recipe.has("required_structure")
 								? recipe.getAsJsonObject("required_structure").get("pattern") : "none") + "|"

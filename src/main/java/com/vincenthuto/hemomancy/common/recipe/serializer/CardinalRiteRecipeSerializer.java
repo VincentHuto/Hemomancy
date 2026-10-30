@@ -263,6 +263,11 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 						GsonHelper.getAsBoolean(structure, "consume_on_success", false));
 			}
 			recipe.setBrazierSignature(brazierSignatureFromJson(pJson, jsonOps));
+			recipe.setOptionalOfferings(optionalOfferingsFromJson(pJson, jsonOps));
+			if (!recipe.getOptionalOfferings().isEmpty() && !recipe.getBrazierSignature().isEmpty()) {
+				throw new JsonSyntaxException("Cardinal rite " + pRecipeId
+						+ " declares both a brazier signature and optional offerings");
+			}
 			if (pJson.has("subject")) {
 				JsonObject subject = GsonHelper.getAsJsonObject(pJson, "subject");
 				recipe.setSubject(CardinalRitePatternJson.parse(subject), GsonHelper.getAsInt(subject, "feed"));
@@ -292,7 +297,8 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		if (!unstained) {
 			recipe.setCeremony(ceremonyFromJson(pJson, pRecipeId, riteType, requiredDegree));
 			int offeringCount = recipe.getBrazierSignature().stream()
-					.mapToInt(CardinalRiteRecipe.BrazierRequirement::count).sum();
+					.mapToInt(CardinalRiteRecipe.BrazierRequirement::count).sum()
+					+ recipe.getOptionalOfferings().size();
 			// Station upgrade rites declare their "id" so the codec path is real here.
 			String policyPath = pRecipeId.getPath();
 			List<String> violations = CardinalRiteProgressionPolicy.violations(
@@ -358,11 +364,23 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		return List.copyOf(result);
 	}
 
+	private static List<CardinalRiteRecipe.OptionalOffering> optionalOfferingsFromJson(JsonObject json, DynamicOps<JsonElement> jsonOps) {
+		if (!json.has("optional_offerings")) return List.of();
+		List<CardinalRiteRecipe.OptionalOffering> result = new ArrayList<>();
+		for (JsonElement element : json.getAsJsonArray("optional_offerings")) {
+			JsonObject entry = element.getAsJsonObject();
+			Ingredient ingredient = Ingredient.CODEC_NONEMPTY.parse(jsonOps, entry.get("ingredient"))
+					.getOrThrow(message -> new JsonSyntaxException("Invalid optional offering ingredient: " + message));
+			result.add(new CardinalRiteRecipe.OptionalOffering(ingredient, GsonHelper.getAsString(entry, "effect")));
+		}
+		return List.copyOf(result);
+	}
+
 	// ---- RecipeSerializer 1.21.1 API ----
 
 	private static final MapCodec<CardinalRiteRecipe> CODEC = RecipeCodecJson.bridge("CardinalRiteRecipe", "cardinal_rite/unknown",
 			CardinalRiteRecipeSerializer::fromJsonObject, CardinalRiteRecipeSerializer::encode,
-			"id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key", "result", "required_degree", "required_purity", "required_clarity", "breakBlocksOnCreation", "unstained", "rankup", "ceremony", "floor", "required_structure", "brazier_signature", "medium", "consume_medium_on_success", "puppeteer_trial", "purpose", "special", "world_finale", "subject");
+			"id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key", "result", "required_degree", "required_purity", "required_clarity", "breakBlocksOnCreation", "unstained", "rankup", "ceremony", "floor", "required_structure", "brazier_signature", "optional_offerings", "medium", "consume_medium_on_success", "puppeteer_trial", "purpose", "special", "world_finale", "subject");
 
 	private static <T> RecordBuilder<T> encode(CardinalRiteRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
 		prefix.add("id", ops.createString(recipe.getId().toString()));
@@ -440,6 +458,12 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 						Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer), pBuffer.readVarInt(), pBuffer.readBoolean()));
 			}
 			recipe.setBrazierSignature(requirements);
+			List<CardinalRiteRecipe.OptionalOffering> optional = new ArrayList<>();
+			for (int i = 0, count = pBuffer.readVarInt(); i < count; i++) {
+				optional.add(new CardinalRiteRecipe.OptionalOffering(
+						Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer), pBuffer.readUtf()));
+			}
+			recipe.setOptionalOfferings(optional);
 			if (pBuffer.readBoolean()) {
 				MultiblockPattern subject = readPattern(pBuffer);
 				recipe.setSubject(subject, pBuffer.readVarInt());
@@ -527,6 +551,11 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, requirement.ingredient());
 				pBuffer.writeVarInt(requirement.count());
 				pBuffer.writeBoolean(requirement.consumeOnSuccess());
+			}
+			pBuffer.writeVarInt(pRecipe.getOptionalOfferings().size());
+			for (CardinalRiteRecipe.OptionalOffering offering : pRecipe.getOptionalOfferings()) {
+				Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, offering.ingredient());
+				pBuffer.writeUtf(offering.effect());
 			}
 			pBuffer.writeBoolean(pRecipe.isWorkingCraft());
 			if (pRecipe.isWorkingCraft()) {

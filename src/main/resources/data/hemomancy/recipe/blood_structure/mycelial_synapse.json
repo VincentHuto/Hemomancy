@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 120,
+  "required_degree": 8,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "hemomancy:hematic_iron_block",
+  "pattern": [
+    ["S", "I"]
+  ],
+  "key": {
+    "S": {
+      "block": "hemomancy:sporite_crystal"
+    },
+    "I": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "result": {
+    "id": "hemomancy:mycelial_synapse"
+  }
+}

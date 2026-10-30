@@ -128,6 +128,11 @@ public class BlockEntityInit {
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity::new,
 							BlockInit.heart_node.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.MycelialSynapseBlockEntity>> mycelial_synapse = TILES
+			.register("mycelial_synapse", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.MycelialSynapseBlockEntity::new,
+							BlockInit.mycelial_synapse.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.FruitingBodyCacheBlockEntity>> fruiting_body_cache = TILES
 			.register("fruiting_body_cache", () -> BlockEntityType.Builder
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.FruitingBodyCacheBlockEntity::new,

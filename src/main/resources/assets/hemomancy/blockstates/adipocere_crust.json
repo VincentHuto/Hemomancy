@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/adipocere_crust"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/adipocere_crust",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/adipocere_crust",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/adipocere_crust",
+      "y": 270
+    }
+  }
+}

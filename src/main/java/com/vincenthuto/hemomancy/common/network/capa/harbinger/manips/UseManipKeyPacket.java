@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionWheelRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
@@ -58,6 +59,12 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			if (player == null)
 				return;
             try {
+			if (PossessionWheelRules.refusesManipulation(HemoCapabilityAccess.isPossessing(player),
+					message.action == Action.STOP_CONTINUOUS)) {
+				player.displayClientMessage(Component.translatable("message.hemomancy.possession.cannot_cast")
+						.withStyle(ChatFormatting.DARK_GRAY), true);
+				return;
+			}
 			boolean bloodPowersBlocked = UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player));
 			if (message.action == Action.STOP_CONTINUOUS) {
 				ManipulationChannelManager.stop((net.minecraft.server.level.ServerPlayer) player, true);
@@ -204,6 +211,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 				LivingStaffWeaponFormRules.isStaffWeaponFormManip(manip.getName()), manip instanceof ConjurationManip,
 				manip.isOnCooldown(player))) return;
 		if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
+		if (PossessionWheelRules.refusesManipulation(HemoCapabilityAccess.isPossessing(player), false)) return;
 		boolean bloodPowersBlocked = UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player));
 		if (bloodPowersBlocked || !HemoCapabilityAccess.getBloodVolume(player).isActive())
 			return;

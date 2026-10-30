@@ -169,6 +169,7 @@ minecraft:banner_pattern hemomancy:hemomancy_veins
 minecraft:block hemomancy:abocipher_emitter
 minecraft:block hemomancy:active_befouling_ash_trail
 minecraft:block hemomancy:active_smouldering_ash_trail
+minecraft:block hemomancy:adipocere_crust
 minecraft:block hemomancy:altar_of_cleansing
 minecraft:block hemomancy:antecedent_vessel
 minecraft:block hemomancy:attached_gourd_stem
@@ -312,6 +313,7 @@ minecraft:block hemomancy:mortal_display
 minecraft:block hemomancy:mourning_mask
 minecraft:block hemomancy:mycelial_crucible
 minecraft:block hemomancy:mycelial_lantern
+minecraft:block hemomancy:mycelial_synapse
 minecraft:block hemomancy:mycelium_erythrocytic_dirt
 minecraft:block hemomancy:myelin_sheath
 minecraft:block hemomancy:nerve_bundle
@@ -457,6 +459,7 @@ minecraft:block_entity_type hemomancy:morphling_incubator
 minecraft:block_entity_type hemomancy:mortal_display
 minecraft:block_entity_type hemomancy:mycelial_crucible
 minecraft:block_entity_type hemomancy:mycelial_lantern
+minecraft:block_entity_type hemomancy:mycelial_synapse
 minecraft:block_entity_type hemomancy:non_euclidean_hallway
 minecraft:block_entity_type hemomancy:offering_stand
 minecraft:block_entity_type hemomancy:pallid_retort
@@ -570,6 +573,7 @@ minecraft:entity_type hemomancy:constrictor_cord_projectile
 minecraft:entity_type hemomancy:containment_anchor
 minecraft:entity_type hemomancy:covenant_throne_seat
 minecraft:entity_type hemomancy:crimson_doe
+minecraft:entity_type hemomancy:crimson_fireball
 minecraft:entity_type hemomancy:dark_arrow
 minecraft:entity_type hemomancy:desiccant
 minecraft:entity_type hemomancy:directed_blood_orb
@@ -698,6 +702,7 @@ minecraft:item hemomancy:active_befouling_ash
 minecraft:item hemomancy:active_smouldering_ash
 minecraft:item hemomancy:aculeate_vitriol
 minecraft:item hemomancy:adipocere
+minecraft:item hemomancy:adipocere_crust
 minecraft:item hemomancy:ahaematic_colloid
 minecraft:item hemomancy:altar_of_cleansing
 minecraft:item hemomancy:ambergris_cylinder
@@ -1153,6 +1158,7 @@ minecraft:item hemomancy:mortal_display
 minecraft:item hemomancy:mourning_mask
 minecraft:item hemomancy:mycelial_crucible
 minecraft:item hemomancy:mycelial_lantern
+minecraft:item hemomancy:mycelial_synapse
 minecraft:item hemomancy:mycelium_erythrocytic_dirt
 minecraft:item hemomancy:mycophant_tendril
 minecraft:item hemomancy:myelin_sheath
@@ -1404,7 +1410,6 @@ minecraft:item hemomancy:telson
 minecraft:item hemomancy:tendon_line
 minecraft:item hemomancy:tengu_mask
 minecraft:item hemomancy:terrestrial_speculum
-minecraft:item hemomancy:thread_of_will
 minecraft:item hemomancy:tidepool_anemone
 minecraft:item hemomancy:tincture_carrion_metabolism
 minecraft:item hemomancy:tincture_carrion_metabolism_jug
@@ -2199,6 +2204,7 @@ neoforge:attachment_types hemomancy:skill_progress
 neoforge:attachment_types hemomancy:specimen_bestiary
 neoforge:attachment_types hemomancy:spore_load
 neoforge:attachment_types hemomancy:station_upgrades
+neoforge:attachment_types hemomancy:surrogate_tether
 neoforge:attachment_types hemomancy:unstained_progress
 neoforge:attachment_types hemomancy:vascular_system
 neoforge:attachment_types hemomancy:visceral_organs

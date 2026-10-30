@@ -104,6 +104,7 @@ src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.
 src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/unstained/PurityGainEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationStatusEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/util/FlightArbiter.java,java,base-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/HeartNodeFaneSeparationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/FoundingFaneEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/HemoCommandStructureGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/command,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/HemoCommandStructureGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java,java,by-name
 src/test/java/com/vincenthuto/hemomancy/architecture/HemorathPresentationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/ManipulationMotes.java,java,helper
@@ -855,6 +856,11 @@ src/test/java/com/vincenthuto/hemomancy/common/block/GourdPresentationResourceTe
 src/test/java/com/vincenthuto/hemomancy/common/block/GourdPresentationResourceTest.java,main,src/main/resources,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/GourdPresentationResourceTest.java,main,src/main/resources/assets/hemomancy/models/block/attached_gourd_stem.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/GourdPresentationResourceTest.java,main,src/main/resources/assets/hemomancy/models/block/gourd.json,resource,base-dir
+src/test/java/com/vincenthuto/hemomancy/common/block/HeartNodeSetPieceResourceTest.java,junit,src/main/resources/assets/hemomancy/blockstates/heart_node.json,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/block/HeartNodeSetPieceResourceTest.java,junit,src/main/resources/assets/hemomancy/blockstates/mycelial_synapse.json,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/block/HeartNodeSetPieceResourceTest.java,junit,src/main/resources/assets/hemomancy/models/block,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/block/HeartNodeSetPieceResourceTest.java,junit,src/main/resources/assets/hemomancy/models/block/bbmodel,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/block/HeartNodeSetPieceResourceTest.java,junit,src/main/resources/assets/hemomancy/models/item/heart_node.json,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/block/HematicIronDoorWaterloggingTest.java,main,src/main/java,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/HematicIronDoorWaterloggingTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/block/shared/WaterloggedDoorBlock.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/HematicIronDoorWaterloggingTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java,java,base-dir
@@ -1206,6 +1212,7 @@ src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/morph
 src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/morphling/MorphlingDeathRecoveryTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/equipment/HarbingerEquipmentEntityEventHandler.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/morphling/MorphlingDeathRecoveryTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/morphling/EquippedMorphlingEvents.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/morphling/MorphlingDeathRecoveryTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/morphling/MorphlingDeathRecovery.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/possession/PossessionRiteDataTest.java,junit,src/main/resources/data/hemomancy/recipe/cardinal_rite/possession_rite.json,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/FungalScarLayerToggleSourceTest.java,main,src/main/java,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/FungalScarLayerToggleSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/layer/player/RenderScarsLayer.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/FungalScarLayerToggleSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SporeImplantScreen.java,java,base-dir
@@ -2036,6 +2043,7 @@ src/test/java/com/vincenthuto/hemomancy/common/event/TransientServerStateLifecyc
 src/test/java/com/vincenthuto/hemomancy/common/event/worldevent/FaneFootprintSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/FaneFootprint.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/event/worldevent/FaneFootprintSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/FoundingFaneSavedData.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/event/worldevent/OrbOfPerspectiveIntegrationSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/ChamberOfWillEvents.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/common/init/CreativeTabSectionTest.java,junit,src/gameTest/resources/frozen/creative-tab-order.txt,other,exact
 src/test/java/com/vincenthuto/hemomancy/common/init/CreativeTabTechnicalBlockGuardTest.java,main,src/main/java,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/init/CreativeTabTechnicalBlockGuardTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/init/CreativeTabTechnicalBlockGuardTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/CreativeTabInit.java,java,base-dir
@@ -3148,6 +3156,8 @@ src/test/java/com/vincenthuto/hemomancy/common/resource/LanternTickResourceTest.
 src/test/java/com/vincenthuto/hemomancy/common/resource/LanternTickResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/resource/LanternTickResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/shared/armor/LanternTickHelmetArmorItem.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/resource/LanternTickResourceTest.java,main,src/main/resources,other,exact-dir
+src/test/java/com/vincenthuto/hemomancy/common/resource/MycelialSynapseBloodStructureRecipeTest.java,junit,src/main/resources/data/hemomancy/loot_table/blocks/mycelial_synapse.json,resource,helper
+src/test/java/com/vincenthuto/hemomancy/common/resource/MycelialSynapseBloodStructureRecipeTest.java,junit,src/main/resources/data/hemomancy/recipe/blood_structure/mycelial_synapse.json,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/resource/PhaseFourTendonLineResourceTest.java,main,src/main/resources,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/resource/PhaseOneUtilityResourceTest.java,main,src/main/resources,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/resource/PhaseThreeSerpentUtilityResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy,java,exact-dir

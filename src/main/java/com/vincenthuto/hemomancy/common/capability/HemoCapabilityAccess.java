@@ -98,6 +98,11 @@ public static com.vincenthuto.hemomancy.common.damage.SchoolCombatState getSchoo
     return entity.getData(HemoAttachmentTypes.SCHOOL_COMBAT);
 }
 
+/** Who holds this mob with Blood Binding, for the Rite of Possession. */
+public static com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateTether getSurrogateTether(Entity entity) {
+    return entity.getData(HemoAttachmentTypes.SURROGATE_TETHER);
+}
+
 // ── Blood Volume ──────────────────────────────────────────────────────────
 
 public static BloodVolume getBloodVolume(Player player) {

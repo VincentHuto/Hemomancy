@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.manipulation.animus;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateTetherRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateTethers;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -53,11 +55,14 @@ public class BloodBindingManip extends BloodManipulation {
 		LivingEntity previous = player;
 		boolean appliedAny = false;
 		for (LivingEntity current : targets) {
-			MobEffectInstance binding = bindingFor(current);
+			// A surrogate on a Qliphoth grand floor is held without end, for the Rite of Possession.
+			MobEffectInstance binding = SurrogateTethers.binding(current, bindingFor(current));
 			if (!applyBinding(player, current, binding)) continue;
+			SurrogateTethers.bound(player, current, binding);
 			appliedAny = true;
 			LivingEntity caster = mode == Mode.LATTICE && previous != player ? target : previous;
-			PacketHandler.sendBloodBindingTendril(caster, current, binding.getDuration(), world.random.nextLong());
+			int shown = binding.isInfiniteDuration() ? SurrogateTetherRules.VISUAL_TICKS : binding.getDuration();
+			PacketHandler.sendBloodBindingTendril(caster, current, shown, world.random.nextLong());
 			previous = current;
 		}
 		if (appliedAny) world.playSound(null, player.blockPosition(), SoundEvents.ILLUSIONER_CAST_SPELL,
@@ -83,7 +88,7 @@ public class BloodBindingManip extends BloodManipulation {
 				&& (targetPlayer.isCreative() || !player.canHarmPlayer(targetPlayer))) return false;
 		MobEffectInstance binding = bindingFor(target);
 		MobEffectInstance current = target.getEffect(EffectInit.blood_binding);
-		return (current == null || current.getDuration() < binding.getDuration())
+		return (current == null || !current.isInfiniteDuration() && current.getDuration() < binding.getDuration())
 				&& CommonHooks.canMobEffectBeApplied(target, binding);
 	}
 

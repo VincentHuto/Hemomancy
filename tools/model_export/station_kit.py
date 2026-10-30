@@ -235,6 +235,22 @@ def bbmodel(name, groups, textures, display=None):
     return project
 
 
+def derive_texture(source, name, desaturate, darken, tint=(1.0, 1.0, 1.0)):
+    """Write textures/block/<name>.png: `source` greyed by `desaturate` (0..1), scaled by `darken`, tinted.
+
+    For a piece's dead or withered state drawn from the same world texture as its living one, so the two
+    keep the same pixels at the same 16 px per block. Returns the new texture's location.
+    """
+    pixels = raster.texture(source).copy()
+    grey = pixels[..., :3] @ np.array([.299, .587, .114])
+    rgb = pixels[..., :3] * (1 - desaturate) + grey[..., None] * desaturate
+    pixels[..., :3] = np.clip(rgb * darken * np.array(tint), 0, 1)
+    out = ASSETS / 'textures/block' / (name + '.png')
+    Image.fromarray((pixels * 255).round().astype(np.uint8), 'RGBA').save(out)
+    raster._textures.pop('hemomancy:block/' + name, None)
+    return 'hemomancy:block/' + name
+
+
 def write_json(path, data, indent=1):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=indent) + '\n', encoding='utf-8')

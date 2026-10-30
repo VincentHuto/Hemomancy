@@ -68,6 +68,7 @@ public final class ModelRegistrar {
         RingDoorRenderer.standaloneModels().forEach(event::register);
         for (String part : DendriticDistributorRenderer.PART_MODELS)
             event.register(DendriticDistributorRenderer.part(part));
+        HeartNodeParts.all().forEach(event::register);
         event.register(MycelialCrucibleRenderer.CISTERN_BLOOD);
         event.register(MycelialLanternRenderer.GAUGE_BLOOD);
         for (String part : com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.SomaticLoomRenderer.PART_MODELS)

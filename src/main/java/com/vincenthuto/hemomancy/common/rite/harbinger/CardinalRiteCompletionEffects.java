@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.common.encounter.VisitationService;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionService;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
@@ -225,12 +226,24 @@ public final class CardinalRiteCompletionEffects {
 				ctx -> VisitationService.visit(ctx.caster()));
 		register("cardinal_rite/possession_rite",
 				(ctx, stage) -> PossessionService.refusal(ctx.caster(),
-						PossessionService.findSurrogate(ctx.level(), riteBounds(ctx), ctx.center())),
+						PossessionService.findSurrogate(ctx.level(), riteBounds(ctx), ctx.center(), ctx.caster())),
 				ctx -> {
-					AABB bounds = riteBounds(ctx);
-					var surrogate = PossessionService.findSurrogate(ctx.level(), bounds, ctx.center());
-					return surrogate != null && PossessionService.begin(ctx.level(), ctx.caster(), surrogate, bounds);
+					var surrogate = PossessionService.findSurrogate(ctx.level(), riteBounds(ctx), ctx.center(),
+							ctx.caster());
+					return surrogate != null && PossessionService.begin(ctx.level(), ctx.caster(), surrogate,
+							possessionOfferings(ctx), ctx.center());
 				});
+	}
+
+	/** What the Rite of Possession's braziers burned during its procession, read by the recipe's effect ids. */
+	private static PossessionRules.Offerings possessionOfferings(Context ctx) {
+		if (ctx.rite() == null || ctx.recipe() == null) return PossessionRules.Offerings.NONE;
+		List<String> effects = new ArrayList<>();
+		for (ActiveCardinalRite.RiteOffering offering : ctx.rite().getAbsorbedOfferings()) {
+			String effect = offering.stack() == null ? null : ctx.recipe().optionalOfferingEffect(offering.stack());
+			if (effect != null) effects.add(effect);
+		}
+		return PossessionRules.Offerings.of(effects);
 	}
 
 	private CardinalRiteCompletionEffects() {

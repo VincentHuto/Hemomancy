@@ -843,6 +843,11 @@ public final class MaterialsData {
                 "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.mnemonic_ambergris.get()),
                 true, UnlockPredicate.minDegree(1)));
 
+        list.add(new MaterialEntry("adipocere", "item.hemomancy.adipocere",
+                "material.hemomancy.adipocere.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.adipocere.get()),
+                true, UnlockPredicate.minDegree(1)));
+
         list.add(new MaterialEntry("calcified_blood_spine", "material.hemomancy.calcified_blood_spine",
                 "",
                 "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.calcified_blood_spine.get()),

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.data;
 
+import com.vincenthuto.hemomancy.common.entity.mob.facsimile.FacsimileBlazeEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
@@ -29,6 +30,10 @@ public final class CrimsonFireClientState {
 	public static boolean isActive(Entity entity) {
 		if (entity == null || !entity.isOnFire()) {
 			return false;
+		}
+		// A facsimile blaze only ever burns crimson.
+		if (entity instanceof FacsimileBlazeEntity) {
+			return true;
 		}
 		Long until = ACTIVE_UNTIL_BY_ENTITY_ID.get(entity.getId());
 		if (until == null) {

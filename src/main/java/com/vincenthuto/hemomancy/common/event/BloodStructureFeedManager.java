@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.event;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -8,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
 import com.vincenthuto.hemomancy.common.rite.structure.BloodStructureCraftingHelper;
+import com.vincenthuto.hemomancy.common.rite.structure.BloodStructureFormation;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import net.minecraft.ChatFormatting;
@@ -101,7 +101,7 @@ public final class BloodStructureFeedManager {
 
 		if (BloodStructureFeedRules.isComplete(progress.bloodFed, recipe.getBloodCost())) {
 			completeFeed(player, level, hitPos, offhandCatalyst, match.match(), blockPattern, recipe, positions,
-					match.stakeFormation(), key);
+					match.formation(), key);
 		}
 		return true;
 	}
@@ -132,7 +132,7 @@ public final class BloodStructureFeedManager {
 
 	private static void completeFeed(ServerPlayer player, ServerLevel level, BlockPos hitPos, ItemStack offhandCatalyst,
 			BlockPattern.BlockPatternMatch match, BlockPattern blockPattern, BloodStructureRecipe recipe,
-			List<BlockPos> positions, HematicStakeBlock.Formation stakeFormation,
+			List<BlockPos> positions, BloodStructureFormation formation,
 			FeedKey key) {
 		if (!player.getAbilities().instabuild) {
 			offhandCatalyst.shrink(1);
@@ -151,7 +151,7 @@ public final class BloodStructureFeedManager {
 				level, match,
 				blockPattern.getWidth(), blockPattern.getHeight(), blockPattern.getDepth(),
 				hitPos, recipe.getResult().copy(),
-				CRAFT_ANIMATION_TICKS, player, stakeFormation));
+				CRAFT_ANIMATION_TICKS, player, formation));
 		ACTIVE_FEEDS.remove(key);
 		COMPLETING_FEEDS.put(key, level.getGameTime() + COMPLETION_LOCK_TICKS);
 	}
@@ -172,8 +172,9 @@ public final class BloodStructureFeedManager {
 
 	private static void sendHint(ServerPlayer player, Component message) {
 		long gameTime = player.serverLevel().getGameTime();
-		long lastHint = LAST_HINT_TICK.getOrDefault(player.getUUID(), Long.MIN_VALUE);
-		if (gameTime - lastHint < HINT_INTERVAL_TICKS) {
+		// No sentinel arithmetic: gameTime - Long.MIN_VALUE overflows negative and would swallow every hint.
+		Long lastHint = LAST_HINT_TICK.get(player.getUUID());
+		if (lastHint != null && gameTime - lastHint < HINT_INTERVAL_TICKS) {
 			return;
 		}
 		player.displayClientMessage(message, true);

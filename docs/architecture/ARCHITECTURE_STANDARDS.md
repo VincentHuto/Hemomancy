@@ -267,6 +267,7 @@ test under `src/test/java/.../architecture/` is listed here.
 | Mechanics | `HemoCommandStructureGuardrailTest` | 11 | `/hemo` one root, one class per branch |
 | Mechanics | `EntityCastGuardrailTest` | 11 | Entity casts as registration hooks |
 | Mechanics | `StationMenuGuardrailTest` | 11 | Menus never spend blood, record practice or enchant |
+| Mechanics | `HeartNodeFaneSeparationGuardrailTest` | heart-node | A heart-node and a Founding Fane never read each other's saved data |
 | Content | `BossFrameworkGuardrailTest` | 13 | Boss bars through `BossBarBinding`; all four Saints share `SaintTrialEntity` and its one ending (loot roll, tomb restore); a sarcophagus never picks a Saint at random |
 | Content | `ContentBoilerplateGuardrailTest` | 13 | `SyncedOwner`, `HemoContainerMenu`, `ProtectedNpc`, `ModelShapes.rotate`, effect categories |
 | Content | `ContentFamilyGuardrailTest` | 13 | Mob families, tracking orbs and combat-weapon storage share their base |

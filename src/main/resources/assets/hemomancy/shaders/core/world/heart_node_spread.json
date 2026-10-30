@@ -1,0 +1,39 @@
+{
+  "blend": {
+    "func": "add",
+    "srcrgb": "srcalpha",
+    "dstrgb": "1-srcalpha"
+  },
+  "vertex": "hemomancy:world/heart_node_spread",
+  "fragment": "hemomancy:world/heart_node_spread",
+  "attributes": [
+    "Position",
+    "Color",
+    "UV0",
+    "UV2",
+    "Normal"
+  ],
+  "samplers": [
+    { "name": "Sampler2" }
+  ],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "HemoTime", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Lobe0", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, -1.0 ] },
+    { "name": "Lobe1", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, -1.0 ] },
+    { "name": "Lobe2", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, -1.0 ] },
+    { "name": "Lobe3", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, -1.0 ] },
+    { "name": "Lobe4", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, -1.0 ] },
+    { "name": "Lobe5", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, -1.0 ] },
+    { "name": "Lobe6", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, -1.0 ] },
+    { "name": "Lobe7", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, -1.0 ] },
+    { "name": "LobeLife0", "type": "float", "count": 4, "values": [ 1.0, 1.0, 1.0, 1.0 ] },
+    { "name": "LobeLife1", "type": "float", "count": 4, "values": [ 1.0, 1.0, 1.0, 1.0 ] },
+    { "name": "LobeArrive0", "type": "float", "count": 4, "values": [ -1.0, -1.0, -1.0, -1.0 ] },
+    { "name": "LobeArrive1", "type": "float", "count": 4, "values": [ -1.0, -1.0, -1.0, -1.0 ] },
+    { "name": "PlayerOffset", "type": "float", "count": 3, "values": [ 0.0, -1000.0, 0.0 ] },
+    { "name": "SpreadFlags", "type": "float", "count": 4, "values": [ 1.0, 1.0, 1.0, 0.0 ] },
+    { "name": "SpreadLook", "type": "float", "count": 4, "values": [ 0.5, 0.0, 50.0, 0.3 ] }
+  ]
+}

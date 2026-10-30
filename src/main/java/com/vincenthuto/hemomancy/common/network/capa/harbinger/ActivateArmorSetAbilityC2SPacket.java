@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionWheelRules;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -25,7 +27,8 @@ public record ActivateArmorSetAbilityC2SPacket(ResourceLocation abilityId) imple
 
 	public static void handle(ActivateArmorSetAbilityC2SPacket packet, IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			if (ctx.player() instanceof ServerPlayer player) {
+			if (ctx.player() instanceof ServerPlayer player
+					&& !PossessionWheelRules.refusesManipulation(HemoCapabilityAccess.isPossessing(player), false)) {
 				ArmorSetAbilityRegistry.tryActivate(player, packet.abilityId);
 			}
 		});

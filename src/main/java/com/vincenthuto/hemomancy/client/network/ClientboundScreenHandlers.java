@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.screen.item.BookOfObservancesScreen;
 import com.vincenthuto.hemomancy.client.screen.item.HarbingerAssignmentLedgerScreen;
 import com.vincenthuto.hemomancy.client.screen.item.SuccessionResidentsScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
+import com.vincenthuto.hemomancy.client.screen.tile.functional.HeartNodeScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SSCScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
 import com.vincenthuto.hemomancy.client.data.EarthenVeinTravelClientState;
@@ -21,6 +22,7 @@ import com.vincenthuto.hemomancy.common.network.dialogue.DialogueRewardResultPac
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenPendingWhisperPacket;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
+import com.vincenthuto.hemomancy.common.network.heartnode.PacketOpenHeartNodeScreen;
 import com.vincenthuto.hemomancy.common.network.mission.OpenBookOfObservancesPacket;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.network.vein.OpenEarthenVeinDisplayPacket;
@@ -51,6 +53,7 @@ public final class ClientboundScreenHandlers {
 		ClientPayloadHandlers.register(OpenSSCScreenPacket.TYPE, ClientboundScreenHandlers::handle);
 		ClientPayloadHandlers.register(OpenVisceralMirrorPacket.TYPE, ClientboundScreenHandlers::handle);
 		ClientPayloadHandlers.register(PacketOpenBloodlinePoolScreen.TYPE, ClientboundScreenHandlers::handle);
+		ClientPayloadHandlers.register(PacketOpenHeartNodeScreen.TYPE, ClientboundScreenHandlers::handle);
 		ClientPayloadHandlers.register(ResidentsSnapshotPacket.TYPE, ClientboundScreenHandlers::handle);
 		ClientPayloadHandlers.register(VisceralMirrorUpdatePacket.TYPE, ClientboundScreenHandlers::handle);
 	}
@@ -149,6 +152,10 @@ public final class ClientboundScreenHandlers {
 				BloodlinePoolScreen.openScreen();
 			}
 		});
+	}
+
+	static void handle(PacketOpenHeartNodeScreen msg, IPayloadContext context) {
+		context.enqueueWork(() -> HeartNodeScreen.open(msg));
 	}
 
 	static void handle(ResidentsSnapshotPacket msg, IPayloadContext context) {

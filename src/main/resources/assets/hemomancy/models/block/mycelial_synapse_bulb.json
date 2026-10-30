@@ -1,0 +1,2087 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/sporite_crystal",
+  "crystal": "hemomancy:block/sporite_crystal"
+ },
+ "elements": [
+  {
+   "name": "bulb_seat",
+   "from": [
+    6.65,
+    8.9,
+    7.4408
+   ],
+   "to": [
+    9.35,
+    9.5,
+    8.5592
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.65,
+      6.5,
+      9.35,
+      7.1
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6.65,
+      6.5,
+      9.35,
+      7.1
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.441,
+      6.5,
+      8.559,
+      7.1
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.441,
+      6.5,
+      8.559,
+      7.1
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb_seat",
+   "from": [
+    7.4408,
+    8.94,
+    6.65
+   ],
+   "to": [
+    8.5592,
+    9.46,
+    9.35
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.441,
+      6.54,
+      8.559,
+      7.06
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      7.441,
+      6.54,
+      8.559,
+      7.06
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6.65,
+      6.54,
+      9.35,
+      7.06
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6.65,
+      6.54,
+      9.35,
+      7.06
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      7.441,
+      6.65,
+      8.559,
+      9.35
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      7.441,
+      6.65,
+      8.559,
+      9.35
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb_seat",
+   "from": [
+    6.65,
+    8.98,
+    7.4408
+   ],
+   "to": [
+    9.35,
+    9.42,
+    8.5592
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.65,
+      6.58,
+      9.35,
+      7.02
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6.65,
+      6.58,
+      9.35,
+      7.02
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.441,
+      6.58,
+      8.559,
+      7.02
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.441,
+      6.58,
+      8.559,
+      7.02
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb_seat",
+   "from": [
+    6.65,
+    9.02,
+    7.4408
+   ],
+   "to": [
+    9.35,
+    9.38,
+    8.5592
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.65,
+      6.62,
+      9.35,
+      6.98
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6.65,
+      6.62,
+      9.35,
+      6.98
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.441,
+      6.62,
+      8.559,
+      6.98
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.441,
+      6.62,
+      8.559,
+      6.98
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb",
+   "from": [
+    6.0,
+    9.5,
+    7.1716
+   ],
+   "to": [
+    10.0,
+    12.3,
+    8.8284
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      3.7,
+      10.0,
+      6.5
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      3.7,
+      10.0,
+      6.5
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.172,
+      3.7,
+      8.828,
+      6.5
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.172,
+      3.7,
+      8.828,
+      6.5
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      7.172,
+      10.0,
+      8.828
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      6.0,
+      7.172,
+      10.0,
+      8.828
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb",
+   "from": [
+    7.1716,
+    9.54,
+    6.0
+   ],
+   "to": [
+    8.8284,
+    12.26,
+    10.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.172,
+      3.74,
+      8.828,
+      6.46
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      7.172,
+      3.74,
+      8.828,
+      6.46
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6.0,
+      3.74,
+      10.0,
+      6.46
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6.0,
+      3.74,
+      10.0,
+      6.46
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      7.172,
+      6.0,
+      8.828,
+      10.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      7.172,
+      6.0,
+      8.828,
+      10.0
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb",
+   "from": [
+    6.0,
+    9.58,
+    7.1716
+   ],
+   "to": [
+    10.0,
+    12.22,
+    8.8284
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      3.78,
+      10.0,
+      6.42
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      3.78,
+      10.0,
+      6.42
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.172,
+      3.78,
+      8.828,
+      6.42
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.172,
+      3.78,
+      8.828,
+      6.42
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      7.172,
+      10.0,
+      8.828
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      6.0,
+      7.172,
+      10.0,
+      8.828
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb",
+   "from": [
+    6.0,
+    9.62,
+    7.1716
+   ],
+   "to": [
+    10.0,
+    12.18,
+    8.8284
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      3.82,
+      10.0,
+      6.38
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      3.82,
+      10.0,
+      6.38
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.172,
+      3.82,
+      8.828,
+      6.38
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.172,
+      3.82,
+      8.828,
+      6.38
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      7.172,
+      10.0,
+      8.828
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      6.0,
+      7.172,
+      10.0,
+      8.828
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb_shoulder",
+   "from": [
+    6.65,
+    12.3,
+    7.4408
+   ],
+   "to": [
+    9.35,
+    13.0,
+    8.5592
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.65,
+      3.0,
+      9.35,
+      3.7
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6.65,
+      3.0,
+      9.35,
+      3.7
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.441,
+      3.0,
+      8.559,
+      3.7
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.441,
+      3.0,
+      8.559,
+      3.7
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb_shoulder",
+   "from": [
+    7.4408,
+    12.34,
+    6.65
+   ],
+   "to": [
+    8.5592,
+    12.96,
+    9.35
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.441,
+      3.04,
+      8.559,
+      3.66
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      7.441,
+      3.04,
+      8.559,
+      3.66
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6.65,
+      3.04,
+      9.35,
+      3.66
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6.65,
+      3.04,
+      9.35,
+      3.66
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      7.441,
+      6.65,
+      8.559,
+      9.35
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      7.441,
+      6.65,
+      8.559,
+      9.35
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb_shoulder",
+   "from": [
+    6.65,
+    12.38,
+    7.4408
+   ],
+   "to": [
+    9.35,
+    12.92,
+    8.5592
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.65,
+      3.08,
+      9.35,
+      3.62
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6.65,
+      3.08,
+      9.35,
+      3.62
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.441,
+      3.08,
+      8.559,
+      3.62
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.441,
+      3.08,
+      8.559,
+      3.62
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "bulb_shoulder",
+   "from": [
+    6.65,
+    12.42,
+    7.4408
+   ],
+   "to": [
+    9.35,
+    12.88,
+    8.5592
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.65,
+      3.12,
+      9.35,
+      3.58
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6.65,
+      3.12,
+      9.35,
+      3.58
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.441,
+      3.12,
+      8.559,
+      3.58
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.441,
+      3.12,
+      8.559,
+      3.58
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      6.65,
+      7.441,
+      9.35,
+      8.559
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_core",
+   "from": [
+    7.5,
+    13.0,
+    7.7929
+   ],
+   "to": [
+    8.5,
+    15.6,
+    8.2071
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      0.4,
+      8.5,
+      3.0
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      0.4,
+      8.5,
+      3.0
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.793,
+      0.4,
+      8.207,
+      3.0
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.793,
+      0.4,
+      8.207,
+      3.0
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      7.793,
+      8.5,
+      8.207
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      7.793,
+      8.5,
+      8.207
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_core",
+   "from": [
+    7.7929,
+    13.04,
+    7.5
+   ],
+   "to": [
+    8.2071,
+    15.56,
+    8.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.793,
+      0.44,
+      8.207,
+      2.96
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      7.793,
+      0.44,
+      8.207,
+      2.96
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.5,
+      0.44,
+      8.5,
+      2.96
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.5,
+      0.44,
+      8.5,
+      2.96
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      7.793,
+      7.5,
+      8.207,
+      8.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      7.793,
+      7.5,
+      8.207,
+      8.5
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_core",
+   "from": [
+    7.5,
+    13.08,
+    7.7929
+   ],
+   "to": [
+    8.5,
+    15.52,
+    8.2071
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      0.48,
+      8.5,
+      2.92
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      0.48,
+      8.5,
+      2.92
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.793,
+      0.48,
+      8.207,
+      2.92
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.793,
+      0.48,
+      8.207,
+      2.92
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      7.793,
+      8.5,
+      8.207
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      7.793,
+      8.5,
+      8.207
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_core",
+   "from": [
+    7.5,
+    13.12,
+    7.7929
+   ],
+   "to": [
+    8.5,
+    15.48,
+    8.2071
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      0.52,
+      8.5,
+      2.88
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      0.52,
+      8.5,
+      2.88
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.793,
+      0.52,
+      8.207,
+      2.88
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.793,
+      0.52,
+      8.207,
+      2.88
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      7.793,
+      8.5,
+      8.207
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      7.793,
+      8.5,
+      8.207
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite",
+   "from": [
+    8.7,
+    12.8,
+    7.7
+   ],
+   "to": [
+    10.2,
+    13.4,
+    8.3
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     12.8,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      8.7,
+      2.6,
+      10.2,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      8.7,
+      2.6,
+      10.2,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.7,
+      2.6,
+      8.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.7,
+      2.6,
+      8.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      8.7,
+      7.7,
+      10.2,
+      8.3
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      8.7,
+      7.7,
+      10.2,
+      8.3
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_tip",
+   "from": [
+    9.8,
+    13.4,
+    7.72
+   ],
+   "to": [
+    10.4,
+    14.9,
+    8.28
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     13.4,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      9.8,
+      1.1,
+      10.4,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      9.8,
+      1.1,
+      10.4,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.72,
+      1.1,
+      8.28,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.72,
+      1.1,
+      8.28,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      9.8,
+      7.72,
+      10.4,
+      8.28
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      9.8,
+      7.72,
+      10.4,
+      8.28
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite",
+   "from": [
+    5.8,
+    12.8,
+    7.7
+   ],
+   "to": [
+    7.3,
+    13.4,
+    8.3
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     12.8,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.8,
+      2.6,
+      7.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      5.8,
+      2.6,
+      7.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.7,
+      2.6,
+      8.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.7,
+      2.6,
+      8.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      5.8,
+      7.7,
+      7.3,
+      8.3
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      5.8,
+      7.7,
+      7.3,
+      8.3
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_tip",
+   "from": [
+    5.6,
+    13.4,
+    7.72
+   ],
+   "to": [
+    6.2,
+    14.9,
+    8.28
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     13.4,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.6,
+      1.1,
+      6.2,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      5.6,
+      1.1,
+      6.2,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.72,
+      1.1,
+      8.28,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.72,
+      1.1,
+      8.28,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      5.6,
+      7.72,
+      6.2,
+      8.28
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      5.6,
+      7.72,
+      6.2,
+      8.28
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite",
+   "from": [
+    5.8,
+    12.8,
+    7.7
+   ],
+   "to": [
+    7.3,
+    13.4,
+    8.3
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     12.8,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.8,
+      2.6,
+      7.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      5.8,
+      2.6,
+      7.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.7,
+      2.6,
+      8.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.7,
+      2.6,
+      8.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      5.8,
+      7.7,
+      7.3,
+      8.3
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      5.8,
+      7.7,
+      7.3,
+      8.3
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_tip",
+   "from": [
+    5.6,
+    13.4,
+    7.72
+   ],
+   "to": [
+    6.2,
+    14.9,
+    8.28
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     13.4,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.6,
+      1.1,
+      6.2,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      5.6,
+      1.1,
+      6.2,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.72,
+      1.1,
+      8.28,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.72,
+      1.1,
+      8.28,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      5.6,
+      7.72,
+      6.2,
+      8.28
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      5.6,
+      7.72,
+      6.2,
+      8.28
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite",
+   "from": [
+    8.7,
+    12.8,
+    7.7
+   ],
+   "to": [
+    10.2,
+    13.4,
+    8.3
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     12.8,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      8.7,
+      2.6,
+      10.2,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      8.7,
+      2.6,
+      10.2,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.7,
+      2.6,
+      8.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.7,
+      2.6,
+      8.3,
+      3.2
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      8.7,
+      7.7,
+      10.2,
+      8.3
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      8.7,
+      7.7,
+      10.2,
+      8.3
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_tip",
+   "from": [
+    9.8,
+    13.4,
+    7.72
+   ],
+   "to": [
+    10.4,
+    14.9,
+    8.28
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     13.4,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      9.8,
+      1.1,
+      10.4,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      9.8,
+      1.1,
+      10.4,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.72,
+      1.1,
+      8.28,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.72,
+      1.1,
+      8.28,
+      2.6
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      9.8,
+      7.72,
+      10.4,
+      8.28
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      9.8,
+      7.72,
+      10.4,
+      8.28
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_spur",
+   "from": [
+    8.8,
+    13.2,
+    7.78
+   ],
+   "to": [
+    9.6,
+    14.0,
+    8.22
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8.8,
+      2.0,
+      9.6,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      8.8,
+      2.0,
+      9.6,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.78,
+      2.0,
+      8.22,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.78,
+      2.0,
+      8.22,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      8.8,
+      7.78,
+      9.6,
+      8.22
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      8.8,
+      7.78,
+      9.6,
+      8.22
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_spur",
+   "from": [
+    7.78,
+    13.2,
+    6.4
+   ],
+   "to": [
+    8.22,
+    14.0,
+    7.2
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.78,
+      2.0,
+      8.22,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      7.78,
+      2.0,
+      8.22,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6.4,
+      2.0,
+      7.2,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6.4,
+      2.0,
+      7.2,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      7.78,
+      6.4,
+      8.22,
+      7.2
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      7.78,
+      6.4,
+      8.22,
+      7.2
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_spur",
+   "from": [
+    6.4,
+    13.2,
+    7.78
+   ],
+   "to": [
+    7.2,
+    14.0,
+    8.22
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.4,
+      2.0,
+      7.2,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6.4,
+      2.0,
+      7.2,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      7.78,
+      2.0,
+      8.22,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      7.78,
+      2.0,
+      8.22,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      6.4,
+      7.78,
+      7.2,
+      8.22
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      6.4,
+      7.78,
+      7.2,
+      8.22
+     ],
+     "texture": "#crystal"
+    }
+   }
+  },
+  {
+   "name": "dendrite_spur",
+   "from": [
+    7.78,
+    13.2,
+    8.8
+   ],
+   "to": [
+    8.22,
+    14.0,
+    9.6
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.78,
+      2.0,
+      8.22,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      7.78,
+      2.0,
+      8.22,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      8.8,
+      2.0,
+      9.6,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      8.8,
+      2.0,
+      9.6,
+      2.8
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      7.78,
+      8.8,
+      8.22,
+      9.6
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      7.78,
+      8.8,
+      8.22,
+      9.6
+     ],
+     "texture": "#crystal"
+    }
+   }
+  }
+ ]
+}

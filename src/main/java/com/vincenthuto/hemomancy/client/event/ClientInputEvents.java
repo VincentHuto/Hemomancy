@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BurnSporeLoadKeyP
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.*;
 import com.vincenthuto.hemomancy.client.registry.KeyMappings;
+import com.vincenthuto.hemomancy.client.screen.manips.PossessedRadialScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.summon.CrossbarRadialScreen;
 import com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScreen;
@@ -164,7 +165,10 @@ public final class ClientInputEvents {
             if (vascCharmKeyIsDown && !menuKey) {
 
                 while (KeyMappings.openVascCharmMenu.consumeClick()) {
-                    if (mc.screen == null && mc.player != null) {
+                    if (mc.screen == null && mc.player != null && HemoCapabilityAccess.isPossessing(mc.player)) {
+                        // A will away from its body sees the possession wheel, never its own manipulations.
+                        mc.setScreen(new PossessedRadialScreen());
+                    } else if (mc.screen == null && mc.player != null) {
                         var inv = HemoCapabilityAccess.getEquipment(mc.player);
                         if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
                             mc.setScreen(new RadialChooseManipScreen(inv));

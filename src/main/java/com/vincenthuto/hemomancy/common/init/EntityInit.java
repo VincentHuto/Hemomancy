@@ -684,6 +684,10 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<FacsimileBlazeEntity>> facsimile_blaze = ENTITY_TYPES.register("facsimile_blaze",
             () -> EntityType.Builder.of(FacsimileBlazeEntity::new, MobCategory.MONSTER).sized(0.6F, 1.8F).fireImmune().clientTrackingRange(8)
                     .build(Hemomancy.rloc("facsimile_blaze").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<CrimsonFireballEntity>> crimson_fireball = ENTITY_TYPES.register("crimson_fireball",
+            () -> EntityType.Builder.<CrimsonFireballEntity>of(CrimsonFireballEntity::new, MobCategory.MISC).sized(0.3125F, 0.3125F)
+                    .clientTrackingRange(4).updateInterval(10)
+                    .build(Hemomancy.rloc("crimson_fireball").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<FacsimileGolemEntity>> facsimile_golem = ENTITY_TYPES.register("facsimile_golem",
             () -> EntityType.Builder.of(FacsimileGolemEntity::new, MobCategory.CREATURE).sized(1.4F, 2.7F).clientTrackingRange(8)
                     .build(Hemomancy.rloc("facsimile_golem").toString()));

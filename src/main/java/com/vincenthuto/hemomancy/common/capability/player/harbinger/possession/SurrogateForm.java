@@ -63,6 +63,6 @@ public enum SurrogateForm {
 	public boolean keepsInventory() { return keepsInventory; }
 	public boolean wearsStandGear() { return wearsStandGear; }
 	public boolean waterHurts() { return waterHurts; }
-	/** Thread of Will cooldown in ticks; 0 when the form has no ability. */
+	/** Ticks the form's triggered wheel gift rests; 0 when the form has none. */
 	public int abilityCooldown() { return abilityCooldown; }
 }

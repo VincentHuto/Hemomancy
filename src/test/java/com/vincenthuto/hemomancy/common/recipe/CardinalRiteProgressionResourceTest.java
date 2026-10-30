@@ -139,9 +139,11 @@ final class CardinalRiteProgressionResourceTest {
 						(CardinalRiteCeremonyDefinition) parser.invoke(null, json,
 								ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/" + id),
 								CardinalRiteType.byName(json.get("riteType").getAsString()), degree);
-				int offerings = json.getAsJsonArray("brazier_signature").asList().stream()
-						.mapToInt(element -> element.getAsJsonObject().get("count").getAsInt())
-						.sum();
+				int offerings = json.has("optional_offerings")
+						? json.getAsJsonArray("optional_offerings").size()
+						: json.getAsJsonArray("brazier_signature").asList().stream()
+								.mapToInt(element -> element.getAsJsonObject().get("count").getAsInt())
+								.sum();
 				assertTrue(CardinalRiteProgressionPolicy
 								.violations("cardinal_rite/" + id, degree, ceremony, offerings).isEmpty(),
 						id + " exceeds degree " + degree + " ceremony ceiling");

@@ -278,7 +278,7 @@ As Archon, you can ritually sever members who betray the covenant. Being cut fro
 ## Key Mechanics
 
 ### Somatic Loom (Memory Weaving)
-The Somatic Loom is where you craft **Hematic Memories** to learn new manipulations. It is your first **Working craft**: at Degree 3, build a Lesser Working floor (bone blocks and polished Venous Stone Bricks around a Cardinal Focus), raise the Loom's frame beside the Focus, seat a Sanguine Formation, light String and Neurotic Enzyme in braziers, plant your Living Staff and feed the frame 150 mL. The floor climbs and swallows the frame, then forges the Loom on the Focus. Every later machine is made the same way; only the Living Staff, Liber, Iron Brazier, Hematic Iron, Dried Gourd, Hematic Stake, Vial Centrifuge and Ghastly Alembic stay floorless.
+The Somatic Loom is where you craft **Hematic Memories** to learn new manipulations. It is your first **Working craft**: at Degree 3, build a Lesser Working floor (bone blocks and polished Venous Stone Bricks around a Cardinal Focus), raise the Loom's frame beside the Focus, seat a Sanguine Formation, light String and Neurotic Enzyme in braziers, plant your Living Staff and feed the frame 150 mL. The floor climbs and swallows the frame, then forges the Loom on the Focus. Every later machine is made the same way; only the Living Staff, Liber, Iron Brazier, Hematic Iron, Dried Gourd, Hematic Stake, Vial Centrifuge and Ghastly Alembic stay floorless (and, for an Apotheos in the Gardens, the Mycelial Synapse).
 
 **Process:**
 1. Craft or obtain **Blank Hematic Memories**

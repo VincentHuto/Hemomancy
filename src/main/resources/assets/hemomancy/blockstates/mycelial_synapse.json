@@ -1,0 +1,56 @@
+{
+  "variants": {
+    "facing=up,withered=false": {
+      "model": "hemomancy:block/mycelial_synapse"
+    },
+    "facing=up,withered=true": {
+      "model": "hemomancy:block/mycelial_synapse_withered"
+    },
+    "facing=down,withered=false": {
+      "model": "hemomancy:block/mycelial_synapse",
+      "x": 180
+    },
+    "facing=down,withered=true": {
+      "model": "hemomancy:block/mycelial_synapse_withered",
+      "x": 180
+    },
+    "facing=north,withered=false": {
+      "model": "hemomancy:block/mycelial_synapse",
+      "x": 90
+    },
+    "facing=north,withered=true": {
+      "model": "hemomancy:block/mycelial_synapse_withered",
+      "x": 90
+    },
+    "facing=south,withered=false": {
+      "model": "hemomancy:block/mycelial_synapse",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,withered=true": {
+      "model": "hemomancy:block/mycelial_synapse_withered",
+      "x": 90,
+      "y": 180
+    },
+    "facing=east,withered=false": {
+      "model": "hemomancy:block/mycelial_synapse",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,withered=true": {
+      "model": "hemomancy:block/mycelial_synapse_withered",
+      "x": 90,
+      "y": 90
+    },
+    "facing=west,withered=false": {
+      "model": "hemomancy:block/mycelial_synapse",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,withered=true": {
+      "model": "hemomancy:block/mycelial_synapse_withered",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

@@ -188,44 +188,34 @@ public final class CardinalRiteStationMatcher {
 				offered.add(new BrazierMatch(worldPos, brazier.getOfferingForMatching().copy(), false));
 			}
 		}
-		int requiredCount = recipe.getBrazierSignature().stream()
-				.mapToInt(CardinalRiteRecipe.BrazierRequirement::count).sum();
-		if (offered.size() != requiredCount) return null;
 		List<CardinalRiteRecipe.BrazierRequirement> slots = recipe.getBrazierSignature().stream()
 				.flatMap(requirement -> java.util.stream.IntStream.range(0, requirement.count())
 						.mapToObj(index -> requirement))
 				.sorted(Comparator.comparingInt(requirement -> requirement.ingredient().getItems().length))
 				.toList();
-		int[] assignments = new int[offered.size()];
-		java.util.Arrays.fill(assignments, -1);
-		if (!assign(slots, offered, 0, new HashSet<>(), assignments)) return null;
-		List<BrazierMatch> matched = new ArrayList<>(offered.size());
-		for (int offeredIndex = 0; offeredIndex < offered.size(); offeredIndex++) {
-			BrazierMatch offering = offered.get(offeredIndex);
-			CardinalRiteRecipe.BrazierRequirement requirement = slots.get(assignments[offeredIndex]);
-			matched.add(new BrazierMatch(offering.pos(), offering.stack(), requirement.consumeOnSuccess()));
+		List<CardinalRiteRecipe.OptionalOffering> optional = recipe.getOptionalOfferings();
+		List<CardinalRiteBrazierSignatureRules.Assignment> assigned = CardinalRiteBrazierSignatureRules.assign(
+				slots.stream().map(CardinalRiteRecipe.BrazierRequirement::ingredient).toList(),
+				optional.stream().map(CardinalRiteRecipe.OptionalOffering::ingredient).toList(),
+				offered, (ingredient, offering) -> offeringAccepted(ingredient, offering.stack()));
+		if (assigned == null) return null;
+		List<BrazierMatch> matched = new ArrayList<>(assigned.size());
+		for (CardinalRiteBrazierSignatureRules.Assignment assignment : assigned) {
+			BrazierMatch offering = offered.get(assignment.offered());
+			// An optional offering is taken whenever it is there; that is what it is offered for.
+			boolean consume = !optional.isEmpty() || slots.get(assignment.slot()).consumeOnSuccess();
+			matched.add(new BrazierMatch(offering.pos(), offering.stack(), consume));
 		}
 		return List.copyOf(matched);
 	}
 
-	private static boolean assign(List<CardinalRiteRecipe.BrazierRequirement> required,
-			List<BrazierMatch> offered, int index, Set<Integer> used, int[] assignments) {
-		if (index == required.size()) return true;
-		for (int offeredIndex = 0; offeredIndex < offered.size(); offeredIndex++) {
-			if (used.contains(offeredIndex)
-					|| !offeringAccepted(required.get(index), offered.get(offeredIndex).stack())) continue;
-			used.add(offeredIndex);
-			assignments[offeredIndex] = index;
-			if (assign(required, offered, index + 1, used, assignments)) return true;
-			assignments[offeredIndex] = -1;
-			used.remove(offeredIndex);
-		}
-		return false;
-	}
-
 	/** Rites never consume a recorded Wax Cylinder; only a blank one answers a cylinder offering. */
 	static boolean offeringAccepted(CardinalRiteRecipe.BrazierRequirement requirement, ItemStack stack) {
-		return requirement.ingredient().test(stack)
+		return offeringAccepted(requirement.ingredient(), stack);
+	}
+
+	private static boolean offeringAccepted(net.minecraft.world.item.crafting.Ingredient ingredient, ItemStack stack) {
+		return ingredient.test(stack)
 				&& (!stack.is(com.vincenthuto.hemomancy.common.init.ItemInit.wax_cylinder.get())
 						|| com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia.blank(stack));
 	}

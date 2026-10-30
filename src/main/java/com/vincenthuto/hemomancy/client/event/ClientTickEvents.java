@@ -52,6 +52,10 @@ public final class ClientTickEvents {
         ClawSlashRenderer.tick();
         MonolithicDislocationClientState.tick();
         CrimsonFireClientState.tick();
+        com.vincenthuto.hemomancy.client.data.PossessionSceneClientState.tick();
+        com.vincenthuto.hemomancy.client.render.world.PossessionSceneRenderer.tick();
+        com.vincenthuto.hemomancy.client.render.world.HeartNodeSpreadRenderer.tickMotes();
+        com.vincenthuto.hemomancy.client.render.world.HeartNodeMomentRenderer.tick();
         BloodBindingTendrilClientState.tick();
         if (SanguineOmenOverlay.instance != null) {
             SanguineOmenOverlay.instance.tick();

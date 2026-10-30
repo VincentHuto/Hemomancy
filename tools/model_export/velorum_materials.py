@@ -519,30 +519,45 @@ ICE_LIGHT = (186, 216, 255)
 ICE_ALPHA = 205
 
 
+def ice_texel(seed, key, face, lx, ly, w, h):
+    """One texel of clear ice: freeze bands down its length, a deeper core, air bubbles and hairline cracks."""
+    n = noise(seed, key, face, lx, ly)
+    band = noise(seed + 'band', key, face, ly // 2)
+    t = .25 + band * .45 + (n - .5) * .3
+    if w > 2 and 0 < lx < w - 1 and abs(lx - (w - 1) / 2) < w / 5:
+        t -= .3                                      # the denser core a column of ice freezes round
+    rgb = mix(ICE_DEEP, ICE_LIGHT, max(0.0, min(1.0, t)))
+    a = ICE_ALPHA - 20 + int(band * 40)
+    if noise(seed + 'crack', key, face, lx - ly) > .93:
+        rgb, a = mix(ICE_DEEP, (40, 70, 150), .5), 235        # a hairline crack, darker and more opaque
+    if n > .94:
+        rgb, a = (236, 246, 255), 240                          # a trapped bubble
+    return rgb, a
+
+
 def ice_painter(frost=0.0, alpha=ICE_ALPHA):
-    """Pale ice: a lit left edge, a deep right edge, vertical striations; `frost` whitens it toward rime."""
+    """Pale ice: a lit left edge, a deep right edge, banded body with bubbles and cracks; `frost` whitens it."""
     def paint(face, lx, ly, w, h, key):
         n = noise('ice', key, face, lx, ly)
+        rgb, a = ice_texel('ice', key, face, lx, ly, w, h)
+        a += alpha - ICE_ALPHA
         if face in ('up', 'down'):
-            rgb = mix(ICE_BODY, ICE_LIGHT, .35 + n * .2)
-            a = alpha
-        elif w == 1:
-            rgb = mix(ICE_BODY, ICE_LIGHT, .55 + n * .2)
-            a = alpha + 15
-        elif lx == 0:
-            rgb, a = ICE_LIGHT, alpha + 25
-        elif lx == w - 1:
-            rgb, a = ICE_DEEP, alpha + 15
-        else:
-            stria = noise('stria', key, face, lx)
-            rgb = mix(ICE_BODY, ICE_LIGHT if stria > .6 else ICE_DEEP, abs(stria - .5) * .7 + (n - .5) * .15)
-            a = alpha - 12 + int(stria * 20)
+            rgb = mix(rgb, ICE_LIGHT, .25)
+        elif w > 1 and lx == 0:
+            rgb, a = mix(rgb, ICE_LIGHT, .6), a + 20
+        elif w > 1 and lx == w - 1:
+            rgb, a = mix(rgb, ICE_DEEP, .5), a + 10
         if frost:
-            rgb = mix(rgb, RIME[4], frost * (.7 + n * .3))
-            a = min(255, a + int(frost * 40))
-        if n > .975:
-            rgb, a = (246, 251, 255), 235
-        return rgb + (min(255, a),)
+            # Rime grows as a crust of crystals over the ice, not a wash: a light tint, then speckled grains whose
+            # cover rises with the frost, so the roots read as frosted texture instead of flat white.
+            rgb = mix(rgb, RIME[2], frost * .35)
+            grain = noise('rime', key, face, lx, ly)
+            if grain < frost * .9:
+                tone = noise('rimetone', key, face, lx, ly)
+                rgb = RIME[5] if tone > .7 else RIME[3] if tone > .3 else RIME[1]
+                a = max(a, 225)
+            a = min(255, a + int(frost * 30))
+        return rgb + (max(0, min(255, a)),)
     return paint
 
 
@@ -574,7 +589,9 @@ def icicle(name, cx, cz, profile, top=16.0, cap_bottom=True):
         faces = {}
         if not last:
             faces['down'] = f'ring:{w}:{profile[k + 1][0]}:{frost}'
-        skip = ['up']
+        # The top segment keeps its top: it culls against a solid ceiling but closes the ice from above when the
+        # icicle hangs from something open. Lower segments' tops sit inside the wider segment above them.
+        skip = [] if k == 0 else ['up']
         if last and not cap_bottom:
             skip.append('down')
         out.append(box(f'{name}{k}', lo, hi, f'ice:{frost}', skip=skip, **faces))
@@ -584,7 +601,7 @@ def icicle(name, cx, cz, profile, top=16.0, cap_bottom=True):
 
 def film(name, lo, hi):
     """A thin skin of ice under the ceiling where the icicles' roots join."""
-    return box(name, lo, hi, 'ice:0.5', skip=('up',))
+    return box(name, lo, hi, 'ice:0.5')
 
 
 # --- the hanging icicle -------------------------------------------------------------------------------------------
@@ -649,6 +666,11 @@ FILM_EDGE = (2.5, 13.5)                  # the film's sides where it leaves the 
 FILM = .75                               # how far the film stands off the stone
 ROW = 4                                  # the sheet is built in 4 px rows; the top and bottom rows meet the edges
 FLUSH = ('south', 'up', 'down')          # rows of film and ribbon show no seam where they meet the next row
+
+
+def flush(k, first, last):
+    """FLUSH for row k, keeping the top of the last row and the bottom of the first so the sheet is closed."""
+    return tuple(f for f in FLUSH if not (f == 'up' and k == last) and not (f == 'down' and k == first))
 # Per layout: the film's sides in each row (bottom row first) and each ribbon's sideways wander per row.
 SHEET_LAYOUTS = [
     {'film': [FILM_EDGE, (2, 13), (3, 14), FILM_EDGE], 'wander': [(0, .5, .5, 0), (0, -.5, 0, 0), (0, 0, .5, 0)],
@@ -664,14 +686,15 @@ def film_rows(rows, bottom=0.0):
     for k, pieces in enumerate(rows):
         for j, (x0, x1) in enumerate(pieces if isinstance(pieces, list) else [pieces]):
             y0 = bottom + k * ROW
-            e.append(box(f'film{k}_{j}', (x0, y0, WALL_Z - FILM), (x1, y0 + ROW, WALL_Z), 'sheet', skip=FLUSH))
+            e.append(box(f'film{k}_{j}', (x0, y0, WALL_Z - FILM), (x1, y0 + ROW, WALL_Z), 'sheet',
+                         skip=flush(k, 0, len(rows) - 1)))
     return e
 
 
 def ribbon(name, x0, x1, proud, wander, rows):
     """A ribbon down the sheet: one box per 4 px row, nudged sideways by `wander`, rows bottom first."""
     return [box(f'{name}_{k}', (x0 + wander[k], k * ROW, WALL_Z - proud), (x1 + wander[k], (k + 1) * ROW,
-                WALL_Z - FILM), 'ice:0.0', skip=FLUSH) for k in rows]
+                WALL_Z - FILM), 'ice:0.0', skip=flush(k, min(rows), max(rows))) for k in rows]
 
 
 def bulges(layout, wander):
@@ -732,16 +755,22 @@ def drip_end(layout):
 
 
 def sheet_painter(face, lx, ly, w, h, key):
-    """The film: thin clear ice with vertical flow lines, a little frost where it meets the stone."""
+    """The film: thin clear ice with strong vertical flow lines, bubbles, and frost where it meets the stone above."""
     n = noise('sheet', key, face, lx, ly)
     flow = noise('flow', key, face, lx)
-    rgb = mix(ICE_BODY, ICE_LIGHT, .3 + flow * .4 + (n - .5) * .1)
-    a = 104 + int(flow * 44)
+    ripple = noise('ripple', key, face, lx, ly // 3)
+    t = .15 + flow * .6 + (ripple - .5) * .35
+    rgb = mix(ICE_DEEP, ICE_LIGHT, max(0.0, min(1.0, t)))
+    a = 96 + int(flow * 70)
     if face != 'north':
-        rgb, a = ICE_LIGHT, 190
-    if n > .98:
-        rgb, a = (246, 251, 255), 220
-    return rgb + (a,)
+        rgb, a = mix(ICE_LIGHT, ICE_DEEP, n * .4), 190
+    elif ly < 2:
+        rgb, a = mix(rgb, RIME[4], .6), 200                    # frost at the lip where the water left the stone
+    if flow > .82 and face == 'north':
+        rgb, a = mix(rgb, ICE_LIGHT, .5), a + 40               # a runnel standing proud of the film
+    if n > .95:
+        rgb, a = (236, 246, 255), 225
+    return rgb + (min(255, a),)
 
 
 DRIP_SHAPES = {'false': drip_sheet, 'true': drip_end}

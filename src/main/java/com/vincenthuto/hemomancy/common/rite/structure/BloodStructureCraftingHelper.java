@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.structure;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.MycelialSynapseBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -57,17 +58,24 @@ public final class BloodStructureCraftingHelper {
 				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, alignError));
 			}
 
-			HematicStakeBlock.Formation stakeFormation = null;
+			BloodStructureFormation formation = null;
 			if (recipe.getResult().is(BlockInit.hematic_stake.get().asItem())) {
-				stakeFormation = findStakeFormation(level, player, match, recipe.getPattern().getBlockPattern());
-				if (stakeFormation == null) {
+				formation = findStakeFormation(level, player, match, recipe.getPattern().getBlockPattern());
+				if (formation == null) {
 					return Optional.of(ProjectionCraftMatch.invalid(recipe, match,
 							Component.translatable("block.hemomancy.hematic_stake.invalid")
 									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC)));
 				}
+			} else if (recipe.getResult().is(BlockInit.mycelial_synapse.get().asItem())) {
+				MycelialSynapseBlock.Check check = findSynapseFormation(level, player, match,
+						recipe.getPattern().getBlockPattern());
+				if (check.formation() == null) {
+					return Optional.of(ProjectionCraftMatch.invalid(recipe, match, check.refusal()));
+				}
+				formation = check.formation();
 			}
 
-			return Optional.of(ProjectionCraftMatch.valid(recipe, match, stakeFormation));
+			return Optional.of(ProjectionCraftMatch.valid(recipe, match, formation));
 		}
 		return Optional.empty();
 	}
@@ -91,6 +99,24 @@ public final class BloodStructureCraftingHelper {
 		return barPos != null && crystalPos != null
 				? HematicStakeBlock.findFormation(level, serverPlayer, barPos, crystalPos)
 				: null;
+	}
+
+	private static MycelialSynapseBlock.Check findSynapseFormation(ServerLevel level, Player player,
+			BlockPattern.BlockPatternMatch match, BlockPattern pattern) {
+		BlockPos ironPos = null;
+		BlockPos crystalPos = null;
+		for (int i = 0; i < pattern.getWidth(); ++i) {
+			for (int j = 0; j < pattern.getHeight(); ++j) {
+				for (int k = 0; k < pattern.getDepth(); ++k) {
+					BlockInWorld block = match.getBlock(i, j, k);
+					if (block.getState().is(BlockInit.hematic_iron_block.get())) ironPos = block.getPos();
+					else if (block.getState().is(BlockInit.sporite_crystal.get())) crystalPos = block.getPos();
+				}
+			}
+		}
+		return player instanceof ServerPlayer serverPlayer && ironPos != null && crystalPos != null
+				? MycelialSynapseBlock.findFormation(level, serverPlayer, ironPos, crystalPos)
+				: MycelialSynapseBlock.Check.refused("not_apotheos");
 	}
 
 	public static BlockPattern.BlockPatternMatch findStructurePatternAtHit(
@@ -165,10 +191,10 @@ public final class BloodStructureCraftingHelper {
 	}
 
 	public record ProjectionCraftMatch(BloodStructureRecipe recipe, BlockPattern.BlockPatternMatch match,
-			HematicStakeBlock.Formation stakeFormation, Component error) {
+			BloodStructureFormation formation, Component error) {
 		static ProjectionCraftMatch valid(BloodStructureRecipe recipe, BlockPattern.BlockPatternMatch match,
-				HematicStakeBlock.Formation stakeFormation) {
-			return new ProjectionCraftMatch(recipe, match, stakeFormation, null);
+				BloodStructureFormation formation) {
+			return new ProjectionCraftMatch(recipe, match, formation, null);
 		}
 
 		static ProjectionCraftMatch invalid(BloodStructureRecipe recipe, BlockPattern.BlockPatternMatch match,

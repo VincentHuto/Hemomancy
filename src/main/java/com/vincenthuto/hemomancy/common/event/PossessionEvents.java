@@ -5,14 +5,22 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.common.util.TriState;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.Possession;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionBodyRules;
+import net.minecraft.world.entity.EntityDimensions;
+import net.neoforged.neoforge.event.entity.EntityEvent;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionSequences;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateTethers;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionService;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionWheelRules;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateForm;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.AbhorrentGazeRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.AbhorrentThoughtEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -36,7 +44,9 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 /**
  * A possession's server rules: damage spends Concentration instead of health, a lethal blow or leaving the Gardens
  * snaps the will home, Ambergris regenerates and liquids drain the forms that cannot bear them, and a possessed body
- * neither builds nor opens. Logout returns the will cleanly; a login mid-possession recovers it.
+ * neither builds nor opens. The wheel's return hold completes here, or breaks if the body moves. Logout returns the
+ * will cleanly; a login mid-possession recovers it. While a departure, arrival or return is staged the player is out
+ * of play: nothing hurts them, they touch nothing, and only a blow nothing may absorb ends the sequence early.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class PossessionEvents {
@@ -46,12 +56,42 @@ public final class PossessionEvents {
 		return HemoCapabilityAccess.isPossessing(player);
 	}
 
+	private static boolean staged(Player player) {
+		return player instanceof ServerPlayer serverPlayer && PossessionSequences.isStaged(serverPlayer);
+	}
+
+	/** An arrival's scene body is only shown: nobody mounts, tames, leashes, strips or strikes it. */
+	private static boolean isSceneBody(net.minecraft.world.entity.Entity entity) {
+		return entity.getTags().contains(PossessionSequences.SCENE_BODY_TAG);
+	}
+
+	/** Possessing, or held by a possession's scene: either way the body neither builds nor uses. */
+	private static boolean outOfPlay(Player player) {
+		return possessed(player) || staged(player);
+	}
+
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onIncomingDamage(LivingIncomingDamageEvent event) {
-		if (!(event.getEntity() instanceof ServerPlayer player) || !possessed(player)) return;
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		boolean bypasses = event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
+		if (PossessionSequences.isStaged(player)) {
+			if (!bypasses) {
+				event.setCanceled(true);
+				return;
+			}
+			// The void or a kill command: the scene ends now, and only a will still away is spared the blow.
+			if (possessed(player)) {
+				event.setCanceled(true);
+				PossessionService.ejectNow(player, PossessionRules.MIND_BROKEN_TICKS);
+			} else {
+				PossessionSequences.abandon(player);
+			}
+			return;
+		}
+		if (!possessed(player)) return;
 		event.setCanceled(true);
-		if (event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-			PossessionService.eject(player, PossessionRules.MIND_BROKEN_TICKS);
+		if (bypasses) {
+			PossessionService.ejectNow(player, PossessionRules.MIND_BROKEN_TICKS);
 			return;
 		}
 		if (PossessionRules.ignoresHit(player.invulnerableTime, event.getSource().is(DamageTypeTags.BYPASSES_COOLDOWN))) return;
@@ -102,11 +142,23 @@ public final class PossessionEvents {
 
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
-		if (!(event.getEntity() instanceof ServerPlayer player) || !possessed(player)) return;
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		PossessionSequences.tick(player);
+		if (!possessed(player) || PossessionSequences.isStaged(player)) return;
 		Possession possession = HemoCapabilityAccess.getPossession(player);
 		if (!PossessionService.inGardens(player.level())) {
 			PossessionService.eject(player, PossessionRules.MIND_BROKEN_TICKS);
 			return;
+		}
+		if (possession.returning()) {
+			if (PossessionWheelRules.returnBroken(player.position().distanceTo(possession.returnFrom()))) {
+				possession.cancelReturn();
+				player.displayClientMessage(Component.translatable("message.hemomancy.possession.return_broken")
+						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), true);
+			} else if (player.level().getGameTime() >= possession.returnAt()) {
+				PossessionService.returnClean(player);
+				return;
+			}
 		}
 		if (player.tickCount % 100 == 0 && possession.regen()) {
 			possession.setConcentration(possession.concentration() + PossessionRules.regenPer100(true));
@@ -120,12 +172,24 @@ public final class PossessionEvents {
 
 	@SubscribeEvent
 	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player && possessed(player)) PossessionService.returnClean(player);
+		if (event.getEntity() instanceof ServerPlayer player) PossessionService.returnNow(player);
 	}
 
 	@SubscribeEvent
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player && possessed(player)) PossessionService.returnClean(player);
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		if (possessed(player)) PossessionService.returnNow(player);
+		PossessionService.releaseOrphans(player);
+	}
+
+	/** A possessed player takes the form's room in every pose; both sides read the same rules. */
+	@SubscribeEvent
+	public static void onSize(EntityEvent.Size event) {
+		if (!(event.getEntity() instanceof Player player)) return;
+		SurrogateForm form = HemoCapabilityAccess.possessionForm(player);
+		if (form == null) return;
+		PossessionBodyRules.Body body = PossessionBodyRules.body(form);
+		event.setNewSize(EntityDimensions.scalable(body.width(), body.height()).withEyeHeight(body.eyeHeight()));
 	}
 
 	@SubscribeEvent
@@ -139,52 +203,75 @@ public final class PossessionEvents {
 
 	@SubscribeEvent
 	public static void onBreak(BlockEvent.BreakEvent event) {
-		if (possessed(event.getPlayer())) event.setCanceled(true);
+		if (outOfPlay(event.getPlayer())) event.setCanceled(true);
 	}
 
 	@SubscribeEvent
 	public static void onPlace(BlockEvent.EntityPlaceEvent event) {
-		if (event.getEntity() instanceof Player player && possessed(player)) event.setCanceled(true);
+		if (event.getEntity() instanceof Player player && outOfPlay(player)) event.setCanceled(true);
 	}
 
-	/** A possessed body opens nothing: with the Thread in hand only the item's own use runs, never the block's. */
+	/** A possessed body opens nothing and uses nothing: its gifts come from the possession wheel. */
 	@SubscribeEvent
 	public static void onUseBlock(PlayerInteractEvent.RightClickBlock event) {
-		if (!possessed(event.getEntity())) return;
-		if (event.getItemStack().is(ItemInit.thread_of_will.get())) event.setUseBlock(TriState.FALSE);
-		else event.setCanceled(true);
+		if (outOfPlay(event.getEntity())) event.setCanceled(true);
 	}
 
 	@SubscribeEvent
 	public static void onUseEntity(PlayerInteractEvent.EntityInteract event) {
-		if (possessed(event.getEntity())) event.setCanceled(true);
+		if (outOfPlay(event.getEntity()) || isSceneBody(event.getTarget())) event.setCanceled(true);
 	}
 
 	@SubscribeEvent
 	public static void onUseEntityAt(PlayerInteractEvent.EntityInteractSpecific event) {
-		if (possessed(event.getEntity())) event.setCanceled(true);
+		if (outOfPlay(event.getEntity()) || isSceneBody(event.getTarget())) event.setCanceled(true);
 	}
 
 	/** A facsimile does not fight other players: a possessed will cannot be killed by them either. */
 	@SubscribeEvent
 	public static void onAttack(AttackEntityEvent event) {
-		if (possessed(event.getEntity()) && event.getTarget() instanceof Player) event.setCanceled(true);
+		if (staged(event.getEntity()) || isSceneBody(event.getTarget())
+				|| possessed(event.getEntity()) && event.getTarget() instanceof Player) {
+			event.setCanceled(true);
+		}
 	}
 
 	/** A surrogate whose visit ended while it was unloaded is released (or dies) the moment it loads again. */
 	@SubscribeEvent
 	public static void onJoin(EntityJoinLevelEvent event) {
+		// A scene body is only ever spawned fresh; one loaded from a save outlived its arrival in a crash.
+		if (event.loadedFromDisk() && event.getEntity().getTags().contains(PossessionSequences.SCENE_BODY_TAG)
+				&& !PossessionSequences.isSceneBody(event.getEntity().getUUID())) {
+			event.setCanceled(true);
+			return;
+		}
 		if (event.getLevel() instanceof ServerLevel level && event.getEntity() instanceof LivingEntity body
 				&& !(body instanceof Player)) {
 			SurrogateLedger ledger = SurrogateLedger.get(level.getServer());
-			if (ledger.verdict(body.getUUID()) != null) PossessionService.settle(body, ledger);
+			if (ledger.verdict(body.getUUID()) != null && !PossessionSequences.holdsSurrogate(body.getUUID())) {
+				PossessionService.settle(body, ledger);
+			}
+		}
+	}
+
+	/** A binding that comes off (runs out, is cured, is let go) forgets its caster: the surrogate is no longer held. */
+	@SubscribeEvent
+	public static void onBindingRemoved(MobEffectEvent.Remove event) {
+		if (event.getEffect().is(EffectInit.blood_binding) && !event.getEntity().level().isClientSide) {
+			SurrogateTethers.unbound(event.getEntity());
+		}
+	}
+
+	@SubscribeEvent
+	public static void onBindingExpired(MobEffectEvent.Expired event) {
+		if (event.getEffectInstance() != null && event.getEffectInstance().getEffect().is(EffectInit.blood_binding)
+				&& !event.getEntity().level().isClientSide) {
+			SurrogateTethers.unbound(event.getEntity());
 		}
 	}
 
 	@SubscribeEvent
 	public static void onUseItem(PlayerInteractEvent.RightClickItem event) {
-		if (possessed(event.getEntity()) && !event.getItemStack().is(ItemInit.thread_of_will.get())) {
-			event.setCanceled(true);
-		}
+		if (outOfPlay(event.getEntity())) event.setCanceled(true);
 	}
 }

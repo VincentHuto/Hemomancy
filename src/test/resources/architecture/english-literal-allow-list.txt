@@ -22,7 +22,7 @@
 1	src/main/java/com/vincenthuto/hemomancy/common/recipe/CardinalRiteRecipe.java	recipe toString
 1	src/main/java/com/vincenthuto/hemomancy/common/recipe/MemoryWeavingRecipe.java	recipe toString
 1	src/main/java/com/vincenthuto/hemomancy/common/recipe/serializer/BloodStructureRecipeSerializer.java	recipe JSON decode errors
-8	src/main/java/com/vincenthuto/hemomancy/common/recipe/serializer/CardinalRiteRecipeSerializer.java	recipe JSON decode errors
+9	src/main/java/com/vincenthuto/hemomancy/common/recipe/serializer/CardinalRiteRecipeSerializer.java	recipe JSON decode errors
 3	src/main/java/com/vincenthuto/hemomancy/common/rite/CardinalRiteDaemonFinale.java	rite recipe validation reasons, logged at load
 11	src/main/java/com/vincenthuto/hemomancy/common/rite/CardinalRiteProgressionPolicy.java	rite recipe validation reasons, logged at load
 3	src/main/java/com/vincenthuto/hemomancy/common/rite/CardinalRitePurpose.java	rite recipe validation reasons, logged at load
@@ -35,10 +35,11 @@
 1	src/main/java/com/vincenthuto/hemomancy/common/worldgen/structure/MausoleumStructure.java	template-name pattern, never shown
 1	src/main/java/com/vincenthuto/hemomancy/config/HemoClientConfig.java	config file comments
 7	src/main/java/com/vincenthuto/hemomancy/config/HemoMnAConfig.java	config file comments
-5	src/main/java/com/vincenthuto/hemomancy/config/HemoServerConfig.java	config file comments
+6	src/main/java/com/vincenthuto/hemomancy/config/HemoServerConfig.java	config file comments
 1	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinCommandedCreeper.java	mixin target descriptors
 2	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinCommandedPotion.java	mixin target descriptors
 2	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinEntityRenderDispatcher.java	mixin target descriptors
+1	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinFacsimileBlazeEmbers.java	mixin target descriptors
 6	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinLivingEntityRenderer.java	mixin target descriptors
 1	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinPelagicAquaticVegetation.java	mixin target descriptors
 1	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinVigilTerrain.java	mixin target descriptors

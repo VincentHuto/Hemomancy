@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.cinematic.scene;
 
 import com.vincenthuto.hemomancy.client.render.cinematic.BossScene;
 import com.vincenthuto.hemomancy.client.render.cinematic.BossSceneRegistry;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionSceneRules;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 
 /** Every boss scene the client knows, under the ids the server plays. */
@@ -21,6 +22,9 @@ public final class BossSceneCatalog {
 		BossSceneRegistry.register(BossPresentationIds.SCENE_VESPER_CROWNED_REFUSAL, VesperCrownedRefusalScene::new);
 		BossSceneRegistry.register(BossPresentationIds.SCENE_VESPER_EVENING_STAR, VesperEveningStarScene::new);
 		BossSceneRegistry.register(BossPresentationIds.SCENE_SAINT_RISE, SaintRiseScene::new);
+		for (PossessionSceneRules.Scene scene : PossessionSceneRules.Scene.values()) {
+			BossSceneRegistry.register(BossPresentationIds.possessionScene(scene), () -> new PossessionScene(scene));
+		}
 
 		BossSceneRegistry.register(BossPresentationIds.SCENE_ANNETTA_BREAK_CARD, () -> new PhaseCardScene("annetta_break", 0xD6EAF6));
 		BossSceneRegistry.register(BossPresentationIds.SCENE_MYCOPHANT_SPLIT_CARD, () -> new PhaseCardScene("mycophant_split", 0xFFA828));

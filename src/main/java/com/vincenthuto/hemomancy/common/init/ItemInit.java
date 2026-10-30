@@ -710,10 +710,6 @@ public class ItemInit {
     /** Corpse wax, the middle wax tier: scraped from bog bodies, distilled from honeycomb with a Ruinous Enzyme. */
     public static final DeferredHolder<Item, Item> adipocere = BASEITEMS.register("adipocere",
             () -> new Item(new Item.Properties()));
-    /** Held by a possessing Silentium only: the facsimile's gift, or (held while sneaking) the way home. */
-    public static final DeferredHolder<Item, Item> thread_of_will = SPECIALITEMS.register("thread_of_will",
-            () -> new com.vincenthuto.hemomancy.common.item.harbinger.ThreadOfWillItem(new Item.Properties().stacksTo(1)
-                    .rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final DeferredHolder<Item, Item> morphic_tonic = BASEITEMS.register("morphic_tonic",
             () -> new MorphicTonicItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> bloody_jug = BASEITEMS.register("bloody_jug",

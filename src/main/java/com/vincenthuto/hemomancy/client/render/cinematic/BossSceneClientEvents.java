@@ -108,12 +108,16 @@ public final class BossSceneClientEvents {
 		CinematicShot.Key key = DIRECTOR.scene().shot().at(DIRECTOR.time(partial));
 		Vec3 target = lookTarget(boss, key, partial);
 		Vec3 wanted = CinematicShot.position(key, boss.getPosition(partial), DIRECTOR.anchorYaw());
-		// pull the camera in front of any wall between it and the boss, as vanilla's third person does
-		BlockHitResult hit = boss.level().clip(new ClipContext(target, wanted, ClipContext.Block.VISUAL,
-				ClipContext.Fluid.NONE, boss));
-		if (hit.getType() == HitResult.Type.MISS) return wanted;
+		// pull the camera in front of any wall between it and the boss, as vanilla's third person does; collision
+		// shapes too, since some blocks draw solid with no visual shape (the Gardens' growths)
+		Vec3 near = wanted;
+		for (ClipContext.Block shape : new ClipContext.Block[] { ClipContext.Block.VISUAL, ClipContext.Block.COLLIDER }) {
+			BlockHitResult hit = boss.level().clip(new ClipContext(target, near, shape, ClipContext.Fluid.NONE, boss));
+			if (hit.getType() != HitResult.Type.MISS) near = hit.getLocation();
+		}
+		if (near == wanted) return wanted;
 		Vec3 back = target.subtract(wanted).normalize().scale(WALL_MARGIN);
-		return hit.getLocation().add(back);
+		return near.add(back);
 	}
 
 	private static Vec3 lookTarget(Entity boss, CinematicShot.Key key, float partial) {

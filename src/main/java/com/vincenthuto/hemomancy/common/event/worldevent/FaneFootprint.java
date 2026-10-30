@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event.worldevent;
 
+import com.vincenthuto.hemomancy.common.world.LobeEnvelope;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
@@ -16,15 +17,11 @@ public record FaneFootprint(BlockPos heart, List<BlockPos> stakes, BlockPos lega
 	}
 
 	public boolean contains(BlockPos pos) {
-		if (heart != null && within(pos, heart, HEART_RADIUS)) {
+		if (LobeEnvelope.contains(heart, stakes, pos, HEART_RADIUS, STAKE_RADIUS, LobeEnvelope.UNBOUNDED)) {
 			return true;
 		}
-		for (BlockPos stake : stakes) {
-			if (within(pos, stake, STAKE_RADIUS)) {
-				return true;
-			}
-		}
-		return heart == null && legacyCenter != null && within(pos, legacyCenter, HEART_RADIUS);
+		return heart == null && legacyCenter != null
+				&& LobeEnvelope.inLobe(pos, legacyCenter, HEART_RADIUS, LobeEnvelope.UNBOUNDED);
 	}
 
 	public double effectStrength(BlockPos pos) {
@@ -32,28 +29,12 @@ public record FaneFootprint(BlockPos heart, List<BlockPos> stakes, BlockPos lega
 		if (center == null || !contains(pos)) {
 			return 0.0D;
 		}
-		double dist = Math.sqrt(distanceSqr(pos, center));
-		double maxDistance = maxDistanceFromHeart();
-		if (maxDistance <= 0.0D) {
-			return 1.0D;
-		}
-		double normalized = Math.max(0.0D, Math.min(1.0D, dist / maxDistance));
-		return 1.0D - normalized * 0.65D;
+		return LobeEnvelope.strength(center, stakes, pos, HEART_RADIUS, STAKE_RADIUS, 0.65D);
 	}
 
 	public boolean canAddStake(BlockPos pos, int budget) {
-		if (heart == null || stakes.size() >= Math.min(budget, MAX_STAKE_BUDGET) || containsStake(pos)) {
-			return false;
-		}
-		if (within(pos, heart, HEART_RADIUS + STAKE_RADIUS)) {
-			return true;
-		}
-		for (BlockPos stake : stakes) {
-			if (within(pos, stake, STAKE_RADIUS * 2.0D)) {
-				return true;
-			}
-		}
-		return false;
+		return LobeEnvelope.canAddLobe(heart, stakes, pos, HEART_RADIUS, STAKE_RADIUS,
+				Math.min(budget, MAX_STAKE_BUDGET), LobeEnvelope.UNBOUNDED);
 	}
 
 	public FaneFootprint withHeart(BlockPos newHeart) {
@@ -78,33 +59,21 @@ public record FaneFootprint(BlockPos heart, List<BlockPos> stakes, BlockPos lega
 		return new FaneFootprint(heart, next, legacyCenter);
 	}
 
+	/** The heart or stake a stake chains back through; null for a stake cut off by a removal (it keeps working). */
+	public BlockPos chainedFrom(BlockPos stake) {
+		return LobeEnvelope.chainedFrom(heart, stakes, stake, HEART_RADIUS, STAKE_RADIUS, LobeEnvelope.UNBOUNDED);
+	}
+
+	/** The widest reach from the heart: its own radius or the far edge of its farthest stake. */
+	public double maxRadius() {
+		return LobeEnvelope.maxRadius(heart, stakes, HEART_RADIUS, STAKE_RADIUS);
+	}
+
 	public boolean containsStake(BlockPos pos) {
 		return stakes.contains(pos);
 	}
 
 	public static int stakeBudget(int playerMembers, int npcMembers) {
 		return Math.min(MAX_STAKE_BUDGET, BASE_STAKE_BUDGET + Math.max(0, playerMembers) + Math.max(0, npcMembers));
-	}
-
-	private double maxDistanceFromHeart() {
-		BlockPos center = heart != null ? heart : legacyCenter;
-		if (center == null) {
-			return 0.0D;
-		}
-		double max = HEART_RADIUS;
-		for (BlockPos stake : stakes) {
-			max = Math.max(max, Math.sqrt(distanceSqr(stake, center)) + STAKE_RADIUS);
-		}
-		return max;
-	}
-
-	private static boolean within(BlockPos pos, BlockPos center, double radius) {
-		return distanceSqr(pos, center) <= radius * radius;
-	}
-
-	private static double distanceSqr(BlockPos pos, BlockPos center) {
-		double dx = pos.getX() + 0.5D - (center.getX() + 0.5D);
-		double dz = pos.getZ() + 0.5D - (center.getZ() + 0.5D);
-		return dx * dx + dz * dz;
 	}
 }

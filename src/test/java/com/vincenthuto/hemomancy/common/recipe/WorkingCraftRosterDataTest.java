@@ -47,8 +47,9 @@ final class WorkingCraftRosterDataTest {
 			Map.entry("covenant_throne", new Craft(6, "greater", "hemomancy:sanguine_formation", 8000)),
 			Map.entry("vascular_effigy", new Craft(6, "grand", "hemomancy:sanguine_formation", 6500)));
 
+	// mycelial_synapse: a heart-node's envelope anchor, floorless like the stake it mirrors (the Gardens have no rite floor).
 	private static final Set<String> FLOORLESS = Set.of("hematic_iron_block", "liber_sanguinum", "living_staff",
-			"iron_brazier", "dried_gourd", "hematic_stake", "vial_centrifuge", "ghastly_alembic",
+			"iron_brazier", "dried_gourd", "hematic_stake", "mycelial_synapse", "vial_centrifuge", "ghastly_alembic",
 			"pallid_retort", "unstained_pillar");
 
 	@Test

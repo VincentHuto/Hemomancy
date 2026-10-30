@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneFootprint;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.rite.structure.BloodStructureFormation;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HematicStakeBlockEntity;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
@@ -306,6 +307,11 @@ public class HematicStakeBlock extends Block implements EntityBlock {
 		}
 	}
 
-	public record Formation(BlockPos pos, BlockPos crystalPos, BlockState state, UUID owner, int budget) {
+	public record Formation(BlockPos pos, BlockPos crystalPos, BlockState state, UUID owner, int budget)
+			implements BloodStructureFormation {
+		@Override
+		public boolean place(ServerLevel level) {
+			return placeFormation(level, this);
+		}
 	}
 }

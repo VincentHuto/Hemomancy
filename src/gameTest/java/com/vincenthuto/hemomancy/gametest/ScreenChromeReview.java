@@ -97,6 +97,9 @@ public final class ScreenChromeReview {
             }, null, null),
             Scene.client("harbinger_progress", com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen.class,
                     com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen::new),
+            Scene.client("heart_node", com.vincenthuto.hemomancy.client.screen.tile.functional.HeartNodeScreen.class,
+                    () -> new com.vincenthuto.hemomancy.client.screen.tile.functional.HeartNodeScreen(
+                            HeartNodeScreenScenes.sampleScreenState(BlockPos.ZERO, java.util.UUID.nameUUIDFromBytes(new byte[] {7}), false))),
             Scene.client("succession_residents", com.vincenthuto.hemomancy.client.screen.item.SuccessionResidentsScreen.class,
                     () -> new com.vincenthuto.hemomancy.client.screen.item.SuccessionResidentsScreen(null)),
             new Scene("synaptic_loadout", com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen.class,
@@ -121,7 +124,28 @@ public final class ScreenChromeReview {
             block("enzymatic_scriptorium", "tile.crafting.EnzymaticScriptoriumScreen", BlockInit.enzymatic_scriptorium),
             block("resonant_forge", "tile.crafting.ResonantForgeScreen", BlockInit.resonant_forge),
             block("clairaudiograph", "tile.functional.ClairaudiographScreen", BlockInit.clairaudiograph),
-            block("phlebotomists_cabinet", "tile.functional.PhlebotomistsCabinetScreen", BlockInit.phlebotomists_cabinet));
+            block("phlebotomists_cabinet", "tile.functional.PhlebotomistsCabinetScreen", BlockInit.phlebotomists_cabinet),
+            // Last, because it gives the reviewer a bloodline that the ledger and pool scenes would otherwise show.
+            new Scene("bloodline_pool_fane", BloodlinePoolScreen.class, ScreenChromeReview::openPoolWithFane, null, null));
+
+    /** The pool screen with a sample fane on its map: four stakes (the last cut off) and a neighbour's fane. */
+    private static void openPoolWithFane() {
+        Minecraft minecraft = Minecraft.getInstance();
+        java.util.UUID leader = minecraft.player.getUUID();
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(minecraft.player).setBloodLine(
+                new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline("Chrome Review",
+                        leader, java.util.UUID.nameUUIDFromBytes(new byte[] {9}), List.of(leader)));
+        BlockPos heart = minecraft.player.blockPosition().offset(12, 0, -8);
+        com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData.setEntries(List.of(
+                new com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFaneBoundaries.Entry(heart,
+                        List.of(heart.offset(62, 0, 10), heart.offset(110, 0, 40), heart.offset(-20, 0, 64),
+                                heart.offset(-150, 0, -30)), 32.0F, leader,
+                        com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation.MEMBER),
+                new com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFaneBoundaries.Entry(
+                        heart.offset(-90, 0, -130), List.of(), 32.0F, java.util.UUID.nameUUIDFromBytes(new byte[] {11}),
+                        com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation.OUTSIDER)));
+        minecraft.setScreen(new BloodlinePoolScreen());
+    }
 
     private static int ticks;
     private static int scene = -1;

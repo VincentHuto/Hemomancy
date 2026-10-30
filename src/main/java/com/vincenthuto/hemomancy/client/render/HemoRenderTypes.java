@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.render;
 
+import com.vincenthuto.hemomancy.client.render.world.HeartNodeSpreadGeometry;
+import com.vincenthuto.hemomancy.client.render.world.MaterialQuads;
 import com.vincenthuto.hemomancy.client.render.world.rite.DaemonHaze;
 import com.vincenthuto.hemomancy.client.render.world.rite.DaemonHazeQueue;
 
@@ -19,6 +21,7 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Locale;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 /**
@@ -841,6 +844,68 @@ public final class HemoRenderTypes {
 
 	private static void setStrike(ShaderInstance shader, String name, WardStrike strike) {
 		setUniform(shader, name, strike.x(), strike.y(), strike.z(), strike.life());
+	}
+
+	/**
+	 * What one heart-node sanctum's spread is drawn with: the time, eight lobe slots (xyz camera-relative centre, w the
+	 * growth front in blocks, -1 for an empty slot), each slot's life (below 1 while a withered lobe recedes) and the
+	 * pulse's run from the heart to it (-1 for none), the viewer's feet and the settings that shape the look. Lobe 0 is
+	 * the heart.
+	 */
+	public record HeartNodeSpreadUniforms(float time, float[] lobes, float[] lives, float[] arrivals, float playerX,
+			float playerY, float playerZ, boolean edge, boolean threads, boolean pulse, boolean stranger, float intensity) {
+	}
+
+	/**
+	 * A heart-node sanctum's mycelial spread over the ground inside its envelope ({@code HeartNodeSpreadRenderer}): one
+	 * type per owner, seeded from the owner's UUID so two sanctums never shimmer in step, and one draw a frame. Lit by the world's lightmap, with
+	 * the veins' glow added over it in the shader.
+	 */
+	public static RenderType heartNodeSpread(UUID owner, HeartNodeSpreadUniforms uniforms) {
+		return HEART_NODE_SPREAD_TYPES.get(owner, uniforms);
+	}
+
+	private static final SeededRenderTypes<UUID, HeartNodeSpreadUniforms, RenderType> HEART_NODE_SPREAD_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createHeartNodeSpread);
+
+	private static RenderType createHeartNodeSpread(UUID owner, Supplier<HeartNodeSpreadUniforms> values) {
+		float seed = MaterialQuads.seedTile(owner.hashCode());
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"heart_node_spread_uniforms",
+				() -> {
+					HeartNodeSpreadUniforms u = values.get();
+					ShaderInstance shader = ShaderInit.HEART_NODE_SPREAD.getInstance().get();
+					setUniform(shader, "HemoTime", u.time());
+					for (int slot = 0; slot < 8; slot++) {
+						setUniform(shader, "Lobe" + slot, u.lobes()[slot * 4], u.lobes()[slot * 4 + 1],
+								u.lobes()[slot * 4 + 2], u.lobes()[slot * 4 + 3]);
+					}
+					float[] lives = u.lives();
+					setUniform(shader, "LobeLife0", lives[0], lives[1], lives[2], lives[3]);
+					setUniform(shader, "LobeLife1", lives[4], lives[5], lives[6], lives[7]);
+					float[] arrivals = u.arrivals();
+					setUniform(shader, "LobeArrive0", arrivals[0], arrivals[1], arrivals[2], arrivals[3]);
+					setUniform(shader, "LobeArrive1", arrivals[4], arrivals[5], arrivals[6], arrivals[7]);
+					setUniform(shader, "PlayerOffset", u.playerX(), u.playerY(), u.playerZ());
+					setUniform(shader, "SpreadFlags", u.edge() ? 1.0F : 0.0F, u.threads() ? 1.0F : 0.0F,
+							u.pulse() ? 1.0F : 0.0F, u.stranger() ? 1.0F : 0.0F);
+					setUniform(shader, "SpreadLook", u.intensity(), seed,
+							HeartNodeSpreadGeometry.HEARTBEAT_TICKS, (float) HeartNodeSpreadGeometry.PULSE_SPEED);
+				},
+				() -> {
+				});
+		return RenderType.create("heart_node_spread",
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 4096, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.HEART_NODE_SPREAD.getShard())
+						.setTexturingState(uniforms)
+						.setLightmapState(RenderType.LIGHTMAP)
+						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.createCompositeState(false));
 	}
 
 	/**

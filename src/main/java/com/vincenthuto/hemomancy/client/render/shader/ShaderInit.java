@@ -52,6 +52,11 @@ public class ShaderInit {
 			DefaultVertexFormat.BLOCK, "HemoTime", "WardColor", "WardRadius", "PlayerOffset", "FocusOffset",
 			"Strike0", "Strike1", "Strike2", "Strike3", "StrikePower", "StrikeKind", "WardBody");
 
+	/** A heart-node sanctum's mycelial spread over the ground inside its envelope. */
+	public static ShaderHolder HEART_NODE_SPREAD = new ShaderHolder(Hemomancy.rloc("world/heart_node_spread"),
+			DefaultVertexFormat.BLOCK, "HemoTime", "Lobe0", "Lobe1", "Lobe2", "Lobe3", "Lobe4", "Lobe5", "Lobe6", "Lobe7",
+			"LobeLife0", "LobeLife1", "LobeArrive0", "LobeArrive1", "PlayerOffset", "SpreadFlags", "SpreadLook");
+
 	/** The same ward burning into an Apotheos on hallowed ground, drawn over the player model. */
 	public static ShaderHolder MAUSOLEUM_WARD_BODY = new ShaderHolder(Hemomancy.rloc("world/mausoleum_ward"),
 			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "WardBody");
@@ -222,6 +227,7 @@ public class ShaderInit {
         registerShader(event, BLOOD_INFUSION_VEINS.createInstance(provider));
         registerShader(event, MAUSOLEUM_WARD.createInstance(provider));
         registerShader(event, MAUSOLEUM_WARD_BODY.createInstance(provider));
+        registerShader(event, HEART_NODE_SPREAD.createInstance(provider));
         registerShader(event, VESPER_WOUND_DRAW.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));
         registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));

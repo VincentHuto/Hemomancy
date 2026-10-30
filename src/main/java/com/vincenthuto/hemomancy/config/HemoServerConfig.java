@@ -8,6 +8,7 @@ public class HemoServerConfig {
 
 	public static ModConfigSpec.IntValue SUCCESSORS_PER_BLOODLINE;
 	public static ModConfigSpec.IntValue CAST_OUTPOURING_REAL_EFFECT_MIN_RANK;
+	public static ModConfigSpec.DoubleValue ADIPOCERE_CRUST_DENSITY;
     public static ModConfigSpec.IntValue SUCCESSORS_GLOBAL;
 
 	// ===== Blood Volume =====
@@ -570,6 +571,14 @@ public class HemoServerConfig {
 		CAST_OUTPOURING_REAL_EFFECT_MIN_RANK = builder
 				.comment("Lowest manipulation rank (0 Humilis .. 4 Perfectus) whose cast outpouring may change the world. -1 keeps outpourings purely visual.")
 				.defineInRange("realEffectMinRank", -1, -1, 4);
+		builder.pop();
+
+		// ───── Adipocere Crusts ─────
+		builder.comment("Adipocere Crust Settings").push("adipocere_crust");
+		ADIPOCERE_CRUST_DENSITY = builder
+				.comment("Scales how often corpse wax crusts the walls of monster rooms, strongholds and ancient cities, "
+						+ "applied the first time each chunk loads. 0 turns it off; a site never takes more than its cap.")
+				.defineInRange("density", 1.0, 0.0, 10.0);
 		builder.pop();
 	}
 

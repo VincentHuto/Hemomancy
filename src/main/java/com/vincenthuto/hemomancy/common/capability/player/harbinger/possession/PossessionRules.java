@@ -10,10 +10,35 @@ public final class PossessionRules {
 	public static final int SHELL_HITS = 3;
 	public static final float HEAVY_HIT = 6f;
 	public static final int WATER_DRAIN_TICKS = 20;
-	/** Adipocere laid in the rite space: corpse wax seals three more hits of Concentration. */
+	/** Adipocere burned in a brazier: corpse wax seals three more hits of Concentration. */
 	public static final int ADIPOCERE_BONUS = 3;
 
+	/** The effect ids the Rite of Possession's optional brazier offerings name. */
+	public static final String REGEN = "concentration_regen";
+	public static final String SHELL = "shell";
+	public static final String TOTEM = "totem";
+	public static final String MAX_CONCENTRATION = "max_concentration";
+	public static final java.util.Set<String> OFFERING_EFFECTS = java.util.Set.of(REGEN, SHELL, TOTEM, MAX_CONCENTRATION);
+
 	private PossessionRules() {}
+
+	/** What the offerings burned in the braziers tune; an unknown effect id tunes nothing. */
+	public record Offerings(boolean regen, boolean shell, boolean totem, boolean wax) {
+		public static final Offerings NONE = new Offerings(false, false, false, false);
+
+		public static Offerings of(java.util.Collection<String> effects) {
+			return new Offerings(effects.contains(REGEN), effects.contains(SHELL), effects.contains(TOTEM),
+					effects.contains(MAX_CONCENTRATION));
+		}
+
+		public int pool(SurrogateForm form) {
+			return form.pool() + (wax ? ADIPOCERE_BONUS : 0);
+		}
+
+		public int shellHits() {
+			return shell ? SHELL_HITS : 0;
+		}
+	}
 
 	/** What remains after a hit: the shell takes it first, then Concentration; broken at zero. */
 	public record Hit(int shell, float concentration, boolean broken) {}

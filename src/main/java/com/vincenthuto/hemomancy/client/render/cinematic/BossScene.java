@@ -70,6 +70,10 @@ public interface BossScene {
 	default void tick(int t) {
 	}
 
+	/** Called once when the player skips the scene, for a scene whose server sequence follows the skip. */
+	default void skipped() {
+	}
+
 	/** Called once when the scene ends, is replaced or is cleared, to undo anything {@link #tick} holds. */
 	default void end() {
 	}

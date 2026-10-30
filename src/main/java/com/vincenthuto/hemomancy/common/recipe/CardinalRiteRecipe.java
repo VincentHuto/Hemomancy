@@ -79,6 +79,7 @@ public class CardinalRiteRecipe extends StationRecipe {
 	protected MultiblockPattern requiredStructure;
 	protected boolean consumeRequiredStructure;
 	protected List<BrazierRequirement> brazierSignature = List.of();
+	protected List<OptionalOffering> optionalOfferings = List.of();
 	protected Ingredient medium = Ingredient.EMPTY;
 	protected boolean consumeMediumOnSuccess = true;
 	protected PuppeteerTrial puppeteerTrial;
@@ -100,6 +101,17 @@ public class CardinalRiteRecipe extends StationRecipe {
 		public BrazierRequirement {
 			if (ingredient == null) throw new IllegalArgumentException("Brazier ingredient cannot be null");
 			if (count < 1) throw new IllegalArgumentException("Brazier ingredient count must be positive");
+		}
+	}
+
+	/**
+	 * An offering a rite takes if a lit brazier holds it and does without otherwise. {@code effect} is the id the
+	 * rite's completion reads to decide what the offering tunes; it is always consumed.
+	 */
+	public record OptionalOffering(Ingredient ingredient, String effect) {
+		public OptionalOffering {
+			if (ingredient == null) throw new IllegalArgumentException("Optional offering ingredient cannot be null");
+			if (effect == null || effect.isBlank()) throw new IllegalArgumentException("Optional offering effect cannot be blank");
 		}
 	}
 
@@ -217,6 +229,23 @@ public class CardinalRiteRecipe extends StationRecipe {
 
 	public void setBrazierSignature(List<BrazierRequirement> brazierSignature) {
 		this.brazierSignature = List.copyOf(brazierSignature);
+	}
+
+	/** When non-empty, the braziers are read for these instead of matched against the signature. */
+	public List<OptionalOffering> getOptionalOfferings() {
+		return optionalOfferings;
+	}
+
+	public void setOptionalOfferings(List<OptionalOffering> optionalOfferings) {
+		this.optionalOfferings = List.copyOf(optionalOfferings);
+	}
+
+	/** The effect id of the optional offering {@code stack} answers, or null. */
+	public String optionalOfferingEffect(ItemStack stack) {
+		for (OptionalOffering offering : optionalOfferings) {
+			if (offering.ingredient().test(stack)) return offering.effect();
+		}
+		return null;
 	}
 
 	public Ingredient getMedium() {

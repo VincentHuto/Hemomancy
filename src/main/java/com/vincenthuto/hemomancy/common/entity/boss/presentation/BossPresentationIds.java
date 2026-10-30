@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.boss.presentation;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionSceneRules;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -39,6 +40,12 @@ public final class BossPresentationIds {
 	public static final ResourceLocation SCENE_VESPER_EVENING_STAR = Hemomancy.rloc("vesper_evening_star");
 	public static final ResourceLocation SCENE_SAINT_RISE = Hemomancy.rloc("saint_rise");
 	public static final ResourceLocation SCENE_HEMORATH_EMPTIES_CARD = Hemomancy.rloc("hemorath_empties");
+	public static final ResourceLocation SCENE_POSSESSION_DEPARTURE = Hemomancy.rloc("possession_departure");
+	public static final ResourceLocation SCENE_POSSESSION_ARRIVAL = Hemomancy.rloc("possession_arrival");
+	public static final ResourceLocation SCENE_POSSESSION_BROKEN_GARDENS = Hemomancy.rloc("possession_broken_gardens");
+	public static final ResourceLocation SCENE_POSSESSION_BROKEN_RITE = Hemomancy.rloc("possession_broken_rite");
+	public static final ResourceLocation SCENE_POSSESSION_CLEAN_GARDENS = Hemomancy.rloc("possession_clean_gardens");
+	public static final ResourceLocation SCENE_POSSESSION_CLEAN_RITE = Hemomancy.rloc("possession_clean_rite");
 
 	public static final List<ResourceLocation> FRAMES = List.of(FRAME_PHLEGETHOSOMA, FRAME_MYCOPHANT, FRAME_ANNETTA_KNOWLES,
 			FRAME_STAINED_PRIESTESS, FRAME_LATENT_INFECTION, FRAME_NAEGLEROPHAEON, FRAME_VESPER_CROWNED_REFUSAL,
@@ -48,7 +55,20 @@ public final class BossPresentationIds {
 			SCENE_MYCOPHANT_CAPTURE, SCENE_MYCOPHANT_SPLIT_CARD, SCENE_ANNETTA_KNOWLES, SCENE_ANNETTA_BREAK_CARD,
 			SCENE_STAINED_PRIESTESS, SCENE_LATENT_INFECTION, SCENE_NAEGLEROPHAEON, SCENE_NAEGLEROPHAEON_TRANSITION_CARD,
 			SCENE_VESPER_CROWNED_REFUSAL, SCENE_VESPER_COCOON_CARD, SCENE_VESPER_EVENING_STAR, SCENE_SAINT_RISE,
-			SCENE_HEMORATH_EMPTIES_CARD);
+			SCENE_HEMORATH_EMPTIES_CARD, SCENE_POSSESSION_DEPARTURE, SCENE_POSSESSION_ARRIVAL, SCENE_POSSESSION_BROKEN_GARDENS,
+			SCENE_POSSESSION_BROKEN_RITE, SCENE_POSSESSION_CLEAN_GARDENS, SCENE_POSSESSION_CLEAN_RITE);
+
+	/** The director scene for one half of a possession's cinematic. */
+	public static ResourceLocation possessionScene(PossessionSceneRules.Scene scene) {
+		return switch (scene) {
+			case DEPARTURE -> SCENE_POSSESSION_DEPARTURE;
+			case ARRIVAL -> SCENE_POSSESSION_ARRIVAL;
+			case BROKEN_GARDENS -> SCENE_POSSESSION_BROKEN_GARDENS;
+			case BROKEN_RITE -> SCENE_POSSESSION_BROKEN_RITE;
+			case CLEAN_GARDENS -> SCENE_POSSESSION_CLEAN_GARDENS;
+			case CLEAN_RITE -> SCENE_POSSESSION_CLEAN_RITE;
+		};
+	}
 
 	private BossPresentationIds() {
 	}

@@ -79,6 +79,11 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("possession",
                     () -> AttachmentType.serializable(Possession::new).copyOnDeath().build());
 
+    /** Who holds a would-be surrogate with Blood Binding, and the Qliphoth floor holding the binding open. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateTether>> SURROGATE_TETHER =
+            ATTACHMENT_TYPES.register("surrogate_tether",
+                    () -> AttachmentType.serializable(com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateTether::new).build());
+
     /** Not copied on death: a respawned Apotheos starts with no spores. */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<SporeLoad>> SPORE_LOAD =
             ATTACHMENT_TYPES.register("spore_load",

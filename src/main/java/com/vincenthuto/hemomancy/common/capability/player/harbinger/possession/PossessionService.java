@@ -5,24 +5,26 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.entity.PossessionEchoEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperEvents;
-import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -37,7 +39,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -46,17 +47,21 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Begins and ends a Silentium's possession. Beginning stills the surrogate, leaves the echo, saves the inventory and
  * carries the will into the Gardens; ending (clean or broken) reverses every step, so nothing is ever left behind
  * except what the spec leaves on purpose: a broken surrogate dies, and an armor stand's gear stays in the Gardens.
+ * Both are staged through {@link PossessionSequences} so the cinematics play; the steps here are what its cut and
+ * settle ticks run. Logout and login recovery use the immediate {@link #returnNow}.
  */
 public final class PossessionService {
 	private static final ResourceLocation SPEED = Hemomancy.rloc("possession_speed");
 	private static final ResourceLocation JUMP = Hemomancy.rloc("possession_jump");
 	private static final ResourceLocation KNOCKBACK = Hemomancy.rloc("possession_knockback");
 	private static final ParticleColor SHADOW = new ParticleColor(40, 30, 48);
+	private static final int[] ROOM_HEIGHTS = {0, 1, -1, 2, -2, 3};
 	private static final EquipmentSlot[] GEAR = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS,
 			EquipmentSlot.FEET, EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND};
 
@@ -70,6 +75,26 @@ public final class PossessionService {
 						&& entity.isAlive() && formOf(entity) != null && !ledger.isHeld(entity.getUUID()))
 				.stream().min(Comparator.comparingDouble(entity -> entity.distanceToSqr(Vec3.atCenterOf(center))))
 				.orElse(null);
+	}
+
+	/**
+	 * The surrogate the rite takes for {@code caster}: the nearest one their Blood Binding holds, or, when none is held,
+	 * the nearest one at all, so the refusal can say it is not bound.
+	 */
+	@Nullable
+	public static LivingEntity findSurrogate(ServerLevel level, AABB bounds, BlockPos center, ServerPlayer caster) {
+		SurrogateLedger ledger = SurrogateLedger.get(level.getServer());
+		LivingEntity held = level.getEntitiesOfClass(LivingEntity.class, bounds, entity -> !(entity instanceof Player)
+						&& entity.isAlive() && formOf(entity) != null && !ledger.isHeld(entity.getUUID())
+						&& holds(caster, entity))
+				.stream().min(Comparator.comparingDouble(entity -> entity.distanceToSqr(Vec3.atCenterOf(center))))
+				.orElse(null);
+		return held != null ? held : findSurrogate(level, bounds, center);
+	}
+
+	/** Whether the caster holds this surrogate: bound by their Blood Binding, or an armor stand, which cannot wander. */
+	public static boolean holds(ServerPlayer caster, LivingEntity surrogate) {
+		return formOf(surrogate) == SurrogateForm.ARMOR_STAND || SurrogateTethers.boundBy(surrogate, caster.getUUID());
 	}
 
 	@Nullable
@@ -94,6 +119,7 @@ public final class PossessionService {
 		if (HemoCapabilityAccess.isPossessing(caster)) return Component.translatable("message.hemomancy.possession.already");
 		if (surrogate == null) return Component.translatable("message.hemomancy.possession.no_surrogate");
 		if (!mayTake(caster, surrogate)) return Component.translatable("message.hemomancy.possession.not_your_pet");
+		if (!holds(caster, surrogate)) return Component.translatable("message.hemomancy.possession.not_bound");
 		if (com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(caster)
 				|| FungalGardenTravelHelper.isProjectionActive(caster))
 			return Component.translatable("message.hemomancy.possession.elsewhere");
@@ -102,21 +128,53 @@ public final class PossessionService {
 		return null;
 	}
 
-	/** Casts {@code caster}'s will into {@code surrogate}'s facsimile, consuming the offerings lying in {@code bounds}. */
-	public static boolean begin(ServerLevel level, ServerPlayer caster, LivingEntity surrogate, AABB bounds) {
+	/** As {@link #begin(ServerLevel, ServerPlayer, LivingEntity, PossessionRules.Offerings, BlockPos)}, framed on the caster. */
+	public static boolean begin(ServerLevel level, ServerPlayer caster, LivingEntity surrogate,
+			PossessionRules.Offerings offerings) {
+		return begin(level, caster, surrogate, offerings, caster.blockPosition());
+	}
+
+	/**
+	 * Begins the departure: the surrogate is stilled and held, and the echo rises under the caster in their own skin.
+	 * The will crosses at the departure's cut ({@link #cross}), tuned by the offerings the rite's braziers burned;
+	 * {@code site} is the rite's Focus, where the medium is spent.
+	 */
+	public static boolean begin(ServerLevel level, ServerPlayer caster, LivingEntity surrogate,
+			PossessionRules.Offerings offerings, BlockPos site) {
 		SurrogateForm form = formOf(surrogate);
-		ServerLevel gardens = caster.server.getLevel(FungalGardenTravelHelper.FUNGAL_GARDENS);
-		if (form == null || gardens == null || refusal(caster, surrogate) != null) return false;
+		if (form == null || PossessionSequences.isStaged(caster) || refusal(caster, surrogate) != null) return false;
 
 		PossessionEchoEntity echo = EntityInit.possession_echo.get().create(level);
 		if (echo == null) return false;
-		boolean regen = consumeOffering(level, bounds, ItemInit.mnemonic_ambergris.get().asItem());
-		boolean shell = consumeOffering(level, bounds, BlockInit.hematic_iron_block.get().asItem());
-		boolean totem = consumeOffering(level, bounds, Items.TOTEM_OF_UNDYING);
-		boolean wax = consumeOffering(level, bounds, ItemInit.adipocere.get());
 
 		still(surrogate);
 		SurrogateLedger.get(level.getServer()).hold(surrogate.getUUID(), caster.getUUID());
+		echo.moveTo(caster.getX(), caster.getY(), caster.getZ(), caster.getYRot(), 0f);
+		echo.setOwner(caster.getUUID());
+		echo.setManifest(1.0F);
+		level.addFreshEntity(echo);
+		caster.closeContainer();
+
+		HumanitySpriteEntity daemon = HumanitySpriteEntity.findBoundToRite(level, caster.getUUID(), site);
+		Vec3 daemonFrom = daemon != null ? daemon.position() : Vec3.atBottomCenterOf(site).add(0.0, 2.5, 0.0);
+		PossessionSequences.startBegin(caster, echo, surrogate, offerings, site, daemonFrom);
+		return true;
+	}
+
+	/**
+	 * The departure's cut: the inventory is set aside, the attachment begins and the will is carried into the Gardens.
+	 * {@code from} and {@code yaw} are where the caster stood when the rite completed; the echo stands there.
+	 */
+	static boolean cross(ServerPlayer caster, LivingEntity surrogate, PossessionRules.Offerings offerings, Vec3 from,
+			float yaw) {
+		SurrogateForm form = formOf(surrogate);
+		ServerLevel gardens = caster.server.getLevel(FungalGardenTravelHelper.FUNGAL_GARDENS);
+		if (form == null || gardens == null || HemoCapabilityAccess.isPossessing(caster)) return false;
+		ServerLevel level = caster.serverLevel();
+		UUID echo = PossessionSequences.echoOf(caster);
+		if (echo == null) return false;
+
+		surrogate.setInvisible(true);
 		List<ItemStack> standGear = new ArrayList<>();
 		if (surrogate instanceof ArmorStand stand && form.wearsStandGear()) {
 			for (EquipmentSlot slot : GEAR) {
@@ -124,12 +182,6 @@ public final class PossessionService {
 				stand.setItemSlot(slot, ItemStack.EMPTY);
 			}
 		}
-
-		echo.moveTo(caster.getX(), caster.getY(), caster.getZ(), caster.getYRot(), 0f);
-		echo.setOwner(caster.getUUID());
-		level.addFreshEntity(echo);
-		level.sendParticles(HemoParticleData.glow(SHADOW), caster.getX(), caster.getY() + 1.0, caster.getZ(), 24,
-				0.3, 0.6, 0.3, 0.02);
 
 		caster.closeContainer();
 		caster.inventoryMenu.removed(caster);
@@ -141,38 +193,52 @@ public final class PossessionService {
 		}
 		for (int i = 0; i < standGear.size(); i++) caster.setItemSlot(GEAR[i], standGear.get(i));
 
-		Vec3 from = caster.position();
-		HemoCapabilityAccess.getPossession(caster).begin(form,
-				form.pool() + (wax ? PossessionRules.ADIPOCERE_BONUS : 0), shell ? PossessionRules.SHELL_HITS : 0,
-				regen, totem, surrogate.getUUID(), level.dimension().location(), echo.getUUID(),
-				level.dimension().location(), from, caster.getYRot(), saved);
+		HemoCapabilityAccess.getPossession(caster).begin(form, offerings.pool(form), offerings.shellHits(),
+				offerings.regen(), offerings.totem(), surrogate.getUUID(), surrogate.level().dimension().location(), echo,
+				level.dimension().location(), from, yaw, saved);
 
-		BlockPos landing = FungalGardenTravelHelper.findSafePos(gardens, caster.getBlockX(), caster.getBlockZ());
-		caster.teleportTo(gardens, landing.getX() + 0.5, landing.getY(), landing.getZ() + 0.5, caster.getYRot(),
-				caster.getXRot());
+		BlockPos landing = FungalGardenTravelHelper.findSafePos(gardens, Mth.floor(from.x), Mth.floor(from.z));
+		caster.teleportTo(gardens, landing.getX() + 0.5, landing.getY(), landing.getZ() + 0.5, yaw, caster.getXRot());
 		applyForm(caster, form, true);
-		ItemStack thread = new ItemStack(ItemInit.thread_of_will.get());
-		if (!caster.getInventory().add(thread)) {
-			HemoCapabilityAccess.getPossession(caster).stash(caster.getInventory().getItem(0).copy());
-			caster.getInventory().setItem(0, thread);
-		}
+		caster.refreshDimensions();
+		makeRoom(gardens, caster);
 		HemoCapabilityAccess.getPossession(caster).sync(caster, true);
 		caster.displayClientMessage(Component.translatable("message.hemomancy.possession.begin")
 				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
 		return true;
 	}
 
-	/** A clean return: the surrogate is released unharmed. */
+	/** A clean return, staged: the body collapses in the Gardens and the caster re-manifests at the echo. */
 	public static void returnClean(ServerPlayer player) {
-		finish(player, false, 0);
+		if (HemoCapabilityAccess.isPossessing(player)) PossessionSequences.startReturn(player, false, 0);
 	}
 
-	/** A snapped return: the surrogate dies, and the caster is left Mind Broken for {@code mindBrokenTicks}. */
+	/** A snapped return, staged: the surrogate dies, and the caster is left Mind Broken for {@code mindBrokenTicks}. */
 	public static void eject(ServerPlayer player, int mindBrokenTicks) {
-		finish(player, true, mindBrokenTicks);
+		if (HemoCapabilityAccess.isPossessing(player)) PossessionSequences.startReturn(player, true, mindBrokenTicks);
 	}
 
-	private static void finish(ServerPlayer player, boolean broken, int mindBrokenTicks) {
+	/**
+	 * Returns the will at once and without scenes, for logout and login recovery: any running sequence is ended
+	 * first, then a possession still open is finished cleanly.
+	 */
+	public static void returnNow(ServerPlayer player) {
+		PossessionSequences.abandon(player);
+		if (HemoCapabilityAccess.isPossessing(player)) finish(player, false, 0, false);
+	}
+
+	/** As {@link #eject}, at once: for a blow nothing may absorb. */
+	public static void ejectNow(ServerPlayer player, int mindBrokenTicks) {
+		PossessionSequences.abandon(player);
+		if (HemoCapabilityAccess.isPossessing(player)) finish(player, true, mindBrokenTicks, false);
+	}
+
+	/** A return's cut: everything but the echo and the surrogate, which wait for the settle tick. */
+	static void finishStaged(ServerPlayer player, boolean broken, int mindBrokenTicks) {
+		finish(player, broken, mindBrokenTicks, true);
+	}
+
+	private static void finish(ServerPlayer player, boolean broken, int mindBrokenTicks, boolean staged) {
 		Possession possession = HemoCapabilityAccess.getPossession(player);
 		SurrogateForm form = possession.form();
 		if (form == null) return;
@@ -186,13 +252,12 @@ public final class PossessionService {
 		if (!form.keepsInventory()) {
 			for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
 				ItemStack stack = inventory.getItem(slot);
-				if (!stack.isEmpty() && !stack.is(ItemInit.thread_of_will.get())) found.add(stack.copy());
+				if (!stack.isEmpty()) found.add(stack.copy());
 			}
 			inventory.clearContent();
 			inventory.load(possession.savedInventory());
 		}
-		removeThreads(inventory);
-		found.addAll(possession.takeStash());
+		found.addAll(possession.takeLegacyStash());
 		applyForm(player, form, false);
 
 		ServerLevel home = levelOr(player, possession.returnDimension(), player.server.overworld());
@@ -205,21 +270,24 @@ public final class PossessionService {
 			}
 		}
 
-		if (possession.echo() != null && home.getEntity(possession.echo()) instanceof PossessionEchoEntity echo) {
-			echo.discard();
-		}
-		if (possession.surrogate() != null) {
-			SurrogateLedger ledger = SurrogateLedger.get(player.server);
-			ledger.settle(possession.surrogate(), broken);
-			ServerLevel surrogateLevel = levelOr(player, possession.surrogateDimension(), home);
-			if (surrogateLevel.getEntity(possession.surrogate()) instanceof LivingEntity body) settle(body, ledger);
+		if (!staged) {
+			if (possession.echo() != null && home.getEntity(possession.echo()) instanceof PossessionEchoEntity echo) {
+				echo.discard();
+			}
+			settleSurrogate(player.server, possession.surrogate(), possession.surrogateDimension(), broken);
+		} else if (possession.surrogate() != null) {
+			// Recorded now, so a crash before the settle tick still carries out the verdict.
+			SurrogateLedger.get(player.server).settle(possession.surrogate(), broken);
 		}
 
 		possession.end();
+		player.refreshDimensions();
 		possession.sync(player, true);
-		home.sendParticles(HemoParticleData.glow(SHADOW), back.x, back.y + 1.0, back.z, 24, 0.3, 0.6, 0.3, 0.02);
-		home.playSound(null, BlockPos.containing(back), SoundEvents.SOUL_ESCAPE.value(), SoundSource.PLAYERS, 1f,
-				broken ? 0.5f : 0.9f);
+		if (!staged) {
+			home.sendParticles(HemoParticleData.glow(SHADOW), back.x, back.y + 1.0, back.z, 24, 0.3, 0.6, 0.3, 0.02);
+			home.playSound(null, BlockPos.containing(back), SoundEvents.SOUL_ESCAPE.value(), SoundSource.PLAYERS, 1f,
+					broken ? 0.5f : 0.9f);
+		}
 		if (broken) {
 			player.addEffect(new MobEffectInstance(EffectInit.mind_broken, mindBrokenTicks, 0, false, true, true));
 			FungalWhisperEvents.triggerWhisper(player, player.getRandom().nextInt(3));
@@ -228,6 +296,58 @@ public final class PossessionService {
 		} else {
 			player.displayClientMessage(Component.translatable("message.hemomancy.possession.returned")
 					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false);
+		}
+	}
+
+	/** Carries out a finished visit's verdict on its surrogate, now if it is loaded, or when it next loads. */
+	static void settleSurrogate(MinecraftServer server, @Nullable UUID surrogate, @Nullable ResourceLocation dimension,
+			boolean broken) {
+		if (surrogate == null) return;
+		SurrogateLedger ledger = SurrogateLedger.get(server);
+		ledger.settle(surrogate, broken);
+		ServerLevel level = dimension == null ? null
+				: server.getLevel(ResourceKey.create(Registries.DIMENSION, dimension));
+		if (level != null && level.getEntity(surrogate) instanceof LivingEntity body) settle(body, ledger);
+	}
+
+	/**
+	 * At login, a caster who is not possessing holds no surrogate: one still held for them was stilled by a departure
+	 * a crash cut short, and is let go.
+	 */
+	public static void releaseOrphans(ServerPlayer player) {
+		if (HemoCapabilityAccess.isPossessing(player) || PossessionSequences.isStaged(player)) return;
+		SurrogateLedger ledger = SurrogateLedger.get(player.server);
+		for (UUID body : ledger.heldBy(player.getUUID())) {
+			ledger.settle(body, false);
+			for (ServerLevel level : player.server.getAllLevels()) {
+				if (level.getEntity(body) instanceof LivingEntity surrogate) settle(surrogate, ledger);
+			}
+		}
+	}
+
+	/**
+	 * The landing is found for a player's size; a wide or tall body may not fit there. Moves the body to the nearest
+	 * spot within a few blocks where all of it fits on solid ground, so it does not start inside a wall.
+	 */
+	private static void makeRoom(ServerLevel level, ServerPlayer player) {
+		if (level.noCollision(player)) return;
+		AABB box = player.getBoundingBox();
+		Vec3 at = player.position();
+		for (int radius = 0; radius <= 4; radius++) {
+			for (int dy : ROOM_HEIGHTS) {
+				for (int dx = -radius; dx <= radius; dx++) {
+					for (int dz = -radius; dz <= radius; dz++) {
+						if (Math.max(Math.abs(dx), Math.abs(dz)) != radius) continue;
+						Vec3 to = new Vec3(Math.floor(at.x) + dx + 0.5, Math.floor(at.y) + dy, Math.floor(at.z) + dz + 0.5);
+						BlockPos floor = BlockPos.containing(to.x, to.y - 0.5, to.z);
+						if (level.noCollision(player, box.move(to.subtract(at)))
+								&& level.getBlockState(floor).isFaceSturdy(level, floor, Direction.UP)) {
+							player.teleportTo(to.x, to.y, to.z);
+							return;
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -243,31 +363,12 @@ public final class PossessionService {
 		boolean any = false;
 		for (EquipmentSlot slot : GEAR) {
 			ItemStack worn = player.getItemBySlot(slot);
-			if (worn.isEmpty() || worn.is(ItemInit.thread_of_will.get())) continue;
+			if (worn.isEmpty()) continue;
 			stand.setItemSlot(slot, worn.copy());
 			player.setItemSlot(slot, ItemStack.EMPTY);
 			any = true;
 		}
 		if (any) level.addFreshEntity(stand);
-	}
-
-	private static void removeThreads(Inventory inventory) {
-		for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
-			if (inventory.getItem(slot).is(ItemInit.thread_of_will.get())) inventory.setItem(slot, ItemStack.EMPTY);
-		}
-	}
-
-	private static boolean consumeOffering(ServerLevel level, AABB bounds, net.minecraft.world.item.Item item) {
-		for (ItemEntity offering : level.getEntitiesOfClass(ItemEntity.class, bounds, entity -> entity.getItem().is(item))) {
-			ItemStack stack = offering.getItem();
-			stack.shrink(1);
-			if (stack.isEmpty()) offering.discard();
-			else offering.setItem(stack);
-			level.sendParticles(HemoParticleData.glow(SHADOW), offering.getX(), offering.getY() + 0.3, offering.getZ(),
-					8, 0.1, 0.1, 0.1, 0.01);
-			return true;
-		}
-		return false;
 	}
 
 	private static void still(LivingEntity surrogate) {
@@ -293,9 +394,11 @@ public final class PossessionService {
 		}
 	}
 
-	private static void release(LivingEntity surrogate) {
+	static void release(LivingEntity surrogate) {
+		SurrogateTethers.release(surrogate);
 		if (surrogate instanceof Mob mob) mob.setNoAi(false);
 		surrogate.setInvulnerable(false);
+		surrogate.setInvisible(false);
 	}
 
 	/** Holds or drops the form's body: speed, jump, the golem's knockback, and flight for the winged forms. */
@@ -306,9 +409,16 @@ public final class PossessionService {
 				AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, present && form.jump() != 0.0);
 		AttributeModifiers.sync(player.getAttribute(Attributes.ATTACK_KNOCKBACK), KNOCKBACK, 1.5,
 				AttributeModifier.Operation.ADD_VALUE, present && form == SurrogateForm.GOLEM);
-		if (form.flies()) {
-			if (present) FlightArbiter.grant(player, FlightArbiter.Source.POSSESSION);
-			else FlightArbiter.revoke(player, FlightArbiter.Source.POSSESSION);
+		applyFlight(player, form, present);
+	}
+
+	/** A winged form flies while its Hover toggle is on; turning Hover off, or leaving the body, grounds it. */
+	public static void applyFlight(Player player, SurrogateForm form, boolean present) {
+		if (!form.flies()) return;
+		if (present && HemoCapabilityAccess.getPossession(player).toggled(PossessionAction.HOVER)) {
+			FlightArbiter.grant(player, FlightArbiter.Source.POSSESSION);
+		} else {
+			FlightArbiter.revoke(player, FlightArbiter.Source.POSSESSION);
 		}
 	}
 

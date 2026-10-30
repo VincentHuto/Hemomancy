@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftItem;
 
@@ -27,7 +28,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * The two creative tabs and what goes in them. The main tab lists the registers in order, minus
- * the hidden items and everything on {@link #WIP}; the WIP tab lists exactly {@link #WIP}.
+ * the hidden items and everything on {@link #WIP}, grouped by {@link CreativeTabSection}; the WIP
+ * tab lists exactly {@link #WIP}.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CreativeTabInit {
@@ -39,6 +41,9 @@ public final class CreativeTabInit {
 			() -> CreativeModeTab.builder()
 					.title(Component.translatable("item_group." + Hemomancy.MOD_ID + ".hemomancytab"))
 					.icon(() -> new ItemStack(ItemInit.charm_of_vascularium.get()))
+					// Bone title and a crimson hover over the client's banded frame (CreativeTabChrome).
+					.withLabelColor(0xE6D8BC)
+					.withSlotColor(0x60D04848)
 					.build());
 	public static final DeferredHolder<CreativeModeTab, CreativeModeTab> hemomancywiptab = CREATIVETABS.register(
 			"hemomancywip",
@@ -70,19 +75,6 @@ public final class CreativeTabInit {
 			ItemInit.blood_thrall_effigy,
 			ItemInit.blood_bolt,
 			ItemInit.vascular_status_gauge,
-			ItemInit.consecrated_syringe,
-			ItemInit.hallowed_residuum_hemorath,
-			ItemInit.hallowed_residuum_seraphae,
-			ItemInit.hallowed_residuum_putriciel,
-			ItemInit.hallowed_residuum_velorum,
-			ItemInit.saint_relic_hemorath,
-			ItemInit.saint_relic_seraphae,
-			ItemInit.saint_relic_putriciel,
-			ItemInit.saint_relic_velorum,
-			ItemInit.memory_crimson_tithe,
-			ItemInit.memory_unclosing_eye,
-			ItemInit.memory_bloom_of_rot,
-			ItemInit.memory_endless_hour,
 			ItemInit.hemorath_rib,
 			ItemInit.echo_of_spleen,
 			ItemInit.echo_of_liver,
@@ -97,13 +89,11 @@ public final class CreativeTabInit {
 			BlockInit.serpentine_idol,
 			BlockInit.morphling_cradle,
 			BlockInit.witness_organ,
-			BlockInit.saint_sarcophagus,
 			BlockInit.gourdvine_tap,
 			BlockInit.sanguine_vigil,
 			BlockInit.sanguine_omen,
 			BlockInit.visceral_mirror,
 			BlockInit.non_euclidean_hallway,
-			BlockInit.blood_basin,
 			BlockInit.blood_pylon,
 			BlockInit.blood_trial_altar,
 			BlockInit.offering_gate,
@@ -134,10 +124,19 @@ public final class CreativeTabInit {
 	}
 
 	@SubscribeEvent
-	public static void buildContents(BuildCreativeModeTabContentsEvent populator) {
-		if (populator.getTabKey() == hemomancytab.getKey()) {
+	public static void buildContents(BuildCreativeModeTabContentsEvent event) {
+		if (event.getTabKey() == hemomancytab.getKey()) {
+			// Gathered in registry order, then handed on grouped by CreativeTabSection.
+			CreativeTabSection.Sorter populator = new CreativeTabSection.Sorter();
 			ItemInit.getAllItemEntriesAsStream().forEach(item -> {
-				if (shouldShowItemInCreativeTab(item.get()) && item.get() != ItemInit.fervent_husk.get()
+				if (item.get() instanceof ConsecratedSyringeItem) {
+					// One per Saint rather than the random default.
+					for (EnumSaintType saint : EnumSaintType.values()) {
+						ItemStack syringe = new ItemStack(item.get());
+						ConsecratedSyringeItem.setSaintType(syringe, saint);
+						populator.accept(syringe);
+					}
+				} else if (shouldShowItemInCreativeTab(item.get()) && item.get() != ItemInit.fervent_husk.get()
 						&& item.get() != ItemInit.cleansing_hemolymph.get()) {
 					populator.accept(item.get());
 					if (item.get() == ItemInit.bloody_vial.get()) {
@@ -154,13 +153,10 @@ public final class CreativeTabInit {
 					populator.accept(block.get());
 				}
 			});
-		} else if (populator.getTabKey() == hemomancywiptab.getKey()) {
+			populator.emitTo(event);
+		} else if (event.getTabKey() == hemomancywiptab.getKey()) {
 			for (DeferredHolder<?, ? extends ItemLike> entry : WIP) {
-				if (entry.get() instanceof ConsecratedSyringeItem syringe) {
-					populator.accept(syringe.randomSaintStack());
-				} else {
-					populator.accept(entry.get());
-				}
+				event.accept(entry.get());
 			}
 		}
 	}
@@ -173,7 +169,6 @@ public final class CreativeTabInit {
 				&& item != ItemInit.active_befouling_ash.get()
 				&& item != ItemInit.active_smouldering_ash.get()
 				&& item != ItemInit.living_weapon_graft.get()
-				&& item != ItemInit.thread_of_will.get()
 				&& item != ItemInit.living_sickle.get()
 				&& item != ItemInit.synaptic_step.get()
 				&& item != ItemInit.memory_conjure_living_staff.get()

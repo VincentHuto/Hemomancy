@@ -53,6 +53,7 @@ import com.vincenthuto.hemomancy.client.render.tile.unstained.SuspendedCleansedB
 import com.vincenthuto.hemomancy.client.render.tile.unstained.crafting.PallidRetortRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.unstained.functional.AltarOfCleansingRenderer;
 import com.vincenthuto.hemomancy.common.init.*;
+import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -110,6 +111,7 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.facsimile_bat.get(), FacsimileRenderers.Bat::new);
         event.registerEntityRenderer(EntityInit.facsimile_enderman.get(), FacsimileRenderers.Enderman::new);
         event.registerEntityRenderer(EntityInit.facsimile_blaze.get(), FacsimileRenderers.Blaze::new);
+        event.registerEntityRenderer(EntityInit.crimson_fireball.get(), NoopRenderer::new);
         event.registerEntityRenderer(EntityInit.facsimile_golem.get(), FacsimileRenderers.Golem::new);
         event.registerEntityRenderer(EntityInit.facsimile_horse.get(), FacsimileRenderers.HorseFacsimile::new);
         event.registerEntityRenderer(EntityInit.facsimile_donkey.get(), FacsimileRenderers.DonkeyFacsimile::new);
@@ -279,6 +281,9 @@ public final class EntityRendererRegistrar {
         event.registerBlockEntityRenderer(BlockEntityInit.dendritic_distributor.get(),
                 DendriticDistributorRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.hematic_stake.get(), HematicStakeRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.heart_node.get(), HeartNodeRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.mycelial_synapse.get(), MycelialSynapseRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.fruiting_body_cache.get(), FruitingBodyCacheRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.consecrated_bloodwell.get(), ConsecratedBloodwellRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.cardinal_focus.get(), CardinalFocusRenderer::new);

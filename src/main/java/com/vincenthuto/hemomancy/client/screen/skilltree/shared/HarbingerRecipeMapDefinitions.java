@@ -66,7 +66,7 @@ public final class HarbingerRecipeMapDefinitions {
 		registerRites("Ancestral", "ancestral_communion", "possession_rite", "visitation_rite");
 
 		registerCrafting("Floorless Crafts", "dried_gourd", "hematic_iron_block", "iron_brazier", "liber_sanguinum",
-				"living_staff", "vial_centrifuge", "ghastly_alembic", "hematic_stake");
+				"living_staff", "vial_centrifuge", "ghastly_alembic", "hematic_stake", "mycelial_synapse");
 		registerCrafting("Apparatus", "mnemonic_reliquary", "somatic_loom", "sporitic_thurible", "morphling_incubator",
 				"mycelial_lantern");
 		registerCrafting("Ritual Infrastructure", "runic_chisel_station", "visceral_mirror", "dendritic_distributor",
@@ -94,7 +94,7 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/hematic_unbinding", () -> new ItemStack(ItemInit.hematic_suture_needle.get()));
 		iconRites("cardinal_rite/scarlet_summons", () -> new ItemStack(ItemInit.blood_thrall_effigy.get()));
 		iconRites("cardinal_rite/covenant_vigil", () -> new ItemStack(BlockInit.sanguine_vigil.get()));
-		iconRites("cardinal_rite/possession_rite", () -> new ItemStack(ItemInit.thread_of_will.get()));
+		iconRites("cardinal_rite/possession_rite", () -> new ItemStack(ItemInit.sanguine_quintessence.get()));
 		iconRites("cardinal_rite/visitation_rite", () -> new ItemStack(BlockInit.heart_node.get()));
 		iconRites("cardinal_rite/sanguine_dominion", () -> new ItemStack(BlockInit.covenant_throne.get()));
 
@@ -186,6 +186,7 @@ public final class HarbingerRecipeMapDefinitions {
 		linkCrafting("blood_structure/vial_centrifuge", "blood_structure/mycelial_lantern", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/visceral_mirror", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/hematic_stake", RecipeMapLink.Kind.CONCEPTUAL);
+		linkCrafting("blood_structure/hematic_stake", "blood_structure/mycelial_synapse", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/dendritic_distributor", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/covenant_throne", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/sanguine_monolith", RecipeMapLink.Kind.CONCEPTUAL);

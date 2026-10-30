@@ -23,6 +23,7 @@ public class BloodBindingEffect extends MobEffect {
 		super.applyEffectTick(entity, amplifier);
 		var binding = entity.getEffect(EffectInit.blood_binding);
 		if (binding != null) {
+			com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.SurrogateTethers.tick(entity, binding);
 			entity.setDeltaMovement(0, 0, 0);
 			// A player's own client drives their motion: without a velocity packet a bound player walks free.
 			if (entity instanceof net.minecraft.server.level.ServerPlayer) entity.hurtMarked = true;

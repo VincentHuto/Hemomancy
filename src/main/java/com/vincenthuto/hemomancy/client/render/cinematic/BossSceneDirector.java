@@ -73,7 +73,10 @@ public final class BossSceneDirector {
 			return;
 		}
 		skipHeld = held ? skipHeld + 1 : 0;
-		if (skipHeld >= SKIP_TICKS) skipped = true;
+		if (skipHeld >= SKIP_TICKS && !skipped) {
+			skipped = true;
+			scene.skipped();
+		}
 	}
 
 	public void clear() {

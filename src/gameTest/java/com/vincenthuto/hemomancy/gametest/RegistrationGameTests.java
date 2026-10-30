@@ -129,8 +129,8 @@ public final class RegistrationGameTests {
         wip.buildContents(parameters);
         assertItemsInOrder(helper, main.getDisplayItems(), ItemInit.liber_sanguinum.get(),
                 ItemInit.harbinger_assignment_ledger.get(), ItemInit.blood_absorption.get(),
-                ItemInit.blood_projection.get(), ItemInit.living_syringe.get(), ItemInit.morphling_jar.get(),
-                ItemInit.vial_rack.get(), ItemInit.chitinite_arm_banner.get());
+                ItemInit.blood_projection.get(), ItemInit.living_syringe.get(), ItemInit.vial_rack.get(),
+                ItemInit.morphling_jar.get(), ItemInit.chitinite_arm_banner.get());
         var debugTools = java.util.List.of(ItemInit.structure_spawner.get(), ItemInit.structure_scanner.get(),
                 ItemInit.debug_showcase.get());
         helper.assertTrue(main.getDisplayItems().stream().noneMatch(stack -> debugTools.contains(stack.getItem())),
@@ -540,30 +540,93 @@ public final class RegistrationGameTests {
             helper.succeed();
     }
 
-    /** A heart-node's ribs grow only into air: they never dig into stone or a player's builds. */
+    /** A heart-node matures through its stages on the level clock and grows nothing into the world. */
     @GameTest(template = "empty", timeoutTicks = 20)
-    public static void heartNodeRibsNeverReplaceSolidBlocks(GameTestHelper helper) {
+    public static void heartNodeMaturesWithoutPlacingBlocks(GameTestHelper helper) {
         BlockPos nodePos = new BlockPos(8, 1, 8);
         helper.setBlock(nodePos, BlockInit.heart_node.get());
         var node = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity)
                 helper.getBlockEntity(nodePos);
         var level = helper.getLevel();
-        BlockPos rib0 = com.vincenthuto.hemomancy.common.world.HeartNodeRules.ribBase(helper.absolutePos(nodePos), 0);
-        BlockPos rib2 = com.vincenthuto.hemomancy.common.world.HeartNodeRules.ribBase(helper.absolutePos(nodePos), 2);
-        for (int y = 0; y <= 3; y++) {
-            level.setBlock(rib0.above(y), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
-            level.setBlock(rib2.above(y), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+        long now = level.getGameTime();
+        int ticks = com.vincenthuto.hemomancy.common.world.HeartNodeRules.MATURE_TICKS;
+        node.plant(UUID.randomUUID(), now);
+        helper.assertTrue(node.stage() == 0, "A fresh node starts at stage 0, found " + node.stage());
+        node.plant(node.owner(), now - ticks / 3);
+        node.refreshStage(level);
+        helper.assertTrue(node.stage() == 1, "A third of the way grown is stage 1, found " + node.stage());
+        helper.assertTrue(heartNodeModelStage(helper, nodePos) == 1, "The block shows stage 1's model");
+        node.plant(node.owner(), now - ticks);
+        node.refreshStage(level);
+        helper.assertTrue(node.stage() == com.vincenthuto.hemomancy.common.world.HeartNodeRules.MATURE_STAGE,
+                "A node past MATURE_TICKS is mature, found " + node.stage());
+        helper.assertTrue(heartNodeModelStage(helper, nodePos) == node.stage(), "The block shows the grown model");
+        node.plant(node.owner(), now);
+        helper.assertTrue(heartNodeModelStage(helper, nodePos) == 0, "Replanting shows the seed knot again");
+        BlockPos origin = helper.absolutePos(nodePos);
+        for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-8, 0, -8), origin.offset(8, 5, 8))) {
+            helper.assertTrue(!level.getBlockState(pos).is(BlockInit.calcified_hyphae.get())
+                    && !level.getBlockState(pos).is(BlockInit.infected_cap.get()),
+                    "A maturing node never grows ribs, found one at " + pos);
         }
-        level.setBlock(rib2.above(), net.minecraft.world.level.block.Blocks.OAK_PLANKS.defaultBlockState(), 3);
-        node.growRib(level, 0);
-        node.growRib(level, 2);
-        helper.assertTrue(level.getBlockState(rib0).is(BlockInit.calcified_hyphae.get()), "A rib grows into air");
-        helper.assertTrue(level.getBlockState(rib0.above(3)).is(BlockInit.infected_cap.get()), "A rib is capped, found " + level.getBlockState(rib0.above(3)) + " below " + level.getBlockState(rib0.above(2)));
-        helper.assertTrue(level.getBlockState(rib2.above()).is(net.minecraft.world.level.block.Blocks.OAK_PLANKS),
-                "A rib never replaces a player's block");
-        helper.assertTrue(level.getBlockState(rib2).is(BlockInit.calcified_hyphae.get()), "The rest of the rib still grows");
         clearTestArea(helper);
             helper.succeed();
+    }
+
+    /**
+     * Water beside a heart-node or a synapse flows round them, never into them: their shapes are small enough that a
+     * fluid would otherwise wash them away, dropping the node and withering its sanctum.
+     */
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void heartNodeAndSynapseHoldBackFluids(GameTestHelper helper) {
+        BlockPos nodePos = new BlockPos(3, 1, 3);
+        BlockPos synapsePos = new BlockPos(6, 1, 3);
+        helper.setBlock(nodePos, BlockInit.heart_node.get());
+        helper.setBlock(synapsePos, BlockInit.mycelial_synapse.get());
+        helper.setBlock(nodePos.west(), net.minecraft.world.level.block.Blocks.WATER);
+        helper.setBlock(synapsePos.east(), net.minecraft.world.level.block.Blocks.WATER);
+        helper.runAfterDelay(40, () -> {
+            helper.assertBlockPresent(BlockInit.heart_node.get(), nodePos);
+            helper.assertBlockPresent(BlockInit.mycelial_synapse.get(), synapsePos);
+            // Only these blocks' own drops count: GameTests run side by side, so other items may lie near.
+            helper.assertTrue(helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                    new net.minecraft.world.phys.AABB(helper.absolutePos(nodePos)).inflate(6),
+                    item -> item.getItem().is(BlockInit.heart_node.get().asItem())
+                            || item.getItem().is(BlockInit.mycelial_synapse.get().asItem())).isEmpty(),
+                    "Neither was washed out as an item");
+            clearTestArea(helper);
+            helper.succeed();
+        });
+    }
+
+    /** A node saved before maturity stages (rib stage up to 8, no planting time) loads as mature. */
+    @GameTest(template = "empty", timeoutTicks = 20)
+    public static void heartNodeFromBeforeStagesLoadsMature(GameTestHelper helper) {
+        BlockPos nodePos = new BlockPos(4, 1, 4);
+        helper.setBlock(nodePos, BlockInit.heart_node.get());
+        var node = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity)
+                helper.getBlockEntity(nodePos);
+        UUID owner = UUID.randomUUID();
+        var old = new net.minecraft.nbt.CompoundTag();
+        old.putUUID("Owner", owner);
+        old.putInt("Stage", 8);
+        old.putInt("Growth", 40);
+        node.loadWithComponents(old, helper.getLevel().registryAccess());
+        helper.assertTrue(owner.equals(node.owner()), "The owner survives the load");
+        helper.assertTrue(node.stage() == com.vincenthuto.hemomancy.common.world.HeartNodeRules.MATURE_STAGE,
+                "An old rib count is read as maturity, found " + node.stage());
+        node.refreshStage(helper.getLevel());
+        helper.assertTrue(node.stage() == com.vincenthuto.hemomancy.common.world.HeartNodeRules.MATURE_STAGE,
+                "An old node with no planting time stays mature");
+        helper.assertTrue(heartNodeModelStage(helper, nodePos) == node.stage(),
+                "A node saved before the stage was a block state catches its model up on its next check");
+        clearTestArea(helper);
+            helper.succeed();
+    }
+
+    private static int heartNodeModelStage(GameTestHelper helper, BlockPos nodePos) {
+        return helper.getBlockState(nodePos)
+                .getValue(com.vincenthuto.hemomancy.common.block.harbinger.functional.HeartNodeBlock.STAGE);
     }
 
     /** Mind Broken is the possession rite's cooldown: milk and a totem's cleanse leave it in place. */

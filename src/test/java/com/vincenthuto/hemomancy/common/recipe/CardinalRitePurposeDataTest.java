@@ -47,7 +47,8 @@ final class CardinalRitePurposeDataTest {
 			Map.entry("hematic_unbinding", "bond"), Map.entry("scarlet_summons", "bond"),
 			Map.entry("covenant_vigil", "bond"), Map.entry("ancestral_communion", "bond"),
 			Map.entry("possession_rite", "bond"), Map.entry("visitation_rite", "bond"));
-	private static final Set<String> SPECIAL = Set.of("apotheos_rite", "bloom_of_qliphoth", "ancestral_communion");
+	private static final Set<String> SPECIAL = Set.of("apotheos_rite", "bloom_of_qliphoth", "ancestral_communion",
+			"possession_rite");
 
 	@Test
 	void everyHarbingerRiteDeclaresItsPinnedPurposeOnAMatchingFloor() throws IOException {

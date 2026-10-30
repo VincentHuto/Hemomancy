@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.client.data.BloodFlowDiagnosticsClientData;
 import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
 import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
+import com.vincenthuto.hemomancy.client.data.HeartNodeClientState;
 import com.vincenthuto.hemomancy.client.data.ManipulationCostDiagnosticsClientData;
 import com.vincenthuto.hemomancy.client.data.ManipulationSlotDiagnosticsClientData;
 import com.vincenthuto.hemomancy.client.data.MaxBloodDiagnosticsClientData;
@@ -36,6 +37,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodli
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberOfWill;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberVisit;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFaneBoundaries;
+import com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeEnvelopePacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncFungalProjection;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMaxBloodDiagnostics;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMycophantFightScene;
@@ -82,6 +84,7 @@ public final class ClientboundStateHandlers {
 		ClientPayloadHandlers.register(PacketSyncCircusPerception.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncCircusSchool.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncFaneBoundaries.TYPE, ClientboundStateHandlers::handle);
+		ClientPayloadHandlers.register(HeartNodeEnvelopePacket.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncFungalProjection.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncLiberKnowledge.TYPE, ClientboundStateHandlers::handle);
 		ClientPayloadHandlers.register(PacketSyncManipulationCostDiagnostics.TYPE, ClientboundStateHandlers::handle);
@@ -145,6 +148,10 @@ public final class ClientboundStateHandlers {
 
 	static void handle(final PacketSyncFaneBoundaries msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> FaneBoundaryClientData.setEntries(msg.entries()));
+	}
+
+	static void handle(HeartNodeEnvelopePacket packet, IPayloadContext context) {
+		context.enqueueWork(() -> HeartNodeClientState.accept(packet.envelopes()));
 	}
 
 	static void handle(PacketSyncFungalProjection packet, IPayloadContext context) {

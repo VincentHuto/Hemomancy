@@ -4,10 +4,39 @@
   "riteType": "lesser",
   "purpose": "bond",
   "required_degree": 8,
+  "special": true,
   "riteName": "Rite of Possession",
-  "riteDescription": "A Silentium forces their will onto a piece of the organism. Drag a surrogate into the rite space and still it there; the will walks the Gardens in its facsimile while an echo waits at the rite.",
-  "floor": "hemomancy:communion_lesser",
-  "brazier_signature": [],
+  "riteDescription": "A Silentium forces their will onto a piece of the organism. Seat a Sanguine Quintessence in the Focus of a Qliphoth floor, drag a surrogate onto it and hold it there with your own Blood Binding, which lasts on the floor until the rite ends; the will walks the Gardens in its facsimile while an echo waits at the rite. Whatever the lit braziers hold of ambergris, hematic iron, a totem or adipocere is burned to steady the will.",
+  "floor": "hemomancy:qliphoth_grand",
+  "medium": {
+    "item": "hemomancy:sanguine_quintessence"
+  },
+  "optional_offerings": [
+    {
+      "ingredient": {
+        "item": "hemomancy:mnemonic_ambergris"
+      },
+      "effect": "concentration_regen"
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:hematic_iron_block"
+      },
+      "effect": "shell"
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:totem_of_undying"
+      },
+      "effect": "totem"
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:adipocere"
+      },
+      "effect": "max_concentration"
+    }
+  ],
   "ceremony": {
     "profile": "simple",
     "anchors": [

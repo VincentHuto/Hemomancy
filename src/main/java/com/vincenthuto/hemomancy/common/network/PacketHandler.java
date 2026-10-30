@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network;
 
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPossession;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PossessionActionPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PossessionScenePacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PossessionSkipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSporeLoad;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
@@ -65,7 +68,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "20";
+    public static final String PROTOCOL_VERSION = "25";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -98,6 +101,9 @@ public class PacketHandler {
                 PacketSyncStationUpgrades::handle);
         net.playToClient(PacketSyncSporeLoad.TYPE, PacketSyncSporeLoad.STREAM_CODEC, PacketSyncSporeLoad::handle);
         net.playToClient(PacketSyncPossession.TYPE, PacketSyncPossession.STREAM_CODEC, PacketSyncPossession::handle);
+        net.playToServer(PossessionActionPacket.TYPE, PossessionActionPacket.STREAM_CODEC, PossessionActionPacket::handle);
+        net.playToServer(PossessionSkipPacket.TYPE, PossessionSkipPacket.STREAM_CODEC, PossessionSkipPacket::handle);
+        net.playToClient(PossessionScenePacket.TYPE, PossessionScenePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToServer(BurnSporeLoadKeyPacket.TYPE, BurnSporeLoadKeyPacket.STREAM_CODEC, BurnSporeLoadKeyPacket::handle);
         net.playToServer(com.vincenthuto.hemomancy.common.network.succession.ResidentsRequestPacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.succession.ResidentsRequestPacket.STREAM_CODEC,
@@ -154,6 +160,15 @@ public class PacketHandler {
                 com.vincenthuto.hemomancy.common.network.boss.BossBarFramePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(com.vincenthuto.hemomancy.common.network.mausoleum.WardStrikePacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.mausoleum.WardStrikePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeEnvelopePacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeEnvelopePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeMomentPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeMomentPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.heartnode.PacketOpenHeartNodeScreen.TYPE,
+                com.vincenthuto.hemomancy.common.network.heartnode.PacketOpenHeartNodeScreen.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToServer(com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeSettingsPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeSettingsPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeSettingsPacket::handle);
         net.playToClient(com.vincenthuto.hemomancy.common.network.boss.BossScenePacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.boss.BossScenePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketSyncMycophantFightScene.TYPE,

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.world.AdipocereCrustDecoration;
 import com.vincenthuto.hemomancy.common.world.GardensNetwork;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.BloodwoodGrowthHandler;
@@ -139,8 +140,12 @@ public final class TransientServerStateEvents {
 		BloodFlowLedger.clearSessionState();
 		CorticalArchipelagoFeature.clearSessionState();
 		GardensNetwork.clearSessionState();
+		AdipocereCrustDecoration.clearSessionState();
 		com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.WardAnchors.clearServer();
 		MausoleumEvents.clearSessionState();
+		HeartNodeEnvelopeSync.clearSessionState();
+		HeartNodeEvents.clearSessionState();
+		com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionSequences.clearSessionState();
 	}
 
 	/** Ends one player's session state. Teardowns that cancel, restore or move something run before plain removals. */
@@ -154,7 +159,10 @@ public final class TransientServerStateEvents {
 			CircusPracticalController.logout(serverPlayer);
 			TerrestrialSpeculumPlantingManager.logout(serverPlayer);
 			FoundingFaneEvents.clearPreviewRelation(serverPlayer);
+			HeartNodeEnvelopeSync.logout(serverPlayer);
+			HeartNodeEvents.logout(serverPlayer);
 			LanternTickLightManager.logout(serverPlayer);
+			com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionSequences.logout(serverPlayer);
 		}
 		ManipulationReactiveEvents.logout(player);
 		ConductionManager.logout(player);

@@ -59,6 +59,11 @@ public final class VeinBackgroundRenderer {
         public static final Palette MACHINE = CRIMSON.rings(30, 35, 0, 0);
         /** The progress screen's crimson, whose glow keeps a trace of green and blue. */
         public static final Palette PROGRESS = CRIMSON.rings(35, 40, 4, 3);
+        /**
+         * The Gardens' pale felt: a dark grey ground with a faint bone glow, and strands that run from dim crimson (the
+         * faint ones) to pale rose-grey (the bright ones), so the veins read as blood under mycelium.
+         */
+        public static final Palette MYCELIAL = new Palette(0xFF100E0D, 4, 30, 34, 30, 28, 70, 100, 60, 220, 30, 200, 1f, 0.6f);
         /** Where {@link #PROGRESS} fades to as the deep path opens: violet. */
         public static final Palette PROGRESS_DEEP = new Palette(0xFF0E020D, 4, 45, 47, 5, 15, 34, 24, 3, 4, 18, 16, 0.86f, 0.74f);
 
@@ -93,6 +98,8 @@ public final class VeinBackgroundRenderer {
             public static final Scattered CRIMSON = new Scattered(12345L, 120, 10, 20, 6, 15, 25);
             /** The machine screens' sparser, fainter motes. */
             public static final Scattered MACHINE = new Scattered(13579L, 70, 10, 20, 6, 15, 20);
+            /** Spore dust for the Gardens screens: warmer, with as much green as red. */
+            public static final Scattered SPORE = new Scattered(20261029L, 90, 24, 24, 30, 12, 22);
 
             public Scattered count(int count) {
                 return new Scattered(seed, count, redBase, redRange, greenRange, alphaBase, alphaRange);
@@ -130,6 +137,10 @@ public final class VeinBackgroundRenderer {
         public static final Style CRIMSON = new Style(Field.STANDARD, Palette.CRIMSON, Speckles.Scattered.CRIMSON);
         /** The machine screens' finer, dimmer field. */
         public static final Style MACHINE = new Style(Field.MACHINE, Palette.MACHINE, Speckles.Scattered.MACHINE);
+
+        /** The Gardens screens' field: the stations' shallow strands on {@link Palette#MYCELIAL}, with spore dust. */
+        public static final Style MYCELIAL = new Style(Field.STATION.seed(20261029L), Palette.MYCELIAL,
+                Speckles.Scattered.SPORE);
 
         /** The Harbinger screens' default: 28 crimson tendrils that deepen to violet. */
         public static final Style PROGRESS = new Style(Field.STANDARD.withAnglePhase(), Palette.PROGRESS, Palette.PROGRESS_DEEP,

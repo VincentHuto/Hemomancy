@@ -24,6 +24,11 @@ final class SpecialFloorDataTest {
 			"apotheos_rite", "apotheos_grand",
 			"bloom_of_qliphoth", "qliphoth_grand",
 			"ancestral_communion", "ancestral_grand");
+	/**
+	 * Special rites performed on another special rite's floor. They keep their own purpose: the Rite of Possession is
+	 * a bond rite done where the organism's tree is grown, so it borrows the Qliphoth floor.
+	 */
+	private static final Map<String, String> BORROWED_FLOORS = Map.of("possession_rite", "qliphoth_grand");
 
 	@Test
 	void eachSpecialRiteHasItsOwnGrandFloorOfItsPurpose() throws IOException {
@@ -52,6 +57,8 @@ final class SpecialFloorDataTest {
 				assertNotNull(floor, file + " names a missing floor " + floorId);
 				if (CardinalRitePurpose.ofFloorStyle(floor.get("style").getAsString()) != null) continue;
 				assertTrue(rite.has("special") && rite.get("special").getAsBoolean(), file + " is on a special floor");
+				String name = file.getFileName().toString().replace(".json", "");
+				if (floorId.equals(BORROWED_FLOORS.get(name))) continue;
 				assertEquals(floor.get("purpose").getAsString(), rite.get("purpose").getAsString(),
 						file + " does not share its special floor's purpose");
 			}
