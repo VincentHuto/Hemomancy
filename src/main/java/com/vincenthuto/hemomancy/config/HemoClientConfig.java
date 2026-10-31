@@ -24,6 +24,7 @@ public class HemoClientConfig {
 	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_MUTATION_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_BLOOD_ORB_RENDERER;
 	public static ModConfigSpec.BooleanValue RENDER_FANE_BOUNDARY;
+	public static ModConfigSpec.EnumValue<FaneBoundaryStyle> FANE_BOUNDARY_STYLE;
 	public static ModConfigSpec.BooleanValue RENDER_CARDINAL_RITE_FOG;
 	public static ModConfigSpec.BooleanValue RENDER_HEART_NODE_SPREAD;
 	public static ModConfigSpec.DoubleValue CARDINAL_RITE_FOG_VERTICAL_OFFSET;
@@ -42,6 +43,12 @@ public class HemoClientConfig {
 		ATTACHED,
 		LEGACY_ICON,
 		OFF
+	}
+
+	/** How a Founding Fane's bounds are drawn: inscribed on the ground near and inside them, or as a dome everywhere. */
+	public enum FaneBoundaryStyle {
+		SURFACE,
+		DOME
 	}
 
 	public enum CardinalRiteHudMode {
@@ -139,6 +146,10 @@ public class HemoClientConfig {
 				.comment("Render Founding Fane boundary domes and screen distortion.")
 				.define("renderFaneBoundary", true);
 
+		FANE_BOUNDARY_STYLE = CLIENT_BUILDER
+				.comment("SURFACE (default) inscribes Engram glyphs over the ground inside a fane, with a ring where its bounds meet the ground, and fades the dome out as you come close; the dome still shows from a distance. DOME draws the dome everywhere.")
+				.defineEnum("faneBoundaryStyle", FaneBoundaryStyle.SURFACE);
+
 		RENDER_CARDINAL_RITE_FOG = CLIENT_BUILDER
 				.comment("Render rolling red and black ground fog around active Harbinger cardinal rites.")
 				.define("renderCardinalRiteFog", true);
@@ -196,6 +207,10 @@ public class HemoClientConfig {
 	public static boolean useTexturedDialogueStyle() {
 		return USE_TEXTURED_DIALOGUE_STYLE == null
 				|| USE_TEXTURED_DIALOGUE_STYLE.get();
+	}
+
+	public static FaneBoundaryStyle faneBoundaryStyle() {
+		return FANE_BOUNDARY_STYLE == null ? FaneBoundaryStyle.SURFACE : FANE_BOUNDARY_STYLE.get();
 	}
 
 	public static CardinalRiteHudMode cardinalRiteHud() {

@@ -34,7 +34,10 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.Optional;
 
-/** Courtyard, paired wall segments, gate, and four corner homes assembled by jigsaw pools. */
+/**
+ * Courtyard, paired wall segments, gate, and four corner homes assembled by jigsaw pools
+ * (tools/worldgen/harbinger_sites/outpost.py).
+ */
 public class HarbingerOutpostStructure extends HemoJigsawStructure {
 	public static final MapCodec<HarbingerOutpostStructure> CODEC = codec(HarbingerOutpostStructure::new);
 
@@ -78,17 +81,20 @@ public class HarbingerOutpostStructure extends HemoJigsawStructure {
 		String outpostKey = HarbingerRecruitmentRules.createOutpostKey(
 				level.getLevel().dimension().location(), fullBox);
 
+		// Prop the cobbled-deepslate footing (row 0 of every piece) down to the ground.
 		for (int x = minX; x <= maxX; x++) {
 			for (int z = minZ; z <= maxZ; z++) {
 				BlockPos base = new BlockPos(x, fullBox.minY(), z);
-				if (!level.getBlockState(base).is(Blocks.BLACKSTONE)) continue;
+				if (!level.getBlockState(base).is(Blocks.COBBLED_DEEPSLATE)) continue;
 				for (int y = base.getY() - 1; y >= base.getY() - 8; y--) {
 					BlockPos support = new BlockPos(x, y, z);
 					if (!level.getBlockState(support).canBeReplaced()) break;
-					level.setBlock(support, Blocks.BLACKSTONE.defaultBlockState(), 2);
+					level.setBlock(support, Blocks.COBBLED_DEEPSLATE.defaultBlockState(), 2);
 				}
 			}
 		}
+
+		StructureBraziers.rekindle(level, fullBox, chunkBox);
 
 		// Visit controllers one block beyond this chunk to link authored fillers.
 		// Only place a missing filler inside the current chunk: a later template

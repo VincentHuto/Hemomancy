@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryVisibilityRules;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -33,7 +34,13 @@ public final class FaneBoundaryRenderer {
 	private static final int DOME_SEGMENTS = 80;
 	private static final int DOME_RINGS = 64;
 	private static final double SPHERE_LATITUDE_END = Math.PI;
-	private static final float HEART_RADIUS = 40.0F;
+	static final float HEART_RADIUS = 40.0F;
+	/**
+	 * In the SURFACE style the dome is gone this close outside a fane's bounds and whole this far out, while
+	 * {@link FaneGroundRenderer} draws the ground in its place.
+	 */
+	private static final double DOME_FADE_NEAR = 4.0D;
+	private static final double DOME_FADE_FAR = 20.0D;
 	private static final float HOSTILE_DOME_ALPHA = 0.90F;
 	private static final float RIVAL_DOME_ALPHA = 0.45F;
 	private static final float MUNDANE_OUTSIDER_DOME_ALPHA = 0.52F;
@@ -79,8 +86,9 @@ public final class FaneBoundaryRenderer {
 
 		renderHostileWorldDomes(poseStack, entries, buffer, time, cam);
 		for (FaneBoundaryClientData.Entry entry : entries) {
-			if (effectiveRelation(entry) == FaneBoundaryRelation.MEMBER) {
-				drawMemberShimmer(poseStack, cam, entry, time);
+			float fade = domeFade(entry, cam);
+			if (effectiveRelation(entry) == FaneBoundaryRelation.MEMBER && fade > 0.01F) {
+				drawMemberShimmer(poseStack, cam, entry, time, fade);
 			}
 		}
 		RenderSystem.depthMask(true);
@@ -130,7 +138,36 @@ public final class FaneBoundaryRenderer {
 		return strongest;
 	}
 
-	private static boolean faneBoundaryRendererEnabled() {
+	/** Whether this viewer draws the fane's bounds on the ground ({@link FaneGroundRenderer}) as well as the dome. */
+	static boolean surfaceStyle() {
+		return HemoClientConfig.faneBoundaryStyle() == HemoClientConfig.FaneBoundaryStyle.SURFACE;
+	}
+
+	/** How far {@code pos} lies outside the nearest of the fane's bounds, in blocks; 0 inside them. */
+	static double outsideDistance(FaneBoundaryClientData.Entry entry, Vec3 pos) {
+		double nearest = distanceOutside(pos, entry.heart(), HEART_RADIUS);
+		for (BlockPos stake : entry.stakes()) {
+			nearest = Math.min(nearest, distanceOutside(pos, stake, entry.radius()));
+		}
+		return nearest;
+	}
+
+	private static double distanceOutside(Vec3 pos, BlockPos center, float radius) {
+		double dx = pos.x - (center.getX() + 0.5D);
+		double dy = pos.y - (center.getY() + 0.15D);
+		double dz = pos.z - (center.getZ() + 0.5D);
+		return Math.max(0.0D, Math.sqrt(dx * dx + dy * dy + dz * dz) - radius);
+	}
+
+	/** How much of the fane's dome to draw: all of it in the DOME style, and from afar in the SURFACE style. */
+	static float domeFade(FaneBoundaryClientData.Entry entry, Vec3 cam) {
+		if (!surfaceStyle()) {
+			return 1.0F;
+		}
+		return (float) HemoEasing.smoothstep(DOME_FADE_NEAR, DOME_FADE_FAR, outsideDistance(entry, cam));
+	}
+
+	static boolean faneBoundaryRendererEnabled() {
 		FaneBoundaryClientData.ViewMode viewMode = FaneBoundaryClientData.viewMode();
 		return viewMode != FaneBoundaryClientData.ViewMode.HIDDEN
 				&& (viewMode == FaneBoundaryClientData.ViewMode.MUNDANE
@@ -138,7 +175,7 @@ public final class FaneBoundaryRenderer {
 				|| HemoClientConfig.RENDER_FANE_BOUNDARY == null || HemoClientConfig.RENDER_FANE_BOUNDARY.get());
 	}
 
-	private static FaneBoundaryRelation effectiveRelation(FaneBoundaryClientData.Entry entry) {
+	static FaneBoundaryRelation effectiveRelation(FaneBoundaryClientData.Entry entry) {
 		FaneBoundaryClientData.ViewMode viewMode = FaneBoundaryClientData.viewMode();
 		if (viewMode == FaneBoundaryClientData.ViewMode.MUNDANE) {
 			return FaneBoundaryRelation.MUNDANE_OUTSIDER;
@@ -198,17 +235,21 @@ public final class FaneBoundaryRenderer {
 			if (relation == FaneBoundaryRelation.MEMBER) {
 				continue;
 			}
+			float fade = domeFade(entry, cam);
+			if (fade <= 0.01F) {
+				continue;
+			}
 			float seed = faneSeed(entry);
+			ShellStyle style = ShellStyle.forRelation(relation, time + seed);
+			style = style.withAlpha(style.alpha() * fade);
 			if (relation == FaneBoundaryRelation.OUTSIDER) {
-				drawRevealedFaneStyleDome(poseStack, buffer, cam, entry.heart(), HEART_RADIUS, time, seed);
+				drawStyledDome(poseStack, buffer, cam, entry.heart(), HEART_RADIUS, time, seed, style);
 				for (BlockPos stake : entry.stakes()) {
-					ShellStyle style = ShellStyle.forRelation(relation, time + seed);
 					drawHostileDomeShell(poseStack, buffer, cam, stake, entry.radius(), time, seed + stake.getX(),
 							style.withAlpha(style.alpha() * 0.65F), false);
 				}
 				continue;
 			}
-			ShellStyle style = ShellStyle.forRelation(relation, time + seed);
 			drawHostileDomeShell(poseStack, buffer, cam, entry.heart(), HEART_RADIUS, time, seed, style, false);
 			if (style.glowAlphaScale() > 0.0F) {
 				drawHostileDomeShell(poseStack, buffer, cam, entry.heart(), HEART_RADIUS * 1.025F, time,
@@ -223,7 +264,12 @@ public final class FaneBoundaryRenderer {
 
 	public static void drawRevealedFaneStyleDome(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
 			Vec3 cam, BlockPos center, float radius, float time, float seed) {
-		ShellStyle style = ShellStyle.forRelation(FaneBoundaryRelation.OUTSIDER, time + seed);
+		drawStyledDome(poseStack, buffer, cam, center, radius, time, seed,
+				ShellStyle.forRelation(FaneBoundaryRelation.OUTSIDER, time + seed));
+	}
+
+	private static void drawStyledDome(PoseStack poseStack, MultiBufferSource.BufferSource buffer, Vec3 cam,
+			BlockPos center, float radius, float time, float seed, ShellStyle style) {
 		drawHostileDomeShell(poseStack, buffer, cam, center, radius, time, seed, style, false);
 		if (style.glowAlphaScale() > 0.0F) {
 			drawHostileDomeShell(poseStack, buffer, cam, center, radius * 1.025F, time, seed + 19.0F,
@@ -302,8 +348,8 @@ public final class FaneBoundaryRenderer {
 	}
 
 	private static void drawMemberShimmer(PoseStack poseStack, Vec3 cam, FaneBoundaryClientData.Entry entry,
-			float time) {
-		float alpha = MEMBER_SHIMMER_ALPHA * (0.70F + 0.30F * (float) Math.sin(time * 0.07F));
+			float time, float fade) {
+		float alpha = MEMBER_SHIMMER_ALPHA * (0.70F + 0.30F * (float) Math.sin(time * 0.07F)) * fade;
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.enableDepthTest();

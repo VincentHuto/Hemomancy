@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.decoration.HarbingerEscr
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ResonantForgeBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -42,6 +43,10 @@ import java.util.Optional;
 @PrefixGameTestTemplate(false)
 public final class HarbingerOutpostAssemblyGameTests {
 	private HarbingerOutpostAssemblyGameTests() {}
+
+	/** The rebuilt outpost uses none of the Nether's blocks. */
+	private static final java.util.regex.Pattern NETHER_WORDS =
+			java.util.regex.Pattern.compile("nether|blackstone|basalt|shroomlight|netherrack|crimson_|warped_|soul_");
 
 	@GameTest(templateNamespace = "registration_validation", template = "empty")
 	public static void fourSeedsKeepAllMandatoryPieces(GameTestHelper helper) {
@@ -113,10 +118,13 @@ public final class HarbingerOutpostAssemblyGameTests {
 		var ladderPositions = new HashSet<BlockPos>();
 		for (BlockPos pos : BlockPos.betweenClosed(anchor.offset(-42, 0, -42), anchor.offset(42, 20, 42))) {
 			var state = level.getBlockState(pos);
-			if (state.is(Blocks.POLISHED_BLACKSTONE_BRICK_SLAB)) {
+			if (state.is(BlockInit.hematic_iron_plating_slab.get())) {
 				helper.assertTrue(level.getBlockState(pos.below()).isSolid(),
 						"A roof slab is floating above its supporting layer at " + pos);
 			}
+			String path = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).getPath();
+			helper.assertTrue(!NETHER_WORDS.matcher(path).find(),
+					"The outpost still uses a Nether block, " + path + ", at " + pos);
 			if (state.is(Blocks.RED_BANNER) || state.is(Blocks.RED_WALL_BANNER)) {
 				helper.assertTrue(state.canSurvive(level, pos), "An outpost banner lacks support at " + pos);
 			}
@@ -137,12 +145,12 @@ public final class HarbingerOutpostAssemblyGameTests {
 			if (state.is(Blocks.FURNACE)) { furnaces++; furnacePos = pos.immutable(); }
 			if (state.is(Blocks.SMOKER)) { smokers++; smokerPos = pos.immutable(); }
 			if (state.is(Blocks.CARTOGRAPHY_TABLE)) maps++;
-			if (state.is(Blocks.BLACKSTONE) && pos.getY() == plaza.getY() + 19) tallRoof++;
+			if (state.is(BlockInit.hematic_iron_plating_slab.get()) && pos.getY() == plaza.getY() + 20) tallRoof++;
 			if (state.is(Blocks.BREWING_STAND)
 					&& level.getBlockEntity(pos) instanceof BrewingStandBlockEntity stand
 					&& stand.getItem(0).is(Items.POTION) && stand.getItem(1).is(Items.POTION)
 					&& stand.getItem(2).is(Items.POTION)) vialDisplays++;
-			if (state.is(Blocks.CAMPFIRE)) pyres++;
+			if (state.is(BlockInit.iron_brazier.get()) && BrazierBlock.isLit(state)) pyres++;
 			if (state.is(BlockInit.blood_basin.get())) basins++;
 		}
 		helper.assertTrue(vicar == 1 && artificer == 1 && alchemist == 1 && alembic == 1
@@ -151,7 +159,7 @@ public final class HarbingerOutpostAssemblyGameTests {
 						+ " centrifuge=" + alchemist + " alembic=" + alembic + " cabinet=" + cabinet
 						+ " loom=" + mnemonist);
 		helper.assertTrue(banners >= 8 && standingBanners >= 2 && pyres >= 1 && basins == 0,
-				"The courtyard decoration or safe basin contract was lost");
+				"The courtyard decoration, its lit vigil brazier or the safe basin contract was lost");
 		helper.assertTrue(vialDisplays == 2, "The Alchemist's vial displays did not load their bottles");
 		helper.assertTrue(beds == 8 && crafting == 1 && furnaces == 1 && smokers == 1
 				&& maps == 1 && tallRoof > 0,

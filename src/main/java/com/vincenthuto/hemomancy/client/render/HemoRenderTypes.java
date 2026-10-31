@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
@@ -117,6 +118,7 @@ public final class HemoRenderTypes {
 
 	/** The Abocipher font atlas, which the Dominion floor's seal spells its runes from. */
 	public static final ResourceLocation ABOCIPHER_FONT_TEXTURE = Hemomancy.rloc("textures/font/abocipher.png");
+	public static final ResourceLocation ENGRAM_GLYPHS_TEXTURE = Hemomancy.rloc("textures/misc/engram_glyphs.png");
 	/** The engram runes packed a to z (tools/assets/build_engram_atlas.py), filtered smoothly for the Communion floor's inscriptions. */
 	public static final ResourceLocation ENGRAM_ATLAS_TEXTURE = Hemomancy.rloc("textures/world/rite_floor/engram_atlas.png");
 
@@ -959,6 +961,56 @@ public final class HemoRenderTypes {
 						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
 						.setWriteMaskState(RenderType.COLOR_WRITE)
 						.setCullState(RenderType.NO_CULL)
+						.createCompositeState(false));
+	}
+
+	/**
+	 * What one fane's ground layer is drawn with: the time, its colour (0xRRGGBB), the heart's camera-relative centre and
+	 * radius, the viewer's feet, the viewer's relation code (0 member, 1 rival elder, 2 outsider, 3 mundane), the drawn
+	 * reach and the layer's fade.
+	 */
+	public record FaneGroundUniforms(float time, int color, float heartX, float heartY, float heartZ, float heartRadius,
+			float playerX, float playerY, float playerZ, float relation, float reach, float fade) {
+	}
+
+	/**
+	 * A Founding Fane's ground seen from inside ({@code FaneGroundRenderer}): Engram glyphs over the floor within its
+	 * bounds and a cut ring where the bounds meet the ground. One type per fane, seeded from its heart, and one draw.
+	 */
+	public static RenderType faneGround(BlockPos heart, FaneGroundUniforms uniforms) {
+		return FANE_GROUND_TYPES.get(heart, uniforms);
+	}
+
+	private static final SeededRenderTypes<BlockPos, FaneGroundUniforms, RenderType> FANE_GROUND_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createFaneGround);
+
+	private static RenderType createFaneGround(BlockPos heart, Supplier<FaneGroundUniforms> values) {
+		float seed = MaterialQuads.seedTile((int) heart.asLong() ^ (int) (heart.asLong() >>> 32));
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"fane_ground_uniforms",
+				() -> {
+					FaneGroundUniforms u = values.get();
+					ShaderInstance shader = ShaderInit.FANE_GROUND.getInstance().get();
+					setUniform(shader, "HemoTime", u.time());
+					setRgbUniform(shader, "FaneColor", u.color());
+					setUniform(shader, "HeartOffset", u.heartX(), u.heartY(), u.heartZ(), u.heartRadius());
+					setUniform(shader, "PlayerOffset", u.playerX(), u.playerY(), u.playerZ());
+					setUniform(shader, "FaneLook", u.relation(), seed, u.reach(), u.fade());
+				},
+				() -> {
+				});
+		return RenderType.create("fane_ground",
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 4096, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.FANE_GROUND.getShard())
+						.setTextureState(new RenderStateShard.TextureStateShard(ENGRAM_GLYPHS_TEXTURE, false, false))
+						.setTexturingState(uniforms)
+						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
 						.createCompositeState(false));
 	}
 

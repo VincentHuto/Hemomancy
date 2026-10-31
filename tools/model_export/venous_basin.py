@@ -17,7 +17,7 @@ the animated hemomancy:block/blood_still; everything else is painted into the `v
 stone, hematic iron, bone and lacquer of the mausoleum set pieces. Authored for `facing=north` with the spout
 toward -z. 16 px per block.
 
-Emits venous_basin_<0..3>, blood_basin, the atlas, both blockstates, models/item/venous_basin.json, Blockbench
+Emits venous_basin_<0..3>, venous_basin_pour (the stream, VenousBasinBlock.POURING), blood_basin, the atlas, both blockstates, models/item/venous_basin.json, Blockbench
 projects and, with `--preview`, build/model-previews/venous_basin.png and blood_basin.png.
 Python 3 + Pillow + NumPy.
 """
@@ -356,15 +356,43 @@ def model(elements, height):
             'elements': elements}
 
 
+def venous_pour():
+    """The stream a brimming basin pours from its spout into the gutter in the floor in front of it: a sheet of blood
+    spilling off the spout's tip, then a falling ribbon down past the floor's top into the gutter's channel. Hand-UV'd
+    on the animated blood (the atlas pipeline's world UVs cannot reach below the block)."""
+    x0, x1 = NOTCH
+    tip_y = NOTCH_Y + .6
+
+    def faces(u0, u1, v0, v1, skip=()):
+        return {f: {'uv': [u0, v0, u1, v1], 'texture': '#blood'}
+                for f in ('north', 'south', 'east', 'west', 'up', 'down') if f not in skip}
+
+    elements = [
+        {'name': 'pour_lip', 'from': [x0, NOTCH_Y, -0.75], 'to': [x1, tip_y, 0],
+         'faces': faces(x0, x1, 4, 4.75, skip=('south',))},
+        {'name': 'pour_fall', 'from': [7.4, -3.5, -1.5], 'to': [8.6, NOTCH_Y + .2, -0.5],
+         'faces': dict(faces(7.4, 8.6, 0, 15.7, skip=('up', 'down')), up={'uv': [7.4, 7, 8.6, 8], 'texture': '#blood'})},
+        {'name': 'pour_splash', 'from': [6.5, -3.6, -2.4], 'to': [9.5, -3.4, 0.4],
+         'faces': faces(6.5, 9.5, 6, 8.8, skip=('down',))},
+    ]
+    return {'parent': 'minecraft:block/block', 'render_type': 'minecraft:translucent', 'ambientocclusion': False,
+            'textures': {'blood': TEXTURES['blood'], 'particle': TEXTURES['blood']}, 'elements': elements}
+
+
 def venous_blockstate():
-    variants = {}
+    """The basin for its facing and fill, and the stream when it pours (VenousBasinBlock.POURING)."""
+    parts = []
     for facing, y in (('north', 0), ('east', 90), ('south', 180), ('west', 270)):
         for level in range(4):
-            v = {'model': f'hemomancy:block/venous_basin_{level}'}
+            apply = {'model': f'hemomancy:block/venous_basin_{level}'}
             if y:
-                v['y'] = y
-            variants[f'facing={facing},fill={level}'] = v
-    return {'variants': variants}
+                apply['y'] = y
+            parts.append({'when': {'facing': facing, 'fill': str(level)}, 'apply': apply})
+        apply = {'model': 'hemomancy:block/venous_basin_pour'}
+        if y:
+            apply['y'] = y
+        parts.append({'when': {'facing': facing, 'pouring': 'true'}, 'apply': apply})
+    return {'multipart': parts}
 
 
 def preview_sheet(models, order, title, out_name, scale=15):
@@ -409,6 +437,7 @@ def main():
         outputs[f'block/{name}'] = model(elements, atlas.height)
     write({k: v for k, v in outputs.items() if 'venous' in k}, 'venous_basin', outputs['block/venous_basin_2'])
     write({'block/blood_basin': outputs['block/blood_basin']}, 'blood_basin', outputs['block/blood_basin'])
+    (ASSETS / 'models/block/venous_basin_pour.json').write_text(json.dumps(venous_pour(), indent=2) + '\n')
     item = {'parent': 'hemomancy:block/venous_basin_2'}
     (ASSETS / 'models/item/venous_basin.json').write_text(json.dumps(item, indent=2) + '\n')
     (ASSETS / 'blockstates/venous_basin.json').write_text(json.dumps(venous_blockstate(), indent=2) + '\n')

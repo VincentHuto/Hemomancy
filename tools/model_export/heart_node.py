@@ -2,7 +2,7 @@
 
 A crimson heart (the bleeding heart it was made from) sits half sunk in a knot of pale hyphal roots. The
 roots splay over the block's floor and a little past it, so the sanctum's spread seems to come out of them.
-Thin bone ribs grow up round the heart and close over it in a cage, the old rib ring kept at block scale,
+Four bone ribs grow up round the heart and close over it in a cage, the old rib ring kept at block scale,
 and capped fruiting bodies come up on the roots once it is grown.
 
 Stages (blockstate `stage`, HeartNodeRules.stageAt):
@@ -28,22 +28,25 @@ from station_kit import Model
 
 NAME = 'heart_node'
 LIVING = {
-    'root': 'hemomancy:block/calcified_hyphae',
+    'root': 'hemomancy:block/heart_node_root',
     'knot': 'hemomancy:block/erythrocytic_mycelium_top',
     'bone': 'minecraft:block/bone_block_side',
     'bonecap': 'minecraft:block/bone_block_top',
     'flesh': 'hemomancy:block/heart_node_flesh',
     'dark': 'hemomancy:block/heart_node_vessel',
-    'scab': 'hemomancy:block/blood_scorched_scab',
     'cap': 'hemomancy:block/infected_cap',
     'gill': 'hemomancy:block/fungal_gill',
 }
 CAPS = {'bone': 'bonecap'}
-# The heart's own flesh: the world's crust and bog flesh are near black at block scale, so the heart lifts them
-# to a living crimson. (source, desaturate, darken, tint)
-FLESH = {
-    'flesh': ('hemomancy:block/hemorrhagic_crust', 0, 1.95, (1.0, 1.0, 1.0)),
-    'dark': ('hemomancy:block/bog_flesh', 0, 1.5, (1.0, 1.0, 1.0)),
+# The node's own calm materials, drawn from world textures with their speckle settled: each source pixel is pulled
+# toward its neighbours and its texture's mean, then the values are grouped into a few bands, so a face reads as a
+# couple of clear tones at 16 px per block rather than per-pixel noise. The crust and bog flesh are near black at
+# block scale, so the heart lifts them to a living crimson; the roots are the calcified hyphae taken off bone white
+# so they part from the ribs. (source, smoothing 0..1, contrast, bands, gain, tint)
+CALM = {
+    'flesh': ('hemomancy:block/hemorrhagic_crust', .55, .5, 4, 1.85, (1.0, .92, .92)),
+    'dark': ('hemomancy:block/bog_flesh', .5, .55, 3, 1.4, (1.0, 1.0, 1.0)),
+    'root': ('hemomancy:block/calcified_hyphae', .55, .45, 3, .86, (1.0, .93, .88)),
 }
 # How each material dies: (desaturate, darken, tint). Flesh greys, roots and ribs blacken, caps go brown.
 WITHER = {
@@ -53,7 +56,6 @@ WITHER = {
     'bonecap': (.6, .5, (1.0, .92, .82)),
     'flesh': (.9, .62, (1.0, .97, .95)),
     'dark': (.9, .55, (1.0, .97, .95)),
-    'scab': (.9, .5, (1.0, 1.0, 1.0)),
     'cap': (.75, .5, (1.0, .85, .7)),
     'gill': (.75, .5, (1.0, .85, .7)),
 }
@@ -64,8 +66,9 @@ HEART_CENTRE = (8.0, 4.4, 8.0)
 HEART_SCALE = (.72, .86, 1.0, 1.0)
 # The root knot in pixels (x0, y0, z0, x1, y1, z1): HeartNodeBlock's collision box.
 KNOT = (4.5, 0, 4.5, 11.5, 3.4, 11.5)
-EIGHTHS = (0, 45, 90, 135, 180, 225, 270, 315)
-OFFSETS = (22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5)
+# Four ribs on the quarter turns, so they sit square on the pixel grid; the main roots leave between them.
+QUARTERS = (0, 90, 180, 270)
+DIAGONALS = (45, 135, 225, 315)
 
 DISPLAY = {
     'gui': {'rotation': [30, 225, 0], 'translation': [0, 1.5, 0], 'scale': [.8, .8, .8]},
@@ -82,53 +85,53 @@ DISPLAY = {
 def seed_knot(m):
     """The knot the heart was planted in: a tight ball of hyphae with a few rootlets feeling outward."""
     m.octo('seed_knot', 'y', (8, 0, 8), 2.5, 0, 2.6, 'knot', cap='root')
-    for deg in (45, 135, 225, 315):
-        m.radial('seed_rootlet', CENTRE, deg, 2.2, 4.0, -.35, .35, 0, .5, 'root')
-        m.radial('seed_rootlet_tip', CENTRE, deg + 22.5, 3.4, 4.6, -.25, .25, 0, .32, 'root')
+    for deg, reach in zip(DIAGONALS, (4.4, 3.8, 4.6, 3.6)):
+        m.radial('seed_rootlet', CENTRE, deg, 2.2, reach, -.5, .5, 0, .5, 'root')
 
 
 def knot(m):
-    """The grown knot: a low mound of hyphae, lumps where the main roots leave it, the heart sunk in its top."""
+    """The grown knot: a low mound of hyphae, a lump where each main root leaves it, the heart sunk in its top."""
     x0, _, z0, x1, y1, z1 = KNOT
     m.octo('knot', 'y', (8, 0, 8), (x1 - x0) / 2, 0, 2.2, 'knot', cap='root')
     m.octo('knot_crown', 'y', (8, 0, 8), 2.7, 2.2, y1, 'root')
-    for deg in (45, 135, 225, 315):
+    for deg in DIAGONALS:
         x, z = kit.polar(CENTRE, deg, 2.7)
         m.octo('knot_lump', 'y', (x, 0, z), 1.1, 0, 2.9, 'root')
 
 
+# The main roots, one from each lump, at uneven lengths so the splay is not a star: (degrees, reach).
+ROOTS = ((45, 9.6), (135, 8.2), (225, 9.2), (315, 7.6))
+# Two short rootlets between them.
+ROOTLETS = ((22.5, 6.4), (202.5, 5.8))
+
+
 def roots(m):
-    """Main roots splay over the floor and a little past the block; rootlets fork off between them."""
-    for deg in EIGHTHS:
-        m.radial('root', CENTRE, deg, 3.0, 6.8, -.55, .55, 0, .75, 'root')
-        m.radial('root_reach', CENTRE, deg, 6.8, 8.6, -.4, .4, 0, .5, 'root')
-        m.radial('root_tip', CENTRE, deg, 8.6, 9.8, -.26, .26, 0, .3, 'root')
-        x, z = kit.polar(CENTRE, deg, 5.0)
-        m.octo('root_node', 'y', (x, 0, z), .75, 0, 1.0, 'knot', cap='root')
-    for deg in OFFSETS:
-        m.radial('rootlet', CENTRE, deg, 4.2, 6.6, -.3, .3, 0, .42, 'root')
-        m.radial('rootlet_tip', CENTRE, deg, 6.6, 7.6, -.2, .2, 0, .28, 'root')
+    """Four main roots splay over the floor and a little past the block, tapering in two steps; two rootlets."""
+    for deg, reach in ROOTS:
+        mid = 3.0 + (reach - 3.0) * .62
+        m.radial('root', CENTRE, deg, 3.0, mid, -.75, .75, 0, 1.0, 'root')
+        m.radial('root_tip', CENTRE, deg, mid, reach, -.5, .5, 0, .5, 'root')
+    for deg, reach in ROOTLETS:
+        m.radial('rootlet', CENTRE, deg, 3.6, reach, -.5, .5, 0, .5, 'root')
 
 
-# Each rib from its socket in the knot up round the heart: (r0, r1, y0, y1). The heart reaches 3.0 px
-# from its centre at the top of a beat, so the ribs keep a pixel clear of it.
-RIB_RISE = ((3.6, 4.4, 2.6, 3.6), (4.1, 4.9, 3.6, 4.8), (4.3, 5.1, 4.8, 6.0), (4.0, 4.8, 6.0, 7.1),
-            (3.5, 4.3, 7.1, 8.0), (2.9, 3.7, 8.0, 8.8))
-RIB_CLOSE = ((2.2, 3.0, 8.8, 9.6), (1.4, 2.3, 9.6, 10.3), (.8, 1.6, 10.3, 10.8))
+# Each rib from its socket in the knot up round the heart: (r0, r1, y0, y1), a few long overlapping spans so the
+# curve steps cleanly. The heart reaches 3.0 px from its centre at the top of a beat, so the ribs keep clear of it.
+RIB_RISE = ((3.7, 4.7, 2.4, 4.4), (4.2, 5.2, 4.2, 6.6), (3.8, 4.8, 6.4, 8.2), (3.0, 4.0, 8.0, 9.2))
+RIB_CLOSE = ((1.9, 3.1, 9.0, 10.1), (.8, 2.0, 9.9, 10.7))
 
 
 def ribs(m, closed):
-    """Eight thin bone ribs rise from the knot; open, their tips curl in short of the crown, closed they meet."""
-    for deg in EIGHTHS:
-        m.radial('rib_socket', CENTRE, deg, 3.3, 4.5, -.6, .6, 2.0, 2.9, 'bone')
+    """Four bone ribs rise from the knot; open, their tips curl in short of the crown, closed they meet."""
+    for deg in QUARTERS:
+        m.radial('rib_socket', CENTRE, deg, 3.3, 4.9, -.75, .75, 1.8, 2.8, 'bone')
         for r0, r1, y0, y1 in RIB_RISE:
-            m.radial('rib', CENTRE, deg, r0, r1, -.38, .38, y0, y1, 'bone')
-        m.radial('rib_spur', CENTRE, deg, 5.0, 5.5, -.22, .22, 5.0, 5.7, 'bonecap')
+            m.radial('rib', CENTRE, deg, r0, r1, -.5, .5, y0, y1, 'bone')
         if closed:
             for r0, r1, y0, y1 in RIB_CLOSE:
-                m.radial('rib', CENTRE, deg, r0, r1, -.34, .34, y0, y1, 'bone')
+                m.radial('rib', CENTRE, deg, r0, r1, -.5, .5, y0, y1, 'bone')
         else:
-            m.radial('rib_tip', CENTRE, deg, 2.5, 3.1, -.26, .26, 8.8, 9.3, 'bonecap')
+            m.radial('rib_tip', CENTRE, deg, 2.3, 3.2, -.5, .5, 9.0, 9.7, 'bonecap')
     if closed:
         m.octo('cage_crown', 'y', (8, 0, 8), 1.5, 10.4, 11.4, 'bone')
         m.octo('crown_knot', 'y', (8, 0, 8), .9, 11.4, 12.0, 'root')
@@ -138,11 +141,8 @@ def fruiting_bodies(m):
     """Two capped fruiting bodies up on the roots, gills under their caps."""
     for deg, r, height, size in ((112.5, 6.4, 2.7, 1.35), (292.5, 5.6, 2.1, 1.05)):
         x, z = kit.polar(CENTRE, deg, r)
-        m.octo('fruit_stalk', 'y', (x, 0, z), .42, .4, height, 'root')
-        m.octo('fruit_cap', 'y', (x, 0, z), size, height, height + .7, 'cap', bottom='gill')
-        m.octo('fruit_crown', 'y', (x, 0, z), size * .6, height + .7, height + 1.1, 'cap')
-    x, z = kit.polar(CENTRE, 202.5, 4.6)
-    m.octo('fruit_bud', 'y', (x, 0, z), .5, .3, 1.3, 'cap')
+        m.octo('fruit_stalk', 'y', (x, 0, z), .5, .4, height, 'root')
+        m.octo('fruit_cap', 'y', (x, 0, z), size, height, height + .8, 'cap', bottom='gill')
 
 
 def stage(n):
@@ -160,7 +160,7 @@ def stage(n):
 
 
 def heart():
-    """A fist-sized crimson heart: two ventricles, an apex, dark atria and vessel stubs, coronaries over it."""
+    """A fist-sized crimson heart: two ventricles, an apex, dark atria and vessel stubs, two dark coronaries."""
     m = Model()
     cx, cy, cz = HEART_CENTRE
     m.octo('heart', 'y', (cx, 0, cz), 2.3, cy - 2.0, cy + 1.9, 'flesh')
@@ -171,11 +171,10 @@ def heart():
     m.octo('atrium', 'y', (cx + 1.0, 0, cz + .8), 1.05, cy + 1.6, cy + 2.4, 'dark')
     m.octo('aorta', 'y', (cx + .4, 0, cz - .5), .65, cy + 2.2, cy + 3.3, 'dark')
     m.octo('vessel', 'y', (cx - .6, 0, cz + .6), .45, cy + 2.2, cy + 2.9, 'dark')
-    for deg, y0, y1 in ((0, cy - 1.6, cy + 1.2), (90, cy - 1.2, cy + 1.6), (180, cy - 1.4, cy + 1.0),
-                        (270, cy - 1.8, cy + .9)):
-        m.radial('coronary', (cx, cz), deg, 2.25, 2.55, -.25, .25, y0, y1, 'scab')
-        m.radial('coronary_branch', (cx, cz), deg, 2.25, 2.5, .25, 1.3, y0 + 1.5, y0 + 1.75, 'scab')
-        m.radial('coronary_branch', (cx, cz), deg, 2.25, 2.45, -1.0, -.25, y0 + .7, y0 + .9, 'scab')
+    # Two coronaries down the front and back, each with one branch: the groove between the ventricles.
+    for deg, y0, y1 in ((45, cy - 1.6, cy + 1.6), (225, cy - 1.4, cy + 1.4)):
+        m.radial('coronary', (cx, cz), deg, 2.2, 2.6, -.5, .5, y0, y1, 'dark')
+        m.radial('coronary_branch', (cx, cz), deg, 2.2, 2.5, .5, 1.6, y0 + 1.2, y0 + 1.7, 'dark')
     return m
 
 
@@ -189,13 +188,37 @@ def scaled(factor):
     return apply
 
 
-def flesh_textures():
-    for mat, (source, desaturate, darken, tint) in FLESH.items():
-        kit.derive_texture(source, LIVING[mat].split('/')[-1], desaturate, darken, tint)
+def calm_texture(source, name, smoothing, contrast, bands, gain, tint):
+    """Write textures/block/<name>.png: `source` with its speckle settled (see CALM). Returns its location."""
+    import numpy as np
+    from PIL import Image
+    import resonant_forge_preview as raster
+    pixels = raster.texture(source).copy()
+    rgb = pixels[..., :3]
+    # Each pixel pulled toward its eight neighbours (wrapping, so the texture still tiles).
+    near = sum(np.roll(np.roll(rgb, dy, 0), dx, 1) for dy in (-1, 0, 1) for dx in (-1, 0, 1)) / 9
+    rgb = rgb * (1 - smoothing) + near * smoothing
+    mean = rgb.reshape(-1, 3).mean(0)
+    rgb = mean + (rgb - mean) * contrast
+    # The values grouped into a few bands about the mean, the hue kept.
+    lum = rgb @ np.array([.299, .587, .114])
+    lo, hi = lum.min(), lum.max()
+    step = (np.round((lum - lo) / max(hi - lo, 1e-6) * (bands - 1)) / (bands - 1)) * (hi - lo) + lo
+    rgb = rgb * (step / np.maximum(lum, 1e-6))[..., None]
+    pixels[..., :3] = np.clip(rgb * gain * np.array(tint), 0, 1)
+    out = kit.ASSETS / 'textures/block' / (name + '.png')
+    Image.fromarray((pixels * 255).round().astype(np.uint8), 'RGBA').save(out)
+    raster._textures.pop('hemomancy:block/' + name, None)
+    return 'hemomancy:block/' + name
+
+
+def calm_textures():
+    for mat, args in CALM.items():
+        calm_texture(args[0], LIVING[mat].split('/')[-1], *args[1:])
 
 
 def withered_textures():
-    flesh_textures()
+    calm_textures()
     return {mat: kit.derive_texture(loc, NAME + '_withered_' + mat, *WITHER[mat]) for mat, loc in LIVING.items()}
 
 

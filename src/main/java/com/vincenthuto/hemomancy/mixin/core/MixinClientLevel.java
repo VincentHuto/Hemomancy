@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
+import com.vincenthuto.hemomancy.client.render.world.FaneGroundRenderer;
 import com.vincenthuto.hemomancy.client.render.world.HeartNodeSpreadRenderer;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -10,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Tells the heart-node spread a block changed where the client can see it, so the faces of that section are found
+ * Tells the heart-node spread and the fane ground a block changed where the client can see it, so the faces of that section are found
  * again. NeoForge fires no client-side event for a block change the server sends.
  */
 @Mixin(ClientLevel.class)
@@ -18,6 +19,9 @@ public abstract class MixinClientLevel {
 	@Inject(method = "sendBlockUpdated", at = @At("HEAD"), remap = false)
 	private void hemomancy$heartNodeSpreadBlockChange(BlockPos pos, BlockState oldState, BlockState newState, int flags,
 			CallbackInfo ci) {
-		if (oldState != newState) HeartNodeSpreadRenderer.invalidate(pos);
+		if (oldState != newState) {
+			HeartNodeSpreadRenderer.invalidate(pos);
+			FaneGroundRenderer.invalidate(pos);
+		}
 	}
 }

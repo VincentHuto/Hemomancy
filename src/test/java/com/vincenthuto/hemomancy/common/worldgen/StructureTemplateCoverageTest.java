@@ -24,9 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class StructureTemplateCoverageTest {
 	private static final Map<String, String> TEMPLATES_NOT_YET_AUTHORED = Map.of(
-			"hemomancy:bog_body_ossuary_niche", "structure set kept, template not authored",
 			"hemomancy:crimson_lodge_annex", "structure set kept, template not authored",
-			"hemomancy:sanguine_surveyor_bivouac", "structure set kept, template not authored",
 			"hemomancy:circus_pavilion", "orphan pool: the pavilion structure starts from crimson_troupe_pavilion");
 	private static final Set<String> EMPTY_BIOME_TAGS = Set.of("mausoleum");
 

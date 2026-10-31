@@ -10,6 +10,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.material.Fluids;
 
 public final class DiscoveryInscriptionPlacement {
 	private static final int MAX_RADIUS = 9;
@@ -76,7 +77,7 @@ public final class DiscoveryInscriptionPlacement {
 			return false;
 		}
 
-		BlockState state = block.defaultBlockState();
+		BlockState state = waterlogIfSubmerged(level, pos, block.defaultBlockState());
 		if (state.hasProperty(DiscoveryInscriptionBlock.FACING)) {
 			state = state.setValue(DiscoveryInscriptionBlock.FACING, facingToward(origin, pos));
 		}
@@ -106,7 +107,7 @@ public final class DiscoveryInscriptionPlacement {
 				continue;
 			}
 
-			BlockState state = block.defaultBlockState();
+			BlockState state = waterlogIfSubmerged(level, pos, block.defaultBlockState());
 			if (state.hasProperty(DiscoveryInscriptionBlock.FACING)) {
 				state = state.setValue(DiscoveryInscriptionBlock.FACING, facing);
 			}
@@ -121,6 +122,13 @@ public final class DiscoveryInscriptionPlacement {
 
 	private static boolean canReplaceForInscription(WorldGenLevel level, BlockPos pos) {
 		return level.getBlockState(pos).isAir() || level.getFluidState(pos).is(FluidTags.WATER);
+	}
+
+	/** A wreck's inscriptions sit in the sea; placing a dry state there would leave an air pocket. */
+	private static BlockState waterlogIfSubmerged(WorldGenLevel level, BlockPos pos, BlockState state) {
+		return state.hasProperty(DiscoveryInscriptionBlock.WATERLOGGED)
+				? state.setValue(DiscoveryInscriptionBlock.WATERLOGGED, level.getFluidState(pos).isSourceOfType(Fluids.WATER))
+				: state;
 	}
 
 	private static Direction facingToward(BlockPos origin, BlockPos pos) {

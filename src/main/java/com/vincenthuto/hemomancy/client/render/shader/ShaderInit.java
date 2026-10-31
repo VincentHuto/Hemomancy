@@ -61,6 +61,10 @@ public class ShaderInit {
 			DefaultVertexFormat.BLOCK, "HemoTime", "Lobe0", "Lobe1", "Lobe2", "Lobe3", "Lobe4", "Lobe5", "Lobe6", "Lobe7",
 			"LobeLife0", "LobeLife1", "LobeArrive0", "LobeArrive1", "PlayerOffset", "SpreadFlags", "SpreadLook");
 
+	/** A Founding Fane's ground seen from inside: Engram glyphs over the floor and a ring where its bounds meet it. */
+	public static ShaderHolder FANE_GROUND = new ShaderHolder(Hemomancy.rloc("world/fane_ground"),
+			DefaultVertexFormat.BLOCK, "HemoTime", "FaneColor", "HeartOffset", "PlayerOffset", "FaneLook");
+
 	/** The same ward burning into an Apotheos on hallowed ground, drawn over the player model. */
 	public static ShaderHolder MAUSOLEUM_WARD_BODY = new ShaderHolder(Hemomancy.rloc("world/mausoleum_ward"),
 			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "WardBody");
@@ -233,6 +237,7 @@ public class ShaderInit {
         registerShader(event, MAUSOLEUM_WARD.createInstance(provider));
         registerShader(event, MAUSOLEUM_WARD_BODY.createInstance(provider));
         registerShader(event, HEART_NODE_SPREAD.createInstance(provider));
+        registerShader(event, FANE_GROUND.createInstance(provider));
         registerShader(event, VESPER_WOUND_DRAW.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));
         registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));

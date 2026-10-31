@@ -1,0 +1,191 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:translucent",
+  "ambientocclusion": false,
+  "textures": {
+    "blood": "hemomancy:block/blood_still",
+    "particle": "hemomancy:block/blood_still"
+  },
+  "elements": [
+    {
+      "name": "pour_lip",
+      "from": [
+        7,
+        12,
+        -0.75
+      ],
+      "to": [
+        9,
+        12.6,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7,
+            4,
+            9,
+            4.75
+          ],
+          "texture": "#blood"
+        },
+        "east": {
+          "uv": [
+            7,
+            4,
+            9,
+            4.75
+          ],
+          "texture": "#blood"
+        },
+        "west": {
+          "uv": [
+            7,
+            4,
+            9,
+            4.75
+          ],
+          "texture": "#blood"
+        },
+        "up": {
+          "uv": [
+            7,
+            4,
+            9,
+            4.75
+          ],
+          "texture": "#blood"
+        },
+        "down": {
+          "uv": [
+            7,
+            4,
+            9,
+            4.75
+          ],
+          "texture": "#blood"
+        }
+      }
+    },
+    {
+      "name": "pour_fall",
+      "from": [
+        7.4,
+        -3.5,
+        -1.5
+      ],
+      "to": [
+        8.6,
+        12.2,
+        -0.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.4,
+            0,
+            8.6,
+            15.7
+          ],
+          "texture": "#blood"
+        },
+        "south": {
+          "uv": [
+            7.4,
+            0,
+            8.6,
+            15.7
+          ],
+          "texture": "#blood"
+        },
+        "east": {
+          "uv": [
+            7.4,
+            0,
+            8.6,
+            15.7
+          ],
+          "texture": "#blood"
+        },
+        "west": {
+          "uv": [
+            7.4,
+            0,
+            8.6,
+            15.7
+          ],
+          "texture": "#blood"
+        },
+        "up": {
+          "uv": [
+            7.4,
+            7,
+            8.6,
+            8
+          ],
+          "texture": "#blood"
+        }
+      }
+    },
+    {
+      "name": "pour_splash",
+      "from": [
+        6.5,
+        -3.6,
+        -2.4
+      ],
+      "to": [
+        9.5,
+        -3.4,
+        0.4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.5,
+            6,
+            9.5,
+            8.8
+          ],
+          "texture": "#blood"
+        },
+        "south": {
+          "uv": [
+            6.5,
+            6,
+            9.5,
+            8.8
+          ],
+          "texture": "#blood"
+        },
+        "east": {
+          "uv": [
+            6.5,
+            6,
+            9.5,
+            8.8
+          ],
+          "texture": "#blood"
+        },
+        "west": {
+          "uv": [
+            6.5,
+            6,
+            9.5,
+            8.8
+          ],
+          "texture": "#blood"
+        },
+        "up": {
+          "uv": [
+            6.5,
+            6,
+            9.5,
+            8.8
+          ],
+          "texture": "#blood"
+        }
+      }
+    }
+  ]
+}

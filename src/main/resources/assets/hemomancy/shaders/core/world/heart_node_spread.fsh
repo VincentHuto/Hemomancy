@@ -75,15 +75,33 @@ float arriveAt(int i) {
     return i < 4 ? LobeArrive0[i] : LobeArrive1[i - 4];
 }
 
-// A thin branching strand: the contour of smooth noise, so it meanders and forks.
-float strand(vec3 p, float width) {
-    return 1.0 - smoothstep(width * 0.7, width, abs(smoothNoise(p) - 0.5));
+// A line `halfWidth` either side of zero distance, its edge anti-aliased over one screen pixel. A line thinner than a
+// pixel fades instead of breaking into stair steps, so distant strands thin out rather than crawl.
+float hairline(float dist, float halfWidth) {
+    float aa = max(fwidth(dist), 0.0001);
+    float w = max(halfWidth, aa * 0.5);
+    return (1.0 - smoothstep(w - aa * 0.5, w + aa * 0.5, dist)) * (halfWidth / w);
+}
+
+// How far q lies, in blocks, from a thin branching strand: the contour of smooth noise, so it meanders and forks.
+// The noise's distance from its contour is divided by its slope, so a strand keeps one width along its whole length
+// instead of swelling into blobs where the noise flattens. `freq` stretches the noise per axis of q.
+float strandDistance(vec2 q, vec2 freq, float salt) {
+    vec3 p = vec3(q * freq, salt);
+    float n = smoothNoise(p);
+    const float E = 0.04;
+    vec2 slope = vec2(smoothNoise(p + vec3(E, 0.0, 0.0)) - n, smoothNoise(p + vec3(0.0, E, 0.0)) - n) / E * freq;
+    return abs(n - 0.5) / max(length(slope), 0.15);
+}
+
+float strand(vec2 q, vec2 freq, float salt, float halfWidth) {
+    return hairline(strandDistance(q, freq, salt), halfWidth);
 }
 
 // Short straight fibres lying along the angle a: strands stretched along one axis.
 float fibres(vec2 p, float a, float salt) {
     vec2 r = vec2(cos(a) * p.x + sin(a) * p.y, -sin(a) * p.x + cos(a) * p.y);
-    return strand(vec3(r.x * 1.6, r.y * 7.5, salt), 0.07);
+    return strand(r, vec2(1.6, 7.5), salt, 0.008);
 }
 
 // A soft bump a few ticks wide, where a heartbeat's wave is passing.
@@ -116,8 +134,6 @@ void main() {
     vec2 away = toFeet.xz / max(length(toFeet.xz), 0.001);
     plane -= away * press * (0.2 + 0.07 * sin(t * 0.25));
     plane += vec2(seed * 7.31, seed * 3.17);
-    // Snapped to the block's 16 pixels, so the mat has the texel density of the blocks it lies on.
-    plane = (floor(plane * 16.0) + 0.5) / 16.0;
     // A slow warp, so nothing in the mat lines up with the block grid.
     vec2 warped = plane + (vec2(smoothNoise(vec3(plane * 0.35, seed)), smoothNoise(vec3(plane * 0.35, seed + 17.0)))
             - 0.5) * 0.9;
@@ -155,13 +171,17 @@ void main() {
     float felt = fbm(warped * 1.6 + vec2(0.0, t * 0.0015));
     float threshold = mix(0.9, 0.18, density);
     float feltCover = smoothstep(threshold, threshold + 0.12, felt);
-    float width = mix(0.03, 0.07, intensity) * (0.65 + 0.35 * density);
-    float big = strand(vec3(warped * 0.5, seed + t * 0.0008), width);
-    float fine = strand(vec3(warped * 1.8, seed + 11.0), width * 0.8) * (0.3 + 0.7 * density);
-    // Hair: the finest hyphae, a fibrous nap over the felt that thins out with it.
+    // Half-widths in blocks: the main strands about a pixel wide at the heart, the fine ones about half that.
+    float width = mix(0.02, 0.032, intensity) * (0.55 + 0.45 * density);
+    float bigDistance = strandDistance(warped, vec2(0.5), seed + t * 0.0008);
+    float big = hairline(bigDistance, width);
+    // The vessel core down the middle of a main strand, where the glow runs.
+    float bigCore = hairline(bigDistance, width * 0.4);
+    float fine = strand(warped, vec2(1.8), seed + 11.0, width * 0.5) * (0.3 + 0.7 * density);
+    // Hair: the finest hyphae, a fibrous nap lying on the felt and its margins only, so bare ground stays clear.
     float hair = max(fibres(warped, 0.6 + seed, seed + 61.0), fibres(warped, 2.2 + seed, seed + 67.0))
-            * (0.2 + 0.8 * density);
-    feltCover = max(feltCover * (0.7 + 0.3 * hair), hair * 0.55 * density);
+            * (0.2 + 0.8 * density) * smoothstep(threshold - 0.15, threshold + 0.05, felt);
+    feltCover = max(feltCover * (0.7 + 0.3 * hair), hair * 0.35 * density);
 
     // ---- the edge: the felt gives out and the strands thin into frond tips reaching outward, stopping on a ragged
     // line, so the boundary reads without ever being a circle
@@ -174,7 +194,7 @@ void main() {
         float fray = 1.0 - smoothstep(0.3, 1.5, depth);
         float line = depth + (smoothNoise(vec3(side * 1.3, seed + 31.0, along * 0.2)) - 0.5) * 1.1;
         edgeCut = smoothstep(0.0, 0.25, line);
-        frond = strand(vec3(side * 2.6, along * 0.45, seed + 23.0), 0.1) * fray;
+        frond = strand(vec2(side, along), vec2(2.6, 0.45), seed + 23.0, 0.014) * fray;
         feltCover *= 1.0 - fray;
         big *= mix(1.0, 0.4, fray);
         fine *= 1.0 - fray;
@@ -185,14 +205,13 @@ void main() {
     }
 
     // ---- threads: a thicker crimson-cored hypha meandering along the ground from the heart toward each synapse
-    float threadCore = 0.0;
-    float threadHalo = 0.0;
-    if (SpreadFlags.y > 0.5 && floorFace > 0.5 && abs(toThread) < THREAD_SPAN - 0.05) {
-        float meander = (smoothNoise(vec3(pathLength * 0.45, seed + 41.0, 0.0)) - 0.5) * 0.55;
-        float d = abs(toThread + meander);
-        threadCore = 1.0 - smoothstep(0.07, 0.13, d);
-        threadHalo = exp(-d * d * 18.0) * 0.4;
-    }
+    // The line is measured outside the gate: its anti-aliasing takes screen derivatives, which a branch that differs
+    // between neighbouring pixels leaves undefined.
+    float meander = (smoothNoise(vec3(pathLength * 0.45, seed + 41.0, 0.0)) - 0.5) * 0.55;
+    float threadDistance = abs(toThread + meander);
+    float onThread = SpreadFlags.y > 0.5 && floorFace > 0.5 && abs(toThread) < THREAD_SPAN - 0.05 ? 1.0 : 0.0;
+    float threadCore = hairline(threadDistance, 0.04) * onThread;
+    float threadHalo = exp(-threadDistance * threadDistance * 60.0) * 0.35 * onThread;
 
     // ---- the pulse: a soft brightening ring rolls out from the heart through the veins, then down each thread to its
     // synapse, which flares
@@ -228,7 +247,7 @@ void main() {
     // ---- colour: lit felt and dark crimson strands, the fresh rim white, and the veins' glow added over the light
     vec3 lit = lightColor.rgb;
     vec3 feltColour = mix(vec3(0.6, 0.58, 0.56), vec3(0.88, 0.85, 0.8), fbm(warped * 4.3 + 2.0));
-    feltColour = mix(feltColour, vec3(0.95, 0.93, 0.9), hair * 0.5);
+    feltColour = mix(feltColour, vec3(0.95, 0.93, 0.9), hair * 0.3);
     vec3 veinColour = vec3(0.42, 0.05, 0.07);
     vec3 glowColour = vec3(0.95, 0.16, 0.14);
     vec3 colour = feltColour * lit;
@@ -236,7 +255,7 @@ void main() {
     colour = mix(colour, vec3(0.92, 0.9, 0.86) * lit, frond * (1.0 - veins));
     colour = mix(colour, vec3(1.0, 0.98, 0.95) * max(lit, vec3(0.55)), rim * 0.85);
     colour = mix(colour, veinColour * lit, threadCore * 0.6);
-    float veinGlow = big * (0.14 + 0.55 * ring) + fine * 0.25 * ring;
+    float veinGlow = bigCore * (0.2 + 0.7 * ring) + big * 0.15 * ring + fine * 0.25 * ring;
     colour += glowColour * (veinGlow * 0.5 + threadCore * (0.2 + 0.7 * run) + threadHalo * 0.2 * (0.3 + run)
             + flare * 0.9);
 

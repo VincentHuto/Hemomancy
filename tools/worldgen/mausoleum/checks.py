@@ -97,7 +97,8 @@ def expected(name):
             return None
         table = dict(SILENT)
         table.update(UNMODELLED.get(name, {}))
-        table.update({k: tuple(v) for k, v in keys.items()})
+        # A multipart that only draws a part when a switch is on names just 'true'; the switch still takes 'false'.
+        table.update({k: BOOL if set(v) <= set(BOOL) else tuple(v) for k, v in keys.items()})
         return table
     return {}
 

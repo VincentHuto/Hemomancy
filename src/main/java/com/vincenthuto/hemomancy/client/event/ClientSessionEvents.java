@@ -99,6 +99,7 @@ public final class ClientSessionEvents {
         MausoleumWardClientState.clear();
         MausoleumWardRenderer.clear();
         com.vincenthuto.hemomancy.client.render.world.HeartNodeSpreadRenderer.clear();
+        com.vincenthuto.hemomancy.client.render.world.FaneGroundRenderer.clear();
         com.vincenthuto.hemomancy.client.render.world.HeartNodeMomentRenderer.clear();
         com.vincenthuto.hemomancy.client.sound.MausoleumAmbience.clear();
         com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.WardAnchors.clearClient();

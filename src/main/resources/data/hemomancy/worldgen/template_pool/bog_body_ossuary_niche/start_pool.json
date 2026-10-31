@@ -8,7 +8,8 @@
         "location": "hemomancy:bog_body_ossuary_niche",
         "processors": "minecraft:empty",
         "projection": "rigid",
-        "element_type": "minecraft:single_pool_element"
+        "element_type": "minecraft:single_pool_element",
+        "override_liquid_settings": "ignore_waterlogging"
       }
     }
   ]

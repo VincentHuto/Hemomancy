@@ -21,6 +21,9 @@ public final class StructurePlacementChecks {
 	private static final int OUTPOST_RADIUS = 28;
 	private static final int OUTPOST_SAMPLE_STEP = 7;
 	private static final int MAX_OUTPOST_SURFACE_VARIATION = 8;
+	private static final int TEMPLE_RADIUS = 15;
+	private static final int TEMPLE_SAMPLE_STEP = 5;
+	private static final int MAX_TEMPLE_SURFACE_VARIATION = 6;
 	private static final int CIRCUS_PAVILION_FOOTPRINT_RADIUS = 24;
 	private static final int CIRCUS_PAVILION_SAMPLE_STEP = 12;
 
@@ -149,6 +152,29 @@ public final class StructurePlacementChecks {
 			}
 		}
 		return high - low <= MAX_OUTPOST_SURFACE_VARIATION ? OptionalInt.of(high) : OptionalInt.empty();
+	}
+
+	/**
+	 * The Blood Temple's podium (31 x 23, any rotation, centred near the chunk's middle) must sit on dry land that rises
+	 * no more than {@link #MAX_TEMPLE_SURFACE_VARIATION} across it; beard_thin fills the rest under the podium.
+	 */
+	public static boolean isSuitableBloodTempleSite(Structure.GenerationContext context) {
+		if (!canPlaceOverworldHemomancyStructure(context)) return false;
+		int centerX = context.chunkPos().getMiddleBlockX();
+		int centerZ = context.chunkPos().getMiddleBlockZ();
+		int low = Integer.MAX_VALUE;
+		int high = Integer.MIN_VALUE;
+		for (int dx = -TEMPLE_RADIUS; dx <= TEMPLE_RADIUS; dx += TEMPLE_SAMPLE_STEP) {
+			for (int dz = -TEMPLE_RADIUS; dz <= TEMPLE_RADIUS; dz += TEMPLE_SAMPLE_STEP) {
+				int x = centerX + dx;
+				int z = centerZ + dz;
+				if (!isSuitableLandColumn(context, x, z, MAX_ALLOWED_WATER_DEPTH)) return false;
+				int surface = getSurfaceHeight(context, x, z);
+				low = Math.min(low, surface);
+				high = Math.max(high, surface);
+			}
+		}
+		return high - low <= MAX_TEMPLE_SURFACE_VARIATION;
 	}
 
 	public static boolean isSuitableCircusPavilionSite(Structure.GenerationContext context) {

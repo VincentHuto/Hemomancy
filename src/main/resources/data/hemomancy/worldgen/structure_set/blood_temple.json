@@ -9,6 +9,10 @@
     "salt": 1594707081,
     "spacing": 32,
     "separation": 4,
+    "exclusion_zone": {
+      "other_set": "hemomancy:harbinger_outpost",
+      "chunk_count": 5
+    },
     "type": "minecraft:random_spread"
   }
 }

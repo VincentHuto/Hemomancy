@@ -68,6 +68,7 @@ public final class WorldEffectDispatcher {
             float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
             // The heart-node spread lies on the ground, so it goes first: the ward and every rite visual draw over it.
             HeartNodeSpreadRenderer.render(event.getPoseStack(), partialTick);
+            FaneGroundRenderer.render(event.getPoseStack(), partialTick);
             MausoleumWardRenderer.render(event.getPoseStack(), partialTick);
             CircusPerceptionOverlay.renderWorld(event.getPoseStack(), partialTick);
             VesperFightFloorRenderer.renderFadingPerimeter(event);

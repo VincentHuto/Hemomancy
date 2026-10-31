@@ -94,6 +94,8 @@ def reviewClients = [
                              props: ['hemomancy.possessionReview': 'true']],
     heartNodeReviewClient: [dir: 'build/heart-node-review', user: 'HeartNodeReview', size: review,
                             props: ['hemomancy.heartNodeReview': 'true']],
+    faneGroundReviewClient: [dir: 'build/fane-ground-review', user: 'FaneGroundReview', size: review,
+                             props: ['hemomancy.faneGroundReview': 'true']],
     riteFloorReviewClient: [dir: 'build/rite-floor-client-review', user: 'RiteFloorReview', size: review,
                             props: ['hemomancy.riteFloorReview': 'true',
                                     'hemomancy.riteFloorReviewSpecial': gradleOr('riteFloorReviewSpecial', 'true')]],
@@ -126,6 +128,9 @@ def reviewClients = [
                                      // Track 5: -PbrinedSeatChartOnly=true shoots only the Relay Chart stops.
                                      'hemomancy.brinedSeatReview.chartOnly': gradleOr('brinedSeatChartOnly', 'false')]],
     // Brined Court outposts and signs (Track 8): -PbrinedOutpostSeed=<seed> (default 42); build/brined-outpost-review/screenshots.
+    // Blood Temple and Harbinger Outpost in a superflat world (HarbingerSitesClientReview); build/harbinger-sites-review/screenshots.
+    harbingerSitesReviewClient: [dir: 'build/harbinger-sites-review', user: 'SitesReview', driver: false, size: review,
+                                 props: ['hemomancy.harbingerSitesReview': 'true']],
     brinedOutpostReviewClient: [dir: 'build/brined-outpost-review', user: 'OutpostReview', driver: false, size: review,
                                 props: ['hemomancy.brinedOutpostReview': 'true',
                                         'hemomancy.brinedOutpostReview.seed': gradleOr('brinedOutpostSeed', '42')]],
