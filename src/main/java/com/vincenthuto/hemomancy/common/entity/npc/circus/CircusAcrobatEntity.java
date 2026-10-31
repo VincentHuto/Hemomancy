@@ -39,7 +39,7 @@ public final class CircusAcrobatEntity extends CircusPerformerEntity {
 	}
 
 	@Override protected String roleId() { return "circus_acrobat"; }
-	@Override protected String texturePath() { return "textures/entity/circus/acrobat_0.png"; }
+	@Override protected String texturePath() { return "textures/entity/npc/harbinger/circus/acrobat_0.png"; }
 	@Override protected int performanceDuration() { return 100; }
 
 	@Override

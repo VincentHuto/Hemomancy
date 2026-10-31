@@ -45,7 +45,7 @@ public final class CircusStiltWalkerEntity extends CircusPerformerEntity {
 	}
 
 	@Override protected String roleId() { return "circus_stilt_walker"; }
-	@Override protected String texturePath() { return "textures/entity/circus/stilt_walker_0.png"; }
+	@Override protected String texturePath() { return "textures/entity/npc/harbinger/circus/stilt_walker_0.png"; }
 	@Override protected int performanceDuration() { return 160; }
 
 	@Override

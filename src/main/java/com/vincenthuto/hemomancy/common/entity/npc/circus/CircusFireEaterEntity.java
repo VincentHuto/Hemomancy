@@ -31,7 +31,7 @@ public final class CircusFireEaterEntity extends CircusPerformerEntity {
 	}
 
 	@Override protected String roleId() { return "circus_fire_eater"; }
-	@Override protected String texturePath() { return "textures/entity/circus/fire_eater_0.png"; }
+	@Override protected String texturePath() { return "textures/entity/npc/harbinger/circus/fire_eater_0.png"; }
 	@Override protected int performanceDuration() { return 80; }
 
 	@Override

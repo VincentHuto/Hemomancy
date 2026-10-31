@@ -336,7 +336,7 @@ public final class CircusRingmasterEntity extends PathfinderMob {
 		options.add(new DialogueOption("hemomancy.circus.school.conductor", "school", null));
 		options.add(new DialogueOption("hemomancy.dialogue.circus_performer.leave", null, null));
 		return DialogueTree.builder(getType().getDescriptionId(),
-				Hemomancy.rloc("textures/entity/circus/ringmaster.png"), getId())
+				Hemomancy.rloc("textures/entity/npc/harbinger/circus/ringmaster.png"), getId())
 				.addNode(new DialogueNode("greeting", List.of("hemomancy.circus.ringmaster.line." + route.serializedName()),
 						options))
 				.addNode(new DialogueNode("school", List.of("hemomancy.circus.school.ringmaster.curriculum", "hemomancy.circus.school.ringmaster.faculty", "hemomancy.circus.school.aftermath." + route.serializedName()), List.of(new DialogueOption("hemomancy.circus.school.back", "greeting", null))))

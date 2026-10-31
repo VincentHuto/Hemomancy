@@ -50,7 +50,7 @@ public final class CircusKnifeThrowerEntity extends CircusPerformerEntity {
 	}
 
 	@Override protected String roleId() { return "circus_knife_thrower"; }
-	@Override protected String texturePath() { return "textures/entity/circus/knife_thrower_0.png"; }
+	@Override protected String texturePath() { return "textures/entity/npc/harbinger/circus/knife_thrower_0.png"; }
 	@Override protected int performanceDuration() { return 100; }
 
 	@Override
