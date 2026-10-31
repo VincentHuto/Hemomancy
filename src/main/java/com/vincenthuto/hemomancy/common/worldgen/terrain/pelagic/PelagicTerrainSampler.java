@@ -142,9 +142,11 @@ public final class PelagicTerrainSampler {
         return result;
     }
 
-    record VentSite(int x, int z, long salt, double angle, boolean active) {}
+    /** One seeded vent-field candidate per {@link #VENT_CELL}-block cell; inactive candidates raise no mound. */
+    public record VentSite(int x, int z, long salt, double angle, boolean active) {}
+    public static final int VENT_CELL = 64;
 
-    VentSite ventSite(int cellX, int cellZ) {
+    public VentSite ventSite(int cellX, int cellZ) {
         long salt = hash(cellX, cellZ, 201);
         int x = cellX * 64 + 8 + (int)(unit(salt) * 48);
         int z = cellZ * 64 + 8 + (int)(unit(mix(salt)) * 48);

@@ -349,7 +349,7 @@ public final class HarbingerRepairGameTests {
     public static void alchemistHeldJarKeepsCurrentDegreeLessons(GameTestHelper helper) {
         var jar = new com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.HeldSpecimenJar(
                 Hemomancy.rloc("morphling_polyp"), java.util.List.of(
-                        com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer.BAT));
+                        com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer.LIGHT_BACTERIA));
         for (int degree = 2; degree <= 8; degree++) {
             var baseline = com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees
                     .forDegree(degree, 42, true, false);
@@ -362,7 +362,7 @@ public final class HarbingerRepairGameTests {
             helper.assertTrue(held.getStartNode().options().stream().anyMatch(option ->
                             "alchemist_bestiary_record".equals(option.eventId()))
                     && held.getStartNode().options().stream().anyMatch(option ->
-                            "alchemist_bestiary_surrender_morphling_bat".equals(option.eventId())),
+                            "alchemist_bestiary_surrender_morphling_light_bacteria".equals(option.eventId())),
                     "Recording and layer-specific surrender must remain available at D" + degree);
             assertDialogueTargetsExist(helper, held);
         }
@@ -1021,9 +1021,9 @@ public final class HarbingerRepairGameTests {
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void equippedBondWritesBackToOnlyItsOwnSpecimen(GameTestHelper helper) {
         ServerPlayer player = player(helper);
-        ItemStack original = new ItemStack(ItemInit.morphling_bootlace.get());
+        ItemStack original = new ItemStack(ItemInit.morphling_ink_cap.get());
         MorphlingIdentity.ensureIdentity(original);
-        ItemStack sameStrain = new ItemStack(ItemInit.morphling_bootlace.get());
+        ItemStack sameStrain = new ItemStack(ItemInit.morphling_ink_cap.get());
         MorphlingIdentity.ensureIdentity(sameStrain);
         ItemStack jar = jar(original, sameStrain);
         player.getInventory().setItem(0, jar);
@@ -1043,7 +1043,7 @@ public final class HarbingerRepairGameTests {
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void duplicatedIdentityDoesNotSpreadEarnedBond(GameTestHelper helper) {
         ServerPlayer player = player(helper);
-        ItemStack original = new ItemStack(ItemInit.morphling_bootlace.get());
+        ItemStack original = new ItemStack(ItemInit.morphling_ink_cap.get());
         MorphlingIdentity.ensureIdentity(original);
         ItemStack jar = jar(original, original.copy());
         player.getInventory().setItem(0, jar);
@@ -1062,10 +1062,9 @@ public final class HarbingerRepairGameTests {
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void staffPrimalChargesOnceAndRejectsCooldownWithoutWear(GameTestHelper helper) {
         ServerPlayer player = player(helper);
-        ItemStack creature = new ItemStack(ItemInit.morphling_bootlace.get());
+        ItemStack creature = new ItemStack(ItemInit.morphling_holdfast.get());
         MorphlingIdentity.ensureIdentity(creature);
         MorphlingItem.setPrimalized(creature); // Stage fixture; this is not earned growth acceptance.
-        MorphlingItem.setLastAbilityTick(creature, "Primal:WebOfRedThread", -10000);
         player.getInventory().setItem(1, jar(creature));
         HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(creature.copy());
         var blood = HemoCapabilityAccess.getBloodVolume(player);
@@ -1078,11 +1077,12 @@ public final class HarbingerRepairGameTests {
         staff.set(DataComponents.DAMAGE, 0);
         player.getInventory().setItem(0, staff);
         staff.getItem().releaseUsing(staff, helper.getLevel(), player, 35980);
-        helper.assertTrue(blood.getBloodVolume() == 750, "Bootlace must charge its authored 250 blood exactly once");
+        helper.assertTrue(blood.getBloodVolume() == 650, "The Holding must charge its 350 blood exactly once");
         helper.assertTrue(staff.getDamageValue() == 1, "Successful activation must wear the triggering Staff once");
         staff.getItem().releaseUsing(staff, helper.getLevel(), player, 35980);
-        helper.assertTrue(blood.getBloodVolume() == 750 && staff.getDamageValue() == 1,
+        helper.assertTrue(blood.getBloodVolume() == 650 && staff.getDamageValue() == 1,
                 "Cooldown rejection must consume neither blood nor Staff durability");
+        com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingPowers.clearHost(player);
         player.discard();
         helper.succeed();
     }

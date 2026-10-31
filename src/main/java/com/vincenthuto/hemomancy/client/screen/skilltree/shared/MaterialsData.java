@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.UnlockPredicate;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrain;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -631,45 +633,12 @@ public final class MaterialsData {
                 "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_polyp.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("morphling_deadmans_purse", "material.hemomancy.morphling_deadmans_purse",
-                "material.hemomancy.morphling_deadmans_purse.desc",
-                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_deadmans_purse.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-        list.add(new MaterialEntry("morphling_gravecap", "material.hemomancy.morphling_gravecap",
-                "material.hemomancy.morphling_gravecap.desc",
-                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_gravecap.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-        list.add(new MaterialEntry("morphling_witchs_ear", "material.hemomancy.morphling_witchs_ear",
-                "material.hemomancy.morphling_witchs_ear.desc",
-                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_witchs_ear.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-        list.add(new MaterialEntry("morphling_lumenlace", "material.hemomancy.morphling_lumenlace",
-                "material.hemomancy.morphling_lumenlace.desc",
-                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_lumenlace.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-        list.add(new MaterialEntry("morphling_bootlace", "material.hemomancy.morphling_bootlace",
-                "material.hemomancy.morphling_bootlace.desc",
-                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_bootlace.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-        list.add(new MaterialEntry("morphling_irontooth", "material.hemomancy.morphling_irontooth",
-                "material.hemomancy.morphling_irontooth.desc",
-                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_irontooth.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-        list.add(new MaterialEntry("morphling_emberfang", "material.hemomancy.morphling_emberfang",
-                "material.hemomancy.morphling_emberfang.desc",
-                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_emberfang.get()),
-                true, UnlockPredicate.minDegree(3)));
-
-        list.add(new MaterialEntry("morphling_winter_shroud", "material.hemomancy.morphling_winter_shroud",
-                "material.hemomancy.morphling_winter_shroud.desc",
-                "material.hemomancy.category.morphlings", () -> new ItemStack(ItemInit.morphling_winter_shroud.get()),
-                true, UnlockPredicate.minDegree(3)));
+        for (MorphlingStrain strain : MorphlingStrains.ALL) {
+            list.add(new MaterialEntry(strain.itemPath(), "material.hemomancy." + strain.itemPath(),
+                    "material.hemomancy." + strain.itemPath() + ".desc",
+                    "material.hemomancy.category.morphlings", () -> new ItemStack(strain.item().get()),
+                    true, UnlockPredicate.minDegree(3)));
+        }
 
         // ── Scars & Patterns ──
         list.add(new MaterialEntry("scar_blank", "item.hemomancy.scar_blank",

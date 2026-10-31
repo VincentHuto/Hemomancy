@@ -7,9 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that grants increased mining speed and bonus health
- * regeneration when underground (below Y=50), simulating Irontooth's natural
- * tunneling instincts. Applied by the Irontooth Morphling while it is attached
- * to the player. The mining speed bonus is applied via attribute modifier
+ * regeneration when underground (below Y=50). Used by its standalone potion.
+ * The mining speed bonus is applied via attribute modifier
  * in EffectInit. Night vision is also periodically granted underground.
  */
 public class BurrowersInstinctEffect extends MobEffect {

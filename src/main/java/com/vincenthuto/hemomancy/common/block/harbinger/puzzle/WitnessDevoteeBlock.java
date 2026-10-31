@@ -57,6 +57,11 @@ public class WitnessDevoteeBlock extends StackedSetPieceBlock {
 		return 2;
 	}
 
+	@Override
+	protected BlockState withStorey(BlockState state, int storey) {
+		return state.setValue(HALF, storey == 0 ? DoubleBlockHalf.LOWER : DoubleBlockHalf.UPPER);
+	}
+
 	/** Both halves keep {@link #LIT} in step: whichever half changes, its partner copies it, as a door's halves do. */
 	@Override
 	protected BlockState updateShape(BlockState state, Direction direction, BlockState neighbour, LevelAccessor level,

@@ -19,7 +19,7 @@ out vec4 fragColor;
 #moj_import <hemomancy:noise/vein_hash3.glsl>
 #moj_import <hemomancy:noise/vein_hash1.glsl>
 #moj_import <hemomancy:noise/vein_noise.glsl>
-float fbm(vec3 p) { return smoothNoise(p)*.57+smoothNoise(p*2.03+7.1)*.28+smoothNoise(p*4.11-3.7)*.15; }
+#moj_import <hemomancy:noise/vein_fbm.glsl>
 vec3 axisOf(int code) {
     if(code==0) return vec3(1,0,0);
     if(code==1) return vec3(-1,0,0);
@@ -29,18 +29,7 @@ vec3 axisOf(int code) {
     return vec3(0,0,-1);
 }
 
-// Distance to the nearest cell point and the gap to the second: thin gaps trace a branching vessel network
-// (the Cardinal floor membrane's cellular(), lifted into three dimensions).
-vec2 cellular(vec3 p) {
-    vec3 cell=floor(p),local=fract(p);
-    float nearest=8.0,second=8.0;
-    for(int x=-1;x<=1;x++) for(int y=-1;y<=1;y++) for(int z=-1;z<=1;z++) {
-        vec3 o=vec3(x,y,z);
-        float d=length(o+.15+.7*hash3(cell+o)-local);
-        if(d<nearest){second=nearest;nearest=d;} else if(d<second) second=d;
-    }
-    return vec2(nearest,second-nearest);
-}
+#moj_import <hemomancy:noise/vein_cellular.glsl>
 float line(float gap,float width) { return 1.0-smoothstep(width,width+.06,gap); }
 
 // Exit sites per vascular section (EnumVeinSections order: HEAD, ARMS, HEART, BODY, LEGS), in body pixels.

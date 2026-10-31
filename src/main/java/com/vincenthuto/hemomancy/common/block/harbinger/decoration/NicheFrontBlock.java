@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.decoration;
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -34,6 +35,11 @@ public class NicheFrontBlock extends Block {
 		super(properties);
 		this.shapes = ModelShapes.horizontal(ModelShapes.of(outline));
 		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
 	}
 
 	@Override

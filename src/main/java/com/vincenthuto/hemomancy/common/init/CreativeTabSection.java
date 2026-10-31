@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -48,13 +50,16 @@ public enum CreativeTabSection {
 			"spawn_egg_blood_drunk_puppeteer", "spawn_egg_enthralled_doll", "spawn_egg_veinwing_vulture",
 			"spawn_egg_marrow_spitter", "spawn_egg_gorebound_hulk", "spawn_egg_mnemonist_puppet",
 			"spawn_egg_scarlet_mummer", "spawn_egg_sanguine_hound")),
-	BRINED_COURT("brined_court", Set.of(
+	BRINED_COURT("brined_court", withMorphlings(
 			"raw_pelagic_herring", "cooked_pelagic_herring", "cuttlefish_chromatophores", "erythrocoral_fragment",
-			"mnemonic_ambergris", "salt_stained_voyager_log", "chalybeate_sclerite", "blood_chum", "erythrocoral_block", "calcified_erythrocoral", "mnemonic_ambergris_block",
+			"mnemonic_ambergris", "salt_stained_voyager_log", "relay_chart", "brine_sealed_letter", "chalybeate_sclerite", "blood_chum", "erythrocoral_block", "calcified_erythrocoral", "mnemonic_ambergris_block",
 			"hematic_algal_crust", "tidepool_anemone", "bone_worm_colony", "giant_tube_worm_colony",
-			"erythrocoral_fan", "erythrocoral_tendril", 	"morphling_jar", "morphling_polyp", "morphling_deadmans_purse", "morphling_gravecap",
-			"morphling_witchs_ear", "morphling_lumenlace", "morphling_bootlace", "morphling_irontooth",
-			"morphling_emberfang", "morphling_winter_shroud","spawn_egg_barbed_urchin", "spawn_egg_chiton",
+			"erythrocoral_fan", "erythrocoral_tendril",
+			// The Court's set pieces, placeable for building and testing (review fixes 2026-10-30).
+			"sunburst_bloom", "sunburst_frond", "sunburst_crust", "sunburst_lamp", "petrified_follower", "house_marker", "relay_marker", "messenger_buoy",
+			"holdfast_root_mass", "nest_cup", "fold_veil", "rope_pod", "current_tissue", "current_strand", "sclerotium_shell",
+			"bell_sleeper", "marrow_plume", "kindled_tissue", "hydra_crown", "vent_offering_basin", "marimo_moss", "marimo_heart",
+			"spawn_egg_barbed_urchin", "spawn_egg_chiton",
 			"spawn_egg_pyrosome", "spawn_egg_pelagic_herring", "spawn_egg_ice_fish", "spawn_egg_siphonophore",
 			"spawn_egg_bloody_belly_comb_jelly", "spawn_egg_hagfish", "spawn_egg_vampire_squid",
 			"spawn_egg_chalybeate_snail", "spawn_egg_hemojelly", "spawn_egg_blood_lantern_jelly",
@@ -63,7 +68,7 @@ public enum CreativeTabSection {
 	SAINTS("saints", Set.of(
 			"hallowed_residuum_fragment_hemorath", "hallowed_residuum_fragment_seraphae",
 			"hallowed_residuum_fragment_putriciel", "hallowed_residuum_fragment_velorum", "recollection_hemorath",
-			"recollection_seraphae", "recollection_putriciel", "recollection_velorum", "velorum_mask","hemorath_rib",
+			"recollection_seraphae", "recollection_putriciel", "recollection_velorum", "velorum_mask", "hemorath_rib",
 			"consecrated_syringe", "hallowed_residuum_hemorath", "hallowed_residuum_seraphae",
 			"hallowed_residuum_putriciel", "hallowed_residuum_velorum", "saint_relic_hemorath", "saint_relic_seraphae",
 			"saint_relic_putriciel", "saint_relic_velorum", "memory_crimson_tithe", "memory_unclosing_eye",
@@ -74,7 +79,10 @@ public enum CreativeTabSection {
 			"charred_bookshelf", "sodden_mud_bricks", "spore_shelf", "rimed_deepslate_bricks",
 			"rimed_deepslate_brick_wall", "rimed_deepslate_brick_slab", "rimed_deepslate_brick_stairs",
 			"rime_lantern", "hanging_icicle", "frozen_drip", "adipocere_crust", "dark_lacquer_planks", "dark_lacquer_planks_slab",
-			"dark_lacquer_planks_stairs", "blood_gutter", "venous_basin", "ossuary_clock")),
+			"dark_lacquer_planks_stairs", "blood_gutter", "venous_basin", "ossuary_clock",
+			// The mausoleum set pieces, placeable for building and testing (review fixes 2026-10-30).
+			"sealed_niche", "opened_niche", "reliquary_sconce", "rot_pyre", "frozen_devotee", "containment_anchor_block",
+			"chapel_focus", "witness_stone", "litany_stone", "offering_stand", "pulse_pylon", "spawn_mark")),
 	GARDENS("gardens", Set.of(
 			"qliphoth_seed", "qliphoth_pome", "monolith_fragment", "monolith_imbued_cloth", "memory_of_vesper",
 			"orb_of_perspective", "fungal_spine", "fruiting_lure", "morphic_tonic","mycophant_tendril",
@@ -96,6 +104,21 @@ public enum CreativeTabSection {
 			"nerve_bundle", "synaptic_node", "dura_membrane", "dendrite_growth","ganglion_cluster", "naeglerophaeon_ganglion", "spawn_egg_choir_keeper",
 			"spawn_egg_myelin_borer")),
 	MISC("misc", Set.of());
+
+	/**
+	 * The Brined Court's own ids plus the Morphling jar, the polyp and the eight house strains, which the user files
+	 * with the Court (they are also listed in {@link CreativeTabGroup#MORPHLINGS}; the section wins).
+	 */
+	private static Set<String> withMorphlings(String... paths) {
+		var all = new LinkedHashSet<>(List.of(paths));
+		all.add("morphling_jar");
+		all.add("morphling_polyp");
+		all.addAll(MorphlingStrains.itemPaths());
+		return Set.copyOf(all);
+	}
+
+	/** Entries shown straight after another entry of their section instead of in registry order. */
+	private static final Map<String, String> PLACED_AFTER = Map.of("hemorath_rib", "velorum_mask");
 
 	private static final Map<ResourceLocation, CreativeTabSection> BY_ID = new HashMap<>();
 
@@ -179,10 +202,33 @@ public enum CreativeTabSection {
 					.thenComparingInt(entry -> CreativeTabGroup.orderWithinGroup(entry.stack.getItem()));
 			items.getOrDefault(HEMATIC, new ArrayList<>()).sort(hematicOrder);
 			eggs.getOrDefault(HEMATIC, new ArrayList<>()).sort(hematicOrder);
+			items.values().forEach(Sorter::placeAfterAnchors);
 			for (CreativeTabSection section : values()) {
 				items.getOrDefault(section, List.of()).forEach(entry -> output.accept(entry.stack, entry.visibility));
 				eggs.getOrDefault(section, List.of()).forEach(entry -> output.accept(entry.stack, entry.visibility));
 			}
+		}
+
+		private static void placeAfterAnchors(List<Entry> entries) {
+			PLACED_AFTER.forEach((path, anchorPath) -> {
+				int from = indexOf(entries, path);
+				int anchor = indexOf(entries, anchorPath);
+				if (from < 0 || anchor < 0) {
+					return;
+				}
+				Entry moved = entries.remove(from);
+				entries.add(indexOf(entries, anchorPath) + 1, moved);
+			});
+		}
+
+		private static int indexOf(List<Entry> entries, String path) {
+			ResourceLocation id = Hemomancy.rloc(path);
+			for (int i = 0; i < entries.size(); i++) {
+				if (BuiltInRegistries.ITEM.getKey(entries.get(i).stack.getItem()).equals(id)) {
+					return i;
+				}
+			}
+			return -1;
 		}
 	}
 }

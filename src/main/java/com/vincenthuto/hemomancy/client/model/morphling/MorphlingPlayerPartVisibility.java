@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import java.util.EnumSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,8 @@ public final class MorphlingPlayerPartVisibility {
     private static final Map<PlayerModel<?>, VisibilitySnapshot> SNAPSHOTS = new IdentityHashMap<>();
     private static final ThreadLocal<Set<AttachmentPoint>> ACTIVE_HIDDEN_PARTS =
             ThreadLocal.withInitial(Set::of);
+    /** A Primal head replacement wears the helmet over it; the head is hidden but the helmet is not. */
+    private static final ThreadLocal<Boolean> HELMET_KEPT = ThreadLocal.withInitial(() -> false);
 
     private MorphlingPlayerPartVisibility() {
     }
@@ -42,6 +45,7 @@ public final class MorphlingPlayerPartVisibility {
         }
 
         ACTIVE_HIDDEN_PARTS.set(hiddenParts);
+        HELMET_KEPT.set(keepsHelmet(player));
         PlayerModel<?> model = renderer.getModel();
         SNAPSHOTS.put(model, VisibilitySnapshot.capture(model));
         hiddenParts.forEach(part -> setVisible(model, part, false));
@@ -54,6 +58,7 @@ public final class MorphlingPlayerPartVisibility {
             snapshot.restore(model);
         }
         ACTIVE_HIDDEN_PARTS.remove();
+        HELMET_KEPT.remove();
     }
 
     public static void applyToArmorModel(HumanoidModel<?> model, EquipmentSlot slot) {
@@ -64,7 +69,7 @@ public final class MorphlingPlayerPartVisibility {
 
         switch (slot) {
             case HEAD -> {
-                if (hiddenParts.contains(AttachmentPoint.HEAD)) {
+                if (hiddenParts.contains(AttachmentPoint.HEAD) && !HELMET_KEPT.get()) {
                     model.head.visible = false;
                     model.hat.visible = false;
                 }
@@ -111,13 +116,31 @@ public final class MorphlingPlayerPartVisibility {
             return Set.of(AttachmentPoint.HEAD);
         }
 
-        var stack = HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
+        var equipped = HemoCapabilityAccess.getEquippedMorphling(player);
+        var stack = equipped.getEquippedMorphling();
         MorphlingVisualMutation mutation = MorphlingMutationRegistry.get(stack);
-        if (mutation == null || mutation.modelAttachment == null) {
+        if (mutation == null || mutation.attachments.isEmpty()) {
             return Set.of();
         }
         int maturity = MorphlingItem.getMaturityLevel(stack);
-        return mutation.modelAttachment.hiddenPlayerParts(maturity);
+        int flags = equipped.getActiveFlags();
+        Set<AttachmentPoint> hidden = EnumSet.noneOf(AttachmentPoint.class);
+        for (MorphlingModelAttachment attachment : mutation.attachments) {
+            hidden.addAll(attachment.hiddenPlayerParts(maturity, flags));
+        }
+        return hidden;
+    }
+
+    private static boolean keepsHelmet(Player player) {
+        if (hasMycophantTendril(player)) return false;
+        var equipped = HemoCapabilityAccess.getEquippedMorphling(player);
+        MorphlingVisualMutation mutation = MorphlingMutationRegistry.get(equipped.getEquippedMorphling());
+        if (mutation == null) return false;
+        int maturity = MorphlingItem.getMaturityLevel(equipped.getEquippedMorphling());
+        for (MorphlingModelAttachment attachment : mutation.attachments) {
+            if (attachment.keepsHelmet(maturity, equipped.getActiveFlags())) return true;
+        }
+        return false;
     }
 
     private static boolean hasMycophantTendril(Player player) {

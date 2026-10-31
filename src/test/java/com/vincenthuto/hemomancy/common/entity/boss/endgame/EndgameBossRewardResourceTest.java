@@ -92,7 +92,7 @@ class EndgameBossRewardResourceTest {
 		assertContains("Tendril layer checks charm slot", tendrilLayer,
 				"getEquipment(player).getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX).is(ItemInit.mycophant_tendril.get())");
 		assertContains("Tendril layer draws fungal head attachment", tendrilLayer,
-				"new MorphlingFungalHeadModel");
+				"new FungalHeadAttachmentModel");
 		assertContains("Evening Star renderer keeps the glow layer", eveningStarRenderer,
 				"new VesperEveningStarLinesLayer(this)");
 		assertNotContains("Crowned Refusal phase does not use the Evening Star glow layer", crownedRefusalRenderer,

@@ -14,8 +14,7 @@ import net.minecraft.world.entity.player.Player;
 
 /**
  * A beneficial effect that passively replenishes the player's blood volume.
- * Applied by the Deadman's Purse Morphling while it is attached to the player. Each
- * tick, the player's blood volume is filled by a small amount that scales
+ * Used by its standalone potion. Each tick, the player's blood volume is filled by a small amount that scales
  * with the amplifier.
  */
 public class SanguineSiphonEffect extends MobEffect {

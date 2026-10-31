@@ -246,11 +246,12 @@ DESCENT_SPRING = 12
 
 
 def descent_walk(x):
-    """The block a visitor stands in at x: the top landing, six steps down, then the bottom landing."""
+    """The block a visitor stands in at x: the top landing, seven steps down (the first level with the landing), then
+    the bottom landing."""
     if x <= 3:
         return 8
-    if x <= 9:
-        return 7 - (x - 4)
+    if x <= 10:
+        return 8 - (x - 4)
     return 1
 
 
@@ -276,7 +277,7 @@ def descent(saint):
             if x <= 3:
                 floor = c['inlay'] if z in (2, 8) else c['runner'] if z == 5 else c['floor']
                 room.set(x, walk - 1, z, floor)
-            elif x <= 9:
+            elif x <= 10:
                 room.set(x, walk - 1, z, c['trim_stairs'], stairs('west'))
             else:
                 floor = c['inlay'] if z in (2, 8) else c['runner'] if z == 5 else \
@@ -581,10 +582,14 @@ def nave(saint, low_side):
                 for y in range(stand, 11):
                     room.set(x, y, z, AIR)
             room.set(x, NAVE_GALLERY + 1, arcade, AIR)
-            if room.get(x, stand, arcade) == AIR:
+            # A rail only where the flight stands above the arcade's arch: the bay under the first steps (x 2-4) is the
+            # way onto the stair from the vessel, so nothing stands in it.
+            if stand > NAVE_GALLERY - 2 and room.get(x, stand, arcade) == AIR:
                 room.set(x, stand, arcade, c['trim_wall'], rail('x'))
         for z in (a0, a1, a2):
             room.set(GALLERY_STAIR[-1] + 1, NAVE_GALLERY, z, c['inlay'])
+        # The balustrade's free end at the stairhead is a newel capped like the piers it runs between.
+        room.set(GALLERY_STAIR[-1], NAVE_GALLERY + 2, arcade, c['trim'])
         # Over the stairwell the aisle rises two storeys: a half vault leans off the outer wall.
         for x in GALLERY_STAIR:
             room.set(x, 10, a0, c['vault_stairs'], stairs(side, 'top'))
@@ -592,6 +597,10 @@ def nave(saint, low_side):
         for b, p in enumerate(NAVE_PIERS[:-1]):
             if b % 2 == 1:
                 kit.wall_light(room, c, p + 2, 9, wall, 'south' if side == 'north' else 'north')
+    # The gallery balustrade joins the piers (posts under their trim) and the end walls it meets.
+    for side, (a0, a1, a2, arcade, wall, back) in sides.items():
+        for x in range(NAVE_L):
+            room.joined.add((x, NAVE_GALLERY + 1, arcade))
     ring_door(room, c, saint)
     arch(room, c, 0, 0, zc)
     room.jigsaw(0, 0, zc, 'west_up', conn('nave_in'), conn('threshold_out'), EMPTY, c['runner'])

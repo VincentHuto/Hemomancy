@@ -1,0 +1,19 @@
+{
+  "values": [
+    "hemomancy:sunburst_bloom",
+    "hemomancy:sunburst_frond",
+    "hemomancy:sunburst_crust",
+    "hemomancy:sunburst_lamp",
+    "minecraft:moss_block",
+    "minecraft:moss_carpet",
+    "minecraft:farmland",
+    "minecraft:glow_lichen",
+    "minecraft:azalea",
+    "minecraft:flowering_azalea",
+    "minecraft:big_dripleaf",
+    "minecraft:small_dripleaf",
+    "#minecraft:crops",
+    "#minecraft:flowers",
+    "#minecraft:leaves"
+  ]
+}

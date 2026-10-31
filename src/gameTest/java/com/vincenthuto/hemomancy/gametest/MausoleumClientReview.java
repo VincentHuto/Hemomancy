@@ -7,6 +7,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mausoleum.WardStrikePacket;
@@ -82,6 +83,9 @@ import javax.annotation.Nullable;
  * <p>A stop may also put the ring door in a state before its shot ({@code "door"}: the controller's {@code "block"} in
  * template coordinates, its lit {@code "nodes"}, a {@code "phase"} and how far into it, {@code "tick"}), written into the
  * door's saved state {@code "lead"} ticks before the screenshot so a ring is caught mid-turn or the blood mid-channel.
+ * An {@code OPENING} door's tick is its charge at the shot and its {@code "path"} is {@code PROPER} (a Silentium) or
+ * {@code FORCED} (an Apotheos); the viewer is made that path and projects into the door every tick until the shot, so
+ * the stream or the hyphae show.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class MausoleumClientReview {
@@ -96,8 +100,8 @@ public final class MausoleumClientReview {
 	private record Shot(String folder, String name, Vec3 eye, Vec3 look, int degree, @Nullable Action action,
 			@Nullable DoorState door) {}
 
-	/** The ring door at {@code block} put in a state: lit nodes (turning since the write), a phase and its tick. */
-	private record DoorState(BlockPos block, int nodes, String phase, int tick, int lead) {}
+	/** The ring door at {@code block} put in a state: lit nodes (turning since the write), a phase, its tick and path. */
+	private record DoorState(BlockPos block, int nodes, String phase, int tick, String path, int lead) {}
 
 	/** The ward answering before a shot: a strike of {@code kind} on {@code face} of {@code block}, in the world. */
 	private record Action(WardStrikePacket.Kind kind, BlockPos block, Direction face, int lead) {}
@@ -205,6 +209,16 @@ public final class MausoleumClientReview {
 			var server = mc.getSingleplayerServer();
 			var uuid = mc.player.getUUID();
 			server.execute(() -> setDoor(server.getPlayerList().getPlayer(uuid).serverLevel(), door, uuid));
+		}
+		if (door != null && door.phase().equals("OPENING") && shotTick > wait - door.lead() && shotTick <= wait) {
+			var server = mc.getSingleplayerServer();
+			var uuid = mc.player.getUUID();
+			server.execute(() -> {
+				var player = server.getPlayerList().getPlayer(uuid);
+				if (player.serverLevel().getBlockEntity(door.block()) instanceof RingDoorBlockEntity controller) {
+					controller.takeProjectedBlood(player, door.block().above(2), 0, false);
+				}
+			});
 		}
 		if (shotTick < wait) return;
 		Path out = mc.gameDirectory.toPath().resolve(current.folder()).resolve(current.name() + ".png");
@@ -388,13 +402,21 @@ public final class MausoleumClientReview {
 		for (int ring = 0; ring < state.nodes(); ring++) starts[ring] = ring == state.nodes() - 1 ? now : 1;
 		tag.putLongArray(RingDoorBlockEntity.TAG_TURN_START, starts);
 		tag.putString(RingDoorBlockEntity.TAG_PHASE, state.phase());
-		tag.putInt(RingDoorBlockEntity.TAG_PHASE_TICK, state.tick());
+		boolean opening = state.phase().equals("OPENING");
+		tag.putInt(RingDoorBlockEntity.TAG_PHASE_TICK, opening ? 0 : state.tick());
+		// An opening door is fed every tick from here to the shot, so it starts that many ticks short.
+		tag.putInt(RingDoorBlockEntity.TAG_CHARGE, opening ? Math.max(1, state.tick() - state.lead())
+				: state.phase().equals("SINKING") ? RingDoorRules.OPEN_TICKS : 0);
+		tag.putString(RingDoorBlockEntity.TAG_PATH, opening ? state.path() : "NONE");
 		tag.putUUID(RingDoorBlockEntity.TAG_PROJECTOR, viewer);
 		door.loadWithComponents(tag, level.registryAccess());
 		BlockEntitySync.markAndSync(door);
-		// The viewer projects: give them the blood each ring takes, so a projection never breaks between stops.
+		// The viewer projects: make them the door's path and give them the blood, so a projection never breaks.
 		var player = level.getServer().getPlayerList().getPlayer(viewer);
-		if (player != null && state.phase().equals("PROJECTING")) {
+		if (player != null && opening) {
+			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+			degree.setDegreeNumber(8);
+			degree.setArchonPath(state.path().equals("FORCED") ? EnumArchonPath.APOTHEOS : EnumArchonPath.SILENTIUM);
 			var volume = HemoCapabilityAccess.getBloodVolume(player);
 			volume.setActive(true);
 			volume.setBloodVolume(Math.max(volume.getBloodVolume(), 3000));
@@ -412,6 +434,7 @@ public final class MausoleumClientReview {
 				door.has("nodes") ? door.get("nodes").getAsInt() : 0,
 				door.has("phase") ? door.get("phase").getAsString() : "IDLE",
 				door.has("tick") ? door.get("tick").getAsInt() : 0,
+				door.has("path") ? door.get("path").getAsString() : "PROPER",
 				door.has("lead") ? door.get("lead").getAsInt() : DEFAULT_LEAD);
 	}
 

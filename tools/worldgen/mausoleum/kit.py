@@ -32,6 +32,8 @@ class Room:
     def __init__(self, sx, sy, sz):
         self.size = (sx, sy, sz)
         self.blocks = {}
+        # Walls finish() joins to what stands beside them once the theme has dressed the room (connect_walls).
+        self.joined = set()
 
     def inside(self, x, y, z):
         return 0 <= x < self.size[0] and 0 <= y < self.size[1] and 0 <= z < self.size[2]
@@ -175,6 +177,80 @@ def wall_end(axis, toward):
     props = post()
     props[toward] = 'low'
     return props
+
+
+# What a wall joins besides another wall: a neighbour whose touching face is a full square. Names that are not whole
+# cubes (or carry a model) never qualify; stairs qualify by their back.
+NOT_SOLID = ('_stairs', '_slab', '_wall', '_button', '_pressure_plate', '_door', '_trapdoor', '_fence', '_bars',
+             '_pane', '_lantern', '_carpet', '_chain', 'minecraft:chain', 'minecraft:jigsaw', AIR, '_glass',
+             'minecraft:hanging_roots', 'minecraft:mangrove_roots', 'minecraft:barrel')
+
+
+def _wall_name(name):
+    return name is not None and name.endswith('_wall')
+
+
+def _solid_face(room, x, y, z, toward):
+    """Whether the block at (x, y, z) shows a full face toward `toward` (the side facing the wall)."""
+    entry = room.blocks.get((x, y, z))
+    if entry is None:
+        return False
+    name, props, _ = entry
+    props = dict(props)
+    if name.endswith('_stairs'):
+        return props.get('shape') in ('straight', 'inner_left', 'inner_right') and props.get('facing') == toward
+    if name.endswith('_slab'):
+        return props.get('type') == 'double'
+    if name.endswith(NOT_SOLID) or name in NOT_SOLID or name.startswith('hemomancy:') and props.keys() - {'axis'}:
+        return False
+    from . import checks
+    return name not in checks.SET_PIECES
+
+
+def _covers_side(room, x, y, z, side):
+    """Whether the block over a wall at (x, y - 1, z) covers that wall's arm toward `side` (or, for side None, its
+    post), so the arm stands tall (or the post must rise): vanilla's test on the block above's lower face."""
+    entry = room.blocks.get((x, y, z))
+    if entry is None:
+        return False
+    name, props, _ = entry
+    props = dict(props)
+    if _wall_name(name):
+        return props.get('up') == 'true' if side is None else props.get(side, 'none') != 'none'
+    if name.endswith('_stairs'):
+        return props.get('half') == 'bottom'
+    if name.endswith('_slab'):
+        return props.get('type') in ('bottom', 'double')
+    if name in ('minecraft:chain', 'hemomancy:hematic_iron_chain'):
+        return side is None and props.get('axis') == 'y'
+    return _solid_face(room, x, y, z, 'down')
+
+
+def connect_walls(room, cells):
+    """Gives each wall at `cells` the state vanilla's WallBlock would: an arm toward every wall or full face beside it,
+    tall where the block above covers it, and a post where the run ends, turns, or something above needs one. Jigsaw
+    pieces keep the template's state until a neighbour changes, so a balustrade that butts a pier or a wall must be
+    saved joined to it."""
+    for (x, y, z) in cells:
+        name, props, nbt = room.blocks[(x, y, z)]
+        state = dict(props)
+        for side, (dx, dz) in STEP.items():
+            other = room.get(x + dx, y, z + dz)
+            joined = _wall_name(other) or _solid_face(room, x + dx, y, z + dz, OPPOSITE[side])
+            state[side] = ('tall' if _covers_side(room, x, y + 1, z, side) else 'low') if joined else 'none'
+        n, s, e, w = (state[side] == 'none' for side in ('north', 'south', 'east', 'west'))
+        straight_tall = state['north'] == state['south'] == 'tall' or state['east'] == state['west'] == 'tall'
+        above = room.blocks.get((x, y + 1, z))
+        if above and _wall_name(above[0]) and dict(above[1]).get('up') == 'true':
+            up = True
+        elif (n and s and e and w) or n != s or e != w:
+            up = True
+        elif straight_tall:
+            up = False
+        else:
+            up = _covers_side(room, x, y + 1, z, None)
+        state['up'] = 'true' if up else 'false'
+        room.set(x, y, z, name, state, nbt)
 
 
 def bone(axis):
@@ -671,7 +747,7 @@ def stair_shaft(c, rng, shaft):
 
 def _shaft_column(room, c, rng, shaft, x, z, stands, stair, rail_axis, corner=False):
     """One cell of the spiral: under the lowest walk solid stone (newel masonry where it faces the well), then for each
-    walk a floor (or a stair dropping into it) with air above it up to the next walk's floor or the dome. A balustrade
+    walk a floor (carrying a step where the walk drops) with air above it up to the next walk's floor or the dome. A balustrade
     cell carries a rail on its floor."""
     top = shaft.top
     for y in range(0, stands[0] - 1):
@@ -685,8 +761,6 @@ def _shaft_column(room, c, rng, shaft, x, z, stands, stair, rail_axis, corner=Fa
         facing = stair.get((x, z, stand))
         if rail_axis:
             room.set(x, stand - 1, z, c['trim'])
-        elif facing:
-            room.set(x, stand - 1, z, c['trim_stairs'], stairs(facing))
         else:
             edge = x in (1, 3, 11, 13) or z in (1, 3, 11, 13)
             room.set(x, stand - 1, z, c['inlay'] if edge and rng.random() < 0.5 else
@@ -694,6 +768,9 @@ def _shaft_column(room, c, rng, shaft, x, z, stands, stair, rail_axis, corner=Fa
         ceiling = stands[i + 1] - 1 if i + 1 < len(stands) else top
         for y in range(stand, ceiling):
             room.set(x, y, z, AIR)
+        if facing:
+            # The step stands on the lower walk's floor, its high side level with the walk above.
+            room.set(x, stand, z, c['trim_stairs'], stairs(facing))
         if not rail_axis and i + 1 < len(stands) and ceiling - stand >= 6:
             # A landing under a landing: corbel the walk above off the drum wall.
             fz = 'north' if z == 1 else 'south' if z == 13 else None
@@ -845,6 +922,7 @@ def finish(room, c, seed, open_outside=False):
     cell (drawn from a fixed seed) takes one of that block's variants. A block with no variants is the room's author's
     to dress, so it raises."""
     from . import checks
+    connect_walls(room, sorted(cell for cell in room.joined if _wall_name(room.get(*cell))))
     rng = random.Random('finish/' + seed)
     for _ in range(12):
         windows = checks.flat_windows(room, open_outside)

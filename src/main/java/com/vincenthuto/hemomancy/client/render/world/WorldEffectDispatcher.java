@@ -47,6 +47,7 @@ public final class WorldEffectDispatcher {
         CrossbarHolderTracker.onStage(event);
         AvatarFirstPersonRenderer.render(event);
         OutpouringRenderer.render(event);
+        MorphlingStrainWorldRenderer.render(event);
         ManipulationVisualRenderer.render(event);
 
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
@@ -83,6 +84,7 @@ public final class WorldEffectDispatcher {
             com.vincenthuto.hemomancy.client.render.world.zone.RiteZoneBoundaryRenderer.render(event.getPoseStack(), partialTick);
             GourdVineRenderer.render(event.getPoseStack(), partialTick);
             BloodStructureFeedWarpRenderer.render(event.getPoseStack(), partialTick);
+            RingDoorSpreadQueue.render(event.getPoseStack());
             FaneBoundaryRenderer.renderWorldMask(event.getPoseStack(), partialTick);
             BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
             QliphothBloomRenderer.render(event.getPoseStack(), partialTick, event.getFrustum());

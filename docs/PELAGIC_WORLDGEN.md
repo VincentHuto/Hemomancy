@@ -10,7 +10,7 @@ The approved expansion combines rocky shore and tidepools, retains Erythrocoral 
 - Twilight (33..13): scalloped shoulders and curved gullies. Midnight (12..-8): incised branching canyons and wet alcoves. Carrion (-9..-30): low-relief sediment fans and sparse fossil beds. Hydrothermal (-31..-53): gently rolling plains with localized fault-aligned mineral mounds, aprons and chimneys.
 - Deep biomes occupy the water and a thin seabed skin; underlying cave biomes remain separate. Minecraft's quart sampling blends the nominal elevation boundaries.
 - Terrain sampling is coordinate-only and deterministic. Cross-chunk decoration writes only its owning chunk.
-- Geology uses the existing terrain materials. The subsequent [ecology pass](PELAGIC_ECOLOGY.md) adds six mobile species and four habitat growths without changing these landforms. Morphling systems, currents, pressure and temperature remain outside this work.
+- Geology uses the existing terrain materials. The subsequent [ecology pass](PELAGIC_ECOLOGY.md) adds six mobile species and four habitat growths without changing these landforms. Brined Court structure placement reads this terrain without changing it (see [Brined Court placement](#brined-court-placement)); Morphling systems, currents, pressure and temperature remain outside this work.
 - Terrain and generated growths affect new chunks only. Natural fauna can populate existing suitable chunks, and players can place collected growths. Existing world borders may show a change of elevation. No retrogen, custom world-height change, or replacement generator codec.
 
 ## Implementation
@@ -154,3 +154,43 @@ Footprints now reject unsuitable corners and middle points before scanning the i
 A fresh seeded vanilla-engine search from X292929/Z1001011 reproduces the same pavilion coordinates. Early screening alone took 49.364 seconds; screening plus shared cells took 26.521 seconds. These harness runs are separate from the player's 209-second live run and are not a controlled multiplier against it. The loaded probe also compared 36,864 sampled block states with vanilla base columns without differences. An additional height-only precheck took 30.315 seconds and was reverted. Reports are `-3049523894949504431-pavilion-locate-screen` and `-3049523894949504431-pavilion-locate-cells`; logs and the live profile are under `build/worldgen-diagnostics`. Vanilla locate remains synchronous and distant searches can still pause server ticks.
 
 Final verification passes all 22 loaded Circus tests and fresh seed 1337 terrain, biome, landmark, growth and monument acceptance (`1337-pavilion-final`). All 24 sampled terrain and biome hashes match `1337-ocean-troupe-fixed`; seven decorated patches differ. The focused JVM run passes 45 tests. The combined loaded-test log is `pavilion-final.log`.
+
+## Brined Court placement
+
+Brined Court Track 6 (2026-10-30) places the Court's eight sites in this terrain. The sites are `hemomancy:brined_court` structures (`common/worldgen/structure/court/CourtStructure`, one type, the site named in each structure JSON) in the `#hemomancy:brined_court` structure tag. Track 6 shipped one-block stub templates; Track 7 (the Seats) and Track 8 (the outposts, which also add the `hemomancy:court_signs` sign feature to every Pelagic biome) replaced each site's template pool without touching placement, and the stub template is gone.
+
+| House | Site | Set | Habitat checked |
+|---|---|---|---|
+| The Giving Light | Lighthouse Garden | Seats | Erythrocoral Reef shelf; tries a 5-by-5 grid of points up to 48 blocks around its cell's chunk centre, nearest first |
+| The Kindling | Vent Sanctum | Seats | Nearest seeded vent field within 72 blocks whose mound and chimneys the terrain actually builds (`PelagicLandmarks.hostsVentField`) |
+| The Holding Stone | Tide Refuge | Outposts | Rockpool Shore, floor Y 56 to 68 |
+| The Shared Wake | Wake nursery | Outposts | Under Pelagic Ocean water on a bank or the upper slope (floor at or above Y 13), searching 64 blocks round its cell; every valid cell (2026-10-30 review) |
+| The Woven Current | Line Camp | Outposts | Twilight Ocean floor |
+| The Veiled Fold | Screened Cleft | Outposts | Midnight Ocean floor, surface temperature at or above -0.15 |
+| The Still Bell | The Bell | Outposts | Midnight Ocean floor, surface temperature below -0.15 (vanilla's cold and frozen bands) |
+| Last Marrow | Whale Fall | Outposts | Carrion Depths floor |
+
+**Structure sets.** `brined_court_seats`: `random_spread` spacing 64, separation 24, salt 1029834751. `brined_court_outposts`: spacing 28, separation 10, salt 1029834763, `exclusion_zone` of 6 chunks against the Seats. Each entry validates only in its own habitat, so a cell holds at most one Seat or one outpost whatever its depth. The wake nursery has weight 1, the other outposts 3; since their habitats do not overlap, the weights matter only if a later change lets two entries share a cell.
+
+**The predicate.** `CourtPlacementRules` is called first from `findGenerationPoint` and runs, cheapest first:
+
+1. **Gate.** `CourtWorldProbe.of` returns nothing unless `PelagicWorldgen.context` is installed (config on, vanilla Overworld with a supported preset, sea level 63, minimum Y -64). No Court site generates otherwise.
+2. **Biome source.** The house's biome at its band's middle (Reef and Pelagic Ocean Y48, Shore Y62, Twilight Y23, Midnight Y2, Carrion Y-19, Hydrothermal Y-42), then the Midnight houses' surface temperature from the climate sampler at sea level. Quart sampling is honoured because the probe asks the real biome source.
+3. **Sampler floor.** `PelagicContext.column` (seeded, coordinate-only, no chunk) gives the floor; the centre must be fully shaped, the marker (first water block) and the jigsaw start above it must both read as the house's biome, and the floor at the footprint's corners and edge midpoints must vary by no more than the site's limit (6 for most outposts, 8 for the Bell and the Garden, 10 for the Vent Sanctum, 12 for the Screened Cleft's canyons). Points with less than half shaping strength refuse the site.
+4. **Exclusion.** No site within 96 blocks of another faction's landmark: Circus pavilion, troupe camps and abandoned stages, Voyager wrecks and vessels, mausoleums and Saint mausoleums, ocean monuments. `CourtLandmarkCells` computes those sets' potential chunks with vanilla's own `RandomSpreadStructurePlacement` math and counts a cell only if its surface or floor biome is one some structure in that set accepts; their distance gets 16 blocks of slack because their centres follow their templates. Outposts also keep 96 blocks from where a Seat would actually stand (the Garden and Sanctum can move up to 72 blocks from their cell's chunk). Generated structure starts are never read, so the answer does not depend on generation order.
+
+There is no all-column scan. Track 7's Garden coast check and any interior scan must come after these steps. A Seat's pieces should stay within about 56 blocks of its marker so that, with its 72-block anchor movement, they remain inside vanilla's eight-chunk structure-reference range.
+
+**Discovery.** `CourtSeatCandidates.nearest(level, from, rings)` walks the Seat set's cells outward in square rings and runs the same predicate on each cell's potential chunk, without loading chunks. It stops once no farther ring can hold a nearer Seat. Track 5's Relay Chart uses it off the server thread. `/locate structure` on Court structures still runs vanilla's synchronous search, cheap here because the predicate is cheap, but a distant search can still pause the server; `MixinPelagicBiomeSearch` affects biome searches only.
+
+**Validation.** `./gradlew.bat runCourtValidationServer -PcourtSeed=42 -PcourtRun=<name> -PcourtOrder=forward|reverse` (`court_worldgen_validation`, generator `CourtWorldValidation`, opt-in) builds a fresh seeded noise Overworld with the Pelagic test-world mixin. It loads, at structure-starts status only, every potential chunk of the Seat set within 8,192 blocks and of the outpost and faction sets within 6,144 blocks, in forward or reverse order; Seats not found there are predicted out to 32,768 blocks and then loaded. It checks that every Court start is the one the predicate predicts, stands in its house's biome and band (and climate, for Midnight), and rests on the sampled floor; that the Vent Sanctum is on a built vent-field centre; one outpost per cell; no outpost inside the Seat exclusion zone; no Court landmark within 96 blocks of any landmark; at most 2 Court sites and 4 landmarks in any 512-by-512 region holding a Court site; `CourtSeatCandidates.nearest` over 8 rings within 2 seconds, naming a generated Garden; no Court start in inland cells or in 24 Nether chunks. It then generates full chunks along a 7-chunk lane through the sea for 45 seconds under an in-process JFR recording and requires Court placement code in at most 2% of generation-worker samples, then inspects the Seats (`CourtSeatValidation`) and the nearest outpost of each kind with the sign caps per 256-by-256 region (`CourtOutpostValidation`, Track 8). Reports and recordings are `build/court-worlds/<seed>-<run>/court-report.json` and `court-travel.jfr`.
+
+Results on 2026-10-30 (run names `t6-final-forward` and `t6-final-reverse`): all six runs pass, and each seed's forward and reverse runs generate the identical Court sites.
+
+| Seed | Court sites (Gardens / Sanctums / outposts) | Faction landmarks | Nearest Court-to-landmark pair | Max per Court region (Court / all) | Seat search | JFR worker samples, Court frames |
+|---|---|---|---|---|---|---|
+| 42 | 19 (2 / 4 / 13) | 64 | 188 blocks | 1 / 2 | 72 ms, Garden at 3432, 5096 | 4,293 and 4,094, none |
+| 1337 | 18 (1 / 2 / 15) | 92 | 215 blocks | 1 / 2 | 26 ms, Garden at -1616, -1776 | 4,090 and 4,168, none |
+| 8675309 | 21 (5 / 2 / 14) | 94 | 215 blocks | 2 / 2 | 12 ms, Garden at -1880, 32 | 4,249 and 4,187, none |
+
+Every run covered 667 to 711 inland control cells and 24 Nether chunks without a Court site, and about 1,000 fully generated chunks during travel. No Court frame was sampled during travel, so the placement cost is below what a 10 ms sampler can see on that lane; it is not a measured share. The Wake nursery and Tide Refuge are rare on these seeds (one Tide Refuge on seed 1337, no nursery within 6,144 blocks), because both need shallow habitat at the cell's one candidate point.

@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:lighthouse_garden",
+      "weight": 1
+    },
+    {
+      "structure": "hemomancy:vent_sanctum",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 64,
+    "separation": 24,
+    "salt": 1029834751
+  }
+}

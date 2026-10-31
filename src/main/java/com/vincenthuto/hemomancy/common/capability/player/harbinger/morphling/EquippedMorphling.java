@@ -8,6 +8,9 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 public class EquippedMorphling implements IEquippedMorphling, INBTSerializable<CompoundTag> {
 
 	private ItemStack equippedMorphling = ItemStack.EMPTY;
+	private int activeFlags;
+	private int[] linkedEntityIds = new int[0];
+	private long[] linkedAnchors = new long[0];
 
 	@Override
 	public ItemStack getEquippedMorphling() {
@@ -22,11 +25,40 @@ public class EquippedMorphling implements IEquippedMorphling, INBTSerializable<C
 	@Override
 	public void clearMorphling() {
 		this.equippedMorphling = ItemStack.EMPTY;
+		this.activeFlags = 0;
+		this.linkedEntityIds = new int[0];
+		this.linkedAnchors = new long[0];
 	}
 
 	@Override
 	public boolean hasMorphling() {
 		return !equippedMorphling.isEmpty();
+	}
+
+	@Override
+	public int getActiveFlags() {
+		return activeFlags;
+	}
+
+	@Override
+	public void setActiveFlags(int flags) {
+		this.activeFlags = flags;
+	}
+
+	@Override
+	public int[] getLinkedEntityIds() {
+		return linkedEntityIds;
+	}
+
+	@Override
+	public long[] getLinkedAnchors() {
+		return linkedAnchors;
+	}
+
+	@Override
+	public void setLinks(int[] entityIds, long[] anchors) {
+		this.linkedEntityIds = entityIds == null ? new int[0] : entityIds;
+		this.linkedAnchors = anchors == null ? new long[0] : anchors;
 	}
 
 	@Override

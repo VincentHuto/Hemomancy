@@ -1,0 +1,15 @@
+{
+  "type": "hemomancy:brined_court",
+  "site": "tide_refuge",
+  "start_pool": "hemomancy:brined_court/tide_refuge/start_pool",
+  "size": 1,
+  "max_distance_from_center": 48,
+  "biomes": "#hemomancy:has_structure/brined_court_tide_refuge",
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "start_height": {
+    "absolute": 0
+  },
+  "spawn_overrides": {},
+  "start_jigsaw_name": "hemomancy:court_outpost_start"
+}

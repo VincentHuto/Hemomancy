@@ -40,6 +40,7 @@ public final class DialogueEventRouter {
 			ArtificerDialogueEvents::handle,
 			VicarDialogueEvents::handle,
 			VoyagerDialogueEvents::handle,
+			CourtDialogueEvents::handle,
 			VeinMasonDialogueEvents::handle,
 			AcolyteDialogueEvents::handle,
 			ZealotDialogueEvents::handle,

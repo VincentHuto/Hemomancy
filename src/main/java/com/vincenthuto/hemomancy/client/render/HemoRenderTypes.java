@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -767,6 +768,59 @@ public final class HemoRenderTypes {
 				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true,
 				RenderType.CompositeState.builder()
 						.setShaderState(ShaderInit.BLOOD_INFUSION_VEINS.getShard())
+						.setTexturingState(uniforms)
+						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/**
+	 * The ring door opening: {@code mode} 0 for a Silentium's blood turning to monolith, 1 for an Apotheos's hyphae and
+	 * cracks, at {@code progress} of the charge. {@code origin} (the hit point) and {@code anchor} (the door's pixel
+	 * origin) are camera-relative; {@code right} is the door's +x in the world; the well is its centre and radius in door
+	 * pixels, and {@code reach} how far the spread has to run from the hit point to cover the face.
+	 */
+	public static RenderType ringDoorOpening(float gameTime, float progress, float doorSeed, float mode, Vec3 origin,
+			Vec3 anchor, Vec3 right, float wellX, float wellY, float wellRadius, float reach) {
+		return RING_DOOR_OPENING_TYPES.get(doorSeed, new RingDoorOpeningUniforms(gameTime, progress, mode,
+				(float) origin.x, (float) origin.y, (float) origin.z, (float) anchor.x, (float) anchor.y, (float) anchor.z,
+				(float) right.x, (float) right.y, (float) right.z, wellX, wellY, wellRadius, reach));
+	}
+
+	private record RingDoorOpeningUniforms(float gameTime, float progress, float mode, float originX, float originY,
+			float originZ, float anchorX, float anchorY, float anchorZ, float rightX, float rightY, float rightZ,
+			float wellX, float wellY, float wellRadius, float reach) {
+	}
+
+	private static final SeededRenderTypes<Float, RingDoorOpeningUniforms, RenderType> RING_DOOR_OPENING_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createRingDoorOpening);
+
+	private static RenderType createRingDoorOpening(Float key, Supplier<RingDoorOpeningUniforms> values) {
+		float doorSeed = key;
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"ring_door_opening_uniforms",
+				() -> {
+					RingDoorOpeningUniforms u = values.get();
+					ShaderInstance shader = ShaderInit.RING_DOOR_OPENING.getInstance().get();
+					setUniform(shader, "HemoTime", u.gameTime());
+					setUniform(shader, "Progress", u.progress());
+					setUniform(shader, "DoorSeed", doorSeed);
+					setUniform(shader, "Mode", u.mode());
+					setUniform(shader, "Origin", u.originX(), u.originY(), u.originZ());
+					setUniform(shader, "Anchor", u.anchorX(), u.anchorY(), u.anchorZ());
+					setUniform(shader, "DoorRight", u.rightX(), u.rightY(), u.rightZ());
+					setUniform(shader, "Well", u.wellX(), u.wellY(), u.wellRadius(), u.reach());
+				},
+				() -> {
+				});
+		return RenderType.create("ring_door_opening",
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.RING_DOOR_OPENING.getShard())
 						.setTexturingState(uniforms)
 						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)

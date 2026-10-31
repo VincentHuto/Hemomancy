@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingFungalHeadModel;
+import com.vincenthuto.hemomancy.client.model.entity.morphling.FungalHeadAttachmentModel;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
@@ -29,7 +29,7 @@ public class MycophantTendrilFungalizationLayer<T extends LivingEntity, M extend
 	private static final ResourceLocation SWIRL_TEXTURE =
 			Hemomancy.rloc("textures/models/armor/avatar_glow.png");
 
-	private MorphlingFungalHeadModel fungalHeadModel;
+	private FungalHeadAttachmentModel fungalHeadModel;
 
 	public MycophantTendrilFungalizationLayer(LivingEntityRenderer<T, M> renderer) {
 		super(renderer);
@@ -66,7 +66,7 @@ public class MycophantTendrilFungalizationLayer<T extends LivingEntity, M extend
 	private void renderFungalHead(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T entity,
 			M parentModel, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch) {
-		MorphlingFungalHeadModel headModel = fungalHeadModel();
+		FungalHeadAttachmentModel headModel = fungalHeadModel();
 		headModel.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 
 		poseStack.pushPose();
@@ -76,10 +76,10 @@ public class MycophantTendrilFungalizationLayer<T extends LivingEntity, M extend
 		poseStack.popPose();
 	}
 
-	private MorphlingFungalHeadModel fungalHeadModel() {
+	private FungalHeadAttachmentModel fungalHeadModel() {
 		if (this.fungalHeadModel == null) {
-			this.fungalHeadModel = new MorphlingFungalHeadModel(Minecraft.getInstance().getEntityModels()
-					.bakeLayer(MorphlingFungalHeadModel.LAYER_LOCATION));
+			this.fungalHeadModel = new FungalHeadAttachmentModel(Minecraft.getInstance().getEntityModels()
+					.bakeLayer(FungalHeadAttachmentModel.LAYER_LOCATION));
 		}
 		return this.fungalHeadModel;
 	}

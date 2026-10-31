@@ -11,7 +11,11 @@ import net.minecraft.world.entity.player.Player;
  */
 public interface ProtectedNpc {
 	default boolean admitsDamage(DamageSource source) {
-		return source.is(DamageTypes.GENERIC_KILL)
-				|| source.getEntity() instanceof Player player && player.isCreative();
+		return isKillCommand(source) || source.getEntity() instanceof Player player && player.isCreative();
+	}
+
+	/** {@code /kill}: the administrative removal every protected NPC admits. */
+	static boolean isKillCommand(DamageSource source) {
+		return source.is(DamageTypes.GENERIC_KILL);
 	}
 }

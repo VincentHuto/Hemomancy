@@ -12,7 +12,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -142,12 +144,23 @@ public class RingDoorBlock extends Block implements EntityBlock, IMultiBlock {
 		}
 	}
 
+	/**
+	 * A held item keeps its own use: Blood Projection is held on the door to open it, so the door never takes the click
+	 * for itself. Only an empty hand reaches {@link #useWithoutItem} and is told the rings answer blood.
+	 */
+	@Override
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+			Player player, InteractionHand hand, BlockHitResult hit) {
+		return stack.isEmpty() ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+				: ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+	}
+
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
 			BlockHitResult hit) {
 		if (level.isClientSide) return InteractionResult.SUCCESS;
 		if (player instanceof ServerPlayer server && level.getBlockEntity(pos) instanceof RingDoorBlockEntity door) {
-			door.use(server);
+			door.touch(server);
 		}
 		return InteractionResult.CONSUME;
 	}

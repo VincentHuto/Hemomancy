@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -46,20 +47,10 @@ public final class SpecimenBestiaryDefinitions {
 			specimen("verdigris_moth")
 	);
 
-	private static final List<MorphlingEntry> MORPHLING_ENTRIES = List.of(
-			morphling(MorphlingPolypLayer.BAT, ItemInit.morphling_witchs_ear, "witchs_ear"),
-			morphling(MorphlingPolypLayer.CENTIPEDE, ItemInit.morphling_winter_shroud, "winter_shroud"),
-			morphling(MorphlingPolypLayer.CHITINITE, ItemInit.morphling_winter_shroud, "winter_shroud"),
-			morphling(MorphlingPolypLayer.CUTTLEFISH, ItemInit.morphling_lumenlace, "lumenlace"),
-			morphling(MorphlingPolypLayer.FUNGAL, ItemInit.morphling_gravecap, "gravecap"),
-			morphling(MorphlingPolypLayer.LEECHES, ItemInit.morphling_deadmans_purse, "deadmans_purse"),
-			morphling(MorphlingPolypLayer.MOLE, ItemInit.morphling_irontooth, "irontooth"),
-			morphling(MorphlingPolypLayer.PESTS, ItemInit.morphling_gravecap, "gravecap"),
-			morphling(MorphlingPolypLayer.SERPENT, ItemInit.morphling_emberfang, "emberfang"),
-			morphling(MorphlingPolypLayer.SPIDER, ItemInit.morphling_bootlace, "bootlace"),
-			morphling(MorphlingPolypLayer.TICK, ItemInit.morphling_deadmans_purse, "deadmans_purse"),
-			morphling(MorphlingPolypLayer.URCHIN, ItemInit.morphling_winter_shroud, "winter_shroud")
-	);
+	/** One entry per wild partner family, in strain-table order; each family yields its house strain. */
+	private static final List<MorphlingEntry> MORPHLING_ENTRIES = MorphlingStrains.ALL.stream()
+			.map(strain -> morphling(strain.polypFamily(), strain.item(), strain.binomialKey()))
+			.toList();
 	private static final Set<ResourceLocation> ECOLOGY_SPECIMENS = RESEARCH_ENTRIES.stream()
 			.map(ResearchEntry::id)
 			.collect(Collectors.toUnmodifiableSet());
@@ -124,19 +115,25 @@ public final class SpecimenBestiaryDefinitions {
 	}
 
 	private static MorphlingEntry morphling(MorphlingPolypLayer layer, DeferredHolder<Item, Item> item,
-			String binomialPath) {
+			String binomialKey) {
 		String id = layer.serializedName();
 		return new MorphlingEntry(layer, item,
 				"bestiary.hemomancy.morphling." + id + ".title",
 				"bestiary.hemomancy.morphling." + id + ".description",
 				"bestiary.hemomancy.morphling." + id + ".source",
-				"morphling.hemomancy." + binomialPath + ".binomial");
+				binomialKey,
+				morphlingCourtKey(id));
 	}
 
 	public record ResearchEntry(ResourceLocation id, String titleKey, String descriptionKey, String sourceKey) {
 	}
 
+	/** The Court paragraph for a morphling family's entry, shown only once the Court is known (decision M7). */
+	public static String morphlingCourtKey(String layerId) {
+		return "bestiary.hemomancy.morphling." + layerId + ".court";
+	}
+
 	public record MorphlingEntry(MorphlingPolypLayer layer, DeferredHolder<Item, Item> morphling,
-			String titleKey, String descriptionKey, String sourceKey, String binomialKey) {
+			String titleKey, String descriptionKey, String sourceKey, String binomialKey, String courtKey) {
 	}
 }

@@ -4,11 +4,13 @@ which stay in structure/mausoleum/ as reference only.
 
 The connectors keep the old chain: top's down connector at (7, 0, 8) meets the stair's up connector, the stair's east
 connector meets the antechamber's west one, and the antechamber's east connector meets the descent (its floor is the
-descent's entry floor). The pavilion's floor is its first row, level with the ground (start_height 0); the west gap
-(x 0-2, z 7-9) is the way in (MausoleumComplexResourceTest.theEntranceFloorIsLevelWithTheGround).
+descent's entry floor). The pavilion's first row is a footing that replaces the ground's top block (start_height 0);
+its step ring, portico stair and floor stand one row up, on the ground; the west gap (x 0-2, z 7-9) is the way in
+(MausoleumComplexResourceTest.theEntranceStandsOnTheGround).
 
-Walking in: through the portico and the arched door, along the runner to the landing at x=7, then a flight of
-stairs dropping one per block east (x 7-16 in the pavilion's frame) under a raking vault, into the antechamber.
+Walking in: up the portico stair, through the arched door, along the runner to the landing steps at x=6 and 7, then a
+flight of stairs dropping one per block east (x 7-16 in the pavilion's frame) under a raking vault, into the
+antechamber.
 """
 import random
 
@@ -30,6 +32,8 @@ PILASTERS = (2, 6, 10, 14)
 LANCETS = (4, 8, 12)
 WELL = range(8, 12)  # the stairwell's open cells along x at z 7-9; the landing step is x=7
 LANDING = 7
+# The hall's floor row once footing() has lifted the pavilion onto its footing course (row 0, the ground's top block).
+FLOOR = 1
 
 # The stair: 10 long, 11 tall, 7 wide; a flight 3 wide (z 2-4) dropping from the landing to the antechamber.
 STAIR_L, STAIR_H, STAIR_W = 10, 11, 7
@@ -91,9 +95,33 @@ def top(saint, c, conn, pool_name):
     roof(room, c)
     portico(room, c)
     stairwell(room, c, rng)
+    room = footing(room, c)
     room.jigsaw(LANDING, 0, CENTRE, 'down_east', conn('top_out'), conn('stairs'), pool_name(saint, 'stairs'),
                 stair_state(c), joint='aligned')
     return room
+
+
+def footing(room, c):
+    """Lifts the pavilion one course onto a footing of base under its whole footprint. The footing is the template's
+    row 0, which replaces the ground's top block (and beard_thin levels the land around to it), so the step ring and
+    the portico stair stand on the ground instead of sinking half a block into it. The flight below keeps its height:
+    the old landing step stays in the footing at x=LANDING, a new step at floor level comes in west of it, and the
+    footing is cut open over the flight's first steps."""
+    sx, sy, sz = room.size
+    lifted = Room(sx, sy + 1, sz)
+    for (x, y, z), (name, props, nbt) in room.blocks.items():
+        lifted.set(x, y + 1, z, name, dict(props), nbt)
+    for x in range(TOP):
+        for z in range(TOP):
+            if footprint(x, z):
+                lifted.set(x, 0, z, c['base'])
+    for z in range(CENTRE - 1, CENTRE + 2):
+        lifted.set(LANDING - 1, 1, z, c['trim_stairs'], stairs('west'))
+        lifted.set(LANDING, 1, z, AIR)
+        lifted.set(LANDING, 0, z, c['trim_stairs'], stairs('west'))
+        for x in WELL:
+            lifted.set(x, 0, z, AIR)
+    return lifted
 
 
 def outer_skin(room, c, rng):

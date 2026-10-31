@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import net.minecraft.network.chat.Component;
 
 import java.util.*;
@@ -13,6 +14,10 @@ public final class MaterialAtlasSpec {
 	private static final int UNSTAINED_HUB_Y = 522;
 	private static final int UNSTAINED_HUB_LABEL_X = 495;
 	private static final int UNSTAINED_HUB_LABEL_Y = 513;
+	/** Atlas positions of the house strains, in {@link MorphlingStrains#ALL} order. */
+	private static final int[][] MORPHLING_STRAIN_COORDINATES = {
+			{1220, 1036}, {1261, 1059}, {1202, 1139}, {1181, 1021},
+			{1245, 1139}, {1284, 1104}, {1122, 1059}, {1157, 1104}};
 
 	private static final EnumMap<MaterialAtlasPath, List<MaterialAtlasBucket>> BUCKETS =
 			new EnumMap<>(MaterialAtlasPath.class);
@@ -193,14 +198,10 @@ public final class MaterialAtlasSpec {
 		entryAt("morphling_cradle", h, "morphlings", d(3), 1152, 968, "morphling_polyp");
 		entryAt("morphling_incubator", h, "morphlings", d(3), 1082, 925, "morphling_polyp", "recycled_enzyme");
 		entryAt("morphling_polyp", h, "morphlings", d(3), 1137, 1021);
-		entryAt("morphling_deadmans_purse", h, "morphlings", d(3), 1202, 1139, "morphling_polyp");
-		entryAt("morphling_gravecap", h, "morphlings", d(3), 1122, 1059, "morphling_polyp");
-		entryAt("morphling_witchs_ear", h, "morphlings", d(3), 1181, 1021, "morphling_polyp");
-		entryAt("morphling_lumenlace", h, "morphlings", d(3), 1220, 1036, "morphling_polyp");
-		entryAt("morphling_bootlace", h, "morphlings", d(3), 1245, 1139, "morphling_polyp");
-		entryAt("morphling_irontooth", h, "morphlings", d(3), 1261, 1059, "morphling_polyp");
-		entryAt("morphling_emberfang", h, "morphlings", d(3), 1157, 1104, "morphling_polyp");
-		entryAt("morphling_winter_shroud", h, "morphlings", d(3), 1284, 1104, "morphling_polyp");
+		for (int i = 0; i < MorphlingStrains.ALL.size(); i++) {
+			int[] at = MORPHLING_STRAIN_COORDINATES[i];
+			entryAt(MorphlingStrains.ALL.get(i).itemPath(), h, "morphlings", d(3), at[0], at[1], "morphling_polyp");
+		}
 		entryAt("scar_station", h, "scars_patterns", d(4), 401, 275, "mason_effigy");
 		entryAt("scar_blank", h, "scars_patterns", d(4), 349, 260, "scar_station");
 		entryAt("living_syringe", h, "alchemy_enzymes", d(2), 805, 1006, "vivacious_enzyme");

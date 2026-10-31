@@ -698,13 +698,13 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> ring_door = MODELEDBLOCKS.register("ring_door",
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(-1.0f, 3600000f)
 					.noLootTable().noOcclusion().sound(SoundType.DEEPSLATE_BRICKS).lightLevel(state -> 3).pushReaction(PushReaction.BLOCK)));
-	/** A Chapel's focus in a Saint mausoleum: its trial lights a node on the ring door. Unbreakable; no item. */
+	/** A Chapel's focus in a Saint mausoleum: its trial lights a node on the ring door. Unbreakable. */
 	public static final DeferredHolder<Block, Block> chapel_focus = MODELEDBLOCKS.register("chapel_focus",
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelFocusBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(-1.0f, 3600000f)
 					.noLootTable().noOcclusion().sound(SoundType.DEEPSLATE_BRICKS).lightLevel(state -> 6)
 					.pushReaction(PushReaction.BLOCK)));
 	// Mausoleum set pieces (Track 6). Trial pieces are unbreakable like the focus; the dressing breaks and drops
-	// nothing. None has an item.
+	// nothing. Each has an item for building and testing; the Witness Devotee stays structure-only.
 	/** One of Velorum's frozen congregation, two tall, in one of four poses. */
 	public static final DeferredHolder<Block, Block> frozen_devotee = MODELEDBLOCKS.register("frozen_devotee",
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.FrozenDevoteeBlock(BlockBehaviour.Properties.of()
@@ -796,6 +796,125 @@ public class BlockInit {
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.plant.AdipocereCrustBlock(BlockBehaviour.Properties.of()
 					.mapColor(MapColor.TERRACOTTA_WHITE).strength(0.3f).noOcclusion().noCollission()
 					.sound(SoundType.HONEY_BLOCK).pushReaction(PushReaction.DESTROY)));
+	// The Brined Court's Seat set pieces (Track 7): structure-only, no items, no drops. Light is biological.
+	/** Gold lichen-crusted rock at the Lighthouse Garden: it glows at night. */
+	public static final DeferredHolder<Block, Block> sunburst_crust = MODELEDBLOCKS.register("sunburst_crust",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(1.5f, 6.0f)
+					.noLootTable().sound(SoundType.STONE).lightLevel(state -> 10)));
+	/** The Lighthouse Garden's beacon: a living Sunburst bloom in a bone cage. */
+	public static final DeferredHolder<Block, Block> sunburst_lamp = MODELEDBLOCKS.register("sunburst_lamp",
+			() -> new CourtFixtureBlock(new double[][] {{2, 0, 2, 14, 16, 14}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_ORANGE).strength(2.0f, 6.0f).noLootTable().noOcclusion()
+					.sound(SoundType.BONE_BLOCK).lightLevel(state -> 15)));
+	/** Frond growth on the Garden's terraces and round its anchored arbor members. */
+	public static final DeferredHolder<Block, Block> sunburst_frond = MODELEDBLOCKS.register("sunburst_frond",
+			() -> new CourtFixtureBlock(new double[][] {{2, 0, 2, 14, 14, 14}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_ORANGE).strength(0.2f).noLootTable().noOcclusion().noCollission()
+					.sound(SoundType.WET_GRASS).pushReaction(PushReaction.DESTROY).lightLevel(state -> 7)));
+	/** A follower of Marimo gone all the way into his moss, on the undercroft's lowest walls. */
+	public static final DeferredHolder<Block, Block> petrified_follower = MODELEDBLOCKS.register("petrified_follower",
+			() -> new PetrifiedFollowerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GREEN)
+					.strength(3.0f, 9.0f).noLootTable().noOcclusion().sound(SoundType.MOSS)
+					.pushReaction(PushReaction.BLOCK)));
+	/** The polyp ring and flame-coloured tentacle crown that makes a vent chimney one of Hydra's heads. */
+	public static final DeferredHolder<Block, Block> hydra_crown = MODELEDBLOCKS.register("hydra_crown",
+			() -> new CourtFixtureBlock(new double[][] {{2, 0, 2, 14, 4, 14}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_ORANGE).strength(2.0f, 6.0f).noLootTable().noOcclusion()
+					.sound(SoundType.SLIME_BLOCK).pushReaction(PushReaction.BLOCK).lightLevel(state -> 10)));
+	/** The carved basin at a chimney's foot where the Kindling feed their offerings in. */
+	public static final DeferredHolder<Block, Block> vent_offering_basin = MODELEDBLOCKS.register("vent_offering_basin",
+			() -> new CourtFacingFixtureBlock(new double[][] {{1, 0, 1, 15, 9, 15}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BLACK).strength(3.0f, 9.0f).noLootTable().noOcclusion()
+					.sound(SoundType.GILDED_BLACKSTONE).pushReaction(PushReaction.BLOCK).lightLevel(state -> 6)));
+	/** Hydra's body at the Vent Sanctum: the mass that members who did not keep a head became. */
+	public static final DeferredHolder<Block, Block> kindled_tissue = MODELEDBLOCKS.register("kindled_tissue",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(2.0f, 6.0f)
+					.noLootTable().sound(SoundType.SLIME_BLOCK).lightLevel(state -> 4)));
+	// The Brined Court's presences (Track 10): Marimo is his moss. It never breaks outside Creative and never moves.
+	/** Marimo's moss, filling the undercroft's lowest chamber and threading up through its walls. */
+	public static final DeferredHolder<Block, Block> marimo_moss = MODELEDBLOCKS.register("marimo_moss",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.MarimoMossBlock(BlockBehaviour.Properties
+					.of().mapColor(MapColor.COLOR_GREEN).strength(-1.0f, 3600000.0f).noLootTable().sound(SoundType.MOSS)
+					.pushReaction(PushReaction.BLOCK).isValidSpawn((state, level, pos, type) -> false).lightLevel(state -> 4)));
+	/** Marimo's Heart: the densest knot of his moss, which notices the living who come down to it. */
+	public static final DeferredHolder<Block, Block> marimo_heart = MODELEDBLOCKS.register("marimo_heart",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.MarimoHeartBlock(BlockBehaviour.Properties
+					.of().mapColor(MapColor.COLOR_YELLOW).strength(-1.0f, 3600000.0f).noLootTable().sound(SoundType.MOSS)
+					.pushReaction(PushReaction.BLOCK).isValidSpawn((state, level, pos, type) -> false).lightLevel(state -> 9)));
+	/** A bloom the Bloom Warden sows over the tier floor; fed by light from above, gone after the fight (Track 10). */
+	public static final DeferredHolder<Block, Block> warden_bloom = MODELEDBLOCKS.register("warden_bloom",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.WardenBloomBlock(BlockBehaviour.Properties
+					.of().mapColor(MapColor.COLOR_YELLOW).instabreak().noLootTable().noOcclusion().noCollission()
+					.sound(SoundType.LILY_PAD).pushReaction(PushReaction.DESTROY).lightLevel(state -> 7)));
+	// The Brined Court's outpost and sign set pieces (Track 8): placed by structures and features, items for building
+	// and testing since the 2026-10-30 review, no drops.
+	/** The Holding Stone's gripping growth, cemented to the rock at the Tide Refuge's entrance. */
+	public static final DeferredHolder<Block, Block> holdfast_root_mass = MODELEDBLOCKS.register("holdfast_root_mass",
+			() -> new CourtFacingFixtureBlock(new double[][] {{1, 0, 5, 15, 14, 16}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.TERRACOTTA_BROWN).strength(3.0f, 9.0f).noLootTable().noOcclusion()
+					.sound(SoundType.ROOTS).pushReaction(PushReaction.BLOCK)));
+	/** The Shared Wake's grown purse cups on the nursery bank, red egg cases inside. */
+	public static final DeferredHolder<Block, Block> nest_cup = MODELEDBLOCKS.register("nest_cup",
+			() -> new CourtFixtureBlock(new double[][] {{2, 0, 2, 14, 9, 14}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BLUE).strength(0.8f).noLootTable().noOcclusion()
+					.sound(SoundType.WART_BLOCK).pushReaction(PushReaction.DESTROY)));
+	/** The lamp-lit pod that hangs from the Woven Current's lines. */
+	public static final DeferredHolder<Block, Block> rope_pod = MODELEDBLOCKS.register("rope_pod",
+			() -> new CourtFixtureBlock(new double[][] {{4, 1, 4, 12, 16, 12}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_PURPLE).strength(0.5f).noLootTable().noOcclusion().noCollission()
+					.sound(SoundType.WET_GRASS).pushReaction(PushReaction.DESTROY).lightLevel(state -> 11)));
+	/** The Woven Current's living line across a gully: climbable, like a chain on any axis. */
+	public static final DeferredHolder<Block, Block> current_strand = MODELEDBLOCKS.register("current_strand",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.CurrentStrandBlock(
+					BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(0.5f).noLootTable()
+							.noOcclusion().noCollission().sound(SoundType.WET_GRASS).pushReaction(PushReaction.DESTROY)
+							.lightLevel(state -> 3)));
+	/** Violet-blue grown tissue with a glowing vein net: the Line Camp's pod walls. */
+	public static final DeferredHolder<Block, Block> current_tissue = MODELEDBLOCKS.register("current_tissue",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(1.0f, 4.0f)
+					.noLootTable().sound(SoundType.WART_BLOCK).lightLevel(state -> 6)));
+	/** The Ink Cap veil that screens the Veiled Fold's doorways. */
+	public static final DeferredHolder<Block, Block> fold_veil = MODELEDBLOCKS.register("fold_veil",
+			() -> new CourtFacingFixtureBlock(new double[][] {{0, 0, 5, 16, 16, 9}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BLACK).strength(0.3f).noLootTable().noOcclusion().noCollission()
+					.sound(SoundType.WOOL).pushReaction(PushReaction.DESTROY)));
+	/** The Still Bell's grown diving-bell rind: hard frost blue-grey sclerotium, no metal. */
+	public static final DeferredHolder<Block, Block> sclerotium_shell = MODELEDBLOCKS.register("sclerotium_shell",
+			() -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).strength(4.0f, 12.0f)
+					.noLootTable().sound(SoundType.NETHER_WART)));
+	/** A Still Bell elder sealed in its folded mantle, hung in the bell's upper ring. */
+	public static final DeferredHolder<Block, Block> bell_sleeper = MODELEDBLOCKS.register("bell_sleeper",
+			() -> new CourtFixtureBlock(new double[][] {{3, 0, 3, 13, 16, 13}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_LIGHT_BLUE).strength(3.0f, 9.0f).noLootTable().noOcclusion()
+					.noCollission().sound(SoundType.WART_BLOCK).pushReaction(PushReaction.BLOCK).lightLevel(state -> 3)));
+	/** Last Marrow's red feeding plumes, grown out of the whale fall's bones. */
+	public static final DeferredHolder<Block, Block> marrow_plume = MODELEDBLOCKS.register("marrow_plume",
+			() -> new CourtFixtureBlock(new double[][] {{3, 0, 3, 13, 15, 13}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_RED).strength(0.3f).noLootTable().noOcclusion().noCollission()
+					.sound(SoundType.WET_GRASS).pushReaction(PushReaction.DESTROY).lightLevel(state -> 5)));
+	/** Marimo's floating sign: a gold bloom on the water over reef and coast. */
+	public static final DeferredHolder<Block, Block> sunburst_bloom = MODELEDBLOCKS.register("sunburst_bloom",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.SunburstBloomBlock(
+					BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).instabreak().noLootTable()
+							.noOcclusion().sound(SoundType.LILY_PAD).pushReaction(PushReaction.DESTROY)
+							.lightLevel(com.vincenthuto.hemomancy.common.block.harbinger.decoration.SunburstBloomBlock::light)));
+	/** A house's boundary post: one block, the house as a property. */
+	public static final DeferredHolder<Block, Block> house_marker = MODELEDBLOCKS.register("house_marker",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.HouseMarkerBlock(
+					BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(3.0f, 9.0f).noLootTable()
+							.noOcclusion().sound(SoundType.GILDED_BLACKSTONE).pushReaction(PushReaction.BLOCK)
+							.lightLevel(state -> 3)));
+	/** The relay post at a depth boundary, red current threads drifting off it. */
+	public static final DeferredHolder<Block, Block> relay_marker = MODELEDBLOCKS.register("relay_marker",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.RelayMarkerBlock(
+					BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_WHITE).strength(2.0f, 6.0f)
+							.noLootTable().noOcclusion().sound(SoundType.BONE_BLOCK).pushReaction(PushReaction.BLOCK)
+							.lightLevel(state -> 4)));
+	/** A grown float on the open water with a trailing line: a messenger's buoy. */
+	public static final DeferredHolder<Block, Block> messenger_buoy = MODELEDBLOCKS.register("messenger_buoy",
+			() -> new CourtFixtureBlock(new double[][] {{4, 6, 4, 12, 16, 12}}, BlockBehaviour.Properties.of()
+					.mapColor(MapColor.TERRACOTTA_WHITE).strength(0.8f).noLootTable().noOcclusion()
+					.sound(SoundType.WART_BLOCK).pushReaction(PushReaction.DESTROY)));
 	/** Hemorath's floor gutter: a deepslate-tile floor with a blood channel cut in it, dry to full. */
 	public static final DeferredHolder<Block, Block> blood_gutter = MODELEDBLOCKS.register("blood_gutter",
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.BloodGutterBlock(BlockBehaviour.Properties.of()
@@ -1248,7 +1367,12 @@ public class BlockInit {
 			Map.entry("hematic_stake", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("puppeteers_spindle", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("mason_effigy", b -> new BlockItem(b, new Item.Properties())),
-			Map.entry("covenant_throne", b -> new BlockItem(b, new Item.Properties())));
+			Map.entry("covenant_throne", b -> new BlockItem(b, new Item.Properties())),
+			// One item for every Saint's tomb; the stack names its Saint, and the tab lists one per palette.
+			Map.entry("saint_sarcophagus", b -> new com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SaintSarcophagusBlockItem(b, new Item.Properties())),
+			// Sits on the water like a lily pad; the house marker carries its house on the stack.
+			Map.entry("sunburst_bloom", b -> new net.minecraft.world.item.PlaceOnWaterBlockItem(b, new Item.Properties())),
+			Map.entry("house_marker", b -> new com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.HouseMarkerBlockItem(b, new Item.Properties())));
 	private static final Map<String, String> MANUAL_BLOCK_ITEMS = Map.of(
 			"gourd_stem", "gourd_seeds",
 			"active_befouling_ash_trail", "active_befouling_ash",
@@ -1258,9 +1382,8 @@ public class BlockInit {
 			"sanguine_conduit", "sanguine_conduit");
 	private static final Set<String> ITEMLESS_BLOCKS = Set.of("attached_gourd_stem", "filler_block",
 			"warp_chair_filler", "abocipher_emitter", "qliphoth_bloom",
-			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "chapel_focus", "recollection_cyst",
-			"frozen_devotee", "witness_stone", "witness_devotee", "litany_stone", "offering_stand", "pulse_pylon", "spawn_mark",
-			"containment_anchor_block", "rot_pyre", "sealed_niche", "opened_niche", "reliquary_sconce");
+			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "recollection_cyst",
+			"witness_devotee", "warden_bloom");
 	private static final Set<String> HIDDEN_BLOCK_ITEMS = Set.of("active_befouling_ash_trail",
 			"active_smouldering_ash_trail", "engram_block", "mycelial_synapse");
 

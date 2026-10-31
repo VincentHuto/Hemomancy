@@ -1,6 +1,6 @@
 # Registered Hemomancy payloads for this PROTOCOL_VERSION, checked by PayloadProtocolVersionTest.
 # When the set changes, bump PacketHandler.PROTOCOL_VERSION and rewrite this file.
-version 25
+version 27
 playToServer ActivateArmorSetAbilityC2SPacket
 playBidirectional AntecedentEffectPacket
 playToServer ArborFruitInteractPacket
@@ -99,6 +99,7 @@ playToClient PacketSyncChamberVisit
 playToClient PacketSyncCircusPerception
 playToClient PacketSyncCircusSchool
 playToClient PacketSyncClinicalBlood
+playToClient PacketSyncCourtProgress
 playToClient PacketSyncDegree
 playToClient PacketSyncFaneBoundaries
 playToClient PacketSyncFungalProjection

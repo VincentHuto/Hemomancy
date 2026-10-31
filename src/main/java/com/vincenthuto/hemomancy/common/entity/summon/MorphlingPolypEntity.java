@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -35,6 +36,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidType;
 
@@ -93,13 +95,27 @@ public class MorphlingPolypEntity extends Monster {
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
 	}
 
+	/** Natural water spawns keep one try in this many that pass the open-water check. */
+	static final int OCEAN_SPAWN_ODDS = 40;
+	/** No natural water spawn within this many blocks of another polyp. */
+	static final int OCEAN_SPACING = 48;
+
 	public static boolean canSpawnHere(EntityType<? extends MorphlingPolypEntity> type, LevelAccessor level,
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 		boolean water = level.getFluidState(pos).is(FluidTags.WATER);
 		if (water) {
-			return level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()
+			boolean open = level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()
 					&& (level.getFluidState(pos.above()).is(FluidTags.WATER)
 					|| level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty());
+			if (!open) return false;
+			if (spawnReason != MobSpawnType.NATURAL && spawnReason != MobSpawnType.CHUNK_GENERATION) return true;
+			// Almost no other monster passes a water spawn check, so without these the polyp took the whole ocean
+			// monster cap (review 2026-10-30): one try in OCEAN_SPAWN_ODDS, only on the seabed, never near another.
+			BlockPos floor = pos.below();
+			return random.nextInt(OCEAN_SPAWN_ODDS) == 0
+					&& level.getBlockState(floor).isFaceSturdy(level, floor, Direction.UP)
+					&& level.getEntitiesOfClass(MorphlingPolypEntity.class,
+							new AABB(pos).inflate(OCEAN_SPACING)).isEmpty();
 		}
 		BlockPos below = pos.below();
 		return level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()

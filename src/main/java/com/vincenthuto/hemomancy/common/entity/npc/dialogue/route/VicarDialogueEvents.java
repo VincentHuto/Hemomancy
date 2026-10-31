@@ -22,7 +22,8 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 
 /**
  * The Vicar's dialogue events: early initiation, the Voyager report, blood-shotting, the Hermit road report, the
- * first bloodcraft reward, blueprints, the Mason's Respite directive and the church map (the Zealot hands it out too).
+ * first bloodcraft reward, blueprints, the Mason's Respite directive, the church map (the Zealot hands it out too)
+ * and a Brine-Sealed Letter.
  */
 final class VicarDialogueEvents {
 	private VicarDialogueEvents() {
@@ -64,6 +65,9 @@ final class VicarDialogueEvents {
 		case "give_stained_church_map" -> {
 			handleGiveStainedChurchMap(player, event.getEntityId());
 		}
+		case CourtDiscoveryDialogue.VICAR_LETTER -> event.setRewardDelivered(
+				player.level().getEntity(event.getEntityId()) instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity
+						&& com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtDiscoveryProgress.recordLetter(player));
 		case "vicar_begin_initiation" -> event.setRewardDelivered(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, player.level().getEntity(event.getEntityId())));
 		case "vicar_release_charm" -> event.setRewardDelivered(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.release(player, player.level().getEntity(event.getEntityId())));
 		default -> {

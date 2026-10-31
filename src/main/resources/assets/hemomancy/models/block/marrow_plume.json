@@ -1,0 +1,1687 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    16
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/marrow_plume",
+    "particle": "hemomancy:block/marrow_plume"
+  },
+  "elements": [
+    {
+      "name": "foot",
+      "from": [
+        4,
+        0,
+        4
+      ],
+      "to": [
+        12,
+        1,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.25,
+            11.0,
+            1.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            1.25,
+            11.0,
+            2.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.25,
+            11.0,
+            3.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.25,
+            11.0,
+            4.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            1.0,
+            0.0,
+            2.0,
+            8.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            2.0,
+            0.0,
+            3.0,
+            8.0
+          ],
+          "texture": "#atlas",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "root_a",
+      "from": [
+        3,
+        0.03,
+        7
+      ],
+      "to": [
+        5,
+        0.75,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4.25,
+            11.0,
+            4.5,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.5,
+            11.0,
+            4.75,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.75,
+            11.0,
+            5.0,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            5.0,
+            11.0,
+            5.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            11.75,
+            0.0,
+            12.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            12.0,
+            0.0,
+            12.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "root_b",
+      "from": [
+        11,
+        0.03,
+        6
+      ],
+      "to": [
+        13,
+        0.75,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.25,
+            11.0,
+            5.5,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.5,
+            11.0,
+            5.75,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            5.75,
+            11.0,
+            6.0,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.0,
+            11.0,
+            6.25,
+            12.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            12.25,
+            0.0,
+            12.5,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            12.5,
+            0.0,
+            12.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "tall_stalk",
+      "from": [
+        7,
+        1,
+        7
+      ],
+      "to": [
+        8.5,
+        10,
+        8.5
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          7.75,
+          1,
+          7.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            0.0,
+            0.25,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            0.25,
+            0.0,
+            0.5,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.5,
+            0.0,
+            0.75,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            0.75,
+            0.0,
+            1.0,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            12.75,
+            0.0,
+            13.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            13.0,
+            0.0,
+            13.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "tall_club",
+      "from": [
+        6.25,
+        10,
+        6.25
+      ],
+      "to": [
+        9.25,
+        12.5,
+        9.25
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          7.75,
+          1,
+          7.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            5.0,
+            0.0,
+            5.375,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.375,
+            0.0,
+            5.75,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            5.75,
+            0.0,
+            6.125,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.125,
+            0.0,
+            6.5,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            6.5,
+            0.0,
+            6.875,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            6.875,
+            0.0,
+            7.25,
+            3.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "tall_arm_0",
+      "from": [
+        5.5,
+        12.5,
+        7
+      ],
+      "to": [
+        7.0,
+        14,
+        8.5
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          7.75,
+          1,
+          7.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            13.25,
+            0.0,
+            13.5,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            13.5,
+            0.0,
+            13.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            13.75,
+            0.0,
+            14.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            14.0,
+            0.0,
+            14.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            14.25,
+            0.0,
+            14.5,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            14.5,
+            0.0,
+            14.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "tall_arm_1",
+      "from": [
+        9,
+        12.5,
+        7
+      ],
+      "to": [
+        10.5,
+        14,
+        8.5
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          7.75,
+          1,
+          7.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            14.75,
+            0.0,
+            15.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            15.0,
+            0.0,
+            15.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            15.25,
+            0.0,
+            15.5,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            15.5,
+            0.0,
+            15.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            15.75,
+            0.0,
+            16.0,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            0.0,
+            9.0,
+            0.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "tall_arm_2",
+      "from": [
+        7,
+        12.5,
+        5.5
+      ],
+      "to": [
+        8.5,
+        14,
+        7.0
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          7.75,
+          1,
+          7.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0.25,
+            9.0,
+            0.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            0.5,
+            9.0,
+            0.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.75,
+            9.0,
+            1.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            1.0,
+            9.0,
+            1.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            1.25,
+            9.0,
+            1.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            1.5,
+            9.0,
+            1.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "tall_arm_3",
+      "from": [
+        7,
+        12.5,
+        9
+      ],
+      "to": [
+        8.5,
+        14,
+        10.5
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          7.75,
+          1,
+          7.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            1.75,
+            9.0,
+            2.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.0,
+            9.0,
+            2.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.25,
+            9.0,
+            2.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            2.5,
+            9.0,
+            2.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            2.75,
+            9.0,
+            3.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            3.0,
+            9.0,
+            3.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "mid_stalk",
+      "from": [
+        4.5,
+        1,
+        9.5
+      ],
+      "to": [
+        6.0,
+        7,
+        11.0
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "z",
+        "origin": [
+          5.25,
+          1,
+          10.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            3.0,
+            0.0,
+            3.25,
+            6.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            3.25,
+            0.0,
+            3.5,
+            6.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.5,
+            0.0,
+            3.75,
+            6.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.75,
+            0.0,
+            4.0,
+            6.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            3.25,
+            9.0,
+            3.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            3.5,
+            9.0,
+            3.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "mid_club",
+      "from": [
+        3.75,
+        7,
+        8.75
+      ],
+      "to": [
+        6.75,
+        9.5,
+        11.75
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "z",
+        "origin": [
+          5.25,
+          1,
+          10.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            7.25,
+            0.0,
+            7.625,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            7.625,
+            0.0,
+            8.0,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            8.0,
+            0.0,
+            8.375,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            8.375,
+            0.0,
+            8.75,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.75,
+            0.0,
+            9.125,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.125,
+            0.0,
+            9.5,
+            3.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "mid_arm_0",
+      "from": [
+        3.0,
+        9.5,
+        9.5
+      ],
+      "to": [
+        4.5,
+        11,
+        11.0
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "z",
+        "origin": [
+          5.25,
+          1,
+          10.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            3.75,
+            9.0,
+            4.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.0,
+            9.0,
+            4.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.25,
+            9.0,
+            4.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            4.5,
+            9.0,
+            4.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            4.75,
+            9.0,
+            5.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            5.0,
+            9.0,
+            5.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "mid_arm_1",
+      "from": [
+        6.5,
+        9.5,
+        9.5
+      ],
+      "to": [
+        8.0,
+        11,
+        11.0
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "z",
+        "origin": [
+          5.25,
+          1,
+          10.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            5.25,
+            9.0,
+            5.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.5,
+            9.0,
+            5.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            5.75,
+            9.0,
+            6.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.0,
+            9.0,
+            6.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            6.25,
+            9.0,
+            6.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            6.5,
+            9.0,
+            6.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "mid_arm_2",
+      "from": [
+        4.5,
+        9.5,
+        8.0
+      ],
+      "to": [
+        6.0,
+        11,
+        9.5
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "z",
+        "origin": [
+          5.25,
+          1,
+          10.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            6.75,
+            9.0,
+            7.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            7.0,
+            9.0,
+            7.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            7.25,
+            9.0,
+            7.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            7.5,
+            9.0,
+            7.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            7.75,
+            9.0,
+            8.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            8.0,
+            9.0,
+            8.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "mid_arm_3",
+      "from": [
+        4.5,
+        9.5,
+        11.5
+      ],
+      "to": [
+        6.0,
+        11,
+        13.0
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "z",
+        "origin": [
+          5.25,
+          1,
+          10.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            8.25,
+            9.0,
+            8.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            8.5,
+            9.0,
+            8.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            8.75,
+            9.0,
+            9.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            9.0,
+            9.0,
+            9.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.25,
+            9.0,
+            9.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.5,
+            9.0,
+            9.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "low_stalk",
+      "from": [
+        10,
+        1,
+        5
+      ],
+      "to": [
+        11.5,
+        5,
+        6.5
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [
+          10.75,
+          1,
+          5.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            4.0,
+            0.0,
+            4.25,
+            4.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.25,
+            0.0,
+            4.5,
+            4.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.5,
+            0.0,
+            4.75,
+            4.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            4.75,
+            0.0,
+            5.0,
+            4.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.75,
+            9.0,
+            10.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            10.0,
+            9.0,
+            10.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "low_club",
+      "from": [
+        9.25,
+        5,
+        4.25
+      ],
+      "to": [
+        12.25,
+        7.5,
+        7.25
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [
+          10.75,
+          1,
+          5.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            9.5,
+            0.0,
+            9.875,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            9.875,
+            0.0,
+            10.25,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            10.25,
+            0.0,
+            10.625,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            10.625,
+            0.0,
+            11.0,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            11.0,
+            0.0,
+            11.375,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            11.375,
+            0.0,
+            11.75,
+            3.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "low_arm_0",
+      "from": [
+        8.5,
+        7.5,
+        5
+      ],
+      "to": [
+        10.0,
+        9,
+        6.5
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [
+          10.75,
+          1,
+          5.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            10.25,
+            9.0,
+            10.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            10.5,
+            9.0,
+            10.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            10.75,
+            9.0,
+            11.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            11.0,
+            9.0,
+            11.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            11.25,
+            9.0,
+            11.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            11.5,
+            9.0,
+            11.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "low_arm_1",
+      "from": [
+        12,
+        7.5,
+        5
+      ],
+      "to": [
+        13.5,
+        9,
+        6.5
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [
+          10.75,
+          1,
+          5.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            11.75,
+            9.0,
+            12.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            12.0,
+            9.0,
+            12.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            12.25,
+            9.0,
+            12.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            12.5,
+            9.0,
+            12.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            12.75,
+            9.0,
+            13.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            13.0,
+            9.0,
+            13.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "low_arm_2",
+      "from": [
+        10,
+        7.5,
+        3.5
+      ],
+      "to": [
+        11.5,
+        9,
+        5.0
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [
+          10.75,
+          1,
+          5.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            13.25,
+            9.0,
+            13.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            13.5,
+            9.0,
+            13.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            13.75,
+            9.0,
+            14.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            14.0,
+            9.0,
+            14.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            14.25,
+            9.0,
+            14.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            14.5,
+            9.0,
+            14.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "low_arm_3",
+      "from": [
+        10,
+        7.5,
+        7
+      ],
+      "to": [
+        11.5,
+        9,
+        8.5
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [
+          10.75,
+          1,
+          5.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            14.75,
+            9.0,
+            15.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            15.0,
+            9.0,
+            15.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            15.25,
+            9.0,
+            15.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            15.5,
+            9.0,
+            15.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            15.75,
+            9.0,
+            16.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            0.0,
+            11.0,
+            0.25,
+            13.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    }
+  ]
+}

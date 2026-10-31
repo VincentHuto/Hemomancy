@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "hemomancy:block/current_strand"
+    },
+    "axis=x": {
+      "model": "hemomancy:block/current_strand",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z": {
+      "model": "hemomancy:block/current_strand",
+      "x": 90
+    }
+  }
+}

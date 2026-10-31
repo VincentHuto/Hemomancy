@@ -253,6 +253,25 @@ def item_elements(*groups):
     return out
 
 
+# A two-storey set piece's item draws the whole figure at about half the size of a one-cell block.
+TALL_DISPLAY = {
+    'gui': {'rotation': [30, 225, 0], 'translation': [0, -2.5, 0], 'scale': [0.33, 0.33, 0.33]},
+    'ground': {'translation': [0, 1, 0], 'scale': [0.16, 0.16, 0.16]},
+    'fixed': {'translation': [0, -2.5, 0], 'scale': [0.33, 0.33, 0.33]},
+    'head': {'translation': [0, 6, 0], 'scale': [0.5, 0.5, 0.5]},
+    'thirdperson_righthand': {'rotation': [75, 45, 0], 'translation': [0, 1.5, 0], 'scale': [0.2, 0.2, 0.2]},
+    'thirdperson_lefthand': {'rotation': [75, 45, 0], 'translation': [0, 1.5, 0], 'scale': [0.2, 0.2, 0.2]},
+    'firstperson_righthand': {'rotation': [0, 45, 0], 'translation': [0, -1, 0], 'scale': [0.2, 0.2, 0.2]},
+    'firstperson_lefthand': {'rotation': [0, 225, 0], 'translation': [0, -1, 0], 'scale': [0.2, 0.2, 0.2]},
+}
+
+
+def write_tall_item(name, whole):
+    """Writes item/<name> from a set piece's joined storeys (item_elements), shown with TALL_DISPLAY."""
+    item = dict(whole, display=TALL_DISPLAY)
+    (ASSETS / 'models' / 'item' / f'{name}.json').write_text(json.dumps(item, indent=2) + '\n')
+
+
 def write(outputs, project_name, project_model):
     for name, model in outputs.items():
         (ASSETS / 'models' / (name + '.json')).write_text(json.dumps(model, indent=2) + '\n')

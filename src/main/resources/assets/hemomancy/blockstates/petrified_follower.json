@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "moss=partial,facing=north": {
+      "model": "hemomancy:block/petrified_follower"
+    },
+    "moss=partial,facing=east": {
+      "model": "hemomancy:block/petrified_follower",
+      "y": 90
+    },
+    "moss=partial,facing=south": {
+      "model": "hemomancy:block/petrified_follower",
+      "y": 180
+    },
+    "moss=partial,facing=west": {
+      "model": "hemomancy:block/petrified_follower",
+      "y": 270
+    },
+    "moss=whole,facing=north": {
+      "model": "hemomancy:block/petrified_follower_whole"
+    },
+    "moss=whole,facing=east": {
+      "model": "hemomancy:block/petrified_follower_whole",
+      "y": 90
+    },
+    "moss=whole,facing=south": {
+      "model": "hemomancy:block/petrified_follower_whole",
+      "y": 180
+    },
+    "moss=whole,facing=west": {
+      "model": "hemomancy:block/petrified_follower_whole",
+      "y": 270
+    }
+  }
+}

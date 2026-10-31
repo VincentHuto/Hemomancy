@@ -39,7 +39,7 @@ public final class RecipeCodecGameTests {
 
     @GameTest(template = "empty")
     public static void incubatorRetainsResultFormatsAndRegistryContext(GameTestHelper helper) throws Exception {
-        checkFamily(helper, new IncubatorRecipeSerializer().codec().codec(), "incubator/morphling_bootlace");
+        checkFamily(helper, new IncubatorRecipeSerializer().codec().codec(), "incubator/morphling_ink_cap");
         helper.succeed();
     }
 

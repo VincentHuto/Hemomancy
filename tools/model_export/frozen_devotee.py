@@ -61,7 +61,7 @@ from PIL import Image, ImageDraw
 import coplanar
 from clairaudiograph import clamp, noise, render
 from fixture_atlas import ASSETS, ROOT, box, build, item_elements, mirror_x, model_json, preview, separate, spin, \
-    split_storeys, write
+    split_storeys, write, write_tall_item
 
 ATLAS = 'frozen_devotee'
 PARTICLE = f'hemomancy:block/{ATLAS}'
@@ -875,7 +875,9 @@ def main():
         witness[turn_to] = item_elements((models[names['striding', 'lower', 'forward']], 0), (upper, 16))
         print(f'  witness lit {turn_to}: {len(upper)} upper cubes; upper box {fmt(bounds(upper)[0])}..'
               f'{fmt(bounds(upper)[1])}')
-    write(outputs, 'frozen_devotee', model_json(joined['kneeling', 'forward'], ATLAS, atlas.height, PARTICLE))
+    kneeling = model_json(joined['kneeling', 'forward'], ATLAS, atlas.height, PARTICLE)
+    write(outputs, 'frozen_devotee', kneeling)
+    write_tall_item('frozen_devotee', kneeling)
     write({}, WITNESS, model_json(witness['left'], ATLAS, atlas.height, PARTICLE))
     (ASSETS / 'blockstates/frozen_devotee.json').write_text(json.dumps(blockstate(names), indent=2) + '\n')
     (ASSETS / f'blockstates/{WITNESS}.json').write_text(json.dumps(witness_blockstate(names), indent=2) + '\n')

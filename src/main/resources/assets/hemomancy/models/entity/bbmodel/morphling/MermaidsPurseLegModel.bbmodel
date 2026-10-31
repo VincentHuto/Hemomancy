@@ -1,0 +1,376 @@
+{
+ "meta": {
+  "format_version": "4.10",
+  "model_format": "free",
+  "box_uv": true
+ },
+ "name": "MermaidsPurseLegModel",
+ "model_identifier": "mermaids_purse_legs",
+ "resolution": {
+  "width": 64,
+  "height": 64
+ },
+ "elements": [
+  {
+   "name": "calf_finlets_0",
+   "uuid": "81022ef9-eff1-5d20-a726-62f3f73b781e",
+   "type": "cube",
+   "from": [
+    -0.25,
+    16.25,
+    2
+   ],
+   "to": [
+    0.25,
+    17.5,
+    3.25
+   ],
+   "origin": [
+    0,
+    17.5,
+    2
+   ],
+   "uv_offset": [
+    0,
+    0
+   ],
+   "autouv": 0,
+   "faces": {
+    "north": {
+     "uv": [
+      1.25,
+      1.25,
+      1.75,
+      2.5
+     ],
+     "texture": 0
+    },
+    "east": {
+     "uv": [
+      0,
+      1.25,
+      1.25,
+      2.5
+     ],
+     "texture": 0
+    },
+    "south": {
+     "uv": [
+      3.0,
+      1.25,
+      3.5,
+      2.5
+     ],
+     "texture": 0
+    },
+    "west": {
+     "uv": [
+      1.75,
+      1.25,
+      3.0,
+      2.5
+     ],
+     "texture": 0
+    },
+    "up": {
+     "uv": [
+      1.75,
+      1.25,
+      1.25,
+      0
+     ],
+     "texture": 0
+    },
+    "down": {
+     "uv": [
+      2.25,
+      0,
+      1.75,
+      1.25
+     ],
+     "texture": 0
+    }
+   }
+  },
+  {
+   "name": "calf_finlets_1",
+   "uuid": "3e66251a-e342-5ed1-9d91-2069156c4ce9",
+   "type": "cube",
+   "from": [
+    -0.25,
+    15.25,
+    2
+   ],
+   "to": [
+    0.25,
+    16.25,
+    3.0
+   ],
+   "origin": [
+    0,
+    17.5,
+    2
+   ],
+   "uv_offset": [
+    4,
+    0
+   ],
+   "autouv": 0,
+   "faces": {
+    "north": {
+     "uv": [
+      5.0,
+      1.0,
+      5.5,
+      2.0
+     ],
+     "texture": 0
+    },
+    "east": {
+     "uv": [
+      4,
+      1.0,
+      5.0,
+      2.0
+     ],
+     "texture": 0
+    },
+    "south": {
+     "uv": [
+      6.5,
+      1.0,
+      7.0,
+      2.0
+     ],
+     "texture": 0
+    },
+    "west": {
+     "uv": [
+      5.5,
+      1.0,
+      6.5,
+      2.0
+     ],
+     "texture": 0
+    },
+    "up": {
+     "uv": [
+      5.5,
+      1.0,
+      5.0,
+      0
+     ],
+     "texture": 0
+    },
+    "down": {
+     "uv": [
+      6.0,
+      0,
+      5.5,
+      1.0
+     ],
+     "texture": 0
+    }
+   }
+  },
+  {
+   "name": "calf_finlets_2",
+   "uuid": "e8e6deaa-c242-580d-9cc9-6d980e0633c5",
+   "type": "cube",
+   "from": [
+    -0.25,
+    14.25,
+    2
+   ],
+   "to": [
+    0.25,
+    15.0,
+    2.75
+   ],
+   "origin": [
+    0,
+    17.5,
+    2
+   ],
+   "uv_offset": [
+    7,
+    0
+   ],
+   "autouv": 0,
+   "faces": {
+    "north": {
+     "uv": [
+      7.75,
+      0.75,
+      8.25,
+      1.5
+     ],
+     "texture": 0
+    },
+    "east": {
+     "uv": [
+      7,
+      0.75,
+      7.75,
+      1.5
+     ],
+     "texture": 0
+    },
+    "south": {
+     "uv": [
+      9.0,
+      0.75,
+      9.5,
+      1.5
+     ],
+     "texture": 0
+    },
+    "west": {
+     "uv": [
+      8.25,
+      0.75,
+      9.0,
+      1.5
+     ],
+     "texture": 0
+    },
+    "up": {
+     "uv": [
+      8.25,
+      0.75,
+      7.75,
+      0
+     ],
+     "texture": 0
+    },
+    "down": {
+     "uv": [
+      8.75,
+      0,
+      8.25,
+      0.75
+     ],
+     "texture": 0
+    }
+   }
+  },
+  {
+   "name": "calf_finlets_3",
+   "uuid": "28279471-f6f7-5c95-9dc9-8f6e5372527f",
+   "type": "cube",
+   "from": [
+    -0.25,
+    13.25,
+    2
+   ],
+   "to": [
+    0.25,
+    13.75,
+    2.5
+   ],
+   "origin": [
+    0,
+    17.5,
+    2
+   ],
+   "uv_offset": [
+    10,
+    0
+   ],
+   "autouv": 0,
+   "faces": {
+    "north": {
+     "uv": [
+      10.5,
+      0.5,
+      11.0,
+      1.0
+     ],
+     "texture": 0
+    },
+    "east": {
+     "uv": [
+      10,
+      0.5,
+      10.5,
+      1.0
+     ],
+     "texture": 0
+    },
+    "south": {
+     "uv": [
+      11.5,
+      0.5,
+      12.0,
+      1.0
+     ],
+     "texture": 0
+    },
+    "west": {
+     "uv": [
+      11.0,
+      0.5,
+      11.5,
+      1.0
+     ],
+     "texture": 0
+    },
+    "up": {
+     "uv": [
+      11.0,
+      0.5,
+      10.5,
+      0
+     ],
+     "texture": 0
+    },
+    "down": {
+     "uv": [
+      11.5,
+      0,
+      11.0,
+      0.5
+     ],
+     "texture": 0
+    }
+   }
+  }
+ ],
+ "outliner": [
+  {
+   "name": "calf_finlets",
+   "origin": [
+    0,
+    17.5,
+    2
+   ],
+   "rotation": [
+    -0.0,
+    0.0,
+    -0.0
+   ],
+   "uuid": "5cd7ec52-c48e-5fc3-8653-28c36c6570a1",
+   "children": [
+    "81022ef9-eff1-5d20-a726-62f3f73b781e",
+    "3e66251a-e342-5ed1-9d91-2069156c4ce9",
+    "e8e6deaa-c242-580d-9cc9-6d980e0633c5",
+    "28279471-f6f7-5c95-9dc9-8f6e5372527f"
+   ],
+   "export": true,
+   "isOpen": false,
+   "visibility": true
+  }
+ ],
+ "textures": [
+  {
+   "name": "mermaids_purse_legs.png",
+   "uuid": "c40ca69b-eda5-5eb2-a0b8-b802967d5311",
+   "id": "0",
+   "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAArElEQVR4nO3QoQrCUBTG8W9Mxhhs3LKJL+A7iMkg2ASjxehziclmE4wWg8HsMFrkxsuFwYrcgS9x+f/C4TtwyvkSSZrMj7aqKr0u6zrs49nBfu+7erl/2rZt1TSNyrJUyJ/bdriJRTJdna1zTqGAPM/lvVeapiqKQn3fDznLMj1Oi6ge/xuFYYwZCui6Tu/rJspHAQAAAAAAAAAAAAAAAAAAAAAAAAAAAEAx+wEWxyRGkr0oawAAAABJRU5ErkJggg==",
+   "mode": "bitmap",
+   "render_mode": "default",
+   "visible": true
+  }
+ ],
+ "animations": []
+}

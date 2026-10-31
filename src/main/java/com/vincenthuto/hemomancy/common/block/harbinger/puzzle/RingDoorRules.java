@@ -6,39 +6,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The ring door before a Saint's chamber. A Silentium opens it properly once every Chapel's node is lit, paying a
- * ring of blood for each; an Apotheos shatters it at any time, and the Saint then fights with every deed skipped.
+ * The ring door before a Saint's chamber. It opens to held Blood Projection: {@link #OPEN_TICKS} fed ticks, each
+ * paying {@link #BLOOD_PER_TICK}, and a door left alone bleeds its charge back off. A Silentium opens it properly once
+ * every Chapel's node is lit; an Apotheos opens it by force at any time, and the Saint then fights with every deed
+ * skipped.
  */
 public final class RingDoorRules {
 	public static final int RINGS = 3;
-	public static final int BLOOD_PER_RING = 300;
+	/** Held projection to open the door: ten seconds. */
+	public static final int OPEN_TICKS = 200;
+	/** What the whole opening costs, on either path. */
+	public static final int BLOOD_COST = 1000;
+	/** Paid on each fed tick. */
+	public static final int BLOOD_PER_TICK = BLOOD_COST / OPEN_TICKS;
+	/** A door not fed for this many ticks starts to bleed its charge off. */
+	public static final int FEED_GRACE = 4;
+	/** While bleeding, the door loses a tick of charge this often: half as fast as it fills. */
+	public static final int BLEED_TICKS = 2;
 	public static final int FALL_TICKS = 40;
 	/** How far a door looks for its Chapels and its tomb: the wings run thirty-odd blocks out from the nave (Track 3). */
 	public static final int CHAPEL_SEARCH = 64;
 	/** The wings leave the nave at its floor, from its gallery seven up and down a flight into the crypt. */
 	public static final int CHAPEL_SEARCH_HEIGHT = 16;
-	public static final int SPREAD = 16;
 	/** A lit node turns its ring to the seam over this long. */
 	public static final int TURN_TICKS = 40;
-	/** One ring fills with the Silentium's blood over this long. */
-	public static final int FILL_TICKS = 40;
-	/** Paid at the start of each ring's stage. */
-	public static final int STAGE_COST = BLOOD_PER_RING;
-	/** The crimson pulse through the seam once the inner ring is full. */
-	public static final int PULSE_TICKS = 20;
-	/** The slab sinks into the floor over this long. */
+	/** A Silentium's slab sinks into the floor over this long once the door is full. */
 	public static final int SINK_TICKS = FALL_TICKS;
-	/** The hyphae crack the slab over this long before it bursts. */
-	public static final int SHATTER_TICKS = 30;
 	/** The burst slab's fragments fall for this long. */
 	public static final int BURST_TICKS = 30;
-	/** How far the projecting Silentium may stand from the rings. */
-	public static final double PROJECTOR_REACH = 16.0D;
 	/** A scrambled ring never rests this close to the seam, so an unlit door never looks aligned. */
 	public static final float REST_CLEARANCE = 30f;
-
-	/** The projection's stages, in tick order: the three rings, the pulse, the sink, then done. */
-	public static final int STAGE_PULSE = RINGS, STAGE_SINK = RINGS + 1, STAGE_DONE = RINGS + 2;
+	/** Where each ring's channel starts filling, as a share of the charge, outer to inner; each fills over RING_SPAN. */
+	private static final float[] RING_START = {0.22f, 0.42f, 0.62f};
+	private static final float RING_SPAN = 0.22f;
+	/** The share of the charge from which the pulse runs down the seam. */
+	public static final float PULSE_START = 0.86f;
 
 	private RingDoorRules() {}
 
@@ -46,65 +48,36 @@ public final class RingDoorRules {
 		return TURN_TICKS;
 	}
 
-	public static int fillTicks() {
-		return FILL_TICKS;
+	/** How far along the opening a charge is, 0 to 1. */
+	public static float progress(float charge) {
+		return HemoEasing.clamp01(charge / OPEN_TICKS);
 	}
 
-	public static int stageCost() {
-		return STAGE_COST;
+	/** The charge after one tick: fed, it fills by one; unfed past the grace, it bleeds one every BLEED_TICKS. */
+	public static int nextCharge(int charge, boolean fed, long ticksSinceFed) {
+		if (fed) return Math.min(OPEN_TICKS, charge + 1);
+		if (ticksSinceFed <= FEED_GRACE || ticksSinceFed % BLEED_TICKS != 0) return charge;
+		return Math.max(0, charge - 1);
 	}
 
-	public static int shatterTicks() {
-		return SHATTER_TICKS;
+	/** Whether the charge is being fed, from the ticks since its last feed. */
+	public static boolean fed(long ticksSinceFed) {
+		return ticksSinceFed <= FEED_GRACE;
 	}
 
-	/** The tick the pulse starts on: every ring full. */
-	public static int pulseStart() {
-		return RINGS * FILL_TICKS;
+	/** How full a Silentium's {@code ring} channel is at {@code progress} of the opening, 0 to 1. */
+	public static float ringFill(int ring, float progress) {
+		return HemoEasing.clamp01((progress - RING_START[ring]) / RING_SPAN);
 	}
 
-	/** The tick the slab starts to sink on, and the tomb learns it was opened properly. */
-	public static int sinkStart() {
-		return pulseStart() + PULSE_TICKS;
+	/** How far the pulse has run down the seam at {@code progress} of the opening, 0 to 1. */
+	public static float pulse(float progress) {
+		return HemoEasing.clamp01((progress - PULSE_START) / (1 - PULSE_START));
 	}
 
-	/** The whole projection, from the click to the open door. */
-	public static int projectionLength() {
-		return sinkStart() + SINK_TICKS;
-	}
-
-	/** At {@code tick} of a projection: the ring (0 outer .. 2 inner) filling, then the pulse, sink and done stages. */
-	public static int stageAt(int tick) {
-		if (tick < pulseStart()) return Math.max(0, tick) / FILL_TICKS;
-		if (tick < sinkStart()) return STAGE_PULSE;
-		if (tick < projectionLength()) return STAGE_SINK;
-		return STAGE_DONE;
-	}
-
-	/** The ring whose blood is due at exactly this tick of a projection, or -1. */
-	public static int paysAt(int tick) {
-		if (tick < 0 || tick >= pulseStart() || tick % FILL_TICKS != 0) return -1;
-		return tick / FILL_TICKS;
-	}
-
-	/** How full {@code ring} is at {@code tick} of a projection, 0 to 1. */
-	public static float ringFill(int ring, float tick) {
-		return HemoEasing.clamp01((tick - ring * FILL_TICKS) / FILL_TICKS);
-	}
-
-	/** How far the pulse has run up the seam at {@code tick} of a projection, 0 to 1. */
-	public static float pulse(float tick) {
-		return HemoEasing.clamp01((tick - pulseStart()) / PULSE_TICKS);
-	}
-
-	/** How far the slab has sunk at {@code tick} of a projection, 0 to 1, eased. */
+	/** How far the slab has sunk {@code tick} ticks into its sinking, 0 to 1, eased. */
 	public static float sink(float tick) {
-		return HemoEasing.smoothstep((tick - sinkStart()) / SINK_TICKS);
-	}
-
-	/** How far the hyphae have cracked the slab at {@code tick} of a shattering, 0 to 1. */
-	public static float crack(float tick) {
-		return HemoEasing.clamp01(tick / SHATTER_TICKS);
+		return HemoEasing.smoothstep(tick / SINK_TICKS);
 	}
 
 	/** How far a ring has turned from its rest to the seam, {@code ticksSinceLit} after its node lit; 0 to 1, eased. */

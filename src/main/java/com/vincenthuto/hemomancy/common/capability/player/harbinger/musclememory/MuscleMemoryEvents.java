@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememor
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.EmberfangMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMuscleMemory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -64,11 +64,11 @@ public final class MuscleMemoryEvents {
                 player, MuscleMemory.SANGUINE_FISTS, 20, 20);
         if (!trigger.accepted()) return;
         event.setNewDamage(event.getNewDamage() + result.bonusDamage() + (trigger.overexerted() ? 2F : 0F));
-        if (trigger.overexerted() || MuscleMemoryActivationService.hasSignatureMorphling(player, EmberfangMorphlingItem.class)) {
+        if (trigger.overexerted() || MuscleMemoryActivationService.hasSignatureMorphling(player, MorphlingStrains.KINBUD)) {
             event.getEntity().knockback(trigger.overexerted() ? .75D : .5D,
                     Math.sin(Math.toRadians(player.getYRot())), -Math.cos(Math.toRadians(player.getYRot())));
         }
-        if (MuscleMemoryWorldEvents.consumeEmberfangMomentum(player)) event.setNewDamage(event.getNewDamage() + 1F);
+        if (MuscleMemoryWorldEvents.consumeCoursingMomentum(player)) event.setNewDamage(event.getNewDamage() + 1F);
         LAST_TARGET_TRIGGER.computeIfAbsent(player.getUUID(), ignored -> new HashMap<>())
                 .put(event.getEntity().getId(), gameTime);
     }

@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole;
+import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.HouseMarkerBlockItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SaintSarcophagusBlockItem;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -75,7 +78,6 @@ public final class CreativeTabInit {
 			ItemInit.blood_thrall_effigy,
 			ItemInit.blood_bolt,
 			ItemInit.vascular_status_gauge,
-			ItemInit.hemorath_rib,
 			ItemInit.echo_of_spleen,
 			ItemInit.echo_of_liver,
 			ItemInit.echo_of_heart,
@@ -84,6 +86,25 @@ public final class CreativeTabInit {
 			ItemInit.draught_of_still_mercy,
 			ItemInit.lethean_brew,
 			ItemInit.spawn_egg_peacock_spider,
+			// The Brined Court's members, until their review (Track 9).
+			ItemInit.court_member_eggs.get(CourtRole.GARDENER),
+			ItemInit.court_member_eggs.get(CourtRole.ARBOR),
+			ItemInit.court_member_eggs.get(CourtRole.LIGHTKEEPER),
+			ItemInit.court_member_eggs.get(CourtRole.TIDEWARDEN),
+			ItemInit.court_member_eggs.get(CourtRole.BRACED_ELDER),
+			ItemInit.court_member_eggs.get(CourtRole.EDGE_SWIMMER),
+			ItemInit.court_member_eggs.get(CourtRole.NURSERY_TENDER),
+			ItemInit.court_member_eggs.get(CourtRole.LINESMAN),
+			ItemInit.court_member_eggs.get(CourtRole.LAMP_COLONY),
+			ItemInit.court_member_eggs.get(CourtRole.HOST),
+			ItemInit.court_member_eggs.get(CourtRole.VEILED_RESIDENT),
+			ItemInit.court_member_eggs.get(CourtRole.BELLWARDEN),
+			ItemInit.court_member_eggs.get(CourtRole.SLEEPER),
+			ItemInit.court_member_eggs.get(CourtRole.MARROW_TENDER),
+			ItemInit.court_member_eggs.get(CourtRole.ROOTED_ELDER),
+			ItemInit.court_member_eggs.get(CourtRole.OFFERING_BEARER),
+			ItemInit.court_member_eggs.get(CourtRole.KINDLED_ELDER),
+			ItemInit.court_member_eggs.get(CourtRole.HEAD_TENDER),
 			BlockInit.semi_sentient_construct,
 			BlockInit.humane_idol,
 			BlockInit.serpentine_idol,
@@ -149,7 +170,14 @@ public final class CreativeTabInit {
 			});
 			LivingWeaponGraftItem.creativeStacks().forEach(populator::accept);
 			BlockInit.getAllBlockEntriesAsStream().forEach(block -> {
-				if (shouldShowBlockInCreativeTab(block.get())) {
+				if (!shouldShowBlockInCreativeTab(block.get())) return;
+				if (block.get().asItem() instanceof HouseMarkerBlockItem marker) {
+					// One per house, like the syringes.
+					HouseMarkerBlockItem.creativeStacks(marker).forEach(populator::accept);
+				} else if (block.get().asItem() instanceof SaintSarcophagusBlockItem tomb) {
+					// The unnamed tomb, then one per Saint in its palette.
+					SaintSarcophagusBlockItem.creativeStacks(tomb).forEach(populator::accept);
+				} else {
 					populator.accept(block.get());
 				}
 			});

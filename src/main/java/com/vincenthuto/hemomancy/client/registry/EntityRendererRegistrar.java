@@ -74,6 +74,10 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.directed_blood_orb.get(), BloodOrbDirectedRenderer::new);
         event.registerEntityRenderer(EntityInit.blood_cloud_carrier.get(), BloodCloudCarrierRenderer::new);
         event.registerEntityRenderer(EntityInit.blood_cloud.get(), BloodCloudRenderer::new);
+        // Track 3 draws Bloom and Whale Fall patches from WorldEffectDispatcher; the entity itself has no model.
+        event.registerEntityRenderer(EntityInit.morphling_field.get(), NoopRenderer::new);
+        event.registerEntityRenderer(EntityInit.hydra_rising_head.get(),
+                com.vincenthuto.hemomancy.client.render.entity.npc.court.HydraRisingHeadRenderer::new);
         event.registerEntityRenderer(EntityInit.tracking_blood_orb.get(), BloodOrbTrackingRenderer::new);
         event.registerEntityRenderer(EntityInit.tracking_snake.get(), TrackingSerpentRenderer::new);
         event.registerEntityRenderer(EntityInit.tracking_pests.get(), TrackingPestsRenderer::new);
@@ -176,6 +180,14 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.harbinger_mnemonist.get(), HarbingerMnemonistRenderer::new);
         event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);
         event.registerEntityRenderer(EntityInit.harbinger_voyager.get(), HarbingerVoyagerRenderer::new);
+        for (var row : com.vincenthuto.hemomancy.client.model.entity.npc.court.CourtMemberModels.ALL) {
+            event.registerEntityRenderer(EntityInit.court_members.get(row.role()).get(),
+                    context -> new com.vincenthuto.hemomancy.client.render.entity.npc.court.CourtMemberRenderer(context, row));
+        }
+        event.registerEntityRenderer(EntityInit.bloom_warden.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.npc.court.CourtMemberRenderer(
+                context, com.vincenthuto.hemomancy.client.model.entity.npc.court.CourtMemberModels.BLOOM_WARDEN));
+        event.registerEntityRenderer(EntityInit.kindled_champion.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.npc.court.CourtMemberRenderer(
+                context, com.vincenthuto.hemomancy.client.model.entity.npc.court.CourtMemberModels.KINDLED_CHAMPION));
         event.registerEntityRenderer(EntityInit.harbinger_votary_wayfarer.get(), HarbingerVotaryWayfarerRenderer::new);
         event.registerEntityRenderer(EntityInit.circus_strongman.get(), context -> new CircusPerformerRenderer<>(
                 context, new CircusStrongmanModel(context.bakeLayer(CircusStrongmanModel.LAYER_LOCATION)),
@@ -311,6 +323,8 @@ public final class EntityRendererRegistrar {
                 com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle.OfferingStandRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.pulse_pylon.get(),
                 com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle.PulsePylonRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.marimo_heart.get(),
+                com.vincenthuto.hemomancy.client.render.tile.harbinger.decoration.MarimoHeartRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.rot_pyre.get(),
                 com.vincenthuto.hemomancy.client.render.tile.harbinger.decoration.RotPyreRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.altar_of_cleansing.get(),

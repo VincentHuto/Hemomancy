@@ -13,9 +13,8 @@ import java.util.List;
 
 /**
  * A beneficial effect that grants echolocation-like perception, causing nearby
- * entities to glow visibly (even through walls). Applied by the Witch's Ear Morphling
- * while it is attached to the player. The detection radius scales with the
- * amplifier.
+ * entities to glow visibly (even through walls). Used by its standalone potion.
+ * The detection radius scales with the amplifier.
  */
 public class EchoicPerceptionEffect extends MobEffect {
 	private final String displayKey;

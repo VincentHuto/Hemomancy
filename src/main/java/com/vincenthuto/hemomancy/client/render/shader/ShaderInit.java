@@ -47,6 +47,10 @@ public class ShaderInit {
 			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "BlockSeed", "FinalizeProgress", "CrackShare",
 			"VeinOrigin", "VeinNormal", "VeinAnchor");
 
+	/** The ring door opening to held Blood Projection: a Silentium's blood turning to monolith, an Apotheos's hyphae. */
+	public static ShaderHolder RING_DOOR_OPENING = new ShaderHolder(Hemomancy.rloc("world/ring_door_opening"),
+			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "DoorSeed", "Mode", "Origin", "Anchor", "DoorRight", "Well");
+
 	/** The consecrated ward over a Saint's mausoleum: runes on the stone, the threshold sheet, strikes. */
 	public static ShaderHolder MAUSOLEUM_WARD = new ShaderHolder(Hemomancy.rloc("world/mausoleum_ward"),
 			DefaultVertexFormat.BLOCK, "HemoTime", "WardColor", "WardRadius", "PlayerOffset", "FocusOffset",
@@ -225,6 +229,7 @@ public class ShaderInit {
         registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP_ENTITY.createInstance(provider));
         registerShader(event, BLOOD_INFUSION_VEINS.createInstance(provider));
+        registerShader(event, RING_DOOR_OPENING.createInstance(provider));
         registerShader(event, MAUSOLEUM_WARD.createInstance(provider));
         registerShader(event, MAUSOLEUM_WARD_BODY.createInstance(provider));
         registerShader(event, HEART_NODE_SPREAD.createInstance(provider));

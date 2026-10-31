@@ -7,6 +7,14 @@ import com.vincenthuto.hemomancy.common.block.harbinger.plant.BloodwoodGrowthHan
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.SynapticLoadoutLockout;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.HoldfastMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.KinbudSecondHead;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingAnchorState;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingFeeding;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingHomeConditions;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingLinks;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingRegrowthQueue;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingSession;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryWorldEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
@@ -94,6 +102,14 @@ public final class TransientServerStateEvents {
 		SporiticThuribleResonanceState.clearSessionState();
 		BloodwoodGrowthHandler.clearSessionState();
 		EquippedMorphlingEvents.clearSessionState();
+		MorphlingAnchorState.clearSessionState();
+		MorphlingHomeConditions.clearSessionState();
+		MorphlingLinks.clearSessionState();
+		MorphlingRegrowthQueue.clearSessionState();
+		KinbudSecondHead.clearSessionState();
+		MorphlingFeeding.clearSessionState();
+		MorphlingSession.clearSessionState();
+		HoldfastMorphlingItem.clearSessionState();
 		ChummedWatersAreaManager.clearSessionState();
 		BlackVeilCovenantManager.clearSessionState();
 		TemporaryIceManager.clearSessionState();
@@ -128,6 +144,7 @@ public final class TransientServerStateEvents {
 		ActiveEngramLooms.clear();
 		EarlyInitiation.clearSessionState();
 		VoyagerVesselGuidance.clearSessionState();
+		com.vincenthuto.hemomancy.common.worldgen.structure.court.CourtSeatSearch.clearSessionState();
 		CircusPracticalController.clearSessionState();
 		BloodVialInjectionAnimation.clearSessionState();
 		MicroscopeExamination.clearSessionState();
@@ -168,6 +185,7 @@ public final class TransientServerStateEvents {
 		ConductionManager.logout(player);
 		EarlyInitiation.logout(player);
 		VoyagerVesselGuidance.logout(player);
+		com.vincenthuto.hemomancy.common.worldgen.structure.court.CourtSeatSearch.logout(player.getUUID());
 		BloodVialInjectionAnimation.logout(player);
 		MicroscopeExamination.logout(player);
 		EngramTracing.end(player);
@@ -183,5 +201,14 @@ public final class TransientServerStateEvents {
 		SporiticThuribleEvents.logout(player);
 		GardensNetwork.logout(player);
 		MausoleumEvents.logout(player);
+		EquippedMorphlingEvents.logout(player);
+		// A wound queued before a relog still regrows inside its window, so MorphlingRegrowthQueue keeps its entry.
+		MorphlingLinks.logout(player.getUUID());
+		MorphlingAnchorState.logout(player.getUUID());
+		MorphlingHomeConditions.logout(player.getUUID());
+		MorphlingFeeding.clear(player.getUUID());
+		MorphlingSession.clear(player.getUUID());
+		KinbudSecondHead.clear(player.getUUID());
+		HoldfastMorphlingItem.logout(player.getUUID());
 	}
 }

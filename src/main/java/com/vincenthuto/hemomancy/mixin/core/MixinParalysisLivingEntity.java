@@ -16,15 +16,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinParalysisLivingEntity {
     @Inject(method="isImmobile",at=@At("HEAD"),cancellable=true,remap=false)
     private void hemomancy$paralysisInput(CallbackInfoReturnable<Boolean> cir) {
-        if (Paralysis.isParalyzed((LivingEntity)(Object)this)) cir.setReturnValue(true);
+        if (Paralysis.blocksMovement((LivingEntity)(Object)this)) cir.setReturnValue(true);
     }
     @ModifyVariable(method="travel",at=@At("HEAD"),argsOnly=true,remap=false)
     private Vec3 hemomancy$paralysisTravel(Vec3 input) {
-        return Paralysis.isParalyzed((LivingEntity)(Object)this) ? Vec3.ZERO : input;
+        return Paralysis.blocksMovement((LivingEntity)(Object)this) ? Vec3.ZERO : input;
     }
     @Inject(method="jumpFromGround",at=@At("HEAD"),cancellable=true,remap=false)
     private void hemomancy$paralysisJump(CallbackInfo ci) {
-        if (Paralysis.isParalyzed((LivingEntity)(Object)this)) ci.cancel();
+        if (Paralysis.blocksMovement((LivingEntity)(Object)this)) ci.cancel();
     }
     @Inject(method="startUsingItem",at=@At("HEAD"),cancellable=true,remap=false)
     private void hemomancy$paralysisUse(InteractionHand hand,CallbackInfo ci) {

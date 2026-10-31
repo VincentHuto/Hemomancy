@@ -8,6 +8,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import com.vincenthuto.hemomancy.common.entity.mob.arthropod.AbstractChthonianEntity;
 import net.minecraft.world.entity.Entity;
 
 
@@ -227,10 +228,22 @@ public class ChthonianModel<T extends Entity> extends EntityModel<T> {
 		rMandible.render(poseStack, buffer, packedLight, packedOverlay);
 	}
 
+	/** Head tracking kept this frame; the head locks straight while climbing a wall. */
+	private float headFollow = 1.0F;
+
+	@Override
+	public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
+		this.headFollow = entity instanceof AbstractChthonianEntity chthonian
+				? chthonian.climbPose().headFollow(partialTick)
+				: 1.0F;
+	}
+
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch) {
-		// Head tracking
+		// Head tracking, locked straight while climbing
+		netHeadYaw *= this.headFollow;
+		headPitch *= this.headFollow;
 		this.skull.yRot = netHeadYaw * ((float) Math.PI / 180F);
 		this.skull.xRot = headPitch * ((float) Math.PI / 180F);
 

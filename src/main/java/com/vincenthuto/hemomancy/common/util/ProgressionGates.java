@@ -58,6 +58,19 @@ public final class ProgressionGates {
 		return unstainedStage(HemoCapabilityAccess.getUnstainedProgress(player));
 	}
 
+	/**
+	 * Whether the player has set foot on the Unstained path (stage 1 or beyond). The Brined Court shuns such a player as a
+	 * walking biohazard (Track 11, L8); ask this rather than {@code volume.isActive()}.
+	 */
+	public static boolean isUnstained(Player player) {
+		return isUnstained(unstainedStage(player));
+	}
+
+	/** {@link #isUnstained(Player)} for a stage already in hand. */
+	public static boolean isUnstained(int unstainedStage) {
+		return unstainedStage >= 1;
+	}
+
 	/** {@link #unstainedStage(Player)} for progress already in hand. */
 	public static int unstainedStage(UnstainedProgress progress) {
 		if (progress.hasClarityUnlocked()) {

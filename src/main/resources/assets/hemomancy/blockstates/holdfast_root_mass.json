@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/holdfast_root_mass"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/holdfast_root_mass",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/holdfast_root_mass",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/holdfast_root_mass",
+      "y": 270
+    }
+  }
+}

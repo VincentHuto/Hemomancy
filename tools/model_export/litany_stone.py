@@ -26,7 +26,7 @@ import carved_stone
 from carved_stone import stone_rgb, world
 from clairaudiograph import clamp
 from fixture_atlas import (ASSETS, box, build, item_elements, mirror_x, model_json, paint, preview, separate,
-                           split_storeys, write)
+                           split_storeys, write, write_tall_item)
 
 ATLAS = 'litany_stone'
 FIELD = (3, 13, 5, 26)    # texel-centre x range and block-pixel y range of the recessed field
@@ -204,6 +204,7 @@ def main():
     outputs = {'block/litany_stone_lower': model_json(models['lower'], ATLAS, atlas.height, particle),
                'block/litany_stone_upper': model_json(models['upper'], ATLAS, atlas.height, particle)}
     write(outputs, 'litany_stone', whole)
+    write_tall_item('litany_stone', whole)
     # The charred stone paints the same elements on its own atlas, so the plain one never moves.
     c_atlas, c_models = build(groups, CHARRED_SPECIAL)
     c_atlas.save(ASSETS / f'textures/block/{CHARRED_ATLAS}.png')

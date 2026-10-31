@@ -1,0 +1,47 @@
+{
+  "parent": "hemomancy:block/house_marker_giving_light",
+  "overrides": [
+    {
+      "predicate": {
+        "hemomancy:house": 1.0
+      },
+      "model": "hemomancy:item/house_marker_holding_stone"
+    },
+    {
+      "predicate": {
+        "hemomancy:house": 2.0
+      },
+      "model": "hemomancy:item/house_marker_shared_wake"
+    },
+    {
+      "predicate": {
+        "hemomancy:house": 3.0
+      },
+      "model": "hemomancy:item/house_marker_woven_current"
+    },
+    {
+      "predicate": {
+        "hemomancy:house": 4.0
+      },
+      "model": "hemomancy:item/house_marker_veiled_fold"
+    },
+    {
+      "predicate": {
+        "hemomancy:house": 5.0
+      },
+      "model": "hemomancy:item/house_marker_still_bell"
+    },
+    {
+      "predicate": {
+        "hemomancy:house": 6.0
+      },
+      "model": "hemomancy:item/house_marker_last_marrow"
+    },
+    {
+      "predicate": {
+        "hemomancy:house": 7.0
+      },
+      "model": "hemomancy:item/house_marker_kindling"
+    }
+  ]
+}

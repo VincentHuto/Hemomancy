@@ -26,6 +26,8 @@ public final class BossBarFrames {
 		FRAMES.put(BossPresentationIds.FRAME_PUTRICIEL, new PutricielFrame());
 		FRAMES.put(BossPresentationIds.FRAME_VELORUM, new VelorumFrame());
 		FRAMES.put(BossPresentationIds.FRAME_SERAPHAE, new SeraphaeFrame());
+		FRAMES.put(BossPresentationIds.FRAME_BLOOM_WARDEN, new BloomWardenFrame());
+		FRAMES.put(BossPresentationIds.FRAME_KINDLED_CHAMPION, new KindledChampionFrame());
 	}
 
 	private BossBarFrames() {

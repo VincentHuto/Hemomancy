@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
 import com.vincenthuto.hutoslib.math.MathUtils;
+import com.vincenthuto.hemomancy.common.entity.WallClimbPose;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -29,6 +30,9 @@ public abstract class AbstractChthonianEntity extends Spider {
 	}
 
 	public int puffCooldown = 0;
+
+	/** Client-only: the body turns onto any wall it climbs. */
+	private final WallClimbPose climbPose = new WallClimbPose(state -> true);
 
 	protected AbstractChthonianEntity(EntityType<? extends AbstractChthonianEntity> type, Level worldIn) {
 		super(type, worldIn);
@@ -105,6 +109,9 @@ public abstract class AbstractChthonianEntity extends Spider {
 	@Override
 	public void tick() {
 		super.tick();
+		if (level().isClientSide) {
+			this.climbPose.tick(this, isClimbing() || !onGround());
+		}
 		LivingEntity target = getTarget();
 		if (target == null)
 			return;
@@ -117,6 +124,10 @@ public abstract class AbstractChthonianEntity extends Spider {
 		if (isClose) {
 			yBodyRot = (float) MathUtils.getAngle(AbstractChthonianEntity.this, target) + 90f;
 		}
+	}
+
+	public WallClimbPose climbPose() {
+		return this.climbPose;
 	}
 
 }

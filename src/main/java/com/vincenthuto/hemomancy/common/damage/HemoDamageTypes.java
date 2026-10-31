@@ -13,6 +13,8 @@ import javax.annotation.Nullable;
 public final class HemoDamageTypes {
     public static final ResourceKey<DamageType> SEARING = ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("searing"));
     public static final ResourceKey<DamageType> DECAY_RELEASE = ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("decay_release"));
+    /** Kinbud's Stung: its own type so deaths read right; not Poison (Brined Court balance rule 6). */
+    public static final ResourceKey<DamageType> STUNG = ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("stung"));
 
     public static DamageSource attributed(DamageSource source, SchoolHitContext context, @Nullable Entity owner) {
         return SchoolDamage.attributed(source, context, owner);

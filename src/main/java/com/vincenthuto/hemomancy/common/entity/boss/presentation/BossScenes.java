@@ -14,6 +14,8 @@ import net.minecraft.world.entity.Entity;
 public final class BossScenes {
 	/** Everyone within this range of the boss sees its scene, which covers every arena's bar viewers. */
 	public static final double RANGE = 64.0D;
+	/** The entity id a scene that frames nothing carries. */
+	public static final int NO_ENTITY = -1;
 
 	private BossScenes() {
 	}
@@ -26,6 +28,11 @@ public final class BossScenes {
 		if (!(boss.level() instanceof ServerLevel level)) return;
 		PacketHandler.sendNear(level, boss.getX(), boss.getY(), boss.getZ(), RANGE,
 				new BossScenePacket(scene, boss.getId(), offset));
+	}
+
+	/** A scene that frames no entity (a presence that is blocks, not a creature): the player's own view, no shot. */
+	public static void playTo(ServerPlayer player, ResourceLocation scene) {
+		PacketHandler.sendToPlayer(player, new BossScenePacket(scene, NO_ENTITY, 0));
 	}
 
 	public static void playTo(ServerPlayer player, Entity boss, ResourceLocation scene, int offset) {

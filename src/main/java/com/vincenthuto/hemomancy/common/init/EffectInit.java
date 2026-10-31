@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.effect.*;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,6 +22,7 @@ import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -206,48 +208,12 @@ public class EffectInit {
             () -> new Potion("potion_of_burrowers_instinct",
                     new MobEffectInstance(burrowers_instinct, 1200, 0)));
 
-    // Morphling strain identity effects. The legacy effects above remain for standalone potions and rites.
-    public static final DeferredHolder<MobEffect, MobEffect> morphling_deadmans_purse = EFFECTS.register(
-            "morphling_deadmans_purse",
-            () -> new SanguineSiphonEffect(MobEffectCategory.BENEFICIAL, 0xB21F35,
-                    "effect.hemomancy.morphling_deadmans_purse"));
-    public static final DeferredHolder<MobEffect, MobEffect> morphling_gravecap = EFFECTS.register(
-            "morphling_gravecap",
-            () -> new MycorrhizalMendingEffect(MobEffectCategory.BENEFICIAL, 0xB52A64,
-                    "effect.hemomancy.morphling_gravecap"));
-    public static final DeferredHolder<MobEffect, MobEffect> morphling_witchs_ear = EFFECTS.register(
-            "morphling_witchs_ear",
-            () -> new EchoicPerceptionEffect(MobEffectCategory.BENEFICIAL, 0x7F3A9A,
-                    "effect.hemomancy.morphling_witchs_ear"));
-    public static final DeferredHolder<MobEffect, MobEffect> morphling_lumenlace = EFFECTS.register(
-            "morphling_lumenlace",
-            () -> new LuminousDissipationEffect(MobEffectCategory.BENEFICIAL, 0x2F79C7,
-                    "effect.hemomancy.morphling_lumenlace")
-                    .addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE,
-                            Hemomancy.rloc("morphling_lumenlace_knockback_resistance"),
-                            0.1D, AttributeModifier.Operation.ADD_VALUE));
-    public static final DeferredHolder<MobEffect, MobEffect> morphling_bootlace = EFFECTS.register(
-            "morphling_bootlace",
-            () -> new ArachnidAnastomosisEffect(MobEffectCategory.BENEFICIAL, 0x7E2AC7,
-                    "effect.hemomancy.morphling_bootlace"));
-    public static final DeferredHolder<MobEffect, MobEffect> morphling_irontooth = EFFECTS.register(
-            "morphling_irontooth",
-            () -> new BurrowersInstinctEffect(MobEffectCategory.BENEFICIAL, 0xA57A5A,
-                    "effect.hemomancy.morphling_irontooth")
-                    .addAttributeModifier(Attributes.BLOCK_BREAK_SPEED,
-                            Hemomancy.rloc("morphling_irontooth_block_break_speed"),
-                            0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-    public static final DeferredHolder<MobEffect, MobEffect> morphling_emberfang = EFFECTS.register(
-            "morphling_emberfang",
-            () -> new SerpentineGuileEffect(MobEffectCategory.BENEFICIAL, 0xE34A2F,
-                    "effect.hemomancy.morphling_emberfang"));
-    public static final DeferredHolder<MobEffect, MobEffect> morphling_winter_shroud = EFFECTS.register(
-            "morphling_winter_shroud",
-            () -> new VenomousResilienceEffect(MobEffectCategory.BENEFICIAL, 0x76C9FF,
-                    "effect.hemomancy.morphling_winter_shroud")
-                    .addAttributeModifier(Attributes.MOVEMENT_SPEED,
-                            Hemomancy.rloc("morphling_winter_shroud_movement_speed"),
-                            0.05F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+    // Morphling strain passives, one per MorphlingStrains row (morphling_<id>); the table holds the holders.
+    public static final List<DeferredHolder<MobEffect, MobEffect>> MORPHLING_PASSIVES = MorphlingStrains.ALL.stream()
+            .map(strain -> EFFECTS.<MobEffect>register(strain.itemPath(),
+                    () -> new MorphlingStrainEffect(MobEffectCategory.BENEFICIAL, strain.accentColor() & 0xFFFFFF,
+                            strain.passiveEffectKey())))
+            .toList();
 
     // Unstained Path Effects
     public static final DeferredHolder<MobEffect, MobEffect> silver_ward = EFFECTS.register("silver_ward",
@@ -285,6 +251,14 @@ public class EffectInit {
             () -> new HemophagyEffect(MobEffectCategory.HARMFUL, 0x4B0000));
 
     public static final DeferredHolder<MobEffect, MobEffect> paralysis = EFFECTS.register("paralysis", ParalysisEffect::new);
+
+    // Brined Court strain powers: Kinbud's sting and the Morphling lock markers MorphlingLock reads.
+    public static final DeferredHolder<MobEffect, MobEffect> stung = EFFECTS.register("stung",
+            com.vincenthuto.hemomancy.common.effect.StungEffect::new);
+    public static final DeferredHolder<MobEffect, MobEffect> pinned = EFFECTS.register("pinned",
+            () -> new com.vincenthuto.hemomancy.common.effect.MorphlingLockEffect(MobEffectCategory.HARMFUL, 0xA08C80));
+    public static final DeferredHolder<MobEffect, MobEffect> morphling_sealed = EFFECTS.register("morphling_sealed",
+            () -> new com.vincenthuto.hemomancy.common.effect.MorphlingLockEffect(MobEffectCategory.NEUTRAL, 0x7A7488));
 
     public static final DeferredHolder<MobEffect, MobEffect> sanguine_pressure = schoolState("sanguine_pressure", 0xB21B38);
     public static final DeferredHolder<MobEffect, MobEffect> necrosis = schoolState("necrosis", 0x435F31);

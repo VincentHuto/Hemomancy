@@ -1,0 +1,124 @@
+{
+  "variants": {
+    "facing=north,house=giving_light": {
+      "model": "hemomancy:block/house_marker_giving_light"
+    },
+    "facing=east,house=giving_light": {
+      "model": "hemomancy:block/house_marker_giving_light",
+      "y": 90
+    },
+    "facing=south,house=giving_light": {
+      "model": "hemomancy:block/house_marker_giving_light",
+      "y": 180
+    },
+    "facing=west,house=giving_light": {
+      "model": "hemomancy:block/house_marker_giving_light",
+      "y": 270
+    },
+    "facing=north,house=holding_stone": {
+      "model": "hemomancy:block/house_marker_holding_stone"
+    },
+    "facing=east,house=holding_stone": {
+      "model": "hemomancy:block/house_marker_holding_stone",
+      "y": 90
+    },
+    "facing=south,house=holding_stone": {
+      "model": "hemomancy:block/house_marker_holding_stone",
+      "y": 180
+    },
+    "facing=west,house=holding_stone": {
+      "model": "hemomancy:block/house_marker_holding_stone",
+      "y": 270
+    },
+    "facing=north,house=shared_wake": {
+      "model": "hemomancy:block/house_marker_shared_wake"
+    },
+    "facing=east,house=shared_wake": {
+      "model": "hemomancy:block/house_marker_shared_wake",
+      "y": 90
+    },
+    "facing=south,house=shared_wake": {
+      "model": "hemomancy:block/house_marker_shared_wake",
+      "y": 180
+    },
+    "facing=west,house=shared_wake": {
+      "model": "hemomancy:block/house_marker_shared_wake",
+      "y": 270
+    },
+    "facing=north,house=woven_current": {
+      "model": "hemomancy:block/house_marker_woven_current"
+    },
+    "facing=east,house=woven_current": {
+      "model": "hemomancy:block/house_marker_woven_current",
+      "y": 90
+    },
+    "facing=south,house=woven_current": {
+      "model": "hemomancy:block/house_marker_woven_current",
+      "y": 180
+    },
+    "facing=west,house=woven_current": {
+      "model": "hemomancy:block/house_marker_woven_current",
+      "y": 270
+    },
+    "facing=north,house=veiled_fold": {
+      "model": "hemomancy:block/house_marker_veiled_fold"
+    },
+    "facing=east,house=veiled_fold": {
+      "model": "hemomancy:block/house_marker_veiled_fold",
+      "y": 90
+    },
+    "facing=south,house=veiled_fold": {
+      "model": "hemomancy:block/house_marker_veiled_fold",
+      "y": 180
+    },
+    "facing=west,house=veiled_fold": {
+      "model": "hemomancy:block/house_marker_veiled_fold",
+      "y": 270
+    },
+    "facing=north,house=still_bell": {
+      "model": "hemomancy:block/house_marker_still_bell"
+    },
+    "facing=east,house=still_bell": {
+      "model": "hemomancy:block/house_marker_still_bell",
+      "y": 90
+    },
+    "facing=south,house=still_bell": {
+      "model": "hemomancy:block/house_marker_still_bell",
+      "y": 180
+    },
+    "facing=west,house=still_bell": {
+      "model": "hemomancy:block/house_marker_still_bell",
+      "y": 270
+    },
+    "facing=north,house=last_marrow": {
+      "model": "hemomancy:block/house_marker_last_marrow"
+    },
+    "facing=east,house=last_marrow": {
+      "model": "hemomancy:block/house_marker_last_marrow",
+      "y": 90
+    },
+    "facing=south,house=last_marrow": {
+      "model": "hemomancy:block/house_marker_last_marrow",
+      "y": 180
+    },
+    "facing=west,house=last_marrow": {
+      "model": "hemomancy:block/house_marker_last_marrow",
+      "y": 270
+    },
+    "facing=north,house=kindling": {
+      "model": "hemomancy:block/house_marker_kindling"
+    },
+    "facing=east,house=kindling": {
+      "model": "hemomancy:block/house_marker_kindling",
+      "y": 90
+    },
+    "facing=south,house=kindling": {
+      "model": "hemomancy:block/house_marker_kindling",
+      "y": 180
+    },
+    "facing=west,house=kindling": {
+      "model": "hemomancy:block/house_marker_kindling",
+      "y": 270
+    }
+  }
+}

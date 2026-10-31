@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 11,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Morphling Cultivation",
+  "subtitle": "A partner raised on blood",
+  "text": "A Morphling is a fungal strain that has grown an animal's answer to a problem without becoming the animal. Each lives with a partner organism, an alga, a bacterium or a yeast, and the partner decides the strain. Wild Morphling Polyps carry up to three partners, picked up from where they grew. From the second Degree, capture one in a Specimen Jar and bring it to the Alchemist: recording it logs its partner families, and surrendering it yields a wild-bound Morphling. A wild-bound strain starts at Developing and stops there until an Incubator stabilizes it. Equip a Morphling from the Morphling Jar or the Scarlet Vanity. It draws about 10 mL of blood a minute in upkeep, more while a puppet you own is active. Before each incubation it must absorb blood through that upkeep: 50 mL at Fledgling, 100 mL at Developing and 200 mL at Mature. The Morphling Incubator opens at the fifth Degree. Each feeding raises a strain one stage. Its preferred enzyme counts in full, its secondary at three quarters and any other at half. The stages run Unfed, Fledgling, Developing, Mature, Apex and Primal. The passive works from Unfed and grows with every stage; Developing, Mature and Apex each add a power. Every strain also has a home, the conditions it was raised for, where its powers run stronger and a few run at all.",
+  "icon": "hemomancy:morphling_jar"
+}

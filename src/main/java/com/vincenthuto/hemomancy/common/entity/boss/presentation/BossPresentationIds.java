@@ -24,6 +24,8 @@ public final class BossPresentationIds {
 	public static final ResourceLocation FRAME_PUTRICIEL = Hemomancy.rloc("putriciel");
 	public static final ResourceLocation FRAME_VELORUM = Hemomancy.rloc("velorum");
 	public static final ResourceLocation FRAME_SERAPHAE = Hemomancy.rloc("seraphae");
+	public static final ResourceLocation FRAME_BLOOM_WARDEN = Hemomancy.rloc("bloom_warden");
+	public static final ResourceLocation FRAME_KINDLED_CHAMPION = Hemomancy.rloc("kindled_champion");
 
 	public static final ResourceLocation SCENE_MYCOPHANT_WAKING = Hemomancy.rloc("mycophant_waking");
 	public static final ResourceLocation SCENE_MYCOPHANT_REMATCH = Hemomancy.rloc("mycophant_rematch");
@@ -40,6 +42,10 @@ public final class BossPresentationIds {
 	public static final ResourceLocation SCENE_VESPER_EVENING_STAR = Hemomancy.rloc("vesper_evening_star");
 	public static final ResourceLocation SCENE_SAINT_RISE = Hemomancy.rloc("saint_rise");
 	public static final ResourceLocation SCENE_HEMORATH_EMPTIES_CARD = Hemomancy.rloc("hemorath_empties");
+	public static final ResourceLocation SCENE_MARIMO_PRESENCE = Hemomancy.rloc("marimo_presence");
+	public static final ResourceLocation SCENE_HYDRA_RISE = Hemomancy.rloc("hydra_rise");
+	public static final ResourceLocation SCENE_BLOOM_WARDEN = Hemomancy.rloc("bloom_warden");
+	public static final ResourceLocation SCENE_KINDLED_CHAMPION = Hemomancy.rloc("kindled_champion");
 	public static final ResourceLocation SCENE_POSSESSION_DEPARTURE = Hemomancy.rloc("possession_departure");
 	public static final ResourceLocation SCENE_POSSESSION_ARRIVAL = Hemomancy.rloc("possession_arrival");
 	public static final ResourceLocation SCENE_POSSESSION_BROKEN_GARDENS = Hemomancy.rloc("possession_broken_gardens");
@@ -49,14 +55,16 @@ public final class BossPresentationIds {
 
 	public static final List<ResourceLocation> FRAMES = List.of(FRAME_PHLEGETHOSOMA, FRAME_MYCOPHANT, FRAME_ANNETTA_KNOWLES,
 			FRAME_STAINED_PRIESTESS, FRAME_LATENT_INFECTION, FRAME_NAEGLEROPHAEON, FRAME_VESPER_CROWNED_REFUSAL,
-			FRAME_VESPER_EVENING_STAR, FRAME_HEMORATH, FRAME_PUTRICIEL, FRAME_VELORUM, FRAME_SERAPHAE);
+			FRAME_VESPER_EVENING_STAR, FRAME_HEMORATH, FRAME_PUTRICIEL, FRAME_VELORUM, FRAME_SERAPHAE,
+			FRAME_BLOOM_WARDEN, FRAME_KINDLED_CHAMPION);
 
 	public static final List<ResourceLocation> SCENES = List.of(SCENE_PHLEGETHOSOMA, SCENE_MYCOPHANT_WAKING, SCENE_MYCOPHANT_REMATCH,
 			SCENE_MYCOPHANT_CAPTURE, SCENE_MYCOPHANT_SPLIT_CARD, SCENE_ANNETTA_KNOWLES, SCENE_ANNETTA_BREAK_CARD,
 			SCENE_STAINED_PRIESTESS, SCENE_LATENT_INFECTION, SCENE_NAEGLEROPHAEON, SCENE_NAEGLEROPHAEON_TRANSITION_CARD,
 			SCENE_VESPER_CROWNED_REFUSAL, SCENE_VESPER_COCOON_CARD, SCENE_VESPER_EVENING_STAR, SCENE_SAINT_RISE,
 			SCENE_HEMORATH_EMPTIES_CARD, SCENE_POSSESSION_DEPARTURE, SCENE_POSSESSION_ARRIVAL, SCENE_POSSESSION_BROKEN_GARDENS,
-			SCENE_POSSESSION_BROKEN_RITE, SCENE_POSSESSION_CLEAN_GARDENS, SCENE_POSSESSION_CLEAN_RITE);
+			SCENE_POSSESSION_BROKEN_RITE, SCENE_POSSESSION_CLEAN_GARDENS, SCENE_POSSESSION_CLEAN_RITE, SCENE_MARIMO_PRESENCE,
+			SCENE_HYDRA_RISE, SCENE_BLOOM_WARDEN, SCENE_KINDLED_CHAMPION);
 
 	/** The director scene for one half of a possession's cinematic. */
 	public static ResourceLocation possessionScene(PossessionSceneRules.Scene scene) {

@@ -30,7 +30,14 @@ public final class Paralysis {
 
     public static boolean blocksActions(LivingEntity entity) {
         return isParalyzed(entity) || entity.isAlive() && entity.hasEffect(EffectInit.disrupted)
-                || entity instanceof Player player && AxonalTransductionManager.isTraveling(player);
+                || entity instanceof Player player && AxonalTransductionManager.isTraveling(player)
+                || com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingLock.blocksActions(entity);
+    }
+
+    /** Paralysis or a Morphling pin: the body cannot walk or jump. */
+    public static boolean blocksMovement(LivingEntity entity) {
+        return isParalyzed(entity)
+                || com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingLock.isPinned(entity);
     }
 
     public static boolean apply(LivingEntity target, int ticks) {

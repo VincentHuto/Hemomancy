@@ -2,7 +2,9 @@ package com.vincenthuto.hemomancy.common.worldgen.structure;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
+import com.mojang.datafixers.util.Function3;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -41,20 +43,30 @@ public abstract class HemoJigsawStructure extends Structure {
 		this.jigsaw = jigsaw;
 	}
 
+	private static final MapCodec<Jigsaw> JIGSAW_FIELDS = RecordCodecBuilder.mapCodec(instance -> instance.group(
+					StructureTemplatePool.CODEC.fieldOf("start_pool").forGetter(Jigsaw::startPool),
+					ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name").forGetter(Jigsaw::startJigsawName),
+					Codec.intRange(0, 30).fieldOf("size").forGetter(Jigsaw::size),
+					HeightProvider.CODEC.fieldOf("start_height").forGetter(Jigsaw::startHeight),
+					Heightmap.Types.CODEC.optionalFieldOf("project_start_to_heightmap").forGetter(Jigsaw::projectStartToHeightmap),
+					Codec.intRange(1, 128).fieldOf("max_distance_from_center").forGetter(Jigsaw::maxDistanceFromCenter))
+			.apply(instance, Jigsaw::new));
+
 	public static <S extends HemoJigsawStructure> MapCodec<S> codec(BiFunction<StructureSettings, Jigsaw, S> factory) {
 		return RecordCodecBuilder.<S>mapCodec(instance -> instance.group(
 						settingsCodec(instance),
-						StructureTemplatePool.CODEC.fieldOf("start_pool").forGetter(structure -> structure.jigsaw.startPool()),
-						ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name")
-								.forGetter(structure -> structure.jigsaw.startJigsawName()),
-						Codec.intRange(0, 30).fieldOf("size").forGetter(structure -> structure.jigsaw.size()),
-						HeightProvider.CODEC.fieldOf("start_height").forGetter(structure -> structure.jigsaw.startHeight()),
-						Heightmap.Types.CODEC.optionalFieldOf("project_start_to_heightmap")
-								.forGetter(structure -> structure.jigsaw.projectStartToHeightmap()),
-						Codec.intRange(1, 128).fieldOf("max_distance_from_center")
-								.forGetter(structure -> structure.jigsaw.maxDistanceFromCenter()))
-				.apply(instance, (settings, startPool, startJigsawName, size, startHeight, heightmap, maxDistance) ->
-						factory.apply(settings, new Jigsaw(startPool, startJigsawName, size, startHeight, heightmap, maxDistance))));
+						JIGSAW_FIELDS.forGetter(structure -> structure.jigsaw))
+				.apply(instance, factory));
+	}
+
+	/** The same fields plus one structure-specific field beside them. */
+	public static <S extends HemoJigsawStructure, E> MapCodec<S> codec(MapCodec<E> extra, Function<S, E> getter,
+			Function3<StructureSettings, Jigsaw, E, S> factory) {
+		return RecordCodecBuilder.<S>mapCodec(instance -> instance.group(
+						settingsCodec(instance),
+						JIGSAW_FIELDS.forGetter(structure -> structure.jigsaw),
+						extra.forGetter(getter))
+				.apply(instance, factory));
 	}
 
 	/** Whether this chunk suits the structure: biome, terrain and spacing checks beyond the structure set. */
@@ -90,6 +102,14 @@ public abstract class HemoJigsawStructure extends Structure {
 			Optional<Heightmap.Types> projectStartToHeightmap) {
 		return JigsawPlacement.addPieces(context, jigsaw.startPool(), jigsaw.startJigsawName(), jigsaw.size(), start,
 				false, projectStartToHeightmap, jigsaw.maxDistanceFromCenter(), PoolAliasLookup.EMPTY,
-				JigsawStructure.DEFAULT_DIMENSION_PADDING, LiquidSettings.APPLY_WATERLOGGING);
+				JigsawStructure.DEFAULT_DIMENSION_PADDING, liquidSettings());
+	}
+
+	/**
+	 * Whether a placed block that can hold water takes the water already standing where it lands (vanilla's
+	 * default). A waterlogged stair is a water source, so a buried structure that can meet an aquifer turns it off.
+	 */
+	protected LiquidSettings liquidSettings() {
+		return LiquidSettings.APPLY_WATERLOGGING;
 	}
 }

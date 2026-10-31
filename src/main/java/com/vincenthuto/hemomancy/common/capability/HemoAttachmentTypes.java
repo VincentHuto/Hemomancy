@@ -185,6 +185,10 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("circus_progress", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgress::new).copyOnDeath().build());
 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtProgress>> COURT_PROGRESS =
+            ATTACHMENT_TYPES.register("court_progress", () -> AttachmentType.serializable(
+                    com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtProgress::new).copyOnDeath().build());
+
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.encounter.ChamberAccess>> CHAMBER_ACCESS =
             ATTACHMENT_TYPES.register("chamber_access", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.encounter.ChamberAccess::new).copyOnDeath().build());

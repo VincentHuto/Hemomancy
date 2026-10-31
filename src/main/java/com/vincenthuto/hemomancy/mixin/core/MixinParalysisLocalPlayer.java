@@ -12,7 +12,7 @@ public abstract class MixinParalysisLocalPlayer {
     @Inject(method="aiStep",at=@At(value="INVOKE",target="Lnet/minecraft/client/player/Input;tick(ZF)V",shift=At.Shift.AFTER),remap=false)
     private void hemomancy$paralysisControls(CallbackInfo ci) {
         LocalPlayer player = (LocalPlayer)(Object)this;
-        if (!Paralysis.isParalyzed(player)) return;
+        if (!Paralysis.blocksMovement(player)) return;
         player.input.leftImpulse=0; player.input.forwardImpulse=0;
         player.input.up=false; player.input.down=false;
         player.input.left=false; player.input.right=false;

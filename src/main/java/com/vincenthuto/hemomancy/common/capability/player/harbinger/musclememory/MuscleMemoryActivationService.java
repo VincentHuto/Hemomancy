@@ -44,7 +44,7 @@ public final class MuscleMemoryActivationService {
         if (!state.isEnabled(memory) || deadSection) return TriggerResult.REJECTED;
         MuscleMemoryResonanceRules.Resonance resonance = resonance(player, memory);
         double cost = memory.bloodCost() * resonance.costMultiplier();
-        boolean purse = allowBorrowed && hasSignatureMorphling(player, DeadmansPurseMorphlingItem.class);
+        boolean purse = allowBorrowed && hasSignatureMorphling(player, MorphlingStrains.MERMAIDS_PURSE);
         boolean armed = state.isOverexertionArmed(memory, now);
         double maximumCost = armed ? cost * MuscleMemoryPrimingRules.OVEREXERT_BLOOD_MULTIPLIER : cost;
         double borrowedAvailable = purse ? Math.min(maximumCost * .5D, BorrowedBloodReserve.get(player)) : 0D;
@@ -95,30 +95,33 @@ public final class MuscleMemoryActivationService {
         return new TriggerResult(true, payment.overexerted(), payment.fellBack());
     }
 
-    public static boolean hasSignatureMorphling(ServerPlayer player, Class<?> type) {
-        ItemStack stack = HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
-        return !stack.isEmpty() && type.isInstance(stack.getItem());
+    public static boolean hasSignatureMorphling(ServerPlayer player, MorphlingStrain strain) {
+        return MorphlingStrains.is(HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling(), strain);
     }
 
     private static MuscleMemoryResonanceRules.Resonance resonance(ServerPlayer player, MuscleMemory memory) {
         ItemStack stack = HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
         if (stack.getItem() instanceof IMorphling morphling) {
-            return MuscleMemoryResonanceRules.resolve(memory, morphling.getPreferredTendency(), morphling.getSecondaryTendency(), isSignature(memory, stack.getItem()));
+            return MuscleMemoryResonanceRules.resolve(memory, morphling.getPreferredTendency(), morphling.getSecondaryTendency(), isSignature(memory, stack));
         }
         return MuscleMemoryResonanceRules.Resonance.NONE;
     }
 
-    private static boolean isSignature(MuscleMemory memory, Object item) {
+    /** The house strain whose body each memory echoes; it lowers that memory's cost. */
+    static MorphlingStrain signatureStrain(MuscleMemory memory) {
         return switch (memory) {
-            case SANGUINE_FISTS -> item instanceof EmberfangMorphlingItem;
-            case LABORING_ARMS -> item instanceof IrontoothMorphlingItem;
-            case COURSING_LEGS -> item instanceof EmberfangMorphlingItem;
-            case HUSHED_GAIT -> item instanceof BootlaceMorphlingItem;
-            case PREDATORY_EYES -> item instanceof WitchsEarMorphlingItem;
-            case SECOND_PULSE -> item instanceof DeadmansPurseMorphlingItem;
-            case ENDURING_VISCERA -> item instanceof WinterShroudMorphlingItem;
-            case CARRION_METABOLISM -> item instanceof GravecapMorphlingItem;
+            case SANGUINE_FISTS -> MorphlingStrains.KINBUD;
+            case LABORING_ARMS -> MorphlingStrains.HOLDFAST;
+            case COURSING_LEGS, SECOND_PULSE -> MorphlingStrains.MERMAIDS_PURSE;
+            case HUSHED_GAIT -> MorphlingStrains.INK_CAP;
+            case PREDATORY_EYES -> MorphlingStrains.DEAD_MANS_ROPE;
+            case ENDURING_VISCERA -> MorphlingStrains.HUSHBELL;
+            case CARRION_METABOLISM -> MorphlingStrains.MARROWPLUME;
         };
+    }
+
+    private static boolean isSignature(MuscleMemory memory, ItemStack stack) {
+        return MorphlingStrains.is(stack, signatureStrain(memory));
     }
 
 

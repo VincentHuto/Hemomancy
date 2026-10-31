@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:bone",
+    "minecraft:bone_block",
+    "minecraft:rotten_flesh"
+  ]
+}

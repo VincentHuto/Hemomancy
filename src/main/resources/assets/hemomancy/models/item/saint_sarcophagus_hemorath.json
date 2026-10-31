@@ -1,0 +1,6 @@
+{
+  "parent": "hemomancy:item/saint_sarcophagus",
+  "textures": {
+    "atlas": "hemomancy:block/saint_sarcophagus_hemorath"
+  }
+}

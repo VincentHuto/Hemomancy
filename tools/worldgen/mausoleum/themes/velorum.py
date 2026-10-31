@@ -217,8 +217,13 @@ def _height_over_floor(room, x, y, z):
 
 
 def _pinned(name):
-    """Air cells a JVM test keeps open: the threshold's corridor and the chamber's boss floor."""
+    """Air cells a JVM test keeps open: the threshold's corridor, the ring door's filler cells (the door grows into
+    them when placed) and the chamber's boss floor."""
     from .. import pieces
+    if name == 'nave':
+        half = pieces.RING_DOOR_HALF
+        return {(pieces.NAVE_L - 1, y, pieces.NAVE_ZC + dz) for y in range(1, pieces.RING_DOOR_H + 1)
+                for dz in range(-half, half + 1)}
     if name == 'threshold':
         return {(x, y, z) for x in range(1, 14) for y in range(1, 6) for z in range(3, 8)}
     if name == 'chamber':
@@ -463,7 +468,7 @@ def _crowded(room, x, y, z):
 def dress_top(room, c):
     """Just inside the west door, the last devotee: the one who closed the gate, turned back toward it, reaching."""
     from .. import entrance
-    devotee(room, 5, 1, entrance.CENTRE - 2, 'west', 'reaching')
+    devotee(room, 5, entrance.FLOOR + 1, entrance.CENTRE - 2, 'west', 'reaching')
 
 
 # --- the Procession (Beholding) ---------------------------------------------------------------------------------------

@@ -12,58 +12,62 @@ public final class MorphlingPolypLayerRules {
 		return new SpawnContext();
 	}
 
+	/**
+	 * Which partner families a wild polyp can carry where it spawns. Each family follows its strain's
+	 * house water where the land has an analogue: sunlit open ground and shallows for the sun alga,
+	 * stone for the coralline alga, cold or high ground for the cold bacteria, heat for the vent bacteria.
+	 */
 	public static EnumSet<MorphlingPolypLayer> candidateLayers(SpawnContext context) {
 		EnumSet<MorphlingPolypLayer> candidates = EnumSet.noneOf(MorphlingPolypLayer.class);
 		if (context.inWater || context.ocean) {
-			candidates.add(MorphlingPolypLayer.CUTTLEFISH);
-			candidates.add(MorphlingPolypLayer.URCHIN);
+			candidates.add(MorphlingPolypLayer.SUN_ALGA);
+			candidates.add(MorphlingPolypLayer.GUT_BACTERIA);
+			candidates.add(MorphlingPolypLayer.LIGHT_BACTERIA);
 		}
 		if (context.riverOrSwamp || context.swamp) {
-			candidates.add(MorphlingPolypLayer.LEECHES);
-			candidates.add(MorphlingPolypLayer.TICK);
-			candidates.add(MorphlingPolypLayer.FUNGAL);
+			candidates.add(MorphlingPolypLayer.GUT_BACTERIA);
+			candidates.add(MorphlingPolypLayer.BLACK_YEAST);
 		}
-		if (context.desertOrBadlands) {
-			candidates.add(MorphlingPolypLayer.SERPENT);
-			candidates.add(MorphlingPolypLayer.CHITINITE);
+		if (context.desertOrBadlands || context.jungle) {
+			candidates.add(MorphlingPolypLayer.VENT_BACTERIA);
+			candidates.add(MorphlingPolypLayer.BONE_BACTERIA);
 		}
-		if (context.jungle) {
-			candidates.add(MorphlingPolypLayer.SERPENT);
-			candidates.add(MorphlingPolypLayer.TICK);
+		if (context.forest || context.darkForest) {
+			candidates.add(MorphlingPolypLayer.BONE_BACTERIA);
+			candidates.add(MorphlingPolypLayer.LIGHT_BACTERIA);
 		}
-		if (context.forest || context.darkForest || context.taigaOrOldGrowth) {
-			candidates.add(MorphlingPolypLayer.SPIDER);
-			candidates.add(MorphlingPolypLayer.TICK);
+		if (context.darkForest || context.mushroom || context.fungalNearby) {
+			candidates.add(MorphlingPolypLayer.BLACK_YEAST);
 		}
-		if (context.darkForest || context.mushroom || context.fungalNearby || context.taigaOrOldGrowth) {
-			candidates.add(MorphlingPolypLayer.FUNGAL);
+		if (context.taigaOrOldGrowth) {
+			candidates.add(MorphlingPolypLayer.COLD_BACTERIA);
 		}
 		if (context.openLand) {
-			candidates.add(MorphlingPolypLayer.PESTS);
+			candidates.add(MorphlingPolypLayer.SUN_ALGA);
 		}
 		if (context.mountainOrStony || context.stoneNearby) {
-			candidates.add(MorphlingPolypLayer.CENTIPEDE);
-			candidates.add(MorphlingPolypLayer.CHITINITE);
+			candidates.add(MorphlingPolypLayer.CORALLINE_ALGA);
+			candidates.add(MorphlingPolypLayer.COLD_BACTERIA);
 		}
 		if (context.underground || context.lowLight) {
-			candidates.add(MorphlingPolypLayer.BAT);
-			candidates.add(MorphlingPolypLayer.SPIDER);
+			candidates.add(MorphlingPolypLayer.BLACK_YEAST);
+			candidates.add(MorphlingPolypLayer.LIGHT_BACTERIA);
 		}
 		if (context.underground && (context.dirtNearby || context.mountainOrStony || context.stoneNearby)) {
-			candidates.add(MorphlingPolypLayer.MOLE);
+			candidates.add(MorphlingPolypLayer.BONE_BACTERIA);
 		}
 		if (context.underground && context.stoneNearby) {
-			candidates.add(MorphlingPolypLayer.CENTIPEDE);
+			candidates.add(MorphlingPolypLayer.VENT_BACTERIA);
 		}
 		if (candidates.isEmpty()) {
-			candidates.add(MorphlingPolypLayer.PESTS);
+			candidates.add(MorphlingPolypLayer.SUN_ALGA);
 		}
 		return candidates;
 	}
 
 	public static int selectLayerMask(Collection<MorphlingPolypLayer> candidates, Random random, int maxLayers) {
 		if (candidates == null || candidates.isEmpty()) {
-			return MorphlingPolypLayer.PESTS.bit();
+			return MorphlingPolypLayer.SUN_ALGA.bit();
 		}
 		List<MorphlingPolypLayer> pool = new ArrayList<>(candidates);
 		int layersToPick = Math.max(1, Math.min(Math.min(maxLayers, MAX_NATURAL_LAYERS), pool.size()));

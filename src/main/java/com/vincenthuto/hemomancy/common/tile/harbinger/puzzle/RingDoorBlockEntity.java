@@ -11,9 +11,11 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.event.ApotheosBodyEvents;
+import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.tile.HemoBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.ProjectedBloodSink;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -24,6 +26,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
@@ -42,46 +45,64 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * The ring door's controller. Each completed Chapel lights a node and its ring turns to the seam. A Silentium
- * projects into the lit door and it fills ring by ring, a ring of their blood at the start of each, pulses, and sinks
- * into the floor; an Apotheos cracks it with hyphae and it bursts. Either way the frame stays and the door stays open.
- * The renderer reads {@link #phase()}, {@link #phaseTick()}, {@link #nodes()} and {@link #turnStart(int)}; the
- * client advances its own copy of the phase tick between syncs.
+ * The ring door's controller. Each completed Chapel lights a node and its ring turns to the seam. The door opens to
+ * held Blood Projection ({@link ProjectedBloodSink}): each fed tick pays {@link RingDoorRules#BLOOD_PER_TICK} and adds a
+ * tick of charge, and a door left alone bleeds its charge back off. A Silentium's blood spreads from where they aim and
+ * turns to the monolith's black and red; full, the slab sinks into the floor. An Apotheos's hyphae spread and crack it;
+ * full, it bursts. Either way the frame stays and the door stays open. The renderer reads {@link #phase()},
+ * {@link #charge(float)}, {@link #path()}, {@link #origin()}, {@link #feeding()} and the nodes; the client advances its
+ * own copy of the charge and the phase tick between syncs.
  */
-public class RingDoorBlockEntity extends HemoBlockEntity {
-	public enum Phase { IDLE, PROJECTING, SHATTERING, OPEN }
+public class RingDoorBlockEntity extends HemoBlockEntity implements ProjectedBloodSink {
+	public enum Phase { IDLE, OPENING, SINKING, OPEN }
 
 	/** The saved tag's keys; the structure generator writes {@link #TAG_SAINT} and {@link #TAG_FILLERS_PLACED}. */
 	public static final String TAG_PHASE = "Phase", TAG_PHASE_TICK = "PhaseTick", TAG_NODES = "Nodes",
 			TAG_TURN_START = "TurnStart", TAG_PROJECTOR = "Projector", TAG_SAINT = "Saint", TAG_OPENED_BY = "OpenedBy",
-			TAG_SKIPPED = "Skipped", TAG_FILLERS_PLACED = "FillersPlaced";
+			TAG_SKIPPED = "Skipped", TAG_FILLERS_PLACED = "FillersPlaced", TAG_CHARGE = "Charge", TAG_PATH = "Path",
+			TAG_ORIGIN = "Origin", TAG_FEEDING = "Feeding";
 
 	private static final BloodAccounting.Source RING = BloodAccounting.Source.of("ring_door", Category.WORLD, true, false);
 	private static final ParticleColor CRIMSON = new ParticleColor(168, 36, 54);
-	private static final ParticleColor HYPHAE = new ParticleColor(214, 196, 150);
+	private static final ParticleColor HYPHAE = new ParticleColor(236, 226, 186);
+	private static final ParticleColor HYPHAE_GOLD = new ParticleColor(242, 214, 128);
 	private static final ParticleColor BLOOD = new ParticleColor(132, 14, 26);
+	/** The server resends a charging door this often, and the client runs its own charge in between. */
+	private static final int SYNC_TICKS = 10;
 
 	private Phase phase = Phase.IDLE;
 	private int phaseTick;
 	private int nodes;
 	private final long[] turnStart = new long[RingDoorRules.RINGS];
+	/** The ticks of held projection the door holds, 0 to {@link RingDoorRules#OPEN_TICKS}. */
+	private int charge;
+	/** The way the door is being opened while it charges: PROPER for a Silentium, FORCED for an Apotheos. */
+	private DoorMode path = DoorMode.NONE;
+	/** The last player to feed the door. */
 	@Nullable
 	private UUID projector;
-	/** The projecting player as clicked, for a projector the server's player list does not hold. Not saved. */
-	private WeakReference<ServerPlayer> projectorHeld = new WeakReference<>(null);
+	/** Where the projection last struck the door, in the world. */
+	@Nullable
+	private Vec3 origin;
+	private boolean feeding;
+	/** The game tick of the last feed. Not saved: a reloaded door counts from its load. */
+	private long lastFed = Long.MIN_VALUE / 2;
+	/** The client's running charge, set from each sync and advanced each client tick. */
+	private float shownCharge;
 	@Nullable
 	private EnumSaintType saint;
 	private DoorMode openedBy = DoorMode.NONE;
-	/** The Chapels a shattering will tell the tomb were skipped, held until the burst. */
+	/** The Chapels the burst told the tomb were skipped. */
 	private final List<ChapelRules.Kind> skipped = new ArrayList<>();
 	/** A structure places the door without a placer, so its fillers grow on its first tick. */
 	private boolean fillersPlaced;
@@ -94,7 +115,7 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 		return phase;
 	}
 
-	/** Ticks into the current phase; in {@code OPEN}, ticks since the door opened, counting to the burst's end. */
+	/** Ticks into SINKING; in {@code OPEN}, ticks since the door opened, counting to the burst's end. */
 	public int phaseTick() {
 		return phaseTick;
 	}
@@ -106,6 +127,30 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 	/** The game time {@code ring}'s node lit, or 0 for long ago. */
 	public long turnStart(int ring) {
 		return ring >= 0 && ring < turnStart.length ? turnStart[ring] : 0L;
+	}
+
+	/** The server's charge, in ticks of held projection. */
+	public int charge() {
+		return charge;
+	}
+
+	/** The client's charge between syncs, {@code partialTick} into the frame. */
+	public float charge(float partialTick) {
+		float step = feeding ? 1f : -1f / RingDoorRules.BLEED_TICKS;
+		return Math.max(0f, Math.min(RingDoorRules.OPEN_TICKS, shownCharge + step * partialTick));
+	}
+
+	public DoorMode path() {
+		return path;
+	}
+
+	@Nullable
+	public Vec3 origin() {
+		return origin;
+	}
+
+	public boolean feeding() {
+		return feeding;
 	}
 
 	@Nullable
@@ -174,64 +219,119 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 		return lit;
 	}
 
-	// ── The click ───────────────────────────────────────────────────────────
+	// ── Opening ─────────────────────────────────────────────────────────────
+
+	/** A hand on the door: it answers blood, not hands. */
+	public void touch(ServerPlayer player) {
+		if (phase != Phase.OPEN) tell(player, Component.translatable("message.hemomancy.ring_door.touch"));
+	}
 
 	/**
-	 * A player touches the door: an Apotheos shatters it; a Silentium with every node lit and three rings of blood
-	 * starts the projection; anyone else is told why not. A door already moving or open ignores the touch.
+	 * Blood projected at the door ({@code hitPos} is the part aimed at). An Apotheos may open it at any time; a
+	 * Silentium once every node is lit; anyone else is told why not. A fed tick pays its blood, adds a tick of charge
+	 * and moves the spread's origin to where the projection struck. The door takes one feed a tick, whoever gives it.
+	 * Returns the blood taken.
 	 */
-	public void use(ServerPlayer player) {
-		if (!(level instanceof ServerLevel world) || phase != Phase.IDLE) return;
-		List<ChapelFocusBlockEntity> chapels = chapelsNear(world, worldPosition);
-		int lit = refresh(chapels);
-		if (RingDoorRules.mayShatter(ApotheosBodyEvents.isApotheos(player))) {
-			shatter(skippedKinds(chapels));
-			return;
+	@Override
+	public double takeProjectedBlood(Player player, BlockPos hitPos, double rate, boolean livingStaff) {
+		if (!(level instanceof ServerLevel world) || !(player instanceof ServerPlayer server)) return 0.0D;
+		if (phase != Phase.IDLE && phase != Phase.OPENING) return 0.0D;
+		DoorMode way = wayFor(server);
+		if (way == DoorMode.NONE) {
+			tell(server, Component.translatable("message.hemomancy.ring_door.refused"));
+			return 0.0D;
 		}
+		if (phase == Phase.OPENING && way != path) {
+			tell(server, Component.translatable("message.hemomancy.ring_door.contested"));
+			return 0.0D;
+		}
+		if (way == DoorMode.PROPER) {
+			int lit = phase == Phase.IDLE ? refresh(chapelsNear(world, worldPosition)) : nodes;
+			if (!RingDoorRules.mayProject(true, lit)) {
+				tell(server, Component.translatable("message.hemomancy.ring_door.nodes", lit, RingDoorRules.RINGS));
+				return 0.0D;
+			}
+		}
+		long now = world.getGameTime();
+		if (lastFed == now) return 0.0D;
+		var volume = HemoCapabilityAccess.getBloodVolume(server);
+		if (!volume.isActive() || volume.getBloodVolume() < RingDoorRules.BLOOD_PER_TICK) {
+			tell(server, Component.translatable("message.hemomancy.ring_door.blood", RingDoorRules.BLOOD_COST));
+			return 0.0D;
+		}
+		BloodAccounting.pay(server, RingDoorRules.BLOOD_PER_TICK, RING);
+		boolean sync = phase == Phase.IDLE || !feeding || !server.getUUID().equals(projector);
+		if (phase == Phase.IDLE) {
+			phase = Phase.OPENING;
+			path = way;
+			charge = 0;
+		}
+		lastFed = now;
+		feeding = true;
+		projector = server.getUUID();
+		Vec3 struck = struckPoint(world, server, hitPos);
+		if (origin == null || origin.distanceToSqr(struck) > 0.0625D) sync = true;
+		origin = struck;
+		charge = RingDoorRules.nextCharge(charge, true, 0);
+		if (charge % 4 == 0) fedEffects(world, way);
+		if (charge >= RingDoorRules.OPEN_TICKS) {
+			complete(world);
+		} else if (sync || charge % SYNC_TICKS == 0) {
+			BlockEntitySync.markAndSync(this);
+		} else {
+			setChanged();
+		}
+		return RingDoorRules.BLOOD_PER_TICK;
+	}
+
+	private static DoorMode wayFor(ServerPlayer player) {
+		if (RingDoorRules.mayShatter(ApotheosBodyEvents.isApotheos(player))) return DoorMode.FORCED;
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
-		if (!HarbingerPathPermissions.isSilentium(degree.getDegreeNumber(), degree.getArchonPath())) {
-			tell(player, Component.translatable("message.hemomancy.ring_door.refused"));
-			return;
-		}
-		if (!RingDoorRules.mayProject(true, lit)) {
-			tell(player, Component.translatable("message.hemomancy.ring_door.nodes", lit, RingDoorRules.RINGS));
-			return;
-		}
-		var volume = HemoCapabilityAccess.getBloodVolume(player);
-		if (!volume.isActive() || volume.getBloodVolume() < RingDoorRules.BLOOD_PER_RING * RingDoorRules.RINGS) {
-			tell(player, Component.translatable("message.hemomancy.ring_door.blood",
-					RingDoorRules.BLOOD_PER_RING * RingDoorRules.RINGS));
-			return;
-		}
-		startProjection(player);
+		return HarbingerPathPermissions.isSilentium(degree.getDegreeNumber(), degree.getArchonPath())
+				? DoorMode.PROPER : DoorMode.NONE;
 	}
 
-	/**
-	 * The Silentium's way. The door takes {@code player}'s blood a ring at a time, from the next tick; it does not
-	 * ask again whether they may. False when the door is already moving or open.
-	 */
-	public boolean startProjection(ServerPlayer player) {
-		if (phase != Phase.IDLE) return false;
-		phase = Phase.PROJECTING;
-		phaseTick = 0;
-		projector = player.getUUID();
-		projectorHeld = new WeakReference<>(player);
-		BlockEntitySync.markAndSync(this);
-		return true;
+	/** Where the projection meets the door: its trace's point when that lands on the part, else the part's centre. */
+	private static Vec3 struckPoint(ServerLevel level, ServerPlayer player, BlockPos hitPos) {
+		HitResult trace = SanguineProjectionTargeting.pick(level, player, SanguineProjectionTargeting.PROJECTION_REACH,
+				true);
+		if (trace instanceof BlockHitResult block && block.getBlockPos().equals(hitPos)) return block.getLocation();
+		return Vec3.atCenterOf(hitPos);
 	}
 
-	/** The Apotheos's way: hyphae crack the slab, and after {@link RingDoorRules#SHATTER_TICKS} it bursts. */
-	public boolean shatter(List<ChapelRules.Kind> skippedChapels) {
-		if (phase == Phase.SHATTERING || phase == Phase.OPEN) return false;
-		phase = Phase.SHATTERING;
-		phaseTick = 0;
-		clearProjector();
-		skipped.clear();
-		skipped.addAll(skippedChapels);
-		sound(SoundEvents.SCULK_BLOCK_SPREAD, 1.4f, 0.5f);
-		sound(SoundEvents.GRINDSTONE_USE, 0.8f, 0.4f);
-		BlockEntitySync.markAndSync(this);
-		return true;
+	/** The door full: a Silentium's slab starts to sink and the tomb learns it was opened properly; an Apotheos's bursts. */
+	private void complete(ServerLevel level) {
+		charge = RingDoorRules.OPEN_TICKS;
+		feeding = false;
+		if (path == DoorMode.PROPER) {
+			phase = Phase.SINKING;
+			phaseTick = 0;
+			recordDoor(level, DoorMode.PROPER, List.of());
+			for (float x = -22; x <= 38; x += 10) {
+				particles(level, HemoParticleData.glow(CRIMSON), at(x, 2, 8), 3, 0.15, 0.02);
+			}
+			sound(SoundEvents.BEACON_POWER_SELECT, 1.2f, 0.5f);
+			sound(SoundEvents.GRINDSTONE_USE, 1.0f, 0.4f);
+			BlockEntitySync.markAndSync(this);
+		} else {
+			burst(level);
+		}
+	}
+
+	/** Every few fed ticks: the blood or the hyphae at the strike, and the door answering. */
+	private void fedEffects(ServerLevel level, DoorMode way) {
+		if (origin == null) return;
+		float progress = RingDoorRules.progress(charge);
+		if (way == DoorMode.PROPER) {
+			particles(level, HemoParticleData.bloodCell(BLOOD), origin, 2, 0.08, 0.02);
+			particles(level, HemoParticleData.glow(CRIMSON), origin, 1, 0.1, 0.01);
+			if (charge % 20 == 0) sound(SoundEvents.BUCKET_EMPTY_LAVA, 0.5f, 0.45f + 0.3f * progress);
+		} else {
+			particles(level, HemoParticleData.sporiticSpore(HYPHAE), origin, 3, 0.15, 0.015);
+			particles(level, HemoParticleData.glow(HYPHAE_GOLD), origin, 1, 0.1, 0.01);
+			if (charge % 12 == 0) sound(SoundEvents.SCULK_VEIN_BREAK, 0.6f + 0.4f * progress, 0.5f + 0.4f * progress);
+			if (charge % 40 == 0) sound(SoundEvents.GRINDSTONE_USE, 0.5f + 0.5f * progress, 0.4f);
+		}
 	}
 
 	// ── Ticking ─────────────────────────────────────────────────────────────
@@ -243,8 +343,8 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 		}
 		if (!(level instanceof ServerLevel server)) return;
 		switch (door.phase) {
-			case PROJECTING -> door.tickProjection(server);
-			case SHATTERING -> door.tickShatter(server);
+			case OPENING -> door.tickOpening(server);
+			case SINKING -> door.tickSinking(server);
 			case OPEN -> {
 				if (door.phaseTick < RingDoorRules.BURST_TICKS) door.phaseTick++;
 			}
@@ -253,10 +353,11 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 		}
 	}
 
-	/** The client's own phase clock, so the rings move smoothly between the server's syncs. */
+	/** The client's own clocks, so the spread and the slab move smoothly between the server's syncs. */
 	public static void clientTick(Level level, BlockPos pos, BlockState state, RingDoorBlockEntity door) {
 		switch (door.phase) {
-			case PROJECTING, SHATTERING -> door.phaseTick++;
+			case OPENING -> door.shownCharge = door.charge(1f);
+			case SINKING -> door.phaseTick++;
 			case OPEN -> {
 				if (door.phaseTick < RingDoorRules.BURST_TICKS) door.phaseTick++;
 			}
@@ -265,41 +366,30 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 		}
 	}
 
-	private void tickProjection(ServerLevel level) {
-		int ring = RingDoorRules.paysAt(phaseTick);
-		if (ring >= 0) {
-			ServerPlayer player = projectorPlayer(level);
-			if (!mayPay(level, player)) {
-				breakProjection(player);
-				return;
-			}
-			BloodAccounting.pay(player, RingDoorRules.stageCost(), RING);
-			Vec3 node = at(RingDoorGeometry.RING_X, RingDoorGeometry.RING_Y + RingDoorGeometry.CHANNEL_RADII[ring],
-					RingDoorGeometry.RING_FRONT_Z);
-			particles(level, HemoParticleData.glow(CRIMSON), node, 10, 0.12, 0.02);
-			particles(level, HemoParticleData.bloodCell(BLOOD), node, 6, 0.1, 0.03);
-			sound(SoundEvents.BUCKET_EMPTY_LAVA, 0.8f, 0.5f + 0.15f * ring);
+	/** Unfed past the grace, the charge bleeds off; drained, the door is idle again. */
+	private void tickOpening(ServerLevel level) {
+		long since = level.getGameTime() - lastFed;
+		if (RingDoorRules.fed(since)) return;
+		boolean stopped = feeding;
+		feeding = false;
+		int before = charge;
+		charge = RingDoorRules.nextCharge(charge, false, since);
+		if (charge <= 0) {
+			phase = Phase.IDLE;
+			path = DoorMode.NONE;
+			projector = null;
+			origin = null;
+			sound(SoundEvents.BEACON_DEACTIVATE, 0.8f, 0.5f);
 			BlockEntitySync.markAndSync(this);
+			return;
 		}
-		if (phaseTick == RingDoorRules.pulseStart()) {
-			for (float y = 4; y <= 72; y += 6) {
-				particles(level, HemoParticleData.glow(CRIMSON), at(RingDoorGeometry.RING_X, y, RingDoorGeometry.RING_FRONT_Z),
-						2, 0.04, 0.01);
-			}
-			sound(SoundEvents.BEACON_ACTIVATE, 1.0f, 0.6f);
-			BlockEntitySync.markAndSync(this);
-		}
-		if (phaseTick == RingDoorRules.sinkStart()) {
-			recordDoor(level, DoorMode.PROPER, List.of());
-			for (float x = -22; x <= 38; x += 10) {
-				particles(level, HemoParticleData.glow(CRIMSON), at(x, 2, 8), 3, 0.15, 0.02);
-			}
-			sound(SoundEvents.BEACON_POWER_SELECT, 1.2f, 0.5f);
-			sound(SoundEvents.GRINDSTONE_USE, 1.0f, 0.4f);
-			BlockEntitySync.markAndSync(this);
-		}
+		if (stopped || (charge != before && charge % SYNC_TICKS == 0)) BlockEntitySync.markAndSync(this);
+		else if (charge != before) setChanged();
+	}
+
+	private void tickSinking(ServerLevel level) {
 		phaseTick++;
-		if (phaseTick >= RingDoorRules.projectionLength()) {
+		if (phaseTick >= RingDoorRules.SINK_TICKS) {
 			for (BlockPos cell : interiorCells(true)) {
 				level.sendParticles(HemoParticleData.glow(CRIMSON), cell.getX() + 0.5, cell.getY() + 0.3,
 						cell.getZ() + 0.5, 4, 0.4, 0.2, 0.4, 0.02);
@@ -311,32 +401,19 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 		}
 	}
 
-	private void tickShatter(ServerLevel level) {
-		if (phaseTick % 6 == 0) {
-			float[] slab = RingDoorGeometry.SLAB;
-			Vec3 centre = at((slab[0] + slab[3]) / 2, (slab[1] + slab[4]) / 2, slab[2]);
-			float spread = 0.3f + 0.9f * RingDoorRules.crack(phaseTick);
-			sendAcross(level, HemoParticleData.sporiticSpore(HYPHAE), centre, 6, spread * 1.6, spread * 1.6, 0.05, 0.02);
-			sound(SoundEvents.SCULK_VEIN_BREAK, 0.8f, 0.6f);
-		}
-		phaseTick++;
-		if (phaseTick >= RingDoorRules.SHATTER_TICKS) burst(level);
-		else setChanged();
-	}
-
 	/** The cracked slab bursts: fragments and hyphae across the doorway, and the tomb learns what was skipped. */
 	private void burst(ServerLevel level) {
 		for (BlockPos cell : interiorCells(true)) {
 			double x = cell.getX() + 0.5, y = cell.getY() + 0.5, z = cell.getZ() + 0.5;
-			level.sendParticles(HemoParticleData.glow(CRIMSON), x, y, z, 6, 0.4, 0.4, 0.4, 0.08);
-			level.sendParticles(HemoParticleData.sporiticSpore(HYPHAE), x, y, z, 6, 0.4, 0.4, 0.4, 0.1);
-			level.sendParticles(HemoParticleData.bloodCell(BLOOD), x, y, z, 4, 0.4, 0.4, 0.4, 0.06);
+			level.sendParticles(HemoParticleData.glow(HYPHAE_GOLD), x, y, z, 6, 0.4, 0.4, 0.4, 0.08);
+			level.sendParticles(HemoParticleData.sporiticSpore(HYPHAE), x, y, z, 8, 0.4, 0.4, 0.4, 0.12);
+			level.sendParticles(HemoParticleData.bloodCell(BLOOD), x, y, z, 2, 0.4, 0.4, 0.4, 0.06);
 		}
 		level.playSound(null, worldPosition, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, 0.6f);
-		List<ChapelRules.Kind> told = List.copyOf(skipped);
 		skipped.clear();
+		skipped.addAll(skippedKinds(chapelsNear(level, worldPosition)));
 		openDoor(level, DoorMode.FORCED);
-		recordDoor(level, DoorMode.FORCED, told);
+		recordDoor(level, DoorMode.FORCED, List.copyOf(skipped));
 	}
 
 	/** The interior falls away; the frame stands. */
@@ -349,43 +426,10 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 		phase = Phase.OPEN;
 		phaseTick = 0;
 		openedBy = mode;
-		clearProjector();
-		BlockEntitySync.markAndSync(this);
-	}
-
-	/** The projection fails: the rings drain back, and nothing is recorded. The blood already given is spent. */
-	private void breakProjection(@Nullable ServerPlayer player) {
-		phase = Phase.IDLE;
-		phaseTick = 0;
-		clearProjector();
-		sound(SoundEvents.BEACON_DEACTIVATE, 1.0f, 0.5f);
-		if (player != null) tell(player, Component.translatable("message.hemomancy.ring_door.broken"));
-		BlockEntitySync.markAndSync(this);
-	}
-
-	private void clearProjector() {
+		path = DoorMode.NONE;
 		projector = null;
-		projectorHeld = new WeakReference<>(null);
-	}
-
-	@Nullable
-	private ServerPlayer projectorPlayer(ServerLevel level) {
-		if (projector == null) return null;
-		ServerPlayer online = level.getServer().getPlayerList().getPlayer(projector);
-		if (online != null) return online;
-		ServerPlayer held = projectorHeld.get();
-		return held != null && projector.equals(held.getUUID()) && !held.hasDisconnected() ? held : null;
-	}
-
-	/** Whether the projector is still here, alive, near enough and holding a ring of blood. */
-	private boolean mayPay(ServerLevel level, @Nullable ServerPlayer player) {
-		if (player == null || player.isRemoved() || !player.isAlive() || player.level() != level) return false;
-		Vec3 centre = at(RingDoorGeometry.RING_X, RingDoorGeometry.RING_Y, 8);
-		if (player.position().distanceToSqr(centre) > RingDoorRules.PROJECTOR_REACH * RingDoorRules.PROJECTOR_REACH) {
-			return false;
-		}
-		var volume = HemoCapabilityAccess.getBloodVolume(player);
-		return volume.isActive() && volume.getBloodVolume() >= RingDoorRules.stageCost();
+		feeding = false;
+		BlockEntitySync.markAndSync(this);
 	}
 
 	// ── Geometry ────────────────────────────────────────────────────────────
@@ -416,14 +460,6 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 	private static void particles(ServerLevel level, ParticleOptions particle, Vec3 at, int count, double spread,
 			double speed) {
 		level.sendParticles(particle, at.x, at.y, at.z, count, spread, spread, spread, speed);
-	}
-
-	/** Particles spread across the door's face ({@code across} along it, {@code depth} through it). */
-	private void sendAcross(ServerLevel level, ParticleOptions particle, Vec3 at, int count, double across, double up,
-			double depth, double speed) {
-		boolean alongX = facing().getAxis() == Direction.Axis.Z;
-		level.sendParticles(particle, at.x, at.y, at.z, count, alongX ? across : depth, up, alongX ? depth : across,
-				speed);
 	}
 
 	private void sound(SoundEvent sound, float volume, float pitch) {
@@ -519,6 +555,10 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 		if (projector != null) tag.putUUID(TAG_PROJECTOR, projector);
 		if (saint != null) tag.putString(TAG_SAINT, saint.name());
 		tag.putString(TAG_OPENED_BY, openedBy.name());
+		tag.putInt(TAG_CHARGE, charge);
+		tag.putString(TAG_PATH, path.name());
+		tag.putBoolean(TAG_FEEDING, feeding);
+		if (origin != null) tag.put(TAG_ORIGIN, newDoubleList(origin.x, origin.y, origin.z));
 	}
 
 	@Override
@@ -544,6 +584,12 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 		projector = tag.hasUUID(TAG_PROJECTOR) ? tag.getUUID(TAG_PROJECTOR) : null;
 		saint = tag.contains(TAG_SAINT) ? parse(EnumSaintType.class, tag.getString(TAG_SAINT), null) : null;
 		openedBy = parse(DoorMode.class, tag.getString(TAG_OPENED_BY), DoorMode.NONE);
+		charge = Math.max(0, Math.min(RingDoorRules.OPEN_TICKS, tag.getInt(TAG_CHARGE)));
+		shownCharge = charge;
+		path = parse(DoorMode.class, tag.getString(TAG_PATH), DoorMode.NONE);
+		feeding = tag.getBoolean(TAG_FEEDING);
+		ListTag at = tag.getList(TAG_ORIGIN, Tag.TAG_DOUBLE);
+		origin = at.size() == 3 ? new Vec3(at.getDouble(0), at.getDouble(1), at.getDouble(2)) : null;
 		if (tag.contains(TAG_SKIPPED)) {
 			skipped.clear();
 			for (Tag kind : tag.getList(TAG_SKIPPED, Tag.TAG_STRING)) {
@@ -570,5 +616,11 @@ public class RingDoorBlockEntity extends HemoBlockEntity {
 		} catch (IllegalArgumentException unknown) {
 			return fallback;
 		}
+	}
+
+	private static ListTag newDoubleList(double... values) {
+		ListTag list = new ListTag();
+		for (double value : values) list.add(DoubleTag.valueOf(value));
+		return list;
 	}
 }

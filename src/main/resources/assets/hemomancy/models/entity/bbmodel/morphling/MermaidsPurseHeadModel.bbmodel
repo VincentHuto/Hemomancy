@@ -1,0 +1,376 @@
+{
+ "meta": {
+  "format_version": "4.10",
+  "model_format": "free",
+  "box_uv": true
+ },
+ "name": "MermaidsPurseHeadModel",
+ "model_identifier": "mermaids_purse_head",
+ "resolution": {
+  "width": 64,
+  "height": 64
+ },
+ "elements": [
+  {
+   "name": "bill_crest_0",
+   "uuid": "b07779fd-f53c-5941-ba65-74cae666e85b",
+   "type": "cube",
+   "from": [
+    -0.5,
+    30.5,
+    -4.5
+   ],
+   "to": [
+    0.5,
+    32.0,
+    -0.5
+   ],
+   "origin": [
+    0,
+    30.5,
+    -4
+   ],
+   "uv_offset": [
+    0,
+    0
+   ],
+   "autouv": 0,
+   "faces": {
+    "north": {
+     "uv": [
+      4,
+      4,
+      5,
+      5.5
+     ],
+     "texture": 0
+    },
+    "east": {
+     "uv": [
+      0,
+      4,
+      4,
+      5.5
+     ],
+     "texture": 0
+    },
+    "south": {
+     "uv": [
+      9,
+      4,
+      10,
+      5.5
+     ],
+     "texture": 0
+    },
+    "west": {
+     "uv": [
+      5,
+      4,
+      9,
+      5.5
+     ],
+     "texture": 0
+    },
+    "up": {
+     "uv": [
+      5,
+      4,
+      4,
+      0
+     ],
+     "texture": 0
+    },
+    "down": {
+     "uv": [
+      6,
+      0,
+      5,
+      4
+     ],
+     "texture": 0
+    }
+   }
+  },
+  {
+   "name": "bill_crest_1",
+   "uuid": "17904cac-61c2-54e7-83fd-5b162387c0e5",
+   "type": "cube",
+   "from": [
+    -0.25,
+    32.0,
+    -4
+   ],
+   "to": [
+    0.25,
+    32.75,
+    -1
+   ],
+   "origin": [
+    0,
+    30.5,
+    -4
+   ],
+   "uv_offset": [
+    10,
+    0
+   ],
+   "autouv": 0,
+   "faces": {
+    "north": {
+     "uv": [
+      13,
+      3,
+      13.5,
+      3.75
+     ],
+     "texture": 0
+    },
+    "east": {
+     "uv": [
+      10,
+      3,
+      13,
+      3.75
+     ],
+     "texture": 0
+    },
+    "south": {
+     "uv": [
+      16.5,
+      3,
+      17.0,
+      3.75
+     ],
+     "texture": 0
+    },
+    "west": {
+     "uv": [
+      13.5,
+      3,
+      16.5,
+      3.75
+     ],
+     "texture": 0
+    },
+    "up": {
+     "uv": [
+      13.5,
+      3,
+      13,
+      0
+     ],
+     "texture": 0
+    },
+    "down": {
+     "uv": [
+      14.0,
+      0,
+      13.5,
+      3
+     ],
+     "texture": 0
+    }
+   }
+  },
+  {
+   "name": "bill_crest_2",
+   "uuid": "cd89d2d0-aa33-5569-b04d-b6a21984ea9f",
+   "type": "cube",
+   "from": [
+    -0.25,
+    30.5,
+    -7.5
+   ],
+   "to": [
+    0.25,
+    31.25,
+    -4.5
+   ],
+   "origin": [
+    0,
+    30.5,
+    -4
+   ],
+   "uv_offset": [
+    17,
+    0
+   ],
+   "autouv": 0,
+   "faces": {
+    "north": {
+     "uv": [
+      20,
+      3,
+      20.5,
+      3.75
+     ],
+     "texture": 0
+    },
+    "east": {
+     "uv": [
+      17,
+      3,
+      20,
+      3.75
+     ],
+     "texture": 0
+    },
+    "south": {
+     "uv": [
+      23.5,
+      3,
+      24.0,
+      3.75
+     ],
+     "texture": 0
+    },
+    "west": {
+     "uv": [
+      20.5,
+      3,
+      23.5,
+      3.75
+     ],
+     "texture": 0
+    },
+    "up": {
+     "uv": [
+      20.5,
+      3,
+      20,
+      0
+     ],
+     "texture": 0
+    },
+    "down": {
+     "uv": [
+      21.0,
+      0,
+      20.5,
+      3
+     ],
+     "texture": 0
+    }
+   }
+  },
+  {
+   "name": "bill_crest_3",
+   "uuid": "156d2207-d78f-5363-9c3a-36fc14b27446",
+   "type": "cube",
+   "from": [
+    -0.25,
+    30.5,
+    -9
+   ],
+   "to": [
+    0.25,
+    31.0,
+    -7.5
+   ],
+   "origin": [
+    0,
+    30.5,
+    -4
+   ],
+   "uv_offset": [
+    24,
+    0
+   ],
+   "autouv": 0,
+   "faces": {
+    "north": {
+     "uv": [
+      25.5,
+      1.5,
+      26.0,
+      2.0
+     ],
+     "texture": 0
+    },
+    "east": {
+     "uv": [
+      24,
+      1.5,
+      25.5,
+      2.0
+     ],
+     "texture": 0
+    },
+    "south": {
+     "uv": [
+      27.5,
+      1.5,
+      28.0,
+      2.0
+     ],
+     "texture": 0
+    },
+    "west": {
+     "uv": [
+      26.0,
+      1.5,
+      27.5,
+      2.0
+     ],
+     "texture": 0
+    },
+    "up": {
+     "uv": [
+      26.0,
+      1.5,
+      25.5,
+      0
+     ],
+     "texture": 0
+    },
+    "down": {
+     "uv": [
+      26.5,
+      0,
+      26.0,
+      1.5
+     ],
+     "texture": 0
+    }
+   }
+  }
+ ],
+ "outliner": [
+  {
+   "name": "bill_crest",
+   "origin": [
+    0,
+    30.5,
+    -4
+   ],
+   "rotation": [
+    -0.0,
+    0.0,
+    -0.0
+   ],
+   "uuid": "4634e1c2-723b-55ed-bcf4-e5f661c738a1",
+   "children": [
+    "b07779fd-f53c-5941-ba65-74cae666e85b",
+    "17904cac-61c2-54e7-83fd-5b162387c0e5",
+    "cd89d2d0-aa33-5569-b04d-b6a21984ea9f",
+    "156d2207-d78f-5363-9c3a-36fc14b27446"
+   ],
+   "export": true,
+   "isOpen": false,
+   "visibility": true
+  }
+ ],
+ "textures": [
+  {
+   "name": "mermaids_purse_head.png",
+   "uuid": "1ea3ade6-c1cc-5e98-a921-d59cf85ec094",
+   "id": "0",
+   "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABAklEQVR4nO3TP0vDQBjH8edCICF/EDJ26eBoHVyqII4d9G34hgTfgAXXFkepm7QoOCg66xZwEUJIMgVOLlCRK+1QEG/4fuDg8gvP5Z47ImIZnT/o/slYywbp3mWx7t3d4m2l9uOz0bf3LxvX/C+eHVRV1Y1t2bWL53e9XHM2f3XuEPy//sDxwa4Sh/l2kCRJN76svHd0VURRJGVZShAE0htNCjOP41iuL4Y7eZ53dVmWyc3sUZt5mqZyuN93+gDU4Gyqm6YRz/O6DYdhKOb5d6aUkqfJqdONbMs3/6Zp1NxkXdfStu1P88sMAAAAAAAAAAAAAAAAAAAAAAAAAAAAEOd9AwNvVXm0+yuuAAAAAElFTkSuQmCC",
+   "mode": "bitmap",
+   "render_mode": "default",
+   "visible": true
+  }
+ ],
+ "animations": []
+}

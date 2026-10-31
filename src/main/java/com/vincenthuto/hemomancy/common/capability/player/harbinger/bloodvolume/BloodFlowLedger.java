@@ -104,6 +104,22 @@ public final class BloodFlowLedger {
 		return actual;
 	}
 
+	/**
+	 * Claims circulation bandwidth for something that is not blood, such as Morphling healing (Brined Court balance
+	 * rule 5), so it contends with the passive blood income in the same window. Returns the share granted.
+	 */
+	public static double claimCirculationBandwidth(ServerPlayer player, double requested) {
+		if (player == null || requested <= 0.0D) return 0.0D;
+		if (!circulationEnabled()) return requested;
+		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
+		CirculationIncomeRules.Grant grant = CirculationIncomeRules.grant(requested, player.level().getGameTime(),
+				circulationWindowTicks(), state.getCirculationWindowStart(), state.getCirculationWindowUsed(),
+				bandwidthPerWindow(player));
+		state.setCirculationWindowStart(grant.windowStart());
+		state.setCirculationWindowUsed(grant.usedInWindow());
+		return grant.granted();
+	}
+
 	public static double transferFromVessel(ServerPlayer player, IBloodVolume playerVolume, IBloodVolume vesselVolume,
 			String sourceId, String label, double requested, int intervalTicks) {
 		if (player == null || playerVolume == null || vesselVolume == null || requested <= 0.0D) {

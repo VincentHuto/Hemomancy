@@ -65,6 +65,9 @@ public class BaseFeatureInit {
 			new ErythrocoralReefFeature(NoneFeatureConfiguration.CODEC));
     public static final Feature<NoneFeatureConfiguration> PELAGIC_SEABED = register("pelagic_seabed", new PelagicSeabedFeature());
     public static final Feature<NoneFeatureConfiguration> PELAGIC_HABITAT = register("pelagic_habitat", new PelagicHabitatFeature());
+    /** The Brined Court's signs (Track 8): blooms, lone house markers, relays, buoys and vent offerings. */
+    public static final Feature<NoneFeatureConfiguration> COURT_SIGNS = register("court_signs",
+            new com.vincenthuto.hemomancy.common.worldgen.feature.court.CourtSignFeature());
 
 	public static final Feature<NoneFeatureConfiguration> SPORE_NEXUS_TOWER = register("spore_nexus_tower",
 			new SporeNexusTowerFeature(NoneFeatureConfiguration.CODEC));

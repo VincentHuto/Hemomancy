@@ -7,8 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that passively regenerates the player's health over time.
- * Applied by the Gravecap Morphling while it is attached to the player. Each
- * tick, the entity heals a small amount that scales with the amplifier.
+ * Used by its standalone potion. Each tick, the entity heals a small amount that scales with the amplifier.
  */
 public class MycorrhizalMendingEffect extends MobEffect {
 	private final String displayKey;

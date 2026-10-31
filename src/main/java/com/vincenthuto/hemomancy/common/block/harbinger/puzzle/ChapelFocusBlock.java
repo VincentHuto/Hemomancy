@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.puzzle;
 
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.ChapelFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.util.HemoTickers;
@@ -11,6 +12,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -29,21 +31,31 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.Map;
+
 import javax.annotation.Nullable;
 
 /**
  * A Chapel's focus: touched by a D8 player it begins that Chapel's trial; lit once the trial is complete. Its facing is
  * authored north in the template and turns with the placed piece, which is how the block entity knows which way to
- * turn its wing's marks.
+ * turn its wing's marks. Models from tools/model_export/chapel_focus.py.
  */
 public class ChapelFocusBlock extends Block implements EntityBlock {
 	public static final BooleanProperty LIT = BooleanProperty.create("lit");
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 13, 14);
+	private static final Map<Direction, VoxelShape> SHAPES = ModelShapes.horizontal(
+			ModelShapes.of(new double[] {2, 0, 2, 14, 1.5, 14}, new double[] {2.75, 1.5, 2.75, 13.25, 2.5, 13.25},
+					new double[] {3.5, 2.5, 4.25, 12.5, 9, 11.5}, new double[] {2.75, 9, 3.25, 13.25, 10.5, 12.5},
+					new double[] {5, 10.5, 5, 11, 13, 11}));
 
 	public ChapelFocusBlock(Properties properties) {
 		super(properties);
 		registerDefaultState(stateDefinition.any().setValue(LIT, false).setValue(FACING, Direction.NORTH));
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
 	}
 
 	@Override
@@ -63,7 +75,7 @@ public class ChapelFocusBlock extends Block implements EntityBlock {
 
 	@Override
 	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-		return SHAPE;
+		return SHAPES.get(state.getValue(FACING));
 	}
 
 	@Nullable

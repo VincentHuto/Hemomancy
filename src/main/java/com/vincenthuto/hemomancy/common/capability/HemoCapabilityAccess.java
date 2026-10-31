@@ -75,6 +75,10 @@ public static com.vincenthuto.hemomancy.common.capability.player.harbinger.circu
     return player.getData(HemoAttachmentTypes.CIRCUS_PROGRESS);
 }
 
+public static com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtProgress courtProgress(Player player) {
+    return player.getData(HemoAttachmentTypes.COURT_PROGRESS);
+}
+
 public static com.vincenthuto.hemomancy.common.encounter.ChamberAccess chamberAccess(Player player) {
     return player.getData(HemoAttachmentTypes.CHAMBER_ACCESS);
 }

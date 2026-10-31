@@ -27,6 +27,10 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.core.registries.BuiltInRegistries;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingLinks;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -73,6 +77,10 @@ public final class MultiplayerVerification {
 						.executes(ctx -> gifts(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))
 				.then(Commands.literal("visit").then(Commands.argument("player", EntityArgument.player())
 						.executes(ctx -> visit(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))
+				.then(Commands.literal("strands").then(Commands.argument("host", EntityArgument.player())
+						.then(Commands.argument("partner", EntityArgument.player())
+								.executes(ctx -> strands(ctx.getSource(), EntityArgument.getPlayer(ctx, "host"),
+										EntityArgument.getPlayer(ctx, "partner"))))))
 				.then(Commands.literal("report").then(Commands.argument("player", EntityArgument.player())
 						.executes(ctx -> report(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))
 				.then(Commands.literal("menu").then(Commands.argument("name", StringArgumentType.word())
@@ -85,7 +93,11 @@ public final class MultiplayerVerification {
 		var equipment = HemoCapabilityAccess.getEquipment(player);
 		StringBuilder out = new StringBuilder();
 		out.append("fungal=").append(id(HemoCapabilityAccess.getScarState(player).getFungalScar()));
-		out.append(" morphling=").append(id(HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling()));
+		var morphling = HemoCapabilityAccess.getEquippedMorphling(player);
+		out.append(" morphling=").append(id(morphling.getEquippedMorphling()));
+		out.append(" morphflags=").append(Integer.toHexString(morphling.getActiveFlags()));
+		out.append(" strands=").append(java.util.Arrays.toString(morphling.getLinkedEntityIds()));
+		out.append(" anchors=").append(java.util.Arrays.toString(morphling.getLinkedAnchors()));
 		out.append(" muscle=");
 		for (EnumVeinSections section : EnumVeinSections.values())
 			muscle.enabledMemory(section).ifPresent(memory -> out.append(section).append(':').append(memory).append(','));
@@ -104,7 +116,7 @@ public final class MultiplayerVerification {
 		equipment.setStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX, new ItemStack(ItemInit.charm_of_vascularium.get()));
 		equipment.setStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX, new ItemStack(ItemInit.blood_gourd_red.get()));
 		HemoCapabilityAccess.getScarState(player).setFungalScar(new ItemStack(ItemInit.noctifly_agaric.get()));
-		HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(new ItemStack(ItemInit.morphling_gravecap.get()));
+		HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(new ItemStack(ItemInit.morphling_marrowplume.get()));
 		var muscle = HemoCapabilityAccess.muscleMemory(player);
 		for (MuscleMemory memory : List.of(MuscleMemory.SANGUINE_FISTS, MuscleMemory.COURSING_LEGS)) {
 			muscle.learnAndAddReserve(memory, 1_000_000);
@@ -137,6 +149,48 @@ public final class MultiplayerVerification {
 		EquippedMorphlingEvents.syncToClient(player);
 		MuscleMemoryEvents.sync(player);
 		HarbingerEquipmentEntityEventHandler.syncLayerVisibilityToClient(player);
+	}
+
+	/**
+	 * Brined Court Track 2: the host wears an Apex Dead Man's Rope tied to the partner, who wears a Mature Mermaid's
+	 * Purse banked to half its cap, and also anchors a strand to the block under the host. Both clients' {@code peers}
+	 * digests should then show the host's strand to the partner's entity id, the anchor and the Purse's
+	 * banked-blood fill; a hurt partner below 30% health draws School's Share.
+	 */
+	private static int strands(CommandSourceStack source, ServerPlayer host, ServerPlayer partner) {
+		for (ServerPlayer player : List.of(host, partner)) {
+			var volume = HemoCapabilityAccess.getBloodVolume(player);
+			volume.setActive(true);
+			volume.setMaxBloodVolume(5000.0D);
+			volume.setBloodVolume(5000.0D);
+		}
+		ItemStack rope = new ItemStack(MorphlingStrains.DEAD_MANS_ROPE.item().get());
+		MorphlingItem.setPrimalized(rope);
+		ItemStack purse = new ItemStack(MorphlingStrains.MERMAIDS_PURSE.item().get());
+		var tag = new net.minecraft.nbt.CompoundTag();
+		tag.putFloat("EnzymePower", MorphlingItem.MATURITY_THRESHOLDS[3]);
+		purse.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+				net.minecraft.world.item.component.CustomData.of(tag));
+		HemoCapabilityAccess.getEquippedMorphling(host).setEquippedMorphling(rope);
+		HemoCapabilityAccess.getEquippedMorphling(partner).setEquippedMorphling(purse);
+		var board = host.getScoreboard();
+		var team = board.getPlayerTeam("hemoverify_school");
+		if (team == null) team = board.addPlayerTeam("hemoverify_school");
+		board.addPlayerToTeam(host.getScoreboardName(), team);
+		board.addPlayerToTeam(partner.getScoreboardName(), team);
+		// Half the borrowed-blood cap, so the Purse fill bits (24-27) read a nonzero value on both clients.
+		double cap = com.vincenthuto.hemomancy.config.HemoServerConfig.BORROWED_BLOOD_CAP.get();
+		com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve.deposit(partner,
+				cap / 2.0D - com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve.get(partner));
+		MorphlingLinks.clear(host);
+		boolean tied = ((IMorphling) rope.getItem()).onEquippedSneakUse(host, rope, partner, null);
+		boolean anchored = ((IMorphling) rope.getItem()).onEquippedSneakUse(host, rope, null,
+				host.blockPosition().below());
+		EquippedMorphlingEvents.syncToClient(host);
+		EquippedMorphlingEvents.syncToClient(partner);
+		say(source, "STRANDS " + host.getName().getString() + "->" + partner.getName().getString() + " tied=" + tied
+				+ " anchored=" + anchored + " links=" + MorphlingLinks.count(host));
+		return state(source, host);
 	}
 
 	private static int state(CommandSourceStack source, ServerPlayer player) {

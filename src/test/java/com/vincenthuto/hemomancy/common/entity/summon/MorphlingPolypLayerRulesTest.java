@@ -11,8 +11,8 @@ public final class MorphlingPolypLayerRulesTest {
 	public static void main(String[] args) {
 		oceanContextIncludesAquaticLayers();
 		undergroundContextIncludesCaveLayers();
-		desertContextIncludesSerpentLayer();
-		openLandContextFallsBackToPests();
+		desertContextIncludesVentLayer();
+		openLandContextYieldsSunAlgaOnly();
 		selectedMaskIsCappedAndRoundTrips();
 		emptyContextStillSelectsOneLayer();
 	}
@@ -20,29 +20,30 @@ public final class MorphlingPolypLayerRulesTest {
 	private static void oceanContextIncludesAquaticLayers() {
 		EnumSet<MorphlingPolypLayer> candidates = MorphlingPolypLayerRules.candidateLayers(
 				MorphlingPolypLayerRules.context().inWater().ocean());
-		assertContains("ocean context includes cuttlefish", candidates, MorphlingPolypLayer.CUTTLEFISH);
-		assertContains("ocean context includes urchin", candidates, MorphlingPolypLayer.URCHIN);
+		assertContains("ocean context includes sun alga", candidates, MorphlingPolypLayer.SUN_ALGA);
+		assertContains("ocean context includes gut bacteria", candidates, MorphlingPolypLayer.GUT_BACTERIA);
+		assertContains("ocean context includes light bacteria", candidates, MorphlingPolypLayer.LIGHT_BACTERIA);
 	}
 
 	private static void undergroundContextIncludesCaveLayers() {
 		EnumSet<MorphlingPolypLayer> candidates = MorphlingPolypLayerRules.candidateLayers(
 				MorphlingPolypLayerRules.context().underground().lowLight().stoneNearby().dirtNearby());
-		assertContains("underground context includes bat", candidates, MorphlingPolypLayer.BAT);
-		assertContains("underground context includes mole", candidates, MorphlingPolypLayer.MOLE);
-		assertContains("underground context includes centipede", candidates, MorphlingPolypLayer.CENTIPEDE);
+		assertContains("underground context includes black yeast", candidates, MorphlingPolypLayer.BLACK_YEAST);
+		assertContains("underground context includes bone bacteria", candidates, MorphlingPolypLayer.BONE_BACTERIA);
+		assertContains("underground context includes vent bacteria", candidates, MorphlingPolypLayer.VENT_BACTERIA);
 	}
 
-	private static void desertContextIncludesSerpentLayer() {
+	private static void desertContextIncludesVentLayer() {
 		EnumSet<MorphlingPolypLayer> candidates = MorphlingPolypLayerRules.candidateLayers(
 				MorphlingPolypLayerRules.context().desertOrBadlands());
-		assertContains("desert context includes serpent", candidates, MorphlingPolypLayer.SERPENT);
+		assertContains("desert context includes vent bacteria", candidates, MorphlingPolypLayer.VENT_BACTERIA);
 	}
 
-	private static void openLandContextFallsBackToPests() {
+	private static void openLandContextYieldsSunAlgaOnly() {
 		EnumSet<MorphlingPolypLayer> candidates = MorphlingPolypLayerRules.candidateLayers(
 				MorphlingPolypLayerRules.context().openLand());
 		assertEquals("open land candidate count", 1, candidates.size());
-		assertContains("open land fallback includes pests", candidates, MorphlingPolypLayer.PESTS);
+		assertContains("open land yields sun alga", candidates, MorphlingPolypLayer.SUN_ALGA);
 	}
 
 	private static void selectedMaskIsCappedAndRoundTrips() {

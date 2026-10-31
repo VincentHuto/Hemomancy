@@ -102,11 +102,16 @@ public final class CreativeTabReview {
 		NAMES.add("top");
 		CreativeTabSection last = null;
 		int lastRun = Integer.MIN_VALUE;
+		int lastStart = 0;
 		for (int i = 0; i < items.size(); i++) {
 			if (items.get(i).isEmpty()) continue;
 			CreativeTabSection section = CreativeTabSection.of(items.get(i));
 			int run = CreativeTabSection.run(items.get(i));
 			if (section != last) {
+				// A section taller than one screen gets a second shot of its lower rows.
+				if (last != null && last != CreativeTabSection.HEMATIC && i / 9 - lastStart > 4)
+					add(rows, lastStart + 4, last.id() + "-more");
+				lastStart = i / 9 - 1;
 				add(rows, i / 9 - 1, section.id());
 			} else if (section == CreativeTabSection.HEMATIC && run != lastRun && run >= 0) {
 				add(rows, i / 9, "hematic-" + CreativeTabGroup.values()[run].name().toLowerCase(java.util.Locale.ROOT));

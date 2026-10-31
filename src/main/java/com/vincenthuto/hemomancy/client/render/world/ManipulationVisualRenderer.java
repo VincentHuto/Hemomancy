@@ -281,6 +281,7 @@ public final class ManipulationVisualRenderer {
                     if(source instanceof net.minecraft.world.entity.LivingEntity living) {
                         Vec3 palm=from.add(frame.hand());
                         var found=com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandParticleEffects.useTargets(living,palm);
+                        if(found!=null&&found.replaced()) { poses.popPose(); continue; }
                         if(found!=null) { Vec3 feet=from; targets=found.points().stream().map(t -> t.subtract(feet)).toList(); }
                     }
                     CellHandGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),eye,right,up,time,age,opacity,frame,targets,from);

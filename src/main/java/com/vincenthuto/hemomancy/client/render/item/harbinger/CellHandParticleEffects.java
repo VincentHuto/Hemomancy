@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.item.harbinger;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.particle.*;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle.RingDoorRenderer;
 import com.vincenthuto.hemomancy.common.particle.EntityParticleUtils;
 import com.vincenthuto.hemomancy.client.render.world.CellHandStreams;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
@@ -186,8 +187,14 @@ public final class CellHandParticleEffects {
 		spawnFirstPersonParticlesForStack(stack, hand, head != null ? head : fallbackFirstPersonHandOrigin(hand));
 	}
 
-	/** What a cell hand in use is drawing from (absorption) or pouring into (projection), in world space. */
-	public record UseTargets(boolean absorbing, List<Vec3> points) {
+	/**
+	 * What a cell hand in use is drawing from (absorption) or pouring into (projection), in world space. {@code replaced}
+	 * when something else draws this projection (an Apotheos's hyphae into a ring door), so the hand pours nothing.
+	 */
+	public record UseTargets(boolean absorbing, List<Vec3> points, boolean replaced) {
+		public UseTargets(boolean absorbing, List<Vec3> points) {
+			this(absorbing, points, false);
+		}
 	}
 
 	/**
@@ -216,6 +223,8 @@ public final class CellHandParticleEffects {
 		if (isProjectionMode(living, stack)) {
 			HitResult trace = SanguineProjectionTargeting.pick(world, living, SanguineProjectionTargeting.PROJECTION_REACH, true);
 			if (trace.getType() != HitResult.Type.BLOCK) return new UseTargets(false, List.of());
+			if (trace instanceof net.minecraft.world.phys.BlockHitResult block
+					&& RingDoorRenderer.hyphaeInPlaceOfBlood(living, block)) return new UseTargets(false, List.of(), true);
 			Vec3 target = trace instanceof net.minecraft.world.phys.BlockHitResult block
 					? com.vincenthuto.hemomancy.client.render.world.WorkingCraftSwallowRenderer.projectionLanding(origin, block)
 					: trace.getLocation();
@@ -376,6 +385,9 @@ public final class CellHandParticleEffects {
 	}
 
 	private static void spawnProjectionParticle(Minecraft mc, Vec3 origin, HitResult trace, Random rand) {
+		// An Apotheos forcing a ring door gives it hyphae, not blood; the door draws them.
+		if (trace instanceof net.minecraft.world.phys.BlockHitResult block && mc.player != null
+				&& RingDoorRenderer.hyphaeInPlaceOfBlood(mc.player, block)) return;
 		Particle created = mc.particleEngine.createParticle(
 				HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD),
 				origin.x, origin.y, origin.z, 0.0D, 0.0D, 0.0D);

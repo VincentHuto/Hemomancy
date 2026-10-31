@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "turn=0": {
+      "model": "hemomancy:block/sunburst_bloom_pad"
+    },
+    "turn=1": {
+      "model": "hemomancy:block/sunburst_bloom_pad",
+      "y": 90
+    },
+    "turn=2": {
+      "model": "hemomancy:block/sunburst_bloom_pad",
+      "y": 180
+    },
+    "turn=3": {
+      "model": "hemomancy:block/sunburst_bloom_pad",
+      "y": 270
+    }
+  }
+}

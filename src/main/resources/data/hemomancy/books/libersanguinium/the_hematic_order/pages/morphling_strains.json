@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 12,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Eight Strains",
+  "subtitle": "As the Order lists them",
+  "text": "Sunburst, Heliophyta donans, Lux: a gold lichen that feeds its host in sunlight and feeds failing companions. At home in daylight under open sky. Holdfast, Hapterophyta tenax, Ferric: grips stone, resists knockback and shelters allies. At home on stone or underwater. Mermaid's Purse, Sanguibursa communis, Animus: banks blood from strikes and spends it healing the school. At home at speed in the water, in open ocean or near an ally. Dead Man's Rope, Funiculospora nexilis, Ductilis: senses the living and ties strands to allies and blocks. At home underwater or while holding a strand. Ink Cap, Atramentaria velata, Tenebris: hides its host and escapes in ink. At home in the dark or underwater. Hushbell, Campanospora silens, Congeatio: conserves food and air and folds shut when hurt. At home in the cold, deep underwater or standing still. Marrowplume, Medullophyta ossivora, Mortem: heals on bone and kills and makes kills yield more. At home near bone blocks or after a kill. Kinbud, Pyrrhiza gemmans, Flammeus: stings, regrows part of each wound and buds a second head in a fight. At home near heat. The Living Bestiary keeps a field note on each strain you've recorded.",
+  "icon": "hemomancy:morphling_sunburst"
+}

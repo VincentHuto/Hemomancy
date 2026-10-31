@@ -9,8 +9,8 @@ import net.minecraft.world.entity.player.Player;
 /**
  * Minecraft-facing adapter for {@link BorrowedBloodRules}: a small per-player
  * reserve of blood lent by the world rather than owned by the body. Current
- * writers: Blood Lust overkill lifesteal (ArmorSetBonusHandler) and — once the
- * morphling reframe lands — Deadman's Purse feed-banking. Current reader:
+ * writer: Blood Lust overkill lifesteal (ArmorSetBonusHandler); Mermaid's Purse
+ * feed banking (Brined Court strain powers). Current reader:
  * emergency cover when a manipulation cast would otherwise fail for lack of
  * blood (BloodManipulation).
  *

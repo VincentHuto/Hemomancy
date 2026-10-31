@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "has_morphling_winter_shroud": {
+    "has_morphling_hushbell": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": "hemomancy:morphling_winter_shroud"
+            "items": "hemomancy:morphling_hushbell"
           }
         ]
       }
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "has_morphling_winter_shroud",
+      "has_morphling_hushbell",
       "has_the_recipe"
     ]
   ]

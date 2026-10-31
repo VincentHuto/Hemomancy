@@ -28,7 +28,6 @@ public final class HemomancyCreativeTabsSourceTest {
 			"blood_thrall_effigy",
 			"blood_bolt",
 			"vascular_status_gauge",
-			"hemorath_rib",
 			"echo_of_spleen",
 			"echo_of_liver",
 			"echo_of_heart",

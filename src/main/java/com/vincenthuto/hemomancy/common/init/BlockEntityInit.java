@@ -123,6 +123,11 @@ public class BlockEntityInit {
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.decoration.RotPyreBlockEntity::new,
 							BlockInit.rot_pyre.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.decoration.MarimoHeartBlockEntity>> marimo_heart = TILES
+			.register("marimo_heart", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.decoration.MarimoHeartBlockEntity::new,
+							BlockInit.marimo_heart.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity>> heart_node = TILES
 			.register("heart_node", () -> BlockEntityType.Builder
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity::new,

@@ -43,6 +43,7 @@ public final class ClientSessionEvents {
         NaeglerophaeonCaptureOverlay.clear();
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
+        com.vincenthuto.hemomancy.client.render.world.MorphlingStrainTrails.clear();
         com.vincenthuto.hemomancy.client.data.HeartNodeClientState.clear();
         ActiveRiteClientData.clear();
         com.vincenthuto.hemomancy.client.data.CardinalRiteEventClientState.clear();
@@ -51,6 +52,7 @@ public final class ClientSessionEvents {
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSkyWound.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.DaemonHazeQueue.clear();
+        com.vincenthuto.hemomancy.client.render.world.RingDoorSpreadQueue.clear();
         com.vincenthuto.hemomancy.client.sound.RiteSoundBed.stopAll();
         com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer.clearCaches();
         com.vincenthuto.hemomancy.client.render.world.floor.FloorRiteResponse.clear();
@@ -116,6 +118,7 @@ public final class ClientSessionEvents {
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSkyWound.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.DaemonHazeQueue.clear();
+        com.vincenthuto.hemomancy.client.render.world.RingDoorSpreadQueue.clear();
         com.vincenthuto.hemomancy.client.sound.RiteSoundBed.stopAll();
         com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer.clearCaches();
         com.vincenthuto.hemomancy.client.render.world.floor.FloorRiteResponse.clear();

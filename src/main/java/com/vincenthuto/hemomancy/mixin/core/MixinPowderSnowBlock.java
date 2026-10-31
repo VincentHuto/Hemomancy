@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PowderSnowBlock.class)
 public abstract class MixinPowderSnowBlock {
 	@Inject(method = "canEntityWalkOnPowderSnow", at = @At("RETURN"), cancellable = true, remap = false)
-	private static void hemomancy$allowWinterShroudTraversal(Entity entity,
+	private static void hemomancy$allowCryoprotectedTraversal(Entity entity,
 			CallbackInfoReturnable<Boolean> cir) {
 		cir.setReturnValue(MixinHooks.canWalkOnPowderSnow(entity, cir.getReturnValue()));
 	}

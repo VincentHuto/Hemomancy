@@ -106,8 +106,7 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
 
         // Render any additional 3-D model attachment (wings, plating, tendrils, etc.)
         // SimpleBodyAttachment already does its own pushPose/popPose internally.
-        MorphlingModelAttachment attachment = mutation.modelAttachment;
-        if (attachment != null) {
+        for (MorphlingModelAttachment attachment : mutation.attachments) {
             attachment.render(poseStack, buffer, packedLight, entity,
                     (HumanoidModel<?>) model,
                     limbSwing, limbSwingAmount, partialTicks,

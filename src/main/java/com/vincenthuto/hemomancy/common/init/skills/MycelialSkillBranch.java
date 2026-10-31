@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.init.skills;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import net.minecraft.world.item.ItemStack;
 
@@ -29,15 +30,15 @@ public final class MycelialSkillBranch {
 			SkillPointInit.skill_primal_morphogenesis = SkillPointInit.registerSkill(branch,
 					new SkillPoint(37, "skill_primal_morphogenesis", 1000, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_qliphoth_gestation)
 							.setSkillPointCost(5).setRequiredDegree(8).setTreePosition(321, 703).setBranch("mycelial").setBranchColor(0xFF6E8F3A).addParents(SkillPointInit.deep_base_skill)
-							.setIconItem(() -> new ItemStack(ItemInit.morphling_gravecap.get())));
+							.setIconItem(() -> new ItemStack(MorphlingStrains.MARROWPLUME.item().get())));
 			SkillPointInit.skill_symbiotic_metabolism = SkillPointInit.registerSkill(branch,
 					new SkillPoint(64, "skill_symbiotic_metabolism", 475, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_sporitic_attunement)
 							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(394, 732).setBranch("mycelial").setBranchColor(0xFF6E8F3A).setToggleable(true)
-							.setIconItem(() -> new ItemStack(ItemInit.morphling_gravecap.get())));
+							.setIconItem(() -> new ItemStack(MorphlingStrains.MARROWPLUME.item().get())));
 			SkillPointInit.skill_dormant_symbiote = SkillPointInit.registerSkill(branch,
 					new SkillPoint(65, "skill_dormant_symbiote", 550, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_symbiotic_metabolism)
 							.setSkillPointCost(4).setRequiredDegree(5).setTreePosition(474, 606).setBranch("mycelial").setBranchColor(0xFF6E8F3A).setToggleable(true).addParents(SkillPointInit.deep_base_skill)
-							.setIconItem(() -> new ItemStack(ItemInit.morphling_gravecap.get())));
+							.setIconItem(() -> new ItemStack(MorphlingStrains.MARROWPLUME.item().get())));
 		// </skill-editor>
 	}
 }

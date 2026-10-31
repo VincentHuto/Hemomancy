@@ -1,0 +1,10 @@
+{
+  "parent": "hemomancy:block/messenger_buoy",
+  "display": {
+    "gui": {
+      "rotation": [30, 225, 0],
+      "translation": [-0.43, 1.41, 0],
+      "scale": [0.418, 0.418, 0.418]
+    }
+  }
+}

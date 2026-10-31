@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.structure;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -17,10 +18,6 @@ public final class StructurePlacementChecks {
 	private static final int MAX_LAND_STRUCTURE_HEIGHT = 150;
 	private static final int MAX_ALLOWED_WATER_DEPTH = 2;
 	private static final int MAX_ALLOWED_SWAMP_WATER_DEPTH = 8;
-	/** The farthest a mausoleum piece reaches from its entrance's centre (80, measured by the generator's layout check). */
-	private static final int MAUSOLEUM_FOOTPRINT_RADIUS = 80;
-	private static final int MAUSOLEUM_SAMPLE_STEP = 16;
-	private static final int MAX_MAUSOLEUM_SURFACE_VARIATION = 10;
 	private static final int OUTPOST_RADIUS = 28;
 	private static final int OUTPOST_SAMPLE_STEP = 7;
 	private static final int MAX_OUTPOST_SURFACE_VARIATION = 8;
@@ -64,8 +61,14 @@ public final class StructurePlacementChecks {
 		return true;
 	}
 
+	/**
+	 * Whether the entrance chunk is dry land low enough to build on. Whether the halls stay buried is checked against
+	 * the laid-out pieces ({@code MausoleumStructure}). Vanilla tests the structure's biome only after the site check,
+	 * so the biome is tested first here, against every centre the rotated entrance could have; {@code /locate} visits
+	 * thousands of candidates and almost all of them fail it.
+	 */
 	public static boolean isSuitableBuriedMausoleumSite(Structure.GenerationContext context) {
-		if (!isSuitableLandChunk(context)) {
+		if (!canPlaceOverworldHemomancyStructure(context)) {
 			return false;
 		}
 
@@ -73,27 +76,45 @@ public final class StructurePlacementChecks {
 		int centerX = chunkPos.getMinBlockX() + 8;
 		int centerZ = chunkPos.getMinBlockZ() + 8;
 		int centerSurface = getSurfaceHeight(context, centerX, centerZ);
-
-		if (!isSuitableLandColumn(context, centerX, centerZ, MAX_ALLOWED_WATER_DEPTH)) {
+		if (!mausoleumEntranceBiomeMayMatch(context, centerSurface)) {
 			return false;
 		}
 
-		for (int xOffset = -MAUSOLEUM_FOOTPRINT_RADIUS; xOffset <= MAUSOLEUM_FOOTPRINT_RADIUS; xOffset += MAUSOLEUM_SAMPLE_STEP) {
-			for (int zOffset = -MAUSOLEUM_FOOTPRINT_RADIUS; zOffset <= MAUSOLEUM_FOOTPRINT_RADIUS; zOffset += MAUSOLEUM_SAMPLE_STEP) {
-				int x = centerX + xOffset;
-				int z = centerZ + zOffset;
-				if (!isSuitableLandColumn(context, x, z, MAX_ALLOWED_WATER_DEPTH)) {
-					return false;
-				}
-
-				int surface = getSurfaceHeight(context, x, z);
-				if (Math.abs(surface - centerSurface) > MAX_MAUSOLEUM_SURFACE_VARIATION) {
-					return false;
-				}
+		int minX = chunkPos.getMinBlockX();
+		int minZ = chunkPos.getMinBlockZ();
+		if (centerSurface >= MAX_LAND_STRUCTURE_HEIGHT
+				|| centerSurface - getOceanFloorHeight(context, centerX, centerZ) > MAX_ALLOWED_WATER_DEPTH) {
+			return false;
+		}
+		int[][] corners = { { 0, 0 }, { 15, 0 }, { 0, 15 }, { 15, 15 } };
+		for (int[] corner : corners) {
+			if (!isSuitableLandColumn(context, minX + corner[0], minZ + corner[1], MAX_ALLOWED_WATER_DEPTH)) {
+				return false;
 			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * Whether the structure's biome could pass vanilla's final check. That check reads the biome at the entrance
+	 * piece's centre, which sits eight blocks from the chunk's corner along each axis, on whichever side the start
+	 * rotation puts it; this accepts the site if any of those centres, or the corner itself, is a valid biome.
+	 */
+	private static boolean mausoleumEntranceBiomeMayMatch(Structure.GenerationContext context, int surface) {
+		int cornerX = context.chunkPos().getMinBlockX();
+		int cornerZ = context.chunkPos().getMinBlockZ();
+		int quartY = QuartPos.fromBlock(surface);
+		for (int dx = -8; dx <= 8; dx += 8) {
+			for (int dz = -8; dz <= 8; dz += 8) {
+				Holder<Biome> biome = context.biomeSource().getNoiseBiome(QuartPos.fromBlock(cornerX + dx), quartY,
+						QuartPos.fromBlock(cornerZ + dz), context.randomState().sampler());
+				if (context.validBiome().test(biome)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/** The complete courtyard and its four wings must fit on one modestly sloped site. */

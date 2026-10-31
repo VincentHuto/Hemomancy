@@ -103,14 +103,15 @@ class MausoleumComplexResourceTest {
 	/**
 	 * Track 1, issue 0. {@code JigsawPlacement} moves a rigid start piece so that {@code minY + 1} (its ground-level
 	 * delta) equals {@code start_height + first free block}: template row r lands at
-	 * {@code start_height + groundTop + r}, where groundTop is the ground's top block. The floor a visitor walks into
-	 * at the entrance is level with the ground when that row lands on groundTop, so start_height must be minus the
-	 * floor's row. {@code MausoleumStructure} then lifts the whole complex onto the highest ground under the entrance.
+	 * {@code start_height + groundTop + r}, where groundTop is the ground's top block, and {@code beard_thin} levels
+	 * the land around to that same block. Row 0 is the pavilion's footing, so it must land on groundTop (start_height
+	 * 0); the step ring, the portico stair and the floor stand one course up, on the ground rather than half sunk into
+	 * it. {@code MausoleumStructure} then lifts the whole complex onto the highest ground under the entrance.
 	 * Changing the entrance template or the structure JSON without the other breaks this.
 	 */
 	@ParameterizedTest
 	@ValueSource(strings = {"hemorath", "seraphae", "putriciel", "velorum"})
-	void theEntranceFloorIsLevelWithTheGround(String saint) throws IOException {
+	void theEntranceStandsOnTheGround(String saint) throws IOException {
 		CompoundTag top = NbtIo.readCompressed(RepoPaths.DATA.resolve("structure/mausoleum/" + saint + "/top.nbt"),
 				NbtAccounter.unlimitedHeap());
 		ListTag palette = top.getList("palette", Tag.TAG_COMPOUND);
@@ -128,10 +129,18 @@ class MausoleumComplexResourceTest {
 			boolean open = cells.getOrDefault(List.of(3, y + 1, 8), "minecraft:air").equals("minecraft:air");
 			if (solid && open) floorRow = y;
 		}
-		assertEquals(0, floorRow, "the entrance floor is the template's first row");
+		assertEquals(1, floorRow, "the entrance floor is one course over the footing row");
+		for (int z = 0; z < 17; z++) {
+			String footing = cells.getOrDefault(List.of(0, 0, z), "minecraft:air");
+			String step = cells.getOrDefault(List.of(0, 1, z), "minecraft:air");
+			if (step.endsWith("_stairs")) {
+				assertFalse(footing.equals("minecraft:air") || footing.endsWith("_stairs"),
+						"the step at z " + z + " stands on the footing, not in the ground's row");
+			}
+		}
 		JsonObject structure = ResourceReader.data("worldgen/structure/mausoleum_" + saint + ".json");
-		assertEquals(-floorRow, structure.getAsJsonObject("start_height").getAsJsonObject("value").get("absolute")
-				.getAsInt());
+		assertEquals(0, structure.getAsJsonObject("start_height").getAsJsonObject("value").get("absolute")
+				.getAsInt(), "the footing row replaces the ground's top block");
 		assertEquals("rigid", ResourceReader.data("worldgen/template_pool/mausoleum/" + saint + "/top.json")
 				.getAsJsonArray("elements").get(0).getAsJsonObject().getAsJsonObject("element").get("projection")
 				.getAsString(), "a rigid element's ground-level delta is the 1 the arithmetic assumes");

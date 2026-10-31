@@ -22,6 +22,7 @@ hemomancy:bloody_jug
 hemomancy:blood_gourd_white
 hemomancy:blood_gourd_red
 hemomancy:blood_gourd_black
+hemomancy:curved_horn
 hemomancy:hematic_microscope
 hemomancy:scrying_dish
 hemomancy:hearty_compass
@@ -267,23 +268,12 @@ hemomancy:tincture_second_pulse_jug
 hemomancy:tincture_enduring_viscera_jug
 hemomancy:tincture_carrion_metabolism_jug
 hemomancy:sanguine_salve
-hemomancy:morphic_tonic
 hemomancy:foul_paste
 hemomancy:ferric_binder
 hemomancy:crimson_lacquer
 hemomancy:sclerotic_oleum
 hemomancy:aculeate_vitriol
 hemomancy:chromatic_sublimate
-hemomancy:morphling_jar
-hemomancy:morphling_polyp
-hemomancy:morphling_deadmans_purse
-hemomancy:morphling_gravecap
-hemomancy:morphling_witchs_ear
-hemomancy:morphling_lumenlace
-hemomancy:morphling_bootlace
-hemomancy:morphling_irontooth
-hemomancy:morphling_emberfang
-hemomancy:morphling_winter_shroud
 hemomancy:living_staff
 hemomancy:worn_vow_fitting
 hemomancy:barbed_fitting
@@ -360,7 +350,6 @@ hemomancy:phantasmal_blood_lust_chest
 hemomancy:phantasmal_blood_lust_legs
 hemomancy:phantasmal_blood_lust_boots
 hemomancy:covenant_mantle
-hemomancy:vestment_of_the_final_molt
 hemomancy:swollen_leech
 hemomancy:dried_leech
 hemomancy:serpent_scale
@@ -369,19 +358,17 @@ hemomancy:fervent_husk
 hemomancy:toxicognath
 hemomancy:fargone_proboscis
 hemomancy:telson
-hemomancy:curved_horn
 hemomancy:venous_pinion
 hemomancy:spore_sac
 hemomancy:queens_physogastrism
 hemomancy:calcified_blood_spine
-hemomancy:ganglion_cluster
-hemomancy:naeglerophaeon_ganglion
 hemomancy:sanguine_formation
 hemomancy:blood_crystal_shard
 hemomancy:sanguine_quintessence
 hemomancy:hematic_iron_scrap
 hemomancy:hematic_iron_powder
 hemomancy:vivianite_cluster
+hemomancy:adipocere
 hemomancy:blood_rock
 hemomancy:blood_stained_stone
 hemomancy:bleeding_bulb
@@ -492,6 +479,7 @@ hemomancy:unstained_helm
 hemomancy:unstained_chestplate
 hemomancy:unstained_leggings
 hemomancy:unstained_boots
+hemomancy:vestment_of_the_final_molt
 hemomancy:liber_immaculatus
 hemomancy:ahaematic_colloid
 hemomancy:lethean_chalice
@@ -553,15 +541,56 @@ hemomancy:spawn_egg_scarlet_mummer
 hemomancy:spawn_egg_sanguine_hound
 hemomancy:raw_pelagic_herring
 hemomancy:cooked_pelagic_herring
+hemomancy:relay_chart
+hemomancy:brine_sealed_letter
 hemomancy:chalybeate_sclerite
 hemomancy:cuttlefish_chromatophores
 hemomancy:erythrocoral_fragment
 hemomancy:mnemonic_ambergris
 hemomancy:salt_stained_voyager_log
 hemomancy:blood_chum
+hemomancy:morphling_polyp
+hemomancy:morphling_sunburst
+hemomancy:morphling_holdfast
+hemomancy:morphling_mermaids_purse
+hemomancy:morphling_dead_mans_rope
+hemomancy:morphling_ink_cap
+hemomancy:morphling_hushbell
+hemomancy:morphling_marrowplume
+hemomancy:morphling_kinbud
+hemomancy:morphling_jar
 hemomancy:erythrocoral_block
 hemomancy:calcified_erythrocoral
 hemomancy:mnemonic_ambergris_block
+hemomancy:sunburst_crust
+hemomancy:sunburst_lamp
+hemomancy:sunburst_frond
+hemomancy:petrified_follower
+hemomancy:hydra_crown
+hemomancy:vent_offering_basin
+hemomancy:kindled_tissue
+hemomancy:marimo_moss
+hemomancy:marimo_heart
+hemomancy:holdfast_root_mass
+hemomancy:nest_cup
+hemomancy:rope_pod
+hemomancy:current_strand
+hemomancy:current_tissue
+hemomancy:fold_veil
+hemomancy:sclerotium_shell
+hemomancy:bell_sleeper
+hemomancy:marrow_plume
+hemomancy:sunburst_bloom
+hemomancy:house_marker *
+hemomancy:house_marker *
+hemomancy:house_marker *
+hemomancy:house_marker *
+hemomancy:house_marker *
+hemomancy:house_marker *
+hemomancy:house_marker *
+hemomancy:house_marker *
+hemomancy:relay_marker
+hemomancy:messenger_buoy
 hemomancy:hematic_algal_crust
 hemomancy:tidepool_anemone
 hemomancy:bone_worm_colony
@@ -606,6 +635,7 @@ hemomancy:memory_unclosing_eye
 hemomancy:memory_bloom_of_rot
 hemomancy:memory_endless_hour
 hemomancy:velorum_mask
+hemomancy:hemorath_rib
 hemomancy:consecrated_syringe *
 hemomancy:consecrated_syringe *
 hemomancy:consecrated_syringe *
@@ -635,16 +665,32 @@ hemomancy:rimed_deepslate_brick_stairs
 hemomancy:dark_lacquer_planks_stairs
 hemomancy:charred_log
 hemomancy:ossuary_clock
+hemomancy:chapel_focus
+hemomancy:frozen_devotee
+hemomancy:witness_stone
+hemomancy:litany_stone
+hemomancy:offering_stand
+hemomancy:pulse_pylon
+hemomancy:spawn_mark
+hemomancy:containment_anchor_block
 hemomancy:bone_outgrowth
 hemomancy:spore_shelf
 hemomancy:hanging_icicle
 hemomancy:frozen_drip
+hemomancy:rot_pyre
+hemomancy:sealed_niche
+hemomancy:opened_niche
+hemomancy:reliquary_sconce
 hemomancy:adipocere_crust
 hemomancy:blood_gutter
 hemomancy:venous_basin
 hemomancy:saint_sarcophagus
+hemomancy:saint_sarcophagus *
+hemomancy:saint_sarcophagus *
+hemomancy:saint_sarcophagus *
+hemomancy:saint_sarcophagus *
 hemomancy:blood_basin
-hemomancy:adipocere
+hemomancy:morphic_tonic
 hemomancy:silent_archon_helm
 hemomancy:silent_archon_chestplate
 hemomancy:silent_archon_leggings
@@ -696,6 +742,8 @@ hemomancy:spawn_egg_phlegethosoma
 hemomancy:spawn_egg_excoriated
 hemomancy:spawn_egg_phlegethontic_bombardier
 hemomancy:spawn_egg_osteophage
+hemomancy:ganglion_cluster
+hemomancy:naeglerophaeon_ganglion
 hemomancy:neural_tissue
 hemomancy:axonal_slate
 hemomancy:myelin_sheath
@@ -729,7 +777,6 @@ hemomancy:vein_spider
 hemomancy:blood_thrall_effigy
 hemomancy:blood_bolt
 hemomancy:vascular_status_gauge
-hemomancy:hemorath_rib
 hemomancy:echo_of_spleen
 hemomancy:echo_of_liver
 hemomancy:echo_of_heart
@@ -738,6 +785,24 @@ hemomancy:echo_of_kidneys
 hemomancy:draught_of_still_mercy
 hemomancy:lethean_brew
 hemomancy:spawn_egg_peacock_spider
+hemomancy:spawn_egg_court_gardener
+hemomancy:spawn_egg_court_arbor
+hemomancy:spawn_egg_court_lightkeeper
+hemomancy:spawn_egg_court_tidewarden
+hemomancy:spawn_egg_court_braced_elder
+hemomancy:spawn_egg_court_edge_swimmer
+hemomancy:spawn_egg_court_nursery_tender
+hemomancy:spawn_egg_court_linesman
+hemomancy:spawn_egg_court_lamp_colony
+hemomancy:spawn_egg_court_host
+hemomancy:spawn_egg_court_veiled_resident
+hemomancy:spawn_egg_court_bellwarden
+hemomancy:spawn_egg_court_sleeper
+hemomancy:spawn_egg_court_marrow_tender
+hemomancy:spawn_egg_court_rooted_elder
+hemomancy:spawn_egg_court_offering_bearer
+hemomancy:spawn_egg_court_kindled_elder
+hemomancy:spawn_egg_court_head_tender
 hemomancy:semi_sentient_construct
 hemomancy:humane_idol
 hemomancy:serpentine_idol

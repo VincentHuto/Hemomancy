@@ -22,6 +22,10 @@ public final class BossSceneCatalog {
 		BossSceneRegistry.register(BossPresentationIds.SCENE_VESPER_CROWNED_REFUSAL, VesperCrownedRefusalScene::new);
 		BossSceneRegistry.register(BossPresentationIds.SCENE_VESPER_EVENING_STAR, VesperEveningStarScene::new);
 		BossSceneRegistry.register(BossPresentationIds.SCENE_SAINT_RISE, SaintRiseScene::new);
+		BossSceneRegistry.register(BossPresentationIds.SCENE_MARIMO_PRESENCE, MarimoPresenceScene::new);
+		BossSceneRegistry.register(BossPresentationIds.SCENE_HYDRA_RISE, HydraRiseScene::new);
+		BossSceneRegistry.register(BossPresentationIds.SCENE_BLOOM_WARDEN, BloomWardenScene::new);
+		BossSceneRegistry.register(BossPresentationIds.SCENE_KINDLED_CHAMPION, KindledChampionScene::new);
 		for (PossessionSceneRules.Scene scene : PossessionSceneRules.Scene.values()) {
 			BossSceneRegistry.register(BossPresentationIds.possessionScene(scene), () -> new PossessionScene(scene));
 		}

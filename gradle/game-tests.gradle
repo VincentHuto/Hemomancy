@@ -10,6 +10,7 @@ ext.gameTestSuites = [
     'osteophage_validation': [alpha: true, run: 'osteophageGameTestServer', directory: 'build/osteophage-gametest'],
     'pelagic_ecology_validation': [alpha: true, run: 'pelagicEcologyGameTestServer', directory: 'build/pelagic-ecology/gametest'],
     'pelagic_worldgen_validation': [alpha: false, run: 'pelagicValidationServer', directory: null, reason: 'Requires a fresh seeded noise Overworld.', generator: 'com.vincenthuto.hemomancy.gametest.PelagicWorldValidation'],
+    'court_worldgen_validation': [alpha: false, run: 'courtValidationServer', directory: null, reason: 'Requires a fresh seeded noise Overworld and a JFR travel recording.', generator: 'com.vincenthuto.hemomancy.gametest.CourtWorldValidation'],
     'mnemonic_whale_validation': [alpha: true, run: 'mnemonicWhaleGameTestServer', directory: 'build/mnemonic-whale-gametest'],
     'station_upgrade_validation': [alpha: true, run: 'stationUpgradeGameTestServer', directory: 'build/station-upgrade-gametest'],
     'book_kit_validation': [alpha: true, run: 'bookKitGameTestServer', directory: 'build/book-kit-gametest'],
@@ -27,8 +28,13 @@ ext.gameTestSuites = [
     'unstained_zone_validation': [alpha: true, run: 'unstainedZoneGameTestServer', directory: 'build/unstained-zone-gametest'],
     'rite_space_validation': [alpha: true, run: 'riteSpaceGameTestServer', directory: 'build/rite-space-gametest'],
     'rite_kind_validation': [alpha: true, run: 'riteKindGameTestServer', directory: 'build/rite-kind-gametest'],
+    'morphling_strain_validation': [alpha: true, run: 'morphlingStrainGameTestServer', directory: 'build/morphling-strain-gametest'],
     'adipocere_crust_validation': [alpha: true, run: 'adipocereCrustGameTestServer', directory: 'build/adipocere-crust-gametest'],
     'dialogue_route_validation': [alpha: true, run: 'dialogueRouteGameTestServer', directory: 'build/dialogue-route-gametest'],
+    'court_discovery_validation': [alpha: true, run: 'courtDiscoveryGameTestServer', directory: 'build/court-discovery-gametest'],
+    'court_life_validation': [alpha: true, run: 'courtLifeGameTestServer', directory: 'build/court-life-gametest'],
+    'court_npc_validation': [alpha: true, run: 'courtNpcGameTestServer', directory: 'build/court-npc-gametest'],
+    'court_presence_validation': [alpha: true, run: 'courtPresenceGameTestServer', directory: 'build/court-presence-gametest'],
     'hemo_command_validation': [alpha: true, run: 'hemoCommandGameTestServer', directory: 'build/hemo-command-gametest'],
     'entity_cast_validation': [alpha: true, run: 'entityCastGameTestServer', directory: 'build/entity-cast-gametest'],
     'scriptorium_operation_validation': [alpha: true, run: 'scriptoriumOperationGameTestServer', directory: 'build/scriptorium-operation-gametest'],
@@ -69,8 +75,20 @@ gameTestSuites.each { namespace, suite ->
         run.systemProperty 'hemomancy.pelagic.pavilionLocateProbe', providers.gradleProperty('pelagicPavilionLocate').getOrElse('false')
         run.systemProperty 'hemomancy.pelagic.locateX', providers.gradleProperty('pelagicLocateX').getOrElse('0')
         run.systemProperty 'hemomancy.pelagic.locateZ', providers.gradleProperty('pelagicLocateZ').getOrElse('0')
+        run.systemProperty 'hemomancy.pelagic.locateStructure', providers.gradleProperty('pelagicLocateStructure').getOrElse('hemomancy:circus_pavilion')
         run.programArguments.addAll '--mixin', 'pelagic-validation.mixins.json'
         run.jvmArguments.addAll '-Xms1G', '-Xmx5G'
+    } else if (namespace == 'court_worldgen_validation') {
+        def seed = providers.gradleProperty('courtSeed').getOrElse('42')
+        def pass = providers.gradleProperty('courtRun').getOrElse('fresh')
+        run.gameDirectory = file("build/court-worlds/${seed}-${pass}")
+        // The Pelagic test-world mixin reads its seed property; the Court generator reads its own.
+        run.systemProperty 'hemomancy.pelagic.validationSeed', seed
+        run.systemProperty 'hemomancy.court.validationSeed', seed
+        run.systemProperty 'hemomancy.court.validationOrder', providers.gradleProperty('courtOrder').getOrElse('forward')
+        run.systemProperty 'hemomancy.court.travelSeconds', providers.gradleProperty('courtTravelSeconds').getOrElse('45')
+        run.programArguments.addAll '--mixin', 'pelagic-validation.mixins.json'
+        run.jvmArguments.addAll '-Xms1G', '-Xmx5G', '--add-modules', 'jdk.jfr'
     } else if (suite.generator != null) {
         def seed = providers.gradleProperty('phlegethonticSeed').getOrElse('42')
         def pass = providers.gradleProperty('phlegethonticRun').getOrElse('fresh')

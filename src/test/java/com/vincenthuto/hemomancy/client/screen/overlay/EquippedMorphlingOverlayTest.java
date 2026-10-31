@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrain;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -18,9 +18,7 @@ public final class EquippedMorphlingOverlayTest {
 		legacyIconPlacementRemainsAvailable();
 		stableRenderClockAdvancesWithPartialTicks();
 		bloodOverlayUsesStableRenderClock();
-		lumenlaceItemUsesLumenlaceHudIdentity();
-		lumenlaceItemModelUsesLumenlaceTexture();
-		lumenlacePaletteCarriesBlueAndGoldNeuralSignals();
+		everyStrainHasItsHudIdentity();
 	}
 
 	private static void legacyIconPlacementRemainsAvailable() {
@@ -52,44 +50,15 @@ public final class EquippedMorphlingOverlayTest {
 		}
 	}
 
-	private static void lumenlaceItemUsesLumenlaceHudIdentity() {
-		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_lumenlace");
-		if (visual == null) throw new AssertionError("Missing HUD visual for morphling_lumenlace");
-		if (!"lumenlace".equals(visual.textureName())) {
-			throw new AssertionError("Lumenlace slot uses the wrong texture: " + visual.textureName());
+	private static void everyStrainHasItsHudIdentity() {
+		for (MorphlingStrain strain : MorphlingStrains.ALL) {
+			MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath(strain.itemPath());
+			if (visual == null) throw new AssertionError("Missing HUD visual for " + strain.itemPath());
+			assertTrue(strain.id() + " HUD texture", strain.hudTexture().equals(visual.textureName()));
+			assertTrue(strain.id() + " HUD accent", strain.accentColor() == visual.accentColor());
+			assertTrue(strain.id() + " HUD sprite", Files.isRegularFile(TEXTURE_ROOT.resolve(visual.textureName() + ".png")));
 		}
-	}
-
-	private static void lumenlaceItemModelUsesLumenlaceTexture() throws Exception {
-		Path model = Path.of("src/main/resources/assets/hemomancy/models/item/morphling_lumenlace.json");
-		String modelJson = Files.readString(model);
-		if (!modelJson.contains("hemomancy:item/morphling_lumenlace")) {
-			throw new AssertionError("Lumenlace item model must use the Lumenlace icon");
-		}
-		Path texture = Path.of("src/main/resources/assets/hemomancy/textures/item/morphling_lumenlace.png");
-		if (!Files.isRegularFile(texture)) throw new AssertionError("Missing Lumenlace item texture");
-		BufferedImage image = ImageIO.read(texture.toFile());
-		assertEquals("Lumenlace item texture width", 16, image.getWidth());
-		assertEquals("Lumenlace item texture height", 16, image.getHeight());
-	}
-
-	private static void lumenlacePaletteCarriesBlueAndGoldNeuralSignals() throws Exception {
-		MorphlingHudVisuals.Visual visual = MorphlingHudVisuals.forItemPath("morphling_lumenlace");
-		BufferedImage image = ImageIO.read(TEXTURE_ROOT.resolve(visual.textureName() + ".png").toFile());
-		boolean blue = false;
-		boolean gold = false;
-		for (int y = 0; y < image.getHeight(); y++) {
-			for (int x = 0; x < image.getWidth(); x++) {
-				int argb = image.getRGB(x, y);
-				int red = (argb >>> 16) & 0xFF;
-				int green = (argb >>> 8) & 0xFF;
-				int blueChannel = argb & 0xFF;
-				if ((argb >>> 24) != 0 && blueChannel > red + 40) blue = true;
-				if ((argb >>> 24) != 0 && red > 150 && green > 120 && blueChannel < 150) gold = true;
-			}
-		}
-		assertTrue("Lumenlace keeps a blue light body", blue);
-		assertTrue("Lumenlace adds gold neural signals", gold);
+		assertTrue("unknown items have no HUD visual", MorphlingHudVisuals.forItemPath("morphling_jar") == null);
 	}
 
 	private static void assertTrue(String label, boolean value) {

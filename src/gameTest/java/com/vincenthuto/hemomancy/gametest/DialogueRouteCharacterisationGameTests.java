@@ -56,7 +56,23 @@ public final class DialogueRouteCharacterisationGameTests {
 		VOYAGER(EntityInit.harbinger_voyager::get), ZEALOT(EntityInit.unstained_zealot::get),
 		GUARDIAN(EntityInit.unstained_guardian::get), ACOLYTE(EntityInit.unstained_acolyte::get),
 		SCOUT(EntityInit.unstained_scout::get), RINGMASTER(EntityInit.circus_ringmaster::get),
-		PERFORMER(EntityInit.circus_acrobat::get), ANNETTA(EntityInit.annetta_knowles::get);
+		PERFORMER(EntityInit.circus_acrobat::get), ANNETTA(EntityInit.annetta_knowles::get),
+		GARDENER(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.GARDENER).get()),
+		LIGHTKEEPER(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.LIGHTKEEPER).get()),
+		TIDEWARDEN(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.TIDEWARDEN).get()),
+		BRACED_ELDER(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.BRACED_ELDER).get()),
+		EDGE_SWIMMER(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.EDGE_SWIMMER).get()),
+		NURSERY_TENDER(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.NURSERY_TENDER).get()),
+		LINESMAN(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.LINESMAN).get()),
+		LAMP_COLONY(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.LAMP_COLONY).get()),
+		HOST(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.HOST).get()),
+		VEILED_RESIDENT(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.VEILED_RESIDENT).get()),
+		BELLWARDEN(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.BELLWARDEN).get()),
+		SLEEPER(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.SLEEPER).get()),
+		MARROW_TENDER(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.MARROW_TENDER).get()),
+		ROOTED_ELDER(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.ROOTED_ELDER).get()),
+		OFFERING_BEARER(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.OFFERING_BEARER).get()),
+		HEAD_TENDER(() -> EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.HEAD_TENDER).get());
 
 		private final Supplier<? extends EntityType<?>> type;
 
@@ -146,7 +162,10 @@ public final class DialogueRouteCharacterisationGameTests {
 				HarbingerAlchemistDialogueTrees.EVENT_BODY_ANSWERS_BRIEF,
 				HarbingerArtificerDialogueTrees.EVENT_CLAIM_THREE_ANSWERS_REWARD,
 				HarbingerArtificerDialogueTrees.EVENT_CLAIM_CRIMSON_VESTMENT_REWARD);
-		add(routes, Speaker.VOYAGER, VoyagerIntroductionDialogue.OBSERVE);
+		add(routes, Speaker.VOYAGER, VoyagerIntroductionDialogue.OBSERVE, CourtDiscoveryDialogue.VOYAGER_LEARN,
+				CourtDiscoveryDialogue.VOYAGER_LETTER, CourtDiscoveryDialogue.VOYAGER_CHART);
+		add(routes, Speaker.ALCHEMIST, CourtDiscoveryDialogue.ALCHEMIST_LEAD, CourtDiscoveryDialogue.ALCHEMIST_LETTER);
+		add(routes, Speaker.VICAR, CourtDiscoveryDialogue.VICAR_LETTER);
 		add(routes, Speaker.VICAR, VoyagerIntroductionDialogue.REPORT, VoyagerIntroductionDialogue.BEARING,
 				"vicar_begin_initiation", "vicar_release_charm", HarbingerVicarDialogueTrees.EVENT_BLOOD_SHOTTING,
 				HarbingerVicarDialogueTrees.EVENT_HERMIT_ROAD_REPORT,
@@ -192,6 +211,26 @@ public final class DialogueRouteCharacterisationGameTests {
 		add(routes, Speaker.WHISPER, "qliphoth_communion_done", "archon_choice_silence", "archon_choice_eighth_degree",
 				"whisper_dismiss", "whisper_truth_acknowledged");
 		add(routes, Speaker.SCOUT, "scout_give_notes");
+		// The Brined Court's members (Track 9): each event with a role that offers it, and the Lightkeeper's lesson
+		// spoken by a role that doesn't.
+		add(routes, Speaker.GARDENER, CourtMemberDialogue.FOOD, CourtMemberDialogue.REST, CourtMemberDialogue.GIFT,
+				CourtMemberDialogue.OFFER, CourtMemberDialogue.AMENDS, CourtMemberDialogue.LESSON);
+		add(routes, Speaker.LIGHTKEEPER, CourtMemberDialogue.LESSON, CourtMemberDialogue.JOIN);
+		add(routes, Speaker.TIDEWARDEN, CourtMemberDialogue.REST, CourtMemberDialogue.OFFER);
+		add(routes, Speaker.BRACED_ELDER, CourtMemberDialogue.GIFT, CourtMemberDialogue.JOIN);
+		add(routes, Speaker.EDGE_SWIMMER, CourtMemberDialogue.REST);
+		add(routes, Speaker.NURSERY_TENDER, CourtMemberDialogue.GIFT, CourtMemberDialogue.OFFER, CourtMemberDialogue.JOIN);
+		add(routes, Speaker.LINESMAN, CourtMemberDialogue.OFFER);
+		add(routes, Speaker.LAMP_COLONY, CourtMemberDialogue.GIFT, CourtMemberDialogue.JOIN);
+		add(routes, Speaker.HOST, CourtMemberDialogue.REST, CourtMemberDialogue.OFFER);
+		add(routes, Speaker.VEILED_RESIDENT, CourtMemberDialogue.GIFT, CourtMemberDialogue.JOIN);
+		add(routes, Speaker.BELLWARDEN, CourtMemberDialogue.REST, CourtMemberDialogue.GIFT, CourtMemberDialogue.OFFER,
+				CourtMemberDialogue.JOIN);
+		add(routes, Speaker.SLEEPER, CourtMemberDialogue.GIFT);
+		add(routes, Speaker.MARROW_TENDER, CourtMemberDialogue.FOOD, CourtMemberDialogue.REST, CourtMemberDialogue.OFFER);
+		add(routes, Speaker.ROOTED_ELDER, CourtMemberDialogue.GIFT, CourtMemberDialogue.JOIN);
+		add(routes, Speaker.OFFERING_BEARER, CourtMemberDialogue.OFFER);
+		add(routes, Speaker.HEAD_TENDER, CourtMemberDialogue.GIFT, CourtMemberDialogue.JOIN);
 		routes.add(new Route("no_route_takes_this_event", Speaker.VICAR));
 		return routes;
 	}

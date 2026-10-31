@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * A beneficial effect that slowly repairs vascular damage across all vein
- * sections. Applied by the Bootlace Morphling while it is attached to the player.
+ * sections. Used by its standalone potion.
  * Each tick, every damaged section is healed by a small amount that scales with
  * the amplifier.
  */

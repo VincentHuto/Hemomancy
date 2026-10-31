@@ -17,6 +17,9 @@ public abstract class MixinParalysisPlayer {
     }
     @Inject(method="attack",at=@At("HEAD"),cancellable=true,remap=false)
     private void hemomancy$paralysisAttack(Entity target, CallbackInfo ci) {
-        if (Paralysis.blocksActions((Player)(Object)this)) ci.cancel();
+        if (Paralysis.blocksActions((Player)(Object)this)) {
+            com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingLock.onBlockedAttack((Player)(Object)this);
+            ci.cancel();
+        }
     }
 }

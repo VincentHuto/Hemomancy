@@ -1,0 +1,305 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/sunburst_bloom",
+    "particle": "hemomancy:block/sunburst_bloom"
+  },
+  "elements": [
+    {
+      "name": "pad_x",
+      "from": [
+        2,
+        0.03,
+        4.16
+      ],
+      "to": [
+        14,
+        0.97,
+        11.84
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10.0,
+            6.0,
+            11.5,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            11.5,
+            6.0,
+            13.0,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            10.5,
+            8.0,
+            11.5,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            11.5,
+            8.0,
+            12.5,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            5.5,
+            0.0,
+            7.0,
+            4.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.0,
+            0.0,
+            8.5,
+            4.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "pad_z",
+      "from": [
+        4.16,
+        0,
+        2
+      ],
+      "to": [
+        11.84,
+        1,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12.5,
+            8.0,
+            13.5,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            13.5,
+            8.0,
+            14.5,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            13.0,
+            6.0,
+            14.5,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            14.5,
+            6.0,
+            16.0,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            6.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            1.0,
+            0.0,
+            2.0,
+            6.0
+          ],
+          "texture": "#atlas",
+          "cullface": "down"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "pad_core",
+      "from": [
+        6.5,
+        0.5,
+        6.5
+      ],
+      "to": [
+        9.5,
+        1.25,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            15.0,
+            8.5,
+            15.375,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            15.375,
+            8.5,
+            15.75,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            9.0,
+            0.375,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            0.375,
+            9.0,
+            0.75,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            1.0,
+            6.0,
+            1.375,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            1.375,
+            6.0,
+            1.75,
+            7.5
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "notch",
+      "from": [
+        7.5,
+        0.25,
+        1.5
+      ],
+      "to": [
+        8.5,
+        1.1,
+        5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.25,
+            9.0,
+            7.375,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            7.375,
+            9.0,
+            7.5,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            12.0,
+            8.5,
+            12.5,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            12.5,
+            8.5,
+            13.0,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            0.75,
+            6.0,
+            0.875,
+            8.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            0.875,
+            6.0,
+            1.0,
+            8.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

@@ -11126,5 +11126,31 @@
       ]
     }
   },
-  "gui_light": "front"
+  "gui_light": "front",
+  "overrides": [
+    {
+      "predicate": {
+        "hemomancy:saint": 1
+      },
+      "model": "hemomancy:item/saint_sarcophagus_hemorath"
+    },
+    {
+      "predicate": {
+        "hemomancy:saint": 2
+      },
+      "model": "hemomancy:item/saint_sarcophagus_seraphae"
+    },
+    {
+      "predicate": {
+        "hemomancy:saint": 3
+      },
+      "model": "hemomancy:item/saint_sarcophagus_putriciel"
+    },
+    {
+      "predicate": {
+        "hemomancy:saint": 4
+      },
+      "model": "hemomancy:item/saint_sarcophagus_velorum"
+    }
+  ]
 }

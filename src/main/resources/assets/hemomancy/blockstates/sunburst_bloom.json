@@ -1,0 +1,49 @@
+{
+  "variants": {
+    "turn=0,variant=pad": {
+      "model": "hemomancy:block/sunburst_bloom_pad"
+    },
+    "turn=1,variant=pad": {
+      "model": "hemomancy:block/sunburst_bloom_pad",
+      "y": 90
+    },
+    "turn=2,variant=pad": {
+      "model": "hemomancy:block/sunburst_bloom_pad",
+      "y": 180
+    },
+    "turn=3,variant=pad": {
+      "model": "hemomancy:block/sunburst_bloom_pad",
+      "y": 270
+    },
+    "turn=0,variant=pair": {
+      "model": "hemomancy:block/sunburst_bloom_pair"
+    },
+    "turn=1,variant=pair": {
+      "model": "hemomancy:block/sunburst_bloom_pair",
+      "y": 90
+    },
+    "turn=2,variant=pair": {
+      "model": "hemomancy:block/sunburst_bloom_pair",
+      "y": 180
+    },
+    "turn=3,variant=pair": {
+      "model": "hemomancy:block/sunburst_bloom_pair",
+      "y": 270
+    },
+    "turn=0,variant=bloom": {
+      "model": "hemomancy:block/sunburst_bloom_bloom"
+    },
+    "turn=1,variant=bloom": {
+      "model": "hemomancy:block/sunburst_bloom_bloom",
+      "y": 90
+    },
+    "turn=2,variant=bloom": {
+      "model": "hemomancy:block/sunburst_bloom_bloom",
+      "y": 180
+    },
+    "turn=3,variant=bloom": {
+      "model": "hemomancy:block/sunburst_bloom_bloom",
+      "y": 270
+    }
+  }
+}

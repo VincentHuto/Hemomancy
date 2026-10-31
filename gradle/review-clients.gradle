@@ -65,6 +65,8 @@ def reviewClients = [
                               args: ['--quickPlaySingleplayer', 'SarcophagusReview']],
     brazierReviewClient: [dir: 'build/brazier-client-review', user: 'BrazierReview', size: review,
                           props: ['hemomancy.brazierReview': 'true']],
+    ringDoorReviewClient: [dir: 'build/ring-door-review', user: 'RingDoorReview', size: review,
+                           props: ['hemomancy.ringDoorReview': 'true']],
     condenserReviewClient: [dir: 'build/condenser-client-review', user: 'CondenserReview', size: review,
                             props: ['hemomancy.condenserReview': 'true']],
     sickleStrokeReviewClient: [dir: 'build/sickle-stroke-review', user: 'SickleReview', size: review,
@@ -98,6 +100,9 @@ def reviewClients = [
     screenChromeReviewClient: [dir: 'build/screen-chrome-review', user: 'ChromeReview', size: review,
                                props: ['hemomancy.screenChromeReview': 'true',
                                        'hemomancy.screenChromeReviewLabel': gradleOr('chromeLabel', 'after')]],
+    morphlingStrainReviewClient: [dir: 'build/morphling-strain-review', user: 'StrainReview', size: review,
+                                  props: ['hemomancy.morphlingStrainReview': 'true',
+                                          'hemomancy.morphlingStrainReview.only': gradleOr('morphlingStrainReviewOnly', '')]],
     creativeTabReviewClient: [dir: 'build/creative-tab-review', user: 'CreativeReview', size: review,
                               props: ['hemomancy.creativeTabReview': 'true',
                                       'hemomancy.creativeTabReviewLabel': gradleOr('creativeLabel', 'after')]],
@@ -114,6 +119,24 @@ def reviewClients = [
                                     'hemomancy.mausoleumReview.saint': gradleOr('mausoleum', 'all'),
                                     'hemomancy.mausoleumReview.natural': gradleOr('mausoleumNatural', 'false'),
                                     'hemomancy.mausoleumReview.seed': gradleOr('mausoleumSeed', '20261028')]],
+    // Brined Court Seats (Track 7): -PbrinedSeatSeed=<seed> (default 42); screenshots in build/brined-seat-review/screenshots.
+    brinedSeatReviewClient: [dir: 'build/brined-seat-review', user: 'SeatReview', driver: false, size: review,
+                             props: ['hemomancy.brinedSeatReview': 'true',
+                                     'hemomancy.brinedSeatReview.seed': gradleOr('brinedSeatSeed', '42'),
+                                     // Track 5: -PbrinedSeatChartOnly=true shoots only the Relay Chart stops.
+                                     'hemomancy.brinedSeatReview.chartOnly': gradleOr('brinedSeatChartOnly', 'false')]],
+    // Brined Court outposts and signs (Track 8): -PbrinedOutpostSeed=<seed> (default 42); build/brined-outpost-review/screenshots.
+    brinedOutpostReviewClient: [dir: 'build/brined-outpost-review', user: 'OutpostReview', driver: false, size: review,
+                                props: ['hemomancy.brinedOutpostReview': 'true',
+                                        'hemomancy.brinedOutpostReview.seed': gradleOr('brinedOutpostSeed', '42')]],
+    // Brined Court members (Track 9): -PcourtNpcSeed=<seed> (default 42); build/court-npc-review/screenshots.
+    courtNpcReviewClient: [dir: 'build/court-npc-review', user: 'CourtNpcReview', driver: false, size: review,
+                           props: ['hemomancy.courtNpcReview': 'true',
+                                   'hemomancy.courtNpcReview.seed': gradleOr('courtNpcSeed', '42')]],
+    // Brined Court presences (Track 10): -PcourtPresenceSeed=<seed> (default 42); build/court-presence-review/screenshots.
+    courtPresenceReviewClient: [dir: 'build/court-presence-review', user: 'PresenceReview', driver: false, size: review,
+                                props: ['hemomancy.courtPresenceReview': 'true',
+                                        'hemomancy.courtPresenceReview.seed': gradleOr('courtPresenceSeed', '42')]],
     successionReviewClient: [dir: 'build/succession-client', user: 'SuccessionReview',
                              props: ['hemomancy.successionReview': 'true']],
     successionObserverClient: [dir: 'build/succession-observer', user: 'SucObserver', memory: ['2G', '4G'],

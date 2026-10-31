@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:incubator",
+  "catalysts": [
+    { "item": "hemomancy:cleansing_hemolymph" },
+    { "item": "minecraft:packed_ice" },
+    { "item": "minecraft:rotten_flesh" }
+  ],
+  "result": {
+    "id": "hemomancy:morphling_hushbell"
+  }
+}

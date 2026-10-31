@@ -81,7 +81,7 @@ __pycache__/
 !/docs/harbinger_progression_redesign/
 !/docs/harbinger_progression_redesign/**
 
-# tools/ holds local editors and art pipelines. Only the model generators that tests read, the review launchers and the mausoleum generator are tracked.
+# tools/ holds local editors and art pipelines. Only the model generators that tests read, the review launchers, the mausoleum generator and the Brined Court generator are tracked.
 /tools/*
 !/tools/model_export/
 !/tools/review/
@@ -90,4 +90,7 @@ __pycache__/
 /tools/worldgen/*
 !/tools/worldgen/mausoleum/
 !/tools/worldgen/mausoleum_complexes.py
+!/tools/worldgen/brined_court/
+!/tools/worldgen/brined_court_seats.py
+!/tools/worldgen/brined_court_outposts.py
 .ignore

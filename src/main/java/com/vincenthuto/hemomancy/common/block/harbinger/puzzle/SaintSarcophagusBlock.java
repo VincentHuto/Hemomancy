@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.SaintRelicItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SaintSarcophagusBlockItem;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.EnumCorpusState;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -79,7 +80,6 @@ public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING
 public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 /** Blood cost per offering (drained from player's blood volume). */
 private static final double BLOOD_COST_PER_OFFERING = 100.0;
-private static final String TAG_SAINT_TYPE = "SaintType";
 
 /**
  * The filler cells of a tomb two blocks wide and four long, centred on this block's x: three columns (the side ones
@@ -242,18 +242,10 @@ public void setPlacedBy(Level level, BlockPos pos, BlockState state,
 	super.setPlacedBy(level, pos, state, placer, stack);
 	if (!level.isClientSide) {
 		BlockEntity be = level.getBlockEntity(pos);
-		if (be instanceof SaintSarcophagusBlockEntity sarcophagus) {
-			CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-			if (customData != null) {
-				CompoundTag tag = customData.copyTag();
-				if (tag.contains(TAG_SAINT_TYPE)) {
-					try {
-						sarcophagus.setSaintType(EnumSaintType.valueOf(tag.getString(TAG_SAINT_TYPE)));
-					} catch (IllegalArgumentException ignored) {
-						// an unknown Saint leaves the tomb unnamed until a relic names it
-					}
-				}
-			}
+		// a stack with no Saint, or one this build does not know, leaves the tomb unnamed until a relic names it
+		EnumSaintType saint = SaintSarcophagusBlockItem.saint(stack);
+		if (be instanceof SaintSarcophagusBlockEntity sarcophagus && saint != null) {
+			sarcophagus.setSaintType(saint);
 		}
 		placeFillers(level, pos, state);
 	}

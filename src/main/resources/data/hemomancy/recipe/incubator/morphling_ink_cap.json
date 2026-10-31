@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:incubator",
+  "catalysts": [
+    { "item": "minecraft:ink_sac" },
+    { "item": "hemomancy:cuttlefish_chromatophores" },
+    { "item": "minecraft:rotten_flesh" }
+  ],
+  "result": {
+    "id": "hemomancy:morphling_ink_cap"
+  }
+}

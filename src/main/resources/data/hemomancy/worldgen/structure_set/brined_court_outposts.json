@@ -1,0 +1,38 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:tide_refuge",
+      "weight": 3
+    },
+    {
+      "structure": "hemomancy:wake_nursery",
+      "weight": 1
+    },
+    {
+      "structure": "hemomancy:line_camp",
+      "weight": 3
+    },
+    {
+      "structure": "hemomancy:screened_cleft",
+      "weight": 3
+    },
+    {
+      "structure": "hemomancy:still_bell",
+      "weight": 3
+    },
+    {
+      "structure": "hemomancy:whale_fall",
+      "weight": 3
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 28,
+    "separation": 10,
+    "salt": 1029834763,
+    "exclusion_zone": {
+      "other_set": "hemomancy:brined_court_seats",
+      "chunk_count": 6
+    }
+  }
+}

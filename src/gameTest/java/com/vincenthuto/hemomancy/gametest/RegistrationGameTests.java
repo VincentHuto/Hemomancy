@@ -130,7 +130,9 @@ public final class RegistrationGameTests {
         assertItemsInOrder(helper, main.getDisplayItems(), ItemInit.liber_sanguinum.get(),
                 ItemInit.harbinger_assignment_ledger.get(), ItemInit.blood_absorption.get(),
                 ItemInit.blood_projection.get(), ItemInit.living_syringe.get(), ItemInit.vial_rack.get(),
-                ItemInit.morphling_jar.get(), ItemInit.chitinite_arm_banner.get());
+                ItemInit.chitinite_arm_banner.get(),
+                // The jar is filed with the Brined Court, a later section (user's call, review fixes 2026-10-30).
+                ItemInit.morphling_jar.get());
         var debugTools = java.util.List.of(ItemInit.structure_spawner.get(), ItemInit.structure_scanner.get(),
                 ItemInit.debug_showcase.get());
         helper.assertTrue(main.getDisplayItems().stream().noneMatch(stack -> debugTools.contains(stack.getItem())),
@@ -242,14 +244,13 @@ public final class RegistrationGameTests {
                 "suspended_cleansed_blood_crystal", "suspended_vivianite", "visceral_mirror", "fungal_implantation_pylon",
                 "phlebotomists_field_case", "earthen_vein", "vial_centrifuge", "hematic_armature", "mycelial_crucible",
                 "specimen_jar", "sanguine_monolith", "hematic_stake", "puppeteers_spindle", "mason_effigy",
-                "covenant_throne"));
+                "covenant_throne", "sunburst_bloom", "house_marker", "saint_sarcophagus"));
         var expectedManual = new java.util.TreeSet<>(java.util.Set.of("gourd_stem", "active_befouling_ash_trail",
                 "active_smouldering_ash_trail", "placed_blood_stained_stone", "lethean_poppy_wreath", "sanguine_conduit"));
         var expectedItemless = new java.util.TreeSet<>(java.util.Set.of("attached_gourd_stem", "filler_block",
                 "warp_chair_filler", "abocipher_emitter", "qliphoth_bloom", "escharian_overgrowth",
-                "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "chapel_focus", "recollection_cyst",
-                "frozen_devotee", "witness_stone", "witness_devotee", "litany_stone", "offering_stand", "pulse_pylon", "spawn_mark",
-                "containment_anchor_block", "rot_pyre", "sealed_niche", "opened_niche", "reliquary_sconce"));
+                "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "recollection_cyst",
+                "witness_devotee", "warden_bloom"));
         helper.assertTrue(custom.equals(expectedCustom) && manual.equals(expectedManual) && itemless.equals(expectedItemless),
                 "Block item exceptions changed without an explicit decision: custom=" + custom + " manual=" + manual
                         + " itemless=" + itemless);
@@ -894,99 +895,196 @@ public final class RegistrationGameTests {
         helper.succeed();
     }
 
-    /** An Apotheos cracks the door; it bursts, the frame stands, and the tomb remembers which Chapels were skipped. */
-    @GameTest(template = "empty", timeoutTicks = 80, batch = "ringDoorShatter")
-    public static void shatteredRingDoorTellsTheTombWhatWasSkipped(GameTestHelper helper) {
+    /**
+     * An Apotheos holds projection on the door: each tick pays its share, the slab bursts once the charge is full, the
+     * frame stands, and the tomb remembers which Chapels were skipped.
+     */
+    @GameTest(template = "empty", timeoutTicks = 280, batch = "ringDoorForced")
+    public static void heldApotheosProjectionBurstsTheRingDoor(GameTestHelper helper) {
         BlockPos door = new BlockPos(6, 1, 6);
         helper.setBlock(door, ringDoor(net.minecraft.core.Direction.NORTH));
         BlockPos tombPos = new BlockPos(18, 2, 12);
         helper.setBlock(tombPos, BlockInit.saint_sarcophagus.get());
-        var skipped = java.util.List.of(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelRules.Kind.REPOSE);
+        BlockPos chapel = new BlockPos(2, 1, 2);
+        helper.setBlock(chapel, BlockInit.chapel_focus.get());
+        ((com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.ChapelFocusBlockEntity) helper.getBlockEntity(chapel))
+                .configure(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelRules.Kind.REPOSE, 0);
         var controller = (com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity) helper.getBlockEntity(door);
         var tomb = (com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity) helper.getBlockEntity(tombPos);
+        var player = ringDoorProjector(helper, door, "ring-door-apotheos",
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS);
+        var volume = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player);
+        int open = com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.OPEN_TICKS;
+        int cost = com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.BLOOD_COST;
+        BlockPos absolute = helper.absolutePos(door);
+        int[] fed = {0};
         helper.runAfterDelay(2, () -> {
             assertRingDoorCells(helper, door, false);
-            helper.assertTrue(controller.shatter(skipped), "An idle door can be shattered");
-            helper.assertTrue(tomb.doorMode() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode.NONE,
-                    "The tomb is told only when the slab bursts");
+            controller.touch(player);
+            helper.assertTrue(controller.phase() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity.Phase.IDLE,
+                    "A hand on the door does not open it");
         });
-        helper.runAfterDelay(2 + com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.SHATTER_TICKS / 2, () ->
-                helper.assertTrue(controller.phase() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity.Phase.SHATTERING,
-                        "The slab is still cracking halfway through"));
-        helper.runAfterDelay(2 + com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.SHATTER_TICKS + 4, () -> {
+        helper.onEachTick(() -> {
+            if (helper.getTick() < 3 || fed[0] >= open) return;
+            helper.assertTrue(controller.takeProjectedBlood(player, absolute.above(), 0, false) > 0,
+                    "The door takes the Apotheos's blood on tick " + fed[0]);
+            fed[0]++;
+            if (fed[0] == open / 2) {
+                helper.assertTrue(controller.phase() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity.Phase.OPENING
+                                && controller.charge() == open / 2,
+                        "Halfway, the door is still opening, at charge " + controller.charge());
+                helper.assertTrue(tomb.doorMode() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode.NONE,
+                        "The tomb is told only when the slab bursts");
+            }
+        });
+        helper.runAfterDelay(3 + open + 4, () -> {
             assertRingDoorCells(helper, door, true);
             helper.assertTrue(controller.phase() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity.Phase.OPEN
                             && controller.openedBy() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode.FORCED,
                     "A burst door is open, and forced");
+            helper.assertTrue(volume.getBloodVolume() == 1500 - cost,
+                    "The opening cost " + cost + ", found " + (1500 - volume.getBloodVolume()));
             helper.assertTrue(tomb.doorMode() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode.FORCED,
-                    "A shattered door is a forced awakening");
+                    "A forced door is a forced awakening");
             helper.assertTrue(tomb.skippedChapels().equals(java.util.List.of("REPOSE")), "The skipped Repose is remembered");
             clearTestArea(helper);
             helper.succeed();
         });
     }
 
-    /** A Silentium's blood fills the rings one stage at a time, 300 a ring, and the door sinks open. */
-    @GameTest(template = "empty", timeoutTicks = 260, batch = "ringDoorProjection")
-    public static void projectedRingDoorPaysARingAtATimeAndOpens(GameTestHelper helper) {
-        var level = helper.getLevel();
-        BlockPos door = new BlockPos(6, 1, 6);
+    /** A Silentium holds projection on a lit door: a thousand blood in all, then the slab sinks and the door opens. */
+    @GameTest(template = "empty", timeoutTicks = 320, batch = "ringDoorProjection")
+    public static void heldSilentiumProjectionSinksTheLitRingDoor(GameTestHelper helper) {
+        BlockPos door = new BlockPos(6, 1, 12);
         helper.setBlock(door, ringDoor(net.minecraft.core.Direction.NORTH));
-        BlockPos tombPos = new BlockPos(18, 2, 12);
+        BlockPos tombPos = new BlockPos(18, 2, 18);
         helper.setBlock(tombPos, BlockInit.saint_sarcophagus.get());
+        var items = com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.ChapelFocusBlockEntity.LITANY_ITEMS;
+        for (int slot = 0; slot < 3; slot++) {
+            BlockPos at = new BlockPos(2 + slot * 3, 1, 2);
+            helper.setBlock(at, BlockInit.chapel_focus.get());
+            var focus = (com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.ChapelFocusBlockEntity) helper.getBlockEntity(at);
+            focus.configure(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelRules.Kind.LITANY, slot);
+            focus.start(null, 21L + slot);
+            for (int index : com.vincenthuto.hemomancy.common.block.harbinger.puzzle.ChapelRules.litanyOrder(21L + slot)) {
+                focus.offer(new ItemStack(items[index]), null);
+            }
+        }
         var controller = (com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity) helper.getBlockEntity(door);
         var tomb = (com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity) helper.getBlockEntity(tombPos);
-        var player = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "ring-door-silentium"));
-        player.setGameMode(GameType.SURVIVAL);
-        player.setPos(helper.absolutePos(door).getCenter().add(0, 1, -3));
-        var degree = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player);
-        degree.setDegreeNumber(8);
-        degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENTIUM);
+        var player = ringDoorProjector(helper, door, "ring-door-silentium",
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENTIUM);
         var volume = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player);
-        volume.setActive(true);
-        volume.setMaxBloodVolume(2000);
-        volume.setBloodVolume(1500);
-        int cost = com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.stageCost();
-        int fill = com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.FILL_TICKS;
-        int sink = com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.sinkStart();
-        int length = com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.projectionLength();
-        helper.runAfterDelay(2, () -> {
-            assertRingDoorCells(helper, door, false);
-            helper.assertTrue(controller.startProjection(player), "An idle door takes a projection");
-            helper.assertTrue(player.getUUID().equals(controller.projector()), "The door remembers who projects");
-            helper.assertTrue(volume.getBloodVolume() == 1500, "Nothing is paid before the first stage starts");
+        int open = com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.OPEN_TICKS;
+        int sink = com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.SINK_TICKS;
+        int perTick = com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.BLOOD_PER_TICK;
+        BlockPos absolute = helper.absolutePos(door);
+        int[] fed = {0};
+        helper.onEachTick(() -> {
+            if (helper.getTick() < 3 || fed[0] >= open) return;
+            helper.assertTrue(controller.takeProjectedBlood(player, absolute, 0, false) == perTick,
+                    "Each fed tick pays " + perTick);
+            fed[0]++;
+            helper.assertTrue(volume.getBloodVolume() == 1500 - perTick * fed[0], "The blood is drawn as it is held");
+            if (fed[0] == open) {
+                helper.assertTrue(controller.phase() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity.Phase.SINKING,
+                        "A full door starts to sink");
+                helper.assertTrue(tomb.doorMode() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode.PROPER
+                                && tomb.skippedChapels().isEmpty(),
+                        "The tomb learns it was opened properly as the slab starts to sink");
+                assertRingDoorCells(helper, door, false);
+            }
         });
-        for (int ring = 0; ring < 3; ring++) {
-            int expected = 1500 - cost * (ring + 1);
-            int stage = ring;
-            helper.runAfterDelay(2 + ring * fill + fill / 2, () -> {
-                helper.assertTrue(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.stageAt(controller.phaseTick()) == stage,
-                        "Ring " + stage + " should be filling at tick " + controller.phaseTick());
-                helper.assertTrue(volume.getBloodVolume() == expected,
-                        "Ring " + stage + " is paid at its own stage: expected " + expected + ", found " + volume.getBloodVolume());
-            });
-        }
-        helper.runAfterDelay(2 + sink - 8, () -> helper.assertTrue(
-                tomb.doorMode() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode.NONE,
-                "The tomb is not told before the slab sinks"));
-        helper.runAfterDelay(2 + sink + 8, () -> {
-            helper.assertTrue(tomb.doorMode() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode.PROPER
-                            && tomb.skippedChapels().isEmpty(),
-                    "The tomb learns it was opened properly as the slab starts to sink");
-            helper.assertTrue(controller.phase() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity.Phase.PROJECTING,
-                    "The slab is still sinking");
-            assertRingDoorCells(helper, door, false);
-        });
-        helper.runAfterDelay(2 + length + 6, () -> {
+        helper.runAfterDelay(3 + open + sink + 6, () -> {
             assertRingDoorCells(helper, door, true);
             helper.assertTrue(controller.phase() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity.Phase.OPEN
                             && controller.openedBy() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode.PROPER
                             && controller.projector() == null,
                     "A projected door ends open, opened properly");
-            helper.assertTrue(volume.getBloodVolume() == 1500 - 3 * cost, "Three rings in all, and no more");
+            helper.assertTrue(volume.getBloodVolume() == 1500 - com.vincenthuto.hemomancy.common.block.harbinger.puzzle.RingDoorRules.BLOOD_COST,
+                    "A thousand in all, and no more");
             clearTestArea(helper);
             helper.succeed();
         });
+    }
+
+    /**
+     * A door let go of bleeds its charge off slowly and settles idle again; a Silentium with dark nodes and a player of
+     * neither path are refused, and an Apotheos's opening refuses a Silentium's blood.
+     */
+    @GameTest(template = "empty", timeoutTicks = 200, batch = "ringDoorBleed")
+    public static void ringDoorLetGoBleedsBackToIdle(GameTestHelper helper) {
+        BlockPos door = new BlockPos(6, 1, 6);
+        helper.setBlock(door, ringDoor(net.minecraft.core.Direction.NORTH));
+        var controller = (com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity) helper.getBlockEntity(door);
+        var apotheos = ringDoorProjector(helper, door, "ring-door-bleed",
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS);
+        var silentium = ringDoorProjector(helper, door, "ring-door-dark-nodes",
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENTIUM);
+        var stranger = ringDoorProjector(helper, door, "ring-door-stranger",
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.NONE);
+        BlockPos absolute = helper.absolutePos(door);
+        int held = 40;
+        int[] fed = {0};
+        helper.runAfterDelay(2, () -> {
+            var projection = new ItemStack(com.vincenthuto.hemomancy.common.init.ItemInit.blood_projection.get());
+            for (BlockPos cell : new BlockPos[] {absolute, absolute.above(2)}) {
+                var hit = new net.minecraft.world.phys.BlockHitResult(cell.getCenter(), net.minecraft.core.Direction.NORTH,
+                        cell, false);
+                helper.assertTrue(helper.getLevel().getBlockState(cell).useItemOn(projection, helper.getLevel(), apotheos,
+                                net.minecraft.world.InteractionHand.MAIN_HAND, hit)
+                                == net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION,
+                        "Blood Projection held on the door at " + cell + " goes on to its own use");
+            }
+            helper.assertTrue(controller.takeProjectedBlood(stranger, absolute, 0, false) == 0,
+                    "A player of neither path is refused");
+            helper.assertTrue(controller.takeProjectedBlood(silentium, absolute, 0, false) == 0,
+                    "A Silentium is refused while the nodes are dark");
+            helper.assertTrue(controller.phase() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity.Phase.IDLE,
+                    "Refused blood does not start the door");
+        });
+        helper.onEachTick(() -> {
+            if (helper.getTick() < 3 || fed[0] >= held) return;
+            controller.takeProjectedBlood(apotheos, absolute, 0, false);
+            fed[0]++;
+        });
+        helper.runAfterDelay(3 + held, () -> {
+            helper.assertTrue(controller.charge() == held, "Held for " + held + " ticks, found " + controller.charge());
+            helper.assertTrue(controller.takeProjectedBlood(silentium, absolute, 0, false) == 0,
+                    "A door opening by force refuses a Silentium's blood");
+        });
+        helper.runAfterDelay(3 + held + 30, () -> {
+            int charge = controller.charge();
+            helper.assertTrue(charge > 0 && charge < held,
+                    "Let go, the door bleeds its charge off slowly, found " + charge);
+            helper.assertTrue(controller.phase() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity.Phase.OPENING,
+                    "A bleeding door is still opening");
+        });
+        helper.runAfterDelay(3 + held + 4 + held * 2 + 10, () -> {
+            helper.assertTrue(controller.phase() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity.Phase.IDLE
+                            && controller.charge() == 0
+                            && controller.path() == com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity.DoorMode.NONE,
+                    "A drained door is idle again");
+            assertRingDoorCells(helper, door, false);
+            clearTestArea(helper);
+            helper.succeed();
+        });
+    }
+
+    /** A FakePlayer of {@code path} at the eighth degree, three blocks in front of the door with 1500 blood. */
+    private static FakePlayer ringDoorProjector(GameTestHelper helper, BlockPos door, String name,
+            com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath path) {
+        var player = new FakePlayer(helper.getLevel(), new GameProfile(UUID.randomUUID(), name));
+        player.setGameMode(GameType.SURVIVAL);
+        player.setPos(helper.absolutePos(door).getCenter().add(0, 1, -3));
+        var degree = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player);
+        degree.setDegreeNumber(8);
+        degree.setArchonPath(path);
+        var volume = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player);
+        volume.setActive(true);
+        volume.setMaxBloodVolume(2000);
+        volume.setBloodVolume(1500);
+        return player;
     }
 
     private static net.minecraft.world.level.block.state.BlockState ringDoor(net.minecraft.core.Direction facing) {

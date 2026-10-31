@@ -5,6 +5,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Describes how an equipped morphling visually mutates the player's appearance.
@@ -57,16 +59,15 @@ public class MorphlingVisualMutation {
     public final float swirlSpeed;
 
     /**
-     * Optional 3-D model attachment rendered on top of the color overlay.
-     * Null means no extra geometry beyond the color tint.
+     * 3-D model attachments rendered on top of the color overlay, one per anchor (a strain can grow on several
+     * body parts at once). Empty means tint only.
      */
-    @Nullable
-    public final MorphlingModelAttachment modelAttachment;
+    public final List<MorphlingModelAttachment> attachments;
 
     private MorphlingVisualMutation(float r, float g, float b, float alpha,
             float pulseSpeed, boolean emissive,
             @Nullable ResourceLocation swirlTexture, float swirlSpeed,
-            @Nullable MorphlingModelAttachment modelAttachment) {
+            List<MorphlingModelAttachment> attachments) {
         this.r = r;
         this.g = g;
         this.b = b;
@@ -75,7 +76,7 @@ public class MorphlingVisualMutation {
         this.emissive = emissive;
         this.swirlTexture = swirlTexture;
         this.swirlSpeed = swirlSpeed;
-        this.modelAttachment = modelAttachment;
+        this.attachments = List.copyOf(attachments);
     }
 
     public static Builder builder(float r, float g, float b, float alpha) {
@@ -88,7 +89,7 @@ public class MorphlingVisualMutation {
         private boolean emissive = false;
         private ResourceLocation swirlTexture = null;
         private float swirlSpeed = 0.01f;
-        private MorphlingModelAttachment modelAttachment = null;
+        private final List<MorphlingModelAttachment> attachments = new ArrayList<>();
 
         Builder(float r, float g, float b, float alpha) {
             this.r = r;
@@ -117,7 +118,7 @@ public class MorphlingVisualMutation {
         }
 
         /**
-         * Attach a custom 3-D model to the player while this morphling is equipped.
+         * Adds a custom 3-D model to the player while this morphling is equipped.
          * The attachment receives the same scaled alpha as the color overlay for
          * custom renderers that need it, plus the current morphling maturity in
          * the maturity-aware render overload. Simple model attachments render
@@ -128,13 +129,13 @@ public class MorphlingVisualMutation {
          * attachments, or extend {@link MorphlingModelAttachment} for full control.
          */
         public Builder attach(MorphlingModelAttachment attachment) {
-            this.modelAttachment = attachment;
+            this.attachments.add(attachment);
             return this;
         }
 
         public MorphlingVisualMutation build() {
             return new MorphlingVisualMutation(r, g, b, alpha, pulseSpeed, emissive,
-                    swirlTexture, swirlSpeed, modelAttachment);
+                    swirlTexture, swirlSpeed, attachments);
         }
     }
 }

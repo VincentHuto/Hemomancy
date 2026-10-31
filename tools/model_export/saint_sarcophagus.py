@@ -1079,6 +1079,13 @@ def main():
     outputs['item/saint_sarcophagus'] = item
     project = dict(item, elements=item['elements'] + scaled(models['blood'] + models['coals'] + models['veins'],
                                                             .5, (8, 0, 8), (0, 0, -4)))
+    # Each painted Saint's tomb is its own item model on the same elements; the stack's hemomancy:saint property
+    # (1 + the Saint's place in painted(), as SaintSarcophagusBlockItem.palette reads SAINT_PALETTES) picks it.
+    item['overrides'] = [{'predicate': {'hemomancy:saint': i + 1}, 'model': f'hemomancy:item/{ATLAS}_{name}'}
+                         for i, name in enumerate(painted())]
+    for name in painted():
+        outputs[f'item/{ATLAS}_{name}'] = {'parent': f'hemomancy:item/{ATLAS}',
+                                           'textures': {'atlas': f'hemomancy:block/{ATLAS}_{name}'}}
     write(outputs, 'saint_sarcophagus', project)
     (ASSETS / 'blockstates/saint_sarcophagus.json').write_text(json.dumps(blockstate(), indent=2) + '\n')
     GEOMETRY.write_text(geometry_java())

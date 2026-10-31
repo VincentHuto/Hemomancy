@@ -110,6 +110,7 @@ because of one, it says so.
 | `/hemo` branches | one `<Name>Subcommand` class wired by `HemoCommand` |
 | An entity casting a manipulation | `setEntityCast(EntityCasts::x)` in `ManipulationInit` |
 | Station operations | in the station's block entity; its menu only offers and dispatches |
+| Per-strain Morphling data (tendencies, passive, Cradle, Last Rite, polyp family, HUD art, order) | one row of `MorphlingStrains`; code reads the row, never a `morphling_<strain>` id |
 
 Damage stages (G-1) and wider `Reach` presets (G-2b, F-16) wait on decisions; until then damage listeners keep their
 priorities and each site keeps its named preset.
@@ -268,6 +269,7 @@ test under `src/test/java/.../architecture/` is listed here.
 | Mechanics | `EntityCastGuardrailTest` | 11 | Entity casts as registration hooks |
 | Mechanics | `StationMenuGuardrailTest` | 11 | Menus never spend blood, record practice or enchant |
 | Mechanics | `HeartNodeFaneSeparationGuardrailTest` | heart-node | A heart-node and a Founding Fane never read each other's saved data |
+| Mechanics | `MorphlingStrainTableGuardrailTest` | Brined Court 1 | Strain ids named only by `MorphlingStrains` and `ItemInit`; the deleted first-attempt strains leave no trace in `src/` |
 | Content | `BossFrameworkGuardrailTest` | 13 | Boss bars through `BossBarBinding`; all four Saints share `SaintTrialEntity` and its one ending (loot roll, tomb restore); a sarcophagus never picks a Saint at random |
 | Content | `ContentBoilerplateGuardrailTest` | 13 | `SyncedOwner`, `HemoContainerMenu`, `ProtectedNpc`, `ModelShapes.rotate`, effect categories |
 | Content | `ContentFamilyGuardrailTest` | 13 | Mob families, tracking orbs and combat-weapon storage share their base |

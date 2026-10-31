@@ -43,7 +43,7 @@ public abstract class MixinParalysisServerInput {
                 && com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.isTraveling(player))
             return new ServerboundMovePlayerPacket.Rot(packet.getYRot(player.getYRot()),packet.getXRot(player.getXRot()),false);
         if (!player.serverLevel().getServer().isSameThread()
-                || !Paralysis.isParalyzed(player) || !packet.hasPosition()) return packet;
+                || !Paralysis.blocksMovement(player) || !packet.hasPosition()) return packet;
         return new ServerboundMovePlayerPacket.PosRot(player.getX(),
                 Math.min(player.getY(),packet.getY(player.getY())),player.getZ(),
                 packet.getYRot(player.getYRot()),packet.getXRot(player.getXRot()),packet.isOnGround());

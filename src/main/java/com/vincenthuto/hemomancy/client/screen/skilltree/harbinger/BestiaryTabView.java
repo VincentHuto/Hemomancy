@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRen
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtKnowledge;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -292,7 +294,14 @@ public final class BestiaryTabView {
 		String source = entry.discovered()
 				? Component.translatable(entry.sourceKey()).getString()
 				: Component.translatable("bestiary.hemomancy.locked.source").getString();
-		return drawWrapped(gfx, ctx, source, x, cy, w, 0xFF91A091);
+		cy = drawWrapped(gfx, ctx, source, x, cy, w, 0xFF91A091);
+		if (entry.discovered() && entry.kind() == BestiaryTabState.Kind.MORPHLING
+				&& CourtKnowledge.isKnown(Minecraft.getInstance().player)) {
+			cy += 10;
+			String court = Component.translatable(SpecimenBestiaryDefinitions.morphlingCourtKey(entry.key())).getString();
+			cy = drawWrapped(gfx, ctx, court, x, cy, w, 0xFF7FB8B0);
+		}
+		return cy;
 	}
 
 	private static PreviewBounds previewBounds(ProgressScreenContext ctx, BestiaryTabState state) {

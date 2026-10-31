@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.event;
 
+import com.vincenthuto.hemomancy.client.model.entity.morphling.FungalHeadAttachmentModel;
+import com.vincenthuto.hemomancy.client.model.entity.morphling.MorphlingStrainModels;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.HunterFungusModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.AntibodyModel;
 import com.vincenthuto.hemomancy.client.render.outpouring.CastVeinsLayer;
@@ -149,18 +151,16 @@ public class LayerEvents {
 		event.registerLayerDefinition(VampireBatModel.LAYER_LOCATION, VampireBatModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypLayerModel.LAYER_LOCATION, MorphlingPolypLayerModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingBatHeadAttachmentModel.LAYER_LOCATION, MorphlingBatHeadAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingSpiderBodyAttachmentModel.LAYER_LOCATION, MorphlingSpiderBodyAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingFungalHeadModel.LAYER_LOCATION, MorphlingFungalHeadModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingLeechArmAttachmentModel.LAYER_LOCATION, MorphlingLeechArmAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingChitiniteLegAttachmentModel.LAYER_LOCATION, MorphlingChitiniteLegAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingSerpentLegAttachmentModel.LAYER_LOCATION, MorphlingSerpentLegAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingUrchinBodyAttachmentModel.LAYER_LOCATION, MorphlingUrchinBodyAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingCuttlefishHeadAttachmentModel.LAYER_LOCATION, MorphlingCuttlefishHeadAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingCentipedeBodyAttachmentModel.LAYER_LOCATION, MorphlingCentipedeBodyAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingPestsBodyAttachmentModel.LAYER_LOCATION, MorphlingPestsBodyAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingTickBodyAttachmentModel.LAYER_LOCATION, MorphlingTickBodyAttachmentModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingMoleArmAttachmentModel.LAYER_LOCATION, MorphlingMoleArmAttachmentModel::createBodyLayer);
+		event.registerLayerDefinition(FungalHeadAttachmentModel.LAYER_LOCATION, FungalHeadAttachmentModel::createBodyLayer);
+		for (MorphlingStrainModels.Anchor anchor : MorphlingStrainModels.ALL) {
+			event.registerLayerDefinition(anchor.layer(), anchor.definition());
+		}
+		for (var row : com.vincenthuto.hemomancy.client.model.entity.npc.court.CourtMemberModels.ALL) {
+			event.registerLayerDefinition(row.layer(), row.definition());
+		}
+		for (var row : com.vincenthuto.hemomancy.client.model.entity.npc.court.CourtMemberModels.FOLLOWERS) {
+			event.registerLayerDefinition(row.layer(), row.definition());
+		}
 		event.registerLayerDefinition(ThirsterModel.LAYER_LOCATION, ThirsterModel::createBodyLayer);
 		event.registerLayerDefinition(BloodArmModel.blood_arm, BloodArmModel::createHeadLayer);
 		event.registerLayerDefinition(EarthenVeinModel.LAYER_LOCATION, EarthenVeinModel::createBodyLayer);

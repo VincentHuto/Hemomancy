@@ -98,6 +98,9 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.e
             com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.met(serverPlayer, "alchemist");
             DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "alchemist", degree, 0f);
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withLetterInquiry(tree, "alchemist",
+                    com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.ALCHEMIST_LETTER,
+                    com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.View.of(serverPlayer));
             tree = DialogueHubFactory.decorate(tree, "alchemist", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
@@ -156,6 +159,10 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.e
                     tree, com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.progress(serverPlayer));
         }
         tree = EarlyInitiationDialogue.alchemist(tree, serverPlayer);
+        if (!hasClarityUnlocked(serverPlayer) && !isPurifying(serverPlayer)) {
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withAlchemist(tree,
+                    com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.View.of(serverPlayer));
+        }
 		return com.vincenthuto.hemomancy.common.entity.npc.dialogue.AdvancedBrewingDialogue.append(
 				ClinicalBloodDialogue.append(HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,
 				ArtificerProgressSnapshot.from(serverPlayer), ArtificerAssignments.forkResearchRecordedCount(serverPlayer),

@@ -90,6 +90,11 @@ public class FrozenDevoteeBlock extends StackedSetPieceBlock {
 	}
 
 	@Override
+	protected BlockState withStorey(BlockState state, int storey) {
+		return state.setValue(HALF, storey == 0 ? DoubleBlockHalf.LOWER : DoubleBlockHalf.UPPER);
+	}
+
+	@Override
 	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return outline(state.getValue(POSE), state.getValue(HALF), state.getValue(HEAD) != Head.FORWARD,
 				state.getValue(FACING));

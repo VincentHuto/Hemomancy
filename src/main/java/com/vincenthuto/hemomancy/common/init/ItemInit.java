@@ -215,6 +215,10 @@ public class ItemInit {
             () -> new CovenantWaybillItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> circus_waybill = BASEITEMS.register("circus_waybill",
             () -> new CircusWaybillItem(new Item.Properties().fireResistant()));
+    public static final DeferredHolder<Item, Item> relay_chart = BASEITEMS.register("relay_chart",
+            () -> new com.vincenthuto.hemomancy.common.item.harbinger.RelayChartItem(new Item.Properties().fireResistant()));
+    public static final DeferredHolder<Item, Item> brine_sealed_letter = BASEITEMS.register("brine_sealed_letter",
+            () -> new com.vincenthuto.hemomancy.common.item.harbinger.BrineSealedLetterItem(new Item.Properties()));
 
     public static final DeferredHolder<Item, Item> veins_pattern = BASEITEMS.register("veins_pattern",
             () -> new BannerPatternItem(
@@ -673,22 +677,23 @@ public class ItemInit {
             () -> new ItemMorphlingJar("morphling_jar", 6, Rarity.UNCOMMON));
     public static final DeferredHolder<Item, Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
             () -> new ItemMorphlingPolyp(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> morphling_deadmans_purse = BASEITEMS.register("morphling_deadmans_purse",
-            () -> new DeadmansPurseMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_gravecap = BASEITEMS.register("morphling_gravecap",
-            () -> new GravecapMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_witchs_ear = BASEITEMS.register("morphling_witchs_ear",
-            () -> new WitchsEarMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_lumenlace = BASEITEMS.register("morphling_lumenlace",
-            () -> new LumenlaceMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_bootlace = BASEITEMS.register("morphling_bootlace",
-            () -> new BootlaceMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_irontooth = BASEITEMS.register("morphling_irontooth",
-            () -> new IrontoothMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_emberfang = BASEITEMS.register("morphling_emberfang",
-            () -> new EmberfangMorphlingItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> morphling_winter_shroud = BASEITEMS.register("morphling_winter_shroud",
-            () -> new WinterShroudMorphlingItem(new Item.Properties().stacksTo(1)));
+    // The eight Brined Court house strains; their table is MorphlingStrains.
+    public static final DeferredHolder<Item, Item> morphling_sunburst = BASEITEMS.register("morphling_sunburst",
+            () -> new SunburstMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_holdfast = BASEITEMS.register("morphling_holdfast",
+            () -> new HoldfastMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_mermaids_purse = BASEITEMS.register("morphling_mermaids_purse",
+            () -> new MermaidsPurseMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_dead_mans_rope = BASEITEMS.register("morphling_dead_mans_rope",
+            () -> new DeadMansRopeMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_ink_cap = BASEITEMS.register("morphling_ink_cap",
+            () -> new InkCapMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_hushbell = BASEITEMS.register("morphling_hushbell",
+            () -> new HushbellMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_marrowplume = BASEITEMS.register("morphling_marrowplume",
+            () -> new MarrowplumeMorphlingItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> morphling_kinbud = BASEITEMS.register("morphling_kinbud",
+            () -> new KinbudMorphlingItem(new Item.Properties().stacksTo(1)));
     /// Blood Gourds
     public static final DeferredHolder<Item, Item> dried_gourd = BASEITEMS.register("dried_gourd",
             () -> new BloodGourdItem(new Item.Properties().stacksTo(1), EnumBloodGourdTiers.DRIED));
@@ -1259,6 +1264,32 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_voyager = SPAWNEGGS.register(
             "spawn_egg_harbinger_voyager",
             () -> new DeferredSpawnEggItem(EntityInit.harbinger_voyager, 0x4A1F27, 0xC29A68, new Item.Properties()));
+
+    /** One spawn egg per built Court role, coloured by its house (WIP tab until reviewed). */
+    public static final java.util.Map<com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole, DeferredHolder<Item, DeferredSpawnEggItem>> court_member_eggs =
+            courtMemberEggs();
+
+    private static java.util.Map<com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole, DeferredHolder<Item, DeferredSpawnEggItem>> courtMemberEggs() {
+        var eggs = new java.util.EnumMap<com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole, DeferredHolder<Item, DeferredSpawnEggItem>>(
+                com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.class);
+        EntityInit.court_members.forEach((role, type) -> {
+            // The house's colours: linen and saffron, kelp cloth and coralline pink, cobalt and purse crimson, indigo
+            // and rope violet, ink and bone, frost grey and slate, bone and marrow red, basalt and amber.
+            int[] colours = switch (role.house()) {
+                case KINDLING -> new int[] {0x2E2628, 0xD6842C};
+                case HOLDING_STONE -> new int[] {0x7C725C, 0xB86870};
+                case SHARED_WAKE -> new int[] {0x2846AA, 0x961C28};
+                case WOVEN_CURRENT -> new int[] {0x423C68, 0x9C88FF};
+                case VEILED_FOLD -> new int[] {0x16141A, 0xE0D8C8};
+                case STILL_BELL -> new int[] {0x96A2B0, 0x58647A};
+                case LAST_MARROW -> new int[] {0xE8DEC8, 0xD8343C};
+                default -> new int[] {0xDECEA8, 0xD68E2E};
+            };
+            eggs.put(role, SPAWNEGGS.register("spawn_egg_" + role.entityId(),
+                    () -> new DeferredSpawnEggItem(type, colours[0], colours[1], new Item.Properties())));
+        });
+        return java.util.Collections.unmodifiableMap(eggs);
+    }
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_artificer = SPAWNEGGS.register(
             "spawn_egg_harbinger_artificer",
             () -> new DeferredSpawnEggItem(EntityInit.harbinger_artificer, 0x4A1218, 0xC74832,

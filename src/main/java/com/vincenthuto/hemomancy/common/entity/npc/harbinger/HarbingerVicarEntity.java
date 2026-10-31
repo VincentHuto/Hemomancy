@@ -184,6 +184,9 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
             }
             DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "vicar", degree, 0f);
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withLetterInquiry(tree, "vicar",
+                    com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.VICAR_LETTER,
+                    com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.View.of(serverPlayer));
             tree = DialogueHubFactory.decorate(tree, "vicar", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
@@ -240,6 +243,13 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
             var voyager = com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.progress(player);
             tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.VoyagerIntroductionDialogue
                     .withVicarReport(tree, degree, voyager.observed(), voyager.reported());
+        }
+        if (!hasClarityUnlocked(player) && !HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification()) {
+            var voyager = com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.progress(player);
+            boolean bearing = com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.eligibleForReferral(player)
+                    && !voyager.observed() && !voyager.reported();
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withVicar(tree,
+                    com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.View.of(player), bearing);
         }
         return tree;
     }

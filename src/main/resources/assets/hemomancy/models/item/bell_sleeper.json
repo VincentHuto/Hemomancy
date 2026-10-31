@@ -1,0 +1,10 @@
+{
+  "parent": "hemomancy:block/bell_sleeper",
+  "display": {
+    "gui": {
+      "rotation": [30, 225, 0],
+      "translation": [0, 3.45, 0],
+      "scale": [0.537, 0.537, 0.537]
+    }
+  }
+}

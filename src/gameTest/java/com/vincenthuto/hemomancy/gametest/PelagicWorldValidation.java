@@ -60,20 +60,22 @@ public final class PelagicWorldValidation {
             var structures = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE);
             var pavilion = structures.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(
                     net.minecraft.core.registries.Registries.STRUCTURE,
-                    net.minecraft.resources.ResourceLocation.parse("hemomancy:circus_pavilion")));
+                    net.minecraft.resources.ResourceLocation.parse(System.getProperty("hemomancy.pelagic.locateStructure",
+                            "hemomancy:circus_pavilion"))));
             var targets = net.minecraft.core.HolderSet.direct(pavilion);
             long start = System.nanoTime();
             // Same search radius and reference policy as vanilla /locate structure.
             var found = level.getChunkSource().getGenerator().findNearestMapStructure(level, targets, origin, 100, false);
             double seconds = (System.nanoTime() - start) / 1e9;
-            h.assertTrue(found != null, "Cold pavilion locate must find an actual eligible structure");
+            h.assertTrue(found != null, "Cold locate must find an actual eligible structure");
             var report = new JsonObject();
             report.addProperty("seed", level.getSeed());
             report.addProperty("originX", origin.getX()); report.addProperty("originZ", origin.getZ());
             report.addProperty("foundX", found.getFirst().getX()); report.addProperty("foundZ", found.getFirst().getZ());
             report.addProperty("locateSeconds", seconds);
             Files.writeString(Path.of("pavilion-locate-report.json"), new GsonBuilder().setPrettyPrinting().create().toJson(report));
-            LogUtils.getLogger().info("PAVILION cold locate from {} found {} in {} seconds", origin, found.getFirst(), seconds);
+            LogUtils.getLogger().info("LOCATE_PROBE {} cold locate from {} found {} in {} seconds", pavilion.getRegisteredName(),
+                    origin, found.getFirst(), seconds);
             h.succeed();
         } catch (Exception e) {
             throw new RuntimeException("Pavilion locate validation failed", e);

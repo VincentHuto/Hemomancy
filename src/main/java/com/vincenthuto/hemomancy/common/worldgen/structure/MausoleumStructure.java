@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldgen.structure;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.StructureInit;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawJunction;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -33,7 +35,8 @@ import java.util.regex.Pattern;
  * A Saint's mausoleum complex. Its entrance stands on the highest ground under and around it
  * ({@link MausoleumEntranceRules}); its discovery inscriptions are part of the crypt gallery's templates
  * ({@code tools/worldgen/mausoleum_complexes.py}), not placed after the fact. Once its threshold hall is placed, the
- * ward anchor in its wall is settled with the threshold slab and the boxes of the warded and hallowed pieces.
+ * ward anchor in its wall is settled with the threshold slab and the boxes of the warded and hallowed pieces. Every
+ * chunk of it is sealed against ground water as it is placed ({@link MausoleumSealing}).
  */
 public class MausoleumStructure extends HemoJigsawStructure {
 
@@ -42,6 +45,10 @@ public class MausoleumStructure extends HemoJigsawStructure {
 	static final Set<String> OUTER_PIECES = Set.of("top", "stairs", "antechamber", "descent", "gallery",
 			"descent_turn_0", "descent_turn_1");
 	static final String THRESHOLD_PIECE = "threshold";
+	/** The pavilion and its stair shaft, which stand on and in the entrance ground rather than under it. */
+	private static final Set<String> ENTRANCE_PIECES = Set.of("top", "stairs");
+	/** The pavilion, whose faces stand in the open air rather than against the ground ({@link MausoleumSealing}). */
+	static final Set<String> ABOVE_GROUND_PIECES = Set.of("top");
 	private static final Pattern TEMPLATE = Pattern.compile("hemomancy:mausoleum/[a-z]+/([a-z0-9_]+)");
 
 	public MausoleumStructure(Structure.StructureSettings config, Jigsaw jigsaw) {
@@ -55,7 +62,32 @@ public class MausoleumStructure extends HemoJigsawStructure {
 
 	@Override
 	public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
-		return super.findGenerationPoint(context).flatMap(stub -> settleOnEntranceGround(context, stub));
+		return super.findGenerationPoint(context).flatMap(stub -> settleOnEntranceGround(context, stub))
+				.flatMap(stub -> keepHallsBuried(context, stub));
+	}
+
+	/**
+	 * Lays the pieces out and refuses the site if the ground beside any hall falls far enough to show its walls. Higher
+	 * ground only buries a hall deeper, so a complex can lie under a hillside; only a valley, river or lake bed cut down
+	 * past a hall's roof opens it. The pavilion and the stair shaft under it meet the ground by design.
+	 * Vanilla builds the same pieces from the same random right after this, so laying them out here changes nothing.
+	 */
+	private static Optional<GenerationStub> keepHallsBuried(GenerationContext context, GenerationStub stub) {
+		StructurePiecesBuilder pieces = stub.getPiecesBuilder();
+		for (StructurePiece piece : pieces.build().pieces()) {
+			if (piece instanceof PoolElementStructurePiece pool && ENTRANCE_PIECES.contains(templateName(pool))) continue;
+			BoundingBox box = piece.getBoundingBox();
+			int midX = (box.minX() + box.maxX()) / 2;
+			int midZ = (box.minZ() + box.maxZ()) / 2;
+			int[][] columns = { { midX, midZ }, { box.minX(), box.minZ() }, { box.maxX(), box.minZ() },
+					{ box.minX(), box.maxZ() }, { box.maxX(), box.maxZ() } };
+			for (int[] column : columns) {
+				if (solidGround(context, column[0], column[1]) < box.maxY() - MausoleumEntranceRules.MAX_ROOF_EXPOSURE) {
+					return Optional.empty();
+				}
+			}
+		}
+		return Optional.of(new GenerationStub(stub.position(), Either.right(pieces)));
 	}
 
 	/** Moves the whole complex up so its entrance stands on the highest ground around it, or refuses the site. */
@@ -100,14 +132,27 @@ public class MausoleumStructure extends HemoJigsawStructure {
 		junctions.addAll(raised);
 	}
 
+	/** The top solid block of a column, under any water. */
+	private static int solidGround(GenerationContext context, int x, int z) {
+		return context.chunkGenerator().getFirstOccupiedHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG,
+				context.heightAccessor(), context.randomState());
+	}
+
 	private static int firstFree(GenerationContext context, int x, int z) {
 		return context.chunkGenerator().getFirstFreeHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
 				context.heightAccessor(), context.randomState());
 	}
 
+	/** Placed blocks never take up standing ground water: a waterlogged stair in a hall would be a source in it. */
+	@Override
+	protected LiquidSettings liquidSettings() {
+		return LiquidSettings.IGNORE_WATERLOGGING;
+	}
+
 	@Override
 	public void afterPlace(WorldGenLevel level, StructureManager structureManager, ChunkGenerator generator,
 			RandomSource random, BoundingBox chunkBox, ChunkPos chunkPos, PiecesContainer pieces) {
+		MausoleumSealing.seal(level, chunkBox, pieces.pieces());
 		for (StructurePiece piece : pieces.pieces()) {
 			if (piece instanceof PoolElementStructurePiece pool && THRESHOLD_PIECE.equals(templateName(pool))
 					&& piece.getBoundingBox().intersects(chunkBox)) {

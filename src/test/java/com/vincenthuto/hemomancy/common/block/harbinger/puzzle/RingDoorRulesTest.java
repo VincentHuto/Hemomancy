@@ -13,8 +13,7 @@ class RingDoorRulesTest {
 	void aSilentiumProjectsOnlyWhenEveryNodeIsLit() {
 		assertTrue(RingDoorRules.mayProject(true, 3));
 		assertFalse(RingDoorRules.mayProject(true, 2));
-		assertFalse(RingDoorRules.mayProject(false, 3), "an Apotheos shatters; it does not project");
-		assertEquals(300, RingDoorRules.BLOOD_PER_RING);
+		assertFalse(RingDoorRules.mayProject(false, 3), "a door opened properly wants a Silentium");
 		assertEquals(3, RingDoorRules.RINGS);
 	}
 
@@ -42,63 +41,55 @@ class RingDoorRulesTest {
 	}
 
 	@Test
-	void theDoorKeepsItsStageTimings() {
+	void tenSecondsOfHeldProjectionCostAThousand() {
+		assertEquals(200, RingDoorRules.OPEN_TICKS);
+		assertEquals(1000, RingDoorRules.BLOOD_COST);
+		assertEquals(RingDoorRules.BLOOD_COST, RingDoorRules.BLOOD_PER_TICK * RingDoorRules.OPEN_TICKS,
+				"every fed tick pays its share and the whole opening pays the cost");
 		assertEquals(40, RingDoorRules.turnTicks());
-		assertEquals(40, RingDoorRules.fillTicks());
-		assertEquals(RingDoorRules.BLOOD_PER_RING, RingDoorRules.stageCost());
-		assertEquals(30, RingDoorRules.shatterTicks());
-		assertEquals(20, RingDoorRules.PULSE_TICKS);
 		assertEquals(RingDoorRules.FALL_TICKS, RingDoorRules.SINK_TICKS);
 		assertEquals(30, RingDoorRules.BURST_TICKS);
-		assertEquals(3 * 40 + 20 + 40, RingDoorRules.projectionLength());
 	}
 
 	@Test
-	void aProjectionFillsEachRingThenPulsesThenSinks() {
-		assertEquals(0, RingDoorRules.stageAt(0));
-		assertEquals(0, RingDoorRules.stageAt(39));
-		assertEquals(1, RingDoorRules.stageAt(40));
-		assertEquals(2, RingDoorRules.stageAt(119));
-		assertEquals(RingDoorRules.STAGE_PULSE, RingDoorRules.stageAt(120));
-		assertEquals(RingDoorRules.STAGE_PULSE, RingDoorRules.stageAt(139));
-		assertEquals(RingDoorRules.STAGE_SINK, RingDoorRules.stageAt(140));
-		assertEquals(RingDoorRules.STAGE_SINK, RingDoorRules.stageAt(179));
-		assertEquals(RingDoorRules.STAGE_DONE, RingDoorRules.stageAt(180));
-		assertEquals(5, RingDoorRules.STAGE_DONE);
-	}
-
-	@Test
-	void eachRingIsPaidForOnceAtTheStartOfItsStage() {
-		int paid = 0;
-		for (int tick = -5; tick < RingDoorRules.projectionLength() + 5; tick++) {
-			int ring = RingDoorRules.paysAt(tick);
-			if (ring < 0) continue;
-			assertEquals(ring * RingDoorRules.FILL_TICKS, tick, "ring " + ring + " is paid as its stage starts");
-			assertEquals(paid, ring, "the rings are paid outer to inner");
-			paid++;
+	void aFedDoorFillsAndALeftDoorBleedsOffSlowly() {
+		assertEquals(1, RingDoorRules.nextCharge(0, true, 0));
+		assertEquals(RingDoorRules.OPEN_TICKS, RingDoorRules.nextCharge(RingDoorRules.OPEN_TICKS, true, 0));
+		for (long since = 1; since <= RingDoorRules.FEED_GRACE; since++) {
+			assertEquals(50, RingDoorRules.nextCharge(50, false, since), "a moment's slip keeps the charge");
+			assertTrue(RingDoorRules.fed(since));
 		}
-		assertEquals(RingDoorRules.RINGS, paid);
-		assertEquals(RingDoorRules.BLOOD_PER_RING * RingDoorRules.RINGS, paid * RingDoorRules.stageCost(),
-				"three stages pay what the door has always cost");
+		assertFalse(RingDoorRules.fed(RingDoorRules.FEED_GRACE + 1));
+		int charge = RingDoorRules.OPEN_TICKS;
+		long since = RingDoorRules.FEED_GRACE;
+		int ticks = 0;
+		while (charge > 0) {
+			since++;
+			ticks++;
+			charge = RingDoorRules.nextCharge(charge, false, since);
+		}
+		assertEquals(RingDoorRules.OPEN_TICKS * RingDoorRules.BLEED_TICKS, ticks, 2,
+				"a full door drains in twice the time it took to fill");
+		assertEquals(0, RingDoorRules.nextCharge(0, false, 1000), "a drained door stays at nothing");
 	}
 
 	@Test
-	void theRingsFillInTurnAndTheSlabSinksLast() {
-		assertEquals(0f, RingDoorRules.ringFill(0, 0f));
-		assertEquals(0.5f, RingDoorRules.ringFill(0, 20f), 1e-6f);
-		assertEquals(1f, RingDoorRules.ringFill(0, 40f));
-		assertEquals(0f, RingDoorRules.ringFill(1, 40f));
-		assertEquals(1f, RingDoorRules.ringFill(2, 500f));
-		assertEquals(0f, RingDoorRules.pulse(119f));
-		assertEquals(0.5f, RingDoorRules.pulse(130f), 1e-6f);
-		assertEquals(1f, RingDoorRules.pulse(140f));
-		assertEquals(0f, RingDoorRules.sink(140f));
-		assertEquals(0.5f, RingDoorRules.sink(160f), 1e-6f);
-		assertEquals(1f, RingDoorRules.sink(180f));
-		assertTrue(RingDoorRules.sink(145f) < 5f / 40f, "the sink eases in");
-		assertEquals(0f, RingDoorRules.crack(0f));
-		assertEquals(0.5f, RingDoorRules.crack(15f), 1e-6f);
-		assertEquals(1f, RingDoorRules.crack(45f));
+	void theRingsFillInTurnAsTheChargeRises() {
+		assertEquals(0f, RingDoorRules.progress(0));
+		assertEquals(0.5f, RingDoorRules.progress(100), 1e-6f);
+		assertEquals(1f, RingDoorRules.progress(500));
+		assertEquals(0f, RingDoorRules.ringFill(0, 0.1f));
+		assertTrue(RingDoorRules.ringFill(0, 0.4f) > RingDoorRules.ringFill(1, 0.4f), "the outer ring leads");
+		assertTrue(RingDoorRules.ringFill(1, 0.6f) > RingDoorRules.ringFill(2, 0.6f), "the inner ring fills last");
+		for (int ring = 0; ring < RingDoorRules.RINGS; ring++) {
+			assertEquals(1f, RingDoorRules.ringFill(ring, RingDoorRules.PULSE_START), "ring " + ring + " is full before the pulse");
+		}
+		assertEquals(0f, RingDoorRules.pulse(RingDoorRules.PULSE_START));
+		assertEquals(1f, RingDoorRules.pulse(1f));
+		assertEquals(0f, RingDoorRules.sink(0f));
+		assertEquals(0.5f, RingDoorRules.sink(20f), 1e-6f);
+		assertEquals(1f, RingDoorRules.sink(40f));
+		assertTrue(RingDoorRules.sink(5f) < 5f / 40f, "the sink eases in");
 		assertEquals(0f, RingDoorRules.turn(0f));
 		assertEquals(0.5f, RingDoorRules.turn(20f), 1e-6f);
 		assertEquals(1f, RingDoorRules.turn(1000f));

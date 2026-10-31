@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
@@ -209,11 +209,7 @@ public class MorphlingCradleBlockEntity extends HemoBlockEntity {
 		if (stack == null || stack.isEmpty()) {
 			return false;
 		}
-		return stack.getItem() == ItemInit.morphling_gravecap.get()
-				|| stack.getItem() == ItemInit.morphling_deadmans_purse.get()
-				|| stack.getItem() == ItemInit.morphling_winter_shroud.get()
-				|| stack.getItem() == ItemInit.morphling_bootlace.get()
-				|| stack.getItem() == ItemInit.morphling_irontooth.get();
+		return MorphlingStrains.isCradlePrimal(stack);
 	}
 
 	private void tickServer() {

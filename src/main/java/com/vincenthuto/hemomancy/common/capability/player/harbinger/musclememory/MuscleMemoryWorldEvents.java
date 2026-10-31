@@ -42,7 +42,7 @@ public final class MuscleMemoryWorldEvents {
     private static final Map<UUID, TickSnapshot> SNAPSHOTS = new HashMap<>();
     private static final Map<UUID, Double> SPRINT_DISTANCE = new HashMap<>();
     private static final Map<UUID, CarrionSnapshot> CARRION = new HashMap<>();
-    private static final Map<UUID, Long> EMBERFANG_MOMENTUM = new HashMap<>();
+    private static final Map<UUID, Long> COURSING_MOMENTUM = new HashMap<>();
 
     private MuscleMemoryWorldEvents() {}
 
@@ -50,7 +50,7 @@ public final class MuscleMemoryWorldEvents {
 		SNAPSHOTS.clear();
 		SPRINT_DISTANCE.clear();
 		CARRION.clear();
-		EMBERFANG_MOMENTUM.clear();
+		COURSING_MOMENTUM.clear();
 	}
 
     @SubscribeEvent
@@ -64,12 +64,12 @@ public final class MuscleMemoryWorldEvents {
     }
 
     @SubscribeEvent
-    public static void irontoothBreakSpeed(PlayerEvent.BreakSpeed event) {
+    public static void laboringSignatureBreakSpeed(PlayerEvent.BreakSpeed event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         if (state.isActive(MuscleMemory.LABORING_ARMS, player.level().getGameTime())
                 && event.getState().is(LABORING_RESISTANT)
-                && MuscleMemoryActivationService.hasSignatureMorphling(player, IrontoothMorphlingItem.class)) {
+                && MuscleMemoryActivationService.hasSignatureMorphling(player, MorphlingStrains.HOLDFAST)) {
             event.setNewSpeed(event.getNewSpeed() * 1.15F);
         }
     }
@@ -93,7 +93,7 @@ public final class MuscleMemoryWorldEvents {
             handleCoursing(player, horizontal);
             handleHushed(player, horizontal, now);
             handleEnduring(player, previous, food);
-            handleWinterShroud(player, previous, food, horizontal, now);
+            handleEnduringSignature(player, previous, food, horizontal, now);
         }
         if (player.tickCount % 20 == 0) handlePredatoryEyes(player);
         updateModifiers(player);
@@ -109,8 +109,8 @@ public final class MuscleMemoryWorldEvents {
                     player, MuscleMemory.COURSING_LEGS, 80, 120);
             if (trigger.accepted()) {
                 SPRINT_DISTANCE.put(player.getUUID(), result.remainder());
-                if (MuscleMemoryActivationService.hasSignatureMorphling(player, EmberfangMorphlingItem.class)) {
-                    EMBERFANG_MOMENTUM.put(player.getUUID(), player.level().getGameTime() + 60L);
+                if (MuscleMemoryActivationService.hasSignatureMorphling(player, MorphlingStrains.MERMAIDS_PURSE)) {
+                    COURSING_MOMENTUM.put(player.getUUID(), player.level().getGameTime() + 60L);
                 }
             } else {
                 SPRINT_DISTANCE.put(player.getUUID(), Math.min(11.999D, stored + horizontal));
@@ -132,20 +132,20 @@ public final class MuscleMemoryWorldEvents {
 
     private static void handlePredatoryEyes(ServerPlayer player) {
         if (player.level().getMaxLocalRawBrightness(player.blockPosition()) > 4) return;
-        boolean witch = MuscleMemoryActivationService.hasSignatureMorphling(player, WitchsEarMorphlingItem.class);
+        boolean signature = MuscleMemoryActivationService.hasSignatureMorphling(player, MorphlingStrains.DEAD_MANS_ROPE);
         MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         boolean armed = state.isOverexertionArmed(MuscleMemory.PREDATORY_EYES, player.level().getGameTime());
-        double radius = armed ? 24D : (witch ? 12D : 16D);
+        double radius = armed ? 24D : (signature ? 12D : 16D);
         List<Monster> targets = player.level().getEntitiesOfClass(Monster.class,
                 new AABB(player.blockPosition()).inflate(radius), target -> ManipulationCombatHelper.canHarm(player, target, Reach.MONSTER_FILTER)
                         && target.getDeltaMovement().horizontalDistanceSqr() > .0004D
-                        && (armed || witch || player.hasLineOfSight(target)));
+                        && (armed || signature || player.hasLineOfSight(target)));
         targets.sort(Comparator.comparingDouble(player::distanceToSqr));
         if (targets.isEmpty()) return;
         var trigger = MuscleMemoryActivationService.tryTriggerDetailed(
                 player, MuscleMemory.PREDATORY_EYES, 100, 200);
         if (!trigger.accepted()) return;
-        int limit = trigger.overexerted() ? 8 : (witch ? 5 : 3);
+        int limit = trigger.overexerted() ? 8 : (signature ? 5 : 3);
         for (int i = 0; i < Math.min(limit, targets.size()); i++) {
             targets.get(i).addEffect(new MobEffectInstance(MobEffects.GLOWING,
                     trigger.overexerted() ? 200 : 100, 0, false, false));
@@ -161,10 +161,10 @@ public final class MuscleMemoryWorldEvents {
         }
     }
 
-    private static void handleWinterShroud(ServerPlayer player, TickSnapshot previous, FoodData food,
+    private static void handleEnduringSignature(ServerPlayer player, TickSnapshot previous, FoodData food,
             double horizontal, long now) {
         MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
-        boolean signature = MuscleMemoryActivationService.hasSignatureMorphling(player, WinterShroudMorphlingItem.class);
+        boolean signature = MuscleMemoryActivationService.hasSignatureMorphling(player, MorphlingStrains.HUSHBELL);
         boolean empowered = state.isEmpowered(MuscleMemory.ENDURING_VISCERA, now);
         if (!signature && !empowered) return;
         if (!empowered
@@ -184,10 +184,10 @@ public final class MuscleMemoryWorldEvents {
                 || event.getVanillaEvent().equals(GameEvent.SPLASH);
         boolean deepHush = HemoCapabilityAccess.muscleMemory(player)
                 .isEmpowered(MuscleMemory.HUSHED_GAIT, now);
-        boolean bootlaceLanding = event.getVanillaEvent().equals(GameEvent.HIT_GROUND)
+        boolean signatureLanding = event.getVanillaEvent().equals(GameEvent.HIT_GROUND)
                 && (deepHush || (player.fallDistance <= 6F
-                && MuscleMemoryActivationService.hasSignatureMorphling(player, BootlaceMorphlingItem.class)));
-        if ((quiet && !player.isSprinting()) || bootlaceLanding) event.setCanceled(true);
+                && MuscleMemoryActivationService.hasSignatureMorphling(player, MorphlingStrains.INK_CAP)));
+        if ((quiet && !player.isSprinting()) || signatureLanding) event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -211,7 +211,7 @@ public final class MuscleMemoryWorldEvents {
         if (trigger.overexerted()) player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 200, 0));
         var cap = HemoCapabilityAccess.getEquippedMorphling(player);
         ItemStack equipped = cap.getEquippedMorphling();
-        if (equipped.getItem() instanceof GravecapMorphlingItem) MorphlingItem.markFedNow(equipped, player.level().getGameTime());
+        if (MorphlingStrains.is(equipped, MorphlingStrains.MARROWPLUME)) MorphlingItem.markFedNow(equipped, player.level().getGameTime());
     }
 
     private static void updateModifiers(ServerPlayer player) {
@@ -227,8 +227,8 @@ public final class MuscleMemoryWorldEvents {
 				AttributeModifier.Operation.ADD_VALUE, state.isEmpowered(MuscleMemory.COURSING_LEGS, now));
     }
 
-    static boolean consumeEmberfangMomentum(ServerPlayer player) {
-        Long until = EMBERFANG_MOMENTUM.remove(player.getUUID());
+    static boolean consumeCoursingMomentum(ServerPlayer player) {
+        Long until = COURSING_MOMENTUM.remove(player.getUUID());
         return until != null && until > player.level().getGameTime();
     }
 
@@ -237,7 +237,7 @@ public final class MuscleMemoryWorldEvents {
         SNAPSHOTS.remove(id);
         SPRINT_DISTANCE.remove(id);
         CARRION.remove(id);
-        EMBERFANG_MOMENTUM.remove(id);
+        COURSING_MOMENTUM.remove(id);
     }
 
     private record TickSnapshot(Vec3 position, int food, float saturation, float exhaustion) {}

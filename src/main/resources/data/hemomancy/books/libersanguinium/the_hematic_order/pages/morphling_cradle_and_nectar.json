@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 13,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Cradle and Nectar",
+  "subtitle": "Past Apex",
+  "text": "Primal is not an incubation. Throw an Apex Morphling into Morphic Nectar once you have reached Apotheos, the eighth Degree, and it returns Primal with everything it had. Most Primal powers are used through the Living Staff, cost 250 to 450 mL, have a cooldown and leave you with Morphic Strain. Marrowplume's Whale Fall costs nothing but needs a kill of at least 20 maximum health. Two strains keep a death-save in the shared Last Rite group, which recovers in ten minutes: Ink Cap's Ink Reprieve at Apex, for 500 mL, and Hushbell's Cryptobiosis at Primal, for 650 mL. The Morphling Cradle hosts one Morphling outside the staff and lends its support to you and your bloodline nearby. Only its owner may change what it holds. A Primal strain can be cradled only if it is a support strain: Sunburst, Holdfast, Mermaid's Purse, Hushbell or Marrowplume. Dead Man's Rope, Ink Cap and Kinbud are refused at Primal.",
+  "icon": "hemomancy:morphling_cradle"
+}

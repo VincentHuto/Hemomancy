@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -130,6 +131,58 @@ public interface IMorphling {
 	 */
 	default List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		return List.of();
+	}
+
+
+	/** Called every server tick while equipped, for powers that watch stance or time (Brined Court strain hooks). */
+	default void onEquippedServerTick(Player player, ItemStack stack) {
+	}
+
+	/** {@link MorphlingActiveState} bits this strain shows right now, synced to trackers for Track 3's visuals. */
+	default int activeFlags(Player player, ItemStack stack) {
+		return 0;
+	}
+
+	/** Multiplier on the range hostile mobs detect the host at (Ink Cap's Veil). */
+	default double visibilityMultiplier(Player player, ItemStack stack) {
+		return 1.0D;
+	}
+
+	/** Multiplier on hunger exhaustion (Hushbell's Hush). */
+	default float exhaustionMultiplier(Player player, ItemStack stack) {
+		return 1.0F;
+	}
+
+	/** Chance an air-loss step is skipped underwater (Hushbell's Hush). */
+	default double airLossSkipChance(Player player, ItemStack stack) {
+		return 0.0D;
+	}
+
+	/** Multiplier on breaking speed for this block (Holdfast's Grip). */
+	default float breakSpeedMultiplier(Player player, ItemStack stack, BlockState state) {
+		return 1.0F;
+	}
+
+	/**
+	 * Sneak-use with an empty main hand on an entity ({@code target}) or a block ({@code pos}); return true when the
+	 * strain consumed it (Dead Man's Rope's Strand Link).
+	 */
+	default boolean onEquippedSneakUse(Player player, ItemStack stack, Entity target, BlockPos pos) {
+		return false;
+	}
+
+	/** True when this strain's upkeep is waived right now (Sunburst's Sun-Fed, cancelled by Puppet Interference). */
+	default boolean waivesUpkeep(Player player, ItemStack stack, boolean puppetInterference) {
+		return false;
+	}
+
+	/** True when this strain keeps an effect off its host (Hushbell's poison immunity). */
+	default boolean resistsEffect(Player player, ItemStack stack, net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> effect) {
+		return false;
+	}
+
+	/** Undoes anything the strain holds on its host (attributes, links, windows) when it is taken off or dies. */
+	default void onUnequipped(Player player, ItemStack stack) {
 	}
 
 }

@@ -1,68 +1,45 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.support.EnglishText;
+import com.vincenthuto.hemomancy.support.ResourceReader;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** Every strain row ships its model, art, incubation recipe and text (Brined Court Track 1). */
 final class MorphlingPassiveEffectPresentationTest {
-	private static final Path MORPHLING_SOURCE = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/morphlings");
-	private static final Path LANGUAGE = Path.of(
-			"src/main/resources/assets/hemomancy/lang/en_us.json");
-	private static final Path EFFECT_ICONS = Path.of(
-			"src/main/resources/assets/hemomancy/textures/mob_effect");
-
-	private static final Map<String, String> PASSIVE_EFFECTS = Map.ofEntries(
-			Map.entry("DeadmansPurseMorphlingItem.java", "morphling_deadmans_purse"),
-			Map.entry("GravecapMorphlingItem.java", "morphling_gravecap"),
-			Map.entry("WitchsEarMorphlingItem.java", "morphling_witchs_ear"),
-			Map.entry("LumenlaceMorphlingItem.java", "morphling_lumenlace"),
-			Map.entry("BootlaceMorphlingItem.java", "morphling_bootlace"),
-			Map.entry("IrontoothMorphlingItem.java", "morphling_irontooth"),
-			Map.entry("EmberfangMorphlingItem.java", "morphling_emberfang"),
-			Map.entry("WinterShroudMorphlingItem.java", "morphling_winter_shroud"));
-	private static final Map<String, String> DISPLAY_NAMES = Map.ofEntries(
-			Map.entry("morphling_deadmans_purse", "Deadman's Purse Morphling"),
-			Map.entry("morphling_gravecap", "Gravecap Morphling"),
-			Map.entry("morphling_witchs_ear", "Witch's Ear Morphling"),
-			Map.entry("morphling_lumenlace", "Lumenlace Morphling"),
-			Map.entry("morphling_bootlace", "Bootlace Morphling"),
-			Map.entry("morphling_irontooth", "Irontooth Morphling"),
-			Map.entry("morphling_emberfang", "Emberfang Morphling"),
-			Map.entry("morphling_winter_shroud", "Winter Shroud Morphling"));
+	@Test
+	void everyStrainHasItsResources() throws IOException {
+		for (MorphlingStrain strain : MorphlingStrains.ALL) {
+			String path = strain.itemPath();
+			assertTrue(ResourceReader.exists("assets/hemomancy/models/item/" + path + ".json"), path + " model");
+			assertTrue(ResourceReader.exists("data/hemomancy/recipe/incubator/" + path + ".json"), path + " recipe");
+			for (String folder : new String[] {"", "anim/", "anim2/"}) {
+				assertTrue(ResourceReader.exists("assets/hemomancy/textures/gui/morphling_overlay/" + folder
+						+ strain.hudTexture() + ".png"), path + " HUD sprite " + folder);
+			}
+			assertSixteenSquare("assets/hemomancy/textures/item/" + path + ".png");
+			assertSixteenSquare("assets/hemomancy/textures/mob_effect/" + path + ".png");
+			String name = EnglishText.of(strain.folkNameKey());
+			assertTrue(name.endsWith(" Morphling"), path + " item name");
+			assertEquals(name, EnglishText.of(strain.passiveEffectKey()), path + " effect shares the item name");
+			assertFalse(EnglishText.of(strain.binomialKey()).isBlank(), path + " binomial");
+			assertFalse(EnglishText.of("material.hemomancy." + path + ".desc").isBlank(), path + " atlas text");
+		}
+	}
 
 	@Test
-	void canonicalMorphlingsUseTheRenamedPassiveEffectPresentation() throws IOException {
-		String language = Files.readString(LANGUAGE);
-		String morphlingItem = Files.readString(MORPHLING_SOURCE.resolve("MorphlingItem.java"));
-		assertTrue(morphlingItem.contains("effectDurationTicks(interval), amplifier, false, false, true"),
-				"passive effects must hide particles while retaining their inventory icons");
-		for (Map.Entry<String, String> entry : PASSIVE_EFFECTS.entrySet()) {
-			String source = Files.readString(MORPHLING_SOURCE.resolve(entry.getKey()));
-			String effectId = entry.getValue();
-			assertTrue(source.contains("MorphlingItem.applyPassiveEffect(player, stack, EffectInit."
-					+ effectId), () -> entry.getKey() + " must use " + effectId);
-			assertFalse(Pattern.compile("new MobEffectInstance\\(EffectInit\\." + effectId
-					+ "\\s*,\\s*100\\b").matcher(source).find(),
-					() -> entry.getKey() + " still owns the passive effect duration directly");
-			assertTrue(language.contains("\"effect.hemomancy." + effectId + "\": \""
-					+ DISPLAY_NAMES.get(effectId) + "\""),
-					() -> "Missing renamed display name for " + effectId);
-			Path iconPath = EFFECT_ICONS.resolve(effectId + ".png");
-			assertTrue(Files.exists(iconPath),
-					() -> "Missing icon for " + effectId);
-			BufferedImage icon = ImageIO.read(iconPath.toFile());
-			assertEquals(16, icon.getWidth(), () -> effectId + " icon must be 16 pixels wide");
-			assertEquals(16, icon.getHeight(), () -> effectId + " icon must be 16 pixels high");
+	void incubationAsksForThePartnerFamilyCatalyst() {
+		for (MorphlingStrain strain : MorphlingStrains.ALL) {
+			String recipe = ResourceReader.text("data/hemomancy/recipe/incubator/" + strain.itemPath() + ".json");
+			assertTrue(recipe.contains("\"" + strain.polypFamily().hintItemId() + "\""),
+					strain.id() + " incubation must use its partner family's catalyst");
+			assertTrue(recipe.contains("\"hemomancy:" + strain.itemPath() + "\""), strain.id() + " result");
 		}
 	}
 
@@ -78,5 +55,12 @@ final class MorphlingPassiveEffectPresentationTest {
 				"a finite legacy passive must be replaced by the infinite passive");
 		assertTrue(MorphlingPassiveEffectRules.shouldRefresh(duration, 0, 1, 60),
 				"a maturity change must update the passive amplifier");
+	}
+
+	private static void assertSixteenSquare(String resource) throws IOException {
+		assertTrue(ResourceReader.exists(resource), "missing " + resource);
+		BufferedImage image = ImageIO.read(ResourceReader.path(resource).toFile());
+		assertEquals(16, image.getWidth(), resource + " width");
+		assertEquals(16, image.getHeight(), resource + " height");
 	}
 }

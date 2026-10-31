@@ -68,7 +68,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "25";
+    public static final String PROTOCOL_VERSION = "27";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -335,6 +335,9 @@ public class PacketHandler {
         net.playBidirectional(AntecedentEffectPacket.TYPE, AntecedentEffectPacket.STREAM_CODEC, AntecedentEffectPacket::handle);
         net.playToClient(PacketAntecedentResearch.TYPE, PacketAntecedentResearch.STREAM_CODEC, PacketAntecedentResearch::handle);
         net.playToClient(PacketSyncClinicalBlood.TYPE, PacketSyncClinicalBlood.STREAM_CODEC, PacketSyncClinicalBlood::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncCourtProgress.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncCourtProgress.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncCourtProgress::handle);
         net.playToClient(PacketSyncLiberKnowledge.TYPE, PacketSyncLiberKnowledge.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketSyncUnstainedProgress.TYPE, PacketSyncUnstainedProgress.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToServer(PacketToggleUnstainedBonus.TYPE, PacketToggleUnstainedBonus.STREAM_CODEC, PacketToggleUnstainedBonus::handle);

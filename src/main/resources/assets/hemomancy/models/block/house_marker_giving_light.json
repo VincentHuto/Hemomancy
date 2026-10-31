@@ -1,0 +1,503 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    128
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/house_marker",
+    "particle": "hemomancy:block/house_marker"
+  },
+  "elements": [
+    {
+      "name": "footing",
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        1.5,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            7.0,
+            1.25,
+            7.25
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            1.25,
+            7.0,
+            2.5,
+            7.25
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.5,
+            7.0,
+            3.75,
+            7.25
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.75,
+            7.0,
+            5.0,
+            7.25
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            4.0,
+            1.375,
+            5.25,
+            2.625
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            5.25,
+            1.375,
+            6.5,
+            2.625
+          ],
+          "texture": "#atlas",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "step",
+      "from": [
+        4,
+        1.5,
+        4
+      ],
+      "to": [
+        12,
+        2.5,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            7.75,
+            1.0,
+            7.875
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            1.0,
+            7.75,
+            2.0,
+            7.875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.0,
+            7.75,
+            3.0,
+            7.875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.0,
+            7.75,
+            4.0,
+            7.875
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.75,
+            2.75,
+            9.75,
+            3.75
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.75,
+            2.75,
+            10.75,
+            3.75
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "shaft",
+      "from": [
+        5,
+        2.5,
+        6
+      ],
+      "to": [
+        11,
+        13,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            0.0,
+            0.75,
+            1.375
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            0.75,
+            0.0,
+            1.5,
+            1.375
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            12.0,
+            0.0,
+            12.5,
+            1.375
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            12.5,
+            0.0,
+            13.0,
+            1.375
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            7.0,
+            5.875,
+            7.75,
+            6.375
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.75,
+            5.875,
+            8.5,
+            6.375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "plaque",
+      "from": [
+        4.5,
+        5,
+        5.5
+      ],
+      "to": [
+        11.5,
+        12,
+        6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9.0,
+            4.0,
+            9.875,
+            4.875
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            9.875,
+            4.0,
+            10.75,
+            4.875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            7.0,
+            5.0,
+            7.125,
+            5.875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            7.125,
+            5.0,
+            7.25,
+            5.875
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            0.0,
+            8.0,
+            0.875,
+            8.125
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            0.875,
+            8.0,
+            1.75,
+            8.125
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "collar",
+      "from": [
+        4.5,
+        12.5,
+        5.5
+      ],
+      "to": [
+        11.5,
+        13.5,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.75,
+            8.0,
+            2.625,
+            8.125
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.625,
+            8.0,
+            3.5,
+            8.125
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            8.25,
+            8.25,
+            8.875,
+            8.375
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            8.875,
+            8.25,
+            9.5,
+            8.375
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.0,
+            5.0,
+            9.875,
+            5.625
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.875,
+            5.0,
+            10.75,
+            5.625
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "cap",
+      "from": [
+        5,
+        13.5,
+        6.5
+      ],
+      "to": [
+        11,
+        14.5,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12.25,
+            8.125,
+            13.0,
+            8.25
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            13.0,
+            8.125,
+            13.75,
+            8.25
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.5,
+            8.375,
+            2.875,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            2.875,
+            8.375,
+            3.25,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            3.0,
+            6.5,
+            3.75,
+            6.875
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            3.75,
+            6.5,
+            4.5,
+            6.875
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "cap_knob",
+      "from": [
+        6.5,
+        14.5,
+        7
+      ],
+      "to": [
+        9.5,
+        15,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.25,
+            8.375,
+            3.625,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            3.625,
+            8.375,
+            4.0,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            14.5,
+            8.375,
+            14.75,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            14.75,
+            8.375,
+            15.0,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            10.0,
+            7.5,
+            10.375,
+            7.75
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            10.375,
+            7.5,
+            10.75,
+            7.75
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

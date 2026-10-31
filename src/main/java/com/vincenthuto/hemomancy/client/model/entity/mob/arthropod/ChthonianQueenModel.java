@@ -11,6 +11,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import com.vincenthuto.hemomancy.common.entity.mob.arthropod.AbstractChthonianEntity;
 import net.minecraft.world.entity.Entity;
 
 public class ChthonianQueenModel<T extends Entity> extends EntityModel<T> {
@@ -205,13 +206,13 @@ public class ChthonianQueenModel<T extends Entity> extends EntityModel<T> {
 				CubeListBuilder.create().texOffs(20, 21)
 						.addBox(-1.0F, -0.375F, -3.25F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(26, 30)
 						.addBox(-0.5F, -0.625F, -3.75F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(-1.5F, 20.625F, -5.75F));
+				PartPose.offset(-1.5F, 1.125F, -1.75F));
 
 		PartDefinition lMandible = skull.addOrReplaceChild("lMandible",
 				CubeListBuilder.create().texOffs(12, 21)
 						.addBox(0.0F, -0.45F, -2.75F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(6, 23)
 						.addBox(-0.5F, -0.7F, -3.25F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(1.5F, 20.7F, -6.25F));
+				PartPose.offset(1.5F, 1.2F, -2.25F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
@@ -259,10 +260,22 @@ public class ChthonianQueenModel<T extends Entity> extends EntityModel<T> {
 		whole.render(poseStack, buffer, packedLight, packedOverlay);
 	}
 
+	/** Head tracking kept this frame; the head locks straight while climbing a wall. */
+	private float headFollow = 1.0F;
+
+	@Override
+	public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
+		this.headFollow = entity instanceof AbstractChthonianEntity chthonian
+				? chthonian.climbPose().headFollow(partialTick)
+				: 1.0F;
+	}
+
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch) {
-		// Head tracking
+		// Head tracking, locked straight while climbing
+		netHeadYaw *= this.headFollow;
+		headPitch *= this.headFollow;
 		this.skull.yRot = netHeadYaw * ((float) Math.PI / 180F);
 		this.skull.xRot = headPitch * ((float) Math.PI / 180F);
 

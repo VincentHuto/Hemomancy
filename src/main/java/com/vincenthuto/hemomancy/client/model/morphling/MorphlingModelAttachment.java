@@ -189,6 +189,19 @@ public abstract class MorphlingModelAttachment {
     }
 
     /**
+     * State-aware replacement hook: parts hidden at this maturity while the worn strain shows these
+     * {@code MorphlingActiveState} bits (Hushbell's sealed bell takes the head).
+     */
+    public Set<AttachmentPoint> hiddenPlayerParts(int maturity, int activeFlags) {
+        return hiddenPlayerParts(maturity);
+    }
+
+    /** Whether the helmet still renders over a head this attachment replaces at this maturity. */
+    public boolean keepsHelmet(int maturity, int activeFlags) {
+        return false;
+    }
+
+    /**
      * Creates a simple single-model attachment anchored to one body part.
      * The model is supplied lazily so it is only baked on first render.
      *

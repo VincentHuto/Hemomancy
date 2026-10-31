@@ -460,7 +460,7 @@ public class HemoServerConfig {
 
 		BORROWED_BLOOD_ENABLED = builder
 				.comment("Whether the borrowed-blood reserve accepts deposits (Blood Lust overkill lifesteal; "
-						+ "future morphling feed-banking). Draining an existing reserve always works.")
+						+ "Mermaid's Purse feed banking). Draining an existing reserve always works.")
 				.define("borrowedBloodEnabled", true);
 
 		BORROWED_BLOOD_CAP = builder

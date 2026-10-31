@@ -336,27 +336,21 @@ Starting at Degree 3, you can create **Drudges**, mindless blood constructs that
 - Dies permanently if destroyed
 - Maximum number based on degree
 
-### Morphlings (Infected Creatures)
-**Morphlings** are creatures infected with the Erythrocytic Mycelium, transformed into something new.
+### Morphlings (Cultivated Strains)
+**Morphlings** are fungal strains worn on the body. You feed one blood; it reshapes you and lends you powers. Each strain resembles an animal without being one, and lives with a partner organism that decides what it does.
 
-**Creating Morphlings:**
-- Build a **Morphling Incubator**
-- Capture a creature (specific mob types allowed)
-- Supply blood and fungal materials over time
-- Wait for mutation to complete (days in-game)
-- Hatch a loyal morphling
+**Cultivating Morphlings:**
+- From Degree 2, capture a wild **Morphling Polyp** in a Specimen Jar and bring it to the Alchemist. Surrendering it gives a wild-bound Morphling, usable at Developing but capped until incubated.
+- Equip it from the **Morphling Jar** or the **Scarlet Vanity**. It draws about 10 mL of blood a minute and must absorb bonding blood before each incubation.
+- From Degree 5, feed it enzymes in the **Morphling Incubator**, one stage per feeding: Unfed, Fledgling, Developing, Mature, Apex.
+- After Apotheos (Degree 8), throw an Apex strain into **Morphic Nectar** to make it Primal.
 
-**Morphling Types:**
-- **Sanguine Thralls**: Basic combat morphlings
-- **Blood Hounds**: Tracking and hunting specialists
-- **Flesh Brutes**: Heavy combat tanks
-- More varieties based on source creature
+**The eight strains:** Sunburst (Lux), Holdfast (Ferric), Mermaid's Purse (Animus), Dead Man's Rope (Ductilis), Ink Cap (Tenebris), Hushbell (Congeatio), Marrowplume (Mortem) and Kinbud (Flammeus). Each has a passive, three reactive powers, a Primal power and a home condition where it is stronger. Ink Cap (Apex) and Hushbell (Primal) carry the two Morphling death-saves. See [[Advanced Mechanics]] and `docs/MORPHLING_STRAINS.md`.
 
 **Uses:**
-- Permanent companions distinct from the post-alpha Drudge system
-- Specialized roles
-- Can be ridden (some types)
-- Part of your bloodline
+- Worn powers distinct from puppets and the post-alpha Drudge system
+- A **Morphling Cradle** can host one outside the staff for you and your bloodline
+- The hereditary strains of the [[Brined Court]]'s houses
 
 ### Puppeteering
 Advanced Harbingers can call shaped bodies as temporary extensions of learned blood-memory. These are tethered summons, not possessed creatures or first-person avatars.

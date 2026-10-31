@@ -21,18 +21,18 @@ final class BestiaryTabStateOrderTest {
 				"hemomancy:verdigris_moth.title", "Verdigris Moth",
 				"hemomancy:barbed_urchin.title", "Barbed Urchin",
 				"hemomancy:chiton.title", "chiton",
-				"bat.title", "Witch's Ear Strain",
-				"mole.title", "Irontooth Strain");
+				"light_bacteria.title", "Dead Man's Rope Strain",
+				"coralline_alga.title", "Holdfast Strain");
 		List<BestiaryTabState.Entry> entries = new ArrayList<>(List.of(
-				entry(BestiaryTabState.Kind.MORPHLING, "bat", true),
+				entry(BestiaryTabState.Kind.MORPHLING, "light_bacteria", true),
 				entry(BestiaryTabState.Kind.SPECIMEN, "hemomancy:verdigris_moth", true),
 				entry(BestiaryTabState.Kind.SPECIMEN, "hemomancy:barbed_urchin", false),
-				entry(BestiaryTabState.Kind.MORPHLING, "mole", false),
+				entry(BestiaryTabState.Kind.MORPHLING, "coralline_alga", false),
 				entry(BestiaryTabState.Kind.SPECIMEN, "hemomancy:chiton", true)));
 
 		entries.sort(BestiaryTabState.displayOrder(titles::get));
 
-		assertEquals(List.of("hemomancy:barbed_urchin", "hemomancy:chiton", "hemomancy:verdigris_moth", "mole", "bat"),
+		assertEquals(List.of("hemomancy:barbed_urchin", "hemomancy:chiton", "hemomancy:verdigris_moth", "light_bacteria", "coralline_alga"),
 				entries.stream().map(BestiaryTabState.Entry::key).toList());
 	}
 

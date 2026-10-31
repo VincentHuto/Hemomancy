@@ -1,0 +1,1102 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/relay_marker",
+    "particle": "hemomancy:block/relay_marker"
+  },
+  "elements": [
+    {
+      "name": "footing",
+      "from": [
+        3.5,
+        0,
+        3.5
+      ],
+      "to": [
+        12.5,
+        2,
+        12.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13.75,
+            0.0,
+            14.875,
+            1.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            14.875,
+            0.0,
+            16.0,
+            1.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            9.5,
+            1.125,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            1.125,
+            9.5,
+            2.25,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            1.5,
+            0.0,
+            2.625,
+            4.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            2.625,
+            0.0,
+            3.75,
+            4.5
+          ],
+          "texture": "#atlas",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "step",
+      "from": [
+        5,
+        2,
+        5
+      ],
+      "to": [
+        11,
+        3,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.25,
+            9.5,
+            6.0,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            6.0,
+            9.5,
+            6.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            6.75,
+            9.5,
+            7.5,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            7.5,
+            9.5,
+            8.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            5.25,
+            0.0,
+            6.0,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            6.0,
+            0.0,
+            6.75,
+            3.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "shaft",
+      "from": [
+        6.5,
+        3,
+        6.5
+      ],
+      "to": [
+        9.5,
+        22,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            0.0,
+            0.375,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            0.375,
+            0.0,
+            0.75,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.75,
+            0.0,
+            1.125,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            1.125,
+            0.0,
+            1.5,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            12.75,
+            0.0,
+            13.125,
+            1.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            13.125,
+            0.0,
+            13.5,
+            1.5
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "knuckle_a",
+      "from": [
+        6,
+        8,
+        6
+      ],
+      "to": [
+        10,
+        9,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.25,
+            9.5,
+            8.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            8.75,
+            9.5,
+            9.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            9.25,
+            9.5,
+            9.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            9.75,
+            9.5,
+            10.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            6.75,
+            0.0,
+            7.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.25,
+            0.0,
+            7.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "knuckle_b",
+      "from": [
+        6,
+        16,
+        6
+      ],
+      "to": [
+        10,
+        17,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10.25,
+            9.5,
+            10.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            10.75,
+            9.5,
+            11.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            11.25,
+            9.5,
+            11.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            11.75,
+            9.5,
+            12.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            7.75,
+            0.0,
+            8.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            8.25,
+            0.0,
+            8.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "cradle_floor",
+      "from": [
+        9.5,
+        12,
+        6.5
+      ],
+      "to": [
+        13,
+        12.5,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12.25,
+            9.5,
+            12.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            12.75,
+            9.5,
+            13.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.5,
+            10.5,
+            3.875,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.875,
+            10.5,
+            4.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            11.75,
+            0.0,
+            12.25,
+            1.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            12.25,
+            0.0,
+            12.75,
+            1.5
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "cradle_lip",
+      "from": [
+        12.5,
+        12.5,
+        6.5
+      ],
+      "to": [
+        13,
+        14,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4.5,
+            9.5,
+            4.625,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.625,
+            9.5,
+            4.75,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.25,
+            9.5,
+            2.625,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            2.625,
+            9.5,
+            3.0,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            13.5,
+            0.0,
+            13.625,
+            1.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            13.625,
+            0.0,
+            13.75,
+            1.5
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "cradle_strut",
+      "from": [
+        10,
+        10,
+        7.5
+      ],
+      "to": [
+        11,
+        12,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4.75,
+            9.5,
+            4.875,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.875,
+            9.5,
+            5.0,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            5.0,
+            9.5,
+            5.125,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            5.125,
+            9.5,
+            5.25,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            4.25,
+            10.5,
+            4.375,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            4.375,
+            10.5,
+            4.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "finial",
+      "from": [
+        7,
+        22,
+        7
+      ],
+      "to": [
+        9,
+        24,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.0,
+            9.5,
+            3.25,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            3.25,
+            9.5,
+            3.5,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.5,
+            9.5,
+            3.75,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.75,
+            9.5,
+            4.0,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            4.0,
+            9.5,
+            4.25,
+            10.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            4.25,
+            9.5,
+            4.5,
+            10.5
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "winding_0",
+      "from": [
+        6.25,
+        5,
+        6.25
+      ],
+      "to": [
+        9.75,
+        6,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13.25,
+            9.5,
+            13.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            13.75,
+            9.5,
+            14.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            14.25,
+            9.5,
+            14.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            14.75,
+            9.5,
+            15.25,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.75,
+            0.0,
+            9.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.25,
+            0.0,
+            9.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "winding_1",
+      "from": [
+        6.25,
+        11,
+        6.25
+      ],
+      "to": [
+        9.75,
+        12,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            15.25,
+            9.5,
+            15.75,
+            10.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            0.0,
+            10.5,
+            0.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.5,
+            10.5,
+            1.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            1.0,
+            10.5,
+            1.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.75,
+            0.0,
+            10.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            10.25,
+            0.0,
+            10.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "winding_2",
+      "from": [
+        6.25,
+        19,
+        6.25
+      ],
+      "to": [
+        9.75,
+        20,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.5,
+            10.5,
+            2.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.0,
+            10.5,
+            2.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.5,
+            10.5,
+            3.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.0,
+            10.5,
+            3.5,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            10.75,
+            0.0,
+            11.25,
+            2.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            11.25,
+            0.0,
+            11.75,
+            2.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "trail_0",
+      "from": [
+        8.5,
+        13,
+        9.5
+      ],
+      "to": [
+        9,
+        21,
+        10
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "x",
+        "origin": [
+          8.75,
+          21,
+          9.5
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            4.25,
+            0.0,
+            4.375,
+            4.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.375,
+            0.0,
+            4.5,
+            4.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.5,
+            0.0,
+            4.625,
+            4.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            4.625,
+            0.0,
+            4.75,
+            4.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            4.5,
+            10.5,
+            4.625,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            4.625,
+            10.5,
+            4.75,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "trail_1",
+      "from": [
+        6,
+        12,
+        6.53
+      ],
+      "to": [
+        6.5,
+        21,
+        7
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "z",
+        "origin": [
+          6.5,
+          21,
+          6.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            3.75,
+            0.0,
+            3.875,
+            4.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            3.875,
+            0.0,
+            4.0,
+            4.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.0,
+            0.0,
+            4.125,
+            4.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            4.125,
+            0.0,
+            4.25,
+            4.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            4.75,
+            10.5,
+            4.875,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            4.875,
+            10.5,
+            5.0,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "trail_2",
+      "from": [
+        9.5,
+        15,
+        6.03
+      ],
+      "to": [
+        10,
+        22,
+        6.5
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [
+          9.5,
+          22,
+          6.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            4.75,
+            0.0,
+            4.875,
+            3.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.875,
+            0.0,
+            5.0,
+            3.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            5.0,
+            0.0,
+            5.125,
+            3.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            5.125,
+            0.0,
+            5.25,
+            3.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            5.0,
+            10.5,
+            5.125,
+            11.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            5.125,
+            10.5,
+            5.25,
+            11.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    }
+  ]
+}

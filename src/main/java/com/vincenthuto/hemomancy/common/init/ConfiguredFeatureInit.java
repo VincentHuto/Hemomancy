@@ -80,6 +80,7 @@ public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> ERYTHROCORAL_REEF = createKey("erythrocoral_reef");
     public static final ResourceKey<ConfiguredFeature<?, ?>> PELAGIC_SEABED = createKey("pelagic_seabed");
     public static final ResourceKey<ConfiguredFeature<?, ?>> PELAGIC_HABITAT = createKey("pelagic_habitat");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> COURT_SIGNS = createKey("court_signs");
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> TOOTH_GEODE = createKey("tooth_geode");
 
@@ -262,6 +263,7 @@ public class ConfiguredFeatureInit {
 		register(context, ERYTHROCORAL_REEF, BaseFeatureInit.ERYTHROCORAL_REEF, NoneFeatureConfiguration.INSTANCE);
         register(context, PELAGIC_SEABED, BaseFeatureInit.PELAGIC_SEABED, NoneFeatureConfiguration.INSTANCE);
         register(context, PELAGIC_HABITAT, BaseFeatureInit.PELAGIC_HABITAT, NoneFeatureConfiguration.INSTANCE);
+        register(context, COURT_SIGNS, BaseFeatureInit.COURT_SIGNS, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, TOOTH_GEODE, BaseFeatureInit.TOOTH_GEODE, NoneFeatureConfiguration.INSTANCE);
 

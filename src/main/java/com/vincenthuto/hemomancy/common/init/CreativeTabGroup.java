@@ -3,8 +3,10 @@ package com.vincenthuto.hemomancy.common.init;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -66,10 +68,9 @@ public enum CreativeTabGroup {
 			"tincture_second_pulse_jug", "tincture_enduring_viscera_jug", "tincture_carrion_metabolism_jug",
 			"sanguine_salve", "morphic_tonic", "foul_paste", "ferric_binder", "crimson_lacquer", "sclerotic_oleum",
 			"aculeate_vitriol", "chromatic_sublimate")),
-	MORPHLINGS(List.of(
-			"morphling_jar", "morphling_polyp", "morphling_deadmans_purse", "morphling_gravecap",
-			"morphling_witchs_ear", "morphling_lumenlace", "morphling_bootlace", "morphling_irontooth",
-			"morphling_emberfang", "morphling_winter_shroud")),
+	/** The jar and polyp, then the house strains in {@link MorphlingStrains} order. */
+	MORPHLINGS(Stream.concat(Stream.of("morphling_jar", "morphling_polyp"),
+			MorphlingStrains.itemPaths().stream()).toList()),
 	ARSENAL(List.of(
 			"living_staff", "worn_vow_fitting", "barbed_fitting", "chitinite_fitting", "prismatic_fitting",
 			"crimson_vestment_fitting", "monolithic_frame_fitting", "assumed_limb_fitting", "living_weapon_graft",

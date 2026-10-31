@@ -59,24 +59,25 @@ public class PulsePylonBlock extends StackedSetPieceBlock implements EntityBlock
 	public static final IntegerProperty CHARGE = IntegerProperty.create("charge", 0, 3);
 	public static final int MAX_CHARGE = 3;
 	private static final Map<Direction, VoxelShape> LOWER = ModelShapes.horizontal(
-			ModelShapes.of(new double[] {0.5, 0, 0.5, 15.5, 3, 15.5}, new double[] {1.75, 3, 1.75, 14.25, 5.5, 14.25},
-					new double[] {2.75, 5.5, 1.25, 13.25, 8, 13.25}, new double[] {3, 8, 3, 13, 16, 13}));
+			ModelShapes.of(new double[] {1, 0, 1, 15, 3, 15}, new double[] {2.5, 3, 2.5, 13.5, 6, 13.5},
+					new double[] {2.25, 6, 2.25, 13.75, 7, 13.75}, new double[] {4, 7, 3.75, 12, 16, 12}));
 	private static final Map<Direction, VoxelShape> MIDDLE = ModelShapes.horizontal(
-			ModelShapes.of(new double[] {2.75, 0, 2.75, 13.25, 1.75, 13.25}, new double[] {3.5, 1.75, 3, 12.5, 10, 12.5},
-					new double[] {3.25, 10, 3.25, 12.75, 11.75, 12.75}, new double[] {4, 11.75, 4, 12, 16, 12}));
+			ModelShapes.of(new double[] {4, 0, 3.75, 12, 8, 12}, new double[] {3.5, 8, 3.5, 12.5, 9.5, 12.5},
+					new double[] {4.5, 9.5, 4.25, 11.5, 16, 11.5}));
 	private static final Map<Direction, VoxelShape> UPPER = ModelShapes.horizontal(
-			ModelShapes.of(new double[] {4, 0, 4, 12, 13, 12}, new double[] {4, 7, 3.25, 12, 11.75, 4},
-					new double[] {0.5, 5.25, 0.5, 15.5, 6.75, 15.5}, new double[] {5, 13, 5, 11, 16, 11}));
+			ModelShapes.of(new double[] {4, 0, 4, 12, 13, 12}, new double[] {5.5, 7.5, 3.25, 10.5, 12, 4},
+					new double[] {0.5, 5.25, 0.5, 15.5, 6.75, 15.5}, new double[] {5, 13, 5, 11, 14.5, 11},
+					new double[] {6.5, 14.5, 6.5, 9.5, 16, 9.5}));
 	private static final Map<Direction, VoxelShape> ANCHOR_LOWER = ModelShapes.horizontal(
 			ModelShapes.of(new double[] {1, 0, 1, 15, 2.5, 15}, new double[] {3.5, 2.5, 3.5, 12.5, 4.5, 12.5},
 					new double[] {4.25, 4.5, 4.25, 11.75, 8.75, 11.75}, new double[] {4.75, 8.75, 4.75, 11.25, 16, 11.25}));
 	private static final Map<Direction, VoxelShape> ANCHOR_MIDDLE = ModelShapes.horizontal(
 			ModelShapes.of(new double[] {4.75, 0, 4.75, 11.25, 16, 11.25}));
 	private static final Map<Direction, VoxelShape> ANCHOR_UPPER = ModelShapes.horizontal(
-			ModelShapes.of(new double[] {4.75, 0, 4.75, 11.25, 7, 11.25}, new double[] {4.25, 7, 4.25, 11.75, 15, 11.75},
+			ModelShapes.of(new double[] {4.75, 0, 4.75, 11.25, 7, 11.25}, new double[] {4.25, 7, 4.25, 11.75, 13.5, 11.75},
 					new double[] {5.25, 8.25, 3.25, 10.75, 13.5, 4.25}, new double[] {1, 9.25, 6.75, 15, 11.75, 9.25},
 					new double[] {6.75, 9.25, 11.75, 9.25, 11.75, 15}, new double[] {0.5, 5.25, 0.5, 15.5, 6.75, 15.5},
-					new double[] {6.75, 15, 6.75, 9.25, 16, 9.25}));
+					new double[] {5, 13.5, 5, 11, 14.5, 11}, new double[] {6.75, 14.5, 6.75, 9.25, 16, 9.25}));
 	private static final Map<Direction, VoxelShape> PYRE_LOWER = ModelShapes.horizontal(
 			ModelShapes.of(new double[] {0.5, 0, 0.5, 15.5, 2.5, 15.5}, new double[] {1.75, 2.5, 1.75, 14.25, 5.5, 14.25},
 					new double[] {2.75, 5.5, 2.75, 13.25, 8, 13.25}, new double[] {3.5, 8, 3.5, 12.5, 16, 12.5}));
@@ -86,13 +87,13 @@ public class PulsePylonBlock extends StackedSetPieceBlock implements EntityBlock
 			ModelShapes.of(new double[] {4.5, 0, 4.5, 11.5, 2, 11.5}, new double[] {5.75, 0, 2.25, 10.25, 1.75, 4.5},
 					new double[] {3.75, 2, 3.75, 12.25, 3.25, 12.25}, new double[] {2.5, 3.25, 2.5, 13.5, 11.5, 13.5}));
 	private static final Map<Direction, VoxelShape> FROST_LOWER = ModelShapes.horizontal(
-			ModelShapes.of(new double[] {1, 0, 1, 15, 3, 15}, new double[] {1.75, 3, 1.75, 14.25, 6, 14.25},
-					new double[] {2.75, 6, 2.75, 13.25, 8.5, 13.25}, new double[] {3.5, 8.5, 3.5, 12.5, 16, 12.5}));
+			ModelShapes.of(new double[] {1, 0, 1, 15, 3, 15}, new double[] {2.5, 3, 2.5, 13.5, 6, 13.5},
+					new double[] {2.25, 6, 2.25, 13.75, 7, 13.75}, new double[] {4, 7, 4, 12, 16, 12}));
 	private static final Map<Direction, VoxelShape> FROST_MIDDLE = ModelShapes.horizontal(
-			ModelShapes.of(new double[] {3.5, 0, 3.5, 12.5, 16, 12.5}));
+			ModelShapes.of(new double[] {4, 0, 4, 12, 16, 12}, new double[] {3.5, 8, 3.5, 12.5, 9.5, 12.5}));
 	private static final Map<Direction, VoxelShape> FROST_UPPER = ModelShapes.horizontal(
 			ModelShapes.of(new double[] {4, 0, 4, 12, 13, 12}, new double[] {0.5, 5.25, 0.5, 15.5, 6.75, 15.5},
-					new double[] {5, 13, 5, 11, 16, 11}));
+					new double[] {5, 13, 5, 11, 14.5, 11}, new double[] {6.5, 14.5, 6.5, 9.5, 16, 9.5}));
 
 	public PulsePylonBlock(Properties properties) {
 		super(properties);
@@ -113,6 +114,11 @@ public class PulsePylonBlock extends StackedSetPieceBlock implements EntityBlock
 	@Override
 	protected int storeys() {
 		return 3;
+	}
+
+	@Override
+	protected BlockState withStorey(BlockState state, int storey) {
+		return state.setValue(PART, Part.values()[storey]);
 	}
 
 	@Override

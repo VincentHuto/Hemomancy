@@ -38,7 +38,7 @@ Visible status effects identify the state; the entity attachment owns level, met
 
 Hematic Riposte cancels a parried hit at NORMAL priority, after school preparation only records pending state and before Sanguine Ward or Iron Hearts can absorb it. The cancelled hit therefore builds, spends and absorbs nothing; the parry itself deals no damage, so it never starts a reaction chain.
 
-Blood-volume drain/transfer, vascular damage, Blood Loss, Grave Debt, Insatiable Hunger, and Hemolysis purification remain separate. Healing suppression uses the strongest applicable reduction instead of multiplying penalties. Cauterizing Rebuke, Lumen Suture, and Winter Shroud cures remove their relevant replacement states; Night Vision, mining Haste, and authored defensive trade-offs remain.
+Blood-volume drain/transfer, vascular damage, Blood Loss, Grave Debt, Insatiable Hunger, and Hemolysis purification remain separate. Healing suppression uses the strongest applicable reduction instead of multiplying penalties. Cauterizing Rebuke and Lumen Suture cures remove their relevant replacement states; Night Vision, mining Haste, and authored defensive trade-offs remain.
 
 ## Sanguine Marionette
 
@@ -219,20 +219,20 @@ Vesper actions use their existing `VesperWeaponAction.tendency()`, captured at a
 
 The null-assigned sickle actions and Sanguine Crescents remain untyped. Other boss/fauna/armor attacks without an authored school assignment were not classified from colors, themes, or enzyme drops.
 
-The eight registered Morphlings use these item assignments:
+The eight registered Morphlings (the Brined Court house strains) take their school from their own authored tendencies, never from the staff or the held weapon (`MorphlingCombat`). Their hits and reactions carry the preferred tendency's school; `MorphlingCombat.afflict` applies that school's state, though none of the eight strains calls it yet:
 
-| Morphling | Primary / secondary | School payload |
+| Morphling | Primary / secondary | Preferred school's state |
 | --- | --- | --- |
-| Deadman's Purse | Animus / Congeatio | Pressure on authored direct damage; blood storage/transfer remains separate |
-| Gravecap | Mortem / Animus | Necrosis replaces offensive poison/wither bundles |
-| Witch's Ear | Ductilis / Tenebris | Disruption replaces incidental slowing |
-| Lumenlace | Lux / Ductilis | Illumination replaces offensive blindness/weakness |
-| Bootlace | Tenebris / Lux | Obscured replaces offensive darkness packages |
-| Irontooth | Ferric / Mortem | Lodestone replaces incidental offensive impairment |
-| Emberfang | Flammeus / Ductilis | Searing replaces its unrelated poison/slow/darkness package |
-| Winter Shroud | Congeatio / Ferric | Rime replaces offensive slowing/freezing packages; defensive cold resilience remains |
+| Sunburst | Lux / Ferric | Illumination |
+| Holdfast | Ferric / Animus | Lodestone |
+| Mermaid's Purse | Animus / Ductilis | Pressure; blood banking and School's Share stay separate |
+| Dead Man's Rope | Ductilis / Tenebris | Disruption; strands and shared damage stay separate |
+| Ink Cap | Tenebris / Ductilis | Obscured |
+| Hushbell | Congeatio / Tenebris | Rime; its defensive powers stay separate |
+| Marrowplume | Mortem / Congeatio | Necrosis |
+| Kinbud | Flammeus / Mortem | Searing; Nematocyst Sting applies Stung, its own effect and damage type, not a school state |
 
-Active Morphling damage is direct. On-hit/on-hurt secondary damage uses the triggering root and is reaction damage only; periodic/reaction kills retain non-offensive rewards without creating another offensive chain. Winter Shroud, Lumenlace and Irontooth keep their defensive responses to periodic damage; those responses cannot launch another offensive reaction. The legacy Tick, Pests, Urchin and Chitinite classes also use the replacement paths where applicable, but they are not registered current specimens.
+Active Morphling damage is direct. On-hit/on-hurt secondary damage uses the triggering root and is reaction damage only; periodic/reaction kills retain non-offensive rewards without creating another offensive chain. Defensive responses (Brace, Breakwater, Fold Shut, Cryptobiotic Hide) cannot launch another offensive reaction.
 
 ## Presentation and verification
 

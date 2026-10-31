@@ -1,0 +1,707 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/sunburst_bloom",
+    "particle": "hemomancy:block/sunburst_bloom"
+  },
+  "elements": [
+    {
+      "name": "base_x",
+      "from": [
+        2,
+        0.03,
+        4.16
+      ],
+      "to": [
+        14,
+        0.97,
+        11.84
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            8.0,
+            1.5,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            1.5,
+            8.0,
+            3.0,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            14.5,
+            8.0,
+            15.5,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            0.0,
+            8.5,
+            1.0,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.5,
+            0.0,
+            10.0,
+            4.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            10.0,
+            0.0,
+            11.5,
+            4.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "base_z",
+      "from": [
+        4.16,
+        0,
+        2
+      ],
+      "to": [
+        11.84,
+        1,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.0,
+            8.5,
+            2.0,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.0,
+            8.5,
+            3.0,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.0,
+            8.0,
+            4.5,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            4.5,
+            8.0,
+            6.0,
+            8.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            2.0,
+            0.0,
+            3.0,
+            6.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            3.0,
+            0.0,
+            4.0,
+            6.0
+          ],
+          "texture": "#atlas",
+          "cullface": "down"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "base_core",
+      "from": [
+        6.5,
+        0.5,
+        6.5
+      ],
+      "to": [
+        9.5,
+        1.25,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.75,
+            9.0,
+            4.125,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.125,
+            9.0,
+            4.5,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.5,
+            9.0,
+            4.875,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            4.875,
+            9.0,
+            5.25,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            3.25,
+            6.0,
+            3.625,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            3.625,
+            6.0,
+            4.0,
+            7.5
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "stalk",
+      "from": [
+        7.25,
+        1,
+        7.25
+      ],
+      "to": [
+        8.75,
+        4,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4.0,
+            6.0,
+            4.25,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.25,
+            6.0,
+            4.5,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.5,
+            6.0,
+            4.75,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            4.75,
+            6.0,
+            5.0,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.0,
+            6.0,
+            8.25,
+            7.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            8.25,
+            6.0,
+            8.5,
+            7.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "petal_x",
+      "from": [
+        5,
+        4.03,
+        7
+      ],
+      "to": [
+        11,
+        4.97,
+        9
+      ],
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          8,
+          4.5,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            9.0,
+            8.5,
+            9.75,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            9.75,
+            8.5,
+            10.5,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            5.25,
+            9.0,
+            5.5,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            5.5,
+            9.0,
+            5.75,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            6.5,
+            6.0,
+            7.25,
+            7.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.25,
+            6.0,
+            8.0,
+            7.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "petal_z",
+      "from": [
+        7,
+        4,
+        5
+      ],
+      "to": [
+        9,
+        5,
+        11
+      ],
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          8,
+          4.5,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            5.75,
+            9.0,
+            6.0,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            6.0,
+            9.0,
+            6.25,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            10.5,
+            8.5,
+            11.25,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            11.25,
+            8.5,
+            12.0,
+            9.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            14.75,
+            0.0,
+            15.0,
+            3.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            15.0,
+            0.0,
+            15.25,
+            3.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "heart",
+      "from": [
+        7,
+        4.5,
+        7
+      ],
+      "to": [
+        9,
+        6.5,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.5,
+            6.0,
+            8.75,
+            7.0
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            8.75,
+            6.0,
+            9.0,
+            7.0
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            9.0,
+            6.0,
+            9.25,
+            7.0
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            9.25,
+            6.0,
+            9.5,
+            7.0
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.5,
+            6.0,
+            9.75,
+            7.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.75,
+            6.0,
+            10.0,
+            7.0
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "cup_n",
+      "from": [
+        7,
+        4.5,
+        5.5
+      ],
+      "to": [
+        9,
+        7,
+        6.25
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "x",
+        "origin": [
+          8,
+          4.5,
+          6
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            5.0,
+            6.0,
+            5.25,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.25,
+            6.0,
+            5.5,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            6.0,
+            6.0,
+            6.125,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.125,
+            6.0,
+            6.25,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            6.25,
+            9.0,
+            6.5,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            6.5,
+            9.0,
+            6.75,
+            9.5
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "cup_s",
+      "from": [
+        7,
+        4.5,
+        9.75
+      ],
+      "to": [
+        9,
+        7,
+        10.5
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "x",
+        "origin": [
+          8,
+          4.5,
+          10
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            5.5,
+            6.0,
+            5.75,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.75,
+            6.0,
+            6.0,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            6.25,
+            6.0,
+            6.375,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.375,
+            6.0,
+            6.5,
+            7.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            6.75,
+            9.0,
+            7.0,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.0,
+            9.0,
+            7.25,
+            9.5
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      }
+    }
+  ]
+}

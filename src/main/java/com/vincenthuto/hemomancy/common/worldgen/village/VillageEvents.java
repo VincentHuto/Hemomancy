@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.worldgen.village;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import com.vincenthuto.hemomancy.common.init.VillagerInit;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.Registry;
@@ -44,7 +45,7 @@ public class VillageEvents {
 		Int2ObjectMap<List<VillagerTrades.ItemListing>> trademap = event.getTrades();
 
 		trademap.get(1).addAll(Arrays.asList(sellItem(BlockInit.befouling_ash_trail.get(), 1, 1, 10, 4)));
-		trademap.get(1).addAll(Arrays.asList(sellItem(ItemInit.morphling_gravecap.get(), 1, 1, 10, 4)));
+		trademap.get(1).addAll(Arrays.asList(sellItem(MorphlingStrains.MARROWPLUME.item().get(), 1, 1, 10, 4)));
 		trademap.get(1).addAll(Arrays.asList(sellItem(ItemInit.recycled_enzyme.get(), 1, 1, 10, 4)));
 		trademap.get(1).addAll(Arrays.asList(sellItem(ItemInit.bloody_flask.get(), 1, 1, 10, 4)));
 

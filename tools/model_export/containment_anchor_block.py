@@ -25,7 +25,7 @@ import math
 
 from clairaudiograph import clamp, noise
 from fixture_atlas import (ASSETS, PALETTE, box, build, item_elements, model_json, preview, preview_pair, separate,
-                           spin, split_storeys, write)
+                           spin, split_storeys, write, write_tall_item)
 
 NAME = 'containment_anchor_block'
 ATLAS = NAME
@@ -514,6 +514,7 @@ def main():
     parser.add_argument('--preview', action='store_true')
     args = parser.parse_args()
     whole, _ = export(anchor(), ATLAS, '', NAME)
+    write_tall_item(NAME, whole)
     broken_whole, models = export(snapped_anchor(), f'{ATLAS}_snapped', '_snapped', f'{NAME}_snapped')
     head = [{'from': e['lo'], 'to': e['hi'], 'rotation': e['rotation']} for e in slump(fallen_head())[:3]]
     print(f'  slumped head core (shaft top, capital, crown) bounds {bounds(head)}')

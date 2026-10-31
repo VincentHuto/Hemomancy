@@ -22,6 +22,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /** A post-initiation lodestone that responds when aimed toward a Harbinger Outpost. */
@@ -66,8 +67,14 @@ public class CovenantWaybillItem extends Item {
 		}
 	}
 
-	private void attune(ItemStack stack, ServerLevel level, Player player, boolean showFeedback) {
-		BlockPos target = findTarget(level, player);
+	/** Finds the target and records it on the stack. A subclass whose search is slow records it later instead. */
+	protected void attune(ItemStack stack, ServerLevel level, Player player, boolean showFeedback) {
+		record(stack, level, player, findTarget(level, player), showFeedback);
+	}
+
+	/** Writes {@code target} (or its absence) for {@code level}'s dimension and tells the player when asked. */
+	protected final void record(ItemStack stack, ServerLevel level, Player player, @Nullable BlockPos target,
+			boolean showFeedback) {
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putString(CHECKED_DIMENSION, level.dimension().location().toString());
 		if (target == null) {
@@ -103,7 +110,7 @@ public class CovenantWaybillItem extends Item {
 		return new BlockPos(tag.getInt(TARGET_X), 0, tag.getInt(TARGET_Z));
 	}
 
-	private static boolean wasCheckedInCurrentDimension(ItemStack stack, Level level) {
+	protected static boolean wasCheckedInCurrentDimension(ItemStack stack, Level level) {
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		return level.dimension().location().toString().equals(tag.getString(CHECKED_DIMENSION));
 	}

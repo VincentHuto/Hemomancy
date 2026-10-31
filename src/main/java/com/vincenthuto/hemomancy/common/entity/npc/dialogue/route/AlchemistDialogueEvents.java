@@ -25,7 +25,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 
 /**
  * The Alchemist's dialogue events: the red taxonomy and bestiary, her commissions and lessons, First Separation,
- * the Body Answers brief and the armour research she pays for the Artificer.
+ * the Body Answers brief, the armour research she pays for the Artificer, and her Brined Court lead.
  */
 final class AlchemistDialogueEvents {
 	private AlchemistDialogueEvents() {
@@ -54,6 +54,12 @@ final class AlchemistDialogueEvents {
 			return true;
 		}
 		switch (event.getEventId()) {
+		case CourtDiscoveryDialogue.ALCHEMIST_LEAD -> event.setRewardDelivered(
+				player.level().getEntity(event.getEntityId()) instanceof HarbingerAlchemistEntity
+						&& com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtDiscoveryProgress.recordAlchemist(player));
+		case CourtDiscoveryDialogue.ALCHEMIST_LETTER -> event.setRewardDelivered(
+				player.level().getEntity(event.getEntityId()) instanceof HarbingerAlchemistEntity
+						&& com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtDiscoveryProgress.recordLetter(player));
 		case VagrantMindInquiryDialogue.BIOLOGY_REPORT -> event.setRewardDelivered(
 				com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.reportBiology(
 						player, player.level().getEntity(event.getEntityId())));

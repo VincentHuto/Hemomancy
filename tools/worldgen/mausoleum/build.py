@@ -99,9 +99,10 @@ def write_saint(saint):
     pool(saint, 'niche_end', [element(saint, 'niche_wall')])
     write_json(os.path.join(ROOT, 'worldgen', 'structure', 'mausoleum_%s.json' % saint), {
         'type': 'hemomancy:mausoleum', 'start_pool': pool_name(saint, 'top'), 'size': SIZE,
-        # Row 0 of the entrance (its floor) replaces the ground's top block: JigsawPlacement puts a rigid start's row 0
-        # at start_height + first free block - 1. MausoleumStructure then lifts the complex onto the highest ground
-        # under the entrance. Pinned by MausoleumComplexResourceTest.theEntranceFloorIsLevelWithTheGround.
+        # Row 0 of the entrance (its footing) replaces the ground's top block: JigsawPlacement puts a rigid start's row
+        # 0 at start_height + first free block - 1, and beard_thin levels the land around to it, so the step and floor
+        # stand on the ground one row up. MausoleumStructure then lifts the complex onto the highest ground under the
+        # entrance. Pinned by MausoleumComplexResourceTest.theEntranceStandsOnTheGround.
         'start_height': {'type': 'minecraft:constant', 'value': {'absolute': 0}},
         'project_start_to_heightmap': 'WORLD_SURFACE_WG', 'terrain_adaptation': 'beard_thin',
         # 116 plus beard_thin's 12-block padding is vanilla's 128 ceiling; the complex folds back under itself instead.

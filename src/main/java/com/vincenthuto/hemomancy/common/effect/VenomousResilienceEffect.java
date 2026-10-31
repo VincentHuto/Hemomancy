@@ -7,8 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that grants the player poison immunity and a small
- * movement speed bonus, embodying Winter Shroud's sealed survival state.
- * Applied by the Winter Shroud Morphling while it is attached to the player.
+ * movement speed bonus. Used by its standalone potion.
  * The speed bonus is applied via attribute modifier in EffectInit.
  * Poison immunity is handled by removing the Poison effect each tick.
  */

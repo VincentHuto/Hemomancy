@@ -21,18 +21,15 @@ public class MorphlingPolypLayerModel extends EntityModel<MorphlingPolypEntity> 
 	private final Map<MorphlingPolypLayer, ModelPart> parts = new EnumMap<>(MorphlingPolypLayer.class);
 
 	public MorphlingPolypLayerModel(ModelPart root) {
-		this.parts.put(MorphlingPolypLayer.FUNGAL, root.getChild("fungal"));
-		this.parts.put(MorphlingPolypLayer.LEECHES, root.getChild("leeches"));
-		this.parts.put(MorphlingPolypLayer.CHITINITE, root.getChild("chitinite"));
-		this.parts.put(MorphlingPolypLayer.SERPENT, root.getChild("serpent"));
-		this.parts.put(MorphlingPolypLayer.PESTS, root.getChild("pests"));
-		this.parts.put(MorphlingPolypLayer.SPIDER, root.getChild("spider"));
-		this.parts.put(MorphlingPolypLayer.BAT, root.getChild("bat"));
-		this.parts.put(MorphlingPolypLayer.CUTTLEFISH, root.getChild("cuttlefish"));
-		this.parts.put(MorphlingPolypLayer.TICK, root.getChild("tick"));
-		this.parts.put(MorphlingPolypLayer.URCHIN, root.getChild("urchin"));
-		this.parts.put(MorphlingPolypLayer.CENTIPEDE, root.getChild("centipede"));
-		this.parts.put(MorphlingPolypLayer.MOLE, root.getChild("mole"));
+		// Placeholder: each partner family borrows a first-attempt appendage until Track 3 redraws them.
+		this.parts.put(MorphlingPolypLayer.SUN_ALGA, root.getChild("cuttlefish"));
+		this.parts.put(MorphlingPolypLayer.CORALLINE_ALGA, root.getChild("chitinite"));
+		this.parts.put(MorphlingPolypLayer.GUT_BACTERIA, root.getChild("leeches"));
+		this.parts.put(MorphlingPolypLayer.LIGHT_BACTERIA, root.getChild("bat"));
+		this.parts.put(MorphlingPolypLayer.BLACK_YEAST, root.getChild("fungal"));
+		this.parts.put(MorphlingPolypLayer.COLD_BACTERIA, root.getChild("urchin"));
+		this.parts.put(MorphlingPolypLayer.BONE_BACTERIA, root.getChild("pests"));
+		this.parts.put(MorphlingPolypLayer.VENT_BACTERIA, root.getChild("serpent"));
 	}
 
 	public static LayerDefinition createBodyLayer() {

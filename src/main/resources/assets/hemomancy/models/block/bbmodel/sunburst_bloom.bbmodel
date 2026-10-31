@@ -1,0 +1,357 @@
+{
+  "meta": {
+    "format_version": "4.10",
+    "model_format": "java_block",
+    "box_uv": false
+  },
+  "name": "sunburst_bloom",
+  "ambientocclusion": false,
+  "resolution": {
+    "width": 16,
+    "height": 16
+  },
+  "elements": [
+    {
+      "name": "pad_x",
+      "from": [
+        2,
+        0.03,
+        4.16
+      ],
+      "to": [
+        14,
+        0.97,
+        11.84
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            80.0,
+            12.0,
+            92.0,
+            13.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            92.0,
+            12.0,
+            104.0,
+            13.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            84.0,
+            16.0,
+            92.0,
+            17.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            92.0,
+            16.0,
+            100.0,
+            17.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            44.0,
+            0.0,
+            56.0,
+            8.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            56.0,
+            0.0,
+            68.0,
+            8.0
+          ],
+          "texture": 0
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      },
+      "uuid": "4b579e29-ce8b-5650-aea6-01396165e4f2",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "pad_z",
+      "from": [
+        4.16,
+        0,
+        2
+      ],
+      "to": [
+        11.84,
+        1,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            100.0,
+            16.0,
+            108.0,
+            17.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            108.0,
+            16.0,
+            116.0,
+            17.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            104.0,
+            12.0,
+            116.0,
+            13.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            116.0,
+            12.0,
+            128.0,
+            13.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0.0,
+            0.0,
+            8.0,
+            12.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8.0,
+            0.0,
+            16.0,
+            12.0
+          ],
+          "texture": 0,
+          "cullface": "down"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 11,
+        "sky_light": 15
+      },
+      "uuid": "cd5546ba-f996-56a0-835c-7b8818cfaf7f",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "pad_core",
+      "from": [
+        6.5,
+        0.5,
+        6.5
+      ],
+      "to": [
+        9.5,
+        1.25,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            120.0,
+            17.0,
+            123.0,
+            18.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            123.0,
+            17.0,
+            126.0,
+            18.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0.0,
+            18.0,
+            3.0,
+            19.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            3.0,
+            18.0,
+            6.0,
+            19.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8.0,
+            12.0,
+            11.0,
+            15.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            11.0,
+            12.0,
+            14.0,
+            15.0
+          ],
+          "texture": 0
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      },
+      "uuid": "50c2d785-c7d9-55af-afdd-7377412edaca",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "notch",
+      "from": [
+        7.5,
+        0.25,
+        1.5
+      ],
+      "to": [
+        8.5,
+        1.1,
+        5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            58.0,
+            18.0,
+            59.0,
+            19.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            59.0,
+            18.0,
+            60.0,
+            19.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            96.0,
+            17.0,
+            100.0,
+            18.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            100.0,
+            17.0,
+            104.0,
+            18.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            6.0,
+            12.0,
+            7.0,
+            16.0
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            7.0,
+            12.0,
+            8.0,
+            16.0
+          ],
+          "texture": 0
+        }
+      },
+      "uuid": "793cd2f0-f52e-526e-9f05-319373832c7c",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    }
+  ],
+  "outliner": [
+    "4b579e29-ce8b-5650-aea6-01396165e4f2",
+    "cd5546ba-f996-56a0-835c-7b8818cfaf7f",
+    "50c2d785-c7d9-55af-afdd-7377412edaca",
+    "793cd2f0-f52e-526e-9f05-319373832c7c"
+  ],
+  "textures": [
+    {
+      "name": "sunburst_bloom.png",
+      "id": "atlas",
+      "uuid": "d3eac628-d657-5012-b445-1b7007166797",
+      "uv_width": 128,
+      "uv_height": 32,
+      "source": "data:image/png;base64,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",
+      "mode": "bitmap",
+      "namespace": "hemomancy",
+      "folder": "block"
+    }
+  ],
+  "display": {}
+}

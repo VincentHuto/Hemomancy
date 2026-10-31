@@ -66,68 +66,15 @@ const MODEL_SETS = {
     outDir: OUT_DIR,
     models: MODELS,
   },
+  // The house strains' attachments come from tools/model_export/morphling_strains.py; only the Tendril's fungal head
+  // is still a hand-written Java model.
   morphling: {
     outDir: "src/main/resources/assets/hemomancy/models/entity/bbmodel/morphling",
     models: [
       {
-        name: "MorphlingBatHeadAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingBatHeadAttachmentModel.java",
-        texture: "textures/models/morphling/bat_head_attachment.png",
-      },
-      {
-        name: "MorphlingSpiderBodyAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingSpiderBodyAttachmentModel.java",
-        texture: "textures/models/morphling/spider_body_attachment.png",
-      },
-      {
-        name: "MorphlingFungalHeadModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingFungalHeadModel.java",
+        name: "FungalHeadAttachmentModel",
+        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/morphling/FungalHeadAttachmentModel.java",
         texture: "textures/models/morphling/fungal_head.png",
-      },
-      {
-        name: "MorphlingLeechArmAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingLeechArmAttachmentModel.java",
-        texture: "textures/models/morphling/leech_arm_attachment.png",
-      },
-      {
-        name: "MorphlingChitiniteLegAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingChitiniteLegAttachmentModel.java",
-        texture: "textures/models/morphling/chitinite_leg_attachment.png",
-      },
-      {
-        name: "MorphlingSerpentLegAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingSerpentLegAttachmentModel.java",
-        texture: "textures/models/morphling/serpent_leg_attachment.png",
-      },
-      {
-        name: "MorphlingUrchinBodyAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingUrchinBodyAttachmentModel.java",
-        texture: "textures/models/morphling/urchin_body_attachment.png",
-      },
-      {
-        name: "MorphlingCuttlefishHeadAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingCuttlefishHeadAttachmentModel.java",
-        texture: "textures/models/morphling/cuttlefish_head_attachment.png",
-      },
-      {
-        name: "MorphlingCentipedeBodyAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingCentipedeBodyAttachmentModel.java",
-        texture: "textures/models/morphling/centipede_body_attachment.png",
-      },
-      {
-        name: "MorphlingPestsBodyAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingPestsBodyAttachmentModel.java",
-        texture: "textures/models/morphling/pests_body_attachment.png",
-      },
-      {
-        name: "MorphlingTickBodyAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingTickBodyAttachmentModel.java",
-        texture: "textures/models/morphling/tick_body_attachment.png",
-      },
-      {
-        name: "MorphlingMoleArmAttachmentModel",
-        source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/summon/MorphlingMoleArmAttachmentModel.java",
-        texture: "textures/models/morphling/mole_arm_attachment.png",
       },
     ],
   },

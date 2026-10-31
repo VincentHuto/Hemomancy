@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.worldgen.structure.BloodTempleStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.BogBodyOssuaryNicheStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.BrokenChurchStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.circus.CircusPavilionStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.court.CourtStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.CrimsonLodgeAnnexStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.DynastyCastleStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerOutpostStructure;
@@ -88,6 +89,10 @@ public class StructureInit {
 
 	public static final DeferredHolder<StructureType<?>, StructureType<DynastyCastleStructure>> dynasty_castle = STRUCTURES
 			.register("dynasty_castle", () -> explicitStructureTypeTyping(DynastyCastleStructure.CODEC));
+
+	/** All eight Brined Court sites share one type; each structure JSON names its site. */
+	public static final DeferredHolder<StructureType<?>, StructureType<CourtStructure>> brined_court = STRUCTURES
+			.register("brined_court", () -> explicitStructureTypeTyping(CourtStructure.CODEC));
 
 	public static final DeferredHolder<StructureType<?>, StructureType<VagrantMindStructure>> vagrant_mind = STRUCTURES
 			.register("vagrant_mind", () -> explicitStructureTypeTyping(VagrantMindStructure.CODEC));

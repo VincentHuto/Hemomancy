@@ -296,6 +296,7 @@ public class BiomeInit {
 		BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatureGetter,
 				carverGetter);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.ERYTHROCORAL_REEF);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.COURT_SIGNS);
 
 		return new Biome.BiomeBuilder().hasPrecipitation(true).temperature(0.95F).downfall(0.8F)
 				.specialEffects((new BiomeSpecialEffects.Builder()).waterColor(0x8A315F).waterFogColor(0x321025)

@@ -2,9 +2,7 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.PowerGuardrailState;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.LumenlaceMorphlingItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.WinterShroudMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
 import net.minecraft.world.entity.player.Player;
@@ -12,14 +10,14 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Minecraft-facing adapter for {@link LastRiteRules}: the shared death-save
- * gate. Every death-prevention source (Ink Mantle Reprieve, Last-Light
- * Mantle, Silent Archon refusal, future Cryptobiosis) checks {@link #canFire}
- * before firing and calls {@link #consume} on success.
+ * gate. Every death-prevention source (Ink Cap's Ink Reprieve, Hushbell's
+ * Cryptobiosis, Silent Archon refusal) checks {@link #canFire} before firing
+ * and calls {@link #consume} on success. Which Morphling arms which source,
+ * and at what stage, is a column of {@link MorphlingStrains}.
  */
 public final class LastRiteHelper {
 
 	public static final String INK_MANTLE_ID = "hemomancy:ink_mantle";
-	public static final String LAST_LIGHT_ID = "hemomancy:last_light";
 	public static final String SILENT_REFUSAL_ID = "hemomancy:silent_refusal";
 	public static final String CRYPTOBIOSIS_ID = "hemomancy:cryptobiosis";
 	public static final String PHOENIX_DEBT_ID = "hemomancy:phoenix_debt";
@@ -99,26 +97,11 @@ public final class LastRiteHelper {
 
 	public static void clearMorphlingRites(Player player) {
 		clearIfArmed(player, INK_MANTLE_ID);
-		clearIfArmed(player, LAST_LIGHT_ID);
 		clearIfArmed(player, CRYPTOBIOSIS_ID);
 	}
 
 	private static String sourceIdForMorphling(ItemStack stack) {
-		if (stack == null || stack.isEmpty()) {
-			return "";
-		}
-		if (stack.getItem() instanceof LumenlaceMorphlingItem) {
-			if (MorphlingItem.isPrimal(stack)) {
-				return LAST_LIGHT_ID;
-			}
-			if (MorphlingItem.getMaturityLevel(stack) >= 4) {
-				return INK_MANTLE_ID;
-			}
-		}
-		if (stack.getItem() instanceof WinterShroudMorphlingItem && MorphlingItem.isPrimal(stack)) {
-			return CRYPTOBIOSIS_ID;
-		}
-		return "";
+		return MorphlingStrains.lastRiteFor(stack);
 	}
 
 	private static boolean isValidSourceId(String sourceId) {

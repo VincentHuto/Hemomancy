@@ -1,0 +1,10 @@
+{
+  "parent": "hemomancy:block/petrified_follower",
+  "display": {
+    "gui": {
+      "rotation": [30, 225, 0],
+      "translation": [0.38, -1.53, 0],
+      "scale": [0.539, 0.539, 0.539]
+    }
+  }
+}

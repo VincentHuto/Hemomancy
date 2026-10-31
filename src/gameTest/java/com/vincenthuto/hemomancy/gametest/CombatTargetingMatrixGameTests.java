@@ -13,8 +13,11 @@ import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IrontoothMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.KinbudRules;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.KinbudSecondHead;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager;
 import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.GameTest;
@@ -148,24 +151,38 @@ public final class CombatTargetingMatrixGameTests {
 				(helper, caster, target) -> stillArt(helper, caster, target, art));
 	}
 
-	/** Morphling: Irontooth's primal Deep Tremor Sense damages the Monsters near the caster. */
-	@GameTest(templateNamespace = NAMESPACE, template = ROOM, batch = "combat_matrix_irontooth", timeoutTicks = 100)
-	public static void morphlingIrontoothPrimal(GameTestHelper h) {
-		matrix(h, "morphling Irontooth primal damage", "hostile boss", caster -> {}, (helper, caster, target) -> {
-			ItemStack stack = new ItemStack(ItemInit.morphling_irontooth.get());
-			MorphlingItem.setPrimalized(stack);
-			MorphlingItem.setLastAbilityTick(stack, MorphlingItem.PRIMAL_ABILITY_PREFIX + "DeepTremorSense",
-					helper.getLevel().getGameTime() - 100_000L);
-			return damaged(target, () -> ((IrontoothMorphlingItem) stack.getItem())
-					.tryUse(caster, InteractionHand.MAIN_HAND, stack, helper.getLevel()));
-		});
-	}
-
-	/** Morphling: the look target Bootlace and Emberfang act on. */
+	/** Morphling: the look target strain powers act on. */
 	@GameTest(templateNamespace = NAMESPACE, template = ROOM, batch = "combat_matrix_look", timeoutTicks = 100)
 	public static void morphlingLookTarget(GameTestHelper h) {
 		matrix(h, "morphling findLookTarget", "hostile pet ally puppet boss pvp-on pvp-off", caster -> {},
 				(helper, caster, target) -> MorphlingItem.findLookTarget(caster, 6.0D) == target);
+	}
+
+	/**
+	 * Kinbud's Second Head: body, not a summon, so it answers to {@code canHarmFor} with the host as its source and
+	 * strikes only hostiles (monsters, or mobs hunting the host). Players are never its target.
+	 */
+	@GameTest(templateNamespace = NAMESPACE, template = ROOM, batch = "combat_matrix_second_head", timeoutTicks = 100)
+	public static void kinbudSecondHead(GameTestHelper h) {
+		matrix(h, "Kinbud Second Head", "hostile boss", caster -> {}, (helper, caster, target) -> damaged(target, () -> {
+			KinbudSecondHead.bud(caster, 1, KinbudRules.HEAD_TICKS);
+			KinbudSecondHead.tick(caster, 60, 0);
+			KinbudSecondHead.clear(caster.getUUID());
+		}));
+	}
+
+	/**
+	 * Dead Man's Rope's Red Rope: a looked-at ally is hauled in as a rescue and anything the host may harm is pulled and
+	 * rooted, so it reaches allies and PvP-on players but never a PvP-off player.
+	 */
+	@GameTest(templateNamespace = NAMESPACE, template = ROOM, batch = "combat_matrix_red_rope", timeoutTicks = 100)
+	public static void deadMansRopeRedRope(GameTestHelper h) {
+		matrix(h, "Dead Man's Rope Red Rope", "hostile pet ally puppet boss pvp-on", caster -> {},
+				(helper, caster, target) -> touched(target, () -> {
+					ItemStack rope = new ItemStack(MorphlingStrains.DEAD_MANS_ROPE.item().get());
+					MorphlingItem.setPrimalized(rope);
+					((IMorphling) rope.getItem()).tryUse(caster, InteractionHand.MAIN_HAND, rope, helper.getLevel());
+				}));
 	}
 
 	/** Scar: Glacier (Congeatio, tier 2) slows the Monsters around its wearer. */
@@ -199,6 +216,26 @@ public final class CombatTargetingMatrixGameTests {
 	 * Each {@link Reach} preset gives the verdict of the pre-step-9 filter it replaced, for every kind of body and with
 	 * PvP on and off. STRICT is compared with canHarm's body as it stood before step 9.
 	 */
+	/**
+	 * Brined Court Track 9: what a defending Court member (the Tidewarden, and the Edge-swimmer when built)
+	 * turns on near home. Monsters nobody owns; never a player, a player's pet or puppet, or a player's team-mate.
+	 */
+	@GameTest(templateNamespace = NAMESPACE, template = ROOM, batch = "combat_matrix_court", timeoutTicks = 100)
+	public static void courtMemberDefence(GameTestHelper h) {
+		matrix(h, "Court member defence", "hostile boss", caster -> {}, (helper, caster, target) -> {
+			var member = EntityInit.court_members.get(com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole.TIDEWARDEN)
+					.get().create(helper.getLevel());
+			member.setNoAi(true);
+			member.moveTo(caster.position().add(-1.5D, 0.0D, 0.0D));
+			helper.getLevel().addFreshEntity(member);
+			try {
+				return member.defendsAgainst(target);
+			} finally {
+				member.discard();
+			}
+		});
+	}
+
 	@GameTest(templateNamespace = NAMESPACE, template = ROOM, batch = "combat_matrix_reach", timeoutTicks = 100)
 	public static void reachPresetsReproduceTheirLegacyFilters(GameTestHelper h) {
 		h.runAfterDelay(2, () -> {
@@ -262,6 +299,86 @@ public final class CombatTargetingMatrixGameTests {
 
 	private static void same(GameTestHelper h, String what, boolean legacy, boolean routed) {
 		h.assertTrue(legacy == routed, what + ": legacy filter " + legacy + ", routed " + routed);
+	}
+
+	/**
+	 * Brined Court Track 10: Hydra's rising head is a presence, never a target. Nothing can pick it, the widest area
+	 * effect in the matrix (Silent Severance) leaves it, and it is no living entity, so no column's selector can choose
+	 * it. Marimo is moss blocks and has no entity at all.
+	 */
+	@GameTest(templateNamespace = NAMESPACE, template = ROOM, batch = "combat_matrix_court_presence", timeoutTicks = 100)
+	public static void courtPresenceIsNeverATarget(GameTestHelper h) {
+		h.runAfterDelay(2, () -> {
+			ServerPlayer caster = DuctilisGameTests.player(h);
+			caster.setGameMode(GameType.SURVIVAL);
+			caster.moveTo(h.absoluteVec(CASTER), -90.0F, 0.0F);
+			var head = com.vincenthuto.hemomancy.common.entity.npc.court.HydraRisingHead.rise(h.getLevel(),
+					h.absoluteVec(CASTER.add(TARGET_OFFSET)), caster);
+			try {
+				Vec3 eye = caster.getEyePosition();
+				Vec3 end = eye.add(caster.getLookAngle().scale(8.0D));
+				var hit = net.minecraft.world.entity.projectile.ProjectileUtil.getEntityHitResult(caster, eye, end,
+						caster.getBoundingBox().expandTowards(end.subtract(eye)).inflate(2.0D),
+						entity -> !entity.isSpectator() && entity.isPickable(), 64.0D);
+				h.assertTrue(hit == null || hit.getEntity() != head, "a look or swing never picks the head");
+				SilentArchonArmorAbilityHandler.activateSilentArchonSeverance(caster);
+				h.assertTrue(head.isAlive(), "an area effect leaves the head");
+				h.assertFalse(head.isAttackable(), "the head is never attackable");
+				h.assertFalse((Object) head instanceof LivingEntity, "no living-target selector can choose the head");
+				h.succeed();
+			} finally {
+				head.discard();
+				caster.discard();
+			}
+		});
+	}
+
+	/**
+	 * Brined Court Track 10, Tier 2: the two followers who fight are ordinary targets during their fight only. The Bloom
+	 * Warden and the Kindled Champion take no harm through their opening, take it in their fight (from a strike and
+	 * from the widest area effect in the matrix), and take none once the fight is over and they re-anchor or yield.
+	 */
+	@GameTest(templateNamespace = NAMESPACE, template = ROOM, batch = "combat_matrix_court_followers", timeoutTicks = 100)
+	public static void courtFollowersAreTargetsOnlyInTheirFight(GameTestHelper h) {
+		h.runAfterDelay(2, () -> {
+			ServerPlayer caster = DuctilisGameTests.player(h);
+			caster.setGameMode(GameType.SURVIVAL);
+			caster.moveTo(h.absoluteVec(CASTER), -90.0F, 0.0F);
+			var level = h.getLevel();
+			var warden = com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenEntity.wake(caster,
+					com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenRules.GROWTH, caster.blockPosition());
+			var champion = com.vincenthuto.hemomancy.common.entity.boss.court.KindledChampionEntity.callOut(level,
+					net.minecraft.core.BlockPos.containing(h.absoluteVec(CASTER.add(TARGET_OFFSET))), 90.0F, "kindled_elder", caster);
+			try {
+				var strike = level.damageSources().playerAttack(caster);
+				h.assertFalse(warden.hurt(strike, 2.0F), "the Warden is untouchable through its opening");
+				h.assertFalse(champion.hurt(strike, 2.0F), "the Champion is untouchable through its opening");
+				warden.forcePose(com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenRules.Phase.UPROOTED,
+						com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenRules.Move.NONE);
+				champion.forcePose(0, com.vincenthuto.hemomancy.common.entity.boss.court.KindledChampionRules.Move.NONE);
+				h.assertTrue(ManipulationCombatHelper.canHarm(caster, warden) && ManipulationCombatHelper.canHarm(caster, champion),
+						"both pass the strict rule");
+				float wardenBefore = warden.getHealth(), championBefore = champion.getHealth();
+				h.assertTrue(warden.hurt(strike, 2.0F) && warden.getHealth() < wardenBefore, "the Warden takes a strike in its fight");
+				h.assertTrue(champion.hurt(strike, 2.0F) && champion.getHealth() < championBefore, "the Champion takes one in its fight");
+				warden.invulnerableTime = 0;
+				champion.invulnerableTime = 0;
+				float wardenMid = warden.getHealth(), championMid = champion.getHealth();
+				SilentArchonArmorAbilityHandler.activateSilentArchonSeverance(caster);
+				h.assertTrue(warden.getHealth() <= wardenMid && champion.getHealth() <= championMid, "an area effect may reach them");
+				warden.end(com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenRules.Outcome.GONE);
+				champion.end(com.vincenthuto.hemomancy.common.entity.boss.court.KindledChampionRules.Outcome.GONE, null);
+				warden.invulnerableTime = 0;
+				champion.invulnerableTime = 0;
+				h.assertFalse(warden.hurt(strike, 2.0F), "after its fight the Warden is no target");
+				h.assertFalse(champion.hurt(strike, 2.0F), "after its fight the Champion is no target");
+				h.succeed();
+			} finally {
+				warden.discard();
+				champion.discard();
+				caster.discard();
+			}
+		});
 	}
 
 	private static void matrix(GameTestHelper h, String row, String expected, Consumer<ServerPlayer> prepare, Strike strike) {

@@ -67,6 +67,9 @@ public class HarbingerVoyagerEntity extends PathfinderMob implements Progression
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 			DialogueTree tree = progressionDialogue(serverPlayer);
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "voyager", degree, 0f);
+			tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withLetterInquiry(tree, "voyager",
+					com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.VOYAGER_LETTER,
+					com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.View.of(serverPlayer));
 			tree = DialogueHubFactory.decorate(tree, "voyager", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
@@ -78,9 +81,11 @@ public class HarbingerVoyagerEntity extends PathfinderMob implements Progression
 	public DialogueTree progressionDialogue(ServerPlayer player) {
 		if (hasClarityUnlocked(player)) return HarbingerVoyagerDialogueTrees.clarity(this.getId());
 		if (isPurifying(player)) return HarbingerVoyagerDialogueTrees.purifying(this.getId());
-		return com.vincenthuto.hemomancy.common.entity.npc.dialogue.VoyagerIntroductionDialogue.withFieldObservation(
+		DialogueTree tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.VoyagerIntroductionDialogue.withFieldObservation(
 				HarbingerVoyagerDialogueTrees.forDegree(HemoCapabilityAccess.getPlayerDegreeNumber(player), this.getId()),
 				com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canObserve(player, this));
+		return com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withVoyager(tree,
+				com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.View.of(player));
 	}
 
 	@Override

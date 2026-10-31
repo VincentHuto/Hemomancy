@@ -192,27 +192,6 @@ public final class SchoolCombatGameTests {
         });
     }
 
-    @GameTest(templateNamespace="hemomancy", template=ARENA, batch="school_contracts", timeoutTicks=40)
-    public static void periodicKillsKeepMorphlingRewardsWithoutSpreadingAnotherState(GameTestHelper h) {
-        var player = DuctilisGameTests.player(h);
-        var victim = body(h, EntityType.COW, 6);
-        var nearby = body(h, EntityType.HUSK, 8);
-        var specimen = com.vincenthuto.hemomancy.common.init.ItemInit.morphling_gravecap.get().getDefaultInstance();
-        var maturity = new net.minecraft.nbt.CompoundTag();
-        maturity.putFloat("EnzymePower", 100);
-        specimen.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(maturity));
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(specimen);
-        try {
-            var periodic = hit(player, "periodic_probe", EnumBloodTendency.MORTEM).child(SchoolHitContext.Kind.PERIODIC);
-            victim.hurt(SchoolDamage.attributed(h.getLevel().damageSources().magic(), periodic, player), 200);
-            var equipped = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
-            h.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem.getHusbandryProgress(equipped) >= 2,
-                    "Periodic kill erased Gravecap's non-damaging reward");
-            h.assertTrue(!SchoolStates.has(nearby, SchoolState.NECROSIS), "Periodic kill started another offensive chain");
-            h.succeed();
-        } finally { player.discard(); victim.discard(); nearby.discard(); }
-    }
-
     @GameTest(templateNamespace="hemomancy", template=ARENA, batch="school_contracts", timeoutTicks=45)
     public static void shieldsBlockBuildupConsumptionAndRetaliation(GameTestHelper h) {
         var player = DuctilisGameTests.player(h);
@@ -321,34 +300,11 @@ public final class SchoolCombatGameTests {
     }
 
     @GameTest(templateNamespace="hemomancy", template=ARENA, batch="school_contracts", timeoutTicks=40)
-    public static void postDamageMorphlingSurvivalChecksDoNotSubtractTheHitTwice(GameTestHelper h) {
+    public static void inkCapReprieveKeepsLethalThresholdAndPeriodicProtection(GameTestHelper h) {
         var player = DuctilisGameTests.player(h);
         player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
         for (int tick = 0; tick < 61; tick++) player.tick();
-        var specimen = com.vincenthuto.hemomancy.common.init.ItemInit.morphling_winter_shroud.get().getDefaultInstance();
-        var maturity = new net.minecraft.nbt.CompoundTag();
-        maturity.putFloat("EnzymePower", 100);
-        specimen.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(maturity));
-        com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem.setLastAbilityTick(specimen, "TunMolt", -100000);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(specimen);
-        player.removeAllEffects();
-        player.setHealth(20);
-        player.hurt(h.getLevel().damageSources().magic(), 10);
-        h.assertTrue(player.getHealth() == 10 && !player.hasEffect(MobEffects.INVISIBILITY), "Nonlethal hit triggered a low-health survival response early");
-        player.invulnerableTime = 0;
-        var periodic = hit(null, "searing_probe", EnumBloodTendency.FLAMMEUS).child(SchoolHitContext.Kind.PERIODIC);
-        player.hurt(SchoolDamage.attributed(h.getLevel().damageSources().magic(), periodic, null), 4);
-        h.assertTrue(player.getHealth() == 6 && player.hasEffect(MobEffects.INVISIBILITY),
-                "Periodic damage erased Winter Shroud's non-offensive survival response: health=" + player.getHealth() + " effects=" + player.getActiveEffects());
-        player.discard(); h.succeed();
-    }
-
-    @GameTest(templateNamespace="hemomancy", template=ARENA, batch="school_contracts", timeoutTicks=40)
-    public static void lumenlaceRescueKeepsLethalThresholdAndPeriodicProtection(GameTestHelper h) {
-        var player = DuctilisGameTests.player(h);
-        player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
-        for (int tick = 0; tick < 61; tick++) player.tick();
-        var specimen = com.vincenthuto.hemomancy.common.init.ItemInit.morphling_lumenlace.get().getDefaultInstance();
+        var specimen = com.vincenthuto.hemomancy.common.init.ItemInit.morphling_ink_cap.get().getDefaultInstance();
         var maturity = new net.minecraft.nbt.CompoundTag();
         maturity.putFloat("EnzymePower", 100);
         specimen.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(maturity));

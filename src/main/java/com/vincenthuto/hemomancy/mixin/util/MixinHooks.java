@@ -3,10 +3,6 @@ package com.vincenthuto.hemomancy.mixin.util;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.ClarityBiologyRules;
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.EmberfangMorphlingItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.WinterShroudMorphlingItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.WinterShroudResilienceRules;
 
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -23,17 +19,20 @@ public class MixinHooks {
 	}
 
 	public static float scaleHungerExhaustion(Player player, float amount) {
-		return EmberfangMorphlingItem.scaleExhaustion(player,
-				scaleForClarity(player, amount, ClarityBiologyRules::scaleHungerExhaustion));
+		float scaled = scaleForClarity(player, amount, ClarityBiologyRules::scaleHungerExhaustion);
+		return com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.MorphlingPowerEvents
+				.scaleExhaustion(player, scaled);
+	}
+
+	/** Holdfast's Cling keeps a submerged host out of the current. */
+	public static boolean resistsCurrents(Player player) {
+		return com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.MorphlingPowerEvents
+				.resistsCurrents(player);
 	}
 
 	public static boolean canWalkOnPowderSnow(Entity entity, boolean vanillaResult) {
 		if (entity instanceof LivingEntity living && living.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.cryoprotection)) return true;
-		if (vanillaResult || !(entity instanceof Player player)) return vanillaResult;
-		var cap = HemoCapabilityAccess.getEquippedMorphling(player);
-		return cap.hasMorphling()
-				&& cap.getEquippedMorphling().getItem() instanceof WinterShroudMorphlingItem
-				&& WinterShroudResilienceRules.canTraversePowderSnow(MorphlingItem.getMaturityLevel(cap.getEquippedMorphling()));
+		return vanillaResult;
 	}
 
 	private static float scaleForClarity(LivingEntity entity, float amount, ClarityScaler scaler) {

@@ -446,7 +446,7 @@ def dress_top(room, c):
     lo, hi = 4, entrance.TOP - 5
     for x in (lo, hi):
         for z in (lo, hi):
-            pyre(room, x, 1, z)
+            pyre(room, x, entrance.FLOOR + 1, z)
 
 
 # --- the Burned Library (Litany) --------------------------------------------------------------------------------------

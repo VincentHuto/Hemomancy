@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.entity.WallClimbPose;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
@@ -51,6 +52,8 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 
 	private int retractTicks;
 	private int harvestCooldownTicks;
+	/** Client-only: the foot turns onto the vent it climbs. */
+	private final WallClimbPose climbPose = new WallClimbPose(state -> state.is(CLIMBABLE_VENT_BLOCKS));
 
 	public ChalybeateSnailEntity(EntityType<? extends ChalybeateSnailEntity> type, Level level) {
 		super(type, level);
@@ -198,6 +201,9 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 	public void tick() {
 		super.tick();
 		if (this.level().isClientSide()) {
+			// Turn onto the vent only while rising; client motion is interpolated, so read the position change.
+			boolean rising = this.getY() - this.yo > 0.002D;
+			this.climbPose.tick(this, this.isInWater() && !this.isRetracted() && !this.onGround() && rising);
 			this.crawlAnimationState.startIfStopped(this.tickCount);
 			if (this.isRetracted()) {
 				this.retractAnimationState.startIfStopped(this.tickCount);
@@ -243,6 +249,10 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 		} else {
 			super.travel(travelVector);
 		}
+	}
+
+	public WallClimbPose climbPose() {
+		return this.climbPose;
 	}
 
 	@Override

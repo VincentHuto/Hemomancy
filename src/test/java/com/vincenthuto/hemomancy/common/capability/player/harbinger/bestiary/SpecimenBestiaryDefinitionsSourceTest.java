@@ -48,7 +48,6 @@ public final class SpecimenBestiaryDefinitionsSourceTest {
 
 		for (MorphlingPolypLayer layer : MorphlingPolypLayer.values()) {
 			String id = layer.serializedName();
-			assertContains("morphling entry exists for " + id, definitions, "MorphlingPolypLayer." + layer.name());
 			assertContains("morphling title lang exists for " + id, lang, "\"bestiary.hemomancy.morphling." + id + ".title\"");
 			assertContains("morphling description lang exists for " + id, lang, "\"bestiary.hemomancy.morphling." + id + ".description\"");
 			assertContains("morphling source lang exists for " + id, lang, "\"bestiary.hemomancy.morphling." + id + ".source\"");

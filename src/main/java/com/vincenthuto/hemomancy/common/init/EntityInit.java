@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.common.entity.PossessionEchoEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.court.CourtMemberEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole;
 import net.minecraft.world.entity.monster.Monster;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.HunterFungusEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.AntibodyEntity;
@@ -93,6 +95,18 @@ public class EntityInit {
                             .clientTrackingRange(8)
                             .updateInterval(20)
                             .build(Hemomancy.rloc("hematic_armature_restraint").toString()));
+
+    /** Hydra's largest head rising from its chimney when the Head-tender calls it: a set piece, never a target. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.npc.court.HydraRisingHead>> hydra_rising_head =
+            ENTITY_TYPES.register("hydra_rising_head",
+                    () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.npc.court.HydraRisingHead>of(
+                                    com.vincenthuto.hemomancy.common.entity.npc.court.HydraRisingHead::new, MobCategory.MISC)
+                            .sized(0.01F, 0.01F)
+                            .fireImmune()
+                            .noSummon()
+                            .clientTrackingRange(10)
+                            .updateInterval(4)
+                            .build(Hemomancy.rloc("hydra_rising_head").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<UnsettledIchorEntity>> unsettled_ichor =
             ENTITY_TYPES.register("unsettled_ichor",
@@ -199,6 +213,50 @@ public class EntityInit {
             () -> EntityType.Builder.of(HarbingerVoyagerEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("harbinger_voyager").toString()));
+
+    /**
+     * The Brined Court's members, one entity type per role built so far: the two Seats' roles first, then one house
+     * at a time (Track 9). Each type carries its role; the rest of the member is shared.
+     */
+    public static final java.util.Map<CourtRole, DeferredHolder<EntityType<?>, EntityType<CourtMemberEntity>>> court_members =
+            courtMembers(CourtRole.GARDENER, CourtRole.ARBOR, CourtRole.LIGHTKEEPER,
+                    CourtRole.TIDEWARDEN, CourtRole.BRACED_ELDER, CourtRole.EDGE_SWIMMER, CourtRole.NURSERY_TENDER,
+                    CourtRole.LINESMAN, CourtRole.LAMP_COLONY, CourtRole.HOST, CourtRole.VEILED_RESIDENT,
+                    CourtRole.BELLWARDEN, CourtRole.SLEEPER, CourtRole.MARROW_TENDER, CourtRole.ROOTED_ELDER,
+                    CourtRole.OFFERING_BEARER, CourtRole.KINDLED_ELDER, CourtRole.HEAD_TENDER);
+
+    private static java.util.Map<CourtRole, DeferredHolder<EntityType<?>, EntityType<CourtMemberEntity>>> courtMembers(
+            CourtRole... roles) {
+        var members = new java.util.EnumMap<CourtRole, DeferredHolder<EntityType<?>, EntityType<CourtMemberEntity>>>(CourtRole.class);
+        for (CourtRole role : roles) {
+            // The two new bodies: the Kindled elder stands tall on its long neck; the Rooted elder lies low in its bone.
+            float width = role == CourtRole.KINDLED_ELDER ? 0.9F : role == CourtRole.ROOTED_ELDER ? 0.8F : 0.6F;
+            float height = role == CourtRole.KINDLED_ELDER ? 2.7F : role == CourtRole.ROOTED_ELDER ? 1.4F : 1.95F;
+            members.put(role, ENTITY_TYPES.register(role.entityId(),
+                    () -> EntityType.Builder.<CourtMemberEntity>of((type, level) -> new CourtMemberEntity(type, level, role),
+                                    MobCategory.CREATURE)
+                            .sized(width, height)
+                            .build(Hemomancy.rloc(role.entityId()).toString())));
+        }
+        return java.util.Collections.unmodifiableMap(members);
+    }
+
+    /**
+     * The Court's two followers who fight (Track 10, Tier 2): the Bloom Warden on the Arbor's body, woken by a wrong
+     * against the Giving Light, and the Kindled Champion on the Kindled elder's, called out for a usurpation.
+     */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenEntity>> bloom_warden =
+            ENTITY_TYPES.register("bloom_warden",
+                    () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenEntity>of(
+                                    com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenEntity::new, MobCategory.MISC)
+                            .sized(0.7F, 2.0F)
+                            .build(Hemomancy.rloc("bloom_warden").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.boss.court.KindledChampionEntity>> kindled_champion =
+            ENTITY_TYPES.register("kindled_champion",
+                    () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.boss.court.KindledChampionEntity>of(
+                                    com.vincenthuto.hemomancy.common.entity.boss.court.KindledChampionEntity::new, MobCategory.MISC)
+                            .sized(1.0F, 2.9F)
+                            .build(Hemomancy.rloc("kindled_champion").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<HarbingerVotaryWayfarerEntity>> harbinger_votary_wayfarer = ENTITY_TYPES.register(
             "harbinger_votary_wayfarer",
@@ -840,6 +898,13 @@ public class EntityInit {
             () -> EntityType.Builder.<BloodCloudCarrierEntity>of(BloodCloudCarrierEntity::new, MobCategory.MISC)
                     .setTrackingRange(150).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).sized(0.5F, 0.5F)
                     .build(Hemomancy.rloc("blood_cloud_carrier").toString()));
+    /** Sunburst's Bloom and Marrowplume's Whale Fall: a short-lived aura patch that places no blocks and never saves. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.utility.MorphlingFieldEntity>> morphling_field = ENTITY_TYPES.register("morphling_field",
+            () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.utility.MorphlingFieldEntity>of(
+                    com.vincenthuto.hemomancy.common.entity.utility.MorphlingFieldEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.25F).clientTrackingRange(8).updateInterval(20).noSave()
+                    .build(Hemomancy.rloc("morphling_field").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<CloudEntityBlood>> blood_cloud = ENTITY_TYPES.register("blood_cloud",
             () -> EntityType.Builder.<CloudEntityBlood>of(CloudEntityBlood::new, MobCategory.MISC).setTrackingRange(150)
                     .setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).sized(0.5F, 0.5F)
@@ -1215,6 +1280,9 @@ public class EntityInit {
         event.put(EntityInit.harbinger_mnemonist.get(), HarbingerMnemonistEntity.setAttributes().build());
         event.put(EntityInit.harbinger_vicar.get(), HarbingerVicarEntity.setAttributes().build());
         event.put(EntityInit.harbinger_voyager.get(), HarbingerVoyagerEntity.setAttributes().build());
+        court_members.values().forEach(type -> event.put(type.get(), CourtMemberEntity.setAttributes().build()));
+        event.put(EntityInit.bloom_warden.get(), com.vincenthuto.hemomancy.common.entity.boss.court.BloomWardenEntity.setAttributes().build());
+        event.put(EntityInit.kindled_champion.get(), com.vincenthuto.hemomancy.common.entity.boss.court.KindledChampionEntity.setAttributes().build());
         event.put(EntityInit.harbinger_votary_wayfarer.get(), HarbingerVotaryWayfarerEntity.setAttributes().build());
 		event.put(EntityInit.circus_fire_eater.get(), CircusFireEaterEntity.setAttributes().build());
 		event.put(EntityInit.circus_ringmaster.get(), CircusRingmasterEntity.setAttributes().build());

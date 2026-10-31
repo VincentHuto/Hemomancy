@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrain;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import org.junit.jupiter.api.Test;
 import javax.imageio.ImageIO;
 import java.nio.file.Path;
@@ -11,9 +13,9 @@ final class MorphlingStaticSpriteTest {
     @Test
     void attachedSpritesUseOneNative32PixelFrame() throws Exception {
         assertEquals(32, EquippedMorphlingOverlayPlacement.ATTACHED_SIZE);
-        for (String name : List.of("deadmans_purse", "gravecap", "witchs_ear", "lumenlace",
-                "bootlace", "irontooth", "emberfang", "winter_shroud")) {
-            var visual = MorphlingHudVisuals.forItemPath("morphling_" + name);
+        for (MorphlingStrain strain : MorphlingStrains.ALL) {
+            String name = strain.hudTexture();
+            var visual = MorphlingHudVisuals.forItemPath(strain.itemPath());
             assertNotNull(visual, name);
             assertEquals(name, visual.textureName());
             var file = Path.of("src/main/resources/assets/hemomancy/textures/gui/morphling_overlay/" + name + ".png");

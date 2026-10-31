@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary;
 
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingMigrationRules;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -47,16 +46,16 @@ public class SpecimenBestiaryState {
 
 	public boolean recordMorphlingLayer(MorphlingPolypLayer layer) {
 		return layer != null && addNormalized(recordedMorphlingLayers,
-				MorphlingMigrationRules.migrateLayerFamily(layer.serializedName()));
+				layer.serializedName());
 	}
 
 	public boolean hasRecordedMorphlingLayer(MorphlingPolypLayer layer) {
 		return layer != null && containsNormalized(recordedMorphlingLayers,
-				MorphlingMigrationRules.migrateLayerFamily(layer.serializedName()));
+				layer.serializedName());
 	}
 
 	public boolean hasRecordedMorphlingLayer(String layerName) {
-		return containsNormalized(recordedMorphlingLayers, MorphlingMigrationRules.migrateLayerFamily(layerName));
+		return containsNormalized(recordedMorphlingLayers, layerName);
 	}
 
 	public int recordedMorphlingLayerCount() {
@@ -82,7 +81,7 @@ public class SpecimenBestiaryState {
 		}
 		if (recordedMorphlingLayers != null) {
 			for (String layer : recordedMorphlingLayers) {
-				addNormalized(this.recordedMorphlingLayers, MorphlingMigrationRules.migrateLayerFamily(layer));
+				addNormalized(this.recordedMorphlingLayers, layer);
 			}
 		}
 	}
@@ -129,7 +128,7 @@ public class SpecimenBestiaryState {
 			return;
 		}
 		for (String value : encoded.split(",")) {
-			addNormalized(target, MorphlingMigrationRules.migrateLayerFamily(value));
+			addNormalized(target, value);
 		}
 	}
 }

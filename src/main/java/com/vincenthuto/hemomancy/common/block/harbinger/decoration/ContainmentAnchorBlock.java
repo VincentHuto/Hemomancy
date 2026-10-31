@@ -55,6 +55,11 @@ public class ContainmentAnchorBlock extends StackedSetPieceBlock {
 	}
 
 	@Override
+	protected BlockState withStorey(BlockState state, int storey) {
+		return state.setValue(HALF, storey == 0 ? DoubleBlockHalf.LOWER : DoubleBlockHalf.UPPER);
+	}
+
+	@Override
 	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		if (state.getValue(HALF) == DoubleBlockHalf.LOWER) return LOWER;
 		return state.getValue(SNAPPED) ? UPPER_SNAPPED : UPPER;

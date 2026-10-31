@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/fold_veil"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/fold_veil",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/fold_veil",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/fold_veil",
+      "y": 270
+    }
+  }
+}

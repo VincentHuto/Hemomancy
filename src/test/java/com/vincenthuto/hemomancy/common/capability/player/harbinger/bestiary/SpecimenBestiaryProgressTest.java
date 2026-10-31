@@ -38,9 +38,9 @@ public final class SpecimenBestiaryProgressTest {
 	private static void recordingPolypLayersIsUnique() {
 		SpecimenBestiaryState progress = new SpecimenBestiaryState();
 
-		assertTrue("first fungal layer is new", progress.recordMorphlingLayer(MorphlingPolypLayer.FUNGAL));
-		assertFalse("duplicate fungal layer is not new", progress.recordMorphlingLayer(MorphlingPolypLayer.FUNGAL));
-		assertTrue("layer remains recorded", progress.hasRecordedMorphlingLayer(MorphlingPolypLayer.FUNGAL));
+		assertTrue("first black yeast layer is new", progress.recordMorphlingLayer(MorphlingPolypLayer.BLACK_YEAST));
+		assertFalse("duplicate black yeast layer is not new", progress.recordMorphlingLayer(MorphlingPolypLayer.BLACK_YEAST));
+		assertTrue("layer remains recorded", progress.hasRecordedMorphlingLayer(MorphlingPolypLayer.BLACK_YEAST));
 		assertEquals("recorded layer count", 1, progress.recordedMorphlingLayerCount());
 	}
 
@@ -50,8 +50,8 @@ public final class SpecimenBestiaryProgressTest {
 		String urchin = "hemomancy:barbed_urchin";
 		progress.recordSpecimen(polyp);
 		progress.surrenderSpecimen(urchin);
-		progress.recordMorphlingLayer(MorphlingPolypLayer.URCHIN);
-		progress.recordMorphlingLayer(MorphlingPolypLayer.CUTTLEFISH);
+		progress.recordMorphlingLayer(MorphlingPolypLayer.COLD_BACTERIA);
+		progress.recordMorphlingLayer(MorphlingPolypLayer.SUN_ALGA);
 
 		String encoded = progress.serializeForTest();
 		SpecimenBestiaryState restored = new SpecimenBestiaryState();
@@ -59,8 +59,8 @@ public final class SpecimenBestiaryProgressTest {
 
 		assertTrue("restored specimen", restored.hasRecordedSpecimen(polyp));
 		assertTrue("restored surrender", restored.hasSurrenderedSpecimen(urchin));
-		assertTrue("restored urchin layer", restored.hasRecordedMorphlingLayer(MorphlingPolypLayer.URCHIN));
-		assertTrue("restored cuttlefish layer", restored.hasRecordedMorphlingLayer(MorphlingPolypLayer.CUTTLEFISH));
+		assertTrue("restored cold bacteria layer", restored.hasRecordedMorphlingLayer(MorphlingPolypLayer.COLD_BACTERIA));
+		assertTrue("restored sun alga layer", restored.hasRecordedMorphlingLayer(MorphlingPolypLayer.SUN_ALGA));
 		assertEquals("restored specimen count", 1, restored.recordedSpecimenCount());
 		assertEquals("restored surrender count", 1, restored.surrenderedSpecimenCount());
 		assertEquals("restored layer count", 2, restored.recordedMorphlingLayerCount());
@@ -70,19 +70,19 @@ public final class SpecimenBestiaryProgressTest {
 		SpecimenBestiaryState progress = new SpecimenBestiaryState();
 		progress.recordSpecimen("hemomancy:desiccant");
 		progress.surrenderSpecimen("hemomancy:desiccant");
-		progress.recordMorphlingLayer(MorphlingPolypLayer.FUNGAL);
+		progress.recordMorphlingLayer(MorphlingPolypLayer.BLACK_YEAST);
 
 		progress.replaceFromSync(
 				java.util.Set.of("hemomancy:prism_cuttle"),
 				java.util.Set.of("hemomancy:barbed_urchin"),
-				java.util.Set.of(MorphlingPolypLayer.CUTTLEFISH.serializedName()));
+				java.util.Set.of(MorphlingPolypLayer.SUN_ALGA.serializedName()));
 
 		assertFalse("old recorded specimen is removed", progress.hasRecordedSpecimen("hemomancy:desiccant"));
 		assertFalse("old surrendered specimen is removed", progress.hasSurrenderedSpecimen("hemomancy:desiccant"));
-		assertFalse("old morphling layer is removed", progress.hasRecordedMorphlingLayer(MorphlingPolypLayer.FUNGAL));
+		assertFalse("old morphling layer is removed", progress.hasRecordedMorphlingLayer(MorphlingPolypLayer.BLACK_YEAST));
 		assertTrue("new recorded specimen is present", progress.hasRecordedSpecimen("hemomancy:prism_cuttle"));
 		assertTrue("new surrendered specimen is present", progress.hasSurrenderedSpecimen("hemomancy:barbed_urchin"));
-		assertTrue("new morphling layer is present", progress.hasRecordedMorphlingLayer(MorphlingPolypLayer.CUTTLEFISH));
+		assertTrue("new morphling layer is present", progress.hasRecordedMorphlingLayer(MorphlingPolypLayer.SUN_ALGA));
 		assertEquals("synced specimen count", 1, progress.recordedSpecimenCount());
 		assertEquals("synced surrender count", 1, progress.surrenderedSpecimenCount());
 		assertEquals("synced layer count", 1, progress.recordedMorphlingLayerCount());

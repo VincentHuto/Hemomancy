@@ -7,8 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that subtly deflects incoming projectiles, granting
- * knockback resistance. Applied by the Lumenlace Morphling while it is
- * attached to the player. The knockback resistance bonus is applied via
+ * knockback resistance. Used by its standalone potion. The knockback
+ * resistance bonus is applied via
  * attribute modifier in EffectInit.
  */
 public class LuminousDissipationEffect extends MobEffect {

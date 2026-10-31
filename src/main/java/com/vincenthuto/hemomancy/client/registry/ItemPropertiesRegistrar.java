@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.registry;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.*;
+import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrains;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.DrudgeElectrodeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowItem;
@@ -36,6 +37,17 @@ public final class ItemPropertiesRegistrar {
     @SubscribeEvent
     public static void registerItemPropertyOverrides(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            // The Court house marker's stack picks its house's model (item/house_marker overrides).
+            ItemProperties.register(com.vincenthuto.hemomancy.common.init.BlockInit.house_marker.get().asItem(),
+                    Hemomancy.rloc("house"), (stack, world, entity, seed) ->
+                            com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.HouseMarkerBlockItem
+                                    .house(stack).ordinal());
+            // The Saint Sarcophagus stack picks its Saint's palette (item/saint_sarcophagus overrides).
+            ItemProperties.register(com.vincenthuto.hemomancy.common.init.BlockInit.saint_sarcophagus.get().asItem(),
+                    Hemomancy.rloc("saint"), (stack, world, entity, seed) ->
+                            com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SaintSarcophagusBlockItem
+                                    .palette(stack));
+
             ItemProperties.register(ItemInit.unsigned_ancestral_ledger.get(), Hemomancy.rloc("unsigned"),
                     HemoItemProperties.booleanTag("state"));
 
@@ -131,24 +143,10 @@ public final class ItemPropertiesRegistrar {
                     ItemStack selectedStack = ItemStack.parseOptional(
                             world != null ? world.registryAccess() : RegistryAccess.EMPTY,
                             ((ListTag) items.get("Items")).getCompound(0));
-                    if (selectedStack.getItem() == ItemInit.morphling_emberfang.get()) {
-                        return 1.0F;
-                    } else if (selectedStack.getItem() == ItemInit.morphling_deadmans_purse.get()) {
-                        return 2.0F;
-                    } else if (selectedStack.getItem() == ItemInit.morphling_gravecap.get()) {
-                        return 3.0F;
-                    } else if (selectedStack.getItem() == ItemInit.morphling_bootlace.get()) {
-                        return 4.0F;
-                    } else if (selectedStack.getItem() == ItemInit.morphling_winter_shroud.get()) {
-                        return 5.0F;
-                    } else if (selectedStack.getItem() == ItemInit.morphling_lumenlace.get()) {
-                        return 6.0F;
-                    } else if (selectedStack.getItem() == ItemInit.morphling_witchs_ear.get()) {
-                        return 7.0F;
-                    } else if (selectedStack.getItem() == ItemInit.morphling_irontooth.get()) {
-                        return 8.0F;
-                    }
-                    return 0.0F;
+                    // Staff visuals 1-8 follow the strain table's order.
+                    return MorphlingStrains.of(selectedStack)
+                            .map(strain -> (float) (MorphlingStrains.ALL.indexOf(strain) + 1))
+                            .orElse(0.0F);
                 }
             });
         });

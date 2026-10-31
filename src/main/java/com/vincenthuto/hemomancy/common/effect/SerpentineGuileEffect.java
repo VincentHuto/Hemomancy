@@ -7,8 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that grants the player increased movement speed and
- * attack speed, embodying Emberfang's heated venom reflexes. Applied by the Emberfang Morphling
- * while it is attached to the player. Speed bonuses are applied via attribute
+ * attack speed. Used by its standalone potion. Speed bonuses are applied via attribute
  * modifiers in EffectInit.
  */
 public class SerpentineGuileEffect extends MobEffect {

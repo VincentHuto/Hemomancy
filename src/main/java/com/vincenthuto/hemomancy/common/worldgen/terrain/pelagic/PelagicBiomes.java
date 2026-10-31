@@ -23,6 +23,7 @@ public final class PelagicBiomes {
             var generation = new BiomeGenerationSettings.Builder(placed, carvers);
             generation.addFeature(GenerationStep.Decoration.LOCAL_MODIFICATIONS, PlacedFeatureInit.PELAGIC_SEABED);
             generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.PELAGIC_HABITAT);
+            generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.COURT_SIGNS);
             int water = switch (layer) {
                 case SHORE -> 0x386D76; case OPEN -> 0x28557A; case TWILIGHT -> 0x294552;
                 case MIDNIGHT -> 0x192E42; case CARRION -> 0x303A3E; default -> 0x263C3B;

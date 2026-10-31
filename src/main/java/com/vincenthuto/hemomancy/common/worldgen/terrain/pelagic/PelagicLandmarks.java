@@ -21,8 +21,7 @@ public final class PelagicLandmarks {
             double chance = PelagicTerrainSampler.unit(PelagicTerrainSampler.mix(salt + 1));
             double angle = site.angle();
             var writer = new Writer(result, chunkX, chunkZ, floor);
-            if (center.floor() < -34 && center.form() == PelagicTerrainSampler.Form.PLAIN
-                    && site.active()) {
+            if (hostsVentField(site, center)) {
                 vent(terrain, writer, x, z, angle, salt);
             } else if (center.form() == PelagicTerrainSampler.Form.FAN && center.floor() > -30 && center.floor() < -9 && chance < .20) {
                 fossil(writer, x, z, angle);
@@ -36,6 +35,12 @@ public final class PelagicLandmarks {
         return result;
     }
 
+    /** Whether the seeded site builds its mound and chimneys: active, on fully shaped abyssal plain. */
+    public static boolean hostsVentField(PelagicTerrainSampler.VentSite site, PelagicTerrainSampler.Column center) {
+        return site.active() && center.influence() >= .999 && center.floor() < -34
+                && center.form() == PelagicTerrainSampler.Form.PLAIN;
+    }
+
     private static void vent(PelagicTerrainSampler terrain, Writer writer, int x, int z, double angle, long salt) {
         for (int dx = -9; dx <= 9; dx++) for (int dz = -9; dz <= 9; dz++) {
             double u = dx * Math.cos(angle) + dz * Math.sin(angle);
@@ -45,6 +50,43 @@ public final class PelagicLandmarks {
             int ground = writer.floor.apply(x + dx, z + dz).floorY();
             writer.put(x + dx, ground, z + dz, radius < .45 ? Material.BASALT : Material.TUFF);
         }
+        for (var chimney : chimneys(x, z, salt, writer.floor)) {
+            for (int y = 1; y <= chimney.height(); y++) for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) {
+                if (chimney.contains(chimney.x() + dx, chimney.ground() + y, chimney.z() + dz))
+                    writer.put(chimney.x() + dx, chimney.ground() + y, chimney.z() + dz,
+                            y == chimney.height() ? Material.MAGMA : Material.BASALT);
+            }
+        }
+    }
+
+    /**
+     * One chimney of a seeded vent field: its axis column, the floor it rises from and its height (the magma mouth is
+     * at {@code ground + height}). The Vent Sanctum crowns these; they are never moved or rebuilt.
+     */
+    public record Chimney(int x, int z, int ground, int height) {
+        public int mouthY() {
+            return ground + height;
+        }
+
+        /** Whether the planned chimney body fills this block (before the chunk-ownership and floor filters). */
+        public boolean contains(int bx, int by, int bz) {
+            int y = by - ground;
+            if (y < 1 || y > height) return false;
+            int dx = bx - x, dz = bz - z;
+            double radius = y <= 2 ? 1.8 : y == height ? .8 : 1.15;
+            return Math.abs(dx) <= 2 && Math.abs(dz) <= 2 && dx * dx + dz * dz <= radius * radius;
+        }
+    }
+
+    /** The chimneys a vent field's mound carries: 1 to 5, in seeded jittered sectors round the site centre. */
+    public static List<Chimney> chimneys(PelagicTerrainSampler.VentSite site,
+            BiFunction<Integer, Integer, PelagicTerrainSampler.Column> floor) {
+        return chimneys(site.x(), site.z(), site.salt(), floor);
+    }
+
+    private static List<Chimney> chimneys(int x, int z, long salt,
+            BiFunction<Integer, Integer, PelagicTerrainSampler.Column> floor) {
+        var result = new ArrayList<Chimney>();
         int count = 1 + (int)(PelagicTerrainSampler.unit(PelagicTerrainSampler.mix(salt + 210)) * 5);
         double rotation = PelagicTerrainSampler.unit(PelagicTerrainSampler.mix(salt + 211)) * Math.PI * 2;
         for (int i = 0; i < count; i++) {
@@ -55,14 +97,11 @@ public final class PelagicLandmarks {
                     : 6 + 2 * PelagicTerrainSampler.unit(PelagicTerrainSampler.mix(chimney));
             int vx = x + (int)Math.round(Math.cos(direction) * distance);
             int vz = z + (int)Math.round(Math.sin(direction) * distance);
-            int ground = writer.floor.apply(vx, vz).floorY();
+            int ground = floor.apply(vx, vz).floorY();
             int height = 3 + (int)(PelagicTerrainSampler.unit(PelagicTerrainSampler.mix(chimney + 1)) * 6);
-            for (int y = 1; y <= height; y++) for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) {
-                double radius = y <= 2 ? 1.8 : y == height ? .8 : 1.15;
-                if (dx * dx + dz * dz <= radius * radius)
-                    writer.put(vx + dx, ground + y, vz + dz, y == height ? Material.MAGMA : Material.BASALT);
-            }
+            result.add(new Chimney(vx, vz, ground, height));
         }
+        return result;
     }
 
     private static void fossil(Writer writer, int x, int z, double angle) {

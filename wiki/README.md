@@ -166,6 +166,7 @@ Technical documentation:
 
 Pages still to add:
 - **World-Content.md**: Biomes, structures, mobs in detail
+- **Brined-Court.md**: The sea Court's Seats and outposts
 - **Advanced-Mechanics.md**: Detailed guides for morphlings, puppeteering, blood routing, and retained post-alpha Drudge WIP
 - **Factions.md**: Hematic Order and Unstained beliefs
 - **Items-and-Blocks.md**: Complete item/block reference

@@ -16,6 +16,8 @@ public final class MausoleumEntranceRules {
 	public static final int SAMPLE_STEP = 7;
 	/** The most the ground may rise across that area; more and the pavilion would be cut into a hill or stand on a plinth. */
 	public static final int MAX_RISE = 4;
+	/** How far a hall's roof may stand above the solid ground at its corners; the outer halls' roofs are flush with the grass. */
+	public static final int MAX_ROOF_EXPOSURE = 2;
 
 	private MausoleumEntranceRules() {
 	}

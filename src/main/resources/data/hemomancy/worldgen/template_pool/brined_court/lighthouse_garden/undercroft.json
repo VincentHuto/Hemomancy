@@ -1,0 +1,16 @@
+{
+  "name": "hemomancy:brined_court/lighthouse_garden/undercroft",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "hemomancy:brined_court/lighthouse_garden/undercroft",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "override_liquid_settings": "ignore_waterlogging"
+      }
+    }
+  ]
+}

@@ -304,6 +304,7 @@ public class MorphlingItem extends Item implements IMorphling {
 			tooltip.add(Component.translatable(binomial)
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
+		appendStrainText(stack, tooltip);
 
 		// Show preferred enzyme info
 		EnumBloodTendency preferred = this.getPreferredTendency();
@@ -369,6 +370,10 @@ public class MorphlingItem extends Item implements IMorphling {
 		return "";
 	}
 
+	/** Strain description lines under the binomial; house strains add theirs. */
+	protected void appendStrainText(ItemStack stack, List<Component> tooltip) {
+	}
+
 	private static String formatTendencyName(EnumBloodTendency tendency) {
 		String name = tendency.name();
 		if (name.isEmpty()) return "Unknown";
@@ -391,10 +396,27 @@ public class MorphlingItem extends Item implements IMorphling {
 
 	public static boolean tryBeginPrimalAbility(Player player, ItemStack stack, String abilityKey,
 			double bloodCost, int cooldownTicks, int strainTicks, int strainAmplifier) {
+		return tryBeginPrimalAbility(player, stack, abilityKey, bloodCost, cooldownTicks, strainTicks, strainAmplifier,
+				PRIMAL_ABILITY);
+	}
+
+	/** Names a Primal's own blood source, so the diagnostics show which power paid. */
+	public static BloodAccounting.Source primalSource(String id) {
+		return BloodAccounting.Source.of(id, Category.MORPHLING, false, false);
+	}
+
+	/** True when the Primal named {@code abilityKey} is still recovering. */
+	public static boolean isPrimalRecovering(Player player, ItemStack stack, String abilityKey, int cooldownTicks) {
+		long last = getLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey);
+		return last > 0L && player.level().getGameTime() - last < cooldownTicks;
+	}
+
+	public static boolean tryBeginPrimalAbility(Player player, ItemStack stack, String abilityKey,
+			double bloodCost, int cooldownTicks, int strainTicks, int strainAmplifier, BloodAccounting.Source source) {
 		if (!isPrimal(stack) || player.level().isClientSide) return false;
 		long now = player.level().getGameTime();
 		long lastUse = getLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey);
-		if (now - lastUse < cooldownTicks) {
+		if (lastUse > 0L && now - lastUse < cooldownTicks) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.morphling_item.the_primal_morphling_is_still_recoiling").withStyle(ChatFormatting.DARK_PURPLE), true);
 			return false;
 		}
@@ -403,12 +425,12 @@ public class MorphlingItem extends Item implements IMorphling {
 			player.displayClientMessage(Component.translatable("message.hemomancy.morphling_item.the_primal_morphling_hungers_for_more").withStyle(ChatFormatting.DARK_RED), true);
 			return false;
 		}
-		if (!BloodAccounting.pay(player, bloodCost, PRIMAL_ABILITY).satisfied()) return false;
+		if (!BloodAccounting.pay(player, bloodCost, source).satisfied()) return false;
 		applyMorphicStrain(player,
 				PrimalMorphlingRules.morphicStrainDuration(strainTicks,
 						SkillPointHelper.getPrimalMorphogenesisLevel(player)),
 				strainAmplifier);
-		setLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey, now);
+		setLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey, Math.max(1L, now));
 		if (player instanceof ServerPlayer serverPlayer) {
 			com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager.onCast(serverPlayer);
 		}
@@ -486,29 +508,17 @@ public class MorphlingItem extends Item implements IMorphling {
 	}
 
 	/**
-	 * Applies one of the eight named Morphling passives without letting its
-	 * status icon expire between upkeep ticks. The effect is intentionally
-	 * hidden from potion particles but keeps its icon and current amplifier.
+	 * Applies a strain's passive effect without letting its status icon expire between upkeep ticks,
+	 * clearing every other strain's passive. The effect hides its particles but keeps its icon and
+	 * current amplifier.
 	 */
 	public static void applyPassiveEffect(Player player, ItemStack stack, Holder<MobEffect> effect,
 			int amplifier) {
-		applyPassiveEffect(player, stack, effect, null, amplifier);
-	}
-
-	/**
-	 * Applies a strain-named passive and removes the previous generic passive
-	 * from the same strain when a world is upgraded in place.
-	 */
-	public static void applyPassiveEffect(Player player, ItemStack stack, Holder<MobEffect> effect,
-			Holder<MobEffect> legacyEffect, int amplifier) {
 		if (stack.isEmpty()) return;
 		for (Holder<MobEffect> morphlingEffect : morphlingPassiveEffects()) {
 			if (!morphlingEffect.equals(effect)) {
 				player.removeEffect(morphlingEffect);
 			}
-		}
-		if (legacyEffect != null) {
-			player.removeEffect(legacyEffect);
 		}
 		int interval = drainIntervalTicks();
 		MobEffectInstance current = player.getEffect(effect);
@@ -524,19 +534,12 @@ public class MorphlingItem extends Item implements IMorphling {
 		for (Holder<MobEffect> morphlingEffect : morphlingPassiveEffects()) {
 			player.removeEffect(morphlingEffect);
 		}
-		EmberfangMorphlingItem.clearHeatModifiers(player);
 	}
 
 	private static List<Holder<MobEffect>> morphlingPassiveEffects() {
-		return List.of(
-				EffectInit.morphling_deadmans_purse,
-				EffectInit.morphling_gravecap,
-				EffectInit.morphling_witchs_ear,
-				EffectInit.morphling_lumenlace,
-				EffectInit.morphling_bootlace,
-				EffectInit.morphling_irontooth,
-				EffectInit.morphling_emberfang,
-				EffectInit.morphling_winter_shroud);
+		return MorphlingStrains.ALL.stream()
+				.<Holder<MobEffect>>map(MorphlingStrain::passiveEffect)
+				.toList();
 	}
 
 	private static double fledglingBondBlood() {

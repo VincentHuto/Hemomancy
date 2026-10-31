@@ -1,0 +1,15 @@
+{
+  "type": "hemomancy:brined_court",
+  "site": "still_bell",
+  "start_pool": "hemomancy:brined_court/still_bell/start_pool",
+  "size": 1,
+  "max_distance_from_center": 48,
+  "biomes": "#hemomancy:has_structure/brined_court_still_bell",
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "start_height": {
+    "absolute": 0
+  },
+  "spawn_overrides": {},
+  "start_jigsaw_name": "hemomancy:court_outpost_start"
+}

@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -75,6 +76,14 @@ public class ReliquarySconceBlock extends Block {
 	public ReliquarySconceBlock(Properties properties) {
 		super(properties);
 		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(FLAME, Flame.PALE));
+	}
+
+	/** Hung on the clicked wall face, facing out of it; set on a floor or ceiling, it faces the player. */
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		Direction face = context.getClickedFace();
+		return defaultBlockState().setValue(FACING,
+				face.getAxis().isHorizontal() ? face : context.getHorizontalDirection().getOpposite());
 	}
 
 	@Override
