@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommissionProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommissionProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurveyProgress;
@@ -37,6 +38,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean enzymeMasteryComplete,
 		boolean firstCultureComplete,
 		MorphlingHandlingProgress morphlingHandling,
+		PallidVesselProgress pallidVessel,
 		DeepDarkCommissionProgress deepDarkCommission,
 		PhlegethonticCommissionProgress phlegethonticCommission,
 		VagrantMindInquiryProgress vagrantMindInquiry,
@@ -110,6 +112,10 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.firstCultureComplete);
 		buf.writeBoolean(msg.morphlingHandling.proof());
 		buf.writeBoolean(msg.morphlingHandling.inspected());
+		buf.writeBoolean(msg.pallidVessel.briefed());
+		buf.writeBoolean(msg.pallidVessel.riteDone());
+		buf.writeBoolean(msg.pallidVessel.filled());
+		buf.writeBoolean(msg.pallidVessel.reported());
 		buf.writeBoolean(msg.deepDarkCommission.sampleProof());
 		buf.writeBoolean(msg.deepDarkCommission.reported());
 		buf.writeBoolean(msg.phlegethonticCommission.sampleProof());
@@ -185,6 +191,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readBoolean(),
 				new MorphlingHandlingProgress(buf.readBoolean(), buf.readBoolean()),
+				new PallidVesselProgress(buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean()),
 				new DeepDarkCommissionProgress(buf.readBoolean(), buf.readBoolean()),
 				new PhlegethonticCommissionProgress(buf.readBoolean(), buf.readVarInt(), buf.readBoolean()),
 				new VagrantMindInquiryProgress(buf.readBoolean(), buf.readBoolean(),

@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.voyager.charted_map.title",
+  "line": "hemomancy.trade.voyager.charted_map.line",
+  "order": 20,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:filled_map"
+    },
+    "count": 1
+  },
+  "give": [
+    {
+      "item": "hemomancy:cooked_pelagic_herring",
+      "count": 4
+    }
+  ]
+}

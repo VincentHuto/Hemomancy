@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 
 import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.UnstainedScoutDialogueTrees;
@@ -78,6 +79,7 @@ public class UnstainedScoutEntity extends PathfinderMob implements ProgressionDi
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND
                 && player instanceof ServerPlayer serverPlayer) {
             DialogueTree tree = progressionDialogue(serverPlayer);
+            tree = DialogueHubFactory.decorate(tree, "scout", serverPlayer);
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);

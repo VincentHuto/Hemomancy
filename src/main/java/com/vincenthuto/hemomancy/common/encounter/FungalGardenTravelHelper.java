@@ -55,6 +55,7 @@ public final class FungalGardenTravelHelper {
 	/** The value the old Archon choice key held for a path, for the recipe gates that still name the key. */
 	public static String legacyArchonChoice(EnumArchonPath path) {
 		return switch (path) {
+			// Silent Archon power is Silentium's alone; a Silence still pending (D7) has none.
 			case SILENTIUM -> ARCHON_CHOICE_SILENCE;
 			case APOTHEOS, APOTHEOS_PENDING -> ARCHON_CHOICE_APOTHEOS;
 			default -> "";

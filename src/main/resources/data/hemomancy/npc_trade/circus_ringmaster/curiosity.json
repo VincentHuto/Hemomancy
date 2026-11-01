@@ -1,0 +1,33 @@
+{
+  "title": "hemomancy.trade.circus_ringmaster.curiosity.title",
+  "line": "hemomancy.trade.circus_ringmaster.curiosity.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "tag": "hemomancy:trade/curiosity"
+    },
+    "count": 1,
+    "appraisal": "rarity"
+  },
+  "give": [
+    {
+      "item": "hemomancy:circus_curtain",
+      "count": 2
+    }
+  ],
+  "give_fine": [
+    {
+      "item": "hemomancy:laughing_mask",
+      "count": 1
+    },
+    {
+      "item": "hemomancy:circus_curtain",
+      "count": 2
+    }
+  ],
+  "stock": {
+    "uses": 3,
+    "restock_days": 1
+  }
+}

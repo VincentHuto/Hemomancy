@@ -136,7 +136,7 @@ public final class CourtDiscoveryDialogue {
 		if (start == null) return tree;
 		var nodes = new LinkedHashMap<>(tree.nodes());
 		var options = new ArrayList<>(start.options());
-		options.add(Math.max(0, options.size() - 1), new DialogueOption(optionKey, NODE, null));
+		options.add(Math.max(0, options.size() - 1), new DialogueOption(optionKey, NODE, null).withLore());
 		nodes.put(start.id(), new DialogueNode(start.id(), start.lines(), options));
 		nodes.put(NODE, new DialogueNode(NODE, lines, List.copyOf(nodeOptions)));
 		return copy(tree, nodes);

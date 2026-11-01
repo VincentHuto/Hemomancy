@@ -27,6 +27,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.DialogueEventRouter;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MnemonistStarterMemoryChoice;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PallidVesselDialogue;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PhlegethonticCommissionDialogue;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
@@ -1532,6 +1533,182 @@ public final class ClinicalBloodProgressionGameTests {
         actor.getInventory().selected = 0;
         actor.getPersistentData().putBoolean("hemomancy:chamber_visit_active", true);
         actor.getPersistentData().putString("hemomancy:chamber_visit_mode", mode);
+    }
+
+    @GameTest(template = "empty") public static void pallidVesselQuestRunsBriefingRiteFillReport(GameTestHelper h) {
+        var level = h.getLevel();
+        var learner = player(h, 3);
+        var stranger = player(h, 3);
+        var late = player(h, 4);
+        for (var p : List.of(learner, stranger, late)) HemoCapabilityAccess.getBloodVolume(p).setActive(true);
+        var alchemist = EntityInit.harbinger_alchemist.get().create(level);
+        alchemist.setNoAi(true); alchemist.setPos(learner.position()); level.addFreshEntity(alchemist);
+        var vicar = EntityInit.harbinger_vicar.get().create(level);
+        vicar.setNoAi(true); vicar.setPos(learner.position()); level.addFreshEntity(vicar);
+        var alembicPos = h.absolutePos(new BlockPos(4, 3, 4));
+        level.setBlockAndUpdate(alembicPos, BlockInit.ghastly_alembic.get().defaultBlockState());
+        var alembic = (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity)
+                level.getBlockEntity(alembicPos);
+        var recipeId = Hemomancy.rloc(PallidVesselAssignment.RITE_PATH);
+        var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(level, recipeId);
+        var center = h.absolutePos(new BlockPos(10, 3, 10));
+        try {
+            h.assertTrue(recipe != null, "The Rite of the Pallid Vessel recipe is missing");
+            var start = alchemist.progressionDialogue(learner);
+            var offer = start.getStartNode().options().stream()
+                    .filter(option -> PallidVesselDialogue.NODE.equals(option.nextNodeId())).findFirst().orElse(null);
+            h.assertTrue(offer != null && offer.presentation().quest(), "Degree 3 Alchemist did not offer the vessel quest");
+            var early = DialogueOptionPacket.dispatch(learner, PallidVesselDialogue.REPORT, alchemist.getId());
+            h.assertTrue(early != null && !early.wasRewardDelivered(), "An unbriefed report completed the vessel");
+            h.assertTrue(DialogueOptionPacket.dispatch(learner, PallidVesselDialogue.BRIEF, vicar.getId()) == null,
+                    "The Vicar dispatched the Alchemist's vessel briefing");
+            var brief = DialogueOptionPacket.dispatch(learner, PallidVesselDialogue.BRIEF, alchemist.getId());
+            h.assertTrue(brief != null && brief.wasRewardDelivered() && PallidVesselAssignment.progress(learner).briefed(),
+                    "The Alchemist's briefing was not recorded");
+            h.assertTrue(!PallidVesselAssignment.brief(learner, alchemist), "The briefing recorded twice");
+
+            var gifted = filledWhiteGourd(h, alembic, alembicPos);
+            learner.getInventory().add(gifted);
+            h.assertTrue(!PallidVesselAssignment.recordFill(learner),
+                    "A filled gourd counted before this player's own rite");
+            var strangerRite = com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.interactive(
+                    stranger.getUUID(), center, recipeId, 1200, 4, 6, false, 0);
+            h.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.apply(
+                    new com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.Context(
+                            level, stranger, strangerRite, recipe, center)), "The vessel rite's effect refused");
+            h.assertTrue(!PallidVesselAssignment.progress(learner).riteDone(), "Another player's rite credited the learner");
+            var otherRecipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(level,
+                    Hemomancy.rloc("cardinal_rite/crimson_vessel_rite"));
+            com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.apply(
+                    new com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.Context(
+                            level, learner, strangerRite, otherRecipe, center));
+            h.assertTrue(!PallidVesselAssignment.progress(learner).riteDone(), "A different rite credited the vessel rite");
+            var rite = com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.interactive(
+                    learner.getUUID(), center, recipeId, 1200, 4, 6, false, 0);
+            com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.apply(
+                    new com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.Context(
+                            level, learner, rite, recipe, center));
+            h.assertTrue(PallidVesselAssignment.progress(learner).riteDone(), "The learner's own rite was not recorded");
+
+            learner.getInventory().clearContent();
+            var empty = new ItemStack(ItemInit.blood_gourd_white.get());
+            learner.getInventory().add(empty);
+            h.assertTrue(!PallidVesselAssignment.recordFill(learner), "An empty white gourd counted as filled");
+            learner.getInventory().clearContent();
+            var filled = filledWhiteGourd(h, alembic, alembicPos);
+            learner.getInventory().add(filled);
+            h.assertTrue(PallidVesselAssignment.recordFill(learner) && PallidVesselAssignment.progress(learner).filled(),
+                    "Blood drawn from the Alembic did not record the fill");
+
+            h.assertTrue(DialogueOptionPacket.dispatch(learner, PallidVesselDialogue.REPORT, vicar.getId()) == null,
+                    "The Vicar dispatched the Alchemist's vessel report");
+            int degreeBefore = HemoCapabilityAccess.getPlayerDegreeNumber(learner);
+            var report = DialogueOptionPacket.dispatch(learner, PallidVesselDialogue.REPORT, alchemist.getId());
+            h.assertTrue(report != null && report.wasRewardDelivered() && PallidVesselAssignment.progress(learner).reported(),
+                    "The Alchemist did not accept the vessel report");
+            h.assertTrue(HarbingerAdvancementGranter.hasAdvancement(learner, PallidVesselAssignment.ADV_COMPLETE),
+                    "The hidden completion advancement was not granted");
+            h.assertTrue(learner.getInventory().countItem(ItemInit.dried_gourd.get()) == PallidVesselAssignment.REWARD_GOURDS
+                            && learner.getInventory().countItem(Items.AMETHYST_SHARD) == PallidVesselAssignment.REWARD_SHARDS
+                            && PallidVesselAssignment.REWARD.owed().apply(learner).isEmpty(),
+                    "The report reward did not land exactly once");
+            h.assertTrue(learner.getInventory().countItem(ItemInit.blood_gourd_white.get()) == 1,
+                    "The report took the learner's gourd");
+            h.assertTrue(!PallidVesselAssignment.report(learner, alchemist), "The vessel reported twice");
+
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(learner) == degreeBefore
+                            && !HarbingerAdvancementGranter.hasAdvancement(learner,
+                                    HarbingerAdvancementGranter.ADV_MNEMONIST_WOVEN_VESSEL_COMPLETE),
+                    "The vessel quest moved a Degree or the Woven Vessel");
+            h.assertTrue(PallidVesselAssignment.eligible(late)
+                            && PallidVesselAssignment.progress(late).stage() == PallidVesselProgress.Stage.NOT_BRIEFED
+                            && alchemist.progressionDialogue(late).getNode(PallidVesselDialogue.NODE) != null,
+                    "A Degree 4 player who skipped the vessel lost the quest; it must never gate Degree 4");
+
+            var restored = player(h, 3);
+            try {
+                restored.getPersistentData().put(Player.PERSISTED_NBT_TAG,
+                        learner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).copy());
+                h.assertTrue(PallidVesselAssignment.progress(restored).reported()
+                                && PallidVesselAssignment.REWARD.owed().apply(restored).isEmpty(),
+                        "Vessel completion or its settled reward did not survive persisted restoration");
+            } finally {
+                restored.discard();
+            }
+        } finally {
+            learner.discard(); stranger.discard(); late.discard(); alchemist.discard(); vicar.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void pallidVesselRewardWaitsForRoomAndALivingPlayer(GameTestHelper h) {
+        var level = h.getLevel();
+        var learner = player(h, 3);
+        HemoCapabilityAccess.getBloodVolume(learner).setActive(true);
+        var alchemist = EntityInit.harbinger_alchemist.get().create(level);
+        alchemist.setNoAi(true); alchemist.setPos(learner.position()); level.addFreshEntity(alchemist);
+        var alembicPos = h.absolutePos(new BlockPos(4, 3, 4));
+        level.setBlockAndUpdate(alembicPos, BlockInit.ghastly_alembic.get().defaultBlockState());
+        var alembic = (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity)
+                level.getBlockEntity(alembicPos);
+        var recipeId = Hemomancy.rloc(PallidVesselAssignment.RITE_PATH);
+        var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(level, recipeId);
+        var center = h.absolutePos(new BlockPos(10, 3, 10));
+        try {
+            PallidVesselAssignment.brief(learner, alchemist);
+            com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.apply(
+                    new com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.Context(level,
+                            learner, com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.interactive(
+                                    learner.getUUID(), center, recipeId, 1200, 4, 6, false, 0), recipe, center));
+            var inventory = learner.getInventory();
+            for (int slot = 0; slot < inventory.items.size(); slot++)
+                inventory.setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
+            inventory.setItem(0, filledWhiteGourd(h, alembic, alembicPos));
+            h.assertTrue(PallidVesselAssignment.report(learner, alchemist), "A full inventory blocked the report itself");
+            h.assertTrue(PallidVesselAssignment.REWARD.owed().apply(learner).stream().mapToInt(ItemStack::getCount).sum()
+                            == PallidVesselAssignment.REWARD_GOURDS + PallidVesselAssignment.REWARD_SHARDS,
+                    "A full inventory dropped or lost the vessel reward");
+            inventory.setItem(1, ItemStack.EMPTY);
+            learner.setHealth(0);
+            h.assertTrue(!PendingDelivery.deliver(learner, PallidVesselAssignment.REWARD)
+                            && inventory.getItem(1).isEmpty(), "A dead player received the vessel reward");
+            learner.setHealth(learner.getMaxHealth());
+            inventory.setItem(1, new ItemStack(Items.COBBLESTONE, 64));
+            learner.setGameMode(GameType.CREATIVE);
+            PendingDelivery.deliver(learner, PallidVesselAssignment.REWARD);
+            int owed = PallidVesselAssignment.REWARD.owed().apply(learner).stream().mapToInt(ItemStack::getCount).sum();
+            h.assertTrue(owed == PallidVesselAssignment.REWARD_GOURDS + PallidVesselAssignment.REWARD_SHARDS,
+                    "Creative discard counted as delivering the vessel reward: still owed " + owed);
+            learner.setGameMode(GameType.SURVIVAL);
+            // Dried Gourds don't stack, so the reward needs a slot per item.
+            for (int slot = 1; slot <= 3; slot++) inventory.setItem(slot, ItemStack.EMPTY);
+            PendingDelivery.deliver(learner, PallidVesselAssignment.REWARD);
+            h.assertTrue(inventory.countItem(ItemInit.dried_gourd.get()) == PallidVesselAssignment.REWARD_GOURDS
+                            && inventory.countItem(Items.AMETHYST_SHARD) == PallidVesselAssignment.REWARD_SHARDS
+                            && PallidVesselAssignment.REWARD.owed().apply(learner).isEmpty(),
+                    "The owed vessel reward did not land once room opened: gourds "
+                            + inventory.countItem(ItemInit.dried_gourd.get()) + ", shards "
+                            + inventory.countItem(Items.AMETHYST_SHARD) + ", owed "
+                            + PallidVesselAssignment.REWARD.owed().apply(learner) + ", eligible "
+                            + PallidVesselAssignment.eligible(learner) + ", alive " + learner.isAlive());
+        } finally {
+            learner.discard(); alchemist.discard();
+        }
+        h.succeed();
+    }
+
+    private static ItemStack filledWhiteGourd(GameTestHelper h,
+            com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity alembic, BlockPos pos) {
+        var gourd = new ItemStack(ItemInit.blood_gourd_white.get());
+        alembic.getBloodCapability().setBloodVolume(500);
+        alembic.setItem(4, gourd);
+        com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity
+                .serverTick(h.getLevel(), pos, alembic.getBlockState(), alembic);
+        var filled = alembic.getItem(4).copy();
+        alembic.setItem(4, ItemStack.EMPTY);
+        h.assertTrue(HemoCapabilityAccess.getBloodVolume(filled).orElseThrow().getBloodVolume() > 0,
+                "The Alembic did not fill the white gourd");
+        return filled;
     }
 
     @GameTest(template = "empty") public static void pallidVesselRequiresThirdDegree(GameTestHelper h) {
@@ -4334,6 +4511,9 @@ public final class ClinicalBloodProgressionGameTests {
 		}
 		if (type == com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingProgress.class) {
 			return new com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingProgress(true, false);
+		}
+		if (type == PallidVesselProgress.class) {
+			return new PallidVesselProgress(true, false, true, false);
 		}
 		if (type == com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommissionProgress.class) {
 			return new com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommissionProgress(true, false);

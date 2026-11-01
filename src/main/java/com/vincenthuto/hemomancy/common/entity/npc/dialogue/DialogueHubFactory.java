@@ -1,19 +1,46 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeBoard;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeCard;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeCards;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeRules;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSides;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.*;
 
-/** Builds presentation metadata around existing dialogue nodes without changing event semantics. */
+/**
+ * Builds the topic hub around existing dialogue nodes without changing event semantics. Root options become Quest Work
+ * cards (an explicit quest flag or a mission id) or Conversation cards, one per option, with lore options carrying the
+ * lore glyph and an unread dot. A lore option gated on a rapport tier the player hasn't reached is a locked lore card:
+ * the glyph, a lock and the option's teaser, with nowhere to go. The Trade box is filled from the speaker's want cards
+ * ({@link #withTrade}); a daily card the player hasn't seen today carries the unread dot.
+ */
 public final class DialogueHubFactory {
 	private static final String NAMESPACE = "hemomancy";
 	private static final String MET_HERMIT = "hemomancy_met_harbinger_hermit";
+	/** The glyph a lore card carries in the Conversation box. */
+	public static final ResourceLocation LORE_ICON = Hemomancy.rloc("dialogue/icons/lore");
+	public static final ResourceLocation TRADE_ICON = Hemomancy.rloc("dialogue/icons/trade");
+	private static final String TRADE_TOPIC_PREFIX = "trade/";
+	/** The topic that opens the Trade box on the speaker's refusal line. */
+	public static final String TRADE_REFUSAL_TOPIC = TRADE_TOPIC_PREFIX + "refusal";
+	/**
+	 * Trade topics name no dialogue node: the Trade box draws its cards from the presentation's board, so the screen
+	 * opens them through its own Trade view.
+	 */
+	public static final String TRADE_TARGET = "__trade";
+	/** A locked lore card's target: it names no node, and the card can't be opened. */
+	public static final String LOCKED_TARGET = "__locked";
+	/** The suffix of a rapport-gated lore option's teaser key, shown on its locked card. */
+	public static final String TEASER_SUFFIX = ".teaser";
 
 	private DialogueHubFactory() {}
 
@@ -21,8 +48,9 @@ public final class DialogueHubFactory {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		if ("hermit".equals(npcId)) {
 			player.getPersistentData().putBoolean(MET_HERMIT, true);
-		} else if (degree == 0
+		} else if (degree == 0 && !NpcTradeSides.is(npcId, NpcTradeSides.Side.CIRCUS)
 				&& !player.getPersistentData().getBoolean(MET_HERMIT)) {
+			// The pavilion takes D0 visitors on its own terms; the Circus is not the Vicar's errand.
 			tree = addNewcomerGuidance(tree, npcId);
 		}
 		if (degree >= 7) {
@@ -30,7 +58,39 @@ public final class DialogueHubFactory {
 			tree = withArchonAcknowledgment(tree, npcId, degree, path,
 					HarbingerAdvancementGranter.hasAdvancement(player, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED));
 		}
-		return decorate(tree, npcId, HemoCapabilityAccess.dialogueKnowledge(player));
+		int rapportTier = NpcTradeRules.tier(HemoCapabilityAccess.npcTrades(player).rapport(npcId));
+		// A speaker who won't deal with this player has no rapport to offer them either.
+		if (!NpcTradeSides.refuses(npcId, player)) tree = DialogueRapportLore.with(tree, npcId, rapportTier);
+		return withTrade(decorate(tree, npcId, HemoCapabilityAccess.dialogueKnowledge(player), rapportTier),
+				NpcTradeCards.build(player, npcId));
+	}
+
+	/**
+	 * Fills the Trade box: one {@code TRADE} topic per card, or a single one carrying the speaker's refusal line, so
+	 * the box enables itself. The cards ride in the presentation beside the topics. A speaker with no cards and no
+	 * refusal leaves the box empty.
+	 */
+	public static DialogueTree withTrade(DialogueTree tree, NpcTradeBoard board) {
+		if (!board.present() || tree.presentation().mode() != DialogueScreenMode.TOPIC_HUB) return tree;
+		List<DialogueTopic> topics = new ArrayList<>();
+		if (board.refusalKey().isPresent()) {
+			topics.add(new DialogueTopic(TRADE_REFUSAL_TOPIC, DialogueCategory.TRADE, "hemomancy.dialogue.category.trade",
+					board.refusalKey().get(), TRADE_TARGET, TRADE_ICON, DialogueTopicState.AVAILABLE, null, null,
+					null, false));
+		}
+		for (NpcTradeCard card : board.cards()) {
+			ResourceLocation shown = card.give().isEmpty() ? null : card.give().getFirst().item();
+			topics.add(new DialogueTopic(tradeTopicId(card.offerId()), DialogueCategory.TRADE, card.titleKey(),
+					card.lineKey(), TRADE_TARGET, TRADE_ICON, DialogueTopicState.AVAILABLE, null, null, shown,
+					card.fresh()));
+		}
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), tree.nodes(),
+				tree.entityId(), tree.theme(), tree.presentation().withTrade(board, topics));
+	}
+
+	/** The Trade topic id of a card; the card itself is {@code presentation.trade().card(offerId)}. */
+	public static String tradeTopicId(ResourceLocation offerId) {
+		return TRADE_TOPIC_PREFIX + offerId;
 	}
 
 	static DialogueTree withArchonAcknowledgment(DialogueTree tree, String npcId, int degree,
@@ -82,24 +142,35 @@ public final class DialogueHubFactory {
 				tree.entityId(), tree.theme(), tree.presentation());
 	}
 
+	/** The hub for a player with no rapport with the speaker. */
 	public static DialogueTree decorate(DialogueTree tree, String npcId, DialogueKnowledge knowledge) {
+		return decorate(tree, npcId, knowledge, NpcTradeRules.STRANGER);
+	}
+
+	/** The hub for a player at rapport tier {@code rapportTier} with the speaker. */
+	public static DialogueTree decorate(DialogueTree tree, String npcId, DialogueKnowledge knowledge,
+			int rapportTier) {
 		DialogueNode root = tree.getStartNode();
 		if (root == null) return tree;
 
 		Map<String, DialogueNode> nodes = new LinkedHashMap<>(tree.nodes());
 		List<DialogueTopic> topics = new ArrayList<>();
-		List<DialogueOption> conversationOptions = new ArrayList<>();
 		int syntheticIndex = 0;
+		boolean anyLocked = false;
 
 		for (DialogueOption option : root.options()) {
 			if (isLeave(option) || isInquiry(option)) continue;
-			DialogueCategory category = classify(option);
-			if (category == DialogueCategory.CONVERSATION) {
-				conversationOptions.add(option);
-				continue;
-			}
+			DialogueCategory category = isQuest(option) ? DialogueCategory.QUESTS : DialogueCategory.CONVERSATION;
+			boolean lore = category == DialogueCategory.CONVERSATION && option.presentation().lore();
 
 			String slug = slug(option.nextNodeId() != null ? option.nextNodeId() : option.text());
+			if (lore && lockedByRapport(option, rapportTier)) {
+				topics.add(new DialogueTopic(DialogueTopic.conversationId(slug), DialogueCategory.CONVERSATION,
+						option.text(), option.text() + TEASER_SUFFIX, LOCKED_TARGET, LORE_ICON,
+						DialogueTopicState.LOCKED, null, null, null, false, DialogueAttention.NONE, true));
+				anyLocked = true;
+				continue;
+			}
 			String target = option.nextNodeId();
 			if (target == null || option.eventId() != null) {
 				target = "__hub_" + category.name().toLowerCase(Locale.ROOT) + "_" + syntheticIndex++;
@@ -108,9 +179,9 @@ public final class DialogueHubFactory {
 						List.of(promptKey == null ? "hemomancy.dialogue.action.confirm" : promptKey),
 						List.of(option)));
 			}
-			String topicId = category.name().toLowerCase(Locale.ROOT) + "/" + slug;
-			boolean unread = category == DialogueCategory.LORE
-					&& (knowledge == null || !knowledge.hasRead(readId(npcId, topicId)));
+			String topicId = category == DialogueCategory.QUESTS ? "quests/" + slug : DialogueTopic.conversationId(slug);
+			boolean unread = lore
+					&& (knowledge == null || !knowledge.hasRead(readId(npcId, DialogueTopic.loreReadPath(slug))));
 			DialogueAttention attention = unread ? DialogueAttention.NOTICE : option.presentation().attention();
 			if (attention == DialogueAttention.NONE && category == DialogueCategory.QUESTS) {
 				attention = missionAttention(option.eventId());
@@ -118,18 +189,7 @@ public final class DialogueHubFactory {
 			DialogueTopicState state = category == DialogueCategory.QUESTS
 					? questState(option) : DialogueTopicState.AVAILABLE;
 			topics.add(new DialogueTopic(topicId, category, option.text(), summaryKey(category), target,
-					null, state, null, null, null, unread, attention));
-		}
-
-		if (!conversationOptions.isEmpty()) {
-			String target = "__hub_conversation";
-			String promptKey = conversationOptions.size() == 1
-					? conversationOptions.getFirst().presentation().promptKey() : null;
-			nodes.put(target, new DialogueNode(target,
-					List.of(promptKey == null ? "hemomancy.dialogue.conversation.prompt" : promptKey),
-					List.copyOf(conversationOptions)));
-			topics.add(DialogueTopic.available("conversation/speak_freely", DialogueCategory.CONVERSATION,
-					"hemomancy.dialogue.topic.speak_freely", summaryKey(DialogueCategory.CONVERSATION), target));
+					lore ? LORE_ICON : null, state, null, null, null, unread, attention, lore));
 		}
 
 		for (String nodeId : nodes.keySet()) {
@@ -141,26 +201,37 @@ public final class DialogueHubFactory {
 					"hemomancy.dialogue.topic.inventory_item.summary", nodeId).withItem(itemId));
 		}
 
+		if (anyLocked) {
+			// The greeting lists its options too, so a locked line shows there as a disabled teaser.
+			List<DialogueOption> rootOptions = new ArrayList<>(root.options().size());
+			for (DialogueOption option : root.options()) {
+				rootOptions.add(option.presentation().lore() && lockedByRapport(option, rapportTier)
+						? new DialogueOption(option.text(), null, null,
+								option.presentation().asDisabled(option.text() + TEASER_SUFFIX))
+						: option);
+			}
+			nodes.put(root.id(), new DialogueNode(root.id(), root.lines(), rootOptions));
+		}
+
 		ResourceLocation dialogueId = ResourceLocation.fromNamespaceAndPath(NAMESPACE, slug(npcId));
 		DialoguePresentation presentation = DialoguePresentation.hub(dialogueId, dialogueId, topics);
 		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
 				tree.entityId(), tree.theme(), presentation);
 	}
 
-	private static DialogueCategory classify(DialogueOption option) {
+	private static boolean lockedByRapport(DialogueOption option, int rapportTier) {
+		return option.presentation().rapportTier() > rapportTier;
+	}
+
+	/** An option is quest work when it says so, or when its ids name a mission. */
+	private static boolean isQuest(DialogueOption option) {
+		if (option.presentation().quest()) return true;
 		String value = (option.text() + " " + nullToEmpty(option.nextNodeId()) + " "
 				+ nullToEmpty(option.eventId())).toLowerCase(Locale.ROOT);
-		if (containsAny(value, "quest", "assignment", "reward", "claim", "brief", "task", "report",
+		return containsAny(value, "quest", "assignment", "reward", "claim", "brief", "task", "report",
 				"lesson", "directive", "diagnosis", "observance", "taxonomy", "bestiary",
 				"fungal_survey", "voyager_introduction", "morphling_handling", "circus_referral",
-				"deep_dark_commission", "phlegethontic_commission", "vagrant_inquiry", "woven_vessel")) {
-			return DialogueCategory.QUESTS;
-		}
-		if (containsAny(value, "about", "lore", "history", "order", "rite", "ritual", "machine",
-				"degree", "truth", "explain", "what_", "why_", "teach", "blood_crafting", "annetta")) {
-			return DialogueCategory.LORE;
-		}
-		return DialogueCategory.CONVERSATION;
+				"deep_dark_commission", "phlegethontic_commission", "vagrant_inquiry", "woven_vessel");
 	}
 
 	private static boolean isInquiry(DialogueOption option) {

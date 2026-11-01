@@ -29,8 +29,8 @@ class DialogueThemeStyleConfigTest {
 				"hemomancy:dialogue/categories_material/quests");
 		assertCategoryCard(DialogueCategory.INQUIRIES, true, true,
 				"hemomancy:dialogue/categories_material/inquiries_selected");
-		assertCategoryCard(DialogueCategory.LORE, false, false,
-				"hemomancy:dialogue/categories/lore");
+		assertCategoryCard(DialogueCategory.TRADE, false, false,
+				"hemomancy:dialogue/categories/trade");
 		assertCategoryCard(DialogueCategory.CONVERSATION, true, false,
 				"hemomancy:dialogue/categories/conversation_selected");
 	}

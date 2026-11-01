@@ -24,6 +24,7 @@ import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.event.*;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonSavedData;
@@ -178,6 +179,8 @@ public final class CardinalRiteCompletionEffects {
 					completeHematicUnbinding(ctx.level(), ctx.caster());
 					return true;
 				});
+		effect(com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment.RITE_PATH,
+				ctx -> com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment.recordRite(ctx.caster()));
 		effect("cardinal_rite/pallid_shadow",
 				ctx -> completePallidShadow(ctx.level(), ctx.caster(), ctx.center(), ctx.rite().getRiteSize()));
 		register("cardinal_rite/bloom_of_qliphoth",
@@ -685,11 +688,17 @@ public final class CardinalRiteCompletionEffects {
 	 * Each invocation uses a different dialogue variant from a pool.
 	 */
 	private static void completeAncestralCommunion(ServerLevel sLevel, ServerPlayer caster) {
+		// Activation refuses a Silentium; this covers one who finished the Silence while the rite ran.
+		if (!PendingWhispers.hearsTheHive(caster)) {
+			caster.displayClientMessage(Component.translatable("message.hemomancy.cardinal_rite_activation.ancestral_communion_silentium")
+					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), false);
+			return;
+		}
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
 		int variant = Math.floorMod(degree.getAncestralCommunions(), AncestralCommunionDialogueTrees.VARIANT_COUNT);
 		degree.setAncestralCommunions(degree.getAncestralCommunions() + 1);
 		InitiatoryDegreeEvents.syncDegree(caster, degree);
-		DialogueTree tree = AncestralCommunionDialogueTrees.forVariant(variant);
+		DialogueTree tree = AncestralCommunionDialogueTrees.forVariant(variant, PendingWhispers.hiveAddress(caster));
 
 		PacketHandler.sendToPlayer(caster, new OpenDialoguePacket(tree));
 

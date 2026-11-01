@@ -1,0 +1,23 @@
+{
+  "title": "hemomancy.trade.circus_acrobat.rigging_line.title",
+  "line": "hemomancy.trade.circus_acrobat.rigging_line.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:string"
+    },
+    "count": 8
+  },
+  "give": [
+    {
+      "item": "minecraft:potion",
+      "count": 1,
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:slow_falling"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "title": "hemomancy.trade.mnemonist.living_specimen.title",
+  "line": "hemomancy.trade.mnemonist.living_specimen.line",
+  "order": 20,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:specimen_jar"
+    },
+    "count": 1,
+    "appraisal": "specimen"
+  },
+  "give": [
+    {
+      "item": "hemomancy:memory_thread",
+      "count": 1
+    }
+  ],
+  "give_fine": [
+    {
+      "item": "hemomancy:memory_thread",
+      "count": 1
+    },
+    {
+      "item": "hemomancy:memory_thread",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 2
+  }
+}

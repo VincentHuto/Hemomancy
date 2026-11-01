@@ -1,0 +1,26 @@
+{
+  "title": "hemomancy.trade.vicar.chapel_shards.title",
+  "line": "hemomancy.trade.vicar.chapel_shards.line",
+  "order": 20,
+  "requires": {
+    "degree_at_least": 4
+  },
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:blood_crystal_shard"
+    },
+    "count": 3
+  },
+  "give": [
+    {
+      "item": "hemomancy:vascular_poultice",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 3
+  },
+  "show_locked": true
+}

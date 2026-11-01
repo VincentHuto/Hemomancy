@@ -48,12 +48,20 @@ public final class FungalWhisperDialogueTrees {
 	 * @param variant  A variant index (0–2) for message variety within a tier.
 	 */
 	public static DialogueTree forDegree(int degree, int variant) {
+		return forDegree(degree, variant, "");
+	}
+
+	/**
+	 * As {@link #forDegree(int, int)}, with the lines that name the player as Archon swapped for the key plus
+	 * {@code address} (".apotheos" for an Apotheos; see {@code HarbingerPathPermissions.hiveAddressSuffix}).
+	 */
+	public static DialogueTree forDegree(int degree, int variant, String address) {
 		// entityId of 0 means no entity — this is a disembodied voice
 		return switch (degree) {
 			case 4 -> adeptWhisper(variant);
 			case 5 -> illuminatusWhisper(variant);
 			case 6 -> sanctifiedWhisper(variant);
-			default -> archonWhisper(variant); // degree 7+
+			default -> archonWhisper(variant, address); // degree 7+
 		};
 	}
 
@@ -211,13 +219,13 @@ public final class FungalWhisperDialogueTrees {
 
 	// ── Degree 7 — Archon whispers: the full truth emerges ──
 
-	private static DialogueTree archonWhisper(int variant) {
+	private static DialogueTree archonWhisper(int variant, String address) {
 		return switch (variant) {
 			case 0 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
 					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.archon.v0.line1",
-							"hemomancy.whisper.archon.v0.line2"
+							"hemomancy.whisper.archon.v0.line2" + address
 					), List.of(
 							new DialogueOption("hemomancy.whisper.option.what_was_that", "follow", null),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
@@ -251,7 +259,7 @@ public final class FungalWhisperDialogueTrees {
 					)))
 					.addNode(new DialogueNode("truth", List.of(
 							"hemomancy.whisper.archon.v2.truth1.canon",
-							"hemomancy.whisper.archon.v2.truth2"
+							"hemomancy.whisper.archon.v2.truth2" + address
 					), List.of(
 							memoOption(MemoDefinitions.FUNGAL_WHISPER_TRUTH),
 							new DialogueOption("hemomancy.whisper.option.dismiss", null, "whisper_truth_acknowledged")

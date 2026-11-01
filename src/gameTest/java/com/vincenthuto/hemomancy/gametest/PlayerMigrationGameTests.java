@@ -100,6 +100,15 @@ public final class PlayerMigrationGameTests {
 					&& degree.hasWitnessedFungalRevelation()
 					&& !player.getPersistentData().contains(FungalGardenTravelHelper.ARCHON_CHOICE_KEY),
 					"The Silent root key was not migrated and cleared");
+			for (EnumArchonPath other : new EnumArchonPath[] {EnumArchonPath.NONE, EnumArchonPath.APOTHEOS_PENDING,
+					EnumArchonPath.APOTHEOS}) {
+				degree.setArchonPath(other);
+				helper.assertTrue(!silentGate.matches(player),
+						"The Silentium armour gate must stay shut on the " + other + " path");
+			}
+			degree.setArchonPath(EnumArchonPath.SILENTIUM);
+			helper.assertTrue(silentGate.matches(player), "The Silentium armour gate must open for a Silentium");
+			degree.setArchonPath(EnumArchonPath.SILENT_PENDING);
 			assertSettled(helper, player);
 			helper.succeed();
 		}

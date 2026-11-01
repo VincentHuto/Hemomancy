@@ -27,6 +27,8 @@ import net.minecraft.world.item.Items;
 public final class CourtHospitality {
 	/** The standing act a house's welcome gift records, once per house, so a gift is never taken twice. */
 	public static final String GIFT_ACT = "welcome_gift";
+	/** A member's refusal, for a refused event or a refused custom card. */
+	public static final String REFUSED = "hemomancy.court.refused";
 	public static final int FOOD_HUNGER = 6;
 	public static final float FOOD_SATURATION = 0.6F;
 	/** What a rest restores, at once: the member's shade and quiet, not a potion. */
@@ -82,10 +84,34 @@ public final class CourtHospitality {
 
 	/** Whether the player holds, in the main hand, what this house takes as its custom. */
 	public static boolean holdsCustom(Player player, CourtHouse house) {
+		return isCustomOffering(player.getItemInHand(InteractionHand.MAIN_HAND), house);
+	}
+
+	/** Whether {@code stack} is what this house takes as its custom (the Garden's food for a house without a tag). */
+	public static boolean isCustomOffering(ItemStack stack, CourtHouse house) {
 		TagKey<Item> custom = customTag(house);
-		if (custom == null) return CourtLife.holdsOffering(player);
-		ItemStack held = player.getItemInHand(InteractionHand.MAIN_HAND);
-		return !held.isEmpty() && held.is(custom);
+		if (custom == null) return CourtLife.isOffering(stack);
+		return !stack.isEmpty() && stack.is(custom);
+	}
+
+	/**
+	 * Why {@code member} won't take {@code act} as a custom from this player, or empty when it will: the player is
+	 * shunned or turned away, the role takes no custom, or the act isn't this house's. A trade card checks this
+	 * before it takes anything.
+	 */
+	public static java.util.Optional<String> customRefusal(ServerPlayer player, CourtMemberEntity member, String act) {
+		CourtHouse house = member.role().house();
+		if (CourtLife.isShunned(player) || CourtLife.turnsAway(player, house) || !member.role().offers(Offer.CUSTOM)
+				|| !customAct(house).equals(act)) {
+			return java.util.Optional.of(REFUSED);
+		}
+		return java.util.Optional.empty();
+	}
+
+	/** Takes one offering from {@code offering} as the house's custom; standing counts the act once. */
+	public static void acceptCustom(ServerPlayer player, CourtHouse house, ItemStack offering) {
+		offering.shrink(1);
+		CourtLife.recordAct(player, house, customAct(house), CourtStandingRules.ActKind.CUSTOM);
 	}
 
 	/** The house's own custom tag, or null for a house that takes the Garden's food. */
@@ -163,13 +189,12 @@ public final class CourtHospitality {
 	/** The house's custom: one offering from the main hand. Accepted every time; standing counts it once. */
 	private static boolean offer(ServerPlayer player, CourtHouse house) {
 		if (!holdsCustom(player, house)) return false;
-		player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
-		CourtLife.recordAct(player, house, customAct(house), CourtStandingRules.ActKind.CUSTOM);
+		acceptCustom(player, house, player.getItemInHand(InteractionHand.MAIN_HAND));
 		return true;
 	}
 
 	private static boolean refuse(ServerPlayer player) {
-		player.displayClientMessage(Component.translatable("hemomancy.court.refused").withStyle(ChatFormatting.GRAY), false);
+		player.displayClientMessage(Component.translatable(REFUSED).withStyle(ChatFormatting.GRAY), false);
 		return false;
 	}
 }

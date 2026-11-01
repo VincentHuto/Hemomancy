@@ -13,6 +13,14 @@ public final class SilentArchonArmorRules {
 	private SilentArchonArmorRules() {
 	}
 
+	/**
+	 * Silent Archon power belongs to the eighth-Degree Silentium alone. There is no seventh-Degree Silent Archon: a
+	 * Silence still pending ({@link EnumArchonPath#SILENT_PENDING}) wears the set as plain armor.
+	 */
+	public static boolean hasPower(boolean hasFullSet, int degree, EnumArchonPath path) {
+		return hasFullSet && HarbingerPathPermissions.isSilentium(degree, path);
+	}
+
 	public static boolean canRefuseDeath(boolean hasFullSet, int degree, String archonChoice,
 			double bloodVolume, double bloodCost, long now, long cooldownUntil) {
 		return canRefuseDeath(hasFullSet, degree,

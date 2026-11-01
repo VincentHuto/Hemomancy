@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.capability;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstDrawsAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
@@ -58,7 +59,7 @@ public final class PendingDelivery {
 	private static final class Claims {
 		static final List<Claim> ALL = List.of(FirstDrawsAssignment.VIALS, FirstSeparationAssignment.TOOLS,
 				FirstSeparationAssignment.BRIEFING_VIALS, MycophantEncounterManager.TENDRIL, VesperOrdealManager.MEMORY,
-				QliphothBloomEvents.FUNGAL_SPINE);
+				QliphothBloomEvents.FUNGAL_SPINE, PallidVesselAssignment.REWARD);
 	}
 
 	private PendingDelivery() {

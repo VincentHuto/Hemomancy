@@ -1,0 +1,10 @@
+{
+  "title": "hemomancy.trade.court_nursery_tender.custom.title",
+  "line": "hemomancy.trade.court_nursery_tender.custom.line",
+  "order": 10,
+  "want": {
+    "kind": "custom",
+    "act": "custom_catch"
+  },
+  "opens": "hemomancy.trade.court_nursery_tender.custom.opens"
+}

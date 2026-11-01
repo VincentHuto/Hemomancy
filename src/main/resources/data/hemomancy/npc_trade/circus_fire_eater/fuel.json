@@ -1,0 +1,23 @@
+{
+  "title": "hemomancy.trade.circus_fire_eater.fuel.title",
+  "line": "hemomancy.trade.circus_fire_eater.fuel.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:blaze_powder"
+    },
+    "count": 4
+  },
+  "give": [
+    {
+      "item": "minecraft:potion",
+      "count": 1,
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:fire_resistance"
+        }
+      }
+    }
+  ]
+}

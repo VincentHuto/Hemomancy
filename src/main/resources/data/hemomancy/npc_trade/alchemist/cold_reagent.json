@@ -1,0 +1,26 @@
+{
+  "title": "hemomancy.trade.alchemist.cold_reagent.title",
+  "line": "hemomancy.trade.alchemist.cold_reagent.line",
+  "order": 50,
+  "requires": {
+    "rapport_at_least": 30
+  },
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:frigid_enzyme"
+    },
+    "count": 2
+  },
+  "give": [
+    {
+      "item": "hemomancy:incandescent_enzyme",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 3
+  },
+  "show_locked": true
+}

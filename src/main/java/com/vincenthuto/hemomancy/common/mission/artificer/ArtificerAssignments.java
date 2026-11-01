@@ -456,6 +456,10 @@ public final class ArtificerAssignments {
 	}
 
 	public static void recordD7Lineage(ServerPlayer player, D7Lineage lineage) {
+		// There is no seventh-Degree Silent Archon: that lineage is recorded only for a Silentium.
+		if (lineage == D7Lineage.SILENT_ARCHON && !com.vincenthuto.hemomancy.common.capability.player.harbinger.degree
+				.HarbingerPathPermissions.isSilentium(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+						HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath())) return;
 		if (lineage != D7Lineage.NONE && firstD7Lineage(player) == D7Lineage.NONE) {
 			player.getPersistentData().putString(FIRST_D7_LINEAGE_KEY, lineage.serializedName());
 		}
@@ -476,7 +480,8 @@ public final class ArtificerAssignments {
 
 	public static boolean hasFullD7Lineage(ServerPlayer player, D7Lineage lineage) {
 		return switch (lineage) {
-			case SILENT_ARCHON -> ArmorSetHelper.hasFullSilentArchonSet(player);
+			case SILENT_ARCHON -> com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler
+					.hasFullSilentArchonSet(player);
 			case EDACIOUS -> ArmorSetHelper.hasFullEdaciousBloodlust(player);
 			case SHEOLIC -> ArmorSetHelper.hasFullSheolicBloodlust(player);
 			case PHANTASMAL -> ArmorSetHelper.hasFullPhantasmalBloodlust(player);

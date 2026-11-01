@@ -1,0 +1,35 @@
+{
+  "title": "hemomancy.trade.alchemist.ferric_draw.title",
+  "line": "hemomancy.trade.alchemist.ferric_draw.line",
+  "order": 20,
+  "requires": {
+    "path": "harbinger",
+    "degree_at_least": 2
+  },
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:bloody_vial"
+    },
+    "count": 2,
+    "appraisal": "tendency",
+    "appraisal_tendency": "ferric"
+  },
+  "give": [
+    {
+      "item": "hemomancy:hematic_iron_powder",
+      "count": 2
+    }
+  ],
+  "give_fine": [
+    {
+      "item": "hemomancy:hematic_iron_powder",
+      "count": 4
+    }
+  ],
+  "stock": {
+    "uses": 3,
+    "restock_days": 2
+  },
+  "show_locked": true
+}

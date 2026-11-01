@@ -15,10 +15,14 @@ public final class DialogueSender {
 	}
 
 	/**
-	 * Whispers wait in the player's queue instead of opening. A dialogue with a speaker ends any Monolith
-	 * conversation, and a succession resident's persona decorates the tree before it is sent.
+	 * Nothing the hivemind says reaches a Silentium. Whispers wait in the player's queue instead of opening. A
+	 * dialogue with a speaker ends any Monolith conversation, and a succession resident's persona decorates the tree
+	 * before it is sent.
 	 */
 	public static void open(ServerPlayer player, OpenDialoguePacket open) {
+		if (PendingWhispers.isHivemind(open.tree()) && !PendingWhispers.hearsTheHive(player)) {
+			return;
+		}
 		if (PendingWhispers.isWhisper(open.tree())) {
 			PendingWhispers.enqueue(player, open.tree());
 			return;

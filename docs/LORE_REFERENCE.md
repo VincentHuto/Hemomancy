@@ -32,7 +32,7 @@ The following settled facts are non-negotiable consistency anchors:
 - Verdigris Aura is the early Purity defense; Silver Ward is its advanced Clarity form.
 - The ninth and final Qliphoth Pome grants the Fungal Spine. The first Fungal Spine visit is a two-minute consciousness projection: the player can move and run but has no accessible items or armor, and an accelerating red vignette warns of forced return to the physical body.
 - After that forced return, the eighth Degree splits into two equal ends. The Rite of Apotheosis makes the player Degree 8 Apotheos. The Rite of Pruning, victory over Vesper and absorbing his memory make the player Degree 8 Silentium (colloquially, a silent archon).
-- The ordinary Unstained cure closes when a Harbinger founds a bloodline. Reaching Degree 5 or joining another bloodline does not close it. Defeating the infection unleashed by Annetta's fatal Harbinger encounter unlocks an exceptional severance route for a founder.
+- The ordinary Unstained cure closes when a Harbinger founds a bloodline. Reaching Degree 5 or any higher Degree, or joining another bloodline, does not close it. Defeating the infection unleashed by Annetta's fatal Harbinger encounter unlocks an exceptional severance route for a founder.
 - A bloodline is founded only by the Degree-5 Bloodline Founding rite. An Unsigned Ledger records or joins a covenant; it does not create one by itself.
 - Pale Silver is refined only from Consecrated Copper. It is never a natural metal and is never refined directly from iron.
 - The Saints' tendency pairs are fixed: Hemorath is Animus and Ferric, Seraphae is Lux and Ductilis, Putriciel is Mortem and Flammeus, and Velorum is Congeatio and Tenebris. Every Canon Memory takes its Saint's pair.
@@ -262,7 +262,7 @@ The fungal revelation does not make Harbinger scholarship worthless. Its maps re
 Once players advance past the Blood Temple, they are directed to **Harbinger Outposts** — multi-story structures that serve as the Order's visible presence in the world.
 
 Each outpost contains:
-- A **Harbinger Vicar** — the outpost's lore-keeper and rank-progression guide. The Vicar guides players from Degree 1 through Degree 5, then steps back as an equal once the player reaches the Crimson Lodge. He delivers faction history, doctrinal lore, and the secret of the 8th Degree at Archon.
+- A **Harbinger Vicar** — the outpost's lore-keeper and rank-progression guide. The Vicar guides players from Degree 1 through Degree 5, then steps back as an equal once the player reaches the Crimson Lodge. He delivers faction history, doctrinal lore, and, at Archon, the Order's oldest saying about an 8th Degree. He passes it on as hearsay: not even the Vicar knows what comes after Archon.
 - A **Harbinger Alchemist** — found at the crafting stations, teaches how to use the mod's machines (Alembic, Centrifuge, Somatic Loom, etc.).
 - A **Harbinger Mnemonist** - teaches crude memories, manipulation slots, Mnemonic Reliquary practice, and the Somatic Loom as memory work rather than living equipment.
 - A **Hematic Artificer / Redwright** - a maker-priest of living gear. He briefs and inspects five optional equipment assignments, permanently records the first fork and Archon armor lineages, and demands field proof that the finished work actually answers before granting a fitting. The Alchemist supplies the chemical materials after two formal referrals; the Artificer remains responsible for frame, fit, and external reinforcement. His staff fittings mark witnessed obligations rather than new powers. He is part of ordinary outpost craft, not a hidden ascetic calling.
@@ -273,6 +273,8 @@ The **Cicatrix Anchorite**, commonly called the **Vein-Mason**, is deliberately 
 When an advanced Harbinger asks an outpost member to pledge blood into their covenant, the outpost does not empty itself into that one bloodline. Each outpost may offer only one voice to a player's covenant, and each calling should remain distinct. This is framed as a doctrine of propagation rather than conquest: *spread our cause, do not dilute or absorb the whole lodge.*
 
 > *Vicar's Secret (Archon only):* "The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."
+
+The Vicar holds this as a saying, not as knowledge. Silentium and Apotheosis are legends even to him. The oldest accounts name the two roads past Archon, but both leave a practitioner in a state the Lodge can no longer recognize, so no one who walked them has come back to correct the record. He tells an Archon the saying, says that past it there is only hearsay, and admits he has no warrant for more (`vicar.archon.final_truth`).
 
 ### 6.3a Cardinal Rites as Bodily Liturgy
 
@@ -319,7 +321,7 @@ The eight strains are the hereditary strains of the **Brined Court**, the sea of
 
 ### 6.4 Degrees of Initiation
 
-Most Harbingers — most outposts, most individual groups — only ever reach **Degree 5 (Illuminatus)**. To the average practitioner, this is the summit of what blood magic can offer. The existence of Degrees 6 and 7 is known only to those who reach them; the existence of the 8th is known only to Archons who are told, and most keep the secret.
+Most Harbingers — most outposts, most individual groups — only ever reach **Degree 5 (Illuminatus)**. To the average practitioner, this is the summit of what blood magic can offer. The existence of Degrees 6 and 7 is known only to those who reach them; the 8th reaches Archons only as a saying and a pair of legends, and most keep the secret. No one below the eighth Degree knows what it is, the Vicar included.
 
 | Degree | Title |
 |--------|-------|
@@ -372,7 +374,7 @@ The Alchemist's First Separation then earns Concentrated Blood. Injected directl
 #### ARCHON 7 — *of the Hematic Order*
 **Lore:** The Archon is told what no one below this degree ever hears: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* The Fungal Whispers deliver the complete revelation: the Order was never a human institution. Every degree was a stage of sporulation. The Vicar kneels. And then, quietly: the Sanguine Monolith begins to feel wrong. Hollow. Like something has been waiting inside it.
 
-The Vicar's line now reads straight rather than ironically. Silentium is an eighth Degree, and the Hush that the Apotheosis floor rehearses is the other. The Vicar does not say which silence he means.
+The Vicar's line now reads straight rather than ironically. Silentium is an eighth Degree, and the Hush that the Apotheosis floor rehearses is the other. The Vicar cannot say which silence the saying means, because he does not know: to him both ends are legend and hearsay, and he says so.
 
 Every Degree-7 player is an Archon, and Archon is a full stage with its own work, not a waiting room for the eighth.
 
@@ -380,6 +382,8 @@ Every Degree-7 player is an Archon, and Archon is a full stage with its own work
 
 #### APOTHEOS 8 or SILENTIUM 8 — *of the Hematic Order*
 **Lore:** The eighth Degree has two equal ends, and both are chosen only after the ninth Pome has produced the Spine and the first temporary projection has returned the player to their body. Apotheosis is not an ascension to godhood — it is a *completion of the sporulation cycle*: the Apotheos lets the hivemind in. Silentium is the opposite act. The Archon cuts their own Qliphoth tree, the antenna that tied them to the hive, then takes Vesper's memory in by force. Both ascend by taking something in.
+
+A Silentium can no longer get information from the hivemind, and that is the defining feature of the end. The Fungal Whispers stop for good, whispers still waiting go unheard, and the Rite of Ancestral Communion finds nothing on the other end of the channel. Our Lady is not the hive, and her voice is unaffected. An Apotheos keeps hearing the hive, and it names them Apotheos rather than Archon.
 
 Each end has a home. The Fungal Gardens are the Apotheos's: they walk there in the body and the organism treats them as its own. The Saints' mausoleums are the Silentium's: the Saints' residue tolerates a will that has cut its antenna, and only a Silentium can wake a Saint properly. Each can trespass into the other's home at a cost. The choice decides where a player belongs, not what they may see.
 
@@ -419,9 +423,9 @@ All station upgrades share the same Cardinal ritual grammar: offerings, anchors,
 
 The ladder is a degree ladder with sidegrade forks. Hematic Iron is the first chosen shell: iron taught to carry blood. Barbed, Chitinite, and Prismatic armor are the Initiate's animal-tier answers to danger: venomous retaliation, ferric shelter, and blinding display. Each should feel like a blended ecology rather than a costume from one creature. Barbed borrows from urchin, centipede, and Desiccant; the Desiccant contribution is the Telson, a sting-bulb that swells red while drinking blood. Chitinite borrows from chitinites, Chthonians, and Chalybeate Snails; Prismatic borrows from Prism Cuttle, Lantern Ticks, and Blood Drunk Puppeteers. Blood Lust is the Crimson Lodge's combat vestment, but it is controlled hunger rather than mindless berserker rage. Its masks are small vows and martial tells, not separate doctrines.
 
-Silent Archon Vestments are different. They are cloth and armor mixed once the Archon's refusal of Apotheos has ended in Silentium, made with Monolith Imbued Cloth and the memory-burden of the shattered Crimson Lodestone. Their theme is refusal that still costs blood: survival through discipline, not transcendence. They should never read as the "good" end of the Harbinger path, only as a human-scaled way to continue carrying the infection without surrendering wholly to it.
+Silent Archon Vestments are different. They belong to the Silentium alone: cloth and armor mixed once the Archon's refusal of Apotheos has ended at the eighth Degree in Silentium, made with Monolith Imbued Cloth and the memory-burden of the shattered Crimson Lodestone. There is no seventh-Degree Silent Archon. An Archon who has chosen silence but not yet finished it holds no Silent Archon power or title, and the vestments answer no one else who wears them. Their theme is refusal that still costs blood: survival through discipline, not transcendence. They should never read as the "good" end of the Harbinger path, only as a human-scaled way to continue carrying the infection without surrendering wholly to it.
 
-The Silent Archon route, which ends at the eighth Degree in Silentium, exists because refusing Apotheos is not ignorance or simple fear. The Archon has witnessed the fungal revelation and either cannot speak of it, is cursed into silence by it, or chooses exile rather than becoming another mouth of the hive. "Silent" names the madness, restraint, and refusal that follow the truth. The monolith-themed gear should make that refusal visible: the Monolith is a reflection of the player's will, and wrapping the body in its shattered remnants means the player has become their own fixed will through the ultimate rejection of the revelation. Their blood still works, but by sheer will rather than obedience; at this point the Harbinger's selfhood is strong enough to overpower even the influence of the fungal source.
+"Silent Archon" is the colloquial name for the Silentium, and the route to it ends only at the eighth Degree. The vestments exist because refusing Apotheos is not ignorance or simple fear. The Archon has witnessed the fungal revelation and either cannot speak of it, is cursed into silence by it, or chooses exile rather than becoming another mouth of the hive. "Silent" names the madness, restraint, and refusal that follow the truth. The monolith-themed gear should make that refusal visible: the Monolith is a reflection of the player's will, and wrapping the body in its shattered remnants means the player has become their own fixed will through the ultimate rejection of the revelation. Their blood still works, but by sheer will rather than obedience; at this point the Harbinger's selfhood is strong enough to overpower even the influence of the fungal source.
 
 The curse of silence should remain deliberately ambiguous. It may be self-imposed discipline, trauma, exile, madness, or a final kick in the teeth from the hive mind, but the result is the same: no one who reaches the truth can verbally speak it plainly to those below them. This is one reason the Harbingers can still exist and recruit without the whole Order collapsing under forewarning. Most Harbingers never reach Degree 5 and found a bloodline as a Vicar-level practitioner, let alone Degree 6 or higher. By the end of Degree 6 and the beginning of Degree 7, the player is already approaching the scale of a Harbinger Saint; beyond that, they are a living myth. Silent Archons cannot tell the warning, and Apotheos bodies no longer resemble ordinary Harbingers or meaningfully interact with mere mortals.
 
@@ -445,7 +449,7 @@ At low degrees the fragment is barely aware; its surface is cold. By Degree 5–
 
 The shattering also leaves behind **Monolith Fragments**: stackable black-red facets that behave less like ordinary stone and more like frozen witness. They carry the weight of the Monolith's last coherent shape, making them fitting late-game catalysts for Archons who reject full fungal surrender. They are useful, familiar, and burdened rather than purely empowering; Apotheos-aligned bodies should find them oppressive.
 
-The Monolith uses degree-gated dialogue that gradually discloses its nature. Players who ask *"What are you?"* receive answers that escalate from official Lodge description (Degree 4) to admitted self-awareness (Degree 5) to disclosure of the contained thing (Degree 6) to direct recognition of kinship (Degree 7). Archon dialogue is intimate in a way that should feel wrong before it feels significant.
+The Monolith speaks first at the fifth Degree, by design. That is when the player becomes Vicar-level and the Vicar steps back as an equal (§6.3), so the Monolith stands in for the counsel a Vicar would give: a new Vicar has no one above them at the outpost, and the stone takes that place. Its dialogue gradually discloses its nature. Players who ask *"What are you?"* receive answers that escalate from the official Lodge description and admitted self-awareness (Degree 5) to disclosure of the contained thing (Degree 6) to direct recognition of kinship (Degree 7). Archon dialogue is intimate in a way that should feel wrong before it feels significant.
 
 ### 6.5b The Chamber of Will
 
@@ -502,8 +506,8 @@ They are devout, but not fanatical in the way of those who seek to convert or co
 - Degree 0: concerned sadness; the Church sees a newly blood-touched person as infected and frightened rather than culpable
 - Degree 1-2: careful welcome; help is offered plainly, though the Unstained warn that every rite makes the blood harder to shed
 - Degree 3-4: wary help; Zealots and Acolytes still offer cure, but ask whether the player seeks healing or merely another power
-- Degree 5+: caution rises with experience, but degree alone never closes ordinary cure
-- Bloodline founder: ordinary cure is refused until the exceptional severance learned from the unleashed infection has cut the founder's integration
+- Degree 5+: caution rises with experience, and from the sixth Degree the Zealot asks why the player came so late, but degree alone never closes ordinary cure
+- Bloodline founder, at any Degree: the Zealot, the Podium and the Rite of Lethean Baptism refuse ordinary cure until the exceptional severance learned from the unleashed infection has cut the founder's integration
 - Guardians use blunt force to escort hostile or deceptive visitors out when necessary; they do not spill blood near the church
 
 ### 7.3 Appearance and Equipment
@@ -613,7 +617,7 @@ The original **Pallid Icon** is a rare relic carved from pale silver and found a
 
 ### 8.6 Her Hidden Nature — A Warning
 
-Toward the end of the Clarity path, Our Lady's whispers change subtly. She grows *quieter* and then, occasionally, she begins to push the player toward **actively eradicating sources of corruption** — something that is out of character for a purely defensive force. This is meant as a seed of doubt for the player and a hint at something not yet fully explored in the narrative. She is not perfect. She is still part of nature, and nature can become something other than what we expect.
+As Clarity rises, Our Lady's whispers grow *more common and clearer*: rising Clarity is literally her voice coming clear, and by the last stages she is close and present rather than distant water. Toward the end of the Clarity path what she says changes subtly. Occasionally she begins to push the player toward **actively eradicating sources of corruption** — something that is out of character for a purely defensive force. This is meant as a seed of doubt for the player and a hint at something not yet fully explored in the narrative. She is not perfect. She is still part of nature, and nature can become something other than what we expect.
 
 ---
 
@@ -640,7 +644,7 @@ The Saints are ancient hemomancers whose gifts carried their bodies past ordinar
 
 There are **four Saints**: Hemorath, Seraphae, Putriciel and Velorum. They are not randomly assigned. A sarcophagus holds the Saint it was made for, and an unassigned sarcophagus stays inert until a Saint relic names its occupant.
 
-**How they are found.** Each Saint rests in its own mausoleum complex, built to that Saint's palette and history. The Vicar directs Initiates toward the Saints around **Degree 3–4** (§6.4a), and the Sanguine Monolith points Adepts toward the Sainted Mausoleums, but what that sends them to is the outer halls: the entrance, the antechamber and the outer trial chambers with their early loot. A ward across the threshold turns back anyone below Degree 8. Beyond it lie three Chapels, the ring door and the Saint's own chamber. The Saint fights are Degree-8 content. The older generic mausoleum stays in the data but no longer generates.
+**How they are found.** Each Saint rests in its own mausoleum complex, built to that Saint's palette and history. The Vicar directs Initiates toward the Saints around **Degree 3–4** (§6.4a), but what that sends them to is the outer halls: the entrance, the antechamber and the outer trial chambers with their early loot. A ward across the threshold turns back anyone below Degree 8. Beyond it lie three Chapels, the ring door and the Saint's own chamber. The Saint fights are Degree-8 content. The older generic mausoleum stays in the data but no longer generates.
 
 **Walking the life backwards.** A complex is read from the Saint's rest back toward who they were: the chamber is where it all began, not only where the body lies. Each Chapel is drawn from a deed in the Saint's life. A **Beholding** replays a memory that must be watched correctly. A **Litany** hides the order of offerings in an Abocipher inscription. The **Downfall** is the Saint's fall to the power of Hemomancy, fought as a gauntlet. A **Repose** asks for stillness under threat. Each completed Chapel lights a node on the ring door.
 

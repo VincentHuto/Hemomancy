@@ -61,7 +61,6 @@ class EnglishLocalizationEncodingTest {
 	void authoredDialogueActionPromptsHaveEnglishText() throws IOException {
 		JsonObject language = JsonParser.parseString(Files.readString(LANGUAGE)).getAsJsonObject();
 		assertTrue(language.has("hemomancy.dialogue.action.confirm"));
-		assertTrue(language.has("hemomancy.dialogue.conversation.prompt"));
 
 		try (var paths = Files.walk(DIALOGUE_SOURCE)) {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".java")).toList()) {

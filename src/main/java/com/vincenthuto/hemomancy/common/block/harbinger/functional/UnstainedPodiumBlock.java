@@ -155,7 +155,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		boolean eligible = degree != null && blood != null && UnstainedEntryRules.canSuppressForCure(
-				blood.isActive(), degree.getDegreeNumber(), degree.hasFoundedBloodline(),
+				blood.isActive(), degree.hasFoundedBloodline(),
 				degree.isFounderIntegrationSevered());
 		if (!eligible) {
 			player.displayClientMessage((blood == null || !blood.isActive() ? Component.translatable("message.hemomancy.unstained_podium_block.you_carry_no_active_infection_speak") : Component.translatable("message.hemomancy.unstained_podium_block.your_infection_lies_beyond_ordinary_suppression")).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);

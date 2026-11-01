@@ -71,7 +71,8 @@ public final class ArmorSetAbilityRegistry {
 				requiredSet(ItemInit.silent_archon_helm, ItemInit.silent_archon_chestplate,
 						ItemInit.silent_archon_leggings, ItemInit.silent_archon_boots),
 				ItemInit.silent_archon_helm,
-				player -> true,
+				// Silent Archon power is Silentium's alone.
+				SilentArchonArmorAbilityHandler::hasFullSilentArchonSet,
 				SilentArchonArmorAbilityHandler::activateSilentArchonSeverance,
 				240,
 				300.0D));

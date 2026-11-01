@@ -21,20 +21,20 @@ public final class CircusSchoolDialogue {
         String role = teacher.facultyRoleId();
         String root = "hemomancy.circus.school.";
         var options = new ArrayList<DialogueOption>();
-        options.add(new DialogueOption(root + "ask_history", "history", null));
-        options.add(new DialogueOption(root + "ask_colleagues", "colleagues", null));
+        options.add(new DialogueOption(root + "ask_history", "history", null).withLore());
+        options.add(new DialogueOption(root + "ask_colleagues", "colleagues", null).withLore());
         options.add(new DialogueOption(root + "ask_preparation", "preparation", null));
         options.add(new DialogueOption(root + "ask_aftermath", "aftermath", null));
-        options.add(new DialogueOption(root + "testimony", "testimony", "circus_school_testimony"));
+        options.add(new DialogueOption(root + "testimony", "testimony", "circus_school_testimony").withQuest());
         CircusCurriculum.forTeacher(role).ifPresent(lesson -> {
-            options.add(new DialogueOption(root + "take_lesson", "lesson", "circus_school_teach"));
-            options.add(new DialogueOption(root + "practical", null, "circus_school_practical"));
-            options.add(new DialogueOption(root + "guest", null, "circus_school_guest"));
+            options.add(new DialogueOption(root + "take_lesson", "lesson", "circus_school_teach").withQuest());
+            options.add(new DialogueOption(root + "practical", null, "circus_school_practical").withQuest());
+            options.add(new DialogueOption(root + "guest", null, "circus_school_guest").withQuest());
         });
         if (role.equals("circus_threadkeeper")) {
-            options.add(new DialogueOption(root + "inspect", null, "circus_school_inspect"));
-            options.add(new DialogueOption(root + "report", null, "circus_school_report"));
-            options.add(new DialogueOption(root + "claim", null, "circus_school_claim"));
+            options.add(new DialogueOption(root + "inspect", null, "circus_school_inspect").withQuest());
+            options.add(new DialogueOption(root + "report", null, "circus_school_report").withQuest());
+            options.add(new DialogueOption(root + "claim", null, "circus_school_claim").withQuest());
         }
         options.add(new DialogueOption("hemomancy.dialogue.circus_performer.leave", null, null));
         var builder = DialogueTree.builder(teacher.getType().getDescriptionId(),

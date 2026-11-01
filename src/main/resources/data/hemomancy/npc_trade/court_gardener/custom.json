@@ -1,0 +1,10 @@
+{
+  "title": "hemomancy.trade.court_gardener.custom.title",
+  "line": "hemomancy.trade.court_gardener.custom.line",
+  "order": 10,
+  "want": {
+    "kind": "custom",
+    "act": "custom_food"
+  },
+  "opens": "hemomancy.trade.court_gardener.custom.opens"
+}

@@ -14,6 +14,19 @@ public final class HarbingerPathPermissions {
 		return degree >= 8 && path == EnumArchonPath.APOTHEOS;
 	}
 
+	/**
+	 * Whether the hivemind still reaches this player: its whispers and Ancestral Communion. A Silentium cut the antenna
+	 * that tied them to the hive, and hearing nothing from it is what makes one. Our Lady is not the hive.
+	 */
+	public static boolean hearsTheHive(int degree, EnumArchonPath path) {
+		return !isSilentium(degree, path);
+	}
+
+	/** The lang-key suffix the hive's voice uses to address this player: ".apotheos" for an Apotheos, else none (Archon). */
+	public static String hiveAddressSuffix(int degree, EnumArchonPath path) {
+		return isApotheos(degree, path) ? ".apotheos" : "";
+	}
+
 	/** The degree a teacher's greeting tree answers: their eighth-degree tree is the Apotheos's; a Silentium hears the Archon's. */
 	public static int greetingDegree(int degree, EnumArchonPath path) {
 		return degree >= 8 && path != EnumArchonPath.APOTHEOS ? 7 : degree;

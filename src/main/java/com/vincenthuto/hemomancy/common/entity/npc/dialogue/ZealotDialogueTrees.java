@@ -21,7 +21,7 @@ public final class ZealotDialogueTrees {
     }
 
     /**
-     * Player has active blood at VOTARY+ degree — the full plea with choices.
+     * Player has active blood and the cure is still open to them — the full plea with choices.
      */
     public static DialogueTree pleaDialogue(int entityId, int degree) {
         return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
@@ -30,7 +30,7 @@ public final class ZealotDialogueTrees {
                         "hemomancy.zealot.plea.line1",
                         pleaDegreeLine(degree)
                 ), List.of(
-                        new DialogueOption("hemomancy.dialogue.zealot.option.tell_me_more", "explain", null),
+                        new DialogueOption("hemomancy.dialogue.zealot.option.tell_me_more", "explain", null).withLore(),
                         new DialogueOption("hemomancy.dialogue.zealot.option.not_interested", "reject", "zealot_reject_help")
                 )))
                 .addNode(new DialogueNode("explain", List.of(
@@ -81,7 +81,7 @@ public final class ZealotDialogueTrees {
                             "hemomancy.zealot.enlightened.line1",
                             "hemomancy.zealot.enlightened.line2"
                     ), List.of(
-                            new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_annetta", "annetta_map", null),
+                            new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_annetta", "annetta_map", null).withLore(),
                             new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
@@ -107,8 +107,8 @@ public final class ZealotDialogueTrees {
                             "hemomancy.zealot.clarity_phase.line1",
                             "hemomancy.zealot.clarity_phase.line2"
                     ), List.of(
-							new DialogueOption("hemomancy.dialogue.zealot.option.about_silver_ward", "silver_ward_info", null),
-                            new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_annetta", "annetta_map", null),
+							new DialogueOption("hemomancy.dialogue.zealot.option.about_silver_ward", "silver_ward_info", null).withLore(),
+                            new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_annetta", "annetta_map", null).withLore(),
                             new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
@@ -140,7 +140,7 @@ public final class ZealotDialogueTrees {
                             "hemomancy.zealot.absolved.line1",
                             "hemomancy.zealot.absolved.line2"
                     ), List.of(
-                            new DialogueOption("hemomancy.dialogue.zealot.option.about_clarity_rite", "clarity_rite_info", null),
+                            new DialogueOption("hemomancy.dialogue.zealot.option.about_clarity_rite", "clarity_rite_info", null).withLore(),
                             new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
@@ -165,7 +165,7 @@ public final class ZealotDialogueTrees {
                             "hemomancy.zealot.cleansing.line1",
                             "hemomancy.zealot.cleansing.line2"
                     ), List.of(
-                            new DialogueOption("hemomancy.dialogue.zealot.option.about_altar", "altar_info", null),
+                            new DialogueOption("hemomancy.dialogue.zealot.option.about_altar", "altar_info", null).withLore(),
                             new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
@@ -190,7 +190,7 @@ public final class ZealotDialogueTrees {
                             "hemomancy.zealot.tainted.line1",
                             "hemomancy.zealot.tainted.line2"
                     ), List.of(
-							new DialogueOption("hemomancy.dialogue.zealot.option.about_verdigris", "verdigris_info", null),
+							new DialogueOption("hemomancy.dialogue.zealot.option.about_verdigris", "verdigris_info", null).withLore(),
                             new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                             new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
                     )))
@@ -235,7 +235,8 @@ public final class ZealotDialogueTrees {
             case 2 -> "hemomancy.zealot.plea.degree2.line2";
             case 3 -> "hemomancy.zealot.plea.degree3.line2";
             case 4 -> "hemomancy.zealot.plea.degree4.line2";
-            default -> "hemomancy.zealot.plea.degree5.line2";
+            case 5 -> "hemomancy.zealot.plea.degree5.line2";
+            default -> "hemomancy.zealot.plea.degree6.line2";
         };
     }
 
@@ -263,53 +264,13 @@ public final class ZealotDialogueTrees {
     }
 
     /**
-     * Player is initiated but not yet VOTARY.
+     * Player founded a bloodline and has not cut it with the Severed Covenant: the cure is closed.
      */
-    public static DialogueTree tooEarly(int entityId) {
+    public static DialogueTree bloodlineFounded(int entityId) {
         return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
                 .theme(DialogueTheme.UNSTAINED)
                 .addNode(new DialogueNode("root", List.of(
-                        "hemomancy.zealot.too_early"
-                ), List.of(
-                        new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
-                        new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
-                )))
-                .addNode(new DialogueNode("item_hint", List.of(
-                        "hemomancy.zealot.item_hint"
-                ), List.of(
-                        new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
-                )))
-                .build();
-    }
-
-    /**
-     * Player is beyond the normal cure window.
-     */
-    public static DialogueTree tooDeep(int entityId) {
-        return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
-                .theme(DialogueTheme.UNSTAINED)
-                .addNode(new DialogueNode("root", List.of(
-                        "hemomancy.zealot.too_deep"
-                ), List.of(
-                        new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
-                        new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
-                )))
-                .addNode(new DialogueNode("item_hint", List.of(
-                        "hemomancy.zealot.item_hint"
-                ), List.of(
-                        new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
-                )))
-                .build();
-    }
-
-    /**
-     * Player is uninitiated (degree 0) with active blood.
-     */
-    public static DialogueTree uninitiated(int entityId) {
-        return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
-                .theme(DialogueTheme.UNSTAINED)
-                .addNode(new DialogueNode("root", List.of(
-                        "hemomancy.zealot.uninitiated"
+                        "hemomancy.zealot.bloodline_founded"
                 ), List.of(
                         new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
                         new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)

@@ -95,6 +95,11 @@ public static DialogueKnowledge dialogueKnowledge(Player player) {
     return player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE);
 }
 
+/** Rapport and restock windows from trading with NPCs. Server state; nothing syncs it. */
+public static com.vincenthuto.hemomancy.common.capability.player.shared.trade.NpcTradeLedger npcTrades(Player player) {
+    return player.getData(HemoAttachmentTypes.NPC_TRADE_LEDGER);
+}
+
 
 private HemoCapabilityAccess() {}
 

@@ -18,10 +18,11 @@ import java.util.*;
  *
  * <p>Whisper content is organised by purity/clarity stage. The voice begins as
  * barely perceptible — the faint sound of running water — and gradually becomes
- * clearer and more urgent as the player purifies themselves. At PURIFIED stage
- * she guides the player toward the Rite of Clarity Ascension. After clarity is
- * unlocked her tone shifts: warmer at first, then increasingly serious as the
- * player approaches ENLIGHTENED, where she reveals the price of her gift.
+ * clearer as the player purifies themselves. At PURIFIED stage she guides the
+ * player toward the Rite of Clarity Ascension. After clarity is unlocked her voice
+ * keeps growing clearer and more present with each Clarity stage (and comes more
+ * often; see {@link OurLadyWhisperEvents}): warmer at first, then serious, until at
+ * ENLIGHTENED she speaks plainly. Rising Clarity is literally her voice coming clear.
  */
 public final class OurLadyWhisperDialogueTrees {
 
@@ -184,7 +185,7 @@ public final class OurLadyWhisperDialogueTrees {
 		};
 	}
 
-	// ── ABSOLVED (purity 75–99) — clear, personal, slightly urgent ──
+	// ── ABSOLVED (purity 75–99) — clear, personal, closer ──
 
 	private static DialogueTree absolvedWhisper(int variant) {
 		return switch (variant) {

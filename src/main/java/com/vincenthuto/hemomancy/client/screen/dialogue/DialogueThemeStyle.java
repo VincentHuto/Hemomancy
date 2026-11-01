@@ -44,6 +44,24 @@ public record DialogueThemeStyle(ResourceLocation frameSprite, ResourceLocation 
 				speaker, text, option, disabled, separator, progressBack, progress, track, thumb);
 	}
 
+	/** A refusal under a trade card. */
+	public int dangerColor() {
+		return 0xFFE0504A;
+	}
+
+	/** Slot wells in the Trade box's strip: the frame, the floor and the lip, from the theme's own colours. */
+	public int wellDarkColor() {
+		return 0xFF000000 | ((progressBackColor >> 1) & 0x7F7F7F);
+	}
+
+	public int wellBackgroundColor() {
+		return progressBackColor;
+	}
+
+	public int wellLightColor() {
+		return 0xFF000000 | (separatorColor & 0xFFFFFF);
+	}
+
 	public static ResourceLocation categoryIcon(DialogueCategory category) {
 		return sprite("dialogue/icons/" + category.name().toLowerCase());
 	}

@@ -30,8 +30,7 @@ public final class SanguineMonolithDialogueTrees {
 		if (degree >= 7 && com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.SanguineMonolithDialogueEvents.hasClaimedMonolithCornerstone(player)) {
 			var nodes = new java.util.LinkedHashMap<>(tree.nodes());
 			nodes.put("armature_cornerstone", new DialogueNode("armature_cornerstone", List.of(
-					"hemomancy.dialogue.event.monolith_cornerstone_known",
-					"hemomancy.monolith.armature_cornerstone.given"), List.of(
+					"hemomancy.dialogue.event.monolith_cornerstone_known"), List.of(
 					new DialogueOption("hemomancy.dialogue.monolith.option.leave", null, null))));
 			return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
 					tree.entityId(), tree.theme(), tree.presentation());
@@ -40,16 +39,13 @@ public final class SanguineMonolithDialogueTrees {
 	}
 
 	/**
-	 * Returns the appropriate dialogue tree for the given degree.
-	 * Assumes the player is at least degree 4 (Adept).
+	 * Returns the appropriate dialogue tree for the given degree. The block refuses anyone below
+	 * {@code SanguineMonolithBlock.MIN_DEGREE} (5): the Monolith first speaks to a player who has just become
+	 * Vicar-level, and stands in for the Vicar's counsel from there.
 	 */
 	public static DialogueTree forDegree(int degree) {
-		return switch (degree) {
-			case 4 -> adept();
-			case 5 -> illuminatus();
-			case 6 -> sanctified();
-			default -> archon();
-		};
+		if (degree >= 7) return archon();
+		return degree == 6 ? sanctified() : illuminatus();
 	}
 
 	/** Player is below the minimum degree — the monolith is silent. */
@@ -63,25 +59,10 @@ public final class SanguineMonolithDialogueTrees {
 				.build();
 	}
 
-	/** Degree 4 — Adept. Guidance toward the Sainted Mausoleums; first uncanny hint of awareness. */
-	public static DialogueTree adept() {
-		return DialogueTree.builder(SPEAKER, MONOLITH_ICON, BLOCK_ENTITY_ID)
-				.addNode(new DialogueNode("root", List.of(
-						"hemomancy.monolith.guidance.adept.line1",
-						"hemomancy.monolith.guidance.adept.line2"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.monolith.option.what_are_you", "what_are_you", null),
-						new DialogueOption("hemomancy.dialogue.monolith.option.understood", null, null)
-				)))
-				.addNode(new DialogueNode("what_are_you", List.of(
-						"hemomancy.monolith.what_are_you.adept"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.monolith.option.understood", null, null)
-				)))
-				.build();
-	}
-
-	/** Degree 5 — Illuminatus. The stone is warm. The lodestone speaks with a hint of self-awareness. */
+	/**
+	 * Degree 5 — Illuminatus, the player's first Vicar-level degree. The stone is warm. It gives the Lodge's
+	 * official description and a hint of self-awareness, in the third person.
+	 */
 	public static DialogueTree illuminatus() {
 		return DialogueTree.builder(SPEAKER, MONOLITH_ICON, BLOCK_ENTITY_ID)
 				.addNode(new DialogueNode("root", List.of(

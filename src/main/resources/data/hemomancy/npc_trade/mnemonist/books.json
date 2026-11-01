@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.mnemonist.books.title",
+  "line": "hemomancy.trade.mnemonist.books.line",
+  "order": 30,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:book"
+    },
+    "count": 2
+  },
+  "give": [
+    {
+      "item": "minecraft:glow_ink_sac",
+      "count": 3
+    }
+  ]
+}

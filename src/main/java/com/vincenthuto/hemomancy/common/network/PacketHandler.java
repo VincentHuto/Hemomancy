@@ -28,6 +28,9 @@ import com.vincenthuto.hemomancy.common.network.dialogue.OpenPendingWhisperPacke
 import com.vincenthuto.hemomancy.common.network.dialogue.ClosePendingWhisperPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueSender;
 import com.vincenthuto.hemomancy.common.network.dialogue.PacketSyncNpcProgressionMarkers;
+import com.vincenthuto.hemomancy.common.network.trade.NpcTradeRequestPacket;
+import com.vincenthuto.hemomancy.common.network.trade.NpcTradeResultPacket;
+import com.vincenthuto.hemomancy.common.network.trade.NpcTradeSeenPacket;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.network.mission.OpenBookOfObservancesPacket;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
@@ -68,7 +71,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "27";
+    public static final String PROTOCOL_VERSION = "31";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -361,6 +364,9 @@ public class PacketHandler {
         net.playToClient(DialogueRewardResultPacket.TYPE, DialogueRewardResultPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToServer(DialogueTopicOpenedPacket.TYPE, DialogueTopicOpenedPacket.STREAM_CODEC,
                 DialogueTopicOpenedPacket::handle);
+        net.playToServer(NpcTradeRequestPacket.TYPE, NpcTradeRequestPacket.STREAM_CODEC, NpcTradeRequestPacket::handle);
+        net.playToClient(NpcTradeResultPacket.TYPE, NpcTradeResultPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToServer(NpcTradeSeenPacket.TYPE, NpcTradeSeenPacket.STREAM_CODEC, NpcTradeSeenPacket::handle);
         net.playToClient(OpenInscriptionPacket.TYPE, OpenInscriptionPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(OpenHarbingerAssignmentLedgerPacket.TYPE,
                 OpenHarbingerAssignmentLedgerPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);

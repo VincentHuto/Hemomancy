@@ -96,6 +96,8 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 			if ((HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM.equals(eventId)
 					|| com.vincenthuto.hemomancy.common.entity.npc.dialogue.VagrantMindInquiryDialogue.BIOLOGY_REPORT.equals(eventId)
 					|| MorphlingHandlingDialogue.INSPECT.equals(eventId)
+					|| com.vincenthuto.hemomancy.common.entity.npc.dialogue.PallidVesselDialogue.BRIEF.equals(eventId)
+					|| com.vincenthuto.hemomancy.common.entity.npc.dialogue.PallidVesselDialogue.REPORT.equals(eventId)
 					|| DeepDarkCommissionDialogue.REPORT.equals(eventId)
 					|| DeepDarkCommissionDialogue.BEARING.equals(eventId)
 					|| PhlegethonticCommissionDialogue.REPORT.equals(eventId)

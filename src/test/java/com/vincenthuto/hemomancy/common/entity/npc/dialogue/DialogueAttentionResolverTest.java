@@ -25,8 +25,8 @@ class DialogueAttentionResolverTest {
 	}
 
 	private static DialogueTopic topic(String id, DialogueAttention attention) {
-		return new DialogueTopic(id, DialogueCategory.LORE, "title", "summary", id, null,
-				DialogueTopicState.AVAILABLE, null, null, null, attention != DialogueAttention.NONE, attention);
+		return new DialogueTopic(id, DialogueCategory.CONVERSATION, "title", "summary", id, null,
+				DialogueTopicState.AVAILABLE, null, null, null, attention != DialogueAttention.NONE, attention, true);
 	}
 
 	private static ResourceLocation id(String path) {

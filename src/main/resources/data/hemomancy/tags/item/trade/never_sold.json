@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:fungal_spine",
+    "hemomancy:memory_of_vesper",
+    "hemomancy:mycophant_tendril",
+    "hemomancy:ringmaster_topper",
+    "hemomancy:scar_blank",
+    "hemomancy:consecrated_copper_ingot",
+    "hemomancy:hallowed_residuum_hemorath",
+    "hemomancy:hallowed_residuum_seraphae",
+    "hemomancy:hallowed_residuum_putriciel",
+    "hemomancy:hallowed_residuum_velorum",
+    "hemomancy:recollection_hemorath",
+    "hemomancy:recollection_seraphae",
+    "hemomancy:recollection_putriciel",
+    "hemomancy:recollection_velorum",
+    "hemomancy:saint_relic_hemorath",
+    "hemomancy:saint_relic_seraphae",
+    "hemomancy:saint_relic_putriciel",
+    "hemomancy:saint_relic_velorum"
+  ]
+}

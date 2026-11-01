@@ -32,12 +32,24 @@ public final class BloodPaymentRules {
 	public record Outcome(double requested, double paid, boolean satisfied, String condition) {
 	}
 
-	public static Outcome settle(IBloodVolume volume, double amount, boolean reserveProtected, boolean reserveEnabled,
-			boolean countsAsSpend, Terms terms) {
-		double allowed = reserveProtected
+	/** How much of {@code amount} a payment may take, after Sanguine Reserve's floor for a protected one. */
+	public static double allowed(IBloodVolume volume, double amount, boolean reserveProtected, boolean reserveEnabled) {
+		return reserveProtected
 				? ToggleableSkillRules.allowedBloodDrain(reserveEnabled, volume.getBloodVolume(),
 						volume.getMaxBloodVolume() * RESERVE_FRACTION, amount)
 				: amount;
+	}
+
+	/** Whether a one-off payment of {@code amount} would be paid in full: the volume holds it and the reserve allows it. */
+	public static boolean coversInFull(IBloodVolume volume, double amount, boolean reserveProtected, boolean reserveEnabled) {
+		if (amount <= 0.0D) return true;
+		return volume.getBloodVolume() + EPSILON >= amount
+				&& allowed(volume, amount, reserveProtected, reserveEnabled) + EPSILON >= amount;
+	}
+
+	public static Outcome settle(IBloodVolume volume, double amount, boolean reserveProtected, boolean reserveEnabled,
+			boolean countsAsSpend, Terms terms) {
+		double allowed = allowed(volume, amount, reserveProtected, reserveEnabled);
 		double paid = 0.0D;
 		boolean satisfied = false;
 		String condition = "";

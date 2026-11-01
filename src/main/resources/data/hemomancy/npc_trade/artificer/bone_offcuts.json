@@ -1,0 +1,26 @@
+{
+  "title": "hemomancy.trade.artificer.bone_offcuts.title",
+  "line": "hemomancy.trade.artificer.bone_offcuts.line",
+  "order": 50,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:bone_bricks"
+    },
+    "count": 8
+  },
+  "give": [
+    {
+      "item": "hemomancy:hematic_iron_powder",
+      "count": 3
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 1
+  },
+  "rotation": {
+    "pool": "artificer_daily",
+    "weight": 1
+  }
+}

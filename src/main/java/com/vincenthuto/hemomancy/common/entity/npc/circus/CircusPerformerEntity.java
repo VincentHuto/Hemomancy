@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.Circu
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerTuning;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -33,7 +34,8 @@ import net.minecraft.world.phys.AABB;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class CircusPerformerEntity extends PathfinderMob {
+public abstract class CircusPerformerEntity extends PathfinderMob
+		implements com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSpeaker {
 	private static final EntityDataAccessor<Byte> ACT_STATE = SynchedEntityData.defineId(
 			CircusPerformerEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Byte> VARIANT = SynchedEntityData.defineId(
@@ -275,7 +277,9 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 			boolean firstVisit = CircusPlayerProgress.awardMilestone(serverPlayer, "performer." + roleId(), 50);
 			CircusPlayerProgress.sync(serverPlayer, true);
 			changeState(ActState.RECOVER);
-			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(com.vincenthuto.hemomancy.common.entity.npc.dialogue.CircusSchoolDialogue.tree(this, serverPlayer, firstVisit)));
+			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(DialogueHubFactory.decorate(
+					com.vincenthuto.hemomancy.common.entity.npc.dialogue.CircusSchoolDialogue.tree(this, serverPlayer, firstVisit),
+					facultyRoleId(), serverPlayer)));
 		}
 		return InteractionResult.sidedSuccess(level().isClientSide);
 	}
@@ -352,6 +356,9 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 	}
 
 	public String facultyRoleId() { return roleId(); }
+	@Override public String tradeSpeakerId() { return facultyRoleId(); }
+	/** A performer deals only when it would talk: not downed and not mid-threat. */
+	@Override public boolean tradesWith(ServerPlayer player) { return !isDowned() && threatId == null; }
 	public boolean participatesInFinale() { return true; }
 	public boolean canTeachNow() { return isAlive() && !isDowned() && threatId == null && finaleOwner == null; }
 

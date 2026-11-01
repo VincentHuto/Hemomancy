@@ -1,0 +1,34 @@
+{
+  "title": "hemomancy.trade.artificer.suture_work.title",
+  "line": "hemomancy.trade.artificer.suture_work.line",
+  "order": 30,
+  "want": {
+    "kind": "bundle",
+    "parts": [
+      {
+        "kind": "items",
+        "ingredient": {
+          "item": "minecraft:string"
+        },
+        "count": 4
+      },
+      {
+        "kind": "items",
+        "ingredient": {
+          "item": "hemomancy:blood_crystal_shard"
+        },
+        "count": 1
+      }
+    ]
+  },
+  "give": [
+    {
+      "item": "hemomancy:hematic_suture_needle",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 1,
+    "restock_days": 3
+  }
+}

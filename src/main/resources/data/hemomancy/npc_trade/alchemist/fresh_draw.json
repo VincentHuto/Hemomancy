@@ -1,0 +1,19 @@
+{
+  "title": "hemomancy.trade.alchemist.fresh_draw.title",
+  "line": "hemomancy.trade.alchemist.fresh_draw.line",
+  "order": 40,
+  "want": {
+    "kind": "blood",
+    "amount": 250
+  },
+  "give": [
+    {
+      "item": "hemomancy:bleeding_bulb",
+      "count": 2
+    }
+  ],
+  "stock": {
+    "uses": 1,
+    "restock_days": 1
+  }
+}

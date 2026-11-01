@@ -1,0 +1,27 @@
+{
+  "title": "hemomancy.trade.zealot.amethyst.title",
+  "line": "hemomancy.trade.zealot.amethyst.line",
+  "order": 20,
+  "requires": {
+    "path": "unstained",
+    "stage_at_least": 1
+  },
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "count": 3
+  },
+  "give": [
+    {
+      "item": "hemomancy:draught_of_still_waters",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 2
+  },
+  "show_locked": true
+}

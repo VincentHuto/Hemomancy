@@ -141,6 +141,11 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.e
             tree = MorphlingHandlingDialogue.withAlchemistInspection(tree, degree, handling.proof(),
                     handling.inspected());
         }
+        if (com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment.eligible(serverPlayer)) {
+            com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment.recordFill(serverPlayer);
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.PallidVesselDialogue.withAlchemistQuest(tree,
+                    com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment.progress(serverPlayer));
+        }
         if (com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission.eligible(serverPlayer)) {
             var commission = com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission
                     .progress(serverPlayer);

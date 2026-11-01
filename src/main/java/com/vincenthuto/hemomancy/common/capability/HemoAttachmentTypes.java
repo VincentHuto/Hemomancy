@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Vas
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
+import com.vincenthuto.hemomancy.common.capability.player.shared.trade.NpcTradeLedger;
 import com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataVersion;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
@@ -148,6 +149,11 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<DialogueKnowledge>> DIALOGUE_KNOWLEDGE =
             ATTACHMENT_TYPES.register("dialogue_knowledge",
                     () -> AttachmentType.serializable(DialogueKnowledge::new).copyOnDeath().build());
+
+    /** Rapport with each NPC and the restock windows of limited trade cards; kept through death. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<NpcTradeLedger>> NPC_TRADE_LEDGER =
+            ATTACHMENT_TYPES.register("npc_trade_ledger",
+                    () -> AttachmentType.serializable(NpcTradeLedger::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<SkillProgress>> SKILL_PROGRESS =
             ATTACHMENT_TYPES.register("skill_progress",

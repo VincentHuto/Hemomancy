@@ -82,7 +82,7 @@ Right-click a crude memory with active blood and its required learning degree to
 
 The self-built Somatic Loom remains **Degree III**. Ask the Mnemonist about The Woven Vessel or the Loom to learn the blank Hematic Memory recipe. It needs four Sanguine Formations, four Blood Stained Stones and one Neurotic Enzyme. Make each stained stone from Venous Stone, a Sanguine Formation and redstone dust; crafting all four brings the total to eight formations. Stones found in Hermitage Remnants also work. Spin ordinary chicken Blood Vials for Neurotic Enzyme. Chicken blood can also yield Vivacious Enzyme, so collect more than one vial. Bring the blank, a book, an ink sac and three paper to the Mnemonist for the Blood Shot starter materials. The actual weave then requires its listed catalyst, enzymes and blood.
 
-In the Mnemonist's **Quest Work**, choose **How do I prepare a blank memory?** for The Woven Vessel. General Loom teaching remains under Lore. Indexing supplies the starter materials; finishing the weave is still the Main proof.
+In the Mnemonist's **Quest Work**, choose **How do I prepare a blank memory?** for The Woven Vessel. General Loom teaching remains a lore card under **Conversation**. Indexing supplies the starter materials; finishing the weave is still the Main proof.
 
 ### Blood Volume
 Blood is the resource used by Hemomancy. Most adult humans contain about **5000 mL** of blood, and activation starts you at 1000 mL.
@@ -291,6 +291,15 @@ When blood volume is active, you'll see:
 - **Blood Volume Bar**: Current blood amount (configurable position)
 - **Active Manipulation Indicator**: Shows currently selected manipulation
 - **Cooldown Timers**: Visual feedback for manipulation cooldowns
+
+### Talking and trading with NPCs
+Right-click an NPC to open its dialogue. Most NPCs open on four boxes:
+- **Quest Work**: assignments, lessons and claims.
+- **Inquiries**: questions about the item you hold or carry.
+- **Conversation**: one card per thing to talk about. A card with the lore glyph is lore, and its dot stays until you've read it.
+- **Trade**: the NPC's want cards. Each card names what they want (an item, blood, or a house's custom) and what they give for it.
+
+Click a card to see which of your stacks would pay it. NPCs appraise what you offer: a badly worn or empty offering is refused, and a fine one can earn more. Nothing is taken unless the whole trade goes through, including room for what you get. Trading builds rapport with that one NPC, which opens better cards and more Conversation lines. The Unstained won't trade with a Harbinger at the first Degree or above. The Brined Court never sells: its cards are its customs, and they earn standing. A trade never teaches a manipulation or counts as a step on either path.
 
 ### Keybinds (Default)
 - **`B`**: Open Field Notes journal

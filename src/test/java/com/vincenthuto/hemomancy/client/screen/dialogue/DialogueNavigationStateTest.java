@@ -19,7 +19,7 @@ class DialogueNavigationStateTest {
 	void hubCategoryNodeBackStackIsDeterministic() {
 		DialogueNavigationState state = DialogueNavigationState.hub();
 
-		state.openCategory(DialogueCategory.LORE);
+		state.openCategory(DialogueCategory.CONVERSATION);
 		state.openNode("rites");
 
 		assertEquals(DialogueNavigationState.View.NODE, state.view());
@@ -52,5 +52,18 @@ class DialogueNavigationStateTest {
 		assertEquals(DialogueNavigationState.View.HUB, state.view());
 		assertEquals(null, state.category());
 		assertEquals(null, state.nodeId());
+	}
+
+	@Test
+	void tradeBoxOpensAsACategoryAndBacksOutToTheHub() {
+		DialogueNavigationState state = DialogueNavigationState.hub();
+		state.openCategory(DialogueCategory.TRADE);
+
+		assertEquals(DialogueNavigationState.View.CATEGORY, state.view());
+		assertEquals(DialogueCategory.TRADE, state.category());
+		assertEquals(null, state.nodeId());
+		assertTrue(state.back());
+		assertEquals(DialogueNavigationState.View.HUB, state.view());
+		assertEquals(null, state.category());
 	}
 }

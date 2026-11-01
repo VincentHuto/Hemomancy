@@ -1,0 +1,10 @@
+{
+  "title": "hemomancy.trade.court_bellwarden.custom.title",
+  "line": "hemomancy.trade.court_bellwarden.custom.line",
+  "order": 10,
+  "want": {
+    "kind": "custom",
+    "act": "custom_watch"
+  },
+  "opens": "hemomancy.trade.court_bellwarden.custom.opens"
+}

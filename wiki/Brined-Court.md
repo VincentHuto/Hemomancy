@@ -25,6 +25,7 @@ The rules below are in place. At the two Seats the residents now teach, take you
 - **The first lesson.** At the fifth Degree the Lightkeeper at the Lighthouse Garden teaches that a strain grows faster when fed in its own house's water: once taught, a strain's upkeep bonds it 1.5 times as fast inside its own house's Seat or outpost.
 - **Wrongs and amends** (the Bloom Warden isn't built yet). A wrong against the Giving Light is remembered, even through death, and the Garden turns you away until you hold out food as an offering to make amends.
 - **The Kindled Champion** (the fight itself isn't built yet). With a strain at Apex and the Kindling's friendship, you may challenge for the Champion's title. Lose, and you wait a day before trying again.
+- **Customs at the Trade box.** A role that takes its house's custom also shows it as a card in its dialogue's Trade box. The offering and the standing are the same as offering it in conversation: the custom counts once, and the Court still gives no goods for it.
 - **Unstained visitors** are shunned by every house: no standing, no membership, no lessons. Nobody attacks them.
 
 ## The two Seats

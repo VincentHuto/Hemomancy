@@ -1,0 +1,19 @@
+{
+  "title": "hemomancy.trade.scout.paper.title",
+  "line": "hemomancy.trade.scout.paper.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:paper"
+    },
+    "count": 4
+  },
+  "give": [
+    {
+      "item": "hemomancy:lethean_dew",
+      "count": 2
+    }
+  ],
+  "rapport": 2
+}

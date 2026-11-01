@@ -28,6 +28,12 @@ class SilentArchonVerifiedPathTest {
         assertTrue(SilentArchonArmorRules.canRefuseDeath(true, 8, "silent",
                 4000, 3000, 2000, 0));
 
+        for (EnumArchonPath path : EnumArchonPath.values()) {
+            assertFalse(SilentArchonArmorRules.hasPower(true, 7, path), "No seventh-Degree Silent Archon: " + path);
+            assertEquals(path == EnumArchonPath.SILENTIUM, SilentArchonArmorRules.hasPower(true, 8, path), path.name());
+            assertFalse(SilentArchonArmorRules.hasPower(false, 8, path), "An incomplete set: " + path);
+        }
+
         assertEquals(56, commandeerCost(EnumArchonPath.SILENT_PENDING));
         assertEquals(28, commandeerCost(EnumArchonPath.SILENTIUM));
     }

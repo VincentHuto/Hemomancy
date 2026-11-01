@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.alchemist.spent_enzyme.title",
+  "line": "hemomancy.trade.alchemist.spent_enzyme.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:recycled_enzyme"
+    },
+    "count": 4
+  },
+  "give": [
+    {
+      "item": "hemomancy:enzyme_primer",
+      "count": 1
+    }
+  ]
+}

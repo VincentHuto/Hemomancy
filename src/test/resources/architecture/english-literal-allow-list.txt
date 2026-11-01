@@ -15,6 +15,7 @@
 4	src/main/java/com/vincenthuto/hemomancy/common/data/gen/DynastyCastlePieces.java	datagen block states and provider names
 1	src/main/java/com/vincenthuto/hemomancy/common/data/gen/HemoItemModelProvider.java	datagen block states and provider names
 28	src/main/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperManipulationCoverage.java	design notes on why Vesper skips a manipulation; read by its coverage test only
+2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/trade/NpcTradeRegistry.java	NPC trade datapack validation reasons, logged at load
 16	src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/DebugShowcaseItem.java	creative debug tool section labels, never applied to anything shown
 2	src/main/java/com/vincenthuto/hemomancy/common/item/shared/StructureScannerItem.java	placeholder structure id written into exported templates
 1	src/main/java/com/vincenthuto/hemomancy/common/manipulation/BloodManipulation.java	saved id of the blank manipulation slot; the hemo command fingerprints record it

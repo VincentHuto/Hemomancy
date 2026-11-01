@@ -1,0 +1,22 @@
+{
+  "title": "hemomancy.trade.guardian.iron.title",
+  "line": "hemomancy.trade.guardian.iron.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:iron_ingot"
+    },
+    "count": 6
+  },
+  "give": [
+    {
+      "item": "hemomancy:lethean_brew",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 1
+  }
+}

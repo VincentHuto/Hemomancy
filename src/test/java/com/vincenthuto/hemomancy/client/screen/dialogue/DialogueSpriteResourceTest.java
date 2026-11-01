@@ -29,8 +29,9 @@ class DialogueSpriteResourceTest {
 
 	@Test
 	void categoryIconsAndRecurringNpcCrestsExist() throws IOException {
-		for (String icon : new String[] { "quests", "inquiries", "lore", "conversation", "leave", "back",
-				"reward", "locked", "complete", "turn_in", "unread", "active", "disabled" })
+		for (String icon : new String[] { "quests", "inquiries", "lore", "conversation", "trade", "leave", "back",
+				"reward", "locked", "complete", "turn_in", "unread", "active", "disabled", "grade_poor", "grade_fair",
+				"grade_fine", "carried_full", "carried_some", "blood_drop", "trade_arrow" })
 			assertSprite("icons/" + icon + ".png", 32, 32, false);
 		for (String crest : new String[] { "default", "alchemist", "artificer", "cicatrix_anchorite", "hermit",
 				"mnemonist", "vicar", "votary_wayfarer", "voyager", "acolyte", "guardian", "zealot" })
@@ -39,7 +40,7 @@ class DialogueSpriteResourceTest {
 
 	@Test
 	void hubCategoriesHaveReferenceMatchedColoredCardBorders() throws IOException {
-		for (String category : new String[] { "quests", "inquiries", "lore", "conversation" }) {
+		for (String category : new String[] { "quests", "inquiries", "conversation", "trade" }) {
 			assertSprite("categories/" + category + ".png", 64, 64, true);
 			assertSprite("categories/" + category + "_selected.png", 64, 64, true);
 			assertSolidCenter("categories/" + category + ".png", 8);

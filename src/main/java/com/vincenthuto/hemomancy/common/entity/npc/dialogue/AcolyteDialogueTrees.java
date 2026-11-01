@@ -81,7 +81,7 @@ public final class AcolyteDialogueTrees {
 						"hemomancy.acolyte.tainted.line1",
 						"hemomancy.acolyte.tainted.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.acolyte.option.about_lady", "lady_lore", null),
+						new DialogueOption("hemomancy.dialogue.acolyte.option.about_lady", "lady_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.acolyte.option.task_wreath", null, "acolyte_task_wreath",
 								DialogueOptionPresentation.prompt("hemomancy.dialogue.unstained.observance.available")),
 						new DialogueOption("hemomancy.dialogue.acolyte.option.task_hemolytic", null,
@@ -111,7 +111,7 @@ public final class AcolyteDialogueTrees {
 						"hemomancy.acolyte.cleansing.line1",
 						"hemomancy.acolyte.cleansing.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.acolyte.option.about_silver_veil", "silver_veil", null),
+						new DialogueOption("hemomancy.dialogue.acolyte.option.about_silver_veil", "silver_veil", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.acolyte.option.task_consecrate", null,
 								"acolyte_task_consecrate", DialogueOptionPresentation.prompt(
 								"hemomancy.dialogue.unstained.observance.available")),
@@ -138,7 +138,7 @@ public final class AcolyteDialogueTrees {
 						"hemomancy.acolyte.absolved.line1",
 						"hemomancy.acolyte.absolved.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.acolyte.option.about_clarity", "about_clarity", null),
+						new DialogueOption("hemomancy.dialogue.acolyte.option.about_clarity", "about_clarity", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("about_clarity", List.of(
@@ -187,7 +187,7 @@ public final class AcolyteDialogueTrees {
 						"hemomancy.acolyte.clarity.line1",
 						"hemomancy.acolyte.clarity.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.acolyte.option.about_verdigris", "verdigris", null),
+						new DialogueOption("hemomancy.dialogue.acolyte.option.about_verdigris", "verdigris", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.acolyte.option.task_chalice", null, "acolyte_task_chalice",
 								DialogueOptionPresentation.prompt("hemomancy.dialogue.unstained.observance.available")),
 						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)

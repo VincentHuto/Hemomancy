@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.votary_wayfarer.prismarine.title",
+  "line": "hemomancy.trade.votary_wayfarer.prismarine.line",
+  "order": 20,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:prismarine_shard"
+    },
+    "count": 6
+  },
+  "give": [
+    {
+      "item": "hemomancy:erythrocoral_fragment",
+      "count": 2
+    }
+  ]
+}

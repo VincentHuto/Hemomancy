@@ -1,0 +1,26 @@
+{
+  "title": "hemomancy.trade.artificer.husk_lacquer.title",
+  "line": "hemomancy.trade.artificer.husk_lacquer.line",
+  "order": 40,
+  "requires": {
+    "degree_at_least": 3
+  },
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:chitinous_husk"
+    },
+    "count": 4
+  },
+  "give": [
+    {
+      "item": "hemomancy:crimson_lacquer",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 2
+  },
+  "show_locked": true
+}

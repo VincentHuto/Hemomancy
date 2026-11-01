@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.circus_ringmaster.ring_planks.title",
+  "line": "hemomancy.trade.circus_ringmaster.ring_planks.line",
+  "order": 20,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "tag": "minecraft:planks"
+    },
+    "count": 16
+  },
+  "give": [
+    {
+      "item": "hemomancy:troupe_rigging",
+      "count": 2
+    }
+  ]
+}

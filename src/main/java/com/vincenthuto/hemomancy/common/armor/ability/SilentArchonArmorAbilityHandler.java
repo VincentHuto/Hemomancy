@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.projectile.CombatWeaponCarrierProjectile;
+import com.vincenthuto.hemomancy.common.event.SilentArchonArmorRules;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ITendencyAlignedWeapon;
@@ -77,7 +78,9 @@ public final class SilentArchonArmorAbilityHandler {
 			return true;
 		}
 		if (!hasFullSilentArchonSet(player)) {
-			player.displayClientMessage(Component.translatable("message.hemomancy.silent_archon_armor_ability_handler.the_silent_archon_vestments_are_incomplete").withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.translatable(ArmorSetHelper.hasFullSilentArchonSet(player)
+					? "message.hemomancy.silent_archon_armor_ability_handler.only_a_silentium"
+					: "message.hemomancy.silent_archon_armor_ability_handler.the_silent_archon_vestments_are_incomplete").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		long now = player.level().getGameTime();
@@ -324,8 +327,11 @@ public final class SilentArchonArmorAbilityHandler {
 		return source.isDirect() && source.getEntity() instanceof LivingEntity;
 	}
 
+	/** A full set worn by a Silentium: the only wearer the vestments answer (incorporeality, Slipping, Severance). */
 	public static boolean hasFullSilentArchonSet(Player player) {
-		return ArmorSetHelper.hasFullSilentArchonSet(player);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		return SilentArchonArmorRules.hasPower(ArmorSetHelper.hasFullSilentArchonSet(player),
+				degree.getDegreeNumber(), degree.getArchonPath());
 	}
 
 	private static boolean isAllowedSilentArchonOffense(ServerPlayer attacker, DamageSource source) {

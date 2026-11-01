@@ -2,6 +2,8 @@
 
 The Crimson Troupe is the main Puppeteering school, adjacent to the Brined Court. Find its teaching camps or travelling pavilion, prepare a charged, owner-attuned Marionette Crossbar, and speak to the professors. Instruction reveals an ordeal recipe. Victory in that existing Cardinal Ordeal unlocks the shape; a practical demonstrates mastery.
 
+The Ringmaster and every professor also have a Trade box in their dialogue. They take curiosities (shells, horns, heads, odd specimens, graded by rarity) and goods that suit their act, and the Ringmaster takes a spectacle you've earned by finishing a pavilion challenge. Trading needs no Degree and no active blood.
+
 | Professor | Shape | Degree |
 | --- | --- | ---: |
 | Acrobat | Veinwing Vulture | 3 |

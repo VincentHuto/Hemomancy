@@ -32,6 +32,27 @@ class HarbingerPathPermissionsTest {
 	}
 
 	@Test
+	void onlyAFinishedSilentiumStopsHearingTheHive() {
+		assertFalse(HarbingerPathPermissions.hearsTheHive(8, EnumArchonPath.SILENTIUM));
+		assertTrue(HarbingerPathPermissions.hearsTheHive(8, EnumArchonPath.APOTHEOS));
+		assertTrue(HarbingerPathPermissions.hearsTheHive(7, EnumArchonPath.SILENT_PENDING),
+				"A Silence still pending has not cut the antenna yet");
+		assertTrue(HarbingerPathPermissions.hearsTheHive(7, EnumArchonPath.SILENTIUM),
+				"Silentium is an eighth-degree state");
+		for (int degree = 0; degree <= 7; degree++) {
+			assertTrue(HarbingerPathPermissions.hearsTheHive(degree, EnumArchonPath.NONE), "Degree " + degree);
+		}
+	}
+
+	@Test
+	void theHiveAddressesAnApotheosByTheirOwnTitle() {
+		assertEquals(".apotheos", HarbingerPathPermissions.hiveAddressSuffix(8, EnumArchonPath.APOTHEOS));
+		assertEquals("", HarbingerPathPermissions.hiveAddressSuffix(7, EnumArchonPath.APOTHEOS_PENDING));
+		assertEquals("", HarbingerPathPermissions.hiveAddressSuffix(7, EnumArchonPath.NONE));
+		assertEquals("", HarbingerPathPermissions.hiveAddressSuffix(8, EnumArchonPath.SILENTIUM));
+	}
+
+	@Test
 	void ordinaryProgressionDoesNotNeedAnEndingChoice() {
 		for (int pomes = 0; pomes < 9; pomes++) {
 			assertTrue(HarbingerPathPermissions.canUsePower(pomes, EnumArchonPath.NONE, false));

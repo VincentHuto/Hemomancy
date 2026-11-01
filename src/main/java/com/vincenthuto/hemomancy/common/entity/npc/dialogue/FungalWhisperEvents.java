@@ -18,6 +18,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * At degree 4 the whispers are extremely rare and subliminal barely
  * perceptible intrusive thoughts that plant seeds of doubt. As the player's
  * degree increases, the interval shortens and the content grows more explicit.
+ * <p>
+ * An Apotheos keeps hearing them (addressed as Apotheos); a Silentium never does.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class FungalWhisperEvents {
@@ -75,14 +77,19 @@ public class FungalWhisperEvents {
 		triggerWhisper(serverPlayer, (int) ((player.tickCount / interval) % VARIANT_COUNT));
 	}
 
-	/** Offers the degree's whisper now, if the memo is still due; returns whether one was sent. */
+	/**
+	 * Offers the degree's whisper now, if the memo is still due; returns whether one was sent. A Silentium hears
+	 * nothing: their whispers simply stop, including the one a broken possession used to bring.
+	 */
 	public static boolean triggerWhisper(ServerPlayer serverPlayer, int variant) {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
 		if (degree < 4 || !HemoCapabilityAccess.getBloodVolume(serverPlayer).isActive()) return false;
+		if (!PendingWhispers.hearsTheHive(serverPlayer)) return false;
 		var memo = FungalWhisperDialogueTrees.memoForDegree(degree, Math.floorMod(variant, VARIANT_COUNT));
 		if (!FungalWhisperDialogueTrees.shouldOfferMemoWhisper(serverPlayer, memo)) return false;
 
-		DialogueTree tree = FungalWhisperDialogueTrees.forDegree(degree, Math.floorMod(variant, VARIANT_COUNT));
+		DialogueTree tree = FungalWhisperDialogueTrees.forDegree(degree, Math.floorMod(variant, VARIANT_COUNT),
+				PendingWhispers.hiveAddress(serverPlayer));
 
 		HemoCapabilityAccess.getWillAmbushState(serverPlayer)
 				.setHeraldUntilGameTime(serverPlayer.level().getGameTime() + 2400L);

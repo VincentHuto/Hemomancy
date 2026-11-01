@@ -91,7 +91,7 @@ public final class HarbingerMnemonistDialogueTrees {
 						"hemomancy.mnemonist.purifying.line1",
 						"hemomancy.mnemonist.purifying.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null),
+						new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)
 				)))
@@ -106,7 +106,7 @@ public final class HarbingerMnemonistDialogueTrees {
 						"hemomancy.mnemonist.clarity.line1",
 						"hemomancy.mnemonist.clarity.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_memory", "memory_lore", null),
+						new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_memory", "memory_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)
 				)))
@@ -121,7 +121,7 @@ public final class HarbingerMnemonistDialogueTrees {
 						"hemomancy.mnemonist.uninitiated.line1",
 						"hemomancy.mnemonist.uninitiated.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_memory", "memory_lore", null),
+						new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_memory", "memory_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)
 				)))
@@ -167,37 +167,37 @@ public final class HarbingerMnemonistDialogueTrees {
 					"woven_vessel", EVENT_BLANK_MEMORY_RECIPE));
 		}
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_loom", "loom",
-				EVENT_BLANK_MEMORY_RECIPE));
-		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_reliquary", "reliquary", null));
+				EVENT_BLANK_MEMORY_RECIPE).withLore());
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_reliquary", "reliquary", null).withLore());
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_scriptorium",
-				"scriptorium", EVENT_SCRIPTORIUM_LESSON));
+				"scriptorium", EVENT_SCRIPTORIUM_LESSON).withLore());
 		if (degree >= 4) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_memory_practice",
-					"memory_practice", null));
+					"memory_practice", null).withLore());
 		}
 		if (degree >= 5) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_distributor",
-					"distributor", null));
+					"distributor", null).withLore());
 		}
-		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_chamber", "chamber", null));
-		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null));
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_chamber", "chamber", null).withLore());
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null).withLore());
 		if (morphlingPuppetInterference) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.morphling_puppet_interference",
 					"morphling_puppet_interference", null));
 		}
 		if (degree >= 6) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_mnemonic_doctrine",
-					"mnemonic_doctrine", null));
+					"mnemonic_doctrine", null).withLore());
 		}
 		if (anchoriteReferral && !anchoriteCounsel) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.anchorite_counsel",
 					"anchorite_counsel", EVENT_ANCHORITE_COUNSEL,
-					DialogueOptionPresentation.prompt("hemomancy.mnemonist.anchorite_counsel.prompt")));
+					DialogueOptionPresentation.prompt("hemomancy.mnemonist.anchorite_counsel.prompt")).withLore());
 		}
 		if (CircusIntroductionRules.introductionFor(degree, circusDiscovered)
 				!= CircusIntroductionRules.Introduction.HIDDEN) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_circus",
-					"circus", null));
+					"circus", null).withLore());
 		}
 		if (canClaimStarter) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.choose_starter", "starter_choice", null));
@@ -261,9 +261,9 @@ public final class HarbingerMnemonistDialogueTrees {
 
 	private static List<DialogueOption> neophyteOptions(boolean canClaimStarter) {
 		List<DialogueOption> options = new ArrayList<>();
-		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null));
-		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_slots", "slots", null));
-		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_chamber", "chamber", null));
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null).withLore());
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_slots", "slots", null).withLore());
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_chamber", "chamber", null).withLore());
 		if (canClaimStarter) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.choose_starter", "starter_choice", null));
 		}
@@ -303,7 +303,7 @@ public final class HarbingerMnemonistDialogueTrees {
 		return new DialogueNode("crude_memories", List.of(
 				"hemomancy.mnemonist.crude_memories.line1",
 				"hemomancy.mnemonist.crude_memories.line2"
-		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_slots", "slots", null),
+		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_slots", "slots", null).withLore(),
 				new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
 	}
 

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueRewardChoicePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueTopicOpenedPacket;
+import com.vincenthuto.hemomancy.common.network.trade.NpcTradeSeenPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -49,15 +50,28 @@ public final class DialogueScreen extends Screen {
 	private DialogueLayout layout;
 	private ResourceLocation resolvedPortraitIcon;
 	private boolean resolvedPortraitIsCompanion;
+	private ResourceLocation resolvedCrest;
 	private int scrollOffset;
 	private int maxScroll;
 	private ItemStack hoveredInquiryItem = ItemStack.EMPTY;
+	private boolean hoveredLoreMarker;
+	/** The Trade box as last sent: on open, then replaced by every trade result for this speaker. */
+	private com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeBoard tradeBoard;
+	/** The last trade result's outcome and reason key, for the Trade view; null before any trade. */
+	private TradeReply lastTradeReply;
+	private final DialogueTradeView tradeView;
+
+	/** How the last trade request ended. */
+	public record TradeReply(ResourceLocation offerId,
+			com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeService.Outcome outcome, String reasonKey) {}
 
 	private DialogueScreen(DialogueTree tree) {
 		super(Component.empty());
 		this.tree = tree;
 		this.currentNode = tree.getStartNode();
 		this.style = DialogueThemeStyle.forTheme(tree.theme());
+		this.tradeBoard = tree.presentation().trade();
+		this.tradeView = new DialogueTradeView(tree.entityId(), style);
 		this.navigation = tree.presentation().mode() == DialogueScreenMode.TOPIC_HUB
 				? DialogueNavigationState.hub()
 				: DialogueNavigationState.focused(tree.startNodeId());
@@ -109,6 +123,8 @@ public final class DialogueScreen extends Screen {
 		layout = DialogueLayout.calculate(width, height);
 		clickTargets.clear();
 		hoveredInquiryItem = ItemStack.EMPTY;
+		hoveredLoreMarker = false;
+		if (!inTradeBox()) tradeView.reset();
 		resetGuiState();
 		gfx.blitSprite(style.frameSprite(), layout.panel().x(), layout.panel().y(),
 				layout.panel().width(), layout.panel().height());
@@ -119,6 +135,12 @@ public final class DialogueScreen extends Screen {
 		super.render(gfx, mouseX, mouseY, partialTick);
 		if (!hoveredInquiryItem.isEmpty()) {
 			gfx.renderTooltip(font, hoveredInquiryItem, mouseX, mouseY);
+		} else if (hoveredLoreMarker) {
+			gfx.renderTooltip(font, Component.translatable("hemomancy.dialogue.topic.lore_marker"), mouseX, mouseY);
+		} else if (inTradeBox() && !tradeView.hoveredStack().isEmpty()) {
+			gfx.renderTooltip(font, tradeView.hoveredStack(), mouseX, mouseY);
+		} else if (inTradeBox() && !tradeView.hoveredText().isEmpty()) {
+			gfx.renderComponentTooltip(font, tradeView.hoveredText(), mouseX, mouseY);
 		}
 	}
 
@@ -137,7 +159,7 @@ public final class DialogueScreen extends Screen {
 		var header = layout.header();
 		int portraitSize = Math.min(PORTRAIT_SIZE, header.height() - 4);
 		renderPortrait(gfx, header.x() + 2, header.y() + 2, portraitSize);
-		gfx.blitSprite(DialogueThemeStyle.crest(tree.presentation().styleId()),
+		gfx.blitSprite(crest(),
 				header.right() - 20, header.y() + 4, 16, 16);
 		int textX = header.x() + portraitSize + 12;
 		gfx.drawString(font, Component.translatable(tree.speakerName()), textX, header.y() + 5,
@@ -145,8 +167,9 @@ public final class DialogueScreen extends Screen {
 		int textWidth = Math.max(1, header.right() - textX - 24);
 		int y = header.y() + 20;
 		DialogueNode headerNode = navigation.view() == DialogueNavigationState.View.NODE ? null : tree.getStartNode();
+		Component reaction = inTradeBox() ? tradeView.reaction() : null;
 		if (headerNode != null) {
-			var lines = headerNode.lines().stream()
+			var lines = reaction != null ? font.split(reaction, textWidth) : headerNode.lines().stream()
 					.flatMap(key -> font.split(resolveDialogueLine(key), textWidth).stream()).toList();
 			boolean overflow = y + Math.max(0, lines.size() - 1) * LINE_HEIGHT + font.lineHeight > header.bottom() - 2;
 			int limit = overflow ? header.bottom() - LINE_HEIGHT - 3 : header.bottom() - 2;
@@ -197,7 +220,8 @@ public final class DialogueScreen extends Screen {
 			int y = card.y() - scrollOffset;
 			int cardWidth = card.width();
 			int cardHeight = card.height();
-			boolean enabled = tree.presentation().hasTopics(category);
+			boolean enabled = tree.presentation().hasTopics(category)
+					|| category == DialogueCategory.TRADE && tradeBoard.present();
 			boolean selected = enabled && (contains(x, y, cardWidth, cardHeight, mouseX, mouseY)
 					|| navigation.focusIndex() == i);
 			gfx.blitSprite(enabled ? DialogueThemeStyle.categoryCard(category, selected)
@@ -211,6 +235,9 @@ public final class DialogueScreen extends Screen {
 					: Component.translatable("hemomancy.dialogue.ui.no_topics");
 			drawWrapped(gfx, summary, x + 30, y + 23, cardWidth - 38, 2,
 					enabled ? style.textColor() : style.disabledColor());
+			if (enabled && hasUnread(category)) {
+				gfx.blitSprite(DialogueThemeStyle.statusIcon("unread"), x + cardWidth - 14, y + 5, 8, 8);
+			}
 			clickTargets.add(ClickTarget.category(x, y, cardWidth, cardHeight, category, enabled));
 		}
 		DialogueLayout.Rect last = hub.cards().getLast();
@@ -222,6 +249,11 @@ public final class DialogueScreen extends Screen {
 		List<DialogueTopic> topics = tree.presentation().topics(navigation.category());
 		if (navigation.category() == DialogueCategory.INQUIRIES) {
 			return renderInquiryGrid(gfx, mouseX, mouseY, startY, content, topics);
+		}
+		if (navigation.category() == DialogueCategory.TRADE) {
+			return tradeView.render(gfx, font, tradeBoard, crest(),
+					content, startY, mouseX, mouseY, (x, y, width, height, enabled, action) ->
+							clickTargets.add(ClickTarget.trade(x, y, width, height, enabled, action)));
 		}
 		int y = startY + CONTENT_PAD;
 		int width = content.width() - CONTENT_PAD * 2;
@@ -241,6 +273,9 @@ public final class DialogueScreen extends Screen {
 			} else {
 				gfx.blitSprite(topic.icon() != null ? topic.icon() : DialogueThemeStyle.categoryIcon(topic.category()),
 						x + 8, y + 9, 16, 16);
+				if (topic.lore() && content.contains(mouseX, mouseY) && contains(x + 8, y + 9, 16, 16, mouseX, mouseY)) {
+					hoveredLoreMarker = true;
+				}
 			}
 			int color = enabled ? style.optionColor() : style.disabledColor();
 			Component title = topic.displayItemId() != null
@@ -403,6 +438,17 @@ public final class DialogueScreen extends Screen {
 		texture.restoreLastBlurMipmap();
 	}
 
+	/** The speaker's crest, or the default crest when no sprite was drawn for them (the Circus has none yet). */
+	private ResourceLocation crest() {
+		if (resolvedCrest == null) {
+			ResourceLocation crest = DialogueThemeStyle.crest(tree.presentation().styleId());
+			boolean missing = Minecraft.getInstance().getGuiSprites().getSprite(crest).contents().name()
+					.equals(net.minecraft.client.renderer.texture.MissingTextureAtlasSprite.getLocation());
+			resolvedCrest = missing ? DialogueThemeStyle.crest(null) : crest;
+		}
+		return resolvedCrest;
+	}
+
 	private void resolvePortraitIcon() {
 		ResourceLocation base = tree.speakerIcon();
 		for (ResourceLocation candidate : companionPortraitCandidates(base)) {
@@ -496,7 +542,7 @@ public final class DialogueScreen extends Screen {
 				currentNode = tree.getStartNode();
 				navigation.openNode(currentNode.id());
 			}
-			case CATEGORY -> navigation.openCategory(target.category);
+			case CATEGORY -> enterCategory(target.category);
 			case TOPIC -> openTopic(target.topic);
 			case OPTION -> selectOption(target.optionIndex);
 			case BACK -> {
@@ -504,19 +550,27 @@ public final class DialogueScreen extends Screen {
 				currentNode = tree.getStartNode();
 			}
 			case CLOSE -> onClose();
+			case TRADE -> {
+				target.action.run();
+				return;
+			}
 		}
 		resetScroll();
 	}
 
 	private void openTopic(DialogueTopic topic) {
+		if (DialogueHubFactory.TRADE_TARGET.equals(topic.targetNodeId())) {
+			enterCategory(DialogueCategory.TRADE);
+			return;
+		}
 		DialogueNode node = tree.getNode(topic.targetNodeId());
 		if (node == null) return;
 		currentNode = node;
 		navigation.openNode(node.id());
-		if (topic.category() == DialogueCategory.LORE && topic.unread() && locallyReadTopics.add(topic.id())) {
+		if (topic.lore() && topic.unread() && locallyReadTopics.add(topic.id())) {
 			ResourceLocation dialogueId = tree.presentation().dialogueId();
 			ResourceLocation readId = ResourceLocation.fromNamespaceAndPath(dialogueId.getNamespace(),
-					dialogueId.getPath() + "/" + topic.id());
+					dialogueId.getPath() + "/" + topic.readPath());
 			PacketHandler.sendToServer(new DialogueTopicOpenedPacket(readId, tree.entityId()));
 		}
 	}
@@ -539,6 +593,74 @@ public final class DialogueScreen extends Screen {
 
 	private boolean isClaimPending(DialogueOption option) {
 		return pendingClaims.values().stream().anyMatch(p -> p.node() == currentNode && p.option() == option);
+	}
+
+	/**
+	 * A trade result for the open dialogue: replaces its Trade box with the fresh one and keeps the outcome. A result for
+	 * another speaker, or with no dialogue open, is dropped.
+	 */
+	public static void receiveTradeResult(int entityId, TradeReply reply,
+			com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeBoard board) {
+		if (!(Minecraft.getInstance().screen instanceof DialogueScreen screen) || screen.tree.entityId() != entityId) return;
+		screen.tradeBoard = board;
+		screen.lastTradeReply = reply;
+		screen.tradeView.onResult(reply, board);
+	}
+
+	/** Whether the Trade box is the open view. */
+	private boolean inTradeBox() {
+		return navigation.view() == DialogueNavigationState.View.CATEGORY
+				&& navigation.category() == DialogueCategory.TRADE;
+	}
+
+	/** Opens a hub box, as clicking its card does (the review client drives the Trade box this way). */
+	public void openCategory(DialogueCategory category) {
+		enterCategory(category);
+		resetScroll();
+	}
+
+	/**
+	 * Opens a hub box. Opening the Trade box shows today's daily cards, so their unread dots clear here and the server
+	 * records them as seen.
+	 */
+	private void enterCategory(DialogueCategory category) {
+		navigation.openCategory(category);
+		if (category != DialogueCategory.TRADE) return;
+		boolean marked = false;
+		for (DialogueTopic topic : tree.presentation().topics(DialogueCategory.TRADE)) {
+			if (topic.unread() && locallyReadTopics.add(topic.id())) marked = true;
+		}
+		if (marked && tree.entityId() != 0) {
+			PacketHandler.sendToServer(new NpcTradeSeenPacket(tree.entityId()));
+		}
+	}
+
+	/** Whether a hub box holds a card the player hasn't opened yet (an unread lore line or a new daily want). */
+	private boolean hasUnread(DialogueCategory category) {
+		for (DialogueTopic topic : tree.presentation().topics(category)) {
+			if (topic.unread() && !locallyReadTopics.contains(topic.id())) return true;
+		}
+		return false;
+	}
+
+	/** Opens a want card's selection strip in the Trade box. */
+	public void expandTradeCard(ResourceLocation offerId) {
+		openCategory(DialogueCategory.TRADE);
+		tradeView.expand(offerId);
+	}
+
+	/** The speaker entity this dialogue is open on (0 for a whisper). */
+	public int entityId() {
+		return tree.entityId();
+	}
+
+	public com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeBoard tradeBoard() {
+		return tradeBoard;
+	}
+
+	@org.jetbrains.annotations.Nullable
+	public TradeReply lastTradeReply() {
+		return lastTradeReply;
 	}
 
 	public static void receiveRewardResult(long requestId, boolean delivered) {
@@ -608,10 +730,18 @@ public final class DialogueScreen extends Screen {
 		return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 	}
 
-	private enum TargetKind { GREETING, CATEGORY, TOPIC, OPTION, BACK, CLOSE }
+	private enum TargetKind { GREETING, CATEGORY, TOPIC, OPTION, BACK, CLOSE, TRADE }
 
 	private record ClickTarget(int x, int y, int width, int height, TargetKind kind,
-			DialogueCategory category, DialogueTopic topic, int optionIndex, boolean enabled) {
+			DialogueCategory category, DialogueTopic topic, int optionIndex, boolean enabled, Runnable action) {
+		ClickTarget(int x, int y, int width, int height, TargetKind kind, DialogueCategory category,
+				DialogueTopic topic, int optionIndex, boolean enabled) {
+			this(x, y, width, height, kind, category, topic, optionIndex, enabled, null);
+		}
+		/** A Trade box control: a card, a slot well or Offer. Activating it runs {@code action} and keeps the scroll. */
+		static ClickTarget trade(int x, int y, int width, int height, boolean enabled, Runnable action) {
+			return new ClickTarget(x, y, width, height, TargetKind.TRADE, null, null, -1, enabled, action);
+		}
 		static ClickTarget category(int x, int y, int width, int height, DialogueCategory category, boolean enabled) {
 			return new ClickTarget(x, y, width, height, TargetKind.CATEGORY, category, null, -1, enabled);
 		}
@@ -631,7 +761,8 @@ public final class DialogueScreen extends Screen {
 			return DialogueScreen.contains(x, y, width, height, mouseX, mouseY);
 		}
 		boolean contentTarget() {
-			return kind == TargetKind.CATEGORY || kind == TargetKind.TOPIC || kind == TargetKind.OPTION;
+			return kind == TargetKind.CATEGORY || kind == TargetKind.TOPIC || kind == TargetKind.OPTION
+					|| kind == TargetKind.TRADE;
 		}
 		DialogueLayout.Rect rect() {
 			return new DialogueLayout.Rect(x, y, width, height);

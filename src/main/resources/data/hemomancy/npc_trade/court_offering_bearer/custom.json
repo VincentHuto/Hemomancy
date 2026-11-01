@@ -1,0 +1,10 @@
+{
+  "title": "hemomancy.trade.court_offering_bearer.custom.title",
+  "line": "hemomancy.trade.court_offering_bearer.custom.line",
+  "order": 10,
+  "want": {
+    "kind": "custom",
+    "act": "custom_vent_offering"
+  },
+  "opens": "hemomancy.trade.court_offering_bearer.custom.opens"
+}

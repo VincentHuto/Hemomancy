@@ -14,6 +14,8 @@ The Unstained Path treats blood magic as **infection**, not sacred inheritance. 
 
 The **Liber Immaculatus** uses a paginated book with chapter tabs along its right edge, contents, search, bookmarks, and a resume button, like the Liber Sanguinium. It keeps its pale paper and Clarity-gated passages. Short windows show a shorter two-page spread when space permits; narrow windows show one centered page. Longer entries continue onto additional pages.
 
+**Trading with the Unstained.** The Zealot, the Guardian and the Acolyte trade clean materials through the Trade box in their dialogue. They won't deal with a Harbinger at the first Degree or above: their Trade box shows only a refusal. A player on neither path can trade with them. They also refuse anything stained by blood craft.
+
 **Key Features:**
 - Progressive purification stages (Clarity system)
 - Hemolytic Solution-based rituals

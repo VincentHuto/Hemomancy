@@ -157,6 +157,7 @@ public final class DialogueRouteCharacterisationGameTests {
 				DeepDarkCommissionDialogue.BEARING, PhlegethonticCommissionDialogue.REPORT,
 				PhlegethonticCommissionDialogue.BEARING, MorphlingHandlingDialogue.INSPECT,
 				OverworldFungalSurveyDialogue.REPORT, FirstDrawsDialogue.ACCEPT, SpecimenJarLessonDialogue.TEACH,
+				PallidVesselDialogue.BRIEF, PallidVesselDialogue.REPORT,
 				"alchemist_replace_concentrated_blood", HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_BRIEF,
 				HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM,
 				HarbingerAlchemistDialogueTrees.EVENT_BODY_ANSWERS_BRIEF,

@@ -125,6 +125,7 @@ public final class TransientServerStateEvents {
 		SynapticLoadoutLockout.clearSessionState();
 		ManipulationChargeClock.clearSessionState();
 		BloodlineChatRateLimit.clearSessionState();
+		com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeRequestLimiter.clearSessionState();
 		SummonThrallManip.clearSessionState();
 		CastingAnimationManager.clearSessionState();
 		AvatarManifestationManager.clearSessionState();
@@ -197,6 +198,7 @@ public final class TransientServerStateEvents {
 		ManipulationChargeClock.release(player);
 		NpcProgressionMarkerEvents.logout(player);
 		BloodlineChatRateLimit.logout(player);
+		com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeRequestLimiter.logout(player);
 		BloodFlowLedger.logout(player);
 		SporiticThuribleEvents.logout(player);
 		GardensNetwork.logout(player);

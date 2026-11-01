@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumAffinities;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeLoader;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
@@ -127,6 +128,7 @@ public class Hemomancy {
         event.addListener(new BloodProfileData());
         event.addListener(new ClairaudiographCatalogue());
         event.addListener(new ItemInquiryLoader());
+        event.addListener(new NpcTradeLoader(event.getRegistryAccess()));
         event.addListener(new DiscoveryInscriptionLoader());
         event.addListener(new IchorianSigilLoader());
         event.addListener(new CardinalRiteFloorLoader());

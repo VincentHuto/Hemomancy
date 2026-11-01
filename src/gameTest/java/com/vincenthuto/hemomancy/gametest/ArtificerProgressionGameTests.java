@@ -354,6 +354,20 @@ public final class ArtificerProgressionGameTests {
 		blood.setBloodVolume(5000.0D);
 		ArtificerAssignments.brief(player, ArtificerAssignments.WEIGHT_OF_FRAME_BRIEFED);
 		ArtificerAssignments.onArmatureTierApplied(player, ArmatureTier.MONOLITHIC);
+		if (lineage == D7Lineage.SILENT_ARCHON) {
+			// There is no seventh-Degree Silent Archon: a pending Silence records nothing and the set answers nothing.
+			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+			degree.setDegreeNumber(7);
+			degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_PENDING);
+			ArtificerAssignments.onArmatureUpgrade(player, new ItemStack(firstPiece), 7);
+			helper.assertTrue(ArtificerAssignments.firstD7Lineage(player) == D7Lineage.NONE,
+					"a D7 pending Silence recorded the Silent Archon lineage");
+			equipD7(player, lineage);
+			helper.assertTrue(!ArmorSetAbilityRegistry.tryActivate(player, ability),
+					"Silent Severance answered a D7 pending Silence");
+			degree.setDegreeNumber(8);
+			degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENTIUM);
+		}
 		ArtificerAssignments.onArmatureUpgrade(player, new ItemStack(firstPiece), 7);
 		helper.assertTrue(ArtificerAssignments.inspectWeightOfFrame(player).is(reagent),
 				"D7 inspection did not issue the recorded lineage material");

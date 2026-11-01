@@ -8,8 +8,8 @@ import net.neoforged.neoforge.common.EffectCure;
 import java.util.Set;
 
 /**
- * Mind Broken: a Silentium's will snapped back out of a possession. It weakens the body, draws the Will and the hive's
- * whispers, and bars the rite until it passes. Nothing cures it: not milk, not a totem.
+ * Mind Broken: a Silentium's will snapped back out of a possession. It weakens the body, draws the Will, and bars the
+ * rite until it passes. The hive's whispers stay silent: nothing from the hivemind reaches a Silentium. Nothing cures it: not milk, not a totem.
  */
 public class MindBrokenEffect extends MobEffect {
 	public MindBrokenEffect(MobEffectCategory category, int color) {

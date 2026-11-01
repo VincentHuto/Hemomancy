@@ -99,6 +99,7 @@ public final class ClientboundScreenHandlers {
 				msg.enzymeMasteryCount(), msg.enzymeMasteryComplete(),
 				msg.firstCultureComplete(),
 				msg.morphlingHandling(),
+				msg.pallidVessel(),
 				msg.deepDarkCommission(),
 				msg.phlegethonticCommission(),
 				msg.vagrantMindInquiry(),

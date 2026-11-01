@@ -25,6 +25,7 @@ class DialogueHubMigrationSourceTest {
 				Map.entry("harbinger/HarbingerVoyagerEntity.java", "voyager"),
 				Map.entry("unstained/UnstainedAcolyteEntity.java", "acolyte"),
 				Map.entry("unstained/UnstainedGuardianEntity.java", "guardian"),
+				Map.entry("unstained/UnstainedScoutEntity.java", "scout"),
 				Map.entry("unstained/UnstainedZealotEntity.java", "zealot"));
 		Path root = ROOT.resolve("src/main/java/com/vincenthuto/hemomancy/common/entity/npc");
 		for (var entry : entities.entrySet()) {

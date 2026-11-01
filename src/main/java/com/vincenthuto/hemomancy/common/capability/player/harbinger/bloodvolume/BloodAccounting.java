@@ -45,6 +45,18 @@ public final class BloodAccounting {
 	}
 
 	/**
+	 * Whether {@code pay(player, amount, source)} would be paid in full right now, without paying anything: for a
+	 * price that must be met whole before anything else changes hands.
+	 */
+	public static boolean canPayInFull(Player player, double amount, Source source) {
+		if (player == null) return false;
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
+		boolean reserveEnabled = source.reserveProtected()
+				&& SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_sanguine_reserve);
+		return BloodPaymentRules.coversInFull(volume, amount, source.reserveProtected(), reserveEnabled);
+	}
+
+	/**
 	 * Pays a recurring cost every {@code intervalTicks}, shown per tick in the diagnostics. A dormant volume pays
 	 * nothing, and {@code requireFullAmount} refuses a payment that cannot be made in full.
 	 */

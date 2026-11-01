@@ -55,8 +55,8 @@ public final class HarbingerVotaryWayfarerDialogueTrees {
 	private static DialogueTree basic(int entityId, String rootId, String... lines) {
 		return DialogueTree.builder(SPEAKER, VOTARY_ICON, entityId)
 				.addNode(new DialogueNode(rootId, List.of(lines), List.of(
-						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_voyage", "voyage", null),
-						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_fear", "fear", null),
+						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_voyage", "voyage", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_fear", "fear", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.leave", null, null)
 				)))
@@ -64,14 +64,14 @@ public final class HarbingerVotaryWayfarerDialogueTrees {
 						"hemomancy.votary_wayfarer.voyage.line1",
 						"hemomancy.votary_wayfarer.voyage.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_fear", "fear", null),
+						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_fear", "fear", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("fear", List.of(
 						"hemomancy.votary_wayfarer.fear.line1",
 						"hemomancy.votary_wayfarer.fear.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_voyage", "voyage", null),
+						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_voyage", "voyage", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.leave", null, null)
 				)))
 				.addNode(itemHintNode())

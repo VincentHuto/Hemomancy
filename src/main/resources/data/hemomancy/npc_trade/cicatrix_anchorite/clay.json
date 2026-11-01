@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.cicatrix_anchorite.clay.title",
+  "line": "hemomancy.trade.cicatrix_anchorite.clay.line",
+  "order": 20,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:clay_ball"
+    },
+    "count": 6
+  },
+  "give": [
+    {
+      "item": "hemomancy:polished_venous_stone",
+      "count": 4
+    }
+  ]
+}

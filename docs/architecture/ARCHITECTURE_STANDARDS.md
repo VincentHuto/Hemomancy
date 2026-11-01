@@ -107,6 +107,7 @@ because of one, it says so.
 | Earned items that may not fit | `PendingDelivery` (living player, not observational, confirmed insertion) |
 | Start a Cardinal Rite | `CardinalRiteActivation.tryStart`; kind behaviour is a `RiteKind` hook |
 | Dialogue option events | `DialogueEventRouter` and one `<Npc>DialogueEvents` class per NPC |
+| NPC trades | data under `data/hemomancy/npc_trade/<speaker>/`, run by `NpcTradeService` from `NpcTradeRequestPacket`; never a `DialogueEvent`, a memory, a kit or a progression proof |
 | `/hemo` branches | one `<Name>Subcommand` class wired by `HemoCommand` |
 | An entity casting a manipulation | `setEntityCast(EntityCasts::x)` in `ManipulationInit` |
 | Station operations | in the station's block entity; its menu only offers and dispatches |
@@ -265,6 +266,7 @@ test under `src/test/java/.../architecture/` is listed here.
 | Mechanics | `HealAndFlightGuardrailTest` | 9 | One heal stage; flight only through `FlightArbiter` |
 | Mechanics | `RiteKindGuardrailTest` | 11 | Rite kinds as `RiteKind` hooks; rites built only by `CardinalRiteActivation` |
 | Mechanics | `DialogueRoutingGuardrailTest` | 11 | One `DialogueEvent` subscriber and its route table |
+| Mechanics | `NpcTradeGuardrailTest` | NPC trade 7 | Trades are data run by `NpcTradeService` from its payload, never a `DialogueEvent`; no card sells a memory, kit or `trade/never_sold` item or gives what another of its speaker's cards wants; price kinds stay on their side; the Unstained refusal is checked at the board and in the transaction; only the trade classes write `NpcTradeLedger` |
 | Mechanics | `HemoCommandStructureGuardrailTest` | 11 | `/hemo` one root, one class per branch |
 | Mechanics | `EntityCastGuardrailTest` | 11 | Entity casts as registration hooks |
 | Mechanics | `StationMenuGuardrailTest` | 11 | Menus never spend blood, record practice or enchant |

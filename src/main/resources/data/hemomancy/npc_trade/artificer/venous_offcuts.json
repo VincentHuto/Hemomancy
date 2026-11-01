@@ -1,0 +1,26 @@
+{
+  "title": "hemomancy.trade.artificer.venous_offcuts.title",
+  "line": "hemomancy.trade.artificer.venous_offcuts.line",
+  "order": 50,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:polished_venous_stone"
+    },
+    "count": 8
+  },
+  "give": [
+    {
+      "item": "hemomancy:ferric_binder",
+      "count": 2
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 1
+  },
+  "rotation": {
+    "pool": "artificer_daily",
+    "weight": 1
+  }
+}

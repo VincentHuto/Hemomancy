@@ -28,11 +28,19 @@ public final class AncestralCommunionDialogueTrees {
 	 * Each variant reveals different lore about the fungal origins of hemomancy.
 	 */
 	public static DialogueTree forVariant(int variant) {
+		return forVariant(variant, "");
+	}
+
+	/**
+	 * As {@link #forVariant(int)}, with the lines that name the player as Archon swapped for the key plus
+	 * {@code address} (".apotheos" for an Apotheos). A Silentium never reaches this: the rite refuses them.
+	 */
+	public static DialogueTree forVariant(int variant, String address) {
 		return switch (variant % VARIANT_COUNT) {
 			case 0 -> communionVariant0();
 			case 1 -> communionVariant1();
-			case 2 -> communionVariant2();
-			case 3 -> communionVariant3();
+			case 2 -> communionVariant2(address);
+			case 3 -> communionVariant3(address);
 			default -> communionVariant4();
 		};
 	}
@@ -83,12 +91,12 @@ public final class AncestralCommunionDialogueTrees {
 
 	// ── Variant 2: The Infection ──
 
-	private static DialogueTree communionVariant2() {
+	private static DialogueTree communionVariant2(String address) {
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
 				.theme(DialogueTheme.FUNGAL)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.communion.v2.line1",
-						"hemomancy.communion.v2.line2"
+						"hemomancy.communion.v2.line2" + address
 				), List.of(
 						new DialogueOption("hemomancy.communion.option.tell_me_more", "infection", null),
 						new DialogueOption("hemomancy.communion.option.enough", null, "communion_end")
@@ -110,13 +118,13 @@ public final class AncestralCommunionDialogueTrees {
 
 	// ── Variant 3: The Harbingers ──
 
-	private static DialogueTree communionVariant3() {
+	private static DialogueTree communionVariant3(String address) {
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
 				.theme(DialogueTheme.FUNGAL)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.communion.v3.line1",
 						"hemomancy.communion.v3.line2",
-						"hemomancy.communion.v3.line3"
+						"hemomancy.communion.v3.line3" + address
 				), List.of(
 						new DialogueOption("hemomancy.communion.option.tell_me_more", "harbingers", null),
 						new DialogueOption("hemomancy.communion.option.enough", null, "communion_end")

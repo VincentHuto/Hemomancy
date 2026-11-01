@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenPendingWhisperPacket;
@@ -16,6 +17,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -34,6 +36,24 @@ public final class PendingWhispers {
 
     public static boolean isWhisper(DialogueTree tree) {
         return tree.entityId() == 0 && "hemomancy.whisper.speaker_name".equals(tree.speakerName());
+    }
+
+    /** The hive speaking: a fungal whisper or Ancestral Communion. Our Lady has her own speaker and is not the hive. */
+    public static boolean isHivemind(DialogueTree tree) {
+        return isWhisper(tree)
+                || tree.entityId() == 0 && "hemomancy.communion.speaker_name".equals(tree.speakerName());
+    }
+
+    /** False for a Silentium: nothing from the hivemind reaches them. */
+    public static boolean hearsTheHive(Player player) {
+        return HarbingerPathPermissions.hearsTheHive(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+                HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath());
+    }
+
+    /** The lang-key suffix the hive uses to address this player (see {@link HarbingerPathPermissions#hiveAddressSuffix}). */
+    public static String hiveAddress(Player player) {
+        return HarbingerPathPermissions.hiveAddressSuffix(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+                HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath());
     }
 
     private static ListTag inbox(ServerPlayer player) {
@@ -68,7 +88,7 @@ public final class PendingWhispers {
     }
 
     private static void notifyPending(ServerPlayer player) {
-        if (inbox(player).isEmpty() || player.connection == null) return;
+        if (inbox(player).isEmpty() || player.connection == null || !hearsTheHive(player)) return;
         player.displayClientMessage(Component.translatable("hemomancy.whisper.pending", inbox(player).size())
                 .withStyle(ChatFormatting.DARK_GREEN).append(Component.literal(" "))
                 .append(Component.translatable("hemomancy.whisper.listen").withStyle(style -> style
@@ -77,6 +97,13 @@ public final class PendingWhispers {
     }
 
     public static boolean open(ServerPlayer player) {
+        if (!hearsTheHive(player)) {
+            // Whispers queued before the antenna was cut go unheard.
+            inbox(player).clear();
+            player.displayClientMessage(Component.translatable("hemomancy.whisper.silenced")
+                    .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), false);
+            return false;
+        }
         String busy = player.containerMenu != player.inventoryMenu ? "machine"
                 : player.isUsingItem() ? "item"
                 : player.getLastHurtByMob() != null && recentCombat(player.tickCount, player.getLastHurtByMobTimestamp())

@@ -48,6 +48,7 @@ import java.util.UUID;
 public final class CardinalRiteActivation {
 	private static final ResourceLocation FOUNDING_FANE_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_fane");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
+	private static final ResourceLocation ANCESTRAL_COMMUNION_RITE_ID = Hemomancy.rloc("cardinal_rite/ancestral_communion");
 
 	private CardinalRiteActivation() {
 	}
@@ -214,7 +215,17 @@ public final class CardinalRiteActivation {
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
-				//  Blood cost check 
+				//  Ancestral Communion speaks with the hive, which no longer answers a Silentium
+				if (ANCESTRAL_COMMUNION_RITE_ID.equals(recipe.getId())
+						&& !HarbingerPathPermissions.hearsTheHive(HemoCapabilityAccess.getPlayerDegreeNumber(player),
+								HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath())) {
+					player.displayClientMessage(
+							Component.translatable("message.hemomancy.cardinal_rite_activation.ancestral_communion_silentium").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+							false);
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
+
+				//  Blood cost check
 				if (!recipe.hasInteractiveCeremony() && bloodVolume.getBloodVolume() < recipe.getBloodCost()) {
 					player.displayClientMessage(
 							Component.translatable("message.hemomancy.cardinal_rite_activation.not_enough_blood_to_begin_the",

@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.voyager.survey_log.title",
+  "line": "hemomancy.trade.voyager.survey_log.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:salt_stained_voyager_log"
+    },
+    "count": 1
+  },
+  "give": [
+    {
+      "item": "hemomancy:erythrocoral_fragment",
+      "count": 3
+    }
+  ]
+}

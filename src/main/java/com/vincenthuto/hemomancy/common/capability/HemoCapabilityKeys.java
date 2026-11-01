@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnow
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
+import com.vincenthuto.hemomancy.common.capability.player.shared.trade.NpcTradeLedger;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.IWhiteHumorVolume;
@@ -68,6 +69,9 @@ public final class HemoCapabilityKeys {
 
     public static final EntityCapability<SkillProgress, Void> SKILL_PROGRESS =
             EntityCapability.createVoid(Hemomancy.rloc("skill_progress"), SkillProgress.class);
+
+    public static final EntityCapability<NpcTradeLedger, Void> NPC_TRADE_LEDGER =
+            EntityCapability.createVoid(Hemomancy.rloc("npc_trade_ledger"), NpcTradeLedger.class);
 
     public static final EntityCapability<IWhiteHumorVolume, Void> WHITE_HUMOR_VOLUME =
             EntityCapability.createVoid(Hemomancy.rloc("white_humor_volume"), IWhiteHumorVolume.class);

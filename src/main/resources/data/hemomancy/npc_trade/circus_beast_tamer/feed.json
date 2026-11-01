@@ -1,0 +1,22 @@
+{
+  "title": "hemomancy.trade.circus_beast_tamer.feed.title",
+  "line": "hemomancy.trade.circus_beast_tamer.feed.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:wheat"
+    },
+    "count": 8
+  },
+  "give": [
+    {
+      "item": "minecraft:name_tag",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 1,
+    "restock_days": 3
+  }
+}

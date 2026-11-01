@@ -22,6 +22,21 @@ public record DialogueOption(String text, String nextNodeId, String eventId, Dia
 		if (presentation == null) presentation = DialogueOptionPresentation.normal();
 	}
 
+	/** This option as a lore line: a Conversation card with the lore glyph and an unread dot. */
+	public DialogueOption withLore() {
+		return new DialogueOption(text, nextNodeId, eventId, presentation.withLore());
+	}
+
+	/** This option gated on rapport tier {@code tier} with the speaker (a locked lore card below it). */
+	public DialogueOption withRapportTier(int tier) {
+		return new DialogueOption(text, nextNodeId, eventId, presentation.withRapportTier(tier));
+	}
+
+	/** This option filed under Quest Work. */
+	public DialogueOption withQuest() {
+		return new DialogueOption(text, nextNodeId, eventId, presentation.withQuest());
+	}
+
 	public void toNetwork(FriendlyByteBuf buf) {
 		buf.writeUtf(text);
 		buf.writeBoolean(nextNodeId != null);

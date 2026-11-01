@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedEntryRules;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -84,16 +84,19 @@ public class UnstainedZealotEntity extends PathfinderMob implements ProgressionD
         int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
         IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
         var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+        var initiatory = HemoCapabilityAccess.getInitiatoryDegree(player);
+        boolean maySeekCure = initiatory == null || UnstainedEntryRules.canBeginCure(
+                initiatory.hasFoundedBloodline(), initiatory.isFounderIntegrationSevered());
         DialogueTree tree;
         if (progress != null && progress.hasBegunPurification()) {
             tree = ZealotDialogueTrees.alreadyOnPath(this.getId(), progress.getPurity(),
                     progress.hasClarityUnlocked(), progress.isEnlightened());
         } else if (volume == null || !volume.isActive()) {
             tree = ZealotDialogueTrees.noBlood(this.getId());
-        } else if (degree <= EnumInitiatoryDegree.ILLUMINATUS.getNumber()) {
+        } else if (maySeekCure) {
             tree = ZealotDialogueTrees.pleaDialogue(this.getId(), degree);
         } else {
-            tree = ZealotDialogueTrees.tooDeep(this.getId());
+            tree = ZealotDialogueTrees.bloodlineFounded(this.getId());
         }
         return UnstainedObservanceDialogueDecorator.decorate(tree, player, UnstainedObservances.Issuer.ZEALOT);
     }

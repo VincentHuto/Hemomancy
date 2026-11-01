@@ -103,7 +103,7 @@ public final class HarbingerArtificerDialogueTrees {
 		List<DialogueOption> options = new ArrayList<>();
 		options.add(new DialogueOption("hemomancy.dialogue.artificer.option.who_are_you", "identity", null));
 		if (degree >= 2) {
-			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.teach_armature", "armature", null));
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.teach_armature", "armature", null).withQuest());
 			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.living_staff", "living_staff", null));
 			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.assignments", "assignments", null));
 		}

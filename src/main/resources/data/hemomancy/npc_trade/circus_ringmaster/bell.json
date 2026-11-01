@@ -1,0 +1,26 @@
+{
+  "title": "hemomancy.trade.circus_ringmaster.bell.title",
+  "line": "hemomancy.trade.circus_ringmaster.bell.line",
+  "order": 30,
+  "requires": {
+    "degree_at_least": 4
+  },
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:bell"
+    },
+    "count": 1
+  },
+  "give": [
+    {
+      "item": "hemomancy:puppeteering_thread",
+      "count": 4
+    }
+  ],
+  "stock": {
+    "uses": 1,
+    "restock_days": 2
+  },
+  "show_locked": true
+}

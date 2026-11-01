@@ -268,7 +268,8 @@ public class ArmorSetBonusHandler {
 	}
 
 	private static void syncSilentArchonLastRite(Player player) {
-		if (ArmorSets.isFullSet(player, EnumModArmorTiers.SILENT_ARCHON.holder())) {
+		// The refusal is Silentium's alone; the set arms nothing for anyone else.
+		if (com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler.hasFullSilentArchonSet(player)) {
 			LastRiteHelper.arm(player, LastRiteHelper.SILENT_REFUSAL_ID);
 		} else {
 			LastRiteHelper.clearIfArmed(player, LastRiteHelper.SILENT_REFUSAL_ID);
@@ -280,7 +281,8 @@ public class ArmorSetBonusHandler {
 		if (morphCap.hasMorphling()) {
 			LastRiteHelper.armForMorphling(player, morphCap.getEquippedMorphling());
 		}
-		if (!LastRiteHelper.hasArmedSource(player) && ArmorSets.isFullSet(player, EnumModArmorTiers.SILENT_ARCHON.holder())) {
+		if (!LastRiteHelper.hasArmedSource(player)
+				&& com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler.hasFullSilentArchonSet(player)) {
 			LastRiteHelper.arm(player, LastRiteHelper.SILENT_REFUSAL_ID);
 		}
 	}

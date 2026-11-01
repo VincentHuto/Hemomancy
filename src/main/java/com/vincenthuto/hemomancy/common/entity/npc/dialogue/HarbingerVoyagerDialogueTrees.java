@@ -54,8 +54,8 @@ public final class HarbingerVoyagerDialogueTrees {
 	private static DialogueTree basic(int entityId, String rootId, String... lines) {
 		return DialogueTree.builder(SPEAKER, VOYAGER_ICON, entityId)
 				.addNode(new DialogueNode(rootId, List.of(lines), List.of(
-						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_work", "work", null),
-						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_wrecks", "wrecks", null),
+						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_work", "work", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_wrecks", "wrecks", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.voyager.option.leave", null, null)
 				)))
@@ -63,14 +63,14 @@ public final class HarbingerVoyagerDialogueTrees {
 						"hemomancy.voyager.work.line1",
 						"hemomancy.voyager.work.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_wrecks", "wrecks", null),
+						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_wrecks", "wrecks", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.voyager.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("wrecks", List.of(
 						"hemomancy.voyager.wrecks.line1",
 						"hemomancy.voyager.wrecks.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_work", "work", null),
+						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_work", "work", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.voyager.option.leave", null, null)
 				)))
 				.addNode(itemHintNode())

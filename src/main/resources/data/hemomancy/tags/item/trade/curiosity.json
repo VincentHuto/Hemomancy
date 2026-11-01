@@ -1,0 +1,26 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:nautilus_shell",
+    "minecraft:heart_of_the_sea",
+    "minecraft:goat_horn",
+    "minecraft:rabbit_foot",
+    "minecraft:phantom_membrane",
+    "minecraft:turtle_scute",
+    "minecraft:armadillo_scute",
+    "minecraft:skeleton_skull",
+    "minecraft:zombie_head",
+    "minecraft:creeper_head",
+    "minecraft:piglin_head",
+    "minecraft:disc_fragment_5",
+    "minecraft:echo_shard",
+    "hemomancy:salt_stained_voyager_log",
+    "hemomancy:toxicognath",
+    "hemomancy:telson",
+    "hemomancy:fargone_proboscis",
+    "hemomancy:venous_pinion",
+    "hemomancy:calcified_blood_spine",
+    "hemomancy:cuttlefish_chromatophores",
+    "hemomancy:serpent_scale"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.circus_threadkeeper.ledger_paper.title",
+  "line": "hemomancy.trade.circus_threadkeeper.ledger_paper.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:paper"
+    },
+    "count": 6
+  },
+  "give": [
+    {
+      "item": "hemomancy:puppeteering_thread",
+      "count": 2
+    }
+  ]
+}

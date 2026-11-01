@@ -83,9 +83,13 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 		String option = event == null ? "hemomancy.dialogue.anchorite.option.leave"
 				: p.d6Ready() ? "hemomancy.dialogue.anchorite.option.claim_d6" : "hemomancy.dialogue.anchorite.option.accept_referral";
 		List<DialogueOption> options = new java.util.ArrayList<>();
-		if (event != null) options.add(new DialogueOption(option, null, event,
-				DialogueOptionPresentation.prompt(p.d6Ready()
-						? "hemomancy.anchorite.d6.reward.prompt" : "hemomancy.anchorite.d6.referral.prompt")));
+		if (event != null) {
+			DialogueOption choice = new DialogueOption(option, null, event,
+					DialogueOptionPresentation.prompt(p.d6Ready()
+							? "hemomancy.anchorite.d6.reward.prompt" : "hemomancy.anchorite.d6.referral.prompt"));
+			// Taking the referral starts the sixth-Degree work; the claim's id already reads as quest work.
+			options.add(p.d6Ready() ? choice : choice.withQuest());
+		}
 		if (p.replacementTier() > 0) options.add(new DialogueOption(
 				"hemomancy.dialogue.anchorite.option.replace_pattern", null,
 				p.replacementTier() == 3 ? EVENT_REPLACE_D6 : p.replacementTier() == 2 ? EVENT_REPLACE_D5 : EVENT_REPLACE_D4,
@@ -179,8 +183,8 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 		if (progress.replacementTier() > 0) options.add(new DialogueOption(
 				"hemomancy.dialogue.anchorite.option.replace_pattern", null, replacement,
 				DialogueOptionPresentation.prompt("hemomancy.anchorite.replace_pattern.prompt")));
-		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.about_alchemist", "alchemist", null));
-		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.about_artificer", "artificer", null));
+		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.about_alchemist", "alchemist", null).withLore());
+		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.about_artificer", "artificer", null).withLore());
 		options.add(new DialogueOption("hemomancy.dialogue.anchorite.option.leave", null, null));
 		return DialogueTree.builder(SPEAKER, ANCHORITE_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(

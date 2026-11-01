@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.alchemist.spore_stock.title",
+  "line": "hemomancy.trade.alchemist.spore_stock.line",
+  "order": 30,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:spore_sac"
+    },
+    "count": 3
+  },
+  "give": [
+    {
+      "item": "minecraft:fermented_spider_eye",
+      "count": 2
+    }
+  ]
+}

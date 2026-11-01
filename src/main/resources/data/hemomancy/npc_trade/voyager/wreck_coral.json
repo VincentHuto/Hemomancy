@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.voyager.wreck_coral.title",
+  "line": "hemomancy.trade.voyager.wreck_coral.line",
+  "order": 30,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:calcified_erythrocoral"
+    },
+    "count": 1
+  },
+  "give": [
+    {
+      "item": "minecraft:map",
+      "count": 3
+    }
+  ]
+}

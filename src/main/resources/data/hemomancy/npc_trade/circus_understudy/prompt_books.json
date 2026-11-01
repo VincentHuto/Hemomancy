@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.circus_understudy.prompt_books.title",
+  "line": "hemomancy.trade.circus_understudy.prompt_books.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:book"
+    },
+    "count": 3
+  },
+  "give": [
+    {
+      "item": "hemomancy:mourning_mask",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.circus_stilt_walker.sticks.title",
+  "line": "hemomancy.trade.circus_stilt_walker.sticks.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:stick"
+    },
+    "count": 16
+  },
+  "give": [
+    {
+      "item": "minecraft:scaffolding",
+      "count": 4
+    }
+  ]
+}

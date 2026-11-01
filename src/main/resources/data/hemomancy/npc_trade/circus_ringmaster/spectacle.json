@@ -1,0 +1,20 @@
+{
+  "title": "hemomancy.trade.circus_ringmaster.spectacle.title",
+  "line": "hemomancy.trade.circus_ringmaster.spectacle.line",
+  "order": 40,
+  "want": {
+    "kind": "act",
+    "act": "spectacle"
+  },
+  "give": [
+    {
+      "item": "hemomancy:laughing_mask",
+      "count": 1
+    },
+    {
+      "item": "hemomancy:circus_curtain",
+      "count": 2
+    }
+  ],
+  "rapport": 4
+}

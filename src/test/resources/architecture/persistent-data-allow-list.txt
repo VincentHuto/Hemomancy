@@ -70,6 +70,7 @@
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/FirstDrawsAssignment.java	player mission state under PlayerPersisted
 9	src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/FirstSeparationAssignment.java	player mission state under PlayerPersisted
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/MorphlingHandlingAssignment.java	player mission state under PlayerPersisted
+2	src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/PallidVesselAssignment.java	player mission state under PlayerPersisted
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/OverworldFungalSurvey.java	player mission state under PlayerPersisted
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/PhlegethonticCommission.java	player mission state under PlayerPersisted
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/SpecimenJarLesson.java	player mission state under PlayerPersisted

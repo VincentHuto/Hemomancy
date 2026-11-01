@@ -1,0 +1,22 @@
+{
+  "title": "hemomancy.trade.vicar.thread_blessing.title",
+  "line": "hemomancy.trade.vicar.thread_blessing.line",
+  "order": 30,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:memory_thread"
+    },
+    "count": 2
+  },
+  "give": [
+    {
+      "item": "hemomancy:sanguine_salve",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 2
+  }
+}

@@ -42,6 +42,30 @@ class ArchonEndingDialogueTest {
         assertTrue(!confirmation.contains("seventh degree"), "Silence is no longer a seventh-Degree end");
     }
 
+    @Test
+    void theHiveAddressesAnApotheosAsApotheos() throws Exception {
+        JsonObject language = language();
+        for (String key : List.of("hemomancy.whisper.archon.v0.line2", "hemomancy.whisper.archon.v2.truth2",
+                "hemomancy.communion.v2.line2", "hemomancy.communion.v3.line3")) {
+            assertTrue(language.get(key).getAsString().contains("Archon"), key + " no longer names the Archon");
+            String apotheos = language.get(key + ".apotheos").getAsString();
+            assertTrue(apotheos.contains("Apotheos") && !apotheos.contains("Archon"), key + ".apotheos");
+        }
+        DialogueTree communion = AncestralCommunionDialogueTrees.forVariant(3, ".apotheos");
+        assertTrue(communion.getStartNode().lines().contains("hemomancy.communion.v3.line3.apotheos"));
+        assertEquals(AncestralCommunionDialogueTrees.forVariant(3).getStartNode().lines(),
+                AncestralCommunionDialogueTrees.forVariant(3, "").getStartNode().lines());
+    }
+
+    @Test
+    void aSilentiumIsToldWhyTheHiveIsQuiet() throws Exception {
+        JsonObject language = language();
+        for (String key : List.of("hemomancy.whisper.silenced",
+                "message.hemomancy.cardinal_rite_activation.ancestral_communion_silentium")) {
+            assertTrue(language.has(key) && !language.get(key).getAsString().isBlank(), key);
+        }
+    }
+
     private static JsonObject language() throws Exception {
         return JsonParser.parseString(Files.readString(
                 Path.of("src/main/resources/assets/hemomancy/lang/en_us.json"))).getAsJsonObject();

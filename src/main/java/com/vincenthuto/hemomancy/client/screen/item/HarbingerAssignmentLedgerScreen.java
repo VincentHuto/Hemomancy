@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommissionProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommissionProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurveyProgress;
@@ -56,6 +57,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int CIRCUS_REFERRAL_HEIGHT = 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
 	private static final int FIRST_CULTURE_HEIGHT = 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
 	private static final int MORPHLING_HANDLING_HEIGHT = 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+	private static final int PALLID_VESSEL_HEIGHT = 42 + PallidVesselProgress.STEPS * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
 	private static final int DEEP_DARK_COMMISSION_HEIGHT = 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
 	private static final int PHLEGETHONTIC_COMMISSION_HEIGHT = 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
 	private static final int VAGRANT_MIND_INQUIRY_HEIGHT = 42 + 4 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
@@ -138,6 +140,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
         CIRCUS_SCHOOL(3, AssignmentCategory.SIDE, 42 + 11 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
 		CLINICAL_ECHOES(3, AssignmentCategory.SIDE, 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
 		THE_THREE_ANSWERS(3, AssignmentCategory.VOCATION, THE_THREE_ANSWERS_HEIGHT),
+		PALLID_VESSEL(3, AssignmentCategory.VOCATION, PALLID_VESSEL_HEIGHT),
 		VEIN_MASON(4, AssignmentCategory.MAIN, VEIN_MASON_HEIGHT),
 		FIRST_CULTURE(4, AssignmentCategory.VOCATION, FIRST_CULTURE_HEIGHT),
 		MORPHLING_HANDLING(4, AssignmentCategory.VOCATION, MORPHLING_HANDLING_HEIGHT),
@@ -198,6 +201,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean enzymeMasteryComplete;
 	private final boolean firstCultureComplete;
 	private final MorphlingHandlingProgress morphlingHandling;
+	private final PallidVesselProgress pallidVessel;
 	private final DeepDarkCommissionProgress deepDarkCommission;
 	private final PhlegethonticCommissionProgress phlegethonticCommission;
 	private final VagrantMindInquiryProgress vagrantMindInquiry;
@@ -268,6 +272,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			int redTaxonomyCount, boolean redTaxonomyComplete,
 			int enzymeMasteryCount, boolean enzymeMasteryComplete, boolean firstCultureComplete,
 			MorphlingHandlingProgress morphlingHandling,
+			PallidVesselProgress pallidVessel,
 			DeepDarkCommissionProgress deepDarkCommission,
 			PhlegethonticCommissionProgress phlegethonticCommission,
 			VagrantMindInquiryProgress vagrantMindInquiry,
@@ -312,6 +317,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.enzymeMasteryComplete = enzymeMasteryComplete;
 		this.firstCultureComplete = firstCultureComplete;
 		this.morphlingHandling = morphlingHandling;
+		this.pallidVessel = pallidVessel;
 		this.deepDarkCommission = deepDarkCommission;
 		this.phlegethonticCommission = phlegethonticCommission;
 		this.vagrantMindInquiry = vagrantMindInquiry;
@@ -370,6 +376,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			int redTaxonomyCount, boolean redTaxonomyComplete,
 			int enzymeMasteryCount, boolean enzymeMasteryComplete, boolean firstCultureComplete,
 			MorphlingHandlingProgress morphlingHandling,
+			PallidVesselProgress pallidVessel,
 			DeepDarkCommissionProgress deepDarkCommission,
 			PhlegethonticCommissionProgress phlegethonticCommission,
 			VagrantMindInquiryProgress vagrantMindInquiry,
@@ -402,6 +409,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				redTaxonomyCount, redTaxonomyComplete, enzymeMasteryCount, enzymeMasteryComplete,
 				firstCultureComplete,
 				morphlingHandling,
+				pallidVessel,
 				deepDarkCommission,
 				phlegethonticCommission,
 				vagrantMindInquiry,
@@ -684,6 +692,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
             case CIRCUS_SCHOOL -> renderCircusSchool(gfx, x, y, w, mouseX, mouseY);
 			case FIRST_CULTURE -> renderFirstCulture(gfx, x, y, w, mouseX, mouseY);
 			case MORPHLING_HANDLING -> renderMorphlingHandling(gfx, x, y, w, mouseX, mouseY);
+			case PALLID_VESSEL -> renderPallidVessel(gfx, x, y, w, mouseX, mouseY);
 			case DEEP_DARK_COMMISSION -> renderDeepDarkCommission(gfx, x, y, w, mouseX, mouseY);
 			case PHLEGETHONTIC_COMMISSION -> renderPhlegethonticCommission(gfx, x, y, w, mouseX, mouseY);
 			case VAGRANT_MIND_INQUIRY -> renderVagrantMindInquiry(gfx, x, y, w, mouseX, mouseY);
@@ -1008,6 +1017,28 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				w - 16, ASSIGNMENT_CARD_HEIGHT, morphlingHandling.inspected(), ALCHEMIST_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.step.morphling_inspection",
 				"screen.hemomancy.harbinger_assignment_ledger.step.morphling_inspection.desc", mouseX, mouseY);
+	}
+
+	private void renderPallidVessel(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		String title = "screen.hemomancy.harbinger_assignment_ledger.pallid_vessel.title";
+		String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+		int done = pallidVessel.completedSteps();
+		int total = PallidVesselProgress.STEPS;
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.PALLID_VESSEL, x, y, w,
+				ALCHEMIST_PORTRAIT, title, progress, done, total, pallidVessel.reported())) return;
+		gfx.fill(x, y, x + w, y + PALLID_VESSEL_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, PALLID_VESSEL_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.PALLID_VESSEL, x + 8, y + 6, w - 16,
+				title, progress, done, total, pallidVessel.reported());
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, total);
+		String[] steps = {"briefing", "rite", "fill", "report"};
+		boolean[] complete = {pallidVessel.briefed(), pallidVessel.riteDone(), pallidVessel.filled(),
+				pallidVessel.reported()};
+		for (int i = 0; i < steps.length; i++) {
+			String key = "screen.hemomancy.harbinger_assignment_ledger.step.pallid_vessel_" + steps[i];
+			renderAssignmentCard(gfx, x + 8, y + 42 + i * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP), w - 16,
+					ASSIGNMENT_CARD_HEIGHT, complete[i], ALCHEMIST_PORTRAIT, key, key + ".desc", mouseX, mouseY);
+		}
 	}
 
 	private void renderDeepDarkCommission(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
@@ -1790,6 +1821,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
             case CIRCUS_SCHOOL -> CircusSchoolLedgerState.completedCount() == 10;
 			case FIRST_CULTURE -> firstCultureComplete;
 			case MORPHLING_HANDLING -> morphlingHandling.inspected();
+			case PALLID_VESSEL -> pallidVessel.reported();
 			case DEEP_DARK_COMMISSION -> deepDarkCommission.reported();
 			case PHLEGETHONTIC_COMMISSION -> phlegethonticCommission.reported();
 			case VAGRANT_MIND_INQUIRY -> vagrantMindInquiry.memoryReported() && vagrantMindInquiry.biologyReported();

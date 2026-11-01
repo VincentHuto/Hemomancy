@@ -152,7 +152,7 @@ public final class HarbingerVicarDialogueTrees {
 	private static void addBloodScriptRitualOption(List<DialogueOption> options, boolean hasAbocipherLiteracy) {
 		if (!hasAbocipherLiteracy) {
 			options.add(new DialogueOption("hemomancy.dialogue.vicar.option.open_blood_script",
-					"blood_script_ritual", null));
+					"blood_script_ritual", null).withLore());
 		}
 	}
 
@@ -191,15 +191,15 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.uninitiated.line1",
 						"hemomancy.vicar.uninitiated.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.who_are_harbingers", "harbinger_lore", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.what_is_outpost", "outpost_lore", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.who_are_harbingers", "harbinger_lore", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_is_outpost", "outpost_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("harbinger_lore", List.of(
 						"hemomancy.vicar.uninitiated.harbinger_lore"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.what_is_outpost", "outpost_lore", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_is_outpost", "outpost_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("outpost_lore", List.of(
@@ -230,9 +230,9 @@ public final class HarbingerVicarDialogueTrees {
 			boolean firstBloodcraftRewardClaimed) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_covenant",
-				"covenant_lore", null));
+				"covenant_lore", null).withLore());
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next",
-				"degree_hint", null));
+				"degree_hint", null).withLore());
 		if (hasFoundHermitRoadRemnant && !hasHermitRoadLedger) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.report_hermit_road",
 					"hermit_road_report", EVENT_HERMIT_ROAD_REPORT,
@@ -242,10 +242,10 @@ public final class HarbingerVicarDialogueTrees {
 					"hermit_road_followup", null));
 		} else {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_hermit_road",
-					"hermit_road_intro", null));
+					"hermit_road_intro", null).withLore());
 		}
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_blood_crafting",
-				"blood_crafting", null));
+				"blood_crafting", null).withLore());
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.absorption_hint", "absorption_hint", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.projection_hint", "projection_hint", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.crafting_hint", "crafting_hint", null));
@@ -273,7 +273,7 @@ public final class HarbingerVicarDialogueTrees {
 				.addNode(new DialogueNode("covenant_lore", List.of(
 						"hemomancy.vicar.covenant_lore"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hermit_road_intro", List.of(
@@ -320,7 +320,7 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.hermit_road.followup.line1",
 						"hemomancy.vicar.hermit_road.followup.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("degree_hint", List.of(
@@ -344,8 +344,8 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.votary.line1"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.rooted_vein", "rooted_vein", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_tendencies", "tendency_lore", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_tendencies", "tendency_lore", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
@@ -383,22 +383,22 @@ public final class HarbingerVicarDialogueTrees {
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.initiate.line1"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_fane", "fane_lore", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_fane", "fane_lore", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("fane_lore", List.of(
 						"hemomancy.vicar.initiate.fane_lore"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("saints_lore", List.of(
 						"hemomancy.vicar.initiate.saints_lore"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("degree_hint", List.of(
@@ -421,8 +421,8 @@ public final class HarbingerVicarDialogueTrees {
 
 	public static DialogueTree adept(int entityId, boolean hasAbocipherLiteracy, boolean masonsRespiteDirective) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_brotherhood", "brotherhood_lore", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_brotherhood", "brotherhood_lore", null).withLore());
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore());
 		greetingOptions.add(masonsRespiteDirective
 				? new DialogueOption("hemomancy.dialogue.vicar.option.seek_vein_mason",
 						"masons_respite_followup", null)
@@ -476,11 +476,11 @@ public final class HarbingerVicarDialogueTrees {
 	public static DialogueTree illuminatus(int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge", "lodge_lore", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_fane", "founding_fane_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge", "lodge_lore", null).withLore());
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_fane", "founding_fane_lore", null).withLore());
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.consecrate_armature", "armature_consecration", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.about_the_monolith", "monolith_rumor", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.about_the_monolith", "monolith_rumor", null).withLore());
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore());
 		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
 		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
@@ -491,7 +491,7 @@ public final class HarbingerVicarDialogueTrees {
 				.addNode(new DialogueNode("lodge_lore", List.of(
 						"hemomancy.vicar.illuminatus.lodge_lore"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_fane", "founding_fane_lore", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_founding_fane", "founding_fane_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
@@ -547,8 +547,8 @@ public final class HarbingerVicarDialogueTrees {
 	public static DialogueTree sanctified(int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_hematic_order", "hematic_order_lore", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_hematic_order", "hematic_order_lore", null).withLore());
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore());
 		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
 		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
@@ -559,7 +559,7 @@ public final class HarbingerVicarDialogueTrees {
 				.addNode(new DialogueNode("hematic_order_lore", List.of(
 						"hemomancy.vicar.sanctified.hematic_order_lore"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
@@ -584,14 +584,15 @@ public final class HarbingerVicarDialogueTrees {
 	}
 
 	/**
-	 * Degree 7 — Archon. The vicar bows and offers a humble admission: the Monolith
-	 * carried the player beyond what the Vicar's doctrine could reach.
+	 * Degree 7 — Archon. The vicar bows and passes on the Order's oldest saying about an
+	 * eighth degree as hearsay: he does not know what lies past Archon, and Silentium and
+	 * Apotheosis are legends to him, since neither leaves anyone the Lodge can recognize.
 	 */
 	public static DialogueTree archon(int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_the_final_truth", "final_truth", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_annetta", "annetta_map", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_the_final_truth", "final_truth", null).withLore());
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_annetta", "annetta_map", null).withLore());
 		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
 		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));
@@ -696,8 +697,8 @@ public final class HarbingerVicarDialogueTrees {
 	public static DialogueTree apotheos(int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			boolean hasAbocipherLiteracy) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_do_you_make_of_this", "reflection", null));
-		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_annetta", "annetta_map", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.what_do_you_make_of_this", "reflection", null).withLore());
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_annetta", "annetta_map", null).withLore());
 		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
 		addBloodScriptRitualOption(greetingOptions, hasAbocipherLiteracy);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));

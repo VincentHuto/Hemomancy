@@ -1,0 +1,23 @@
+{
+  "title": "hemomancy.trade.circus_strongman.iron_bar.title",
+  "line": "hemomancy.trade.circus_strongman.iron_bar.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:iron_ingot"
+    },
+    "count": 4
+  },
+  "give": [
+    {
+      "item": "minecraft:potion",
+      "count": 1,
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:strength"
+        }
+      }
+    }
+  ]
+}

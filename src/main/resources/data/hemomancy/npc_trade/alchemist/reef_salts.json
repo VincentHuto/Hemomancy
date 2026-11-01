@@ -1,0 +1,26 @@
+{
+  "title": "hemomancy.trade.alchemist.reef_salts.title",
+  "line": "hemomancy.trade.alchemist.reef_salts.line",
+  "order": 60,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:erythrocoral_fragment"
+    },
+    "count": 4
+  },
+  "give": [
+    {
+      "item": "hemomancy:enzyme_primer",
+      "count": 2
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 1
+  },
+  "rotation": {
+    "pool": "alchemist_daily",
+    "weight": 1
+  }
+}

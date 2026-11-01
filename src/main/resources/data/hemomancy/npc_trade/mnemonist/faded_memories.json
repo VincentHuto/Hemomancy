@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.mnemonist.faded_memories.title",
+  "line": "hemomancy.trade.mnemonist.faded_memories.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:faded_memory"
+    },
+    "count": 2
+  },
+  "give": [
+    {
+      "item": "hemomancy:memory_thread",
+      "count": 1
+    }
+  ]
+}

@@ -78,6 +78,12 @@ final class AlchemistDialogueEvents {
 		case MorphlingHandlingDialogue.INSPECT -> event.setRewardDelivered(
 				com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment.inspect(
 						player, player.level().getEntity(event.getEntityId())));
+		case PallidVesselDialogue.BRIEF -> event.setRewardDelivered(
+				com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment.brief(
+						player, player.level().getEntity(event.getEntityId())));
+		case PallidVesselDialogue.REPORT -> event.setRewardDelivered(
+				com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment.report(
+						player, player.level().getEntity(event.getEntityId())));
 		case OverworldFungalSurveyDialogue.REPORT -> event.setRewardDelivered(
 				com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.report(
 						player, player.level().getEntity(event.getEntityId())));

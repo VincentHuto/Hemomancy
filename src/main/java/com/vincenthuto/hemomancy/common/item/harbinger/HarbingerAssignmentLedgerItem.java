@@ -117,6 +117,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							HarbingerAdvancementGranter.ADV_FIRST_CULTURE_COMPLETE),
 					com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment.progress(serverPlayer),
+					com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment.progress(serverPlayer),
 					com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission.progress(serverPlayer),
 					com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommission.progress(serverPlayer),
 					com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.progress(serverPlayer),

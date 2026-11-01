@@ -1,0 +1,10 @@
+{
+  "title": "hemomancy.trade.court_host.custom.title",
+  "line": "hemomancy.trade.court_host.custom.line",
+  "order": 10,
+  "want": {
+    "kind": "custom",
+    "act": "custom_silence"
+  },
+  "opens": "hemomancy.trade.court_host.custom.opens"
+}

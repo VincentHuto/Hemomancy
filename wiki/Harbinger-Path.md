@@ -214,6 +214,8 @@ The Alchemist teaches each vessel at its rite's existing degree. These are optio
 | Ashen Vessel | 5 | Black Blood Gourd | 3,500 mL | 0.75 mL/tick |
 | Horn of Culmination | 6 | Curved Horn | 1,500 mL | 5 mL/tick |
 
+The Pallid Vessel is also the Alchemist's optional Degree 3 Vocation, **The Pallid Vessel**, in the Assignment Ledger: hear the briefing, perform the rite yourself, get any blood into the White Blood Gourd, then show it to an Alchemist (you keep it). The report pays two Dried Gourds and an Amethyst Shard, the Crimson Vessel's other input. It never holds up Degree 4.
+
 Follow the Alchemist's floor and offering lesson, then its fill/use page. Pallid needs no helper, support sigil, or ordeal. The later vessel rites require a Bastion; the Horn also requires Hematic Iron Pillars. Empty your earlier vessel before offering it for an upgrade, since that offering is consumed.
 
 Fill a personally accessible Ghastly Alembic's reservoir first. Remove returned empty containers from its blood-output slot, then put a corked gourd there to fill it. Take the vessel back when ready. Alternatively, craft four Sanguine Formations in a cross around a vessel for a 200 mL refill, capped at its capacity; its name and cork state remain intact.

@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 public enum DialogueCategory {
 	QUESTS,
 	INQUIRIES,
-	LORE,
-	CONVERSATION;
+	CONVERSATION,
+	TRADE;
 
 	private static final DialogueCategory[] VALUES = values();
 

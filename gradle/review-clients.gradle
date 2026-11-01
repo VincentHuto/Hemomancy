@@ -94,6 +94,8 @@ def reviewClients = [
                              props: ['hemomancy.possessionReview': 'true']],
     heartNodeReviewClient: [dir: 'build/heart-node-review', user: 'HeartNodeReview', size: review,
                             props: ['hemomancy.heartNodeReview': 'true']],
+    npcTradeReviewClient: [dir: 'build/npc-trade-review', user: 'NpcTradeReview', size: review,
+                           props: ['hemomancy.npcTradeReview': 'true']],
     faneGroundReviewClient: [dir: 'build/fane-ground-review', user: 'FaneGroundReview', size: review,
                              props: ['hemomancy.faneGroundReview': 'true']],
     riteFloorReviewClient: [dir: 'build/rite-floor-client-review', user: 'RiteFloorReview', size: review,

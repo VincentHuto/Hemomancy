@@ -1,0 +1,29 @@
+{
+  "title": "hemomancy.trade.circus_knife_thrower.worn_blades.title",
+  "line": "hemomancy.trade.circus_knife_thrower.worn_blades.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "tag": "minecraft:swords"
+    },
+    "count": 1,
+    "appraisal": "durability"
+  },
+  "give": [
+    {
+      "item": "minecraft:arrow",
+      "count": 8
+    }
+  ],
+  "give_fine": [
+    {
+      "item": "minecraft:arrow",
+      "count": 16
+    }
+  ],
+  "stock": {
+    "uses": 4,
+    "restock_days": 1
+  }
+}

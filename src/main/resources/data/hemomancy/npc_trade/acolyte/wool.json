@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.acolyte.wool.title",
+  "line": "hemomancy.trade.acolyte.wool.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "tag": "minecraft:wool"
+    },
+    "count": 4
+  },
+  "give": [
+    {
+      "item": "hemomancy:lethean_poppy",
+      "count": 2
+    }
+  ]
+}

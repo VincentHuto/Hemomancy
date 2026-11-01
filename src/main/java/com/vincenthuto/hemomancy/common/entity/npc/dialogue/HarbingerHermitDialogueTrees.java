@@ -57,7 +57,7 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.no_blood.line2",
 						"hemomancy.hermit.no_blood.line3"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.what_heart", "heart_lore", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_heart", "heart_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.who_are_you", "hermit_duty", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
@@ -71,7 +71,7 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.no_blood.duty.line1",
 						"hemomancy.hermit.no_blood.duty.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.what_heart", "heart_lore", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_heart", "heart_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.build();
@@ -86,7 +86,7 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.uninitiated.line3"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.how_do_i_begin", "guidance", null),
-						new DialogueOption("hemomancy.dialogue.hermit.option.what_is_this_place", "temple_lore", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_is_this_place", "temple_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("guidance", List.of(
@@ -117,8 +117,8 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.neophyte.line1",
 						"hemomancy.hermit.neophyte.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null),
-						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_manipulations", "manip_lore", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null).withQuest(),
+						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_manipulations", "manip_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hint", List.of(
@@ -143,8 +143,8 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.votary.line1",
 						"hemomancy.hermit.votary.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null),
-						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_tendencies", "tendency_lore", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null).withQuest(),
+						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_tendencies", "tendency_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hint", List.of(
@@ -166,7 +166,7 @@ public final class HarbingerHermitDialogueTrees {
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.hermit.initiate.line1"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null).withQuest(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hint", List.of(
@@ -184,14 +184,14 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.adept.line1",
 						"hemomancy.hermit.adept.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_scars", "scar_intro", null),
-						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_scars", "scar_intro", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null).withQuest(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("scar_intro", List.of(
 						"hemomancy.hermit.adept.scar_intro"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.how_do_scars_work", "scar_lore", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.how_do_scars_work", "scar_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("scar_lore", List.of(
@@ -208,7 +208,7 @@ public final class HarbingerHermitDialogueTrees {
 				.addNode(new DialogueNode("hint", List.of(
 						"hemomancy.hermit.adept.hint"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_scars", "scar_intro", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_scars", "scar_intro", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.build();
@@ -220,7 +220,7 @@ public final class HarbingerHermitDialogueTrees {
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.hermit.illuminatus.line1"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null).withQuest(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hint", List.of(
@@ -237,7 +237,7 @@ public final class HarbingerHermitDialogueTrees {
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.hermit.sanctified.line1"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null).withQuest(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hint", List.of(
@@ -270,7 +270,7 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.apotheos.line1",
 						"hemomancy.hermit.apotheos.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.what_remains_for_you", "final_words", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_remains_for_you", "final_words", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("final_words", List.of(

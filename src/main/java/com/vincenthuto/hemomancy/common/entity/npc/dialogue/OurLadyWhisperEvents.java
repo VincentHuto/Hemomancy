@@ -21,7 +21,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * <ul>
  *   <li><b>TAINTED</b> (purity 25+): every ~45 min barely perceptible, like water far away</li>
  *   <li><b>CLEANSING</b> (purity 50+): every ~30 min more audible, gentle encouragement</li>
- *   <li><b>ABSOLVED</b> (purity 75+): every ~20 min clear, personal, slightly urgent</li>
+ *   <li><b>ABSOLVED</b> (purity 75+): every ~20 min clear, personal, closer</li>
  *   <li><b>PURIFIED</b> (purity 100, pre-clarity): every ~15 min direct, guides toward the Rite</li>
  *   <li><b>DISCERNING</b> (clarity 25+): every ~30 min relief, warmth, early revelations</li>
  *   <li><b>VIGILANT</b> (clarity 50+): every ~20 min deeper, hints about the world's true state</li>

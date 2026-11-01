@@ -1,0 +1,52 @@
+{
+  "title": "hemomancy.trade.artificer.worn_tools.title",
+  "line": "hemomancy.trade.artificer.worn_tools.line",
+  "order": 20,
+  "want": {
+    "kind": "items",
+    "ingredient": [
+      {
+        "item": "minecraft:iron_pickaxe"
+      },
+      {
+        "item": "minecraft:iron_axe"
+      },
+      {
+        "item": "minecraft:iron_shovel"
+      },
+      {
+        "item": "minecraft:iron_hoe"
+      },
+      {
+        "item": "minecraft:diamond_pickaxe"
+      },
+      {
+        "item": "minecraft:diamond_axe"
+      },
+      {
+        "item": "minecraft:diamond_shovel"
+      },
+      {
+        "item": "minecraft:diamond_hoe"
+      }
+    ],
+    "count": 1,
+    "appraisal": "durability"
+  },
+  "give": [
+    {
+      "item": "hemomancy:ferric_binder",
+      "count": 1
+    }
+  ],
+  "give_fine": [
+    {
+      "item": "hemomancy:ferric_binder",
+      "count": 2
+    }
+  ],
+  "stock": {
+    "uses": 4,
+    "restock_days": 1
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.guardian.arrows.title",
+  "line": "hemomancy.trade.guardian.arrows.line",
+  "order": 20,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "tag": "minecraft:arrows"
+    },
+    "count": 16
+  },
+  "give": [
+    {
+      "item": "minecraft:bread",
+      "count": 3
+    }
+  ]
+}

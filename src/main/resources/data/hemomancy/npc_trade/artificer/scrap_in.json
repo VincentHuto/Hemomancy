@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.artificer.scrap_in.title",
+  "line": "hemomancy.trade.artificer.scrap_in.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "count": 8
+  },
+  "give": [
+    {
+      "item": "hemomancy:hematic_iron_powder",
+      "count": 2
+    }
+  ]
+}

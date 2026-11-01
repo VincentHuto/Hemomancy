@@ -1,0 +1,19 @@
+{
+  "title": "hemomancy.trade.hermit.bread.title",
+  "line": "hemomancy.trade.hermit.bread.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:bread"
+    },
+    "count": 3
+  },
+  "give": [
+    {
+      "item": "minecraft:candle",
+      "count": 1
+    }
+  ],
+  "rapport": 2
+}

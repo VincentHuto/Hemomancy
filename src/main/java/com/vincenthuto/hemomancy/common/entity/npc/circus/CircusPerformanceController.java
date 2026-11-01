@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.PeacockSpiderEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusKnifeThrowerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeActs;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeWant;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgressRules;
@@ -114,6 +116,8 @@ public final class CircusPerformanceController {
 					.withStyle(ChatFormatting.GRAY), true);
 		if (ticks < required) return;
 		CircusPlayerProgress.completeChallenge(player, challenge, challenge == 0 ? 150 : 100);
+		// A performance held to the end is a spectacle the Ringmaster's act card will take.
+		NpcTradeActs.witnessed(player, NpcTradeWant.Act.SPECTACLE);
 		CircusPlayerProgress.sync(player, true);
 		player.displayClientMessage(Component.translatable("hemomancy.circus.challenge.complete." + challenge)
 				.withStyle(ChatFormatting.RED), false);

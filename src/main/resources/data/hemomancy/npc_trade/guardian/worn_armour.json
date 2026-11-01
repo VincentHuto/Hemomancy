@@ -1,0 +1,52 @@
+{
+  "title": "hemomancy.trade.guardian.worn_armour.title",
+  "line": "hemomancy.trade.guardian.worn_armour.line",
+  "order": 30,
+  "want": {
+    "kind": "items",
+    "ingredient": [
+      {
+        "item": "minecraft:iron_helmet"
+      },
+      {
+        "item": "minecraft:iron_chestplate"
+      },
+      {
+        "item": "minecraft:iron_leggings"
+      },
+      {
+        "item": "minecraft:iron_boots"
+      },
+      {
+        "item": "minecraft:chainmail_helmet"
+      },
+      {
+        "item": "minecraft:chainmail_chestplate"
+      },
+      {
+        "item": "minecraft:chainmail_leggings"
+      },
+      {
+        "item": "minecraft:chainmail_boots"
+      }
+    ],
+    "count": 1,
+    "appraisal": "durability"
+  },
+  "give": [
+    {
+      "item": "minecraft:iron_nugget",
+      "count": 6
+    }
+  ],
+  "give_fine": [
+    {
+      "item": "minecraft:iron_nugget",
+      "count": 12
+    }
+  ],
+  "stock": {
+    "uses": 4,
+    "restock_days": 1
+  }
+}

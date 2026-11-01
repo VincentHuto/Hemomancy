@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.cicatrix_anchorite.bone.title",
+  "line": "hemomancy.trade.cicatrix_anchorite.bone.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:bone"
+    },
+    "count": 8
+  },
+  "give": [
+    {
+      "item": "hemomancy:bone_bricks",
+      "count": 4
+    }
+  ]
+}

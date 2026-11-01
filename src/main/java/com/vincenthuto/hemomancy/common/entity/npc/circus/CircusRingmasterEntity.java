@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownM
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.VampireBatEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity;
@@ -12,6 +13,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSides;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
@@ -47,7 +49,8 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
-public final class CircusRingmasterEntity extends PathfinderMob {
+public final class CircusRingmasterEntity extends PathfinderMob
+		implements com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSpeaker {
 	private static final EntityDataAccessor<Boolean> VULNERABLE = SynchedEntityData.defineId(
 			CircusRingmasterEntity.class, EntityDataSerializers.BOOLEAN);
 	public static final String EVENT_ACCEPT = "circus_accept_pact";
@@ -301,6 +304,17 @@ public final class CircusRingmasterEntity extends PathfinderMob {
 	}
 
 	@Override
+	public String tradeSpeakerId() {
+		return NpcTradeSides.CIRCUS_RINGMASTER;
+	}
+
+	/** The Ringmaster keeps silent, and deals with no one, until the visitor can receive the pact. */
+	@Override
+	public boolean tradesWith(ServerPlayer player) {
+		return CircusProgressRules.canReceivePact(CircusPlayerProgress.acclimation(player));
+	}
+
+	@Override
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
 		if (!level().isClientSide && player instanceof ServerPlayer serverPlayer) {
@@ -308,7 +322,8 @@ public final class CircusRingmasterEntity extends PathfinderMob {
 				player.displayClientMessage(Component.translatable("hemomancy.circus.ringmaster.silent")
 						.withStyle(ChatFormatting.DARK_GRAY), false);
 			} else {
-				PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(dialogue(serverPlayer)));
+				PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(DialogueHubFactory.decorate(
+						dialogue(serverPlayer), NpcTradeSides.CIRCUS_RINGMASTER, serverPlayer)));
 			}
 		}
 		return InteractionResult.sidedSuccess(level().isClientSide);
@@ -319,21 +334,21 @@ public final class CircusRingmasterEntity extends PathfinderMob {
 		java.util.ArrayList<DialogueOption> options = new java.util.ArrayList<>();
 		if (route == CircusRouteRules.Route.NEUTRAL) {
 			if ((CircusPlayerProgress.challenges(player) & 1) == 0) {
-				options.add(new DialogueOption("hemomancy.circus.option.trial", null, EVENT_TRIAL));
+				options.add(new DialogueOption("hemomancy.circus.option.trial", null, EVENT_TRIAL).withQuest());
 			} else {
-				options.add(new DialogueOption("hemomancy.circus.option.accept", "succession_warning", null));
-				options.add(new DialogueOption("hemomancy.circus.option.reject", "liberation_warning", null));
+				options.add(new DialogueOption("hemomancy.circus.option.accept", "succession_warning", null).withQuest());
+				options.add(new DialogueOption("hemomancy.circus.option.reject", "liberation_warning", null).withQuest());
 			}
 		} else if (route == CircusRouteRules.Route.SUCCESSION || route == CircusRouteRules.Route.LIBERATION) {
 			if (route == CircusRouteRules.Route.SUCCESSION
 					&& (CircusPlayerProgress.challenges(player) & CircusRouteRules.ALL_CHALLENGES)
 					!= CircusRouteRules.ALL_CHALLENGES)
-				options.add(new DialogueOption("hemomancy.circus.option.trial", null, EVENT_TRIAL));
-			options.add(new DialogueOption("hemomancy.circus.option.finale", null, EVENT_FINALE));
+				options.add(new DialogueOption("hemomancy.circus.option.trial", null, EVENT_TRIAL).withQuest());
+			options.add(new DialogueOption("hemomancy.circus.option.finale", null, EVENT_FINALE).withQuest());
 			if (CircusPlayerProgress.canRepairRoute(player))
-				options.add(new DialogueOption("hemomancy.circus.option.repair", null, EVENT_REPAIR));
+				options.add(new DialogueOption("hemomancy.circus.option.repair", null, EVENT_REPAIR).withQuest());
 		}
-		options.add(new DialogueOption("hemomancy.circus.school.conductor", "school", null));
+		options.add(new DialogueOption("hemomancy.circus.school.conductor", "school", null).withLore());
 		options.add(new DialogueOption("hemomancy.dialogue.circus_performer.leave", null, null));
 		return DialogueTree.builder(getType().getDescriptionId(),
 				Hemomancy.rloc("textures/entity/npc/harbinger/circus/ringmaster.png"), getId())

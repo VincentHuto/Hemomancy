@@ -1,0 +1,18 @@
+{
+  "title": "hemomancy.trade.zealot.clean_copper.title",
+  "line": "hemomancy.trade.zealot.clean_copper.line",
+  "order": 10,
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "minecraft:copper_ingot"
+    },
+    "count": 6
+  },
+  "give": [
+    {
+      "item": "hemomancy:lethean_dew",
+      "count": 2
+    }
+  ]
+}

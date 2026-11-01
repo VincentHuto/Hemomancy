@@ -2321,6 +2321,7 @@ neoforge:attachment_types hemomancy:last_death_memory
 neoforge:attachment_types hemomancy:liber_knowledge
 neoforge:attachment_types hemomancy:living_staff_progress
 neoforge:attachment_types hemomancy:muscle_memory
+neoforge:attachment_types hemomancy:npc_trade_ledger
 neoforge:attachment_types hemomancy:pending_whispers
 neoforge:attachment_types hemomancy:phlegethontic_ore_reservations
 neoforge:attachment_types hemomancy:phlegethontic_pending_vein

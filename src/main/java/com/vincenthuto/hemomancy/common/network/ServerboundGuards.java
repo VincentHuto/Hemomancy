@@ -58,6 +58,32 @@ public final class ServerboundGuards {
 		return entity != null && player.distanceTo(entity) <= maxDistance ? entity : null;
 	}
 
+	/**
+	 * The living entity with {@code entityId} if it is a {@code type} within {@code maxDistance} blocks of the player,
+	 * otherwise {@code null}.
+	 */
+	@Nullable
+	public static <T> T nearLivingEntity(Player player, int entityId, double maxDistance, Class<T> type) {
+		Entity entity = nearEntity(player, entityId, maxDistance);
+		return entity != null && entity.isAlive() && type.isInstance(entity) ? type.cast(entity) : null;
+	}
+
+	/** The player is alive and not a spectator: someone who can hand things over and take them. */
+	public static boolean activePlayer(Player player) {
+		return player.isAlive() && !player.isSpectator();
+	}
+
+	/** {@code slots} holds at most {@code size} entries, each a slot index below {@code size}, none repeated. */
+	public static boolean distinctSlots(int[] slots, int size) {
+		if (slots == null || slots.length > size) return false;
+		boolean[] seen = new boolean[size];
+		for (int slot : slots) {
+			if (slot < 0 || slot >= size || seen[slot]) return false;
+			seen[slot] = true;
+		}
+		return true;
+	}
+
 	/** The stack in the player's main hand, else off hand, whose item is a {@code type}, otherwise empty. */
 	public static ItemStack heldItem(Player player, Class<? extends Item> type) {
 		for (InteractionHand hand : InteractionHand.values()) {

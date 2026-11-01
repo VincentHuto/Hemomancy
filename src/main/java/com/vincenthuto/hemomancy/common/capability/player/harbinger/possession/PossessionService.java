@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.entity.PossessionEchoEntity;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperEvents;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -290,7 +289,6 @@ public final class PossessionService {
 		}
 		if (broken) {
 			player.addEffect(new MobEffectInstance(EffectInit.mind_broken, mindBrokenTicks, 0, false, true, true));
-			FungalWhisperEvents.triggerWhisper(player, player.getRandom().nextInt(3));
 			player.displayClientMessage(Component.translatable("message.hemomancy.possession.broken")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		} else {

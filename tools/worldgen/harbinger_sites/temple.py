@@ -1,17 +1,17 @@
 """The Blood Temple (data/hemomancy/structure/blood_temple.nbt): the Hematic Order's wayside shrine, where a Harbinger
 Hermit keeps the heart he offered (the Mortal Display) for the one he will invite. Most players meet the Order here
-first, so it is the Order at its most deliberate: a stepped podium, a columned portico, a vaulted nave whose blood
-gutter runs from the door to the heart, and the heart on its dais in the apse.
+first. It is the Hermit's own house and shrine, not a place of public worship: a stepped podium, a columned portico,
+a vaulted hall he lives and works in, whose blood gutter runs from the door to the heart on its dais in the apse.
 
 Authored along x, the door in the west, the apse in the east (the structure turns it):
 
     x0-2    the steps up the podium, a lit brazier on a plinth either side at their head.
     x3-7    the forecourt and portico: four hematic iron columns with bone capitals under a tiled deck and a bone
             balustrade.
-    x8      the west front: an arched door under a rose of sanguine glass; the bell-cote astride the gable above.
+    x8      the west front: an arched door under a rose of sanguine glass; a plain gable above.
     x9-22   the nave: deepslate-tile floor, the gutter down the middle (dry at the door, brimming at the chancel),
-            lacquer kneelers either side, bone pilasters with crimson sconces, sanguine lancets, a plating barrel vault
-            ribbed in bone. The Cardinal Focus stands before the chancel on a ring of venous inlay. North of the nave,
+            the Hermit's worktable, books and water along its walls, bone pilasters with crimson sconces, sanguine
+            lancets, a plating barrel vault ribbed in bone. The Cardinal Focus stands before the chancel on a ring of venous inlay. North of the nave,
             the Hermit's cell (bedroll, lectern, the temple's chest); south, the reliquary chapel.
     x23-28  the apse, behind a bone chancel arch: the dais with the Mortal Display facing the door, two brimming basins,
             iron columns before a reredos of plating and bone, the east rose above it.
@@ -23,7 +23,7 @@ chunk's middle, so all three land in one chunk and its afterPlace links them in 
 Row 0 is the footing course and lands on the surface (project_start_to_heightmap); the podium floor is row 3.
 """
 from .kit import (AIR, BONE, BONE_CHISELED, BONE_STAIRS, BONE_WALL, COBBLED, CUT, CUT_CHISELED, CUT_SMOOTH,
-                  CUT_STAIRS, GLASS, IRON_CHISELED, LAC, LAC_STAIRS, PACKED_ASH, PILLAR, PLANKS, PLATING,
+                  CUT_STAIRS, GLASS, IRON_CHISELED, LAC, LAC_SLAB, LAC_STAIRS, PACKED_ASH, PILLAR, PLANKS, PLATING,
                   PLATING_SLAB, PLATING_STAIRS, POLISHED, POLISHED_STAIRS, TILE, TILE_STAIRS, VENOUS, Piece,
                   bone_field, deep_field, finish, gable_roof, h, quoin, slab, stairs, tile_floor)
 
@@ -56,7 +56,6 @@ def build():
     apse_vault(p)
     rose(p, NAVE[0] - 1, FLOOR + 9, ZC)
     rose(p, APSE[1] + 1, FLOOR + 5, ZC)
-    bell_cote(p)
     cell(p)
     chapel(p)
     furnish(p)
@@ -346,7 +345,7 @@ def cell(p):
 
 
 def chapel(p):
-    """The reliquary chapel on the south side: a shelf of specimen jars, vein banners, kneelers and a candle."""
+    """The reliquary chapel on the south side: a shelf of specimen jars, vein banners and a candle."""
     zf = SIZE[2] - 5
     for x in (13, 14, 16, 17):
         p.set(x, FLOOR + 1, zf, CUT_SMOOTH)
@@ -355,12 +354,10 @@ def chapel(p):
     p.candle(15, FLOOR + 2, zf)
     p.banner(13, FLOOR + 4, zf, 'north', color='red')
     p.banner(17, FLOOR + 4, zf, 'north', color='black')
-    for x in (14, 16):
-        p.set(x, FLOOR + 1, zf - 1, LAC_STAIRS, stairs('south'))
     p.hung_lantern(15, SIDE_TOP - 1, zf - 1, 1)
 
 
-# --- the portico, the roofs and the bell-cote ----------------------------------------------------------------------------
+# --- the portico and the roofs ----------------------------------------------------------------------------
 
 def portico(p):
     """Four hematic iron columns before the west front, a tiled deck over them with a bone balustrade."""
@@ -391,23 +388,6 @@ def roofs(p):
                fill=PLATING)
 
 
-def bell_cote(p):
-    """An open stage on four deepslate piers banded in venous stone astride the west gable's ridge, a lantern hung in it, an iron finial."""
-    bx, base = NAVE[0], WALL_TOP + 8
-    for x in range(bx - 1, bx + 2):
-        for z in range(ZC - 1, ZC + 2):
-            p.set(x, base - 1, z, CUT_SMOOTH)
-            p.set(x, base + 4, z, CUT)
-            for y in range(base, base + 4):
-                p.set(x, y, z, AIR)
-    for x in (bx - 1, bx + 1):
-        for z in (ZC - 1, ZC + 1):
-            for y in range(base, base + 4):
-                p.set(x, y, z, CUT if y in (base, base + 3) else deep_field(p, x, y, z, 'cote'))
-    p.hung_lantern(bx, base + 3, ZC, 1)
-    p.set(bx, base + 5, ZC, IRON_CHISELED)
-
-
 def furnish(p):
     # The gutter: from the door to the chancel, dry at the door, stained, then brimming toward the heart.
     for x in range(NAVE[0], NAVE[1] + 2):
@@ -421,12 +401,20 @@ def furnish(p):
     p.set(fx, fy, fz, 'hemomancy:cardinal_focus')
     p.jigsaw(fx, 0, fz, 'up_north', 'hemomancy:blood_temple/anchor', 'hemomancy:blood_temple/anchor',
              'minecraft:empty', final=COBBLED)
-    # Kneelers of lacquer either side of the gutter, facing the heart.
-    for x in range(NAVE[0] + 2, NAVE[1] - 1):
-        if abs(x - fx) <= 1 or 14 <= x <= 16:
-            continue
-        for z in (ZC - 3, ZC - 2, ZC + 2, ZC + 3):
-            p.set(x, FLOOR + 1, z, LAC_STAIRS, stairs('west'))
+    # The Hermit lives here: his worktable and books against the north wall, water and stores against the south.
+    north, south = ZC - HALF, ZC + HALF
+    for x in (11, 12):
+        p.set(x, FLOOR + 1, north, LAC_SLAB, slab('top'))
+    p.jar(11, FLOOR + 2, north, 'south')
+    p.candle(12, FLOOR + 2, north)
+    p.set(11, FLOOR + 1, north + 1, LAC_STAIRS, stairs('north'))
+    for x in (17, 18):
+        p.set(x, FLOOR + 1, north, 'minecraft:bookshelf')
+    p.candle(18, FLOOR + 2, north)
+    p.set(11, FLOOR + 1, south, 'minecraft:water_cauldron', {'level': '3'})
+    p.barrel(12, FLOOR + 1, south, 'north')
+    p.jar(12, FLOOR + 2, south, 'north')
+    p.set(17, FLOOR + 1, south, 'minecraft:gray_carpet')
     # Crimson sconces on the pilasters away from the side doors, lanterns hung down the vault.
     for x in PILASTERS:
         if x != 16:
