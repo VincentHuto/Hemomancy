@@ -331,36 +331,18 @@ public final class CourtLifeGameTests {
 	 * references the way generation would; closing puts the chunk's own structure data back.
 	 */
 	static final class FakeSite implements AutoCloseable {
-		private final LevelChunk chunk;
-		private final Map<Structure, StructureStart> starts;
-		private final Map<Structure, LongSet> references;
+		private final Runnable restore;
 
 		FakeSite(ServerLevel level, CourtSite site, BlockPos centre) {
 			Structure structure = level.registryAccess().registryOrThrow(Registries.STRUCTURE).get(Hemomancy.rloc(site.id()));
 			if (structure == null) throw new IllegalStateException("No structure for " + site.id());
-			chunk = level.getChunkAt(centre);
-			starts = new HashMap<>(chunk.getAllStarts());
-			references = new HashMap<>(chunk.getAllReferences());
-			StructurePiece piece = new StructurePiece(StructurePieceType.JIGSAW, 0,
-					BoundingBox.fromCorners(centre.offset(-2, -1, -2), centre.offset(2, 3, 2))) {
-				@Override
-				protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag tag) {
-				}
-
-				@Override
-				public void postProcess(WorldGenLevel worldGenLevel, StructureManager manager, ChunkGenerator generator,
-						RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
-				}
-			};
-			ChunkPos pos = chunk.getPos();
-			chunk.setStartForStructure(structure, new StructureStart(structure, pos, 0, new PiecesContainer(List.of(piece))));
-			chunk.addReferenceForStructure(structure, pos.toLong());
+			restore = com.vincenthuto.hemomancy.gametest.playthrough.PlaythroughSites.installStructure(level, structure,
+					BoundingBox.fromCorners(centre.offset(-2, -1, -2), centre.offset(2, 3, 2)));
 		}
 
 		@Override
 		public void close() {
-			chunk.setAllStarts(starts);
-			chunk.setAllReferences(references);
+			restore.run();
 		}
 	}
 }

@@ -669,9 +669,9 @@ public class BlockInit {
 					.mapColor(MapColor.COLOR_RED).strength(2.0f, 3600000f).noOcclusion().forceSolidOn().sound(SoundType.WART_BLOCK)
 					.lightLevel(state -> 5).pushReaction(PushReaction.BLOCK)));
 	/**
-	 * A heart-node's Mycelial Synapse: a Blood Structure that extends its owner's envelope. Raised only from its
-	 * formation; its hidden item is the recipe's face and cannot place it. Owner-instant, drops its inputs. Forced
-	 * solid like the heart-node, so no fluid washes it off its face.
+	 * A heart-node's Mycelial Synapse: a Blood Structure that extends its owner's envelope. Survival raises it from its
+	 * formation; its item sets one down under the same rules, as a Hematic Stake's does. Owner-instant, drops its
+	 * inputs. Forced solid like the heart-node, so no fluid washes it off its face.
 	 */
 	public static final DeferredHolder<Block, Block> mycelial_synapse = MODELEDBLOCKS.register("mycelial_synapse",
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.functional.MycelialSynapseBlock(BlockBehaviour.Properties.of()
@@ -1365,6 +1365,7 @@ public class BlockInit {
 			Map.entry("specimen_jar", b -> new SpecimenJarBlockItem(b, new Item.Properties())),
 			Map.entry("sanguine_monolith", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("hematic_stake", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("mycelial_synapse", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("puppeteers_spindle", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("mason_effigy", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("covenant_throne", b -> new BlockItem(b, new Item.Properties())),
@@ -1385,7 +1386,7 @@ public class BlockInit {
 			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "recollection_cyst",
 			"witness_devotee", "warden_bloom");
 	private static final Set<String> HIDDEN_BLOCK_ITEMS = Set.of("active_befouling_ash_trail",
-			"active_smouldering_ash_trail", "engram_block", "mycelial_synapse");
+			"active_smouldering_ash_trail", "engram_block");
 
 	public static BlockItemDecision itemDecision(ResourceLocation blockId) {
 		String path = blockId.getPath();

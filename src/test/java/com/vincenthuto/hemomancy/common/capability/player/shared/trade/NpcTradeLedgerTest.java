@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** docs/npc_trade/03: the ledger's NBT round trip, the lazy restock window and rapport clamping. */
+/** docs/archive/tracks/npc_trade/03: the ledger's NBT round trip, the lazy restock window and rapport clamping. */
 class NpcTradeLedgerTest {
 	private static final ResourceLocation OFFER = ResourceLocation.fromNamespaceAndPath("hemomancy", "alchemist/spores");
 

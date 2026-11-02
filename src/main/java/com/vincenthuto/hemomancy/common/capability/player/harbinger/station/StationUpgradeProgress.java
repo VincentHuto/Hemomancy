@@ -119,7 +119,9 @@ public final class StationUpgradeProgress implements INBTSerializable<CompoundTa
         return true;
     }
 
+    /** Inserts every pending kit that fits; a dead player keeps them pending, since a corpse's pack is lost. */
     public void deliver(ServerPlayer player) {
+        if (!player.isAlive()) return;
         for (StationUpgradeTier tier : StationUpgradeCatalog.all()) {
             if (!hasPending(tier.station(), tier.tier())) continue;
             ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(tier.upgradeItem()));

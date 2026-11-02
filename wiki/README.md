@@ -185,6 +185,6 @@ Pages still to add:
 
 *"The wiki, like the Liber Sanguinium, is a living document. It grows, adapts, and remembers."*
 
-- [Manipulation presentation pass: all 97 active powers and verification limits](../docs/manipulation_work_plan/05-visuals-results.md)
+- [Manipulation presentation pass: all 97 active powers and verification limits](../docs/archive/done/manipulation_work_plan/05-visuals-results.md)
 
 - [Clairaudiograph](Clairaudiograph.md) — reusable creature calls, wax cylinders, and redstone playback.

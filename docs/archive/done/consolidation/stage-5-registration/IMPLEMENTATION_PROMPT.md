@@ -1,0 +1,11 @@
+# Implementation prompt: Stage 5 — block and item registration
+
+Implement Stage 5 in the current Hemomancy checkout. Read the [Stage 5 audit](stage-5-registration-decisions.md), then inspect current `BlockInit`, `ItemInit`, creative-tab routing, and the runtime resource paths. Start by making the block-to-item decision explicit in gameplay source: for each active block ID, identify auto `BlockItem`, custom `BlockItem`, manually registered item, or intentionally itemless status, with its actual item ID and main/WIP/hidden tab route. Use a small catalog or explicit policy in the existing registration path; keep registration order and every ID stable.
+
+Preserve the Sanguine Conduit's manually owned same-ID item and placement gate, Lethean wreath stack size, gourd seed behavior, and every custom item class or carried-state rule. Once the decisions are explicit, simplify `shouldSkipAutoBlockItem` and `createItemBlock` only where the catalog removes real ambiguity. Do not rewrite DeferredRegisters or generate duplicate registrations.
+
+Check the Mycelial Crucible's survival break/drop behavior. If the block itself fails to drop where intended, add the missing runtime loot resource or a narrowly justified gameplay fix; verify that inventory contents and block item are each dropped once. Check any touched content bundle's localization, models, loot, mining tags, and creative route against the real resource paths.
+
+Compile and run focused registry/resource and survival interaction checks. Avoid a broad test suite. Report IDs and behavior preserved, any confirmed drop correction, checks actually run, and live creative-tab or survival behavior still unverified. Preserve unrelated working-tree changes and do not create a worktree or pause for routine approval.
+
+Consolidation should also reduce file and code bloat where responsibilities truly overlap. Remove obsolete handlers, helpers, and duplicate branches made unnecessary by this stage; avoid creating a new wrapper file for a few lines of shared logic. In the final report, quantify files deleted, lines removed, lines added, and the net line change for gameplay code. If the stage does not reduce file count or code size, explain why the remaining structure is needed.

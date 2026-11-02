@@ -56,8 +56,8 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					.filter(bloom -> bloom.ownerUUID().equals(serverPlayer.getUUID()))
 					.anyMatch(bloom -> blooms.getState(bloom).isPortalOpen());
 			Bloodline playerBloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer).getBloodLine();
-			boolean foundedBloodline = playerBloodline.isValid()
-					&& serverPlayer.getUUID().equals(playerBloodline.getLeaderUUID());
+			// A member of any registered line has done the line step; their covenant is a Bloodwell deposit.
+			boolean foundedBloodline = playerBloodline.isValid();
 			boolean artificerArmaturePlaced = HarbingerAdvancementGranter.isArtificerArmaturePlaced(serverPlayer);
 			boolean artificerFirstHematicUpgrade =
 					HarbingerAdvancementGranter.isArtificerFirstHematicUpgrade(serverPlayer);

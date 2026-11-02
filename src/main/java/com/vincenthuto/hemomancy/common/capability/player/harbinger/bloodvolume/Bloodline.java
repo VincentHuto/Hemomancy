@@ -128,6 +128,7 @@ public class Bloodline {
 	public boolean removeMember(UUID playerUUID) {
 		if (playerUUIDS.remove(playerUUID)) {
 			recalculateMaxVolume();
+			clampPoolToCapacity();
 			return true;
 		}
 		return false;

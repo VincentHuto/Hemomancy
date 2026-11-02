@@ -65,6 +65,22 @@ def reviewClients = [
                               args: ['--quickPlaySingleplayer', 'SarcophagusReview']],
     brazierReviewClient: [dir: 'build/brazier-client-review', user: 'BrazierReview', size: review,
                           props: ['hemomancy.brazierReview': 'true']],
+    // The Vampire Bat cruising, hunting a wounded mob and roosting, from several sides (VampireBatClientReview)
+    vampireBatReviewClient: [dir: 'build/vampire-bat-review', user: 'BatReview', size: review,
+                             props: ['hemomancy.vampireBatReview': 'true']],
+    // One animal standing, walking, fleeing and at night, from several sides (AnimalModelClientReview)
+    crimsonDoeReviewClient: [dir: 'build/crimson-doe-review', user: 'AnimalReview', size: review,
+                             props: ['hemomancy.animalModelReview': 'crimson_doe']],
+    funglingReviewClient: [dir: 'build/fungling-review', user: 'AnimalReview', size: review,
+                           props: ['hemomancy.animalModelReview': 'fungling']],
+    venousStriderReviewClient: [dir: 'build/venous-strider-review', user: 'AnimalReview', size: review,
+                                props: ['hemomancy.animalModelReview': 'venous_strider']],
+    // One Eruptus through every state on a single timeline (EruptusClientReview)
+    eruptusReviewClient: [dir: 'build/eruptus-review', user: 'EruptusReview', size: review,
+                          props: ['hemomancy.eruptusReview': 'true']],
+    // The five book models on tables, in frames, on the ground, in hand and in the inventory (BookModelClientReview).
+    bookModelReviewClient: [dir: 'build/book-model-review', user: 'BookReview', size: review,
+                            props: ['hemomancy.bookModelReview': 'true']],
     ringDoorReviewClient: [dir: 'build/ring-door-review', user: 'RingDoorReview', size: review,
                            props: ['hemomancy.ringDoorReview': 'true']],
     condenserReviewClient: [dir: 'build/condenser-client-review', user: 'CondenserReview', size: review,

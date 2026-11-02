@@ -4,7 +4,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
  * The active-state bits a worn strain shows, carried to the host and every tracker in
  * {@code SyncEquippedMorphlingPacket} for Track 3's attachments, world effects and HUD. Bits 0-23 are flags; bits
  * 24-27 carry Mermaid's Purse's banked-blood fill in sixteenths ({@link #withFill}). The layout is agreed in
- * {@code docs/brined_court/02-strain-powers.md} ("Synced active state"); append, never renumber.
+ * {@code docs/archive/tracks/brined_court/02-strain-powers.md} ("Synced active state"); append, never renumber.
  */
 public final class MorphlingActiveState {
 	/** The strain's home condition holds (tint, HUD). */

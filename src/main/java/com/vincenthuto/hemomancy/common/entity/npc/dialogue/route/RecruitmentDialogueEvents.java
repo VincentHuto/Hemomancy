@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 import net.minecraft.ChatFormatting;
@@ -42,6 +43,12 @@ final class RecruitmentDialogueEvents {
 		return true;
 	}
 
+	private static boolean recruitable(Entity entity) {
+		if (entity == null) return false;
+		for (Class<? extends Entity> type : DialogueEventSpeakers.RECRUITABLE) if (type.isInstance(entity)) return true;
+		return false;
+	}
+
 	/**
 	 * Recruits a Harbinger NPC into the player's bloodline. The NPC's entity
 	 * UUID is added as a phantom member — it counts toward the shared blood
@@ -63,7 +70,8 @@ final class RecruitmentDialogueEvents {
 		}
 
 		Entity entity = player.level().getEntity(entityId);
-		if (entity == null) {
+		// Only a Degree 5 player recruits, and only a Vicar, Alchemist or Mnemonist (the trees offer nothing else).
+		if (!recruitable(entity) || !ProgressionGates.hasDegree(player, 5)) {
 			return;
 		}
 		ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
@@ -156,7 +164,7 @@ final class RecruitmentDialogueEvents {
 		}
 
 		Entity entity = player.level().getEntity(entityId);
-		if (entity == null) {
+		if (!recruitable(entity)) {
 			return;
 		}
 		ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());

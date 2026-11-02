@@ -18,7 +18,7 @@ Velorum's veiled model is authored in `tools/model_export/velorum.py`, with pose
 
 Cardinal Rite floors and Ichorian Sigils share `JsonResourceReloadListener` for JSON scanning, per-file diagnostics, and immutable reload publication. Their schema parsers and registries remain separate; malformed files are skipped, and each applied reload replaces the previous snapshot. The floor loader also keeps each definition's JSON; the `cardinal_rite_floor` channel of `DatapackSyncChannels` sends it to remote clients (one `DatapackSyncPacket`) on login and datapack reload, so blueprints, rite hints and formed-floor visuals work on dedicated servers. Integrated clients share the server registry and ignore the packet.
 
-Recipe codec plumbing shares a registry-aware JSON bridge across Incubator, Memory Weaving, Scar, Armature Upgrade, Fungal Scar Cultivation, Blood Structure, and Cardinal Rite serializers. Nested codec errors propagate instead of silently omitting fields; legacy result forms remain supported. Run `./gradlew.bat runRecipeCodecGameTestServer` for the regression suite, also included in `alphaCheck`. See [recipe pipeline details](../docs/consolidation/recipe-pipelines.md).
+Recipe codec plumbing shares a registry-aware JSON bridge across Incubator, Memory Weaving, Scar, Armature Upgrade, Fungal Scar Cultivation, Blood Structure, and Cardinal Rite serializers. Nested codec errors propagate instead of silently omitting fields; legacy result forms remain supported. Run `./gradlew.bat runRecipeCodecGameTestServer` for the regression suite, also included in `alphaCheck`. See [recipe pipeline details](../docs/archive/done/consolidation/recipe-pipelines.md).
 
 Use this page to find the implementation reference, package layout, build commands, contribution rules, and integration notes.
 
@@ -30,7 +30,7 @@ Item inventory persistence for Syringe, Morphling Jar, and legacy Scar Binder is
 
 ## Documentation
 
-The [Phlegethontic Nether](Phlegethontic-Nether.md) has a [current implementation plan](../docs/phlegethontic-nether-worldgen/2026-09-12-phlegethontic-nether-worldgen.md) and [validation evidence](../docs/phlegethontic-nether-worldgen/VALIDATION.md). Geometry and containment are pure Java; runtime cases are explicitly registered through `DevTestHooks`. Model/material preparation tools live in `tools/model_export`.
+The [Phlegethontic Nether](Phlegethontic-Nether.md) has a [current implementation plan](../docs/archive/done/phlegethontic-nether-worldgen/2026-09-12-phlegethontic-nether-worldgen.md) and [validation evidence](../docs/archive/done/phlegethontic-nether-worldgen/VALIDATION.md). Geometry and containment are pure Java; runtime cases are explicitly registered through `DevTestHooks`. Model/material preparation tools live in `tools/model_export`.
 
 The [Pelagic worldgen reference](../docs/PELAGIC_WORLDGEN.md) records ocean terrain and performance checks. `PelagicContext.column` serves density, aquifer and carver queries from bounded per-worker tile caches; it skips biome lookup outside the ocean/shore climate bands. Reef and shore blends retain shared grid nodes across neighboring chunk revisits, including landmark footprints. Run `./gradlew.bat test --tests '*worldgen.terrain.pelagic.*'` for cache, climate-boundary and terrain regressions, then use the documented fresh-world launcher and report comparison to check actual generated terrain.
 
@@ -55,7 +55,7 @@ Ocean travel also exposed expensive Circus Pavilion footprint checks on the gene
 - Narrative themes and tone guidelines
 - **This is the source of truth for worldbuilding**
 
-**[MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/MNA_COMPATIBILITY_BRAINSTORM.md)**
+**[MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/archive/done/MNA_COMPATIBILITY_BRAINSTORM.md)**
 - Mana and Artifice integration design
 - Each feature includes "MnA Justification"
 - Dormant runtime status for the NeoForge 1.21.1 branch
@@ -68,16 +68,16 @@ Ocean travel also exposed expensive Circus Pavilion footprint checks on the gene
 
 ### Additional Documentation
 
-**[DIALOGUE_ITEM_QUERY_GUIDE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/DIALOGUE_ITEM_QUERY_GUIDE.md)**
+**[DIALOGUE_ITEM_QUERY_GUIDE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/archive/done/DIALOGUE_ITEM_QUERY_GUIDE.md)**
 - Guide for Item Inquiry dialogue system
 - How NPCs respond to shown items
 - Dialogue tree structure
 - JSON format and examples
 
 **Other Docs:**
-- `docs/alpharoadmap.md`: Roadmap and planning
-- `docs/fungalscar.md`: Scar system design notes
-- `docs/hybrid_progression_matrix.md`: Progression balancing
+- `docs/archive/done/alpharoadmap.md`: Roadmap and planning
+- `docs/archive/done/fungalscar.md`: Scar system design notes
+- `docs/archive/done/hybrid_progression_matrix.md`: Progression balancing
 
 ---
 

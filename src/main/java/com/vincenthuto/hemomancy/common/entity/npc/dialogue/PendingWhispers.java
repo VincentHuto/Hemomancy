@@ -139,8 +139,7 @@ public final class PendingWhispers {
         for (int i = 0; i < list.size(); i++) {
             CompoundTag entry = list.getCompound(i);
             if (!id.equals(entry.getUUID("id"))) continue;
-            if (!entry.getBoolean("decision") || !player.getPersistentData()
-                    .getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)) list.remove(i);
+            if (!entry.getBoolean("decision") || !FungalGardenTravelHelper.isRevelationChoicePending(player)) list.remove(i);
             break;
         }
         notifyPending(player);

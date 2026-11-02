@@ -11,8 +11,10 @@ import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeCards;
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeRules;
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSides;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.*;
 
@@ -46,10 +48,8 @@ public final class DialogueHubFactory {
 
 	public static DialogueTree decorate(DialogueTree tree, String npcId, ServerPlayer player) {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		if ("hermit".equals(npcId)) {
-			player.getPersistentData().putBoolean(MET_HERMIT, true);
-		} else if (degree == 0 && !NpcTradeSides.is(npcId, NpcTradeSides.Side.CIRCUS)
-				&& !player.getPersistentData().getBoolean(MET_HERMIT)) {
+		if (!"hermit".equals(npcId) && degree == 0 && !NpcTradeSides.is(npcId, NpcTradeSides.Side.CIRCUS)
+				&& !hasMetHermit(player)) {
 			// The pavilion takes D0 visitors on its own terms; the Circus is not the Vicar's errand.
 			tree = addNewcomerGuidance(tree, npcId);
 		}
@@ -63,6 +63,22 @@ public final class DialogueHubFactory {
 		if (!NpcTradeSides.refuses(npcId, player)) tree = DialogueRapportLore.with(tree, npcId, rapportTier);
 		return withTrade(decorate(tree, npcId, HemoCapabilityAccess.dialogueKnowledge(player), rapportTier),
 				NpcTradeCards.build(player, npcId));
+	}
+
+	/**
+	 * Records that the player has spoken with a Hermit, so outpost NPCs stop offering newcomer guidance. Set when the
+	 * player talks to him, not when his tree is built for a sigil, and kept under PlayerPersisted so a death does not
+	 * bring the guidance back.
+	 */
+	public static void markMetHermit(ServerPlayer player) {
+		CompoundTag root = player.getPersistentData();
+		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
+		durable.putBoolean(MET_HERMIT, true);
+		root.put(Player.PERSISTED_NBT_TAG, durable);
+	}
+
+	private static boolean hasMetHermit(ServerPlayer player) {
+		return player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(MET_HERMIT);
 	}
 
 	/**
@@ -187,7 +203,7 @@ public final class DialogueHubFactory {
 				attention = missionAttention(option.eventId());
 			}
 			DialogueTopicState state = category == DialogueCategory.QUESTS
-					? questState(option) : DialogueTopicState.AVAILABLE;
+					? questState(option, nodes) : DialogueTopicState.AVAILABLE;
 			topics.add(new DialogueTopic(topicId, category, option.text(), summaryKey(category), target,
 					lore ? LORE_ICON : null, state, null, null, null, unread, attention, lore));
 		}
@@ -239,11 +255,30 @@ public final class DialogueHubFactory {
 		return value.contains("item_hint") || value.contains("ask_about_item");
 	}
 
-	private static DialogueTopicState questState(DialogueOption option) {
+	/**
+	 * A card is a turn-in only when something can be handed in: its option sends a claim or reward event, or the node
+	 * it opens does. A card that only says the reward is not ready stays active, and one that says it was claimed, or
+	 * that a lesson was learned, is complete.
+	 */
+	private static DialogueTopicState questState(DialogueOption option, Map<String, DialogueNode> nodes) {
 		String value = (option.text() + " " + nullToEmpty(option.nextNodeId()) + " "
 				+ nullToEmpty(option.eventId())).toLowerCase(Locale.ROOT);
-		if (containsAny(value, "claim", "turn_in", "reward")) return DialogueTopicState.TURN_IN;
-		if (containsAny(value, "complete", "completed")) return DialogueTopicState.COMPLETE;
+		if (option.eventId() != null) {
+			if (containsAny(value, "claim", "turn_in", "reward")) return DialogueTopicState.TURN_IN;
+			if (containsAny(value, "complete", "completed")) return DialogueTopicState.COMPLETE;
+			return DialogueTopicState.ACTIVE;
+		}
+		if (containsAny(value, "unready", "not_ready")) return DialogueTopicState.ACTIVE;
+		if (containsAny(value, "claimed", "complete", "learned")) return DialogueTopicState.COMPLETE;
+		DialogueNode target = option.nextNodeId() == null ? null : nodes.get(option.nextNodeId());
+		if (target != null) {
+			for (DialogueOption next : target.options()) {
+				String event = nullToEmpty(next.eventId()).toLowerCase(Locale.ROOT);
+				if (next.presentation().enabled() && containsAny(event, "claim", "turn_in", "reward")) {
+					return DialogueTopicState.TURN_IN;
+				}
+			}
+		}
 		return DialogueTopicState.ACTIVE;
 	}
 

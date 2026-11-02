@@ -444,9 +444,11 @@ public final class HarbingerAlchemistDialogueTrees {
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.begin_red_taxonomy",
 				"red_taxonomy_intro", null));
 		if (canBriefFirstSeparation) {
+			// First Separation is the Votary's next Main step: a sigil over the Alchemist until it is briefed.
 			greetingOptions.add(new DialogueOption(
 					"hemomancy.dialogue.alchemist.option.first_separation_assignment",
-					"first_separation_offer", null));
+					"first_separation_offer", null,
+					DialogueOptionPresentation.attention(DialogueAttention.NOTICE).withQuest()));
 		}
 		if (canClaimFirstSeparation) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.complete_first_separation",

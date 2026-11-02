@@ -66,7 +66,7 @@ class NpcTradeGuardrailTest {
 				if (NpcTradeGiveRules.isBannedById(id) || neverSold.contains(item)) banned.add(card.id() + " gives " + item);
 			}
 		}
-		assertEquals(List.of(), banned, "Trades never grant progression (docs/npc_trade/00)");
+		assertEquals(List.of(), banned, "Trades never grant progression (docs/archive/tracks/npc_trade/00)");
 	}
 
 	@Test

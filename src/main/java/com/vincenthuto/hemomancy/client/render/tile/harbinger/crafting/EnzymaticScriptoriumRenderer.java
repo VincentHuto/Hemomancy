@@ -3,11 +3,10 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
-import net.minecraft.client.model.BookModel;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.resources.ResourceLocation;
+import com.vincenthuto.hemomancy.client.model.item.book.HemoBookBinding;
+import com.vincenthuto.hemomancy.client.model.item.book.HemoBookLayers;
+import com.vincenthuto.hemomancy.client.model.item.book.HemoBookModel;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
@@ -48,11 +47,11 @@ public final class EnzymaticScriptoriumRenderer implements BlockEntityRenderer<E
         }
     }
 
-    private static final ResourceLocation BOOK_TEXTURE = Hemomancy.rloc("textures/entity/liber_sanguinum.png");
-    private final BookModel book;
+    private static final HemoBookBinding BOOK = HemoBookBinding.LIBER_SANGUINUM;
+    private final HemoBookModel book;
 
     public EnzymaticScriptoriumRenderer(BlockEntityRendererProvider.Context context) {
-        book = new BookModel(context.bakeLayer(ModelLayers.BOOK));
+        book = new HemoBookModel(context.bakeLayer(BOOK.layer));
     }
 
     @Override public boolean shouldRenderOffScreen(EnzymaticScriptoriumBlockEntity station) {
@@ -75,9 +74,10 @@ public final class EnzymaticScriptoriumRenderer implements BlockEntityRenderer<E
         pose.translate(0.5D, 0.97D + Math.sin(time * 0.045D) * 0.015D, 0.375D);
         pose.mulPose(Axis.YP.rotationDegrees(90));
         pose.mulPose(Axis.ZP.rotationDegrees(45));
-        pose.scale(0.8F, 0.8F, 0.8F);
+        float bookScale = 0.8F * HemoBookLayers.MODEL_SCALE;
+        pose.scale(bookScale, bookScale, bookScale);
         book.setupAnim(time, 0.15F, 0.85F, 1.0F);
-        book.renderToBuffer(pose, buffers.getBuffer(book.renderType(BOOK_TEXTURE)), light, overlay, -1);
+        book.renderToBuffer(pose, buffers.getBuffer(BOOK.solid()), light, overlay, -1);
         pose.popPose();
         Matrix4f matrix = pose.last().pose();
         if (stage >= 1) {

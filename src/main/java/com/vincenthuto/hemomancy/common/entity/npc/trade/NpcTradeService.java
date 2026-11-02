@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.trade;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.shared.trade.NpcTradeLedger;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionResidents;
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeAppraisals.Grade;
@@ -140,8 +141,12 @@ public final class NpcTradeService {
 				result.reasonKey(), board));
 	}
 
-	/** A misbegotten Harbinger, or a successor who won't serve this player, keeps no trade either. */
+	/**
+	 * A misbegotten Harbinger, or a successor who won't serve this player, keeps no trade either; nor does a Hermit
+	 * in his farewell, whose tree no longer opens.
+	 */
 	private static boolean serves(ServerPlayer player, Entity entity) {
+		if (entity instanceof HarbingerHermitEntity hermit) return !hermit.isFarewellDying();
 		return !(entity instanceof ProfessionalHarbingerEntity npc)
 				|| !npc.isMisbegotten() && (!npc.isSuccessor() || SuccessionResidents.mayServe(player, npc));
 	}

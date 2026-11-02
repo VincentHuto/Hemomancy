@@ -134,6 +134,16 @@ public class PendingBloodCraftManager {
 		}
 	}
 
+	/**
+	 * Drops, without running them, the crafts in {@code level} whose trigger point lies inside {@code bounds}. Their
+	 * blocks are left as they are. Returns how many were dropped.
+	 */
+	public static int cancelWithin(ServerLevel level, net.minecraft.world.phys.AABB bounds) {
+		int before = pendingCrafts.size();
+		pendingCrafts.removeIf(craft -> craft.level == level && bounds.contains(craft.hitPos.getCenter()));
+		return before - pendingCrafts.size();
+	}
+
 	public static void clear() {
 		pendingCrafts.clear();
 	}

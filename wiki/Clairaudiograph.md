@@ -54,5 +54,5 @@ Still verify in a client: inventory/hand/dropped/mounted glint, model orientatio
 - Seven focused JVM tests pass (recording codec, invalid values, retained unknown kind, catalogue parsing and bounds).
 - All 46 required tests in the specimen dedicated-server suite pass, including eight Clairaudiograph tests covering actual components, vessel conservation, recipes, slot limits, cancellation, stale source requests, forged recordings, redstone, break drops, reload and retained missing-entity playback.
 - Resource logs contain no Clairaudiograph recipe/catalogue loading errors.
-- The full JVM run completed 2,043 tests with two unrelated failures: `MorphlingLumenlaceRenameResourceTest` encounters a non-UTF-8 byte in `docs/phlegethontic-nether-worldgen/orcadian-horseman/README.md`; `LegacyMainTestSuiteContractTest` expects 361 legacy tests but discovers 360. Those files were not changed.
+- The full JVM run completed 2,043 tests with two unrelated failures: `MorphlingLumenlaceRenameResourceTest` encounters a non-UTF-8 byte in `docs/archive/done/phlegethontic-nether-worldgen/orcadian-horseman/README.md`; `LegacyMainTestSuiteContractTest` expects 361 legacy tests but discovers 360. Those files were not changed.
 - Live audio, multiplayer delivery and rendering checks listed above remain unverified.

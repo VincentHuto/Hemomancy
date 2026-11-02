@@ -4,7 +4,7 @@ A hemomancer forces the blood to remember an instruction, and the body performs 
 
 Presentation never touches gameplay. Costs, cooldowns, charge clocks, targeting, hit windows and movement stay where they are; quick casts execute before their animation starts, and charged and continuous timing is the server's. Presentation metadata is resolved from registry identity and is never written into saved manipulation data.
 
-The design contract is [the v2 spec](../docs/superpowers/specs/2026-10-19-casting-animations-v2-design.md). This page describes what was built, including the rulings made during the build where they differ from the spec. The [concept package](../docs/done/HEMOMANCY_CASTING_ANIMATION_CONCEPTS/README.md) remains the material and silhouette reference for each tendency.
+The design contract is [the v2 spec](../docs/superpowers/specs/2026-10-19-casting-animations-v2-design.md). This page describes what was built, including the rulings made during the build where they differ from the spec. The [concept package](../docs/archive/done/HEMOMANCY_CASTING_ANIMATION_CONCEPTS/README.md) remains the material and silhouette reference for each tendency.
 
 ## The grammar
 

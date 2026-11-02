@@ -38,4 +38,4 @@ Normal Scarlet Waybill use points to the next eligible professor whose instructi
 
 Apprenticeship adds no Harbinger Main or finale requirement. Succession leaves the pavilion standing and grants the Ringmaster Pattern. Liberation kills the bound captives and Ringmaster and ruins the carousel. The missing performers are not rescued alive by cutting their strings. Other camps keep teaching after either outcome.
 
-Source: [mechanics reference](../docs/HEMOMANCY_REFERENCE.md#171-circus-integration-boundary) and [school details](../docs/circus/03-puppetry-and-circus-mechanics.md). Native visuals, fresh natural generation, cold restart and multiplayer remain separate acceptance checks.
+Source: [mechanics reference](../docs/HEMOMANCY_REFERENCE.md#171-circus-integration-boundary) and [school details](../docs/archive/tracks/circus/03-puppetry-and-circus-mechanics.md). Native visuals, fresh natural generation, cold restart and multiplayer remain separate acceptance checks.

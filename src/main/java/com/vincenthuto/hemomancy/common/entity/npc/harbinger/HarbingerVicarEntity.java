@@ -214,11 +214,10 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
                 com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.ArtificerDialogueEvents.hasClaimedConsecrationKit(serverPlayer));
         if (degree == 5 || degree == 6) {
             var bloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer).getBloodLine();
-            boolean foundedBloodline = bloodline.isValid()
-                    && serverPlayer.getUUID().equals(bloodline.getLeaderUUID());
+            boolean inBloodline = bloodline.isValid();
             boolean faneComplete = HarbingerChapterProgression.completedChapters(serverPlayer)
                     .contains(HarbingerChapterMilestone.COVENANT_WRITTEN_IN_PLACE);
-            tree = HarbingerVicarDialogueTrees.withCovenantGuidance(tree, degree, foundedBloodline,
+            tree = HarbingerVicarDialogueTrees.withCovenantGuidance(tree, degree, inBloodline,
                     faneComplete,
                     hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED),
                     hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND),
@@ -267,7 +266,7 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
 
     private void grantOrRecoverAssignmentLedger(ServerPlayer player) {
         boolean carriesLedger = player.getInventory().contains(
-                new net.minecraft.world.item.ItemStack(ItemInit.harbinger_assignment_ledger.get()));
+                stack -> stack.is(ItemInit.harbinger_assignment_ledger.get()));
         if (carriesLedger) return;
         net.minecraft.world.item.ItemStack ledger =
                 new net.minecraft.world.item.ItemStack(ItemInit.harbinger_assignment_ledger.get());

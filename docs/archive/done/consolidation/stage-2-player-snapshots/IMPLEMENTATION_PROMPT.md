@@ -1,0 +1,11 @@
+# Implementation prompt: Stage 2 — owner snapshot dispatch
+
+Implement Stage 2 in the current Hemomancy checkout. Read the [Stage 2 audit](stage-2-player-snapshot-dispatch.md), then inspect current `BloodTendencyEvents`, `VascularSystemEvents`, their payloads, and call sites. Carry out the narrow owner-snapshot extraction rather than redesigning all capability events.
+
+Create one shared entry point for `PlayerLoggedInEvent`, `PlayerChangedDimensionEvent`, and `PlayerRespawnEvent`. It should call the existing tendency and vascular senders exactly once each in a documented order. Remove only those six lifecycle subscriptions from their feature classes. Keep feature-owned mutation hooks and the public `syncTendency`/`syncVascular` change-path APIs intact. Preserve tendency's empty-map fallback on login/dimension change, vascular's required-capability behavior, and both required-capability respawn paths. Check whether either sender depends on same-priority event ordering before selecting the call order.
+
+Keep the same attachment IDs, `copyOnDeath` behavior, packet types, directions, codecs, client writes, and recipient scope. In particular, do not normalize tendency's missing enum default of `0` with vascular's `100`, or confuse effective tendency values with stored vascular values. Do not fold blood volume, skills, degree, staff, Unstained, morphling, or observer snapshots into this dispatcher.
+
+Verify one owner packet of each type after login, dimension change, and respawn, plus a direct state-change send. Use focused compile and targeted gameplay checks; add no large test suite. Report the exact source edits, send counts observed or statically established, checks run, and any lifecycle scenario not exercised. Preserve unrelated working-tree changes and do not create a worktree or pause for routine approval.
+
+Consolidation should also reduce file and code bloat where responsibilities truly overlap. Remove obsolete handlers, helpers, and duplicate branches made unnecessary by this stage; avoid creating a new wrapper file for a few lines of shared logic. In the final report, quantify files deleted, lines removed, lines added, and the net line change for gameplay code. If the stage does not reduce file count or code size, explain why the remaining structure is needed.

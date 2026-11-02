@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 /**
  * The named graders an {@code items} want can use. Each turns one stack into a {@link Grade}; a {@code POOR} stack is
  * refused, and a {@code FINE} trade pays {@code give_fine} (or one more rapport). A grader is added here with the
- * catalogue rows that need it, after reading which components those items carry (docs/npc_trade/02).
+ * catalogue rows that need it, after reading which components those items carry (docs/archive/tracks/npc_trade/02).
  */
 public final class NpcTradeAppraisals {
 	public static final String NONE = "none";

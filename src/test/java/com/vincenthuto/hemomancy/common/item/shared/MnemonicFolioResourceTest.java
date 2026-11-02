@@ -21,12 +21,11 @@ final class MnemonicFolioResourceTest {
 	@Test
 	void folioHasModelAndCraftingRecipe() throws Exception {
 		Path model = Path.of("src/main/resources/assets/hemomancy/models/item/mnemonic_folio.json");
-		Path texture = Path.of("src/main/resources/assets/hemomancy/textures/item/mnemonic_folio.png");
-		assertTrue(Files.readString(model).contains("hemomancy:item/mnemonic_folio"));
+		Path texture = Path.of("src/main/resources/assets/hemomancy/textures/entity/book/mnemonic_folio.png");
+		assertTrue(Files.readString(model).contains("builtin/entity"));
 		assertTrue(Files.exists(texture));
 		BufferedImage image = ImageIO.read(texture.toFile());
-		assertEquals(16, image.getWidth());
-		assertEquals(16, image.getHeight());
+		assertEquals(128, image.getWidth());
 		assertTrue(Files.exists(Path.of("src/main/resources/data/hemomancy/recipe/mnemonic_folio.json")));
 	}
 }

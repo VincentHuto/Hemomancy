@@ -18,7 +18,6 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketSyncScarsState;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRite;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRites;
-import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -180,7 +179,8 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 				if (definition == null || definition.getScarType() != ScarType.CEREBRAL
 						|| !scars.knowsCerebralScar(id)) {
 					return Preflight.denied(
-							HemoText.translatable("message.hemomancy.scar_brazier_rite.the_pattern_contains_a_scar_you", id.getPath()), ChatFormatting.RED);
+							Component.translatable("message.hemomancy.scar_brazier_rite.the_pattern_contains_a_scar_you",
+									ItemScarPattern.scarName(id)), ChatFormatting.RED);
 				}
 			}
 			return hasBlood(player, LOADOUT_BLOOD_COST)

@@ -235,8 +235,11 @@ public final class HarbingerArtificerDialogueTrees {
 		}
 		if (progress.needsForkRecovery()) addRecoveryOptions(options, EVENT_RECOVER_FORK_PREFIX,
 				"barbed", "chitinite", "prismatic");
-		if (progress.needsD7Recovery()) addRecoveryOptions(options, EVENT_RECOVER_D7_PREFIX,
-				"silent_archon", "edacious", "sheolic", "phantasmal");
+		if (progress.needsD7Recovery()) {
+			// There is no seventh-Degree Silent Archon (HEMOMANCY_REFERENCE §22.8): its lineage is offered to a Silentium only.
+			if (progress.silentium()) addRecoveryOptions(options, EVENT_RECOVER_D7_PREFIX, "silent_archon");
+			addRecoveryOptions(options, EVENT_RECOVER_D7_PREFIX, "edacious", "sheolic", "phantasmal");
+		}
 		options.add(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null));
 		return new DialogueNode("assignments", List.of(
 				"hemomancy.artificer.assignments.line1",

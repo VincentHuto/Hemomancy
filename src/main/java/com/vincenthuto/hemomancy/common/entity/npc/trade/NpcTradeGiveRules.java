@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * What a trade may never pay (docs/npc_trade/00 "Trades never grant progression"): a manipulation memory
+ * What a trade may never pay (docs/archive/tracks/npc_trade/00 "Trades never grant progression"): a manipulation memory
  * ({@code memory_*}, {@code crude_memory_*}) or {@code hematic_memory}, a station upgrade item from
  * {@link StationUpgradeCatalog}, or anything tagged {@link #NEVER_SOLD}. The loader fails a file that gives one; the
  * tag is checked once tags are bound.

@@ -364,6 +364,7 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
             return InteractionResult.sidedSuccess(player.level().isClientSide);
         }
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
+            DialogueHubFactory.markMetHermit(serverPlayer);
             DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueHubFactory.decorate(tree, "hermit", serverPlayer);
 

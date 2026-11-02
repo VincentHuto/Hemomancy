@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
@@ -162,12 +164,18 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 									ConjurationManip.dispelled(player, mainStack);
 									mainStack.shrink(1);
 									double bloodCost = dispel.getBaseCost();
+									// Read after the shrink, so the stack is already empty and the refund is always the
+									// 90% cap whatever the wear. Whether it should scale with wear is a pending balance
+									// call (docs/PLAYTHROUGH_TESTS.md, D-25); the amount is left as it plays today.
 									double bloodRefund = Math
 											.abs(mainStack.getMaxDamage() - 1000 - mainStack.getDamageValue());
 									if (bloodRefund > bloodCost * 0.9) {
 										bloodRefund = bloodCost * 0.9;
 									}
-									volume.fill(bloodRefund);
+									// Income goes through the ledger, which records it and sends the owner sync.
+									BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "conjuration_dispel",
+											"blood_source.hemomancy.conjuration_dispel", BloodFlowContribution.Category.SKILL,
+											bloodRefund, 1);
 									mainStack.shrink(1);
 									player.displayClientMessage(Component.translatable("message.hemomancy.use_manip_key_packet.dispelled_conjured_item").withStyle(ChatFormatting.RED), true);
 								} else {

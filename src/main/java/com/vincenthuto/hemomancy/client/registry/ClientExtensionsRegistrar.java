@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.client.registry;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.item.ItemClientExtensions;
+import com.vincenthuto.hemomancy.client.model.item.book.HemoBookBinding;
+import com.vincenthuto.hemomancy.client.render.item.HemoBookItemRenderer;
 import com.vincenthuto.hutoslib.client.render.item.RenderItemArmBanner;
 import com.vincenthuto.hutoslib.client.render.item.RenderItemGuideBook;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
@@ -32,6 +34,19 @@ public final class ClientExtensionsRegistrar {
             }
         };
 
+        IClientItemExtensions bookRenderer = new IClientItemExtensions() {
+            // Asked for on every draw; built once, on first use, after the entity models have loaded.
+            private HemoBookItemRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (renderer == null) {
+                    renderer = new HemoBookItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
+                            Minecraft.getInstance().getEntityModels());
+                }
+                return renderer;
+            }
+        };
         IClientItemExtensions guideBookRenderer = new IClientItemExtensions() {
             @Override
             public BlockEntityWithoutLevelRenderer getCustomRenderer() {
@@ -51,7 +66,8 @@ public final class ClientExtensionsRegistrar {
                 continue;
             }
             if (item instanceof ItemGuideBook) {
-                event.registerItem(guideBookRenderer, item);
+                // Hemomancy's books have their own models; any other guide book keeps HutosLib's vanilla-book renderer.
+                event.registerItem(HemoBookBinding.of(item) != null ? bookRenderer : guideBookRenderer, item);
                 continue;
             }
             IClientItemExtensions extensions = ItemClientExtensions.create(item);

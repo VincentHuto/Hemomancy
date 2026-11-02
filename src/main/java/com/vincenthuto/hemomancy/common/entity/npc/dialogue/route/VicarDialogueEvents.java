@@ -200,6 +200,9 @@ final class VicarDialogueEvents {
 	 * inventory instead.
 	 */
 	private static void handleGiveSanguineMonolithBlueprint(ServerPlayer player, int entityId) {
+		// Only the fifth-Degree Vicar tells the Monolith rumour that offers the scrap, and not to a purifying player.
+		if (!ProgressionGates.isDegree(player, 5)
+				|| com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.hasBegunPurification(player)) return;
 		ItemStack hint = MnemonicBlueprintItem.create(ItemInit.mnemonic_blueprint.get(),
 				new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.CARDINAL_RITE,
 						ResourceLocation.tryBuild(Hemomancy.MOD_ID, "cardinal_rite/working/sanguine_monolith")));
@@ -213,6 +216,7 @@ final class VicarDialogueEvents {
 	}
 
 	private static void handleGiveStainedChurchMap(ServerPlayer player, int entityId) {
+		if (!mayReceiveStainedChurchMap(player, player.level().getEntity(entityId))) return;
 		ItemStack map = new ItemStack(ItemInit.stained_church_map.get());
 		DialogueRewards.giveOrDropAtEntity(player, entityId, map);
 
@@ -220,5 +224,18 @@ final class VicarDialogueEvents {
 				Component.translatable("hemomancy.dialogue.event.gives_stained_church_map")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
+	}
+
+	/**
+	 * The trees that offer the map: the Vicar's from the seventh Degree, and the Zealot's once a purifying player has
+	 * reached clarity or enlightenment.
+	 */
+	private static boolean mayReceiveStainedChurchMap(ServerPlayer player, net.minecraft.world.entity.Entity speaker) {
+		if (speaker instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity) {
+			return ProgressionGates.hasDegree(player, 7);
+		}
+		if (!(speaker instanceof com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedZealotEntity)) return false;
+		var unstained = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getUnstainedProgress(player);
+		return unstained.hasBegunPurification() && (unstained.hasClarityUnlocked() || unstained.isEnlightened());
 	}
 }

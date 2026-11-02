@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue.route;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtDiscoveryProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVoyagerEntity;
 import net.minecraft.ChatFormatting;
@@ -39,7 +40,9 @@ final class VoyagerDialogueEvents {
 
 	/** Every Court answer from a Voyager ends with the Relay Chart, when the player knows the Court and has none. */
 	private static boolean court(ServerPlayer player, int entityId, Predicate<ServerPlayer> record) {
-		if (!(player.level().getEntity(entityId) instanceof HarbingerVoyagerEntity)) return false;
+		// The purifying tree has no Court answers.
+		if (!(player.level().getEntity(entityId) instanceof HarbingerVoyagerEntity)
+				|| HemoCapabilityAccess.hasBegunPurification(player)) return false;
 		boolean recorded = record.test(player);
 		ItemStack chart = CourtDiscoveryProgress.takeChart(player);
 		if (!chart.isEmpty()) {

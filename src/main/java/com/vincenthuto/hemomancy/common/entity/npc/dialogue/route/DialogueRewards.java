@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue.route;
 
+import com.google.common.collect.Iterables;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -14,9 +15,10 @@ final class DialogueRewards {
 	private DialogueRewards() {
 	}
 
+	/** Counts the main inventory and the offhand, where a player often holds the item they were asked for. */
 	static boolean hasItemCount(ServerPlayer player, Item item, int needed) {
 		int count = 0;
-		for (ItemStack stack : player.getInventory().items) {
+		for (ItemStack stack : carried(player)) {
 			if (stack.is(item)) {
 				count += stack.getCount();
 				if (count >= needed) {
@@ -29,7 +31,7 @@ final class DialogueRewards {
 
 	static void consumeItemCount(ServerPlayer player, Item item, int amount) {
 		int remaining = amount;
-		for (ItemStack stack : player.getInventory().items) {
+		for (ItemStack stack : carried(player)) {
 			if (remaining <= 0) {
 				break;
 			}
@@ -40,6 +42,10 @@ final class DialogueRewards {
 			}
 		}
 		player.getInventory().setChanged();
+	}
+
+	private static Iterable<ItemStack> carried(ServerPlayer player) {
+		return Iterables.concat(player.getInventory().items, player.getInventory().offhand);
 	}
 
 	static void giveOrDropAtEntity(ServerPlayer player, int entityId, ItemStack stack) {

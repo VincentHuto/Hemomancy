@@ -91,8 +91,11 @@ public final class EarlyInitiation {
     }
     public static boolean begin(ServerPlayer player, Entity officiant) {
         if (!(officiant instanceof LivingEntity vicar) || !near(player, vicar) || !eligible(player)
-                || player.isPassenger() || player.isSleeping() || ACTIVE.containsKey(player.getUUID())
-                || ACTIVE.values().stream().anyMatch(c -> c.vicar == vicar)) return false;
+                || player.isPassenger() || player.isSleeping() || ACTIVE.containsKey(player.getUUID())) return false;
+        if (ACTIVE.values().stream().anyMatch(c -> c.vicar == vicar)) {
+            player.displayClientMessage(Component.translatable("hemomancy.initiation.officiant_busy", vicar.getDisplayName()), false);
+            return false;
+        }
         UUID bloodline = null;
         boolean noAi = false;
         if (vicar instanceof HarbingerVicarEntity npc) {

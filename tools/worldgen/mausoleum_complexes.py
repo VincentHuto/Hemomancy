@@ -1,4 +1,4 @@
-"""Generates the four Saint mausoleum complexes (Section 5; rework tracks in docs/mausoleums/). Re-run from the
+"""Generates the four Saint mausoleum complexes (Section 5; rework tracks in docs/archive/tracks/mausoleums/). Re-run from the
 repository root: python tools/worldgen/mausoleum_complexes.py
 
 The generator lives in the mausoleum package beside this file: kit.py (the architectural modules), trials.py (the

@@ -18,6 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -111,14 +112,31 @@ public class MycelialSynapseBlock extends Block implements EntityBlock {
 		return state.rotate(mirror.getRotation(state.getValue(FACING)));
 	}
 
-	/** A synapse is only ever raised from its formation; the item is the recipe's face, not a way to place one. */
+	/** The item sets a synapse down on the clicked face under the rules a formation answers to, as a stake's does. */
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		if (context.getPlayer() != null && !context.getLevel().isClientSide) {
-			context.getPlayer().displayClientMessage(line("raise_only"), true);
+		if (context.getLevel() instanceof ServerLevel level) {
+			if (!(context.getPlayer() instanceof ServerPlayer player)) return null;
+			String refusal = refusal(level, player, context.getClickedPos());
+			if (refusal != null) {
+				player.displayClientMessage(line(refusal), true);
+				return null;
+			}
 		}
-		return null;
+		return defaultBlockState().setValue(FACING, context.getClickedFace());
+	}
+
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+		super.setPlacedBy(level, pos, state, placer, stack);
+		if (level instanceof ServerLevel server && placer instanceof ServerPlayer player
+				&& HeartNodeSavedData.get(server).addSynapse(player.getUUID(), pos)
+				&& level.getBlockEntity(pos) instanceof MycelialSynapseBlockEntity entity) {
+			entity.raise(player.getUUID(), HeartNodeSavedData.get(server).nodeOf(player.getUUID()));
+			HeartNodeEnvelopeSync.syncAround(server, pos);
+			player.displayClientMessage(line("raised"), true);
+		}
 	}
 
 	@Nullable
@@ -165,11 +183,16 @@ public class MycelialSynapseBlock extends Block implements EntityBlock {
 	public static Check findFormation(ServerLevel level, ServerPlayer player, BlockPos ironPos, BlockPos crystalPos) {
 		Direction facing = Direction.fromDelta(crystalPos.getX() - ironPos.getX(),
 				crystalPos.getY() - ironPos.getY(), crystalPos.getZ() - ironPos.getZ());
-		if (facing == null || !ApotheosBodyEvents.isApotheos(player)) return Check.refused("not_apotheos");
-		if (!FungalGardensPlaces.inDimension(level)) return Check.refused("not_in_gardens");
-		String refusal = sanctumRefusal(HeartNodeSavedData.get(level), player.getUUID(), ironPos);
+		String refusal = facing == null ? "not_apotheos" : refusal(level, player, ironPos);
 		if (refusal != null) return Check.refused(refusal);
 		return new Check(new Formation(player.getUUID(), ironPos.immutable(), crystalPos.immutable(), facing), null);
+	}
+
+	@Nullable
+	private static String refusal(ServerLevel level, ServerPlayer player, BlockPos pos) {
+		if (!ApotheosBodyEvents.isApotheos(player)) return "not_apotheos";
+		if (!FungalGardensPlaces.inDimension(level)) return "not_in_gardens";
+		return sanctumRefusal(HeartNodeSavedData.get(level), player.getUUID(), pos);
 	}
 
 	/** The envelope's say, in refusal order: {@code no_heart}, {@code budget}, {@code foreign}, {@code unconnected}. */

@@ -29,6 +29,10 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 		if (!progress.activeBlood() || progress.degree() < 4) {
 			return locked(entityId);
 		}
+		return withItemHint(lesson(entityId, progress));
+	}
+
+	private static DialogueTree lesson(int entityId, AnchoriteProgressSnapshot progress) {
 		if (!progress.firstLesson()) {
 			return firstLesson(entityId);
 		}
@@ -47,6 +51,21 @@ public final class HarbingerCicatrixAnchoriteDialogueTrees {
 		if (progress.degree() >= 5 && !progress.d5Reward()) return d5(entityId, progress);
 		if (progress.degree() >= 6 && !progress.d6Reward()) return d6(entityId, progress);
 		return completed(entityId, progress);
+	}
+
+	/**
+	 * Adds the item question to a student's greeting (before Leave) and its {@code item_hint} node, the template that
+	 * {@link DialogueItemInquiryNodes} needs before the Anchorite's {@code dialogue_inquiry} answers can show.
+	 */
+	private static DialogueTree withItemHint(DialogueTree tree) {
+		DialogueNode greeting = tree.getNode("greeting");
+		List<DialogueOption> options = new java.util.ArrayList<>(greeting.options());
+		options.add(Math.max(0, options.size() - 1),
+				new DialogueOption("hemomancy.dialogue.anchorite.option.ask_about_item", "item_hint", null));
+		tree.nodes().put("greeting", new DialogueNode("greeting", greeting.lines(), options));
+		tree.nodes().put("item_hint", new DialogueNode("item_hint", List.of("hemomancy.anchorite.item_hint"),
+				List.of(new DialogueOption("hemomancy.dialogue.anchorite.option.leave", null, null))));
+		return tree;
 	}
 
 	private static DialogueTree d5(int entityId, AnchoriteProgressSnapshot p) {

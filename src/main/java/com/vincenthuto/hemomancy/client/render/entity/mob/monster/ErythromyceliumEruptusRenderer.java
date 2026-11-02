@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.ErythromyceliumEruptusModel;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.ErythromyceliumEruptusEntity;
 
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -20,41 +19,32 @@ public class ErythromyceliumEruptusRenderer
 		super(renderManagerIn,
 				new ErythromyceliumEruptusModel(renderManagerIn.bakeLayer(ErythromyceliumEruptusModel.LAYER_LOCATION)),
 				0.5F);
-		
 	}
- @Override
-public void render(ErythromyceliumEruptusEntity pEntity, float pEntityYaw, float pPartialTicks,
-		PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
 
-	 	if(pEntity.isErupted()) {
-	 		pPoseStack.translate(0, 1, 0);
-	 	}
-	 super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
-
- 
- }
+	/** Bloats as it swells, the way a creeper does; the swelling drains away as the eruption starts. */
 	@Override
-	protected void scale(ErythromyceliumEruptusEntity pLivingEntity, PoseStack pPoseStack, float pPartialTickTime) {
-		float f = pLivingEntity.getSwelling(pPartialTickTime);
-		float f1 = 1.0F + Mth.sin(f * 100.0F) * f * 0.01F;
-		f = Mth.clamp(f, 0.0F, 1.0F);
-		f *= f;
-		f *= f;
-		float f2 = (1.0F + f * 0.4F) * f1;
-		float f3 = (1.0F + f * 0.1F) / f1;
-		pPoseStack.scale(f2, f3, f2);
+	protected void scale(ErythromyceliumEruptusEntity entity, PoseStack pose, float partialTick) {
+		float swelling = entity.getSwelling(partialTick);
+		float pulse = 1.0F + Mth.sin(swelling * 100.0F) * swelling * 0.01F;
+		float bloat = swelling * swelling * swelling * swelling;
+		pose.scale((1.0F + bloat * 0.4F) * pulse, (1.0F + bloat * 0.1F) / pulse, (1.0F + bloat * 0.4F) * pulse);
 	}
 
 	@Override
-	protected float getWhiteOverlayProgress(ErythromyceliumEruptusEntity pLivingEntity, float pPartialTicks) {
-		float f = pLivingEntity.getSwelling(pPartialTicks);
-		return (int) (f * 10.0F) % 2 == 0 ? 0.0F : Mth.clamp(f, 0.5F, 1.0F);
+	protected float getWhiteOverlayProgress(ErythromyceliumEruptusEntity entity, float partialTick) {
+		if (entity.isErupted()) return 0.0F;
+		float swelling = entity.getSwelling(partialTick);
+		return (int) (swelling * 10.0F) % 2 == 0 ? 0.0F : Mth.clamp(swelling, 0.5F, 1.0F);
+	}
+
+	/** It never tips over: a corpse is already down, and the standing growth curls up in its model. */
+	@Override
+	protected float getFlipDegrees(ErythromyceliumEruptusEntity entity) {
+		return 0.0F;
 	}
 
 	@Override
 	public ResourceLocation getTextureLocation(ErythromyceliumEruptusEntity entity) {
 		return TEXTURE;
-
 	}
-
 }

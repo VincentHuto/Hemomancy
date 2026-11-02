@@ -32,17 +32,24 @@ public final class SuccessionDialogue {
     public static DialogueTree decorate(ServerPlayer player, Entity entity, DialogueTree tree) {
         if (!(entity instanceof ProfessionalHarbingerEntity npc)) return tree;
         var nodes = new LinkedHashMap<String, DialogueNode>();
+        // Nodes the successor trim leaves with nothing to choose; their hub cards go with them.
+        var emptied = new HashSet<String>();
         for (var node : tree.nodes().values()) {
             var options = new ArrayList<>(node.options());
             if (npc.isSuccessor()) options.removeIf(o -> "recruit_harbinger".equals(o.eventId())
                     || "expel_harbinger".equals(o.eventId()) || "recruit_offer".equals(o.nextNodeId())
                     || BEQUEST.equals(o.eventId()) || DONATE.equals(o.eventId()));
+            if (options.isEmpty() && !node.options().isEmpty()) emptied.add(node.id());
             var nodeLines = npc.isSuccessor() && "identity".equals(node.id())
                     ? List.of("hemomancy.succession.personal_identity") : node.lines();
             nodes.put(node.id(), new DialogueNode(node.id(), nodeLines, options));
         }
         var root = nodes.get(tree.startNodeId());
         if (root == null) return tree;
+        // The hub screen draws cards, never the root's options: cards follow the options added or trimmed here.
+        var topics = new ArrayList<DialogueTopic>();
+        for (var topic : tree.presentation().topics()) if (!emptied.contains(topic.targetNodeId())) topics.add(topic);
+        for (String id : emptied) if (id.startsWith(HUB_NODE_PREFIX)) nodes.remove(id);
         var options = new ArrayList<>(root.options());
         var lines = new ArrayList<>(root.lines());
         String speaker = tree.speakerName();
@@ -61,15 +68,33 @@ public final class SuccessionDialogue {
             var line = SuccessionResidents.line(player);
             boolean consent = SuccessionSavedData.get(player.serverLevel()).hasBequest(npc.getUUID(), line.getBloodlineUUID(), role);
             options.add(new DialogueOption("hemomancy.succession.explain", "succession_explain", null));
-            options.add(new DialogueOption(consent ? "hemomancy.succession.donate" : "hemomancy.succession.ask_bequest",
-                    consent ? null : "succession_consent", consent ? DONATE : null));
+            var bequest = new DialogueOption(consent ? "hemomancy.succession.donate" : "hemomancy.succession.ask_bequest",
+                    consent ? null : "succession_consent", consent ? DONATE : null);
+            options.add(bequest);
+            topics.add(card("succession_explain", "hemomancy.succession.explain", "succession_explain"));
+            if (consent) {
+                String target = HUB_NODE_PREFIX + "succession_donate";
+                nodes.put(target, new DialogueNode(target, List.of("hemomancy.dialogue.action.confirm"), List.of(bequest)));
+                topics.add(card("succession_donate", bequest.text(), target));
+            } else {
+                topics.add(card("succession_consent", bequest.text(), "succession_consent"));
+            }
             nodes.put("succession_consent", new DialogueNode("succession_consent", List.of("hemomancy.succession.consent"),
                     List.of(new DialogueOption("hemomancy.succession.accept_bequest", null, BEQUEST))));
             nodes.put("succession_explain", new DialogueNode("succession_explain", List.of("hemomancy.succession.teaching." + role),
                     List.of(new DialogueOption("hemomancy.succession.back", tree.startNodeId(), null))));
         }
         nodes.put(root.id(), new DialogueNode(root.id(), lines, options));
-        return new DialogueTree(speaker, tree.speakerIcon(), tree.startNodeId(), nodes, tree.entityId(), tree.theme(), tree.presentation());
+        var shown = tree.presentation();
+        var presentation = shown.mode() == DialogueScreenMode.TOPIC_HUB
+                ? new DialoguePresentation(shown.dialogueId(), shown.styleId(), shown.mode(), topics, shown.trade()) : shown;
+        return new DialogueTree(speaker, tree.speakerIcon(), tree.startNodeId(), nodes, tree.entityId(), tree.theme(), presentation);
+    }
+    /** The synthetic node prefix {@code DialogueHubFactory} gives an action card. */
+    private static final String HUB_NODE_PREFIX = "__hub_";
+    private static DialogueTopic card(String slug, String titleKey, String target) {
+        return DialogueTopic.available(DialogueTopic.conversationId(slug), DialogueCategory.CONVERSATION, titleKey,
+                "hemomancy.dialogue.category.conversation.summary", target);
     }
     public static boolean handle(ServerPlayer player, Entity entity, String event) {
         if (!event.startsWith("succession_")) return false;

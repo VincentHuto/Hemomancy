@@ -26,7 +26,8 @@ public final class ClinicalBloodDialogue {
             if (!lesson.teacher.equals(teacher)) continue;
             boolean ready = ClinicalBloodKnowledge.canLearn(player, lesson);
             if (!ready && !progress.knows(lesson)) continue;
-            String id = "clinical_lesson_" + lesson.key();
+            // A learned lesson stays readable, filed as complete work rather than an open quest.
+            String id = "clinical_lesson_" + lesson.key() + (ready ? "" : "_learned");
             options.add(0, new DialogueOption("hemomancy.clinical." + lesson.key() + ".title", id,
                     ready ? lesson.event() : null, ready ? DialogueOptionPresentation.attention(
                     DialogueAttention.NOTICE, "hemomancy.clinical." + lesson.key() + ".prompt")

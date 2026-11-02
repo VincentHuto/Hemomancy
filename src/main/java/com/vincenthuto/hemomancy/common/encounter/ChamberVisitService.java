@@ -131,7 +131,10 @@ public final class ChamberVisitService {
 			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.degree"), true);
 			return false;
 		}
-		if (!canStartVisit(player)) return false;
+		if (!canStartVisit(player)) {
+			player.displayClientMessage(Component.translatable(chairRefusal(player)), true);
+			return false;
+		}
 		bindChair(player);
 		return startVisit(player, isAttuned(player) ? ChamberVisitMode.ATTUNED : ChamberVisitMode.TIMED_CHAIR);
 	}
@@ -152,7 +155,9 @@ public final class ChamberVisitService {
 			return false;
 		}
 		attune(player);
-		return startVisit(player, ChamberVisitMode.ATTUNED);
+		if (startVisit(player, ChamberVisitMode.ATTUNED)) return true;
+		player.displayClientMessage(Component.translatable("message.hemomancy.chamber_visit.rite_unavailable"), false);
+		return false;
 	}
 
 	public static boolean beginAdminVisit(ServerPlayer player) {
@@ -196,6 +201,15 @@ public final class ChamberVisitService {
 				&& !com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.isPossessing(player)
 				&& !player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)
 				&& player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) != null;
+	}
+
+	/** Why {@link #canStartVisit} refused a chair visit, as a message key. */
+	private static String chairRefusal(ServerPlayer player) {
+		if (isActive(player)) return "message.hemomancy.warp_chair.visit_active";
+		if (FungalGardenTravelHelper.isProjectionActive(player)
+				|| com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.isPossessing(player))
+			return "message.hemomancy.warp_chair.elsewhere";
+		return "message.hemomancy.warp_chair.unavailable";
 	}
 
 	private static boolean startVisit(ServerPlayer player, ChamberVisitMode visitMode) {

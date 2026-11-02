@@ -13,6 +13,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 
+import java.util.Locale;
+
 /**
  * The Vein Mason (Cicatrix Anchorite) dialogue events: diagnosis, lessons, rewards, referral and pattern
  * replacement.
@@ -125,8 +127,10 @@ final class VeinMasonDialogueEvents {
 		var diagnosis = VascularDiagnosisRules.diagnosePlayer(player);
 		VeinMasonAssignments.onDiagnosis(player);
 		player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.anchorite_diagnosis",
-				diagnosis.worstSection().name(), diagnosis.flow().name(), Math.round(diagnosis.health()),
-				diagnosis.treatment().name()).withStyle(ChatFormatting.DARK_RED), false);
+				Component.translatable("vein_section.hemomancy." + diagnosis.worstSection().name().toLowerCase(Locale.ROOT)),
+				Component.translatable("blood_flow_state.hemomancy." + diagnosis.flow().name().toLowerCase(Locale.ROOT)),
+				Math.round(diagnosis.health()), Component.translatable(diagnosis.treatment().translationKey()))
+				.withStyle(ChatFormatting.DARK_RED), false);
 		player.openMenu(new VascularViewMenuProvider());
 	}
 
@@ -146,6 +150,13 @@ final class VeinMasonDialogueEvents {
 	}
 
 	private static void replaceAnchoritePattern(ServerPlayer player, int entityId, int tier) {
+		// A pattern is replaced only for the tier the player was actually given, as the replacement option is.
+		boolean earned = switch (tier) {
+			case 3 -> VeinMasonAssignments.has(player, VeinMasonAssignments.D6_REWARD);
+			case 2 -> VeinMasonAssignments.has(player, VeinMasonAssignments.D5_REWARD);
+			default -> HarbingerAdvancementGranter.isVeinMasonFirstLesson(player);
+		};
+		if (!earned) return;
 		VeinMasonScarLesson.Lesson lesson = tier == 1
 				? (HarbingerAdvancementGranter.isVeinMasonRewardClaimed(player)
 						? VeinMasonScarLesson.continuationForPlayer(player) : VeinMasonScarLesson.forPlayer(player))

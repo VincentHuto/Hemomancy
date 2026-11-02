@@ -90,14 +90,18 @@ public final class HarbingerVicarDialogueTrees {
 				tree.entityId(), tree.theme(), tree.presentation());
 	}
 
-	public static DialogueTree withCovenantGuidance(DialogueTree tree, int degree, boolean foundedBloodline,
+	/**
+	 * The D5 and D6 degree hint. At D5 the written covenant comes first (a leader's Fane or a member's Bloodwell
+	 * deposit), then membership of any registered line: a member is sent to the Fane, never to found a line of their own.
+	 */
+	public static DialogueTree withCovenantGuidance(DialogueTree tree, int degree, boolean inBloodline,
 			boolean faneComplete, boolean chamberReturned, boolean throneBound, boolean vigilComplete) {
 		if (degree != 5 && degree != 6) return tree;
 		List<String> lines = new ArrayList<>();
 		if (degree == 5) {
-			lines.add(!foundedBloodline ? "hemomancy.vicar.covenant.found_bloodline"
-					: !faneComplete ? "hemomancy.vicar.covenant.found_fane"
-					: "hemomancy.vicar.covenant.perform_bloodline_rite");
+			lines.add(faneComplete ? "hemomancy.vicar.covenant.perform_bloodline_rite"
+					: !inBloodline ? "hemomancy.vicar.covenant.found_bloodline"
+					: "hemomancy.vicar.covenant.found_fane");
 		} else {
 			if (!chamberReturned) lines.add("hemomancy.vicar.covenant.chamber_return");
 			if (!throneBound) lines.add("hemomancy.vicar.covenant.bind_throne");

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * docs/npc_trade/06: every rapport lore line is written, listed in the lore golden, and belongs to a speaker the
+ * docs/archive/tracks/npc_trade/06: every rapport lore line is written, listed in the lore golden, and belongs to a speaker the
  * player can actually earn rapport with (a known side and shipped want cards).
  */
 class DialogueRapportLoreTest {

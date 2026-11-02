@@ -21,14 +21,14 @@ import net.minecraft.world.item.Item;
  */
 public enum CreativeTabGroup {
 	GUIDES(List.of(
-			"liber_sanguinum", "harbinger_assignment_ledger", "book_of_observances", "scout_field_notes",
+			"liber_sanguinum", "harbinger_assignment_ledger", "scout_field_notes",
 			"mnemonic_blueprint", "mnemonic_folio", "engram_stamp", "stained_church_map", "masons_respite_map",
 			"covenant_waybill", "heart_pattern", "veins_pattern")),
 	BLOOD_TOOLS(List.of(
 			"blood_absorption", "blood_projection", "living_syringe", "bloody_vial", "cleansing_hemolymph", "vial_rack",
 			"bloody_flask", "bloody_jug", "blood_gourd_white", "blood_gourd_red", "blood_gourd_black","curved_horn",
 			"hematic_microscope", "scrying_dish", "hearty_compass", "sanguine_conduit", "charm_of_vascularium",
-			"terrestrial_speculum", "sporitic_thurible", "mind_spike", "listening_scar", "wax_cylinder",
+			"terrestrial_speculum", "sporitic_thurible", "mind_spike", "listening_scar", "ahaematic_colloid", "wax_cylinder",
 			"ambergris_cylinder")),
 	STATIONS(List.of(
 			"gourd", "vial_centrifuge", "centrifugal_governor_kit", "fractionating_rotor_kit",
@@ -122,10 +122,11 @@ public enum CreativeTabGroup {
 			"spawn_egg_leech", "spawn_egg_chitinite", "spawn_egg_fervent_chitinite", "spawn_egg_hemolymphopoda",
 			"spawn_egg_hematic_burrower", "spawn_egg_crimson_doe", "spawn_egg_venous_strider",
 			"spawn_egg_scarlet_serpent", "spawn_egg_desiccant", "spawn_egg_venom_rib_centipede",
-			"spawn_egg_luminal_cicada", "spawn_egg_vampire_bat", "spawn_egg_lantern_tick", "spawn_egg_tooth_pecks",
+			"spawn_egg_luminal_cicada", "spawn_egg_lantern_tick", "spawn_egg_tooth_pecks",
 			"spawn_egg_morphling_polyp", "spawn_egg_bog_revenant", "spawn_egg_thirster", "spawn_egg_fargone",
-			"spawn_egg_chthonian", "spawn_egg_chthonian_queen", "spawn_egg_mortarbound", "spawn_egg_naeglerophaeon",
-			"spawn_egg_will", "spawn_egg_harbinger_artificer"));
+			"spawn_egg_chthonian", "spawn_egg_chthonian_queen", "spawn_egg_mortarbound", "spawn_egg_will",
+			"spawn_egg_harbinger_artificer", "spawn_egg_harbinger_hermit", "spawn_egg_harbinger_alchemist",
+			"spawn_egg_harbinger_cicatrix_anchorite", "spawn_egg_harbinger_mnemonist", "spawn_egg_harbinger_vicar"));
 
 	private record Place(CreativeTabGroup group, int index) {
 	}

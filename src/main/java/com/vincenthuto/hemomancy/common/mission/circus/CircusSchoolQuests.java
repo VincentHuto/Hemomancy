@@ -22,7 +22,10 @@ public final class CircusSchoolQuests {
         return CircusApprenticeshipProgress.practicalComplete(player, lesson.summon()) ? "mastered" : "practical";
     }
     public static boolean inspect(ServerPlayer player) {
-        if (!ProgressionGates.hasDegree(player, 3)) return false;
+        if (!ProgressionGates.hasDegree(player, 3)) {
+            player.displayClientMessage(Component.translatable("message.hemomancy.circus.school.inspect_degree"), false);
+            return false;
+        }
         for (ItemStack stack : new ItemStack[]{player.getMainHandItem(), player.getOffhandItem()}) {
             if (stack.getItem() instanceof MarionetteCrossbarItem && MarionetteCrossbarItem.validateControl(stack, player, false)
                     && MarionetteCrossbarItem.getThread(stack) > 0) {
@@ -57,19 +60,35 @@ public final class CircusSchoolQuests {
         CircusApprenticeshipProgress.state(player).putBoolean("testimony." + role, true);
     }
     public static boolean report(ServerPlayer player) {
-        var state = CircusApprenticeshipProgress.state(player);
         boolean delivered = false;
-        if (state.getBoolean("primer.call") && state.getBoolean("primer.command") && state.getBoolean("primer.recall"))
-            delivered |= finish(player, "empty_ring", 100);
-        if (ProgressionGates.hasDegree(player, 4) && state.getBoolean("testimony.circus_stilt_walker")
-                && state.getBoolean("testimony.circus_knife_thrower")
-                && CircusApprenticeshipProgress.practicalComplete(player, "scarlet_mummer")
-                && CircusApprenticeshipProgress.practicalComplete(player, "marrow_spitter")) delivered |= finish(player, "wrong_audience", 150);
-        if (state.getBoolean("clue.stage") && state.getBoolean("clue.loft") && state.getBoolean("clue.quarters")
-                && state.getBoolean("testimony.circus_understudy") && state.getBoolean("clue.carousel"))
-            delivered |= finish(player, "missing_understudy", 150);
+        if (emptyRingDone(player)) delivered |= finish(player, "empty_ring", 100);
+        if (wrongAudienceDone(player)) delivered |= finish(player, "wrong_audience", 150);
+        if (missingUnderstudyDone(player)) delivered |= finish(player, "missing_understudy", 150);
         player.displayClientMessage(Component.translatable("hemomancy.circus.school." + (delivered ? "report_complete" : "report_incomplete")), false);
         return delivered;
+    }
+    /** Whether a report now would complete an investigation not yet reported. */
+    public static boolean reportReady(ServerPlayer player) {
+        var state = CircusApprenticeshipProgress.state(player);
+        return (emptyRingDone(player) && !state.getBoolean("quest.empty_ring"))
+                || (wrongAudienceDone(player) && !state.getBoolean("quest.wrong_audience"))
+                || (missingUnderstudyDone(player) && !state.getBoolean("quest.missing_understudy"));
+    }
+    private static boolean emptyRingDone(ServerPlayer player) {
+        var state = CircusApprenticeshipProgress.state(player);
+        return state.getBoolean("primer.call") && state.getBoolean("primer.command") && state.getBoolean("primer.recall");
+    }
+    private static boolean wrongAudienceDone(ServerPlayer player) {
+        var state = CircusApprenticeshipProgress.state(player);
+        return ProgressionGates.hasDegree(player, 4) && state.getBoolean("testimony.circus_stilt_walker")
+                && state.getBoolean("testimony.circus_knife_thrower")
+                && CircusApprenticeshipProgress.practicalComplete(player, "scarlet_mummer")
+                && CircusApprenticeshipProgress.practicalComplete(player, "marrow_spitter");
+    }
+    private static boolean missingUnderstudyDone(ServerPlayer player) {
+        var state = CircusApprenticeshipProgress.state(player);
+        return state.getBoolean("clue.stage") && state.getBoolean("clue.loft") && state.getBoolean("clue.quarters")
+                && state.getBoolean("testimony.circus_understudy") && state.getBoolean("clue.carousel");
     }
     private static boolean finish(ServerPlayer player, String quest, int points) {
         var state = CircusApprenticeshipProgress.state(player);
@@ -93,7 +112,11 @@ public final class CircusSchoolQuests {
     public static boolean claim(ServerPlayer player) {
         var state = CircusApprenticeshipProgress.state(player);
         int pending = state.getInt("guest.pending");
-        if (pending <= 0) return false;
+        int owed = pending;
+        if (pending <= 0) {
+            player.displayClientMessage(Component.translatable("message.hemomancy.circus.school.nothing_to_claim"), false);
+            return false;
+        }
         // Slot insertion preserves exact overflow even for creative players with a full inventory.
         for (int slot = 0; slot < player.getInventory().items.size() && pending > 0; slot++) {
             ItemStack held = player.getInventory().items.get(slot);
@@ -106,7 +129,9 @@ public final class CircusSchoolQuests {
         state.putInt("guest.pending", pending);
         player.getInventory().setChanged();
         player.containerMenu.broadcastChanges();
-        player.displayClientMessage(Component.translatable("hemomancy.circus.school.reward", pending), false);
+        player.displayClientMessage(pending == 0
+                ? Component.translatable("hemomancy.circus.school.reward.delivered", owed)
+                : Component.translatable("hemomancy.circus.school.reward", pending), false);
         return pending == 0;
     }
 }

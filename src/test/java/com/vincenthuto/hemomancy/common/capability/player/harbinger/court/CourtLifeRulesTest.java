@@ -142,6 +142,8 @@ class CourtLifeRulesTest {
 		assertEquals(25000L, retry);
 		assertEquals(CourtChampionRules.Gate.REFUSED_WAIT, CourtChampionRules.challenge(true, false, false, true, Standing.FRIEND, 24999L, retry));
 		assertEquals(CourtChampionRules.Gate.OPEN, CourtChampionRules.challenge(true, false, false, true, Standing.FRIEND, 25000L, retry));
+		// A loss moves the worn strain into the Jar: the refusal still names the wait, not the strain.
+		assertEquals(CourtChampionRules.Gate.REFUSED_WAIT, CourtChampionRules.challenge(true, false, false, false, Standing.FRIEND, 24999L, retry));
 	}
 
 	// --- Saved state ---------------------------------------------------------------------------------------------

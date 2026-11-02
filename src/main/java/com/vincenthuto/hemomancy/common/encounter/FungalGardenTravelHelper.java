@@ -88,7 +88,7 @@ public final class FungalGardenTravelHelper {
 
 			performReturnTravel(player);
 		} else {
-			if (player.getPersistentData().getBoolean(REVELATION_CHOICE_PENDING)) {
+			if (isRevelationChoicePending(player)) {
 				PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.coreWitnessDialogue()));
 				return InteractionResult.SUCCESS;
 			}
@@ -130,6 +130,17 @@ public final class FungalGardenTravelHelper {
 
 		player.getCooldowns().addCooldown(cooldownItem, TRAVEL_COOLDOWN);
 		return InteractionResult.SUCCESS;
+	}
+
+	/**
+	 * Whether the Archon's revelation choice waits: the root flag, or (once a death cleared the root key) a witnessed
+	 * revelation with no path chosen after Communion and nine pomes (LF-5).
+	 */
+	public static boolean isRevelationChoicePending(ServerPlayer player) {
+		if (player.getPersistentData().getBoolean(REVELATION_CHOICE_PENDING)) return true;
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		return degree.hasWitnessedFungalRevelation() && degree.getArchonPath() == EnumArchonPath.NONE
+				&& degree.isQliphothCommunionDone() && degree.getTotalPomesConsumed() >= 9;
 	}
 
 	public static boolean isProjectionActive(ServerPlayer player) {

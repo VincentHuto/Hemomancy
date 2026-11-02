@@ -97,6 +97,23 @@ On 2026-10-01, twelve Dream/guided cases reproduced pending-claim loss through a
 
 Final `runClinicalGameTestServer test --tests '*FirstDraws*' --tests '*FirstSeparation*' --tests '*ClinicalBlood*' --tests '*ChamberVisit*' --tests '*Qliphoth*' --tests '*Vesper*' --tests '*Mycophant*' verifyGameTestResourceLog --console=plain` passed 129 clinical, 248 focused JVM and 700 combined required runtime cases plus resources (`build/chamber-pending-gifts-verified-current.log`, terminal exit 0). The corrected red run had exactly twelve intended failures; the initial red run also exposed a fixture count error, corrected before production edits. Review found no actionable issues; all sessions are terminal. Tests supply interrupted visit/earned-claim state, then check untouched temporary inventory, exact entry snapshot restoration, later item/component delivery, repeat refusal and unchanged degree. Actual loaded/native entry/exit, live login ordering, client sync, cold recovery, natural progression and multiplayer remain open; see Phase 8. The full-alpha result below predates this focused correction and remains red.
 
+## Player-Centric Playthroughs
+
+`./gradlew.bat runPlaythroughGameTestServer --offline` runs `playthrough_validation` (on demand, not in `alphaCheck`):
+426 GameTests that play the Harbinger path from a fresh D0 to Degree 8 on both roads (Apotheos and Silentium), with
+the Brined Court and the Crimson Troupe, through the same entry points a client reaches (NPC right-clicks and option
+payloads, item use, placement, menu clicks, held projection and absorption, planted rites, real damage, respawn and
+relog), with edge cases (full packs, Creative, two players, wrong order, forged events, a unique NPC lost, a member
+expelled) and one-player full runs (`PlaythroughFullRunGameTests.harbingerD0ToD5`, `PlaythroughLateRunGameTests`). Its
+315 required tests must pass; of its 111 optional tests, the decision probes and `NOT RUN` probes (100 in the last run)
+fail until the user rules or a client proves them. Per-band coverage, the harness API, how to add a scenario, what the
+GameTest server cannot run (proof owed) and the open decisions (D-1 to D-90) are in
+[PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md). GameTest's summary line ("All 426 required tests passed") counts every
+test, optional ones included.
+
+2026-11-02: all 315 required passed (`build/playthrough-final-run5.log`, BUILD SUCCESSFUL);
+`verifyGameTestSuites compileGameTestJava` and the JVM suite (4,896 tests in 1,149 classes, no failures) were rerun after this round's fixes.
+
 ## Current Full Alpha
 
 After the supply-recovery fixes, `alphaCheck --console=plain` ran 2,408 JVM cases with one failure in `BloodProfileMigrationTest.shipsExactlyTheApprovedRestrictions` and stopped before runtime tasks (`build/progression-recovery-alpha-current.log`, exit 1). `alphaCheck --continue --console=plain` repeated that failure but passed all 700 required combined runtime cases and the strict resource-log verifier (`build/progression-recovery-alpha-continue-current.log`, exit 1 solely on `:test`). Both sessions are terminal. Clinical is opt-in; its 116-case evidence at that refresh was separate, not a fresh alpha pass. The subsequent observational correction above passed 129 clinical cases. The profile/fixture policy decision is pending: Armadillo, Desiccant, Mortarbound, Naeglerophaeon and Chitinite differ. No restriction or assertion was changed. Full alpha remains red; Phase 8 records exact IDs, logs and remaining recovery/native acceptance work.
@@ -381,7 +398,7 @@ Run `./gradlew.bat test --tests '*UnstainedWeapon*' --tests '*LivingWeaponPlayer
 
 Use a new run name for every fresh-world measurement. The validation server uses `build/phlegethontic-worlds/<seed>-<run>` and writes `phlegethontic-validation.json` there. It sets the actual world seed, adds a second TerraBlender Nether region and foreign-namespace Nether biome, generates 576 chunks, audits all feature writes, examines an inner 100-chunk sample, and advances 120 ticks with fluid ticking enabled. Its feature timings combine the queue, Basin materialization, and deferred vein completion per generated chunk; they exclude ore-reservation interception overhead and are not whole-generator overhead benchmarks.
 
-`tools/oneoff/compare_phlegethontic_worlds.py` compares region-file block states in two matching runs. It reports river/vein differences separately from high cavern-surface scab changed by vanilla lava and magma decoration. It requires `nbtlib`. The [validation report](phlegethontic-nether-worldgen/VALIDATION.md) records tested seeds, measured targets, and visual/multiplayer evidence.
+`tools/oneoff/compare_phlegethontic_worlds.py` compares region-file block states in two matching runs. It reports river/vein differences separately from high cavern-surface scab changed by vanilla lava and magma decoration. It requires `nbtlib`. The [validation report](archive/done/phlegethontic-nether-worldgen/VALIDATION.md) records tested seeds, measured targets, and visual/multiplayer evidence.
 
 `PhlegethonticCavernTest` checks domed overhead clearance, tapering before a protected boundary, and continuous overlapping vaults across negative chunk coordinates. For visual regression, compare fresh worlds at the same seed and camera position; loading an old save does not rebuild its roof.
 
@@ -648,7 +665,7 @@ Five added server tests cover exact three-helper gathering and distinct stations
 
 ## Antecedent Inquiry
 
-The [September 19 documentation audit](WORKTREE_REFERENCE_AUDIT_2026-09-19.md) maps the complete Git-visible dirty checkout to subsystem documentation. Documentation/link checks are separate from the dated runtime results below; no fresh full-suite pass is implied.
+The [September 19 documentation audit](archive/done/WORKTREE_REFERENCE_AUDIT_2026-09-19.md) maps the complete Git-visible dirty checkout to subsystem documentation. Documentation/link checks are separate from the dated runtime results below; no fresh full-suite pass is implied.
 
 Run `./gradlew.bat runAntecedentGameTestServer` for the isolated `antecedent_validation` namespace. It covers both specimen provenances, microscope completion and blood exclusions, unknown/legacy preservation, Vanity socket item conservation and component persistence, ancient machine save/stop behavior, a complete personal replay with an interrupted observer, fixture delay/removal, all template rotations, and twenty generated city starts covering all center variants and rotations with no neighboring-room overlap.
 

@@ -1,0 +1,11 @@
+# Implementation prompt: Stage 6 — combat event order
+
+Implement Stage 6 in the current Hemomancy checkout. Read the [Stage 6 audit](stage-6-combat-event-order.md) and trace current handlers from `AttackEntityEvent` through incoming damage, `LivingDamageEvent.Pre`/`Post`, and death. Establish the actual event priority and cancellation behavior before moving a handler.
+
+Make a narrow, reviewable consolidation of repeated combat predicates: distinguish direct primary melee, positive health damage, and positive health-plus-absorption damage. Share a predicate only where existing callers already mean the same thing, and keep the amount each power observes at its current phase. Preserve `SchoolDamage`/`SchoolHitContext` provenance, the `SchoolCombatEvents.prepare`/`commit` pair, Blood Volume and Vascular costs in Pre, Post payoffs, reaction state, and killer attribution. Do not make attack intent count as a landed hit or turn every payoff into a single generic callback.
+
+Inspect the prepared-hit lifetime for canceled incoming damage and repeated `DamageSource` use. Fix a demonstrated stale entry if the trace proves one; do not change cleanup solely because a map looks suspicious. Treat canceled player death and reward ordering as a separate decision: preserve current behavior until an observed scenario and intended outcome justify a change.
+
+Verify direct melee, projectile after weapon swap, absorption-only hit, zeroed/canceled hit, school reaction, and canceled death where the touched code applies. Use focused compile and targeted gameplay checks instead of an expansive test suite. Report which paths were actually exercised, event order observed, code changed, and risks that still need live validation. Preserve unrelated working-tree changes and do not create a worktree or pause for routine approval.
+
+Consolidation should also reduce file and code bloat where responsibilities truly overlap. Remove obsolete handlers, helpers, and duplicate branches made unnecessary by this stage; avoid creating a new wrapper file for a few lines of shared logic. In the final report, quantify files deleted, lines removed, lines added, and the net line change for gameplay code. If the stage does not reduce file count or code size, explain why the remaining structure is needed.

@@ -246,6 +246,9 @@ public final class MycophantEncounterManager {
 		HarbingerAdvancementGranter.grantIfNotDone(owner, HarbingerAdvancementGranter.ADV_HIVE_HEIR);
 		owner.displayClientMessage(Component.translatable("message.hemomancy.mycophant.victory")
 				.withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD), false);
+		if (first && !TENDRIL.owed().apply(owner).isEmpty()) {
+			owner.displayClientMessage(Component.translatable("message.hemomancy.mycophant.make_room"), false);
+		}
 	}
 
 	/**

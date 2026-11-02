@@ -16,7 +16,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** docs/npc_trade/03: the trade transaction over a fake inventory. */
+/** docs/archive/tracks/npc_trade/03: the trade transaction over a fake inventory. */
 class NpcTradeServiceTest {
 	private static final NpcTradeGive REDSTONE = new NpcTradeGive(rl("minecraft:redstone"), 4, Optional.empty());
 	private static final NpcTradeGive MORE_REDSTONE = new NpcTradeGive(rl("minecraft:redstone"), 8, Optional.empty());

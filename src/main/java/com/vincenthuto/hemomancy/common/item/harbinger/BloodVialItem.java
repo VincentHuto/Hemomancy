@@ -140,7 +140,11 @@ public class BloodVialItem extends Item {
         if (player.isSpectator() || !player.isAlive()) return InteractionResultHolder.fail(stack);
         boolean concentrated = com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(stack);
         if (concentrated && player instanceof net.minecraft.server.level.ServerPlayer server
-                && !com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.canInject(server)) return InteractionResultHolder.fail(stack);
+                && !com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.canInject(server)) {
+            server.displayClientMessage(Component.translatable(
+                    com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.refusalKey(server)), true);
+            return InteractionResultHolder.fail(stack);
+        }
         if (!concentrated && !com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.canInject(player)) {
             if (!level.isClientSide) player.displayClientMessage(Component.translatable("hemomancy.clinical.injection.locked"), true);
             return InteractionResultHolder.fail(stack);

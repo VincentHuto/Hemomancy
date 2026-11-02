@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -60,6 +61,34 @@ class CreativeTabSectionTest {
 		assertEquals(CreativeTabSection.values().length - 1,
 				ids.stream().map(CreativeTabSectionTest::sectionOf).collect(Collectors.toSet()).size(),
 				"every section has at least one entry");
+	}
+
+	@Test
+	void entriesFiledBesideAnotherStayBesideIt() throws Exception {
+		List<String> ids = mainTab();
+		assertEquals(ids.indexOf("liber_immaculatus") + 1, ids.indexOf("book_of_observances"));
+		assertEquals(ids.indexOf("listening_scar") + 1, ids.indexOf("ahaematic_colloid"));
+		assertEquals(ids.indexOf("heart_node") + 1, ids.indexOf("mycelial_synapse"));
+	}
+
+	@Test
+	void everyNpcEggIsFiledWithItsFaction() throws Exception {
+		Set<String> tab = Set.copyOf(mainTab());
+		Map<CreativeTabSection, List<String>> npcs = Map.of(
+				CreativeTabSection.HEMATIC, List.of("harbinger_artificer", "harbinger_hermit", "harbinger_alchemist",
+						"harbinger_cicatrix_anchorite", "harbinger_mnemonist", "harbinger_vicar"),
+				CreativeTabSection.UNSTAINED, List.of("unstained_acolyte", "unstained_guardian", "unstained_scout",
+						"unstained_zealot"),
+				CreativeTabSection.CIRCUS, List.of("circus_ringmaster", "circus_fire_eater", "circus_stilt_walker",
+						"circus_acrobat", "circus_knife_thrower", "circus_strongman", "circus_beast_tamer",
+						"circus_threadkeeper", "circus_understudy"),
+				CreativeTabSection.BRINED_COURT, List.of("harbinger_voyager", "harbinger_votary_wayfarer", "court_gardener",
+						"court_head_tender"));
+		npcs.forEach((section, entities) -> entities.forEach(entity -> {
+			String egg = "spawn_egg_" + entity;
+			assertTrue(tab.contains(egg), egg + " is not in the main tab");
+			assertEquals(section, sectionOf(egg), egg);
+		}));
 	}
 
 	private static CreativeTabSection sectionOf(String id) {

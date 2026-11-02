@@ -228,8 +228,8 @@ public final class HemoTestScenarioCatalog {
 
 	private static void prepareRewardClaim(ServerPlayer player) {
 		player.getPersistentData().putBoolean(CLAIM_SNAPSHOT_KEY,
-				player.getPersistentData().getBoolean(ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY));
-		player.getPersistentData().remove(ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY);
+				ArtificerAssignments.isArtificerLessonRewardClaimed(player, ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY));
+		durable(player).remove(ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY);
 	}
 
 	private static void restoreRewardClaim(ServerPlayer player) {
@@ -238,11 +238,16 @@ public final class HemoTestScenarioCatalog {
 		}
 		String claimKey = ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY;
 		if (player.getPersistentData().getBoolean(CLAIM_SNAPSHOT_KEY)) {
-			player.getPersistentData().putBoolean(claimKey, true);
+			ArtificerAssignments.markArtificerLessonRewardClaimed(player, claimKey);
 		} else {
-			player.getPersistentData().remove(claimKey);
+			durable(player).remove(claimKey);
 		}
 		player.getPersistentData().remove(CLAIM_SNAPSHOT_KEY);
+	}
+
+	/** The Artificer's claims live under PlayerPersisted. */
+	private static CompoundTag durable(ServerPlayer player) {
+		return player.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);
 	}
 
 	private static HemoTestResult verifyRewardClaim(ServerPlayer player) {

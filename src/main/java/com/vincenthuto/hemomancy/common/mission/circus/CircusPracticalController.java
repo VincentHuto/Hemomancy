@@ -36,13 +36,20 @@ public final class CircusPracticalController {
     }
     private CircusPracticalController() {}
     public static boolean begin(ServerPlayer player, CircusPerformerEntity teacher, String summon, boolean guest) {
-        if (!teacher.canTeachNow() || !player.isAlive() || player.isSpectator() || player.distanceToSqr(teacher) > 64
-                || !CircusCurriculum.forTeacher(teacher.facultyRoleId()).map(lesson -> lesson.summon().equals(summon)
-                    && com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) >= lesson.degree()).orElse(false)) return false;
+        var lesson = CircusCurriculum.forTeacher(teacher.facultyRoleId()).filter(found -> found.summon().equals(summon)).orElse(null);
+        if (!player.isAlive() || player.isSpectator() || player.distanceToSqr(teacher) > 64 || lesson == null) return false;
+        if (!teacher.canTeachNow()) { systemMessage(player, "busy"); return false; }
+        if (com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) < lesson.degree()) {
+            player.displayClientMessage(Component.translatable("message.hemomancy.circus.school.degree_required", lesson.degree()), false);
+            return false;
+        }
         if (!CircusApprenticeshipProgress.knows(player, summon) || (guest && (!CircusApprenticeshipProgress.practicalComplete(player, summon)
                 || !CircusSchoolQuests.guestEligible(player)))) { message(player, "unlock_first"); return false; }
         var stack = player.getMainHandItem().getItem() instanceof MarionetteCrossbarItem ? player.getMainHandItem() : player.getOffhandItem();
-        if (!(stack.getItem() instanceof MarionetteCrossbarItem) || !MarionetteCrossbarItem.validateControl(stack, player, false)) return false;
+        if (!(stack.getItem() instanceof MarionetteCrossbarItem) || !MarionetteCrossbarItem.validateControl(stack, player, false)) {
+            systemMessage(player, "no_crossbar");
+            return false;
+        }
         cancel(player);
         var session = new Session(player, teacher, summon, MarionetteCrossbarItem.ensureCrossbarId(stack), guest);
         List<Mob> targets = new ArrayList<>();
@@ -173,4 +180,6 @@ public final class CircusPracticalController {
             for (UUID id : session.targets) { Entity target = level.getEntity(id); if (target != null) target.discard(); }
     }
     private static void message(ServerPlayer player, String key) { player.displayClientMessage(Component.translatable("hemomancy.circus.school." + key), false); }
+    /** A school system line ({@code message.hemomancy.circus.school.<key>}). */
+    public static void systemMessage(ServerPlayer player, String key) { player.displayClientMessage(Component.translatable("message.hemomancy.circus.school." + key), false); }
 }

@@ -33,8 +33,12 @@ class PeacockSpiderAndVampireBatModelTextureTest {
 
 	@Test
 	void customCreatureTexturesExactlyCoverTheirModelUvIslands() throws Exception {
-		assertUvFit("PeacockSpiderModel.bbmodel", "peacock_spider/model_peacock_spider.png");
-		assertUvFit("VampireBatModel.bbmodel", "vampire_bat/model_vampire_bat.png");
+		assertUvFit("PeacockSpiderModel.bbmodel", "peacock_spider/model_peacock_spider.png", false);
+		// The bat's wings, ears and tail web are flat panels cut to shape, so transparency inside a UV island is the art.
+		assertUvFit("VampireBatModel.bbmodel", "vampire_bat/model_vampire_bat.png", true);
+		// So are the doe's ears and the strider's crest and primaries.
+		assertUvFit("CrimsonDoeModel.bbmodel", "crimson_doe/model_crimson_doe.png", true);
+		assertUvFit("VenousStriderModel.bbmodel", "venous_strider/model_venous_strider.png", true);
 	}
 
 	@Test
@@ -61,7 +65,7 @@ class PeacockSpiderAndVampireBatModelTextureTest {
 		assertTrue(Files.exists(JAVA.resolve("client/model/entity/mob/animal").resolve(modelName + ".java")));
 	}
 
-	private static void assertUvFit(String modelName, String textureName) throws Exception {
+	private static void assertUvFit(String modelName, String textureName, boolean cutout) throws Exception {
 		var model = JsonParser.parseString(Files.readString(MODELS.resolve(modelName))).getAsJsonObject();
 		var image = ImageIO.read(TEXTURES.resolve(textureName).toFile());
 		assertEquals(model.getAsJsonObject("resolution").get("width").getAsInt(), image.getWidth());
@@ -81,7 +85,7 @@ class PeacockSpiderAndVampireBatModelTextureTest {
 		}
 		for (int y = 0; y < image.getHeight(); y++) for (int x = 0; x < image.getWidth(); x++) {
 			int alpha = image.getRGB(x, y) >>> 24;
-			if (used[y][x]) assertTrue(alpha > 0, textureName + " leaves a UV pixel blank at " + x + "," + y);
+			if (used[y][x]) assertTrue(cutout || alpha > 0, textureName + " leaves a UV pixel blank at " + x + "," + y);
 			else assertEquals(0, alpha, textureName + " paints unused UV space at " + x + "," + y);
 		}
 	}

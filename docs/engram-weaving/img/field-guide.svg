@@ -1,0 +1,986 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="2700" viewBox="0 0 1800 2700">
+<defs>
+<filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+<filter id="softer" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
+<radialGradient id="skin"><stop offset="0" stop-color="#3a0d16"/><stop offset="0.7" stop-color="#2a0710"/><stop offset="0.92" stop-color="#3d0a12"/><stop offset="1" stop-color="#5a0a14" stop-opacity="0"/></radialGradient>
+<linearGradient id="card" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22101a"/><stop offset="1" stop-color="#170a10"/></linearGradient>
+</defs>
+<rect width="1800" height="2700" fill="#120709"/>
+<text x="60.0" y="78.0" font-family="Georgia, 'Times New Roman', serif" font-size="52" fill="#f3d6c8" text-anchor="start" font-weight="bold" >Engram Weaving</text>
+<text x="60.0" y="118.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" fill="#b9a29c" text-anchor="start" font-weight="normal" >A field guide to the Somatic Loom's engram: what lies on the ground, what floats above it, and how a weave goes.</text>
+<path d="M60,140 L1740,140" stroke="#5a1a22" stroke-width="2"/>
+<circle cx="560" cy="700" r="439.2" fill="url(#skin)"/>
+<path d="M520.8,778.3 L510.4,789.8 L495.1,804.6 L495.0,828.8 L511.7,844.1" stroke="#8a1020" stroke-width="0.9" fill="none" opacity="0.55"/>
+<path d="M712.5,797.8 L719.1,812.9 L740.1,829.1 L742.8,854.5 L752.4,886.7" stroke="#8a1020" stroke-width="0.9" fill="none" opacity="0.55"/>
+<path d="M645.1,595.1 L645.7,578.8 L636.7,549.8 L617.0,533.5 L604.4,516.1" stroke="#8a1020" stroke-width="1.6" fill="none" opacity="0.55"/>
+<path d="M612.1,721.7 L639.4,718.0 L659.0,712.6 L681.9,710.1 L708.5,696.5" stroke="#8a1020" stroke-width="1.8" fill="none" opacity="0.55"/>
+<path d="M568.6,932.3 L568.4,963.8 L560.3,981.8 L544.6,986.4 L518.1,998.6" stroke="#8a1020" stroke-width="1.0" fill="none" opacity="0.55"/>
+<path d="M510.7,703.4 L482.2,696.6 L452.8,685.4 L424.9,684.6 L399.8,679.5" stroke="#8a1020" stroke-width="1.4" fill="none" opacity="0.55"/>
+<path d="M752.3,396.8 L765.9,373.1 L758.3,346.1" stroke="#8a1020" stroke-width="2.0" fill="none" opacity="0.55"/>
+<path d="M523.8,864.0 L516.6,876.5 L509.0,892.1 L512.6,906.9 L508.5,923.0" stroke="#8a1020" stroke-width="1.1" fill="none" opacity="0.55"/>
+<path d="M301.4,911.4 L298.4,934.2 L291.5,965.1 L269.2,987.0" stroke="#8a1020" stroke-width="1.3" fill="none" opacity="0.55"/>
+<path d="M831.5,458.2 L835.2,441.1 L830.3,423.1 L822.8,398.4 L813.5,387.8" stroke="#8a1020" stroke-width="1.4" fill="none" opacity="0.55"/>
+<path d="M403.6,868.2 L375.7,868.3 L349.4,867.8 L335.2,862.7 L320.7,836.9" stroke="#8a1020" stroke-width="2.0" fill="none" opacity="0.55"/>
+<path d="M610.4,537.4 L612.3,521.5 L617.7,507.2 L610.3,490.6 L592.5,479.8" stroke="#8a1020" stroke-width="0.9" fill="none" opacity="0.55"/>
+<path d="M647.7,700.1 L663.8,686.2 L663.8,654.7 L667.3,638.1 L662.3,617.7" stroke="#8a1020" stroke-width="1.3" fill="none" opacity="0.55"/>
+<path d="M793.9,927.6 L791.8,950.8 L790.9,966.5 L803.6,983.0 L830.6,997.5" stroke="#8a1020" stroke-width="1.0" fill="none" opacity="0.55"/>
+<path d="M917.4,752.2 L934.0,755.5 L948.0,759.5" stroke="#8a1020" stroke-width="2.0" fill="none" opacity="0.55"/>
+<path d="M518.4,581.8 L509.0,567.3 L506.8,542.7 L515.1,523.9 L512.5,493.7" stroke="#8a1020" stroke-width="2.2" fill="none" opacity="0.55"/>
+<path d="M747.3,450.9 L774.4,441.0 L790.5,422.7 L797.1,409.7 L789.7,391.6" stroke="#8a1020" stroke-width="1.2" fill="none" opacity="0.55"/>
+<path d="M431.7,360.3 L417.3,330.9" stroke="#8a1020" stroke-width="1.3" fill="none" opacity="0.55"/>
+<path d="M581.0,811.6 L593.0,825.1 L608.6,853.1 L606.2,876.5 L595.0,904.4" stroke="#8a1020" stroke-width="0.9" fill="none" opacity="0.55"/>
+<path d="M375.1,406.2 L373.5,377.3 L371.9,359.8 L380.4,341.0 L408.0,322.0" stroke="#8a1020" stroke-width="1.4" fill="none" opacity="0.55"/>
+<path d="M267.1,908.9 L250.1,912.7 L239.3,925.8" stroke="#8a1020" stroke-width="1.0" fill="none" opacity="0.55"/>
+<path d="M731.7,370.8 L746.2,355.6 L758.7,344.7" stroke="#8a1020" stroke-width="1.7" fill="none" opacity="0.55"/>
+<path d="M209.6,640.9 L178.2,639.4 L163.6,628.6" stroke="#8a1020" stroke-width="1.1" fill="none" opacity="0.55"/>
+<path d="M453.2,635.6 L437.9,629.1 L429.0,610.0 L416.5,587.6 L421.3,565.7" stroke="#8a1020" stroke-width="2.1" fill="none" opacity="0.55"/>
+<path d="M342.1,697.7 L327.8,697.0 L310.1,698.0 L292.6,722.3 L291.9,745.8" stroke="#8a1020" stroke-width="1.8" fill="none" opacity="0.55"/>
+<path d="M421.7,648.8 L398.5,639.3 L388.4,626.6 L378.3,610.6 L354.1,593.8" stroke="#8a1020" stroke-width="1.5" fill="none" opacity="0.55"/>
+<path d="M286.1,588.1 L276.3,567.4 L270.6,544.0 L264.7,516.8 L257.3,493.2" stroke="#8a1020" stroke-width="1.5" fill="none" opacity="0.55"/>
+<path d="M816.8,601.1 L848.0,611.2 L873.0,608.1 L897.1,627.3 L913.5,627.7" stroke="#8a1020" stroke-width="1.4" fill="none" opacity="0.55"/>
+<path d="M666.2,752.1 L692.3,743.7 L723.6,750.0 L749.4,738.3 L766.1,736.0" stroke="#8a1020" stroke-width="2.0" fill="none" opacity="0.55"/>
+<path d="M668.8,677.5 L686.8,690.1 L714.9,708.8 L721.4,724.8 L733.2,746.0" stroke="#8a1020" stroke-width="1.3" fill="none" opacity="0.55"/>
+<path d="M608.5,836.6 L607.6,851.0 L604.1,873.5 L617.5,889.1 L628.9,910.5" stroke="#8a1020" stroke-width="0.9" fill="none" opacity="0.55"/>
+<path d="M864.3,671.4 L876.0,682.4 L890.0,687.3 L903.0,701.7 L925.1,705.4" stroke="#8a1020" stroke-width="2.1" fill="none" opacity="0.55"/>
+<path d="M612.3,587.1 L605.9,555.3 L603.9,527.4 L593.0,516.9 L582.7,496.9" stroke="#8a1020" stroke-width="0.9" fill="none" opacity="0.55"/>
+<path d="M794.2,604.4 L809.7,606.9 L820.4,617.8 L823.2,640.7 L833.2,663.7" stroke="#8a1020" stroke-width="2.1" fill="none" opacity="0.55"/>
+<path d="M551.0,779.7 L548.0,798.2 L556.9,813.0 L574.5,816.9 L594.5,814.5" stroke="#8a1020" stroke-width="1.9" fill="none" opacity="0.55"/>
+<path d="M508.6,900.5 L515.3,920.4 L533.0,927.3 L558.2,913.6 L574.5,906.6" stroke="#8a1020" stroke-width="1.5" fill="none" opacity="0.55"/>
+<path d="M626.3,671.1 L648.7,674.8 L679.0,679.5 L703.1,678.6 L735.3,688.5" stroke="#8a1020" stroke-width="1.3" fill="none" opacity="0.55"/>
+<path d="M697.3,458.6 L712.5,442.6 L719.6,429.3 L716.8,414.1 L721.7,395.6" stroke="#8a1020" stroke-width="1.0" fill="none" opacity="0.55"/>
+<path d="M839.2,863.9 L849.2,889.4 L862.2,903.0 L883.3,912.7 L905.8,908.5" stroke="#8a1020" stroke-width="1.2" fill="none" opacity="0.55"/>
+<path d="M918.1,612.3 L936.7,609.4 L952.4,622.2 L965.2,627.9" stroke="#8a1020" stroke-width="1.5" fill="none" opacity="0.55"/>
+<path d="M623.2,898.8 L641.2,905.8 L661.7,897.9 L667.1,884.5 L667.6,865.8" stroke="#8a1020" stroke-width="1.6" fill="none" opacity="0.55"/>
+<path d="M272.2,646.6 L246.9,633.9 L238.0,614.0 L215.4,589.0 L187.6,583.2" stroke="#8a1020" stroke-width="1.7" fill="none" opacity="0.55"/>
+<path d="M869.6,787.4 L884.3,809.4 L889.4,839.3 L907.3,856.0 L929.6,877.1" stroke="#8a1020" stroke-width="1.9" fill="none" opacity="0.55"/>
+<path d="M668.9,490.9 L694.5,480.6 L713.1,479.9 L723.7,467.1 L730.6,452.5" stroke="#8a1020" stroke-width="2.0" fill="none" opacity="0.55"/>
+<path d="M326.1,609.9 L303.2,594.4 L291.4,586.7 L278.6,560.8 L267.7,538.6" stroke="#8a1020" stroke-width="1.7" fill="none" opacity="0.55"/>
+<path d="M823.5,816.1 L839.0,815.6 L864.7,803.1 L880.7,779.1 L904.4,776.1" stroke="#8a1020" stroke-width="1.3" fill="none" opacity="0.55"/>
+<path d="M135.20000000000005,740 A432.0,432.0 0 0 0 470,1128.4 L440,1060.0 Q290.0,1006.0 200.0,760 Z" fill="#5d6a34" opacity="0.38" filter="url(#soft)"/>
+<circle cx="228.8" cy="898.0" r="4" fill="#cfd7a8" opacity="0.8"/>
+<circle cx="308.0" cy="1006.0" r="4" fill="#cfd7a8" opacity="0.8"/>
+<circle cx="207.2" cy="808.0" r="4" fill="#cfd7a8" opacity="0.8"/>
+<circle cx="380.0" cy="1060.0" r="4" fill="#cfd7a8" opacity="0.8"/>
+<circle cx="560" cy="700" r="360" fill="none" stroke="#5a2630" stroke-width="12" opacity="0.9"/>
+<circle cx="560" cy="700" r="360" fill="none" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M560.0,340.0 L634.6,520.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M560.0,340.0 L634.6,520.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M634.6,520.0 L665.4,594.6" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M634.6,520.0 L665.4,594.6" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M665.4,594.6 L709.1,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M665.4,594.6 L709.1,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M709.1,700.0 L740.0,774.6" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M709.1,700.0 L740.0,774.6" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M740.0,774.6 L814.6,954.6" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M740.0,774.6 L814.6,954.6" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M814.6,445.4 L740.0,625.4" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M814.6,445.4 L740.0,625.4" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M740.0,625.4 L709.1,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M740.0,625.4 L709.1,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M709.1,700.0 L665.4,805.4" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M709.1,700.0 L665.4,805.4" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M665.4,805.4 L634.6,880.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M665.4,805.4 L634.6,880.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M634.6,880.0 L560.0,1060.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M634.6,880.0 L560.0,1060.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M920.0,700.0 L740.0,774.6" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M920.0,700.0 L740.0,774.6" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M740.0,774.6 L665.4,805.4" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M740.0,774.6 L665.4,805.4" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M665.4,805.4 L560.0,849.1" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M665.4,805.4 L560.0,849.1" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M560.0,849.1 L485.4,880.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M560.0,849.1 L485.4,880.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M485.4,880.0 L305.4,954.6" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M485.4,880.0 L305.4,954.6" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M814.6,954.6 L634.6,880.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M814.6,954.6 L634.6,880.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M634.6,880.0 L560.0,849.1" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M634.6,880.0 L560.0,849.1" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M560.0,849.1 L454.6,805.4" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M560.0,849.1 L454.6,805.4" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M454.6,805.4 L380.0,774.6" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M454.6,805.4 L380.0,774.6" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M380.0,774.6 L200.0,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M380.0,774.6 L200.0,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M560.0,1060.0 L485.4,880.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M560.0,1060.0 L485.4,880.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M485.4,880.0 L454.6,805.4" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M485.4,880.0 L454.6,805.4" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M454.6,805.4 L410.9,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M454.6,805.4 L410.9,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M410.9,700.0 L380.0,625.4" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M410.9,700.0 L380.0,625.4" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M380.0,625.4 L305.4,445.4" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M380.0,625.4 L305.4,445.4" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M305.4,954.6 L380.0,774.6" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M305.4,954.6 L380.0,774.6" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M380.0,774.6 L410.9,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M380.0,774.6 L410.9,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M410.9,700.0 L454.6,594.6" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M410.9,700.0 L454.6,594.6" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M454.6,594.6 L485.4,520.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M454.6,594.6 L485.4,520.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M485.4,520.0 L560.0,340.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M485.4,520.0 L560.0,340.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M200.0,700.0 L380.0,625.4" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M200.0,700.0 L380.0,625.4" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M380.0,625.4 L454.6,594.6" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M380.0,625.4 L454.6,594.6" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M454.6,594.6 L560.0,550.9" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M454.6,594.6 L560.0,550.9" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M560.0,550.9 L634.6,520.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M560.0,550.9 L634.6,520.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M634.6,520.0 L814.6,445.4" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M634.6,520.0 L814.6,445.4" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M305.4,445.4 L485.4,520.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M305.4,445.4 L485.4,520.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M485.4,520.0 L560.0,550.9" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M485.4,520.0 L560.0,550.9" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M560.0,550.9 L665.4,594.6" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M560.0,550.9 L665.4,594.6" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M665.4,594.6 L740.0,625.4" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M665.4,594.6 L740.0,625.4" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M740.0,625.4 L920.0,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M740.0,625.4 L920.0,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M560.0,550.9 L560.0,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M560.0,550.9 L560.0,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M665.4,594.6 L560.0,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M665.4,594.6 L560.0,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M709.1,700.0 L560.0,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M709.1,700.0 L560.0,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M665.4,805.4 L560.0,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M665.4,805.4 L560.0,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M560.0,849.1 L560.0,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M560.0,849.1 L560.0,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M454.6,805.4 L560.0,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M454.6,805.4 L560.0,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M410.9,700.0 L560.0,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M410.9,700.0 L560.0,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<path d="M454.6,594.6 L560.0,700.0" stroke="#5a2630" stroke-width="12" stroke-linecap="round"/>
+<path d="M454.6,594.6 L560.0,700.0" stroke="#c8a0a8" stroke-width="1.3" opacity="0.45"/>
+<radialGradient id="sk1"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="560.0" cy="340.0" r="13.0" fill="url(#sk1)"/>
+<circle cx="560.0" cy="340.0" r="13.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk2"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="814.6" cy="445.4" r="13.0" fill="url(#sk2)"/>
+<circle cx="814.6" cy="445.4" r="13.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk3"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="920.0" cy="700.0" r="13.0" fill="url(#sk3)"/>
+<circle cx="920.0" cy="700.0" r="13.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk4"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="814.6" cy="954.6" r="13.0" fill="url(#sk4)"/>
+<circle cx="814.6" cy="954.6" r="13.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk5"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="560.0" cy="1060.0" r="13.0" fill="url(#sk5)"/>
+<circle cx="560.0" cy="1060.0" r="13.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk6"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="305.4" cy="954.6" r="13.0" fill="url(#sk6)"/>
+<circle cx="305.4" cy="954.6" r="13.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk7"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="200.0" cy="700.0" r="13.0" fill="url(#sk7)"/>
+<circle cx="200.0" cy="700.0" r="13.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk8"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="305.4" cy="445.4" r="13.0" fill="url(#sk8)"/>
+<circle cx="305.4" cy="445.4" r="13.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk9"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="634.6" cy="520.0" r="10.0" fill="url(#sk9)"/>
+<circle cx="634.6" cy="520.0" r="10.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk10"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="740.0" cy="625.4" r="10.0" fill="url(#sk10)"/>
+<circle cx="740.0" cy="625.4" r="10.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk11"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="740.0" cy="774.6" r="10.0" fill="url(#sk11)"/>
+<circle cx="740.0" cy="774.6" r="10.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk12"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="634.6" cy="880.0" r="10.0" fill="url(#sk12)"/>
+<circle cx="634.6" cy="880.0" r="10.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk13"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="485.4" cy="880.0" r="10.0" fill="url(#sk13)"/>
+<circle cx="485.4" cy="880.0" r="10.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk14"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="380.0" cy="774.6" r="10.0" fill="url(#sk14)"/>
+<circle cx="380.0" cy="774.6" r="10.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk15"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="380.0" cy="625.4" r="10.0" fill="url(#sk15)"/>
+<circle cx="380.0" cy="625.4" r="10.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk16"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="485.4" cy="520.0" r="10.0" fill="url(#sk16)"/>
+<circle cx="485.4" cy="520.0" r="10.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<radialGradient id="sk17"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="560.0" cy="550.9" r="10.0" fill="url(#sk17)"/>
+<circle cx="560.0" cy="550.9" r="10.0" fill="none" stroke="#db0f14" stroke-width="2.6" opacity="0.95"/>
+<circle cx="560.0" cy="550.9" r="14.5" fill="none" stroke="#fff1e6" stroke-width="1.8" opacity="0.9"/>
+<radialGradient id="sk18"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="665.4" cy="594.6" r="10.0" fill="url(#sk18)"/>
+<circle cx="665.4" cy="594.6" r="10.0" fill="none" stroke="#ff660f" stroke-width="2.6" opacity="0.95"/>
+<radialGradient id="sk19"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="709.1" cy="700.0" r="10.0" fill="url(#sk19)"/>
+<circle cx="709.1" cy="700.0" r="10.0" fill="none" stroke="#ffdb29" stroke-width="2.6" opacity="0.95"/>
+<radialGradient id="sk20"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="665.4" cy="805.4" r="10.0" fill="url(#sk20)"/>
+<circle cx="665.4" cy="805.4" r="10.0" fill="none" stroke="#fff7db" stroke-width="2.6" opacity="0.95"/>
+<radialGradient id="sk21"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="560.0" cy="849.1" r="10.0" fill="url(#sk21)"/>
+<circle cx="560.0" cy="849.1" r="10.0" fill="none" stroke="#389e29" stroke-width="2.6" opacity="0.95"/>
+<radialGradient id="sk22"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="454.6" cy="805.4" r="10.0" fill="url(#sk22)"/>
+<circle cx="454.6" cy="805.4" r="10.0" fill="none" stroke="#2e85ff" stroke-width="2.6" opacity="0.95"/>
+<radialGradient id="sk23"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="410.9" cy="700.0" r="10.0" fill="url(#sk23)"/>
+<circle cx="410.9" cy="700.0" r="10.0" fill="none" stroke="#9499a3" stroke-width="2.6" opacity="0.95"/>
+<radialGradient id="sk24"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="454.6" cy="594.6" r="10.0" fill="url(#sk24)"/>
+<circle cx="454.6" cy="594.6" r="10.0" fill="none" stroke="#851fdb" stroke-width="2.6" opacity="0.95"/>
+<path d="M539.3,650.1 L580.7,650.1" stroke="#db0f14" stroke-width="7" stroke-linecap="round"/>
+<path d="M580.7,650.1 L609.9,679.3" stroke="#ff660f" stroke-width="7" stroke-linecap="round"/>
+<path d="M609.9,679.3 L609.9,720.7" stroke="#ffdb29" stroke-width="7" stroke-linecap="round"/>
+<path d="M609.9,720.7 L580.7,749.9" stroke="#fff7db" stroke-width="7" stroke-linecap="round"/>
+<path d="M580.7,749.9 L539.3,749.9" stroke="#389e29" stroke-width="7" stroke-linecap="round"/>
+<path d="M539.3,749.9 L510.1,720.7" stroke="#2e85ff" stroke-width="7" stroke-linecap="round"/>
+<path d="M510.1,720.7 L510.1,679.3" stroke="#9499a3" stroke-width="7" stroke-linecap="round"/>
+<path d="M510.1,679.3 L539.3,650.1" stroke="#851fdb" stroke-width="7" stroke-linecap="round"/>
+<rect x="530" y="670" width="60" height="60" rx="6" fill="#2b1418" stroke="#6b5050" stroke-width="2"/>
+<rect x="538" y="678" width="44" height="44" rx="4" fill="#4a1a24"/>
+<text x="560.0" y="706.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#e8c9c0" text-anchor="middle" font-weight="bold" >LOOM</text>
+<path d="M526,630 L594,630" stroke="#fff1e6" stroke-width="0" />
+<path d="M560.0,340.0 L634.6,520.0 L560.0,550.9 L560.0,700.0" stroke="#db0f14" stroke-width="19" fill="none" opacity="0.22" stroke-linecap="round" stroke-linejoin="round" filter="url(#soft)"/>
+<path d="M560.0,340.0 L634.6,520.0 L560.0,550.9 L560.0,700.0" stroke="#db0f14" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M560.0,340.0 L634.6,520.0 L560.0,550.9 L560.0,700.0" stroke="#ffffff" stroke-width="2.0" fill="none" opacity="0.45" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M920.0,700.0 L740.0,625.4" stroke="#ff660f" stroke-width="19" fill="none" opacity="0.22" stroke-linecap="round" stroke-linejoin="round" filter="url(#soft)"/>
+<path d="M920.0,700.0 L740.0,625.4" stroke="#ff660f" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M920.0,700.0 L740.0,625.4" stroke="#ffffff" stroke-width="2.0" fill="none" opacity="0.45" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="740.0" cy="774.6" r="20.8" fill="#4a1238" opacity="0.45" filter="url(#soft)"/>
+<circle cx="740.0" cy="774.6" r="16.0" fill="#120306"/>
+<path d="M742.4,774.6 L749.4,776.5 L755.5,773.8" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M741.5,776.4 L744.4,783.1 L750.3,786.2" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M739.5,776.9 L736.0,783.3 L737.3,789.8" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M737.8,775.6 L730.7,776.9 L726.4,782.0" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M737.8,773.5 L732.4,768.8 L725.7,768.5" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M739.5,772.2 L739.8,765.0 L735.8,759.6" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M741.5,772.7 L747.4,768.4 L749.1,762.0" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<circle cx="454.6" cy="805.4" r="14.0" fill="#2e85ff" opacity="0.85"/>
+<path d="M458.1,805.4 Q461.9,809.5 467.3,809.4" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M457.2,807.7 Q457.6,813.3 461.8,816.6" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M455.2,808.9 Q451.9,813.4 452.9,818.6" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M452.8,808.5 Q447.4,809.8 444.8,814.5" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M451.3,806.6 Q446.3,804.2 441.3,806.1" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M451.3,804.2 Q449.0,799.1 444.0,797.4" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M452.8,802.4 Q454.4,797.0 451.6,792.5" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M455.2,802.0 Q459.8,798.9 460.6,793.6" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M457.2,803.2 Q462.8,803.8 466.8,800.3" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<circle cx="454.6" cy="805.4" r="3.1" fill="#060102"/>
+<circle cx="454.6" cy="805.4" r="14.7" fill="none" stroke="#2e85ff" stroke-width="2.5"/>
+<circle cx="380.0" cy="774.6" r="18.9" fill="#2e85ff" opacity="0.2" filter="url(#soft)"/>
+<path d="M380.0,774.6 L394.0,774.6 L387.0,786.7 Z" fill="#2e85ff" opacity="0.95" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M380.0,774.6 L387.0,786.7 L373.0,786.7 Z" fill="#2e85ff" opacity="0.70" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M380.0,774.6 L373.0,786.7 L366.0,774.6 Z" fill="#2e85ff" opacity="0.55" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M380.0,774.6 L366.0,774.6 L373.0,762.4 Z" fill="#2e85ff" opacity="0.80" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M380.0,774.6 L373.0,762.4 L387.0,762.4 Z" fill="#2e85ff" opacity="0.60" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M380.0,774.6 L387.0,762.4 L394.0,774.6 Z" fill="#2e85ff" opacity="1.00" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<radialGradient id="pl25"><stop offset="0" stop-color="#ffffff" stop-opacity="0.425"/><stop offset="0.3" stop-color="#db0f14" stop-opacity="0.5"/><stop offset="0.85" stop-color="#db0f14" stop-opacity="0.375"/><stop offset="1" stop-color="#db0f14" stop-opacity="0"/></radialGradient>
+<circle cx="560.0" cy="340.0" r="22.5" fill="#db0f14" opacity="0.09" filter="url(#soft)"/>
+<circle cx="560.0" cy="340.0" r="15.0" fill="url(#pl25)"/>
+<circle cx="560.0" cy="340.0" r="16.8" fill="none" stroke="#9e4d52" stroke-width="2" opacity="0.4"/>
+<radialGradient id="pl26"><stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.3" stop-color="#ff660f" stop-opacity="1.0"/><stop offset="0.85" stop-color="#ff660f" stop-opacity="0.75"/><stop offset="1" stop-color="#ff660f" stop-opacity="0"/></radialGradient>
+<circle cx="920.0" cy="700.0" r="24.0" fill="#ff660f" opacity="0.18" filter="url(#soft)"/>
+<circle cx="920.0" cy="700.0" r="16.0" fill="url(#pl26)"/>
+<circle cx="920.0" cy="700.0" r="17.9" fill="none" stroke="#9e4d52" stroke-width="2" opacity="0.8"/>
+<circle cx="943.7" cy="707.3" r="2.7" fill="#fff4e8" opacity="0.95"/>
+<circle cx="943.7" cy="707.3" r="4.8" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="925.5" cy="724.2" r="2.7" fill="#fff4e8" opacity="0.95"/>
+<circle cx="925.5" cy="724.2" r="4.8" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="901.8" cy="716.9" r="2.7" fill="#fff4e8" opacity="0.95"/>
+<circle cx="901.8" cy="716.9" r="4.8" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="896.3" cy="692.7" r="2.7" fill="#fff4e8" opacity="0.95"/>
+<circle cx="896.3" cy="692.7" r="4.8" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="914.5" cy="675.8" r="2.7" fill="#fff4e8" opacity="0.95"/>
+<circle cx="914.5" cy="675.8" r="4.8" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="938.2" cy="683.1" r="2.7" fill="#fff4e8" opacity="0.95"/>
+<circle cx="938.2" cy="683.1" r="4.8" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="740.0" cy="625.4" r="12.6" fill="#ff660f" opacity="0.35" filter="url(#soft)"/>
+<circle cx="740.0" cy="625.4" r="7.0" fill="#fff0dc"/>
+<circle cx="740.0" cy="625.4" r="4.9" fill="#ff660f" opacity="0.6"/>
+<path d="M685.4,594.6 A20.0,20.0 0 0 1 684.8,599.7" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M682.8,604.6 A20.0,20.0 0 0 1 679.6,608.7" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M675.4,611.9 A20.0,20.0 0 0 1 670.6,613.9" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M665.4,614.6 A20.0,20.0 0 0 1 660.3,613.9" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M655.4,611.9 A20.0,20.0 0 0 1 651.3,608.7" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M648.1,604.6 A20.0,20.0 0 0 1 646.1,599.7" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M645.4,594.6 A20.0,20.0 0 0 1 646.1,589.4" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M648.1,584.6 A20.0,20.0 0 0 1 651.3,580.4" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M655.4,577.2 A20.0,20.0 0 0 1 660.3,575.2" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M665.4,574.6 A20.0,20.0 0 0 1 670.6,575.2" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M675.4,577.2 A20.0,20.0 0 0 1 679.6,580.4" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M682.8,584.6 A20.0,20.0 0 0 1 684.8,589.4" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<circle cx="665.4" cy="594.6" r="20.0" fill="none" stroke="#ffdcb4" stroke-width="1" opacity="0.4"/>
+<circle cx="672.7" cy="589.2" r="2.0" fill="#ff660f" opacity="0.96"/>
+<circle cx="672.6" cy="589.3" r="1.8" fill="#ff660f" opacity="0.84"/>
+<circle cx="666.7" cy="594.6" r="1.4" fill="#ff660f" opacity="0.83"/>
+<circle cx="666.2" cy="598.9" r="1.3" fill="#ff660f" opacity="0.98"/>
+<circle cx="660.3" cy="594.5" r="1.9" fill="#ff660f" opacity="0.94"/>
+<circle cx="672.6" cy="592.4" r="1.7" fill="#ff660f" opacity="0.66"/>
+<circle cx="668.4" cy="593.5" r="2.0" fill="#ff660f" opacity="0.87"/>
+<circle cx="662.7" cy="600.8" r="1.6" fill="#ff660f" opacity="0.89"/>
+<circle cx="669.2" cy="595.7" r="1.7" fill="#ff660f" opacity="0.89"/>
+<circle cx="665.9" cy="596.4" r="1.1" fill="#ff660f" opacity="0.85"/>
+<circle cx="663.0" cy="586.4" r="1.5" fill="#ff660f" opacity="0.93"/>
+<circle cx="666.6" cy="594.6" r="2.2" fill="#ff660f" opacity="0.70"/>
+<circle cx="664.2" cy="601.9" r="1.2" fill="#ff660f" opacity="0.91"/>
+<circle cx="665.0" cy="594.6" r="2.0" fill="#ff660f" opacity="0.74"/>
+<rect x="663.9" y="593.1" width="3" height="3" fill="#ffffff"/>
+<radialGradient id="pl27"><stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.3" stop-color="#2e85ff" stop-opacity="1.0"/><stop offset="0.85" stop-color="#2e85ff" stop-opacity="0.75"/><stop offset="1" stop-color="#2e85ff" stop-opacity="0"/></radialGradient>
+<circle cx="305.4" cy="954.6" r="24.0" fill="#2e85ff" opacity="0.18" filter="url(#soft)"/>
+<circle cx="305.4" cy="954.6" r="16.0" fill="url(#pl27)"/>
+<circle cx="305.4" cy="954.6" r="17.9" fill="none" stroke="#9e4d52" stroke-width="2" opacity="0.8"/>
+<radialGradient id="pl28"><stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.3" stop-color="#389e29" stop-opacity="1.0"/><stop offset="0.85" stop-color="#389e29" stop-opacity="0.75"/><stop offset="1" stop-color="#389e29" stop-opacity="0"/></radialGradient>
+<circle cx="200.0" cy="700.0" r="24.0" fill="#389e29" opacity="0.18" filter="url(#soft)"/>
+<circle cx="200.0" cy="700.0" r="16.0" fill="url(#pl28)"/>
+<circle cx="200.0" cy="700.0" r="17.9" fill="none" stroke="#9e4d52" stroke-width="2" opacity="0.8"/>
+<circle cx="305.4" cy="445.4" r="15.0" fill="#4f4a4a"/>
+<path d="M305.4,445.4 L313.0,448.7 L316.8,454.1" stroke="#0e0b0b" stroke-width="2.2" fill="none"/>
+<path d="M305.4,445.4 L304.7,453.7 L300.7,458.9" stroke="#0e0b0b" stroke-width="2.2" fill="none"/>
+<path d="M305.4,445.4 L297.4,447.3 L291.2,445.1" stroke="#0e0b0b" stroke-width="2.2" fill="none"/>
+<path d="M305.4,445.4 L301.2,438.4 L301.3,431.8" stroke="#0e0b0b" stroke-width="2.2" fill="none"/>
+<path d="M305.4,445.4 L310.8,439.2 L317.1,437.3" stroke="#0e0b0b" stroke-width="2.2" fill="none"/>
+<radialGradient id="pr29"><stop offset="0" stop-color="#ffffff"/><stop offset="0.4" stop-color="#d8cfe0"/><stop offset="0.75" stop-color="#bcd0cc"/><stop offset="1" stop-color="#c6b8d4" stop-opacity="0.6"/></radialGradient>
+<circle cx="560.0" cy="1060.0" r="22.4" fill="#d0c8de" opacity="0.18" filter="url(#soft)"/>
+<circle cx="560.0" cy="1060.0" r="16.0" fill="url(#pr29)"/>
+<circle cx="560.0" cy="1060.0" r="17.9" fill="none" stroke="#9e8a9a" stroke-width="2"/>
+<radialGradient id="pl30"><stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.3" stop-color="#db0f14" stop-opacity="1.0"/><stop offset="0.85" stop-color="#db0f14" stop-opacity="0.75"/><stop offset="1" stop-color="#db0f14" stop-opacity="0"/></radialGradient>
+<circle cx="814.6" cy="954.6" r="24.0" fill="#db0f14" opacity="0.18" filter="url(#soft)"/>
+<circle cx="814.6" cy="954.6" r="16.0" fill="url(#pl30)"/>
+<circle cx="814.6" cy="954.6" r="17.9" fill="none" stroke="#9e4d52" stroke-width="2" opacity="0.8"/>
+<rect x="543.1" y="283.1" width="33.8" height="33.8" rx="16.9" fill="#db0f14" opacity="0.08" filter="url(#soft)"/>
+<rect x="548.8" y="288.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="553.2" y="288.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="557.8" y="288.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="562.2" y="288.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="548.8" y="293.2" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="562.2" y="293.2" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="548.8" y="297.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="557.8" y="297.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="562.2" y="297.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="566.8" y="297.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="548.8" y="302.2" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="566.8" y="302.2" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="548.8" y="306.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="553.2" y="306.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="557.8" y="306.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="562.2" y="306.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="566.8" y="306.8" width="4.5" height="4.5" fill="#db0f14" opacity="0.35"/>
+<rect x="897.5" y="619.5" width="45.0" height="45.0" rx="22.5" fill="#ff660f" opacity="0.22" filter="url(#soft)"/>
+<rect x="911.0" y="627.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="917.0" y="627.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="923.0" y="627.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="905.0" y="633.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="917.0" y="633.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="929.0" y="633.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="905.0" y="639.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="911.0" y="639.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="917.0" y="639.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="923.0" y="639.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="929.0" y="639.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="917.0" y="645.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="911.0" y="651.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="923.0" y="651.0" width="6.0" height="6.0" fill="#ff660f" opacity="1.00"/>
+<rect x="282.9" y="874.1" width="45.0" height="45.0" rx="22.5" fill="#2e85ff" opacity="0.22" filter="url(#soft)"/>
+<rect x="290.4" y="881.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="314.4" y="881.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="290.4" y="887.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="296.4" y="887.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="308.4" y="887.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="314.4" y="887.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="302.4" y="893.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="296.4" y="899.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="302.4" y="899.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="308.4" y="899.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="290.4" y="905.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="314.4" y="905.6" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="177.5" y="619.5" width="45.0" height="45.0" rx="22.5" fill="#389e29" opacity="0.14" filter="url(#soft)"/>
+<rect x="185.0" y="627.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="191.0" y="627.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="197.0" y="627.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="203.0" y="627.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="209.0" y="627.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="197.0" y="633.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="209.0" y="633.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="191.0" y="639.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="197.0" y="639.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="203.0" y="639.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="209.0" y="639.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="185.0" y="645.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="197.0" y="645.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="185.0" y="651.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="191.0" y="651.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="197.0" y="651.0" width="6.0" height="6.0" fill="#389e29" opacity="0.65"/>
+<rect x="282.9" y="364.9" width="45.0" height="45.0" rx="22.5" fill="#8f8a90" opacity="0.11" filter="url(#soft)"/>
+<rect x="290.4" y="372.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="302.4" y="372.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="296.4" y="378.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="302.4" y="378.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="308.4" y="378.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="302.4" y="384.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="314.4" y="384.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="290.4" y="390.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="296.4" y="390.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="308.4" y="390.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="314.4" y="390.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="314.4" y="396.4" width="6.0" height="6.0" fill="#8f8a90" opacity="0.50"/>
+<rect x="537.5" y="979.5" width="45.0" height="45.0" rx="22.5" fill="#e6def0" opacity="0.22" filter="url(#soft)"/>
+<rect x="551.0" y="987.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="563.0" y="987.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="545.0" y="993.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="551.0" y="993.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="557.0" y="993.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="563.0" y="993.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="569.0" y="993.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="545.0" y="999.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="569.0" y="999.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="545.0" y="1005.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="557.0" y="1005.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="569.0" y="1005.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="545.0" y="1011.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="551.0" y="1011.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="563.0" y="1011.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="569.0" y="1011.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="776.6" y="858.6" width="75.9" height="75.9" rx="38.0" fill="#db0f14" opacity="0.22" filter="url(#soft)"/>
+<rect x="799.4" y="871.2" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="809.5" y="871.2" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="819.6" y="871.2" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="789.2" y="881.4" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="809.5" y="881.4" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="829.7" y="881.4" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="789.2" y="891.5" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="799.4" y="891.5" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="809.5" y="891.5" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="819.6" y="891.5" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="829.7" y="891.5" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="809.5" y="901.6" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="799.4" y="911.7" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<rect x="819.6" y="911.7" width="10.1" height="10.1" fill="#db0f14" opacity="1.00"/>
+<ellipse cx="560" cy="550" rx="34" ry="20" fill="#f0e6e0" opacity="0.15" filter="url(#soft)"/>
+<path d="M546,562 q-6,-26 14,-30 q22,4 14,30" fill="none" stroke="#f3dcd2" stroke-width="2" opacity="0.8"/>
+<path d="M814.6,896.6 Q727.3,643.3 570,550" stroke="#ffb0a8" stroke-width="1.6" fill="none" opacity="0.85" stroke-dasharray="6,4"/>
+<path d="M546,242.8 L574,242.8 L560,221.2 Z" fill="#d9b7aa"/>
+<text x="560.0" y="210.4" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="middle" font-weight="normal" font-style="italic" >loom's front</text>
+<path d="M814.6,954.6 L985.0,300.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="814.6" cy="954.6" r="3" fill="#d9b7aa"/>
+<text x="991.0" y="296.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >Fragment being heard</text>
+<text x="991.0" y="316.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Gaze at it with the staff</text>
+<text x="991.0" y="335.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >in hand: its glyph swells</text>
+<text x="991.0" y="355.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >and a nerve thread runs</text>
+<text x="991.0" y="374.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >to the echo, which</text>
+<text x="991.0" y="394.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >replays the memory.</text>
+<path d="M920.0,700.0 L985.0,450.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="920.0" cy="700.0" r="3" fill="#d9b7aa"/>
+<text x="991.0" y="446.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >The lane you are holding</text>
+<text x="991.0" y="466.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Beads circle its pool.</text>
+<text x="991.0" y="485.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >The hot bead is the</text>
+<text x="991.0" y="505.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >lane's head; the ring of</text>
+<text x="991.0" y="524.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >ticks is where your staff</text>
+<text x="991.0" y="544.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >points (pale: allowed).</text>
+<text x="991.0" y="563.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >The tiny dots are your</text>
+<text x="991.0" y="583.5" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >staff's exact point.</text>
+<path d="M560.0,340.0 L985.0,630.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="560.0" cy="340.0" r="3" fill="#d9b7aa"/>
+<text x="991.0" y="626.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >Threaded home</text>
+<text x="991.0" y="646.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >The red lane reaches the</text>
+<text x="991.0" y="665.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >loom through the Animus</text>
+<text x="991.0" y="685.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >face. The pool and glyph</text>
+<text x="991.0" y="704.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >sink and dim.</text>
+<path d="M560.0,1060.0 L985.0,850.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="560.0" cy="1060.0" r="3" fill="#d9b7aa"/>
+<text x="991.0" y="846.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >Grey fragment</text>
+<text x="991.0" y="866.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Magister+. Its colour is</text>
+<text x="991.0" y="885.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >hidden. Its lane must</text>
+<text x="991.0" y="905.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >pass the prism of its</text>
+<text x="991.0" y="924.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >true colour (here the</text>
+<text x="991.0" y="944.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >blue prism) to be dyed.</text>
+<path d="M305.4,954.6 L985.0,760.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="305.4" cy="954.6" r="3" fill="#d9b7aa"/>
+<text x="991.0" y="756.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >A real fragment, waiting</text>
+<text x="991.0" y="776.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Steady glyph in its</text>
+<text x="991.0" y="795.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >tendency's colour.</text>
+<path d="M200.0,700.0 L40.0,1030.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="200.0" cy="700.0" r="3" fill="#d9b7aa"/>
+<text x="46.0" y="1026.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >False fragment (an intrusion)</text>
+<text x="46.0" y="1046.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Looks like a real one, but its</text>
+<text x="46.0" y="1065.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >glyph and pool pulse BETWEEN the</text>
+<text x="46.0" y="1085.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >loom's heartbeats, and listening</text>
+<text x="46.0" y="1104.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >to it replays the wrong memory.</text>
+<text x="46.0" y="1124.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Leave it.</text>
+<path d="M305.4,445.4 L40.0,850.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="305.4" cy="445.4" r="3" fill="#d9b7aa"/>
+<text x="46.0" y="846.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >Husk</text>
+<text x="46.0" y="866.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >A false fragment your bloodline</text>
+<text x="46.0" y="885.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >already knows: dry, grey, cracked.</text>
+<text x="46.0" y="905.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Ignore it.</text>
+<path d="M740.0,774.6 L40.0,410.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="740.0" cy="774.6" r="3" fill="#d9b7aa"/>
+<text x="46.0" y="406.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >Scar</text>
+<text x="46.0" y="426.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Dead clot. No lane can pass</text>
+<text x="46.0" y="445.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >through it.</text>
+<path d="M454.6,805.4 L40.0,550.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="454.6" cy="805.4" r="3" fill="#d9b7aa"/>
+<text x="46.0" y="546.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >Valve</text>
+<text x="46.0" y="566.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >A sphincter of one colour.</text>
+<text x="46.0" y="585.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Only that colour's lane</text>
+<text x="46.0" y="605.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >passes.</text>
+<path d="M380.0,774.6 L985.0,1020.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="380.0" cy="774.6" r="3" fill="#d9b7aa"/>
+<text x="991.0" y="1016.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >Prism</text>
+<text x="991.0" y="1036.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Faceted iris. Dyes a grey</text>
+<text x="991.0" y="1055.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >lane that passes through</text>
+<text x="991.0" y="1075.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >it.</text>
+<path d="M207.2,923.2 L40.0,730.0" stroke="#d9b7aa" stroke-width="1.2" opacity="0.7" stroke-dasharray="3,3"/>
+<circle cx="207.2" cy="923.2" r="3" fill="#d9b7aa"/>
+<text x="46.0" y="726.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#efe2dc" text-anchor="start" font-weight="bold" >Rot (fungal pressure)</text>
+<text x="46.0" y="746.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Grey-green flesh creeping in</text>
+<text x="46.0" y="765.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >from the rim with pale spore</text>
+<text x="46.0" y="785.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >blooms: mistakes on a</text>
+<text x="46.0" y="804.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Summa/Magister engram.</text>
+<rect x="1190" y="170" width="550" height="1060" rx="14" fill="url(#card)" stroke="#4a1a24"/>
+<text x="1220.0" y="215.0" font-family="Georgia, serif" font-size="30" fill="#f3d6c8" text-anchor="start" font-weight="bold" >How a weave goes</text>
+<circle cx="1236" cy="255" r="16" fill="#6e1220" stroke="#d9a0a0" stroke-width="1.5"/>
+<text x="1236.0" y="261.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#fff" text-anchor="middle" font-weight="bold" >1</text>
+<text x="1264.0" y="262.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#efe2dc" text-anchor="start" font-weight="bold" >Choose and load</text>
+<text x="1264.0" y="286.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Pick the memory, then feed the loom its</text>
+<text x="1264.0" y="306.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >enzymes. Each enzyme is 3 spans of thread of</text>
+<text x="1264.0" y="327.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >its tendency. The loom tells you exactly how</text>
+<text x="1264.0" y="348.8" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >many spans YOUR engram needs before taking</text>
+<text x="1264.0" y="369.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >blood.</text>
+<circle cx="1236" cy="401.625" r="16" fill="#6e1220" stroke="#d9a0a0" stroke-width="1.5"/>
+<text x="1236.0" y="407.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#fff" text-anchor="middle" font-weight="bold" >2</text>
+<text x="1264.0" y="408.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#efe2dc" text-anchor="start" font-weight="bold" >Pay the blood</text>
+<text x="1264.0" y="432.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >The engram unfurls over the ground around the</text>
+<text x="1264.0" y="453.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >loom: an eight-pointed star of empty channels</text>
+<text x="1264.0" y="474.5" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >in living skin. One fragment rises at a point</text>
+<text x="1264.0" y="495.4" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >for every enzyme the recipe lists.</text>
+<circle cx="1236" cy="527.325" r="16" fill="#6e1220" stroke="#d9a0a0" stroke-width="1.5"/>
+<text x="1236.0" y="533.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#fff" text-anchor="middle" font-weight="bold" >3</text>
+<text x="1264.0" y="534.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#efe2dc" text-anchor="start" font-weight="bold" >Listen</text>
+<text x="1264.0" y="558.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Staff in hand, rest your gaze on a fragment</text>
+<text x="1264.0" y="579.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >for half a second. The echo above the loom</text>
+<text x="1264.0" y="600.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >replays its memory. A false fragment replays</text>
+<text x="1264.0" y="621.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >the wrong one and pulses off-beat.</text>
+<circle cx="1236" cy="653.0250000000001" r="16" fill="#6e1220" stroke="#d9a0a0" stroke-width="1.5"/>
+<text x="1236.0" y="659.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#fff" text-anchor="middle" font-weight="bold" >4</text>
+<text x="1264.0" y="660.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#efe2dc" text-anchor="start" font-weight="bold" >Take a lane</text>
+<text x="1264.0" y="684.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Use the staff on a fragment to pick up its</text>
+<text x="1264.0" y="705.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >lane (its pool grows a ring of beads).</text>
+<circle cx="1236" cy="736.8750000000001" r="16" fill="#6e1220" stroke="#d9a0a0" stroke-width="1.5"/>
+<text x="1236.0" y="742.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#fff" text-anchor="middle" font-weight="bold" >5</text>
+<text x="1264.0" y="743.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#efe2dc" text-anchor="start" font-weight="bold" >Draw it home</text>
+<text x="1264.0" y="767.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Hold use and sweep along the lines node to</text>
+<text x="1264.0" y="788.8" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >node, or click node by node. Sweep back onto</text>
+<text x="1264.0" y="809.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >the last node to undo a step; sneak-use on a</text>
+<text x="1264.0" y="830.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >lane cuts it back to that node.</text>
+<circle cx="1236" cy="862.5750000000002" r="16" fill="#6e1220" stroke="#d9a0a0" stroke-width="1.5"/>
+<text x="1236.0" y="868.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#fff" text-anchor="middle" font-weight="bold" >6</text>
+<text x="1264.0" y="869.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#efe2dc" text-anchor="start" font-weight="bold" >Reach the loom</text>
+<text x="1264.0" y="893.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >A lane is home when it runs down a spoke into</text>
+<text x="1264.0" y="914.5" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >the loom, or joins a lane of its own colour</text>
+<text x="1264.0" y="935.4" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >that is home. Each node a lane crosses costs 1</text>
+<text x="1264.0" y="956.4" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >span.</text>
+<circle cx="1236" cy="988.2750000000002" r="16" fill="#6e1220" stroke="#d9a0a0" stroke-width="1.5"/>
+<text x="1236.0" y="994.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#fff" text-anchor="middle" font-weight="bold" >7</text>
+<text x="1264.0" y="995.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#efe2dc" text-anchor="start" font-weight="bold" >Leave the lies</text>
+<text x="1264.0" y="1019.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Don't thread false fragments home. Doing so</text>
+<text x="1264.0" y="1040.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >tears them loose and costs you, by rank (see</text>
+<text x="1264.0" y="1061.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >below).</text>
+<circle cx="1236" cy="1093.0500000000002" r="16" fill="#6e1220" stroke="#d9a0a0" stroke-width="1.5"/>
+<text x="1236.0" y="1099.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#fff" text-anchor="middle" font-weight="bold" >8</text>
+<text x="1264.0" y="1100.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#efe2dc" text-anchor="start" font-weight="bold" >Done</text>
+<text x="1264.0" y="1124.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >When every real fragment is home, the engram</text>
+<text x="1264.0" y="1145.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >draws back into the loom, the spans of the</text>
+<text x="1264.0" y="1165.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >real lanes are spent, and the memory is woven.</text>
+<rect x="40" y="1270" width="1720" height="230" rx="14" fill="url(#card)" stroke="#4a1a24"/>
+<text x="70.0" y="1314.0" font-family="Georgia, serif" font-size="28" fill="#f3d6c8" text-anchor="start" font-weight="bold" >The rules of a lane</text>
+<circle cx="80" cy="1344" r="4" fill="#d9a0a0"/>
+<text x="96.0" y="1350.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#b9a29c" text-anchor="start" font-weight="normal" >Lanes run only along the drawn lines: the star's lines, the outer rim between neighbouring points, and the eight spokes into the loom.</text>
+<circle cx="80" cy="1371.6" r="4" fill="#d9a0a0"/>
+<text x="96.0" y="1377.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#b9a29c" text-anchor="start" font-weight="normal" >A node holds one colour. Lanes of different colours never cross or share a node.</text>
+<circle cx="80" cy="1399.1999999999998" r="4" fill="#d9a0a0"/>
+<text x="96.0" y="1405.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#b9a29c" text-anchor="start" font-weight="normal" >Same colour may join: end your lane on a lane of its own colour and that lane carries yours home.</text>
+<circle cx="80" cy="1426.7999999999997" r="4" fill="#d9a0a0"/>
+<text x="96.0" y="1432.8" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#b9a29c" text-anchor="start" font-weight="normal" >Keyed engrams (Summa and up): each spoke enters one face of the loom, and a lane must enter the face of its own colour. Inner socket rims and the</text>
+<text x="96.0" y="1454.4" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#b9a29c" text-anchor="start" font-weight="normal" >loom's rim show each face's colour; the pale double ring marks the Animus face, and the wheel runs clockwise from it.</text>
+<circle cx="80" cy="1475.9999999999998" r="4" fill="#d9a0a0"/>
+<text x="96.0" y="1482.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#b9a29c" text-anchor="start" font-weight="normal" >You need thread: a step is refused if the loom holds no more spans of that colour. Enzymes can be topped up mid-weave.</text>
+<text x="60.0" y="1570.0" font-family="Georgia, serif" font-size="30" fill="#f3d6c8" text-anchor="start" font-weight="bold" >On the ground</text>
+<text x="310.0" y="1570.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#b9a29c" text-anchor="start" font-weight="normal" font-style="italic" >the sockets and what can sit in them</text>
+<rect x="40" y="1596" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="50" y="1606" width="100" height="100" rx="10" fill="#2a0a12"/>
+<radialGradient id="sk31"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="100.0" cy="1656.0" r="22.0" fill="url(#sk31)"/>
+<circle cx="100.0" cy="1656.0" r="22.0" fill="none" stroke="#c9a8a0" stroke-width="1.6" opacity="0.6"/>
+<text x="168.0" y="1630.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Empty socket</text>
+<text x="168.0" y="1654.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >A node lanes can pass through: a</text>
+<text x="168.0" y="1673.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >pit with an ember at the bottom.</text>
+<rect x="475" y="1596" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="485" y="1606" width="100" height="100" rx="10" fill="#2a0a12"/>
+<radialGradient id="pl32"><stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.3" stop-color="#2e85ff" stop-opacity="1.0"/><stop offset="0.85" stop-color="#2e85ff" stop-opacity="0.75"/><stop offset="1" stop-color="#2e85ff" stop-opacity="0"/></radialGradient>
+<circle cx="535.0" cy="1656.0" r="33.0" fill="#2e85ff" opacity="0.18" filter="url(#soft)"/>
+<circle cx="535.0" cy="1656.0" r="22.0" fill="url(#pl32)"/>
+<circle cx="535.0" cy="1656.0" r="24.6" fill="none" stroke="#9e4d52" stroke-width="2" opacity="0.8"/>
+<text x="603.0" y="1630.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Fragment</text>
+<text x="603.0" y="1654.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >A piece of the memory, as a pool</text>
+<text x="603.0" y="1673.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >of its colour. Thread it home.</text>
+<rect x="910" y="1596" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="920" y="1606" width="100" height="100" rx="10" fill="#2a0a12"/>
+<radialGradient id="pl33"><stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.3" stop-color="#ff660f" stop-opacity="1.0"/><stop offset="0.85" stop-color="#ff660f" stop-opacity="0.75"/><stop offset="1" stop-color="#ff660f" stop-opacity="0"/></radialGradient>
+<circle cx="970.0" cy="1656.0" r="28.5" fill="#ff660f" opacity="0.18" filter="url(#soft)"/>
+<circle cx="970.0" cy="1656.0" r="19.0" fill="url(#pl33)"/>
+<circle cx="970.0" cy="1656.0" r="21.3" fill="none" stroke="#9e4d52" stroke-width="2" opacity="0.8"/>
+<circle cx="998.1" cy="1664.7" r="3.2" fill="#fff4e8" opacity="0.95"/>
+<circle cx="998.1" cy="1664.7" r="5.7" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="976.5" cy="1684.7" r="3.2" fill="#fff4e8" opacity="0.95"/>
+<circle cx="976.5" cy="1684.7" r="5.7" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="948.4" cy="1676.0" r="3.2" fill="#fff4e8" opacity="0.95"/>
+<circle cx="948.4" cy="1676.0" r="5.7" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="941.9" cy="1647.3" r="3.2" fill="#fff4e8" opacity="0.95"/>
+<circle cx="941.9" cy="1647.3" r="5.7" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="963.5" cy="1627.3" r="3.2" fill="#fff4e8" opacity="0.95"/>
+<circle cx="963.5" cy="1627.3" r="5.7" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<circle cx="991.6" cy="1636.0" r="3.2" fill="#fff4e8" opacity="0.95"/>
+<circle cx="991.6" cy="1636.0" r="5.7" fill="#ff660f" opacity="0.4" filter="url(#soft)"/>
+<text x="1038.0" y="1630.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Held fragment</text>
+<text x="1038.0" y="1654.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >The lane you are drawing: beads</text>
+<text x="1038.0" y="1673.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >circle its pool.</text>
+<rect x="1345" y="1596" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="1355" y="1606" width="100" height="100" rx="10" fill="#2a0a12"/>
+<radialGradient id="pl34"><stop offset="0" stop-color="#ffffff" stop-opacity="0.425"/><stop offset="0.3" stop-color="#db0f14" stop-opacity="0.5"/><stop offset="0.85" stop-color="#db0f14" stop-opacity="0.375"/><stop offset="1" stop-color="#db0f14" stop-opacity="0"/></radialGradient>
+<circle cx="1405.0" cy="1656.0" r="33.0" fill="#db0f14" opacity="0.09" filter="url(#soft)"/>
+<circle cx="1405.0" cy="1656.0" r="22.0" fill="url(#pl34)"/>
+<circle cx="1405.0" cy="1656.0" r="24.6" fill="none" stroke="#9e4d52" stroke-width="2" opacity="0.4"/>
+<text x="1473.0" y="1630.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Home</text>
+<text x="1473.0" y="1654.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Threaded into the loom. The pool</text>
+<text x="1473.0" y="1673.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >dims and drains.</text>
+<rect x="40" y="1730" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="50" y="1740" width="100" height="100" rx="10" fill="#2a0a12"/>
+<circle cx="100.0" cy="1790.0" r="18.0" fill="#ff660f" opacity="0.35" filter="url(#soft)"/>
+<circle cx="100.0" cy="1790.0" r="10.0" fill="#fff0dc"/>
+<circle cx="100.0" cy="1790.0" r="7.0" fill="#ff660f" opacity="0.6"/>
+<text x="168.0" y="1764.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Lane head</text>
+<text x="168.0" y="1788.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Where the lane you hold currently</text>
+<text x="168.0" y="1807.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >ends.</text>
+<rect x="475" y="1730" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="485" y="1740" width="100" height="100" rx="10" fill="#2a0a12"/>
+<path d="M559.0,1790.0 A24.0,24.0 0 0 1 558.2,1796.2" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M555.8,1802.0 A24.0,24.0 0 0 1 552.0,1807.0" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M547.0,1810.8 A24.0,24.0 0 0 1 541.2,1813.2" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M535.0,1814.0 A24.0,24.0 0 0 1 528.8,1813.2" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M523.0,1810.8 A24.0,24.0 0 0 1 518.0,1807.0" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M514.2,1802.0 A24.0,24.0 0 0 1 511.8,1796.2" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M511.0,1790.0 A24.0,24.0 0 0 1 511.8,1783.8" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M514.2,1778.0 A24.0,24.0 0 0 1 518.0,1773.0" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M523.0,1769.2 A24.0,24.0 0 0 1 528.8,1766.8" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M535.0,1766.0 A24.0,24.0 0 0 1 541.2,1766.8" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M547.0,1769.2 A24.0,24.0 0 0 1 552.0,1773.0" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<path d="M555.8,1778.0 A24.0,24.0 0 0 1 558.2,1783.8" stroke="#ffdcb4" stroke-width="3" fill="none"/>
+<circle cx="535.0" cy="1790.0" r="24.0" fill="none" stroke="#ffdcb4" stroke-width="1" opacity="0.4"/>
+<text x="603.0" y="1764.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Staff mark: pale</text>
+<text x="603.0" y="1788.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Where your staff points. That step</text>
+<text x="603.0" y="1807.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >would be taken.</text>
+<rect x="910" y="1730" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="920" y="1740" width="100" height="100" rx="10" fill="#2a0a12"/>
+<path d="M994.0,1790.0 A24.0,24.0 0 0 1 993.2,1796.2" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M990.8,1802.0 A24.0,24.0 0 0 1 987.0,1807.0" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M982.0,1810.8 A24.0,24.0 0 0 1 976.2,1813.2" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M970.0,1814.0 A24.0,24.0 0 0 1 963.8,1813.2" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M958.0,1810.8 A24.0,24.0 0 0 1 953.0,1807.0" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M949.2,1802.0 A24.0,24.0 0 0 1 946.8,1796.2" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M946.0,1790.0 A24.0,24.0 0 0 1 946.8,1783.8" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M949.2,1778.0 A24.0,24.0 0 0 1 953.0,1773.0" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M958.0,1769.2 A24.0,24.0 0 0 1 963.8,1766.8" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M970.0,1766.0 A24.0,24.0 0 0 1 976.2,1766.8" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M982.0,1769.2 A24.0,24.0 0 0 1 987.0,1773.0" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<path d="M990.8,1778.0 A24.0,24.0 0 0 1 993.2,1783.8" stroke="#ff2a22" stroke-width="3" fill="none"/>
+<circle cx="970.0" cy="1790.0" r="24.0" fill="none" stroke="#ff2a22" stroke-width="1" opacity="0.4"/>
+<text x="1038.0" y="1764.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Staff mark: red</text>
+<text x="1038.0" y="1788.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >That step is refused: a cross,</text>
+<text x="1038.0" y="1807.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >scar, valve, wrong face, wrong</text>
+<text x="1038.0" y="1827.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >prism or no thread.</text>
+<rect x="1345" y="1730" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="1355" y="1740" width="100" height="100" rx="10" fill="#2a0a12"/>
+<circle cx="1400.0" cy="1795.9" r="1.9" fill="#ff660f" opacity="0.73"/>
+<circle cx="1403.5" cy="1785.0" r="1.0" fill="#ff660f" opacity="0.94"/>
+<circle cx="1405.5" cy="1794.3" r="2.0" fill="#ff660f" opacity="0.88"/>
+<circle cx="1397.0" cy="1800.6" r="1.1" fill="#ff660f" opacity="0.92"/>
+<circle cx="1405.9" cy="1790.8" r="1.8" fill="#ff660f" opacity="0.76"/>
+<circle cx="1416.3" cy="1789.0" r="0.9" fill="#ff660f" opacity="0.90"/>
+<circle cx="1411.3" cy="1792.1" r="1.9" fill="#ff660f" opacity="0.66"/>
+<circle cx="1410.9" cy="1796.3" r="1.1" fill="#ff660f" opacity="0.81"/>
+<circle cx="1408.2" cy="1793.5" r="1.2" fill="#ff660f" opacity="0.86"/>
+<circle cx="1405.5" cy="1784.8" r="2.0" fill="#ff660f" opacity="0.91"/>
+<circle cx="1405.8" cy="1794.3" r="1.9" fill="#ff660f" opacity="0.79"/>
+<circle cx="1405.3" cy="1787.1" r="2.2" fill="#ff660f" opacity="0.67"/>
+<circle cx="1404.3" cy="1787.2" r="1.7" fill="#ff660f" opacity="0.95"/>
+<circle cx="1400.9" cy="1784.2" r="0.9" fill="#ff660f" opacity="0.90"/>
+<circle cx="1402.4" cy="1798.0" r="1.5" fill="#ff660f" opacity="0.87"/>
+<circle cx="1400.5" cy="1785.7" r="1.3" fill="#ff660f" opacity="0.61"/>
+<circle cx="1413.2" cy="1789.8" r="2.2" fill="#ff660f" opacity="0.68"/>
+<circle cx="1419.1" cy="1790.6" r="1.5" fill="#ff660f" opacity="0.90"/>
+<rect x="1403.5" y="1788.5" width="3" height="3" fill="#ffffff"/>
+<text x="1473.0" y="1764.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Staff point</text>
+<text x="1473.0" y="1788.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Fine dots on the exact pixel your</text>
+<text x="1473.0" y="1807.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >staff touches; they trail as you</text>
+<text x="1473.0" y="1827.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >sweep, and scatter red when</text>
+<text x="1473.0" y="1846.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >refused.</text>
+<rect x="40" y="1864" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="50" y="1874" width="100" height="100" rx="10" fill="#2a0a12"/>
+<radialGradient id="pl35"><stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.3" stop-color="#389e29" stop-opacity="1.0"/><stop offset="0.85" stop-color="#389e29" stop-opacity="0.75"/><stop offset="1" stop-color="#389e29" stop-opacity="0"/></radialGradient>
+<circle cx="100.0" cy="1924.0" r="33.0" fill="#389e29" opacity="0.18" filter="url(#soft)"/>
+<circle cx="100.0" cy="1924.0" r="22.0" fill="url(#pl35)"/>
+<circle cx="100.0" cy="1924.0" r="24.6" fill="none" stroke="#9e4d52" stroke-width="2" opacity="0.8"/>
+<text x="168.0" y="1898.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >False fragment</text>
+<text x="168.0" y="1922.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Dressed as a real colour, but</text>
+<text x="168.0" y="1941.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >pulses between the loom's beats.</text>
+<text x="168.0" y="1961.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Leave it.</text>
+<rect x="475" y="1864" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="485" y="1874" width="100" height="100" rx="10" fill="#2a0a12"/>
+<circle cx="535.0" cy="1924.0" r="22.0" fill="#4f4a4a"/>
+<path d="M535.0,1924.0 L546.1,1928.7 L551.6,1936.6" stroke="#0e0b0b" stroke-width="2.2" fill="none"/>
+<path d="M535.0,1924.0 L534.0,1936.1 L528.1,1943.7" stroke="#0e0b0b" stroke-width="2.2" fill="none"/>
+<path d="M535.0,1924.0 L523.2,1926.7 L514.1,1923.5" stroke="#0e0b0b" stroke-width="2.2" fill="none"/>
+<path d="M535.0,1924.0 L528.8,1913.6 L529.0,1904.0" stroke="#0e0b0b" stroke-width="2.2" fill="none"/>
+<path d="M535.0,1924.0 L542.9,1914.9 L552.2,1912.1" stroke="#0e0b0b" stroke-width="2.2" fill="none"/>
+<text x="603.0" y="1898.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Husk</text>
+<text x="603.0" y="1922.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >A false fragment your bloodline</text>
+<text x="603.0" y="1941.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >already knows. Harmless; ignore</text>
+<text x="603.0" y="1961.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >it.</text>
+<rect x="910" y="1864" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="920" y="1874" width="100" height="100" rx="10" fill="#2a0a12"/>
+<radialGradient id="pr36"><stop offset="0" stop-color="#ffffff"/><stop offset="0.4" stop-color="#d8cfe0"/><stop offset="0.75" stop-color="#bcd0cc"/><stop offset="1" stop-color="#c6b8d4" stop-opacity="0.6"/></radialGradient>
+<circle cx="970.0" cy="1924.0" r="30.8" fill="#d0c8de" opacity="0.18" filter="url(#soft)"/>
+<circle cx="970.0" cy="1924.0" r="22.0" fill="url(#pr36)"/>
+<circle cx="970.0" cy="1924.0" r="24.6" fill="none" stroke="#9e8a9a" stroke-width="2"/>
+<text x="1038.0" y="1898.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Grey fragment</text>
+<text x="1038.0" y="1922.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Colour hidden (Magister+). Route</text>
+<text x="1038.0" y="1941.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >it through the prism of its true</text>
+<text x="1038.0" y="1961.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >colour.</text>
+<rect x="1345" y="1864" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="1355" y="1874" width="100" height="100" rx="10" fill="#2a0a12"/>
+<circle cx="1405.0" cy="1924.0" r="28.6" fill="#4a1238" opacity="0.45" filter="url(#soft)"/>
+<circle cx="1405.0" cy="1924.0" r="22.0" fill="#120306"/>
+<path d="M1408.3,1924.0 L1417.9,1926.6 L1426.3,1922.9" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M1407.1,1926.6 L1411.0,1935.7 L1419.1,1940.0" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M1404.3,1927.2 L1399.6,1936.0 L1401.3,1945.0" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M1402.0,1925.4 L1392.2,1927.3 L1386.3,1934.2" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M1402.0,1922.6 L1394.5,1916.0 L1385.3,1915.7" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M1404.3,1920.8 L1404.7,1910.8 L1399.2,1903.5" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<path d="M1407.1,1921.4 L1415.1,1915.5 L1417.5,1906.7" stroke="#5c5440" stroke-width="1.8" fill="none" opacity="0.8"/>
+<text x="1473.0" y="1898.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Scar</text>
+<text x="1473.0" y="1922.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Dead flesh. Nothing passes.</text>
+<text x="1473.0" y="1941.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Mistakes on Summa/Magister can</text>
+<text x="1473.0" y="1961.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >grow more.</text>
+<rect x="40" y="1998" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="50" y="2008" width="100" height="100" rx="10" fill="#2a0a12"/>
+<circle cx="100.0" cy="2058.0" r="22.0" fill="#2e85ff" opacity="0.85"/>
+<path d="M105.5,2058.0 Q111.6,2064.3 120.0,2064.2" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M104.2,2061.5 Q104.8,2070.3 111.3,2075.6" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M101.0,2063.4 Q95.8,2070.5 97.4,2078.7" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M97.2,2062.8 Q88.7,2064.9 84.7,2072.2" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M94.8,2059.9 Q87.0,2056.0 79.1,2059.0" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M94.8,2056.1 Q91.3,2048.1 83.4,2045.4" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M97.2,2053.2 Q99.7,2044.8 95.4,2037.6" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M101.0,2052.6 Q108.2,2047.7 109.5,2039.4" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<path d="M104.2,2054.5 Q112.9,2055.4 119.3,2049.9" stroke="#1a0508" stroke-width="2" fill="none" opacity="0.6"/>
+<circle cx="100.0" cy="2058.0" r="4.8" fill="#060102"/>
+<circle cx="100.0" cy="2058.0" r="23.1" fill="none" stroke="#2e85ff" stroke-width="2.5"/>
+<text x="168.0" y="2032.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Valve</text>
+<text x="168.0" y="2056.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Only the lane of its colour may</text>
+<text x="168.0" y="2075.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >pass (Summa+).</text>
+<rect x="475" y="1998" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="485" y="2008" width="100" height="100" rx="10" fill="#2a0a12"/>
+<circle cx="535.0" cy="2058.0" r="29.7" fill="#ffdb29" opacity="0.2" filter="url(#soft)"/>
+<path d="M535.0,2058.0 L557.0,2058.0 L546.0,2077.1 Z" fill="#ffdb29" opacity="0.95" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M535.0,2058.0 L546.0,2077.1 L524.0,2077.1 Z" fill="#ffdb29" opacity="0.70" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M535.0,2058.0 L524.0,2077.1 L513.0,2058.0 Z" fill="#ffdb29" opacity="0.55" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M535.0,2058.0 L513.0,2058.0 L524.0,2038.9 Z" fill="#ffdb29" opacity="0.80" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M535.0,2058.0 L524.0,2038.9 L546.0,2038.9 Z" fill="#ffdb29" opacity="0.60" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M535.0,2058.0 L546.0,2038.9 L557.0,2058.0 Z" fill="#ffdb29" opacity="1.00" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="603.0" y="2032.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Prism</text>
+<text x="603.0" y="2056.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Dyes a grey lane passing through</text>
+<text x="603.0" y="2075.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >it (Magister+).</text>
+<rect x="910" y="1998" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="920" y="2008" width="100" height="100" rx="10" fill="#2a0a12"/>
+<radialGradient id="sk37"><stop offset="0" stop-color="#ff5a2a" stop-opacity="0.9"/><stop offset="0.35" stop-color="#3a0508"/><stop offset="1" stop-color="#14030a"/></radialGradient>
+<circle cx="970.0" cy="2058.0" r="20.0" fill="url(#sk37)"/>
+<circle cx="970.0" cy="2058.0" r="20.0" fill="none" stroke="#db0f14" stroke-width="2.6" opacity="0.95"/>
+<circle cx="970.0" cy="2058.0" r="24.5" fill="none" stroke="#fff1e6" stroke-width="1.8" opacity="0.9"/>
+<text x="1038.0" y="2032.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Keyed socket</text>
+<text x="1038.0" y="2056.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Coloured rim: the loom face its</text>
+<text x="1038.0" y="2075.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >spoke enters. Pale double ring:</text>
+<text x="1038.0" y="2095.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Animus.</text>
+<rect x="1345" y="1998" width="420" height="120" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="1355" y="2008" width="100" height="100" rx="10" fill="#2a0a12"/>
+<circle cx="1405.0" cy="2058.0" r="26" fill="#5d6a34" opacity="0.7" filter="url(#soft)"/>
+<circle cx="1399.0" cy="2062.0" r="4" fill="#cfd7a8"/>
+<circle cx="1414.0" cy="2051.0" r="3" fill="#cfd7a8"/>
+<text x="1473.0" y="2032.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Rot</text>
+<text x="1473.0" y="2056.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Fungal pressure creeping in from</text>
+<text x="1473.0" y="2075.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >the rim. At 3 mistakes it scars a</text>
+<text x="1473.0" y="2095.2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >node or calls up a new false</text>
+<text x="1473.0" y="2114.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >fragment.</text>
+<text x="60.0" y="2192.0" font-family="Georgia, serif" font-size="30" fill="#f3d6c8" text-anchor="start" font-weight="bold" >Floating glyphs</text>
+<rect x="40" y="2218" width="280" height="98" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="67.5" y="2244.5" width="45.0" height="45.0" rx="22.5" fill="#2e85ff" opacity="0.22" filter="url(#soft)"/>
+<rect x="75.0" y="2252.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="99.0" y="2252.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="75.0" y="2258.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="81.0" y="2258.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="93.0" y="2258.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="99.0" y="2258.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="87.0" y="2264.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="81.0" y="2270.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="87.0" y="2270.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="93.0" y="2270.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="75.0" y="2276.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<rect x="99.0" y="2276.0" width="6.0" height="6.0" fill="#2e85ff" opacity="1.00"/>
+<text x="138.0" y="2252.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#efe2dc" text-anchor="start" font-weight="bold" >Steady, bright</text>
+<text x="138.0" y="2274.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >A real fragment waiting</text>
+<text x="138.0" y="2292.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >to be threaded.</text>
+<rect x="330" y="2218" width="280" height="98" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="349.6" y="2236.6" width="60.8" height="60.8" rx="30.4" fill="#db0f14" opacity="0.22" filter="url(#soft)"/>
+<rect x="367.9" y="2246.8" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="375.9" y="2246.8" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="384.1" y="2246.8" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="359.8" y="2254.8" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="375.9" y="2254.8" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="392.1" y="2254.8" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="359.8" y="2262.9" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="367.9" y="2262.9" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="375.9" y="2262.9" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="384.1" y="2262.9" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="392.1" y="2262.9" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="375.9" y="2271.1" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="367.9" y="2279.2" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<rect x="384.1" y="2279.2" width="8.1" height="8.1" fill="#db0f14" opacity="1.00"/>
+<text x="428.0" y="2252.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#efe2dc" text-anchor="start" font-weight="bold" >Swollen</text>
+<text x="428.0" y="2274.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >Being heard: a nerve</text>
+<text x="428.0" y="2292.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >thread runs up to the</text>
+<text x="428.0" y="2311.8" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >echo.</text>
+<rect x="620" y="2218" width="280" height="98" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="647.5" y="2244.5" width="45.0" height="45.0" rx="22.5" fill="#389e29" opacity="0.13" filter="url(#soft)"/>
+<rect x="655.0" y="2252.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="661.0" y="2252.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="667.0" y="2252.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="673.0" y="2252.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="679.0" y="2252.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="667.0" y="2258.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="679.0" y="2258.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="661.0" y="2264.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="667.0" y="2264.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="673.0" y="2264.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="679.0" y="2264.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="655.0" y="2270.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="667.0" y="2270.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="655.0" y="2276.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="661.0" y="2276.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<rect x="667.0" y="2276.0" width="6.0" height="6.0" fill="#389e29" opacity="0.60"/>
+<text x="718.0" y="2252.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#efe2dc" text-anchor="start" font-weight="bold" >Flickering off-beat</text>
+<text x="718.0" y="2274.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >False: it brightens when</text>
+<text x="718.0" y="2292.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >the loom's heart rests.</text>
+<rect x="40" y="2328" width="280" height="98" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="67.5" y="2354.5" width="45.0" height="45.0" rx="22.5" fill="#8f8a90" opacity="0.13" filter="url(#soft)"/>
+<rect x="75.0" y="2362.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="87.0" y="2362.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="81.0" y="2368.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="87.0" y="2368.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="93.0" y="2368.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="87.0" y="2374.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="99.0" y="2374.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="75.0" y="2380.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="81.0" y="2380.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="93.0" y="2380.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="99.0" y="2380.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<rect x="99.0" y="2386.0" width="6.0" height="6.0" fill="#8f8a90" opacity="0.60"/>
+<text x="138.0" y="2362.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#efe2dc" text-anchor="start" font-weight="bold" >Grey and crumbling</text>
+<text x="138.0" y="2384.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >A husk your bloodline</text>
+<text x="138.0" y="2402.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >remembers.</text>
+<rect x="330" y="2328" width="280" height="98" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="357.5" y="2354.5" width="45.0" height="45.0" rx="22.5" fill="#e6def0" opacity="0.22" filter="url(#soft)"/>
+<rect x="371.0" y="2362.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="383.0" y="2362.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="365.0" y="2368.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="371.0" y="2368.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="377.0" y="2368.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="383.0" y="2368.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="389.0" y="2368.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="365.0" y="2374.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="389.0" y="2374.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="365.0" y="2380.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="377.0" y="2380.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="389.0" y="2380.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="365.0" y="2386.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="371.0" y="2386.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="383.0" y="2386.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<rect x="389.0" y="2386.0" width="6.0" height="6.0" fill="#e6def0" opacity="1.00"/>
+<text x="428.0" y="2362.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#efe2dc" text-anchor="start" font-weight="bold" >Pearl grey</text>
+<text x="428.0" y="2384.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >A grey fragment hiding</text>
+<text x="428.0" y="2402.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >its colour.</text>
+<rect x="620" y="2328" width="280" height="98" rx="12" fill="url(#card)" stroke="#3e1820"/>
+<rect x="651.2" y="2358.2" width="37.5" height="37.5" rx="18.8" fill="#db0f14" opacity="0.08" filter="url(#soft)"/>
+<rect x="657.5" y="2364.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="662.5" y="2364.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="667.5" y="2364.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="672.5" y="2364.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="657.5" y="2369.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="672.5" y="2369.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="657.5" y="2374.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="667.5" y="2374.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="672.5" y="2374.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="677.5" y="2374.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="657.5" y="2379.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="677.5" y="2379.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="657.5" y="2384.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="662.5" y="2384.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="667.5" y="2384.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="672.5" y="2384.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<rect x="677.5" y="2384.5" width="5.0" height="5.0" fill="#db0f14" opacity="0.35"/>
+<text x="718.0" y="2362.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#efe2dc" text-anchor="start" font-weight="bold" >Sunk and dim</text>
+<text x="718.0" y="2384.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >Threaded home.</text>
+<text x="60.0" y="2464.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#b9a29c" text-anchor="start" font-weight="normal" font-style="italic" >The glyphs are letters of the Engram script; which letter a fragment shows has no rule meaning.</text>
+<text x="1020.0" y="2192.0" font-family="Georgia, serif" font-size="30" fill="#f3d6c8" text-anchor="start" font-weight="bold" >The wheel</text>
+<path d="M1059.1,2286.1 A120,120 0 0 1 1150.9,2286.1 L1128.0,2341.6 A60,60 0 0 0 1082.0,2341.6 Z" fill="#db0f14" stroke="#120709" stroke-width="3"/>
+<text x="1105.0" y="2252.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#efe2dc" text-anchor="middle" font-weight="bold" >Animus</text>
+<path d="M1150.9,2286.1 A120,120 0 0 1 1215.9,2351.1 L1160.4,2374.0 A60,60 0 0 0 1128.0,2341.6 Z" fill="#ff660f" stroke="#120709" stroke-width="3"/>
+<text x="1211.1" y="2295.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#efe2dc" text-anchor="start" font-weight="bold" >Flammeus</text>
+<path d="M1215.9,2351.1 A120,120 0 0 1 1215.9,2442.9 L1160.4,2420.0 A60,60 0 0 0 1160.4,2374.0 Z" fill="#ffdb29" stroke="#120709" stroke-width="3"/>
+<text x="1255.0" y="2402.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#efe2dc" text-anchor="start" font-weight="bold" >Ductilis</text>
+<path d="M1215.9,2442.9 A120,120 0 0 1 1150.9,2507.9 L1128.0,2452.4 A60,60 0 0 0 1160.4,2420.0 Z" fill="#fff7db" stroke="#120709" stroke-width="3"/>
+<text x="1211.1" y="2508.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#efe2dc" text-anchor="start" font-weight="bold" >Lux</text>
+<path d="M1150.9,2507.9 A120,120 0 0 1 1059.1,2507.9 L1082.0,2452.4 A60,60 0 0 0 1128.0,2452.4 Z" fill="#389e29" stroke="#120709" stroke-width="3"/>
+<text x="1105.0" y="2552.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#efe2dc" text-anchor="middle" font-weight="bold" >Mortem</text>
+<path d="M1059.1,2507.9 A120,120 0 0 1 994.1,2442.9 L1049.6,2420.0 A60,60 0 0 0 1082.0,2452.4 Z" fill="#2e85ff" stroke="#120709" stroke-width="3"/>
+<text x="998.9" y="2508.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#efe2dc" text-anchor="end" font-weight="bold" >Congeatio</text>
+<path d="M994.1,2442.9 A120,120 0 0 1 994.1,2351.1 L1049.6,2374.0 A60,60 0 0 0 1049.6,2420.0 Z" fill="#9499a3" stroke="#120709" stroke-width="3"/>
+<text x="955.0" y="2402.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#efe2dc" text-anchor="end" font-weight="bold" >Ferric</text>
+<path d="M994.1,2351.1 A120,120 0 0 1 1059.1,2286.1 L1082.0,2341.6 A60,60 0 0 0 1049.6,2374.0 Z" fill="#851fdb" stroke="#120709" stroke-width="3"/>
+<text x="998.9" y="2295.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#efe2dc" text-anchor="end" font-weight="bold" >Tenebris</text>
+<circle cx="1105" cy="2397" r="56" fill="none" stroke="#fff1e6" stroke-width="2"/>
+<text x="1105.0" y="2393.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#b9a29c" text-anchor="middle" font-weight="normal" font-style="italic" >clockwise</text>
+<text x="1105.0" y="2410.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#b9a29c" text-anchor="middle" font-weight="normal" font-style="italic" >from Animus</text>
+<text x="970.0" y="2569.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >On a keyed engram the faces follow</text>
+<text x="970.0" y="2587.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >this order round the loom, starting</text>
+<text x="970.0" y="2606.8" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >from whichever face wears the pale</text>
+<text x="970.0" y="2625.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#b9a29c" text-anchor="start" font-weight="normal" >Animus ring.</text>
+<text x="1335.0" y="2192.0" font-family="Georgia, serif" font-size="30" fill="#f3d6c8" text-anchor="start" font-weight="bold" >By rank</text>
+<text x="1335.0" y="2230.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Humilis</text>
+<text x="1335.0" y="2250.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Open star, 1-3 scars, no false fragments. No stakes.</text>
+<text x="1335.0" y="2279.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Mediocritas</text>
+<text x="1335.0" y="2299.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >1 false fragment, 2-4 scars. Threading it home burns</text>
+<text x="1335.0" y="2319.1" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >its spans (then your blood).</text>
+<text x="1335.0" y="2348.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Summa</text>
+<text x="1335.0" y="2368.7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >Keyed faces, 1-2 valves, 1 false fragment. Mistakes</text>
+<text x="1335.0" y="2388.3" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >build fungal pressure.</text>
+<text x="1335.0" y="2417.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Magister</text>
+<text x="1335.0" y="2437.9" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >+ a grey fragment and its prism, 2-3 valves, 1-2</text>
+<text x="1335.0" y="2457.4" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >false, 3-5 scars. Pressure.</text>
+<text x="1335.0" y="2487.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#efe2dc" text-anchor="start" font-weight="bold" >Perfectus</text>
+<text x="1335.0" y="2507.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >2-3 false fragments. One tears loose and bites once.</text>
+<text x="1335.0" y="2526.6" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14.5" fill="#b9a29c" text-anchor="start" font-weight="normal" >A weave never kills: at worst you black out.</text>
+<text x="900.0" y="2670.0" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#6e4a4a" text-anchor="middle" font-weight="normal" >Hemomancy  -  Somatic Loom  -  Engram Weaving</text>
+</svg>

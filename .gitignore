@@ -41,11 +41,7 @@ repo/
 !**/src/**/repo/
 /libs/
 /net/
-/docs/GAMEPLAY_DISCOVERY_LOOPS.md
-/docs/GAMEPLAY_DISCOVERY_ROADMAP_MERGED.md
-/docs/MEMOS_FIELD_NOTES_IMPLEMENTATION_GUIDE.md
 *.args
-/docs/superpowers/
 /.superpowers/
 /.codex-remote-attachments/
 /Notes.txt
@@ -58,28 +54,17 @@ repo/
 /scripts/
 /tmp/
 /tmp
-/docs/Hemo Concept/
-/docs/*
-!/docs/PELAGIC_WORLDGEN.md
-!/docs/PELAGIC_ECOLOGY.md
-!/docs/consolidation/
-!/docs/consolidation/**
-!/docs/architecture/
-!/docs/architecture/**
-/docs/agents/
-/docs/superpowers/
+# docs/: markdown is tracked everywhere. The archive keeps only its markdown; its
+# evidence images, generated output and concept art stay local.
+/docs/archive/**
+!/docs/archive/**/
+!/docs/archive/**/*.md
+/docs/archive/concept/
+/docs/superpowers/mockups/
+/docs/**/__pycache__/
 /output/
-!/docs/STATION_UPGRADES.md
-!/docs/DEPENDENCY_PROVISIONING.md
-!/docs/HARBINGER_PROGRESSION_AUDIT.md
-!/docs/HARBINGER_PROGRESSION_FINISH_OVERVIEW.md
-!/docs/validation/
-!/docs/validation/**
 *.java~
 __pycache__/
-!/docs/HARBINGER_PROGRESSION_REDESIGN.md
-!/docs/harbinger_progression_redesign/
-!/docs/harbinger_progression_redesign/**
 
 # tools/ holds local editors and art pipelines. Only the model generators that tests read, the review launchers, the mausoleum generator, the Brined Court generators, the Mason's Respite generator, the wayside sites generator and the Harbinger sites generator are tracked.
 /tools/*

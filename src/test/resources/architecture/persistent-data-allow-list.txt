@@ -31,13 +31,11 @@
 4	src/main/java/com/vincenthuto/hemomancy/common/entity/mob/animal/VampireBatEntity.java	entity, item-entity or NPC marker data, not player state
 1	src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/ExcoriatedEntity.java	player root keys not yet moved into an attachment (S-1)
 3	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/circus/CircusRingmasterEntity.java	entity, item-entity or NPC marker data, not player state
-1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/ArtificerProgressSnapshot.java	player root keys not yet moved into an attachment (S-1)
-2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueHubFactory.java	player root keys not yet moved into an attachment (S-1)
+2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueHubFactory.java	player mission state under PlayerPersisted (the met-Hermit flag)
 3	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerRecruitmentRules.java	entity, item-entity or NPC marker data, not player state
-2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PendingWhispers.java	legacy inbox root key, read once by the pending_whispers migration (sunset 2027-04-23); the revelation-choice root flag
-4	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/FungalWhisperDialogueEvents.java	player root keys not yet moved into an attachment (S-1)
-2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/MnemonistDialogueEvents.java	player root keys not yet moved into an attachment (S-1)
-1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerMnemonistEntity.java	player root keys not yet moved into an attachment (S-1)
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PendingWhispers.java	legacy inbox root key, read once by the pending_whispers migration (sunset 2027-04-23)
+2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/FungalWhisperDialogueEvents.java	player root keys not yet moved into an attachment (S-1)
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/MnemonistStarterMemoryChoice.java	player mission state under PlayerPersisted; the legacy root key is read once by the mnemonist_starter_claim migration (sunset 2027-05-01)
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/VesperScuteProjectileEntity.java	entity, item-entity or NPC marker data, not player state
 15	src/main/java/com/vincenthuto/hemomancy/common/entity/summon/BoundSummonBehavior.java	player root keys and entity markers
 5	src/main/java/com/vincenthuto/hemomancy/common/entity/summon/EntityIronSpike.java	entity, item-entity or NPC marker data, not player state
@@ -46,7 +44,7 @@
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/summon/SanguineHoundEntity.java	entity, item-entity or NPC marker data, not player state
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/weave/ThreadAttacks.java	entity, item-entity or NPC marker data, not player state
 1	src/main/java/com/vincenthuto/hemomancy/common/entity/weave/WeaveDamageEvents.java	player root keys not yet moved into an attachment (S-1)
-2	src/main/java/com/vincenthuto/hemomancy/common/event/FungalProjectionEvents.java	player root keys not yet moved into an attachment (S-1)
+1	src/main/java/com/vincenthuto/hemomancy/common/event/FungalProjectionEvents.java	player root keys not yet moved into an attachment (S-1)
 6	src/main/java/com/vincenthuto/hemomancy/common/event/MorphicNectarEvents.java	entity, item-entity or NPC marker data, not player state
 2	src/main/java/com/vincenthuto/hemomancy/common/event/RenderingPoolEvents.java	item-entity rendering progress, not player state
 2	src/main/java/com/vincenthuto/hemomancy/common/event/WhiteHumorPurificationEvents.java	entity, item-entity or NPC marker data, not player state
@@ -74,7 +72,7 @@
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/OverworldFungalSurvey.java	player mission state under PlayerPersisted
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/PhlegethonticCommission.java	player mission state under PlayerPersisted
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/alchemist/SpecimenJarLesson.java	player mission state under PlayerPersisted
-11	src/main/java/com/vincenthuto/hemomancy/common/mission/artificer/ArtificerAssignments.java	player mission state under PlayerPersisted
+3	src/main/java/com/vincenthuto/hemomancy/common/mission/artificer/ArtificerAssignments.java	player mission state under PlayerPersisted; the legacy root keys are read once by the artificer_claim_keys migration (sunset 2027-05-01)
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/cicatrix_anchorite/VeinMasonAssignments.java	player mission state under PlayerPersisted
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/shared/VagrantMindInquiry.java	player mission state under PlayerPersisted
 2	src/main/java/com/vincenthuto/hemomancy/common/mission/vicar/FirstBloodcraftAssignment.java	player mission state under PlayerPersisted

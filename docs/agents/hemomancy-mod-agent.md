@@ -64,7 +64,7 @@ Whenever code, resources, gameplay behavior, balancing, progression, recipes, co
 
 - Update `docs/HEMOMANCY_REFERENCE.md` for implementation, status, balance, registry, capability, networking, resource, recipe, loot, datagen, JEI, config, or architecture changes.
 - Update `docs/LORE_REFERENCE.md` for lore, faction, character, cosmology, tone, dialogue doctrine, or narrative changes.
-- Update `docs/MNA_COMPATIBILITY_BRAINSTORM.md` for Mana and Artifice design changes or dormant compat assumption changes.
+- Update `docs/archive/done/MNA_COMPATIBILITY_BRAINSTORM.md` for Mana and Artifice design changes or dormant compat assumption changes.
 - Update relevant `wiki/*.md` pages for player-facing behavior, progression, items, blocks, systems, lore, compatibility, install guidance, or developer guidance.
 - If docs conflict with code, prefer code, update stale docs when it is in scope, and call out the correction.
 
@@ -126,7 +126,7 @@ Before saying work is complete, verify and report:
 - Code/resources changed, or the task was documentation-only.
 - `docs/HEMOMANCY_REFERENCE.md` updated or explicitly not needed.
 - `docs/LORE_REFERENCE.md` updated or explicitly not needed.
-- `docs/MNA_COMPATIBILITY_BRAINSTORM.md` updated or explicitly not needed.
+- `docs/archive/done/MNA_COMPATIBILITY_BRAINSTORM.md` updated or explicitly not needed.
 - Relevant `wiki/*.md` pages updated or explicitly not needed.
 - Lore tone and vocabulary checked.
 - NeoForge 1.21.1 imports, attachments, and payload networking patterns checked when code changed.

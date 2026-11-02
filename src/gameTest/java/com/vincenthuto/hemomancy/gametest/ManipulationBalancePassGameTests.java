@@ -39,7 +39,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import java.util.List;
 import java.util.UUID;
 
-/** Live coverage for the balance pass in docs/MANIPULATION_BALANCE_PLAN.md. */
+/** Live coverage for the balance pass in docs/archive/audits/MANIPULATION_BALANCE_PLAN.md. */
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class ManipulationBalancePassGameTests {

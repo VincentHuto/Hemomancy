@@ -32,9 +32,10 @@ public final class CourtChampionRules {
 		if (shunned) return Gate.REFUSED_SHUNNED;
 		if (!known) return Gate.REFUSED_UNKNOWN;
 		if (alreadyChampion) return Gate.REFUSED_CHAMPION;
+		// The wait comes first: losing moves the worn strain into the Jar, and the player should hear about the day.
+		if (!retryElapsed(now, retryAt)) return Gate.REFUSED_WAIT;
 		if (!apexStrain) return Gate.REFUSED_STRAIN;
 		if (!kindlingStanding.atLeast(CourtStandingRules.Standing.FRIEND)) return Gate.REFUSED_STANDING;
-		if (!retryElapsed(now, retryAt)) return Gate.REFUSED_WAIT;
 		return Gate.OPEN;
 	}
 

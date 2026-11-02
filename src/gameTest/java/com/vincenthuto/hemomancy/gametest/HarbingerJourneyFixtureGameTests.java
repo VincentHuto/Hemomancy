@@ -667,7 +667,7 @@ public final class HarbingerJourneyFixtureGameTests {
 					HemoJourneyFixtures.cleanup(player, origin);
 					HemoJourneyResult restored = HemoJourneySnapshot.restore(player);
 					helper.assertTrue(restored.passed(), "Worn Vow restore must succeed: " + restored.message());
-					helper.assertTrue(!player.getPersistentData().contains(ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY)
+					helper.assertTrue(!player.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG).contains(ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY)
 							&& !HarbingerAdvancementGranter.hasAdvancement(player,
 									HarbingerAdvancementGranter.ADV_ARTIFICER_HEMATIC_IRON_FITTING),
 							"Snapshot restore must remove journey-owned Worn Vow state");
@@ -794,7 +794,7 @@ public final class HarbingerJourneyFixtureGameTests {
 					HemoJourneyFixtures.cleanup(player, origin);
 					HemoJourneyResult restored = HemoJourneySnapshot.restore(player);
 					helper.assertTrue(restored.passed(), "Three Answers restore must succeed: " + restored.message());
-					helper.assertTrue(!player.getPersistentData().contains(ArtificerAssignments.FIRST_FORK_FAMILY_KEY)
+					helper.assertTrue(!player.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG).contains(ArtificerAssignments.FIRST_FORK_FAMILY_KEY)
 							&& !HarbingerAdvancementGranter.hasAdvancement(player,
 									ArtificerAssignments.THREE_ANSWERS_BRIEFED),
 							"Snapshot restore must remove journey-owned Three Answers state");

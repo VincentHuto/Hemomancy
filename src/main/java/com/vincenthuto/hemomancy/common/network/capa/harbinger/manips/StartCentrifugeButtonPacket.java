@@ -41,7 +41,9 @@ public class StartCentrifugeButtonPacket implements CustomPacketPayload {
 		VialCentrifugeStartupResult result = station.attemptStartup(player);
 		player.displayClientMessage(Component.translatable(result.translationKey()), true);
 		if (result == VialCentrifugeStartupResult.SUCCESS
-				&& ProgressionGates.hasDegree(player, 1)) {
+				&& ProgressionGates.hasDegree(player, 2)
+				&& com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.isBriefed(player)) {
+			// Only the assigned spin starts First Separation, as its advancement says: Degree 2 and briefed.
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED);
 		}

@@ -87,6 +87,11 @@ public static com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispe
     return player.getData(HemoAttachmentTypes.PENDING_WHISPERS);
 }
 
+/** Whether the player has a whisper inbox yet; unlike {@link #pendingWhispers} it never creates one. */
+public static boolean hasPendingWhispers(Player player) {
+    return player.hasData(HemoAttachmentTypes.PENDING_WHISPERS);
+}
+
 public static com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns cooldowns(Player player) {
     return player.getData(HemoAttachmentTypes.COOLDOWNS);
 }
@@ -284,6 +289,12 @@ public static Optional<IEquippedMorphling> getEquippedMorphling(Entity entity) {
 
 public static UnstainedProgress getUnstainedProgress(Player player) {
     return player.getData(HemoAttachmentTypes.UNSTAINED_PROGRESS);
+}
+
+/** Whether the player has begun purification; a player with no Unstained progress yet has not, and none is created. */
+public static boolean hasBegunPurification(Player player) {
+    return player.hasData(HemoAttachmentTypes.UNSTAINED_PROGRESS)
+            && player.getData(HemoAttachmentTypes.UNSTAINED_PROGRESS).hasBegunPurification();
 }
 
 public static Optional<IUnstainedProgress> getUnstainedProgress(Entity entity) {

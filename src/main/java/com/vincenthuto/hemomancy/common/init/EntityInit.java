@@ -298,7 +298,7 @@ public class EntityInit {
 					.build(Hemomancy.rloc("peacock_spider").toString()));
 	public static final DeferredHolder<EntityType<?>, EntityType<VampireBatEntity>> vampire_bat = ENTITY_TYPES.register(
 			"vampire_bat", () -> EntityType.Builder.of(VampireBatEntity::new, MobCategory.AMBIENT)
-					.sized(0.5F, 0.9F).clientTrackingRange(8)
+					.sized(0.5F, 0.9F).fireImmune().clientTrackingRange(8)
 					.build(Hemomancy.rloc("vampire_bat").toString()));
 
     // Boss room: Hematic Construct (inner trial minion)
@@ -1218,7 +1218,7 @@ public class EntityInit {
         event.put(EntityInit.bloodlicker.get(), BloodlickerEntity.setAttributes().build());
         event.put(EntityInit.bog_revenant.get(), BogRevenantEntity.setAttributes().build());
         event.put(EntityInit.fargone.get(), FargoneEntity.setAttributes().build());
-        event.put(EntityInit.fungling.get(), FargoneEntity.setAttributes().build());
+        event.put(EntityInit.fungling.get(), FunglingEntity.setAttributes().build());
         event.put(EntityInit.antibody.get(), AntibodyEntity.setAttributes().build());
         event.put(EntityInit.hunter_fungus.get(), HunterFungusEntity.setAttributes().build());
         event.put(EntityInit.facsimile_bat.get(), FacsimileBatEntity.setAttributes().build());

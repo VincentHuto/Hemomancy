@@ -1,0 +1,11 @@
+# Implementation prompt: Stage 7 — packet authority and client state
+
+Implement Stage 7 in the current Hemomancy checkout. Read the [Stage 7 audit](stage-7-network-packet-ownership.md) and [packet index](../packet-registration-index.md), then inspect current packet registrations, handlers, menu validity, senders, and client projections.
+
+First, close confirmed server action gaps for `StartCentrifugeButtonPacket` and `PacketPuppeteersSpindleAction`: require the expected open menu and its current `stillValid(player)` result before performing the action. Share only the small menu-validation step if that is clearer than two local checks. Keep the Centrifuge's startup transaction and Spindle's Crossbar ownership/selection rules in their existing owners. Compare Effigy as the already-gated example. Preserve packet IDs, fields, codecs, and registered directions unless a complete sender inventory justifies a compatible protocol change.
+
+Then trace active-rite snapshots with rites and players in two dimensions. Fix the source-level scope mismatch using a dimension-correct recipient or payload policy backed by that trace; retain full-replacement semantics and growth continuity. Check Chamber of Will and Fungal Projection across logout, reconnect, and world change. Clear stale client state where the lifecycle requires it, including the Fungal active flag when its timer ends, without merging feature-specific payloads. Keep `PacketHandler.sendToPlayer` side effects and unrelated observer packets intact.
+
+Use a focused compile and targeted menu, multiplayer, and client lifecycle checks that address these changes; avoid a large test suite. Report packet direction/recipient behavior, scenarios actually exercised, the code changed, and any unverified compatibility or live visual behavior. Preserve unrelated working-tree changes and do not create a worktree or pause for routine approval.
+
+Consolidation should also reduce file and code bloat where responsibilities truly overlap. Remove obsolete handlers, helpers, and duplicate branches made unnecessary by this stage; avoid creating a new wrapper file for a few lines of shared logic. In the final report, quantify files deleted, lines removed, lines added, and the net line change for gameplay code. If the stage does not reduce file count or code size, explain why the remaining structure is needed.

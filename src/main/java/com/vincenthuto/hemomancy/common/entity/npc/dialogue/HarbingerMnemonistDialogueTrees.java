@@ -96,6 +96,7 @@ public final class HarbingerMnemonistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)
 				)))
 				.addNode(crudeMemoriesNode())
+				.addNode(slotsNode())
 				.addNode(itemHintNode())
 				.build();
 	}

@@ -47,6 +47,12 @@ public final class ConcentratedBlood {
                 com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.DISTILL)
                 && ClinicalBloodKnowledge.eligible(player);
     }
+    /** Why a carried vial will not take right now: the first is still settling, the blood is past it, or not ready. */
+    public static String refusalKey(ServerPlayer player) {
+        if (pending(player)) return "message.hemomancy.blood_injection.concentrated_pending";
+        if (ProgressionGates.hasDegree(player, 3)) return "message.hemomancy.blood_injection.concentrated_spent";
+        return "message.hemomancy.blood_injection.concentrated_not_ready";
+    }
     public static boolean inject(ServerPlayer player) {
         if (!canInject(player)) return false;
         pending(player, true);
@@ -65,9 +71,17 @@ public final class ConcentratedBlood {
         player.displayClientMessage(Component.translatable("hemomancy.initiation.awakened"), false);
         return true;
     }
+    /** Whether the player carries a Concentrated vial anywhere in their inventory, armour or offhand slots included. */
+    public static boolean carries(Player player) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) if (is(player.getInventory().getItem(i))) return true;
+        return false;
+    }
     public static boolean replace(ServerPlayer player, Entity npc) {
         if (!(npc instanceof HarbingerAlchemistEntity) || !EarlyInitiation.near(player, npc) || !canInject(player)) return false;
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) if (is(player.getInventory().getItem(i))) return false;
+        if (carries(player)) {
+            player.displayClientMessage(Component.translatable("hemomancy.initiation.blood_already_carried"), false);
+            return false;
+        }
         EarlyInitiation.give(player, create());
         player.displayClientMessage(Component.translatable("hemomancy.initiation.blood_rest"), false);
         return true;

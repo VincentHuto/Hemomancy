@@ -294,7 +294,7 @@ them green.
     - planted-staff fist: generated fittings append the fist. The test now locates the 27-element run instead of using fixed indices.
     - utility polish: barometer shapes, crucible spout and basin constants, ossuary bounds (now a JSON bounds check), and the candle flame (now in the lit model)
     - loom renderer hooks: `dcdf960e5`
-    - rename scan: reworded the retired pre-Lumenlace strain name in four tracked docs, and the scan now treats `docs/OrchestratorReports/` as an archive, like `docs/done/`.
+    - rename scan: reworded the retired pre-Lumenlace strain name in four tracked docs, and the scan now treats `docs/archive/concept/OrchestratorReports/` as an archive, like `docs/archive/done/`.
   - **Stale count (1):** `LegacyMainTestSuiteContractTest` now compares the set of source-discovered `main()` tests with the adapter's set.
 - **GameTests fixed (all test-side):**
   - `selectedLoomRecipeSurvivesStockAndChargedReload`: compares thread spans before and after reload. Engram Weaving stores 3 spans per enzyme, and payment spends none.
@@ -317,7 +317,7 @@ them green.
 - **Deviations from the roadmap:**
   - M-1 turned out not to be "regenerate vs accept hand edits". There were no hand edits, so no model changed, and no visual check was needed.
   - `/tools/`: the roadmap offered "track or skip". Model generators are tracked, and only the editor check skips.
-  - The local-only `docs/MANIPULATION_BALANCE_PLAN.md` was reworded and `docs/done/.../orcadian-horseman/README.md` was re-encoded, so local runs match CI.
+  - The local-only `docs/archive/audits/MANIPULATION_BALANCE_PLAN.md` was reworded and `docs/archive/done/.../orcadian-horseman/README.md` was re-encoded, so local runs match CI.
   - Dedicated-server and client starts used throwaway game directories under `build/` (from a scratch init script), so the shared `run/world` save was not touched.
 - **Not verified (needs in-game or visual check):**
   - The restored armour inventory textures are visible only as break and item particles. Their in-hand rendering comes from the 3D armour BEWLR and is unchanged.
@@ -376,7 +376,7 @@ them green.
 - **Known issues (pre-existing, not fixed):**
   - `BloodCraftingKeyPressPacket` imports `HarbingerCardinalRiteEvents` without using it.
   - `IWhiteHumorVolume.drainFromSource` has no callers. It is not on the SAFE list.
-  - `docs/done/consolidation/capability-storage-index.md:40` calls `item_blood_volume` "serialized".
+  - `docs/archive/done/consolidation/capability-storage-index.md:40` calls `item_blood_volume` "serialized".
   - `SourceTreeHygieneTest` reads only `hemomancy.mixins.json`. If the dormant MnA mixins are re-enabled, extend it to `hemomancy.mna.mixins.json`.
 - **Handoff notes for step 4 (Phase 2, network hygiene):**
   - The baseline is fully green: 3,928 JUnit tests and 999 GameTests.

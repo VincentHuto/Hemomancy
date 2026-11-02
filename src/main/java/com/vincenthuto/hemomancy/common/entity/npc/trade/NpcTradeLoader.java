@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
 /**
- * Loads NPC want cards from {@code data/<ns>/npc_trade/<speaker>/<offer>.json} (schema: docs/npc_trade/02). A bad file
+ * Loads NPC want cards from {@code data/<ns>/npc_trade/<speaker>/<offer>.json} (schema: docs/archive/tracks/npc_trade/02). A bad file
  * is logged, counted and skipped; the rest load. Rules that span files (two cards on one speaker wanting the same
  * thing, the {@code never_sold} tag) are checked by {@link NpcTradeRegistry}, again once tags are bound.
  */

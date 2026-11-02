@@ -11,7 +11,10 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MnemonistStarterMemoryChoice;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusDiscoveryProgress;
@@ -23,6 +26,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -273,6 +277,41 @@ public final class PlayerMigrationGameTests {
 				helper.assertTrue(PlayerCooldowns.of(respawned.player).until(PlayerCooldowns.PRISMATIC_FLASH) == 0L
 						&& PlayerCooldowns.of(returned.player).until(PlayerCooldowns.PRISMATIC_FLASH) == 0L,
 						"Persisted cooldowns must reset on death and End return, as the root keys did");
+			}
+			helper.succeed();
+		}
+	}
+
+	/**
+	 * F-4: the Artificer's claim and first-choice root keys and the Mnemonist starter claim move under
+	 * PlayerPersisted and leave the root; a value already under PlayerPersisted wins. A death clone keeps them, so the
+	 * one-time rewards stay claimed after a respawn.
+	 */
+	@GameTest(template = "empty", batch = "player_migrations")
+	public static void npcClaimRootKeysMoveUnderPlayerPersisted(GameTestHelper helper) {
+		try (CapturedPlayer captured = CapturedPlayer.create(helper)) {
+			ServerPlayer player = load(helper, captured, "npc_claim_root_keys");
+			login(player);
+			helper.assertTrue(ArtificerAssignments.isArtificerLessonRewardClaimed(player,
+							ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY)
+					&& ArtificerAssignments.isArtificerLessonRewardClaimed(player, ArtificerAssignments.D7_REWARD_CLAIM_KEY)
+					&& ArtificerAssignments.firstForkFamily(player) == ArtificerProgressionRules.ForkFamily.BARBED
+					&& MnemonistStarterMemoryChoice.isClaimed(player),
+					"The root claim keys were not moved under PlayerPersisted");
+			CompoundTag durable = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+			helper.assertTrue("kept".equals(durable.getString(ArtificerAssignments.FIRST_D7_LINEAGE_KEY)),
+					"A value already under PlayerPersisted must win over the old root key: " + durable);
+			var root = player.getPersistentData();
+			helper.assertTrue(root.size() == 1 && root.contains(Player.PERSISTED_NBT_TAG),
+					"The old root keys were left behind: " + root);
+			assertSettled(helper, player);
+
+			try (CapturedPlayer respawned = CapturedPlayer.create(helper)) {
+				respawned.player.restoreFrom(player, false);
+				helper.assertTrue(ArtificerAssignments.isArtificerLessonRewardClaimed(respawned.player,
+								ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY)
+						&& MnemonistStarterMemoryChoice.isClaimed(respawned.player),
+						"A death clone must keep the one-time claims");
 			}
 			helper.succeed();
 		}

@@ -311,7 +311,7 @@ public final class EntityRendererRegistrar {
         event.registerBlockEntityRenderer(BlockEntityInit.phlebotomists_cabinet.get(), PhlebotomistsCabinetRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.phlebotomists_field_case.get(), PhlebotomistsFieldCaseRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.dictation_table.get(), DictationTableRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntityInit.harbinger_escritoire.get(), com.vincenthuto.hutoslib.client.render.block.DictationTableRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.harbinger_escritoire.get(), DictationTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.visceral_mirror.get(), VisceralMirrorRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.non_euclidean_hallway.get(), NonEuclideanHallwayRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.qliphoth_bloom.get(),

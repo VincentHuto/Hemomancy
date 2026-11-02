@@ -160,7 +160,9 @@ src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrai
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/command/QliphothSubcommand.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/encounter/ChamberVisitService.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/encounter/FungalGardenTravelHelper.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/MnemonistStarterMemoryChoice.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PendingWhispers.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/mission/artificer/ArtificerAssignments.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/recipe/ArmatureUpgradeRecipe.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/resources,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/resources/data/hemomancy/recipe/armature_upgrade,resource,exact-dir
@@ -315,6 +317,7 @@ src/test/java/com/vincenthuto/hemomancy/client/model/entity/summon/PaleIntercess
 src/test/java/com/vincenthuto/hemomancy/client/model/entity/summon/PaleIntercessionAssetContractTest.java,junit,src/main/resources/assets/hemomancy/textures/entity/pale_intercession/emissive.png,resource,by-name
 src/test/java/com/vincenthuto/hemomancy/client/model/entity/summon/PaleIntercessionAssetContractTest.java,junit,src/main/resources/data/hemomancy/books/liberimmaculatus/our_lady/pages/pale_intercession.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/model/entity/summon/PaleIntercessionAssetContractTest.java,junit,src/main/resources/data/hemomancy/damage_type/pale_intercession.json,resource,base-dir
+src/test/java/com/vincenthuto/hemomancy/client/model/item/book/HemoBookModelTest.java,junit,src/main/resources/assets/hemomancy/textures/entity/book,resource,helper
 src/test/java/com/vincenthuto/hemomancy/client/model/morphling/MorphlingMutationRegistryTest.java,junit,src/main/resources/assets/hemomancy/models/entity/bbmodel/morphling/FungalHeadAttachmentModel.bbmodel,resource,helper
 src/test/java/com/vincenthuto/hemomancy/client/model/morphling/MorphlingMutationRegistryTest.java,junit,src/main/resources/assets/hemomancy/textures/models/morphling/fungal_head.png,resource,helper
 src/test/java/com/vincenthuto/hemomancy/client/particle/AbocipherParticleResourceTest.java,main,src/main/java,other,exact-dir
@@ -1624,6 +1627,7 @@ src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/ScarletSerpentR
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/ScarletSerpentRulesTest.java,main,src/main/resources/data/hemomancy/loot_table/entities/scarlet_serpent.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/ScarletSerpentRulesTest.java,main,src/main/resources/data/hemomancy/tags/worldgen/biome/scarlet_serpent_spawnlist.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/VampireBatColonyResourceTest.java,junit,src/main/resources/data/hemomancy/neoforge/biome_modifier/add_vampire_bat.json,resource,exact
+src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/VampireBatColonyResourceTest.java,junit,src/main/resources/data/hemomancy/tags/worldgen/biome/vampire_bat_spawnlist.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/VerdigrisMothResourceTest.java,main,src/main/java,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/VerdigrisMothResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/animal/VerdigrisMothResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java,java,base-dir
@@ -2490,7 +2494,7 @@ src/test/java/com/vincenthuto/hemomancy/common/item/shared/MnemonicBlueprintAppe
 src/test/java/com/vincenthuto/hemomancy/common/item/shared/MnemonicBlueprintAppearanceTest.java,junit,src/main/resources/assets/hemomancy/textures/item/mnemonic_blueprint_rite.png,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/shared/MnemonicBlueprintAppearanceTest.java,junit,src/main/resources/assets/hemomancy/textures/item/mnemonic_blueprint_structure.png,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/shared/MnemonicFolioResourceTest.java,junit,src/main/resources/assets/hemomancy/models/item/mnemonic_folio.json,resource,exact
-src/test/java/com/vincenthuto/hemomancy/common/item/shared/MnemonicFolioResourceTest.java,junit,src/main/resources/assets/hemomancy/textures/item/mnemonic_folio.png,resource,exact
+src/test/java/com/vincenthuto/hemomancy/common/item/shared/MnemonicFolioResourceTest.java,junit,src/main/resources/assets/hemomancy/textures/entity/book/mnemonic_folio.png,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/shared/MnemonicFolioResourceTest.java,junit,src/main/resources/data/hemomancy/recipe/clear_mnemonic_blueprint.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/shared/MnemonicFolioResourceTest.java,junit,src/main/resources/data/hemomancy/recipe/mnemonic_folio.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/shared/ScaleGripRulesTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/recipe/ScaleGripBindingRecipe.java,java,exact

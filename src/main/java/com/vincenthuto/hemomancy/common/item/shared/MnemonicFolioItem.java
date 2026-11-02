@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.MnemonicFolioMenu;
+import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,16 +13,16 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public final class MnemonicFolioItem extends Item {
+/** Holds blueprints, not pages: it extends the guide book for its model and its hand animation, and opens a menu. */
+public final class MnemonicFolioItem extends ItemGuideBook {
 	public MnemonicFolioItem(Properties properties) {
-		super(properties.stacksTo(1));
+		super(properties.stacksTo(1), Hemomancy.rloc("textures/entity/book/mnemonic_folio.png"));
 	}
 
 	@Override

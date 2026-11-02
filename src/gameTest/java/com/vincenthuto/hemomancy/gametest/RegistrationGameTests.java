@@ -243,7 +243,7 @@ public final class RegistrationGameTests {
         var expectedCustom = new java.util.TreeSet<>(java.util.Set.of("mortal_display", "suspended_blood_crystal",
                 "suspended_cleansed_blood_crystal", "suspended_vivianite", "visceral_mirror", "fungal_implantation_pylon",
                 "phlebotomists_field_case", "earthen_vein", "vial_centrifuge", "hematic_armature", "mycelial_crucible",
-                "specimen_jar", "sanguine_monolith", "hematic_stake", "puppeteers_spindle", "mason_effigy",
+                "specimen_jar", "sanguine_monolith", "hematic_stake", "mycelial_synapse", "puppeteers_spindle", "mason_effigy",
                 "covenant_throne", "sunburst_bloom", "house_marker", "saint_sarcophagus"));
         var expectedManual = new java.util.TreeSet<>(java.util.Set.of("gourd_stem", "active_befouling_ash_trail",
                 "active_smouldering_ash_trail", "placed_blood_stained_stone", "lethean_poppy_wreath", "sanguine_conduit"));
@@ -465,6 +465,8 @@ public final class RegistrationGameTests {
         var hunter = com.vincenthuto.hemomancy.common.init.EntityInit.hunter_fungus.get().create(level);
         BlockPos start = helper.absolutePos(new BlockPos(1, 1, 1));
         hunter.moveTo(net.minecraft.world.phys.Vec3.atBottomCenterOf(start));
+        // Another test's fake player, far off in the same batch, would otherwise despawn it before its first tick.
+        hunter.setPersistenceRequired();
         level.addFreshEntity(hunter);
         BlockPos heard = start.east(10);
         hunter.hearAlarm(heard, level.getGameTime());

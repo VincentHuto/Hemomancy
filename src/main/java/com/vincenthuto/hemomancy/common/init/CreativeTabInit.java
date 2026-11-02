@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.HouseMarkerBlockItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SaintSarcophagusBlockItem;
 import java.util.List;
@@ -86,25 +85,6 @@ public final class CreativeTabInit {
 			ItemInit.draught_of_still_mercy,
 			ItemInit.lethean_brew,
 			ItemInit.spawn_egg_peacock_spider,
-			// The Brined Court's members, until their review (Track 9).
-			ItemInit.court_member_eggs.get(CourtRole.GARDENER),
-			ItemInit.court_member_eggs.get(CourtRole.ARBOR),
-			ItemInit.court_member_eggs.get(CourtRole.LIGHTKEEPER),
-			ItemInit.court_member_eggs.get(CourtRole.TIDEWARDEN),
-			ItemInit.court_member_eggs.get(CourtRole.BRACED_ELDER),
-			ItemInit.court_member_eggs.get(CourtRole.EDGE_SWIMMER),
-			ItemInit.court_member_eggs.get(CourtRole.NURSERY_TENDER),
-			ItemInit.court_member_eggs.get(CourtRole.LINESMAN),
-			ItemInit.court_member_eggs.get(CourtRole.LAMP_COLONY),
-			ItemInit.court_member_eggs.get(CourtRole.HOST),
-			ItemInit.court_member_eggs.get(CourtRole.VEILED_RESIDENT),
-			ItemInit.court_member_eggs.get(CourtRole.BELLWARDEN),
-			ItemInit.court_member_eggs.get(CourtRole.SLEEPER),
-			ItemInit.court_member_eggs.get(CourtRole.MARROW_TENDER),
-			ItemInit.court_member_eggs.get(CourtRole.ROOTED_ELDER),
-			ItemInit.court_member_eggs.get(CourtRole.OFFERING_BEARER),
-			ItemInit.court_member_eggs.get(CourtRole.KINDLED_ELDER),
-			ItemInit.court_member_eggs.get(CourtRole.HEAD_TENDER),
 			BlockInit.semi_sentient_construct,
 			BlockInit.humane_idol,
 			BlockInit.serpentine_idol,

@@ -31,10 +31,15 @@ public final class CapturedPlayer implements AutoCloseable {
 	public final List<String> chat = new ArrayList<>();
 	private final EmbeddedChannel channel;
 	private boolean online;
+	/** The level list {@link #joinLevel()} added the player to; null when not joined. */
+	private List<ServerPlayer> levelPlayers;
 
 	private CapturedPlayer(GameTestHelper helper) {
-		var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(),
-				"cap_" + UUID.randomUUID().toString().substring(0, 8)), false);
+		this(helper, new GameProfile(UUID.randomUUID(), "cap_" + UUID.randomUUID().toString().substring(0, 8)));
+	}
+
+	private CapturedPlayer(GameTestHelper helper, GameProfile profile) {
+		var cookie = CommonListenerCookie.createInitial(profile, false);
 		this.player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(),
 				cookie.clientInformation());
 		var connection = new Connection(PacketFlow.SERVERBOUND);
@@ -47,6 +52,11 @@ public final class CapturedPlayer implements AutoCloseable {
 
 	public static CapturedPlayer create(GameTestHelper helper) {
 		return new CapturedPlayer(helper);
+	}
+
+	/** A player with a given profile, so a respawned or relogged player keeps the UUID of the one it replaces. */
+	public static CapturedPlayer create(GameTestHelper helper, GameProfile profile) {
+		return new CapturedPlayer(helper, profile);
 	}
 
 	private void capture(Packet<?> packet) {
@@ -71,6 +81,7 @@ public final class CapturedPlayer implements AutoCloseable {
 
 	/** Takes the player out of the server's UUID lookup, as if they had logged out. */
 	public CapturedPlayer offline() {
+		if (levelPlayers != null) leaveLevel();
 		playersByUuid().remove(player.getUUID(), player);
 		online = false;
 		return this;
@@ -92,8 +103,61 @@ public final class CapturedPlayer implements AutoCloseable {
 		return payloads.stream().filter(type::isInstance).map(type::cast).toList();
 	}
 
+	/**
+	 * Opt-in: lists the player in {@code PlayerList.getPlayers()} and in its level's player list, so code that finds
+	 * players through those lists ({@code level.getPlayerByUUID}, {@code getNearestPlayer}, {@code level.getPlayers},
+	 * {@code server.getPlayerList().getPlayers()}) sees them. The player is still not in the level's entity storage:
+	 * the server never ticks them and {@code getEntitiesOfClass(Player.class, ...)} does not find them.
+	 * {@link #leaveLevel()} (and {@link #offline()} and {@link #close()}) take them out again. Also puts them
+	 * {@link #online()}.
+	 */
+	public CapturedPlayer joinLevel() {
+		online();
+		List<ServerPlayer> all = serverPlayers();
+		if (!all.contains(player)) all.add(player);
+		levelPlayers = levelPlayers(player.serverLevel());
+		if (!levelPlayers.contains(player)) levelPlayers.add(player);
+		return this;
+	}
+
+	/** Takes the player out of the lists {@link #joinLevel()} put them in; nothing when they were not joined. */
+	public CapturedPlayer leaveLevel() {
+		serverPlayers().remove(player);
+		if (levelPlayers != null) levelPlayers.remove(player);
+		levelPlayers(player.serverLevel()).remove(player);
+		levelPlayers = null;
+		return this;
+	}
+
+	public boolean joinedLevel() {
+		return levelPlayers != null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<ServerPlayer> serverPlayers() {
+		try {
+			var field = net.minecraft.server.players.PlayerList.class.getDeclaredField("players");
+			field.setAccessible(true);
+			return (List<ServerPlayer>) field.get(player.server.getPlayerList());
+		} catch (ReflectiveOperationException exception) {
+			throw new IllegalStateException("Could not reach the player list", exception);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static List<ServerPlayer> levelPlayers(net.minecraft.server.level.ServerLevel level) {
+		try {
+			var field = net.minecraft.server.level.ServerLevel.class.getDeclaredField("players");
+			field.setAccessible(true);
+			return (List<ServerPlayer>) field.get(level);
+		} catch (ReflectiveOperationException exception) {
+			throw new IllegalStateException("Could not reach the level's player list", exception);
+		}
+	}
+
 	@Override
 	public void close() {
+		if (levelPlayers != null) leaveLevel();
 		if (online) offline();
 		player.discard();
 		channel.finishAndReleaseAll();

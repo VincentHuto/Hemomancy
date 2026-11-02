@@ -7,7 +7,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.
 import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MnemonistStarterMemoryChoice;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
+import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeMigration;
 import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 import net.minecraft.server.level.ServerPlayer;
@@ -55,7 +57,11 @@ public final class PlayerDataMigrations {
 			// The pending whisper inbox root list (S-1c).
 			new Migration(8, "pending_whispers", "2027-04-23", PendingWhispers::migrateLegacyInbox),
 			// Armour, Antecedent scar and Scriptorium cooldown root keys (S-7).
-			new Migration(9, "persisted_cooldowns", "2027-04-23", PlayerCooldowns::migrateLegacyRootKeys));
+			new Migration(9, "persisted_cooldowns", "2027-04-23", PlayerCooldowns::migrateLegacyRootKeys),
+			// The Artificer's lesson, fork and D7 claim keys, once root keys a death clone dropped (F-4).
+			new Migration(10, "artificer_claim_keys", "2027-05-01", ArtificerAssignments::migrateLegacyRootKeys),
+			// The Mnemonist's starter-memory claim, once a root key a death clone dropped (F-4).
+			new Migration(11, "mnemonist_starter_claim", "2027-05-01", MnemonistStarterMemoryChoice::migrateLegacyRootKey));
 
 	public static final int LATEST = MIGRATIONS.getLast().version();
 

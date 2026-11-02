@@ -62,6 +62,12 @@ public record DialogueTopic(String id, DialogueCategory category, String titleKe
 				groupKey, progress, displayItemId, value, attention, lore);
 	}
 
+	/** This card with {@code value} as its state and {@code sigil} as its attention. */
+	public DialogueTopic withStatus(DialogueTopicState value, DialogueAttention sigil) {
+		return new DialogueTopic(id, category, titleKey, summaryKey, targetNodeId, icon, value,
+				groupKey, progress, displayItemId, unread, sigil, lore);
+	}
+
 	public DialogueTopic withItem(ResourceLocation itemId) {
 		return new DialogueTopic(id, category, titleKey, summaryKey, targetNodeId, icon, state,
 				groupKey, progress, itemId, unread, attention, lore);

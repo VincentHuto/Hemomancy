@@ -54,10 +54,10 @@ class HarbingerHermitRoadMissionSourceTest {
 		assertNotMatching("field notes item remains unregistered", itemInit,
 				"(?m)^\\s*public static final DeferredHolder<Item, Item> field_notes =");
 		assertContains("assignment ledger uses guide book base for renderer", ledgerItem, "extends ItemGuideBook");
-		assertContains("assignment ledger texture is field-note style", itemInit,
-				"textures/entity/field_notes.png");
+		assertContains("assignment ledger has its own book atlas", itemInit,
+				"textures/entity/book/harbinger_assignment_ledger.png");
 		assertContains("guide renderer covers item guide books", clientEvents, "item instanceof ItemGuideBook");
-		assertContains("guide renderer is the Liber-style guide renderer", clientEvents, "RenderItemGuideBook");
+		assertContains("Hemomancy books draw with their own book models", clientEvents, "HemoBookItemRenderer");
 		assertContains("assignment ledger language exists", language,
 				"\"item.hemomancy.harbinger_assignment_ledger\"");
 		assertContains("assignment ledger has 3D entity item model", model, "\"parent\": \"builtin/entity\"");

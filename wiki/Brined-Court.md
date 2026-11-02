@@ -1,6 +1,6 @@
 # The Brined Court
 
-The Brined Court is the sea offshoot of the Harbinger tradition: eight houses down the ocean's depth layers, each keeping a hereditary Morphling strain, between Marimo at the sunlit top and Hydra at the vents. Its sites only appear while Pelagic worldgen is on. See `docs/HEMOMANCY_REFERENCE.md` (Structures, "The Brined Court") for the rules and `docs/brined_court/` for the build plan.
+The Brined Court is the sea offshoot of the Harbinger tradition: eight houses down the ocean's depth layers, each keeping a hereditary Morphling strain, between Marimo at the sunlit top and Hydra at the vents. Its sites only appear while Pelagic worldgen is on. See `docs/HEMOMANCY_REFERENCE.md` (Structures, "The Brined Court") for the rules and `docs/archive/tracks/brined_court/` for the build plan.
 
 ## The house strains
 

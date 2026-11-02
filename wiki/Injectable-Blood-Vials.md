@@ -89,7 +89,7 @@ Dedicated fixtures live under `blood_injection_validation`, in their own build-d
 
 - Package assembly and all six focused JVM tests passed.
 - All 15 dedicated GameTests passed: legacy/malformed data, identification persistence/equality, both hands with full inventories, interruption/saturation, creative handling, item changes/death/spectators, packet round trip, pack replacement and refreshed identified answers, custom resistance/mobility/healing/mining, two-tendency selection, syringe preservation, centrifuge startup, and machine interaction before offhand fallback.
-- The full JVM suite ran 2,035 tests; 2,033 passed. Two failures remain outside this feature: `MorphlingLumenlaceRenameResourceTest` encounters invalid UTF-8 in the untouched ignored `docs/phlegethontic-nether-worldgen/orcadian-horseman/README.md`; `LegacyMainTestSuiteContractTest` expects 361 legacy main-method tests while 360 exist. The full `build` task therefore fails its test phase, despite successful assembly.
+- The full JVM suite ran 2,035 tests; 2,033 passed. Two failures remain outside this feature: `MorphlingLumenlaceRenameResourceTest` encounters invalid UTF-8 in the untouched ignored `docs/archive/done/phlegethontic-nether-worldgen/orcadian-horseman/README.md`; `LegacyMainTestSuiteContractTest` expects 361 legacy main-method tests while 360 exist. The full `build` task therefore fails its test phase, despite successful assembly.
 - A focused read-only code review found no actionable correctness issues. No live-client visual, remote multiplayer, or survival balance result is claimed.
 
 ### Injection animation verification

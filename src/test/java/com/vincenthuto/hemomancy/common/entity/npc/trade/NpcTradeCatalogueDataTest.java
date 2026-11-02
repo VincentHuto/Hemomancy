@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * docs/npc_trade/05: the shipped catalogues parse, keep the cross-file rules, and every speaker has the lines the
+ * docs/archive/tracks/npc_trade/05: the shipped catalogues parse, keep the cross-file rules, and every speaker has the lines the
  * Trade box asks for. Item ids are checked against the frozen registry golden for Hemomancy and trusted for vanilla;
  * the live registry check (and the stack-size and component decoding) is {@code NpcTradeGameTests}' job, and the
  * no-want/give-loop rule is {@code NpcTradeGuardrailTest}'s.

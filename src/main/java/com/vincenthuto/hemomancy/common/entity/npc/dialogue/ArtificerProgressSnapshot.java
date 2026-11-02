@@ -14,7 +14,18 @@ public record ArtificerProgressSnapshot(int degree, boolean activeBlood, boolean
 		boolean livingStaffBond, ForkFamily forkFamily, D7Lineage d7Lineage,
 		Step wornVow, Step threeAnswers, Step crimsonVestment, Step assumedLimb, Step weightOfFrame,
 		boolean missingWornVowFitting, boolean missingForkFitting, boolean missingCrimsonFitting,
-		boolean missingAssumedLimbFitting, boolean missingD7Fitting, boolean consecrationKitClaimed) {
+		boolean missingAssumedLimbFitting, boolean missingD7Fitting, boolean consecrationKitClaimed, boolean silentium) {
+	/** A snapshot of a player who is not a Degree 8 Silentium. */
+	public ArtificerProgressSnapshot(int degree, boolean activeBlood, boolean purifying, boolean clarity,
+			boolean livingStaffBond, ForkFamily forkFamily, D7Lineage d7Lineage,
+			Step wornVow, Step threeAnswers, Step crimsonVestment, Step assumedLimb, Step weightOfFrame,
+			boolean missingWornVowFitting, boolean missingForkFitting, boolean missingCrimsonFitting,
+			boolean missingAssumedLimbFitting, boolean missingD7Fitting, boolean consecrationKitClaimed) {
+		this(degree, activeBlood, purifying, clarity, livingStaffBond, forkFamily, d7Lineage, wornVow, threeAnswers,
+				crimsonVestment, assumedLimb, weightOfFrame, missingWornVowFitting, missingForkFitting,
+				missingCrimsonFitting, missingAssumedLimbFitting, missingD7Fitting, consecrationKitClaimed, false);
+	}
+
 	public boolean needsForkRecovery() { return threeAnswers == Step.RECOVER_BRANCH; }
 	public boolean needsD7Recovery() { return weightOfFrame == Step.RECOVER_BRANCH; }
 
@@ -77,7 +88,7 @@ public record ArtificerProgressSnapshot(int degree, boolean activeBlood, boolean
 		boolean cornerstone = HarbingerAdvancementGranter.isArtificerMonolithicFrame(player);
 		boolean d7Upgraded = HarbingerAdvancementGranter.isArtificerFirstD7Upgrade(player);
 		boolean d7Inspected = has(player, ArtificerAssignments.WEIGHT_OF_FRAME_INSPECTED);
-		boolean d7Rewarded = player.getPersistentData().getBoolean(ArtificerAssignments.D7_REWARD_CLAIM_KEY);
+		boolean d7Rewarded = ArtificerAssignments.isArtificerLessonRewardClaimed(player, ArtificerAssignments.D7_REWARD_CLAIM_KEY);
 		boolean d7FullSet = ArtificerAssignments.hasFullD7Lineage(player, lineage);
 		boolean d7Demonstrated = has(player, ArtificerAssignments.WEIGHT_OF_FRAME_DEMONSTRATED);
 		Step d7Step = degree < 7 ? Step.LOCKED : ArtificerProgressionRules.nextWeightOfFrame(
@@ -91,7 +102,9 @@ public record ArtificerProgressSnapshot(int degree, boolean activeBlood, boolean
 				crimsonFitting && !ArtificerAssignments.hasFitting(player, ItemInit.crimson_vestment_fitting.get()),
 				assumedFitting && !ArtificerAssignments.hasFitting(player, ItemInit.assumed_limb_fitting.get()),
 				d7Fitting && !ArtificerAssignments.hasFitting(player, ItemInit.monolithic_frame_fitting.get()),
-				com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.ArtificerDialogueEvents.hasClaimedConsecrationKit(player));
+				com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.ArtificerDialogueEvents.hasClaimedConsecrationKit(player),
+				com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions.isSilentium(
+						degree, HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath()));
 	}
 
 	private static boolean hasForkFitting(ServerPlayer player, ForkFamily family) {

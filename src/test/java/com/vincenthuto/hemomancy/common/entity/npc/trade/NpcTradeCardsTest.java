@@ -13,7 +13,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** docs/npc_trade/03: the Trade box a speaker shows, and its wire form. */
+/** docs/archive/tracks/npc_trade/03: the Trade box a speaker shows, and its wire form. */
 class NpcTradeCardsTest {
 	private static final long DAY = 7L;
 

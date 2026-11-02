@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** docs/npc_trade/06: the daily want is the same for a seed and day, changes across days, and is one card a pool. */
+/** docs/archive/tracks/npc_trade/06: the daily want is the same for a seed and day, changes across days, and is one card a pool. */
 class NpcTradeRotationTest {
 	private static final long SEED = 0x5EEDL;
 	private static final NpcTradeOffer STEADY = offer("steady", Optional.empty());

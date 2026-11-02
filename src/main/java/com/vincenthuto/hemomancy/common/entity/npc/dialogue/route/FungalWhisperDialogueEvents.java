@@ -29,7 +29,7 @@ final class FungalWhisperDialogueEvents {
 					false);
 		}
 		case "archon_choice_silence" -> {
-			if (!player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)) return true;
+			if (!FungalGardenTravelHelper.isRevelationChoicePending(player)) return true;
 			player.getPersistentData().remove(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING);
 			// Archon chose to carry the truth in silence — they turn back from the Eighth Degree.
 			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
@@ -41,7 +41,7 @@ final class FungalWhisperDialogueEvents {
 					false);
 		}
 		case "archon_choice_eighth_degree" -> {
-			if (!player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)) return true;
+			if (!FungalGardenTravelHelper.isRevelationChoicePending(player)) return true;
 			player.getPersistentData().remove(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING);
 			// Archon chose to pursue the Eighth Degree — the Apotheos path opens.
 			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);

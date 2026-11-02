@@ -20,6 +20,14 @@ class VicarCovenantGuidanceTest {
     }
 
     @Test
+    void writtenCovenantComesBeforeLineMembership() {
+        DialogueTree base = HarbingerVicarDialogueTrees.forDegree(5, 42, false);
+        // A member's deposit writes the covenant: the rank rite is next, whoever leads the line.
+        assertEquals(List.of("hemomancy.vicar.covenant.perform_bloodline_rite"),
+                guidance(base, 5, false, true, false, false, false));
+    }
+
+    @Test
     void degreeSixAdviceNamesOnlyMissingProofs() {
         DialogueTree base = HarbingerVicarDialogueTrees.forDegree(6, 42, false);
         assertEquals(List.of("hemomancy.vicar.covenant.chamber_return",

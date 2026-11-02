@@ -52,7 +52,7 @@ public final class FungalProjectionEvents {
 	@SubscribeEvent
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player
-				&& player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)) {
+				&& FungalGardenTravelHelper.isRevelationChoicePending(player)) {
 			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.coreWitnessDialogue()));
 		}
 	}

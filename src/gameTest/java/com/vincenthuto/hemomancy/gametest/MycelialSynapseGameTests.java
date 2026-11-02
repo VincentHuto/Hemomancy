@@ -27,10 +27,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -74,6 +80,27 @@ public final class MycelialSynapseGameTests {
 					&& check.refusal().getContents() instanceof TranslatableContents contents
 					&& contents.getKey().equals("block.hemomancy.mycelial_synapse.not_in_gardens"),
 					"Outside the Gardens a synapse is refused as such");
+			helper.succeed();
+		} finally {
+			player.discard();
+		}
+	}
+
+	/** The item is a real block item, and setting one down answers to the same refusals as raising one. */
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void synapseItemIsRefusedOutsideTheGardens(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+		BlockPos ground = new BlockPos(8, 6, 8);
+		helper.setBlock(ground, Blocks.STONE);
+		helper.assertTrue(BlockInit.mycelial_synapse.get().asItem() instanceof BlockItem,
+				"The synapse must have a block item");
+		ServerPlayer player = apotheos(level, "synapse-item");
+		try {
+			BlockPos clicked = helper.absolutePos(ground);
+			player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(BlockInit.mycelial_synapse.get()));
+			player.getItemInHand(InteractionHand.MAIN_HAND).useOn(new UseOnContext(player, InteractionHand.MAIN_HAND,
+					new BlockHitResult(Vec3.atCenterOf(clicked), Direction.UP, clicked, false)));
+			helper.assertBlockNotPresent(BlockInit.mycelial_synapse.get(), ground.above());
 			helper.succeed();
 		} finally {
 			player.discard();

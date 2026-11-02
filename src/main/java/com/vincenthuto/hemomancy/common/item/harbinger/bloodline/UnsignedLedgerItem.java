@@ -115,6 +115,15 @@ public class UnsignedLedgerItem extends Item {
 						// New player joins the bloodline
 						ServerLevel overworld = ((ServerLevel) worldIn).getServer().overworld();
 						BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+						Bloodline current = savedData.getBloodlineForPlayer(playerIn.getUUID());
+						if (current != null && current.isValid()
+								&& !current.getBloodlineUUID().equals(savedLine.getBloodlineUUID())) {
+							playerIn.displayClientMessage(
+									HemoText.translatable("message.hemomancy.unsigned_ledger_item.you_already_belong_to_a_bloodline",
+											current.getName()).withStyle(ChatFormatting.DARK_RED),
+									true);
+							return InteractionResultHolder.fail(stack);
+						}
 						Bloodline globalLine = savedData.addMember(savedLine.getBloodlineUUID(),
 								playerIn.getUUID());
 

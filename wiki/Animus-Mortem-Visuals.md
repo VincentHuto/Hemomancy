@@ -18,4 +18,4 @@ Later Mortem effects introduce mycelium and sparse spores. Bloom of Rot gives th
 
 Particle settings reduce secondary accents. The main spell shapes remain visible with Minimal particles. Costs, damage, progression and weapon/Avatar silhouettes retain their existing behavior.
 
-[Implementation and verification](../docs/manipulation_work_plan/10-animus-mortem-visuals.md)
+[Implementation and verification](../docs/archive/done/manipulation_work_plan/10-animus-mortem-visuals.md)

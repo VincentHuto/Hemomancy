@@ -17,4 +17,13 @@ class VampireBatColonyResourceTest {
 		assertEquals(8, spawn.get("minCount").getAsInt());
 		assertEquals(20, spawn.get("maxCount").getAsInt());
 	}
+
+	@Test
+	void coloniesLiveOnlyInTheNether() throws Exception {
+		var biomes = JsonParser.parseString(Files.readString(Path.of(
+				"src/main/resources/data/hemomancy/tags/worldgen/biome/vampire_bat_spawnlist.json"))).getAsJsonObject()
+				.getAsJsonArray("values");
+		assertEquals(1, biomes.size());
+		assertEquals("#minecraft:is_nether", biomes.get(0).getAsString());
+	}
 }

@@ -64,6 +64,8 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 	}
 
 	public static DialogueEvent dispatch(ServerPlayer sender, String eventId, int entityId) {
+		// A dead or spectating player cannot take a lesson or a reward; the screen they chose it from is stale.
+		if (!ServerboundGuards.activePlayer(sender)) return null;
 		var entity = sender.level().getEntity(entityId);
 		if (HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT.equals(eventId)) return null;
 		if (SanguineMonolithDialogueTrees.EVENT_CORNERSTONE.equals(eventId)
@@ -75,7 +77,10 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 			var stationClaim = StationUpgradeDialogue.parseClaim(eventId);
 			if (stationClaim.isPresent() && !StationUpgradeDialogue.allowedSpeaker(stationClaim.get().station(), entity))
 				return null;
+			if (!DialogueEventSpeakers.allows(eventId, entity)) return null;
 			if ((HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD.equals(eventId)
+					|| EarlyInitiationDialogue.BEGIN.equals(eventId)
+					|| EarlyInitiationDialogue.RELEASE.equals(eventId)
 					|| VoyagerIntroductionDialogue.REPORT.equals(eventId)
 					|| VoyagerIntroductionDialogue.BEARING.equals(eventId))
 					&& !(entity instanceof HarbingerVicarEntity)) return null;

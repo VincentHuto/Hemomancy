@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeS
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeableStation;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
+import net.minecraft.network.chat.Component;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -131,7 +132,11 @@ public class SanguineCondenserBlockEntity extends HemoBlockEntity implements IBl
         Inventory inventory = player.getInventory();
         ItemStack template = new ItemStack(ItemInit.sanguine_formation.get());
         int offered = Math.min(formations, roomFor(inventory, template));
-        if (offered <= 0) return 0;
+        if (offered <= 0) {
+            // The formation stays where it is; the player is told why the click took nothing.
+            player.displayClientMessage(Component.translatable("message.hemomancy.sanguine_condenser.no_room"), true);
+            return 0;
+        }
         ItemStack stack = template.copyWithCount(offered);
         inventory.add(stack);
         int moved = offered - stack.getCount();

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** docs/npc_trade/02: the offer schema, its side rules, the give bans and the one-want-per-card rule. */
+/** docs/archive/tracks/npc_trade/02: the offer schema, its side rules, the give bans and the one-want-per-card rule. */
 class NpcTradeLoaderTest {
 	private static final Set<String> ITEMS = Set.of("hemomancy:ferric_enzyme", "hemomancy:recycled_enzyme",
 			"hemomancy:enzyme_primer", "hemomancy:spore_sac", "hemomancy:memory_blood_shot", "hemomancy:hematic_memory",

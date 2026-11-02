@@ -54,8 +54,16 @@ final class MnemonistDialogueEvents {
 		}
 		case HarbingerMnemonistDialogueTrees.EVENT_CIRCUS_WAYBILL ->
 				handleMnemonistCircusWaybill(player, event.getEntityId());
-		case HarbingerMnemonistDialogueTrees.EVENT_RELIQUARY_TAUGHT ->
+		case HarbingerMnemonistDialogueTrees.EVENT_RELIQUARY_TAUGHT -> {
+			// The reliquary lesson is told from the third Degree, to a Harbinger who has not begun purifying.
+			Entity teacher = player.level().getEntity(event.getEntityId());
+			if (teacher instanceof HarbingerMnemonistEntity
+					&& player.distanceToSqr(teacher) <= 64
+					&& ProgressionGates.hasDegree(player, 3)
+					&& (!HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification() && !HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked())) {
 				MnemonicReliquaryProgression.teach(player);
+			}
+		}
 		case HarbingerMnemonistDialogueTrees.EVENT_ANCHORITE_COUNSEL ->
 				VeinMasonAssignments.onCounsel(player);
 		case HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN ->
@@ -87,7 +95,9 @@ final class MnemonistDialogueEvents {
 	}
 
 	private static void handleMnemonistCircusWaybill(ServerPlayer player, int entityId) {
+		// The purifying tree offers no waybill.
 		if (!(player.level().getEntity(entityId) instanceof HarbingerMnemonistEntity)
+				|| HemoCapabilityAccess.hasBegunPurification(player)
 				|| HemoCapabilityAccess.getPlayerDegreeNumber(player) < CircusIntroductionRules.MINIMUM_DEGREE
 				|| player.getInventory().contains(new ItemStack(ItemInit.circus_waybill.get()))) return;
 		DialogueRewards.giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.circus_waybill.get()));
@@ -98,7 +108,7 @@ final class MnemonistDialogueEvents {
 	private static boolean handleMnemonistStarterMemory(ServerPlayer player, int entityId, MnemonistStarterMemoryChoice choice) {
 		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification();
 		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked();
-		boolean claimed = player.getPersistentData().getBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY);
+		boolean claimed = MnemonistStarterMemoryChoice.isClaimed(player);
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 
 		if (!MnemonistStarterMemoryChoice.canClaim(degree, purifying, clarity, claimed)) {
@@ -121,7 +131,7 @@ final class MnemonistDialogueEvents {
 			return false;
 		}
 		DialogueRewards.giveOrDropAtEntity(player, entityId, stack);
-		player.getPersistentData().putBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY, true);
+		MnemonistStarterMemoryChoice.markClaimed(player);
 		player.displayClientMessage(
 				Component.translatable("hemomancy.dialogue.event.mnemonist_starter_granted")
 						.withStyle(ChatFormatting.DARK_RED),

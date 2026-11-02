@@ -12,9 +12,9 @@ Blood can be injected before identification. Unknown samples show their source, 
 
 This is an optional use for a field sample. It does not refill blood or permanently change tendencies. The rack carries samples, and centrifuging them still produces enzymes. Missing-mod and malformed samples stay filled and cannot be overwritten. See the [implementation and balance notes](Injectable-Blood-Vials.md) for all mappings.
 
-Lux manipulations form flowing white light, including a luminous Beacon, thin beams and the Unclosing Eye. White Verdict leaves a slightly thicker beam that fades over two seconds after release; the lingering light causes no additional hits. Tenebris forms black liquid that stretches into smoke. Umbral Step's smoke surrounds its departure and arrival positions. Charged manipulations keep their buildup visible through the gauge's full charge duration. Their costs, targeting, damage and gameplay durations are unchanged. [Visual implementation and verification](../docs/manipulation_work_plan/08-lux-umbra-flow.md).
+Lux manipulations form flowing white light, including a luminous Beacon, thin beams and the Unclosing Eye. White Verdict leaves a slightly thicker beam that fades over two seconds after release; the lingering light causes no additional hits. Tenebris forms black liquid that stretches into smoke. Umbral Step's smoke surrounds its departure and arrival positions. Charged manipulations keep their buildup visible through the gauge's full charge duration. Their costs, targeting, damage and gameplay durations are unchanged. [Visual implementation and verification](../docs/archive/done/manipulation_work_plan/08-lux-umbra-flow.md).
 
-Hematic Flare requires a visible permitted target before charging blood; Funeral Bell respects owned allies and disabled PvP for damage and statuses. [Manipulation acceptance results and remaining checks](../docs/manipulation_work_plan/06-acceptance-results.md).
+Hematic Flare requires a visible permitted target before charging blood; Funeral Bell respects owned allies and disabled PvP for damage and statuses. [Manipulation acceptance results and remaining checks](../docs/archive/done/manipulation_work_plan/06-acceptance-results.md).
 
 Memory and progression tooltips distinguish **base cast**, **upkeep per second**, **reactive trigger** and **Living Staff switch** costs. A staff form's registry-zero cost does not make switching free: the base is 250 mL, reduced by Weapons Master to a minimum of 50 mL. Weapon attacks have their own costs, shown on weapon tooltips. Restoration is free, and loaded crossbow ammunition is retained through restoration and re-forming, including a save/reload.
 
@@ -71,7 +71,7 @@ Player/body sources such as base regeneration, **Sanguine Surge**, **Last Wind**
 
 **Manipulations** are the abilities you trigger, charge, toggle, or keep active with blood.
 
-Manipulation effects share material and movement within each tendency: circulating blood, drained residue, nerve impulses, blood-derived iron, heated glass, arrested frost, luminous fibers and inward shadow. Readiness counts and field boundaries continue to follow gameplay state. Brief blood-cell and school-colored glow accents accompany successful activation and hits, with sparse motes around sustained forms. Reducing particles removes decoration while retaining the main spell subjects. [Visual pass and evidence](../docs/manipulation_work_plan/07-visceral-visuals.md).
+Manipulation effects share material and movement within each tendency: circulating blood, drained residue, nerve impulses, blood-derived iron, heated glass, arrested frost, luminous fibers and inward shadow. Readiness counts and field boundaries continue to follow gameplay state. Brief blood-cell and school-colored glow accents accompany successful activation and hits, with sparse motes around sustained forms. Reducing particles removes decoration while retaining the main spell subjects. [Visual pass and evidence](../docs/archive/done/manipulation_work_plan/07-visceral-visuals.md).
 
 Flammeus now uses red-orange flame, thin smoke, boiling blood and tumbling sanguine glass. Congeatio forms dark frozen blood beneath pale frost, with powder, heavy cruor fragments and cracks that follow affected bodies and surfaces. These effects retain the existing spell timing, range and combat behavior. [Fire and Cold materials](Flammeus-Congeatio-Visuals.md).
 
@@ -183,7 +183,7 @@ Living Circuit links up to three nearby teammates and runs through the caster wh
 
 Sovereign Instinct (now a Ductilis passive) turns commandable attackers, those of 80 maximum health or less, on one another for five seconds when at least four blood-bearing enemies are targeting you; bosses only gain Sanguine Pressure. Blackhearted's rupture clears its saturation and starts its existing refractory period. Phoenix Debt uses the shared Last Rite gate and cannot fire repeatedly. These passives must be equipped, enabled, and meet their active-blood and alignment requirements.
 
-See the [casting implementation report](../docs/manipulation_work_plan/02-targeting-and-casting-results.md) for exact scope and remaining live acceptance.
+See the [casting implementation report](../docs/archive/done/manipulation_work_plan/02-targeting-and-casting-results.md) for exact scope and remaining live acceptance.
 
 ### Manipulation Diagnostics
 
@@ -732,7 +732,7 @@ Base costs are now Hemorrhage 75 mL, Coronation 600 mL, Conductive Mark 150 mL a
 
 Dowsing reports nearest ore coordinates, Forge preserves multi-output recipe counts and stack limits, and Lignum-family channels automatically harvest permitted blocks when selection completes. Earlier release and forced cancellation retain their separate behaviors. Memory recipes and progression gates are unchanged. Live balance acceptance and authored effects remain open.
 
-See [area 4 comparisons and verification](../docs/manipulation_work_plan/04-balance-results.md).
+See [area 4 comparisons and verification](../docs/archive/done/manipulation_work_plan/04-balance-results.md).
 
 ## Manipulation balance pass 2 — 10 October 2026
 
@@ -740,7 +740,7 @@ Charged manipulations now fizzle before payment below a quarter charge ("Not eno
 
 Sanguine Surge regenerates 5 mL/s per level and Last Wind 10 mL/s per level below 10% blood. A secondary tendency can lift a manipulation's affinity but never weakens it. Applying a Synaptic pattern locks further applies for ten seconds. Vein sections now matter: higher-rank casts strain harder, a clotted section makes its manipulations 25% dearer, and a dead section refuses them. Kills of mobs with no blood profile no longer feed Animus.
 
-Several Animus forms were re-ranked (Mortar, Halo, Lattice, Summon Avatar and Avatar Arms are learnable from Degree I; Tempest and Avatar Complete need Degree V), and Sanguine Marionette and Sovereign Instinct moved to Ductilis. Every school received tuning; the [developer reference](../docs/HEMOMANCY_REFERENCE.md) §8.2 lists current values, and the [balance plan](../docs/MANIPULATION_BALANCE_PLAN.md#11-pass-2) records what changed and why. Osseous Bloom is now called **Crystalline Bloom**.
+Several Animus forms were re-ranked (Mortar, Halo, Lattice, Summon Avatar and Avatar Arms are learnable from Degree I; Tempest and Avatar Complete need Degree V), and Sanguine Marionette and Sovereign Instinct moved to Ductilis. Every school received tuning; the [developer reference](../docs/HEMOMANCY_REFERENCE.md) §8.2 lists current values, and the [balance plan](../docs/archive/audits/MANIPULATION_BALANCE_PLAN.md#11-pass-2) records what changed and why. Osseous Bloom is now called **Crystalline Bloom**.
 
 ### Specimen storage
 

@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.Circu
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerTuning;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -277,9 +276,8 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 			boolean firstVisit = CircusPlayerProgress.awardMilestone(serverPlayer, "performer." + roleId(), 50);
 			CircusPlayerProgress.sync(serverPlayer, true);
 			changeState(ActState.RECOVER);
-			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(DialogueHubFactory.decorate(
-					com.vincenthuto.hemomancy.common.entity.npc.dialogue.CircusSchoolDialogue.tree(this, serverPlayer, firstVisit),
-					facultyRoleId(), serverPlayer)));
+			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(
+					com.vincenthuto.hemomancy.common.entity.npc.dialogue.CircusSchoolDialogue.hub(this, serverPlayer, firstVisit)));
 		}
 		return InteractionResult.sidedSuccess(level().isClientSide);
 	}

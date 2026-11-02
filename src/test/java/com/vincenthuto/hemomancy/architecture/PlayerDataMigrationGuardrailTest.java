@@ -22,23 +22,27 @@ class PlayerDataMigrationGuardrailTest {
 			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/migration/PlayerDataMigrations.java";
 
 	/** Each migration entry point and the file that defines it. */
-	private static final Map<String, String> ENTRY_POINTS = Map.of(
-			"PlayerCooldowns::migrateLegacyRootKeys",
-			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/cooldown/PlayerCooldowns.java",
-			"ChamberVisitService::migrateLegacyAccess",
-			"src/main/java/com/vincenthuto/hemomancy/common/encounter/ChamberVisitService.java",
-			"PendingWhispers::migrateLegacyInbox",
-			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PendingWhispers.java",
-			"CircusPlayerProgress::migrateLegacyRootKeys",
-			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/circus/CircusPlayerProgress.java",
-			"FungalScarMigrationRules::migrateCarried",
-			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/fungal/FungalScarMigrationRules.java",
-			"StationUpgradeMigration::migrate",
-			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/station/StationUpgradeMigration.java",
-			"LiberKnowledgeEvents::migrateLegacyNotes",
-			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/knowledge/LiberKnowledgeEvents.java",
-			"InitiatoryDegreeEvents::migrateLegacyArchonChoice",
-			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/degree/InitiatoryDegreeEvents.java");
+	private static final Map<String, String> ENTRY_POINTS = Map.ofEntries(
+			Map.entry("ArtificerAssignments::migrateLegacyRootKeys",
+			"src/main/java/com/vincenthuto/hemomancy/common/mission/artificer/ArtificerAssignments.java"),
+			Map.entry("MnemonistStarterMemoryChoice::migrateLegacyRootKey",
+			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/MnemonistStarterMemoryChoice.java"),
+			Map.entry("PlayerCooldowns::migrateLegacyRootKeys",
+			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/cooldown/PlayerCooldowns.java"),
+			Map.entry("ChamberVisitService::migrateLegacyAccess",
+			"src/main/java/com/vincenthuto/hemomancy/common/encounter/ChamberVisitService.java"),
+			Map.entry("PendingWhispers::migrateLegacyInbox",
+			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PendingWhispers.java"),
+			Map.entry("CircusPlayerProgress::migrateLegacyRootKeys",
+			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/circus/CircusPlayerProgress.java"),
+			Map.entry("FungalScarMigrationRules::migrateCarried",
+			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/fungal/FungalScarMigrationRules.java"),
+			Map.entry("StationUpgradeMigration::migrate",
+			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/station/StationUpgradeMigration.java"),
+			Map.entry("LiberKnowledgeEvents::migrateLegacyNotes",
+			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/knowledge/LiberKnowledgeEvents.java"),
+			Map.entry("InitiatoryDegreeEvents::migrateLegacyArchonChoice",
+			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/degree/InitiatoryDegreeEvents.java"));
 
 	@Test
 	void migrationsRunOnlyFromTheTable() throws Exception {

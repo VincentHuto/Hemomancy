@@ -799,7 +799,7 @@ public class ManipulationInit {
 					EnumManipulationRank.PERFECTUS, EnumBloodTendency.TENEBRIS, EnumVeinSections.HEAD)
 					.setCooldownTicks(140).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
 
-	// ── Tier-gap fills (see docs/MANIPULATION_BALANCE_PLAN.md §6) ──
+	// ── Tier-gap fills (see docs/archive/audits/MANIPULATION_BALANCE_PLAN.md §6) ──
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> searing_lash = MANIPS.register("searing_lash",
 			() -> new SearingLashManip("searing_lash", 225, 10, 0, EnumManipulationType.QUICK,

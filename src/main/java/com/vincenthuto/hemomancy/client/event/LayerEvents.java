@@ -28,6 +28,7 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.will.WillModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.*;
 import com.vincenthuto.hemomancy.client.model.entity.summon.*;
 import com.vincenthuto.hemomancy.client.model.item.*;
+import com.vincenthuto.hemomancy.client.model.item.book.HemoBookLayers;
 import com.vincenthuto.hemomancy.client.model.item.unstained.AbsolutionDaggerModel;
 import com.vincenthuto.hemomancy.client.model.item.unstained.AnnettasSanguisLanceaModel;
 import com.vincenthuto.hemomancy.client.model.item.unstained.SilthmereGlaiveModel;
@@ -77,6 +78,12 @@ public class LayerEvents {
 		event.registerLayerDefinition(LivingFlailModel.LAYER_LOCATION, LivingFlailModel::createBodyLayer);
 		event.registerLayerDefinition(MarionetteCrossbarModel.LAYER_LOCATION, MarionetteCrossbarModel::createBodyLayer);
 		event.registerLayerDefinition(LivingSickleModel.LAYER_LOCATION, LivingSickleModel::createBodyLayer);
+		event.registerLayerDefinition(HemoBookLayers.LIBER_SANGUINUM, HemoBookLayers::createLiberSanguinumLayer);
+		event.registerLayerDefinition(HemoBookLayers.LIBER_IMMACULATUS, HemoBookLayers::createLiberImmaculatusLayer);
+		event.registerLayerDefinition(HemoBookLayers.BOOK_OF_OBSERVANCES, HemoBookLayers::createBookOfObservancesLayer);
+		event.registerLayerDefinition(HemoBookLayers.HARBINGER_ASSIGNMENT_LEDGER,
+				HemoBookLayers::createHarbingerAssignmentLedgerLayer);
+		event.registerLayerDefinition(HemoBookLayers.MNEMONIC_FOLIO, HemoBookLayers::createMnemonicFolioLayer);
 		event.registerLayerDefinition(FloatingHeartModel.mortal_display, FloatingHeartModel::createBodyLayer);
 		event.registerLayerDefinition(VisceralMirrorModel.LAYER_LOCATION, VisceralMirrorModel::createBodyLayer);
 		event.registerLayerDefinition(SanguisLanceaModel.LAYER_LOCATION, SanguisLanceaModel::createBodyLayer);

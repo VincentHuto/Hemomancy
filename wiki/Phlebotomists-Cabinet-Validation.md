@@ -4,7 +4,7 @@
 
 - `./gradlew.bat assemble`: passed; cabinet code/resources are present in the release jar, with development GameTests excluded.
 - Dedicated suite: **38 required tests passed**, including **15 cabinet tests** and the existing blood-vial/microscope cases.
-- Full JVM suite: **2,035 passed, 2 failed**. The failures are outside cabinet code: `LegacyMainTestSuiteContractTest` expects 361 legacy tests but discovers 360; `MorphlingLumenlaceRenameResourceTest` fails reading the existing non-UTF-8 `docs/phlegethontic-nether-worldgen/orcadian-horseman/README.md`. Neither file was changed for the cabinet.
+- Full JVM suite: **2,035 passed, 2 failed**. The failures are outside cabinet code: `LegacyMainTestSuiteContractTest` expects 361 legacy tests but discovers 360; `MorphlingLumenlaceRenameResourceTest` fails reading the existing non-UTF-8 `docs/archive/done/phlegethontic-nether-worldgen/orcadian-horseman/README.md`. Neither file was changed for the cabinet.
 - Cabinet resource JSON, mesh bounds and embedded editable-model textures validated. `git diff --check` passed.
 - Interactive client and real-network checks below remain unverified.
 

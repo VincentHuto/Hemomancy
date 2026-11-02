@@ -435,7 +435,7 @@ public final class HemoJourneyChecks {
 					"Wait for the prepared Armature to produce Edacious Blood Lust Boots.");
 			case ARTIFICER_WEIGHT_OF_FRAME_INSPECTION -> require(unmet,
 					ArtificerAssignments.has(player, ArtificerAssignments.WEIGHT_OF_FRAME_INSPECTED)
-							&& player.getPersistentData().getBoolean(ArtificerAssignments.D7_REWARD_CLAIM_KEY)
+							&& ArtificerAssignments.isArtificerLessonRewardClaimed(player, ArtificerAssignments.D7_REWARD_CLAIM_KEY)
 							&& outputPresent(player, stage, origin, claimOutputs),
 					"Show the first Edacious piece to the Artificer and receive its lineage material.");
 			case ARTIFICER_D7_DEMONSTRATION -> require(unmet,

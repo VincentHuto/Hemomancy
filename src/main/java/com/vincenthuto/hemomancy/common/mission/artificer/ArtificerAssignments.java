@@ -7,11 +7,15 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
 import java.util.Set;
 
 import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.D7Lineage;
@@ -146,7 +150,7 @@ public final class ArtificerAssignments {
 	}
 
 	public static boolean isForkResearchRewardClaimed(ServerPlayer player) {
-		return player.getPersistentData().getBoolean(FORK_RESEARCH_REWARD_CLAIM_KEY);
+		return durable(player).getBoolean(FORK_RESEARCH_REWARD_CLAIM_KEY);
 	}
 
 	public static boolean canClaimForkResearchReward(ServerPlayer player) {
@@ -160,7 +164,7 @@ public final class ArtificerAssignments {
 	public static ItemStack claimForkResearchReward(ServerPlayer player) {
 		if (!canClaimForkResearchReward(player)) return ItemStack.EMPTY;
 		ItemStack reward = forkReward(firstForkFamily(player));
-		if (!reward.isEmpty()) player.getPersistentData().putBoolean(FORK_RESEARCH_REWARD_CLAIM_KEY, true);
+		if (!reward.isEmpty()) writableDurable(player).putBoolean(FORK_RESEARCH_REWARD_CLAIM_KEY, true);
 		return reward;
 	}
 
@@ -195,10 +199,10 @@ public final class ArtificerAssignments {
 
 	public static ItemStack claimD7Material(ServerPlayer player) {
 		if (!has(player, WEIGHT_OF_FRAME_INSPECTED) && !HarbingerAdvancementGranter.isArtificerD7Fitting(player)
-				|| player.getPersistentData().getBoolean(D7_REWARD_CLAIM_KEY)) return ItemStack.EMPTY;
+				|| durable(player).getBoolean(D7_REWARD_CLAIM_KEY)) return ItemStack.EMPTY;
 		ItemStack reward = d7Reward(firstD7Lineage(player));
 		if (reward.isEmpty()) return ItemStack.EMPTY;
-		player.getPersistentData().putBoolean(D7_REWARD_CLAIM_KEY, true);
+		writableDurable(player).putBoolean(D7_REWARD_CLAIM_KEY, true);
 		return reward;
 	}
 
@@ -258,7 +262,7 @@ public final class ArtificerAssignments {
 				HarbingerAdvancementGranter.ADV_ARTIFICER_ASSUMED_LIMB_LESSON_READY);
 		if (has(player, WEIGHT_OF_FRAME_BRIEFED)
 				&& HarbingerAdvancementGranter.isArtificerFirstD7Upgrade(player)
-				&& !player.getPersistentData().getBoolean(D7_REWARD_CLAIM_KEY)) {
+				&& !durable(player).getBoolean(D7_REWARD_CLAIM_KEY)) {
 			HarbingerAdvancementGranter.grantIfNotDone(player, WEIGHT_OF_FRAME_LESSON_READY);
 		}
 
@@ -295,11 +299,11 @@ public final class ArtificerAssignments {
 	}
 
 	public static boolean isArtificerLessonRewardClaimed(ServerPlayer player, String claimKey) {
-		return player.getPersistentData().getBoolean(claimKey);
+		return durable(player).getBoolean(claimKey);
 	}
 
 	public static void markArtificerLessonRewardClaimed(ServerPlayer player, String claimKey) {
-		player.getPersistentData().putBoolean(claimKey, true);
+		writableDurable(player).putBoolean(claimKey, true);
 	}
 
 	private static void grantLessonReadyIfUnclaimed(ServerPlayer player, net.minecraft.resources.ResourceLocation prerequisite,
@@ -437,7 +441,7 @@ public final class ArtificerAssignments {
 	}
 
 	public static ForkFamily firstForkFamily(ServerPlayer player) {
-		ForkFamily stored = ForkFamily.fromSerializedName(player.getPersistentData().getString(FIRST_FORK_FAMILY_KEY));
+		ForkFamily stored = ForkFamily.fromSerializedName(durable(player).getString(FIRST_FORK_FAMILY_KEY));
 		if (stored != ForkFamily.NONE) return stored;
 		if (HarbingerAdvancementGranter.isArtificerBarbedFitting(player)) return ForkFamily.BARBED;
 		if (HarbingerAdvancementGranter.isArtificerChitiniteFitting(player)) return ForkFamily.CHITINITE;
@@ -446,12 +450,12 @@ public final class ArtificerAssignments {
 	}
 
 	public static D7Lineage firstD7Lineage(ServerPlayer player) {
-		return D7Lineage.fromSerializedName(player.getPersistentData().getString(FIRST_D7_LINEAGE_KEY));
+		return D7Lineage.fromSerializedName(durable(player).getString(FIRST_D7_LINEAGE_KEY));
 	}
 
 	public static void recordForkFamily(ServerPlayer player, ForkFamily family) {
 		if (family != ForkFamily.NONE && firstForkFamily(player) == ForkFamily.NONE) {
-			player.getPersistentData().putString(FIRST_FORK_FAMILY_KEY, family.serializedName());
+			writableDurable(player).putString(FIRST_FORK_FAMILY_KEY, family.serializedName());
 		}
 	}
 
@@ -461,7 +465,41 @@ public final class ArtificerAssignments {
 				.HarbingerPathPermissions.isSilentium(HemoCapabilityAccess.getPlayerDegreeNumber(player),
 						HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath())) return;
 		if (lineage != D7Lineage.NONE && firstD7Lineage(player) == D7Lineage.NONE) {
-			player.getPersistentData().putString(FIRST_D7_LINEAGE_KEY, lineage.serializedName());
+			writableDurable(player).putString(FIRST_D7_LINEAGE_KEY, lineage.serializedName());
+		}
+	}
+
+	/** The lesson, fork and seventh-Degree claim keys and the first choices, all under PlayerPersisted. */
+	private static final List<String> DURABLE_KEYS = List.of(WORN_VOW_REWARD_CLAIM_KEY, THREE_ANSWERS_REWARD_CLAIM_KEY,
+			CRIMSON_VESTMENT_REWARD_CLAIM_KEY, ASSUMED_LIMB_REWARD_CLAIM_KEY, D7_REWARD_CLAIM_KEY,
+			FORK_RESEARCH_REWARD_CLAIM_KEY, FIRST_FORK_FAMILY_KEY, FIRST_D7_LINEAGE_KEY);
+
+	/**
+	 * The Artificer's claims and first choices, kept under PlayerPersisted so a death or an End return does not make
+	 * a one-time reward claimable again. Read-only: a missing tag reads as empty and is not created.
+	 */
+	private static CompoundTag durable(ServerPlayer player) {
+		return player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+	}
+
+	private static CompoundTag writableDurable(ServerPlayer player) {
+		CompoundTag root = player.getPersistentData();
+		if (!root.contains(Player.PERSISTED_NBT_TAG, Tag.TAG_COMPOUND)) root.put(Player.PERSISTED_NBT_TAG, new CompoundTag());
+		return root.getCompound(Player.PERSISTED_NBT_TAG);
+	}
+
+	/**
+	 * The artificer_claim_keys migration: these keys were once kept at the persistent-data root, which a death clone drops.
+	 * Each old root key is moved under PlayerPersisted (a value already there wins) and removed from the root.
+	 */
+	public static void migrateLegacyRootKeys(ServerPlayer player) {
+		CompoundTag root = player.getPersistentData();
+		for (String key : DURABLE_KEYS) {
+			Tag legacy = root.get(key);
+			if (legacy == null) continue;
+			CompoundTag durable = writableDurable(player);
+			if (!durable.contains(key)) durable.put(key, legacy.copy());
+			root.remove(key);
 		}
 	}
 

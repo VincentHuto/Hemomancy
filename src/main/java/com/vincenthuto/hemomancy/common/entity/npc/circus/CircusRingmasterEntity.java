@@ -193,18 +193,27 @@ public final class CircusRingmasterEntity extends PathfinderMob
 		boolean attentionComplete = (CircusPlayerProgress.challenges(player) & 1) != 0;
 		if (EVENT_ACCEPT.equals(eventId) && attentionComplete
 				&& CircusProgressRules.canReceivePact(CircusPlayerProgress.acclimation(player))) {
-			if (CircusPlayerProgress.chooseRoute(player, CircusRouteRules.Route.SUCCESSION))
+			if (CircusPlayerProgress.chooseRoute(player, CircusRouteRules.Route.SUCCESSION)) {
 				CircusPlayerProgress.completeChallenge(player, 1, 50);
+				player.displayClientMessage(Component.translatable("message.hemomancy.circus.route.chosen.succession")
+						.withStyle(ChatFormatting.DARK_RED), false);
+			}
 		} else if (EVENT_REJECT.equals(eventId) && attentionComplete
 				&& CircusProgressRules.canReceivePact(CircusPlayerProgress.acclimation(player))) {
 			if (CircusPlayerProgress.chooseRoute(player, CircusRouteRules.Route.LIBERATION)) {
 				CircusPlayerProgress.completeChallenge(player, 1, 50);
+				player.displayClientMessage(Component.translatable("message.hemomancy.circus.route.chosen.liberation")
+						.withStyle(ChatFormatting.DARK_RED), false);
 			}
 		} else if (EVENT_REPAIR.equals(eventId)) {
 			CircusPavilionSavedData.Site site = CircusPavilionSavedData.get(player.serverLevel())
 					.site(player.serverLevel(), carousel.encounterOrigin());
-			if (site.activeOwner() == null && site.outcome() == CircusPavilionStateRules.Outcome.NEUTRAL)
-				CircusPlayerProgress.repairRoute(player);
+			if (site.activeOwner() == null && site.outcome() == CircusPavilionStateRules.Outcome.NEUTRAL
+					&& CircusPlayerProgress.repairRoute(player)) {
+				player.displayClientMessage(Component.translatable("message.hemomancy.circus.route.repaired."
+						+ (CircusPlayerProgress.route(player) == CircusRouteRules.Route.SUCCESSION ? "succession" : "liberation"))
+						.withStyle(ChatFormatting.DARK_RED), false);
+			}
 		} else if (EVENT_TRIAL.equals(eventId)) {
 			CircusPerformanceController.beginNext(player, carousel.encounterOrigin());
 		} else if (EVENT_FINALE.equals(eventId)) {

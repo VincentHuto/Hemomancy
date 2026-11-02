@@ -75,10 +75,21 @@ public final class VascularDiagnosisRules {
 	}
 
 	public enum Treatment {
-		REST_AND_FOOD,
-		SANGUINE_SALVE,
-		VASCULAR_POULTICE,
-		VASCULAR_MENDING
+		REST_AND_FOOD("vascular_treatment.hemomancy.rest_and_food"),
+		SANGUINE_SALVE("item.hemomancy.sanguine_salve"),
+		VASCULAR_POULTICE("item.hemomancy.vascular_poultice"),
+		VASCULAR_MENDING("hemomancy.rite.vascular_mending.name");
+
+		private final String translationKey;
+
+		Treatment(String translationKey) {
+			this.translationKey = translationKey;
+		}
+
+		/** The lang key of the remedy's player-facing name (its item or rite where it has one). */
+		public String translationKey() {
+			return translationKey;
+		}
 	}
 
 	public record MemoryRoute(EnumVeinSections section, HematicMemoryExpression expression, String name,

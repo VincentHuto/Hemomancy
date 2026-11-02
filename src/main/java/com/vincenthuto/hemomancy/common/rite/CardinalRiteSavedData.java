@@ -136,12 +136,18 @@ public class CardinalRiteSavedData extends SavedData {
 		setDirty();
 	}
 
+	/**
+	 * Hands the player what their rites left to recover. A dead player keeps the claim until they respawn (a stack put
+	 * into a corpse's pack is lost), and only what actually lands counts: a Creative full pack swallows a stack and
+	 * reports success, so that stack stays owed.
+	 */
 	public void deliverRecovery(ServerPlayer player) {
+		if (!player.isAlive()) return;
 		Map<UUID, List<ItemStack>> claims = recovery.get(player.getUUID());
 		if (claims == null) return;
 		for (List<ItemStack> pending : claims.values())
 			pending.removeIf(stack -> {
-				player.getInventory().add(stack);
+				stack.shrink(com.vincenthuto.hemomancy.common.capability.PendingDelivery.insert(player, stack));
 				return stack.isEmpty();
 			});
 		claims.values().removeIf(List::isEmpty);

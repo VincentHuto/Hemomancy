@@ -94,7 +94,7 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.e
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
 		boolean purifying = isPurifying(serverPlayer);
 		boolean clarity = hasClarityUnlocked(serverPlayer);
-		boolean claimed = serverPlayer.getPersistentData().getBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY);
+		boolean claimed = MnemonistStarterMemoryChoice.isClaimed(serverPlayer);
 		if (clarity) return HarbingerMnemonistDialogueTrees.clarity(this.getId());
 		if (purifying) return HarbingerMnemonistDialogueTrees.purifying(this.getId());
 		DialogueTree tree = HarbingerMnemonistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),

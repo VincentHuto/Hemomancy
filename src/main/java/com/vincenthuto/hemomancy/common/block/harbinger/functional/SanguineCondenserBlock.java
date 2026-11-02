@@ -121,6 +121,7 @@ public class SanguineCondenserBlock extends BaseEntityBlock {
             Player player, InteractionHand hand, BlockHitResult hit) {
         if (CreativeStationUpgrades.tryApply(stack, level, pos, player))
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!stack.is(ItemInit.sanguine_formation.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         return useWithoutItem(state, level, pos, player, hit) == InteractionResult.PASS
                 ? ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION

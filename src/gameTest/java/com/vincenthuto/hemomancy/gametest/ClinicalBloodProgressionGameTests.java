@@ -3699,7 +3699,7 @@ public final class ClinicalBloodProgressionGameTests {
                 "mnemonist_blank_memory_recipe", mnemonist.getId()));
         h.assertTrue(!d2.getRecipeBook().contains(Hemomancy.rloc("hematic_memory")),
                 "Forged D2 lesson awarded the D3 blank recipe");
-        d2.getPersistentData().putBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY, true);
+        MnemonistStarterMemoryChoice.markClaimed(d2);
         h.assertTrue(mnemonist.progressionDialogue(d2).getStartNode().options().stream()
                 .noneMatch(option -> "starter_choice".equals(option.nextNodeId())),
                 "An earlier starter claim was offered again");

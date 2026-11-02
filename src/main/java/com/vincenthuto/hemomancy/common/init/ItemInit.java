@@ -101,7 +101,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
             () -> new BloodyBookItem(new Item.Properties().stacksTo(1),
-                    Hemomancy.rloc("textures/entity/liber_sanguinum.png"))
+                    Hemomancy.rloc("textures/entity/book/liber_sanguinum.png"))
                     .withBookId(Hemomancy.rloc("libersanguinium"))
                     .withNotices(new com.vincenthuto.hutoslib.common.book.BookNoticeStyle("hemomancy.book.fane_discovery", "hutoslib.book.forgotten", "hutoslib.book.revealed", 0xFFB3121A))
                     .withReaderConfiguration(HemomancyBookPresentation::configure)
@@ -113,7 +113,7 @@ public class ItemInit {
             () -> new UnsignedLedgerItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> liber_immaculatus = SPECIALITEMS.register("liber_immaculatus",
             () -> new UnstainedBookItem(new Item.Properties().stacksTo(1),
-                    Hemomancy.rloc("textures/entity/liber_immaculatus.png"))
+                    Hemomancy.rloc("textures/entity/book/liber_immaculatus.png"))
                     .withBookId(Hemomancy.rloc("liberimmaculatus"))
                     .withNotices(new com.vincenthuto.hutoslib.common.book.BookNoticeStyle("hemomancy.book.liber_discovery", "hemomancy.book.forgotten", "hemomancy.book.remembers", 0xFF8EA6CF))
                     .withReaderConfiguration(HemomancyBookPresentation::configure)
@@ -122,11 +122,11 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> harbinger_assignment_ledger = SPECIALITEMS.register("harbinger_assignment_ledger",
             () -> new HarbingerAssignmentLedgerItem(new Item.Properties().stacksTo(1),
-                    Hemomancy.rloc("textures/entity/field_notes.png")));
+                    Hemomancy.rloc("textures/entity/book/harbinger_assignment_ledger.png")));
 
     public static final DeferredHolder<Item, Item> book_of_observances = SPECIALITEMS.register("book_of_observances",
             () -> new BookOfObservancesItem(new Item.Properties().stacksTo(1),
-                    Hemomancy.rloc("textures/entity/book_of_observances.png")));
+                    Hemomancy.rloc("textures/entity/book/book_of_observances.png")));
 
 
     public static final DeferredHolder<Item, Item> scout_field_notes = SPECIALITEMS.register("scout_field_notes",
@@ -1265,7 +1265,7 @@ public class ItemInit {
             "spawn_egg_harbinger_voyager",
             () -> new DeferredSpawnEggItem(EntityInit.harbinger_voyager, 0x4A1F27, 0xC29A68, new Item.Properties()));
 
-    /** One spawn egg per built Court role, coloured by its house (WIP tab until reviewed). */
+    /** One spawn egg per built Court role, coloured by its house. */
     public static final java.util.Map<com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole, DeferredHolder<Item, DeferredSpawnEggItem>> court_member_eggs =
             courtMemberEggs();
 
@@ -1293,6 +1293,78 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_artificer = SPAWNEGGS.register(
             "spawn_egg_harbinger_artificer",
             () -> new DeferredSpawnEggItem(EntityInit.harbinger_artificer, 0x4A1218, 0xC74832,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_hermit = SPAWNEGGS.register(
+            "spawn_egg_harbinger_hermit",
+            () -> new DeferredSpawnEggItem(EntityInit.harbinger_hermit, 0x3A2E2A, 0x8C7355,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_alchemist = SPAWNEGGS.register(
+            "spawn_egg_harbinger_alchemist",
+            () -> new DeferredSpawnEggItem(EntityInit.harbinger_alchemist, 0x2F2A3A, 0xA0342C,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_cicatrix_anchorite = SPAWNEGGS.register(
+            "spawn_egg_harbinger_cicatrix_anchorite",
+            () -> new DeferredSpawnEggItem(EntityInit.harbinger_cicatrix_anchorite, 0x4A1C22, 0xD4C4A6,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_mnemonist = SPAWNEGGS.register(
+            "spawn_egg_harbinger_mnemonist",
+            () -> new DeferredSpawnEggItem(EntityInit.harbinger_mnemonist, 0x1E2230, 0xB03A44,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_vicar = SPAWNEGGS.register(
+            "spawn_egg_harbinger_vicar",
+            () -> new DeferredSpawnEggItem(EntityInit.harbinger_vicar, 0x1A1014, 0x9C1622,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_unstained_acolyte = SPAWNEGGS.register(
+            "spawn_egg_unstained_acolyte",
+            () -> new DeferredSpawnEggItem(EntityInit.unstained_acolyte, 0xE6E0D0, 0x6F8FA8,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_unstained_guardian = SPAWNEGGS.register(
+            "spawn_egg_unstained_guardian",
+            () -> new DeferredSpawnEggItem(EntityInit.unstained_guardian, 0xC9CED2, 0x4F7F86,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_unstained_scout = SPAWNEGGS.register(
+            "spawn_egg_unstained_scout",
+            () -> new DeferredSpawnEggItem(EntityInit.unstained_scout, 0xB8BDB0, 0x5E7A6C,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_unstained_zealot = SPAWNEGGS.register(
+            "spawn_egg_unstained_zealot",
+            () -> new DeferredSpawnEggItem(EntityInit.unstained_zealot, 0xECE7DB, 0x3E7A6C,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_circus_ringmaster = SPAWNEGGS.register(
+            "spawn_egg_circus_ringmaster",
+            () -> new DeferredSpawnEggItem(EntityInit.circus_ringmaster, 0x180C10, 0xC0182A,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_circus_fire_eater = SPAWNEGGS.register(
+            "spawn_egg_circus_fire_eater",
+            () -> new DeferredSpawnEggItem(EntityInit.circus_fire_eater, 0x3A1410, 0xF0802A,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_circus_stilt_walker = SPAWNEGGS.register(
+            "spawn_egg_circus_stilt_walker",
+            () -> new DeferredSpawnEggItem(EntityInit.circus_stilt_walker, 0x2A1C2E, 0xC8B890,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_circus_acrobat = SPAWNEGGS.register(
+            "spawn_egg_circus_acrobat",
+            () -> new DeferredSpawnEggItem(EntityInit.circus_acrobat, 0x7A1424, 0xE6D8BC,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_circus_knife_thrower = SPAWNEGGS.register(
+            "spawn_egg_circus_knife_thrower",
+            () -> new DeferredSpawnEggItem(EntityInit.circus_knife_thrower, 0x262428, 0xB8BCC4,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_circus_strongman = SPAWNEGGS.register(
+            "spawn_egg_circus_strongman",
+            () -> new DeferredSpawnEggItem(EntityInit.circus_strongman, 0x5A2A1C, 0xD4A878,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_circus_beast_tamer = SPAWNEGGS.register(
+            "spawn_egg_circus_beast_tamer",
+            () -> new DeferredSpawnEggItem(EntityInit.circus_beast_tamer, 0x3E3018, 0xB08838,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_circus_threadkeeper = SPAWNEGGS.register(
+            "spawn_egg_circus_threadkeeper",
+            () -> new DeferredSpawnEggItem(EntityInit.circus_threadkeeper, 0x201A2C, 0xC8304A,
+                    new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_circus_understudy = SPAWNEGGS.register(
+            "spawn_egg_circus_understudy",
+            () -> new DeferredSpawnEggItem(EntityInit.circus_understudy, 0x4A4450, 0xA89CAC,
                     new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_harbinger_votary_wayfarer = SPAWNEGGS.register(
             "spawn_egg_harbinger_votary_wayfarer",

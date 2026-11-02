@@ -52,11 +52,54 @@ public final class CircusSchoolDialogue {
         return builder.build();
     }
 
+    /**
+     * The school's hub for {@code player}. The hub reads a claim card as a Turn In and claim, inspect and report cards
+     * as Urgent from their ids alone; the Threadkeeper's cards say so only when something can be handed in.
+     */
+    public static DialogueTree hub(CircusPerformerEntity teacher, ServerPlayer player, boolean firstVisit) {
+        DialogueTree hub = DialogueHubFactory.decorate(tree(teacher, player, firstVisit), teacher.facultyRoleId(), player);
+        if (!teacher.facultyRoleId().equals("circus_threadkeeper")) return hub;
+        var state = CircusApprenticeshipProgress.state(player);
+        boolean owed = state.getInt("guest.pending") > 0;
+        boolean reportable = CircusSchoolQuests.reportReady(player);
+        boolean uninspected = !state.hasUUID("primer.crossbar");
+        List<DialogueTopic> topics = new ArrayList<>();
+        for (DialogueTopic topic : hub.presentation().topics()) {
+            String event = cardEvent(hub, topic);
+            if ("circus_school_claim".equals(event)) {
+                topic = owed ? topic.withStatus(DialogueTopicState.TURN_IN, DialogueAttention.URGENT)
+                        : topic.withStatus(DialogueTopicState.ACTIVE, DialogueAttention.NONE);
+            } else if ("circus_school_report".equals(event)) {
+                topic = topic.withStatus(topic.state(), reportable ? DialogueAttention.URGENT : DialogueAttention.NONE);
+            } else if ("circus_school_inspect".equals(event)) {
+                topic = topic.withStatus(topic.state(), uninspected ? DialogueAttention.NOTICE : DialogueAttention.NONE);
+            }
+            topics.add(topic);
+        }
+        var presentation = hub.presentation();
+        return new DialogueTree(hub.speakerName(), hub.speakerIcon(), hub.startNodeId(), hub.nodes(), hub.entityId(),
+                hub.theme(), new DialoguePresentation(presentation.dialogueId(), presentation.styleId(),
+                        presentation.mode(), topics, presentation.trade()));
+    }
+
+    /** The event a quest card's node sends, or null. */
+    private static String cardEvent(DialogueTree hub, DialogueTopic topic) {
+        if (topic.category() != DialogueCategory.QUESTS || topic.targetNodeId() == null) return null;
+        DialogueNode node = hub.getNode(topic.targetNodeId());
+        if (node == null) return null;
+        for (DialogueOption option : node.options()) if (option.eventId() != null) return option.eventId();
+        return null;
+    }
+
     public static boolean handle(DialogueEvent event) {
         ServerPlayer player = event.getPlayer();
         if (!player.isAlive() || player.isSpectator()
                 || !(player.level().getEntity(event.getEntityId()) instanceof CircusPerformerEntity teacher)
-                || !teacher.canTeachNow() || player.distanceToSqr(teacher) > 64) return false;
+                || player.distanceToSqr(teacher) > 64) return false;
+        if (!teacher.canTeachNow()) {
+            CircusPracticalController.systemMessage(player, "busy");
+            return false;
+        }
         String role = teacher.facultyRoleId();
         var lesson = CircusCurriculum.forTeacher(role).orElse(null);
         switch (event.getEventId()) {
@@ -68,7 +111,9 @@ public final class CircusSchoolDialogue {
                     player.displayClientMessage(Component.translatable("hemomancy.circus.school.not_ready"), false);
                     return false;
                 }
-                return CircusApprenticeshipProgress.teach(player, lesson.summon());
+                if (!CircusApprenticeshipProgress.teach(player, lesson.summon())) return false;
+                CircusPracticalController.systemMessage(player, "lesson_taught");
+                return true;
             }
             case "circus_school_practical", "circus_school_guest" -> {
                 return lesson != null && CircusPracticalController.begin(player, teacher, lesson.summon(),

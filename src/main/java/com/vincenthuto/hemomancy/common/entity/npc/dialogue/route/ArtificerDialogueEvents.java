@@ -176,7 +176,7 @@ public final class ArtificerDialogueEvents {
 		}
 		ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(player);
 		player.displayClientMessage(Component.translatable(messageKey,
-				progress.forkFamily().serializedName(), progress.d7Lineage().serializedName(),
+				forkName(progress.forkFamily()), lineageName(progress.d7Lineage()),
 				Component.translatable(fullSetEquipped
 						? "hemomancy.dialogue.event.artificer_equipment_full"
 						: "hemomancy.dialogue.event.artificer_equipment_incomplete"))
@@ -193,11 +193,19 @@ public final class ArtificerDialogueEvents {
 		DialogueRewards.giveOrDropAtEntity(player, entityId, reward);
 		ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(player);
 		player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.artificer_weight_of_frame_inspected",
-				progress.forkFamily().serializedName(), progress.d7Lineage().serializedName(),
+				forkName(progress.forkFamily()), lineageName(progress.d7Lineage()),
 				Component.translatable(ArtificerAssignments.hasFullD7Lineage(player, progress.d7Lineage())
 						? "hemomancy.dialogue.event.artificer_equipment_full"
 						: "hemomancy.dialogue.event.artificer_equipment_incomplete"))
 				.withStyle(ChatFormatting.DARK_RED), false);
+	}
+
+	private static Component forkName(ForkFamily family) {
+		return Component.translatable("hemomancy.artificer.fork_family." + family.serializedName());
+	}
+
+	private static Component lineageName(D7Lineage lineage) {
+		return Component.translatable("hemomancy.artificer.d7_lineage." + lineage.serializedName());
 	}
 
 	static void handleArtificerMaterial(ServerPlayer player, int entityId, ItemStack reward, String messageKey) {

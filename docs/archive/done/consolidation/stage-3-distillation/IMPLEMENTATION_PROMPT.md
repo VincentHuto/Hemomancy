@@ -1,0 +1,11 @@
+# Implementation prompt: Stage 3 — distillation machines
+
+Implement Stage 3 in the current Hemomancy checkout. Read the [Stage 3 audit](stage-3-distillation-machines.md) and inspect current Alembic and Retort block entities, recipes, menus, and extraction paths before changing them.
+
+Extract the ordinary distillation result-capacity check shared by `GhastlyAlembicBlockEntity` and `PallidRetortBlockEntity`. Pass the recipe result, current output, and capacity explicitly. Preserve the current empty-output rule, `ItemStack.isSameItem` comparison, and stack/count limits. Keep recipe lookup and first-match behavior, Alembic pallid/advanced mode and dedicated blood input, Retort resource policy, commit timing, and each machine's inventory ownership local. Do not merge their tick methods, advanced output check, menus, or screen layouts merely because they look similar.
+
+Trace ordinary result pickup and shift-click in both machines, Alembic advanced output, Retort hemolytic-solution pickup, automation where affected, and block removal. Check item counts/components, `RecipesUsed`, XP, and observance/progression. If that trace confirms the uncalled player-award or Retort observance gap identified by the audit, fix it as a separate, clearly explained gameplay change without silently changing the shared capacity predicate. Preserve NBT keys and existing saved inventories.
+
+Run a focused compile and the smallest meaningful gameplay or interaction checks for the changed paths. Avoid a large test suite. Report which extraction and award paths were exercised, what changed, and what still requires live GUI or save/reload validation. Preserve unrelated working-tree changes and do not create a worktree or pause for routine approval.
+
+Consolidation should also reduce file and code bloat where responsibilities truly overlap. Remove obsolete handlers, helpers, and duplicate branches made unnecessary by this stage; avoid creating a new wrapper file for a few lines of shared logic. In the final report, quantify files deleted, lines removed, lines added, and the net line change for gameplay code. If the stage does not reduce file count or code size, explain why the remaining structure is needed.

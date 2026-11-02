@@ -215,6 +215,17 @@ public final class CardinalRiteCompletionEffects {
 							: null;
 				},
 				ctx -> true);
+		// One line per player: a leader or member cannot found a second line (EarlyInitiation.canJoin agrees).
+		register("cardinal_rite/bloodline_founding",
+				(ctx, stage) -> {
+					Bloodline line = BloodlineSavedData.get(ctx.level().getServer().overworld())
+							.getBloodlineForPlayer(ctx.caster().getUUID());
+					return line != null && line.isValid()
+							? HemoText.translatable("message.hemomancy.cardinal_rite_completion_effects.you_already_belong_to_a_bloodline",
+									line.getName())
+							: null;
+				},
+				ctx -> true);
 		effect("cardinal_rite/exsanguination", ctx -> ctx.caster().displayClientMessage(
 				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.the_lifeblood_crystallizes_sanguine_quintessence").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), false));
 		effect("cardinal_rite/initiate_rite", ctx -> {
@@ -485,6 +496,8 @@ public final class CardinalRiteCompletionEffects {
 			vascular.setVascularSystem(sys);
 		}
 		VascularSystemEvents.syncVascular(caster, vascular);
+		// The Vein-Mason prescribes this rite for the fifth-Degree strain.
+		com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.onTreatment(caster);
 		caster.displayClientMessage(
 				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.purified_blood_surges_through_your_veins").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
 				false);

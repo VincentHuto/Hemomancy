@@ -79,8 +79,9 @@ public final class CircusPerformanceController {
 
 	private static void armAct(ServerPlayer player, BlockPos origin, int challenge) {
 		if (challenge < 2) return;
+		// Only the original cast performs; the school's faculty stays out of the ring and keeps teaching.
 		List<CircusPerformerEntity> troupe = player.serverLevel().getEntitiesOfClass(CircusPerformerEntity.class,
-				new AABB(origin).inflate(20.0D));
+				new AABB(origin).inflate(20.0D), CircusPerformerEntity::participatesInFinale);
 		for (CircusPerformerEntity performer : troupe) {
 			if (challenge == 2 && performer instanceof CircusKnifeThrowerEntity) continue;
 			if (challenge == 3 && !(performer instanceof CircusKnifeThrowerEntity)) continue;
@@ -96,7 +97,8 @@ public final class CircusPerformanceController {
 		int challenge = player.getPersistentData().getInt(ACTIVE) - 1;
 		if (challenge < 0) return;
 		BlockPos origin = BlockPos.of(player.getPersistentData().getLong(ORIGIN));
-		if (!player.isAlive() || player.distanceToSqr(origin.getCenter()) > 24.0D * 24.0D) {
+		// A dead or spectating owner fails the act: spectators earn nothing in the pavilion.
+		if (!player.isAlive() || player.isSpectator() || player.distanceToSqr(origin.getCenter()) > 24.0D * 24.0D) {
 			reset(player, origin, true);
 			return;
 		}

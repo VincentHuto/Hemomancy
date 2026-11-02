@@ -112,7 +112,7 @@ The dormant `HemoMnAConfig` design covers:
 - Balance combo effects
 
 #### Why This Integration?
-The reasons for each MnA feature are documented in [MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/MNA_COMPATIBILITY_BRAINSTORM.md). The design connects the mods through mechanics and story instead of relying only on cross-mod recipes.
+The reasons for each MnA feature are documented in [MNA_COMPATIBILITY_BRAINSTORM.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/archive/done/MNA_COMPATIBILITY_BRAINSTORM.md). The design connects the mods through mechanics and story instead of relying only on cross-mod recipes.
 
 **Alpha note:** Installing Mana and Artifice alongside this NeoForge 1.21.1 alpha should not be expected to enable these features.
 
