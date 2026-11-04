@@ -322,27 +322,4 @@ public final class EnzymaticScriptoriumGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
-    public static void legacyStagesAndMinedStagePersist(GameTestHelper helper) {
-        var block = BlockInit.enzymatic_scriptorium.get();
-        for (int stage = 1; stage <= 2; stage++) {
-            var tag = new net.minecraft.nbt.CompoundTag();
-            tag.putString("Name", "hemomancy:" + (stage == 1 ? "eightfold_scriptorium" : "monolithic_scriptorium"));
-            var props = new net.minecraft.nbt.CompoundTag();
-            props.putString("facing", "east");
-            tag.put("Properties", props);
-            com.vincenthuto.hemomancy.common.enchanting.ScriptoriumLegacyMigration.migrateState(tag);
-            var state = net.minecraft.nbt.NbtUtils.readBlockState(helper.getLevel().holderLookup(net.minecraft.core.registries.Registries.BLOCK), tag);
-            helper.assertTrue(state.is(block) && state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE) == stage,
-                    "Legacy station lost its stage");
-            helper.assertTrue(state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.FACING) == Direction.EAST,
-                    "Legacy station lost its facing");
-            var drops = net.minecraft.world.level.block.Block.getDrops(state, helper.getLevel(), helper.absolutePos(new BlockPos(1, 2, 1)), null);
-            helper.assertTrue(drops.size() == 1 && drops.getFirst().is(block.asItem()), "Stage did not drop the shared item");
-            var restored = drops.getFirst().get(net.minecraft.core.component.DataComponents.BLOCK_STATE).apply(block.defaultBlockState());
-            helper.assertTrue(restored.getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE) == stage,
-                    "Mining lost the stage");
-        }
-        helper.succeed();
-    }
 }

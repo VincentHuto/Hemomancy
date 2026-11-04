@@ -19,7 +19,6 @@ import com.vincenthuto.hemomancy.common.block.shared.DormantGanglionBlock;
 import com.vincenthuto.hemomancy.common.block.shared.HemoWallBlock;
 import com.vincenthuto.hemomancy.common.block.shared.MnemonicCandleBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedDoorBlock;
-import com.vincenthuto.hemomancy.common.block.unstained.SuspendedCleansedBloodCrystalBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.ViridSalisTrailBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.crafting.PallidRetortBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.crafting.StillwaterCondenserBlock;
@@ -479,10 +478,6 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.WART_BLOCK)
 					.lightLevel((state) -> 10).noOcclusion()));
 
-
-
-
-
 	public static final DeferredHolder<Block, Block> puppeteers_wool = BASEBLOCKS.register("puppeteers_wool",
 			() -> new Block(BlockBehaviour.Properties.of().strength(0.8F).sound(SoundType.WOOL)));
 
@@ -611,15 +606,21 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",
 			() -> new CrimsonFlameBlock());
 
-
 	// Plants
 
-	public static final DeferredHolder<Block, Block> blood_wood_log = COLUMNBLOCKS.register("blood_wood_log",
-			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(2.0F, 3.0F).sound(SoundType.WOOD)));
-	public static final DeferredHolder<Block, Block> blood_wood_planks = BASEBLOCKS.register("blood_wood_planks",
-			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(2.0F, 3.0F).sound(SoundType.WOOD)));
+	public static final WoodSet BLOOD_WOOD = WoodSet.register("blood_wood", MapColor.COLOR_RED);
+	public static final DeferredHolder<Block, Block> blood_wood_log = BLOOD_WOOD.log();
+	public static final DeferredHolder<Block, Block> blood_wood_planks = BLOOD_WOOD.planks();
+	/** What a Dead Bush grows into when fed blood: its full set, the one core in each tree, and what a full core yields. */
+	public static final WoodSet HEARTWOOD = WoodSet.register("heartwood", MapColor.CRIMSON_STEM);
+	public static final DeferredHolder<Block, Block> heartwood_core = SPECIALBLOCKS.register("heartwood_core",
+			() -> new com.vincenthuto.hemomancy.common.block.harbinger.plant.HeartwoodCoreBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.CRIMSON_STEM).strength(3.0F, 4.0F).sound(SoundType.WOOD)
+					.lightLevel(state -> com.vincenthuto.hemomancy.common.block.harbinger.plant.HeartwoodCoreRules.light(
+							state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.plant.HeartwoodCoreBlock.FED)))));
+	public static final DeferredHolder<Block, Block> ravenous_heartwood = COLUMNBLOCKS.register("ravenous_heartwood",
+			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.CRIMSON_STEM).strength(3.0F, 4.0F)
+					.sound(SoundType.WOOD).lightLevel(state -> 7)));
 	public static final DeferredHolder<Block, Block> blood_wood_leaves = BASEBLOCKS.register("blood_wood_leaves",
 			() -> new LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_LEAVES)
 					.mapColor(MapColor.COLOR_RED)));
@@ -739,7 +740,7 @@ public class BlockInit {
 					.sound(SoundType.DEEPSLATE_BRICKS).pushReaction(PushReaction.BLOCK)
 					.lightLevel(state -> 2 + state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.puzzle.PulsePylonBlock.CHARGE) * 3)));
 	/** A Downfall seal in the floor, which a wave of the fall rises from. */
-	public static final DeferredHolder<Block, Block> spawn_mark = MODELEDBLOCKS.register("spawn_mark",
+	public static final DeferredHolder<Block, Block> downfall_seal = MODELEDBLOCKS.register("downfall_seal",
 			() -> new com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SpawnMarkBlock(BlockBehaviour.Properties.of()
 					.mapColor(MapColor.COLOR_GRAY).strength(-1.0f, 3600000f).noLootTable().noOcclusion().noCollission()
 					.sound(SoundType.DEEPSLATE_BRICKS).pushReaction(PushReaction.BLOCK)
@@ -1110,12 +1111,6 @@ public class BlockInit {
 					.strength(2.5F, 8.0F).sound(SoundType.COPPER).noOcclusion().lightLevel(state -> 3)));
 
 	// Idols / late utility fixtures
-	public static final DeferredHolder<Block, Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
-			() -> new BlockHumaneIdol(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
-					.sound(SoundType.STONE)));
-	public static final DeferredHolder<Block, Block> serpentine_idol = MODELEDBLOCKS.register("serpentine_idol",
-			() -> new BlockSerpentineIdol(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final DeferredHolder<Block, Block> mycelial_crucible = MODELEDBLOCKS.register("mycelial_crucible",
 			() -> new MycelialCrucibleBlock(
@@ -1127,13 +1122,6 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(2.5F, 8.0F).sound(SoundType.LANTERN).lightLevel(s -> 8).noOcclusion()));
 
-	public static final DeferredHolder<Block, Block> witness_organ = MODELEDBLOCKS.register("witness_organ",
-			() -> new WitnessOrganBlock(BlockBehaviour.Properties.of()
-					.mapColor(MapColor.COLOR_RED)
-					.requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F)
-					.sound(SoundType.WOOD)
-					.noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> semi_sentient_construct = MODELEDBLOCKS
 			.register("semi_sentient_construct", () -> new SemiSentientConstructBlock(BlockBehaviour.Properties.of()
@@ -1215,12 +1203,12 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 							.strength(3.5F, 9.0F).sound(SoundType.BONE_BLOCK).lightLevel(s -> 4).noOcclusion()));
 
-	public static final DeferredHolder<Block, Block> warp_chair = MODELEDBLOCKS.register("warp_chair",
+	public static final DeferredHolder<Block, Block> somnolent_seat = MODELEDBLOCKS.register("somnolent_seat",
 			() -> new WarpChairBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
 					.strength(2.5F, 6.0F).sound(SoundType.WOOD).lightLevel(s -> 3).noOcclusion()
 					.pushReaction(PushReaction.BLOCK)));
 
-	public static final DeferredHolder<Block, Block> warp_chair_filler = SPECIALBLOCKS.register("warp_chair_filler",
+	public static final DeferredHolder<Block, Block> somnolent_seat_filler = SPECIALBLOCKS.register("somnolent_seat_filler",
 			() -> new WarpChairFillerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
 					.strength(2.5F, 6.0F).sound(SoundType.WOOD).noOcclusion()
 					.pushReaction(PushReaction.BLOCK)));
@@ -1252,68 +1240,31 @@ public class BlockInit {
 					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
 
 	public static final DeferredHolder<Block, Block> suspended_vivianite = MODELEDBLOCKS.register("suspended_vivianite",
-			() -> new SuspendedVivianiteBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST)));
+			() -> new com.vincenthuto.hemomancy.common.block.shared.SuspendedCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST), com.vincenthuto.hemomancy.common.tile.harbinger.rite.SuspendedVivianiteBlockEntity::new));
 
 	public static final DeferredHolder<Block, Block> suspended_blood_crystal = MODELEDBLOCKS.register("suspended_blood_crystal",
-			() -> new SuspendedBloodCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST)));
+			() -> new com.vincenthuto.hemomancy.common.block.shared.SuspendedCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST), com.vincenthuto.hemomancy.common.tile.harbinger.rite.SuspendedBloodCrystalBlockEntity::new));
 
 	public static final DeferredHolder<Block, Block> suspended_cleansed_blood_crystal = MODELEDBLOCKS.register("suspended_cleansed_blood_crystal",
-			() -> new SuspendedCleansedBloodCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST)));
+			() -> new com.vincenthuto.hemomancy.common.block.shared.SuspendedCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST), com.vincenthuto.hemomancy.common.tile.unstained.SuspendedCleansedBloodCrystalBlockEntity::new));
 
 	public static final DeferredHolder<Block, Block> bog_body = MODELEDBLOCKS.register("bog_body",
 			() -> new BogBodyBlock(BlockBehaviour.Properties.of().noOcclusion().strength(1.5F, 6.0F).sound(SoundType.WART_BLOCK)));
 
-	public static final DeferredHolder<Block, Block> visceral_mirror = MODELEDBLOCKS.register("visceral_mirror",
-			() -> new VisceralMirrorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.noOcclusion().strength(2.0F, 8.0F).sound(SoundType.GLASS)));
 
 	// Puzzle / boss-room blocks Hemorath encounter
-	public static final DeferredHolder<Block, Block> non_euclidean_hallway = MODELEDBLOCKS.register(
-			"non_euclidean_hallway",
-			() -> new NonEuclideanHallwayBlock(BlockBehaviour.Properties.of()
-					.mapColor(MapColor.COLOR_RED)
-					.noCollission()
-					.noOcclusion()
-					.strength(0.8F, 8.0F)
-					.sound(SoundType.GLASS)
-					.lightLevel(state -> 4)));
 
 	public static final DeferredHolder<Block, Block> blood_basin = MODELEDBLOCKS.register("blood_basin",
 			() -> new BloodBasinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(2.0F, 6.0F).sound(SoundType.STONE).noOcclusion()));
 
-	public static final DeferredHolder<Block, Block> offering_gate = SPECIALBLOCKS.register("offering_gate",
-			() -> new OfferingGateBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(3.0F, 8.0F).sound(SoundType.STONE)));
-
-	public static final DeferredHolder<Block, Block> blood_pylon = MODELEDBLOCKS.register("blood_pylon",
-			() -> new BloodPylonBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(2.0F, 6.0F).sound(SoundType.STONE)));
-
-	public static final DeferredHolder<Block, Block> blood_trial_altar = MODELEDBLOCKS.register("blood_trial_altar",
-			() -> new BloodTrialAltarBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(3.0F, 8.0F).sound(SoundType.STONE)));
-
-	// ── Vanilla-gate rite components ──
-	public static final DeferredHolder<Block, Block> crucible_of_nether_ichor = SPECIALBLOCKS.register(
-			"crucible_of_nether_ichor",
-			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(2.0F, 6.0F).sound(SoundType.STONE)
-					.mapColor(MapColor.NETHER)));
-
-	public static final DeferredHolder<Block, Block> voidtouched_vessel = SPECIALBLOCKS.register(
-			"voidtouched_vessel",
-			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(2.0F, 6.0F).sound(SoundType.STONE)
-					.mapColor(MapColor.COLOR_PURPLE)));
-
     public static final DeferredHolder<Block, Block> circus_stage_record = MODELEDBLOCKS.register("circus_stage_record", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "stage"));
     public static final DeferredHolder<Block, Block> circus_loft_record = MODELEDBLOCKS.register("circus_loft_record", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "loft"));
     public static final DeferredHolder<Block, Block> circus_quarters_record = MODELEDBLOCKS.register("circus_quarters_record", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "quarters"));
-    public static final DeferredHolder<Block, Block> circus_carousel_record = MODELEDBLOCKS.register("circus_carousel_record", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "carousel"));
+    public static final DeferredHolder<Block, Block> impaled_procession_record = MODELEDBLOCKS.register("impaled_procession_record", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "carousel"));
     public static final DeferredHolder<Block, Block> laughing_mask = MODELEDBLOCKS.register("laughing_mask", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), false));
     public static final DeferredHolder<Block, Block> mourning_mask = MODELEDBLOCKS.register("mourning_mask", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), false));
     public static final DeferredHolder<Block, Block> blank_mask = MODELEDBLOCKS.register("blank_mask", () -> new com.vincenthuto.hemomancy.common.block.harbinger.decoration.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), false));
@@ -1355,7 +1306,6 @@ public class BlockInit {
 			Map.entry("suspended_blood_crystal", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("suspended_cleansed_blood_crystal", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("suspended_vivianite", b -> new BlockItem(b, new Item.Properties())),
-			Map.entry("visceral_mirror", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("fungal_implantation_pylon", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("phlebotomists_field_case", b -> new PhlebotomistsFieldCaseBlockItem(b, new Item.Properties())),
 			Map.entry("earthen_vein", b -> new BlockItem(b, new Item.Properties())),
@@ -1382,7 +1332,7 @@ public class BlockInit {
 			"lethean_poppy_wreath", "lethean_poppy_wreath",
 			"sanguine_conduit", "sanguine_conduit");
 	private static final Set<String> ITEMLESS_BLOCKS = Set.of("attached_gourd_stem", "filler_block",
-			"warp_chair_filler", "abocipher_emitter", "qliphoth_bloom",
+			"somnolent_seat_filler", "abocipher_emitter", "qliphoth_bloom",
 			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "recollection_cyst",
 			"witness_devotee", "warden_bloom");
 	private static final Set<String> HIDDEN_BLOCK_ITEMS = Set.of("active_befouling_ash_trail",
@@ -1392,7 +1342,7 @@ public class BlockInit {
 		String path = blockId.getPath();
 		if (POTTEDBLOCKS.getEntries().stream().anyMatch(entry -> entry.getId().equals(blockId))
 				|| LIQUIDBLOCKS.getEntries().stream().anyMatch(entry -> entry.getId().equals(blockId))
-				|| ITEMLESS_BLOCKS.contains(path)) {
+				|| ITEMLESS_BLOCKS.contains(path) || WoodSet.isItemless(path)) {
 			return new BlockItemDecision(ItemRoute.NONE, null, CreativeRoute.HIDDEN);
 		}
 		CreativeRoute tab = CreativeTabInit.isWipBlock(blockId) ? CreativeRoute.WIP
@@ -1407,6 +1357,7 @@ public class BlockInit {
 
 	private static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<? extends Block, ResourceLocation> block) {
 		Function<Block, BlockItem> factory = CUSTOM_BLOCK_ITEMS.get(block.getSecond().getPath());
+		if (factory == null) factory = WoodSet.itemFactory(block.getSecond().getPath());
 		BlockItem item = factory != null ? factory.apply(block.getFirst())
 				: new BlockItem(block.getFirst(), new Item.Properties());
 		return Pair.of(block.getSecond(), item);
@@ -1433,7 +1384,6 @@ public class BlockInit {
 	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {
 		event.register(Registries.ITEM, helper -> helper.register(item.getFirst(), item.getSecond()));
 	}
-
 
 	@SubscribeEvent
 	public static void registerBlocks(FMLCommonSetupEvent event) {

@@ -126,9 +126,9 @@ public final class FlightSourceGameTests {
 	}
 
 	private static void elytraTick(ServerPlayer player, boolean onGround) {
-		if (!player.hasEffect(EffectInit.fungal_elytra)) player.addEffect(new MobEffectInstance(EffectInit.fungal_elytra, 200));
+		if (!player.hasEffect(EffectInit.noctifly_agaric)) player.addEffect(new MobEffectInstance(EffectInit.noctifly_agaric, 200));
 		player.setOnGround(onGround);
-		EffectInit.fungal_elytra.value().applyEffectTick(player, 0);
+		EffectInit.noctifly_agaric.value().applyEffectTick(player, 0);
 	}
 
 	private static void expect(GameTestHelper h, ServerPlayer player, String what, boolean mayfly, boolean flying, float speed) {

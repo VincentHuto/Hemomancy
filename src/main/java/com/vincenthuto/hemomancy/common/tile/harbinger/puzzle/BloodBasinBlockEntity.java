@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.puzzle;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.OfferingGateBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.ChatFormatting;
@@ -76,7 +75,6 @@ public class BloodBasinBlockEntity extends BlockEntity {
         }
 
         if (basins.stream().allMatch(b -> b.fillAmount >= CAPACITY)) {
-            openGates(level, pos);
             level.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0f, 0.7f);
             if (player instanceof ServerPlayer sp) {
                 sp.sendSystemMessage(
@@ -108,18 +106,6 @@ public class BloodBasinBlockEntity extends BlockEntity {
         }
     }
 
-    private void openGates(Level level, BlockPos basinPos) {
-        for (BlockPos p : BlockPos.betweenClosed(
-                basinPos.offset(-SCAN_RADIUS, -SCAN_RADIUS, -SCAN_RADIUS),
-                basinPos.offset(SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS))) {
-            BlockState bs = level.getBlockState(p);
-            if (bs.is(BlockInit.offering_gate.get()) && !bs.getValue(OfferingGateBlock.OPEN)) {
-                level.setBlock(p, bs.setValue(OfferingGateBlock.OPEN, true), 3);
-            }
-        }
-        // End the trial now that all basins are filled and the gate is open
-        BloodTrialAltarBlockEntity.deactivateNearby(level, basinPos, SCAN_RADIUS);
-    }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
@@ -133,11 +119,4 @@ public class BloodBasinBlockEntity extends BlockEntity {
         tag.putDouble("FillAmount", fillAmount);
     }
 
-    public double getFillAmount() {
-        return fillAmount;
-    }
-
-    public double getCapacity() {
-        return CAPACITY;
-    }
 }

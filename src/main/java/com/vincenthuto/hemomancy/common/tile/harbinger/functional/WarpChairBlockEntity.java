@@ -18,7 +18,7 @@ public final class WarpChairBlockEntity extends HemoBlockEntity {
 	@Nullable private UUID owner;
 
 	public WarpChairBlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityInit.warp_chair.get(), pos, state);
+		super(BlockEntityInit.somnolent_seat.get(), pos, state);
 	}
 
 	public boolean isPaired() {

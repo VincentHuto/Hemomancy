@@ -353,7 +353,7 @@ public final class RiteKindCharacterisationGameTests {
 		CardinalRiteSavedData saved = CardinalRiteSavedData.get(helper.getLevel());
 		assertKind(helper, rite, RiteKind.COUNTDOWN);
 		helper.startSequence()
-				.thenExecuteAfter(5, () -> helper.assertTrue(rite.getPhase() == CardinalRitePhase.LEGACY
+				.thenExecuteAfter(5, () -> helper.assertTrue(rite.getPhase() == CardinalRitePhase.COUNTDOWN
 						&& rite.getRemainingTicks() < 30 && rite.getRemainingTicks() > 0, "A countdown ticks down"))
 				.thenWaitUntil(() -> helper.assertTrue(!saved.hasActiveRite(caster.player.getUUID()), "The countdown ends"))
 				.thenExecute(() -> {
@@ -411,7 +411,7 @@ public final class RiteKindCharacterisationGameTests {
 				.thenExecuteAfter(5, () -> {
 					int remaining = rite.getRemainingTicks();
 					resumed[0] = restart(helper, rite);
-					helper.assertTrue(resumed[0].getPhase() == CardinalRitePhase.LEGACY
+					helper.assertTrue(resumed[0].getPhase() == CardinalRitePhase.COUNTDOWN
 							&& resumed[0].getRemainingTicks() == remaining, "The count survives the restart");
 				})
 				.thenWaitUntil(() -> helper.assertTrue(!saved.hasActiveRite(caster.player.getUUID()), "and runs out"))

@@ -57,11 +57,6 @@ public record DialogueTopic(String id, DialogueCategory category, String titleKe
 				? loreReadPath(id.substring(CONVERSATION_PREFIX.length())) : id;
 	}
 
-	public DialogueTopic withUnread(boolean value) {
-		return new DialogueTopic(id, category, titleKey, summaryKey, targetNodeId, icon, state,
-				groupKey, progress, displayItemId, value, attention, lore);
-	}
-
 	/** This card with {@code value} as its state and {@code sigil} as its attention. */
 	public DialogueTopic withStatus(DialogueTopicState value, DialogueAttention sigil) {
 		return new DialogueTopic(id, category, titleKey, summaryKey, targetNodeId, icon, value,

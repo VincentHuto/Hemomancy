@@ -104,12 +104,12 @@ public final class ManipulationChargeVisualGameTests {
             ManipulationChargeVisualPacket.handle(new ManipulationChargeVisualPacket(4), context);
             require(packets.size() == 1, "Shared-selection fixture did not open a valid preview");
             known.setSelectedMemoryRef(com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef
-                    .muscleMemory(com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.LABORING_ARMS));
+                    .thelemicMemory(com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory.LABORING_ARMS));
             player.getPersistentData().remove("hemomancy:charge_visual_tick");
             packets.clear();
             ManipulationChargeVisualPacket.handle(new ManipulationChargeVisualPacket(4), context);
             require(packets.isEmpty(), "Thelemic selection refreshed the prior equipped Noetic preview");
-            known.setEquippedManipNames(List.of("muscle_memory:laboring_arms"));
+            known.setEquippedManipNames(List.of("thelemic_memory:laboring_arms"));
             blood.setActive(false);
             ManipulationChargeVisualPacket.handle(new ManipulationChargeVisualPacket(0), context);
             require(packets.size() == 1 && packets.getFirst().ticks() == 0

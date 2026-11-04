@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -22,7 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class HarbingerVoyagerEntity extends PathfinderMob implements ProgressionDialogueNpc, ProtectedNpc {
-	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerVoyagerEntity(EntityType<? extends HarbingerVoyagerEntity> type, Level level) {
 		super(type, level);
@@ -55,9 +53,6 @@ public class HarbingerVoyagerEntity extends PathfinderMob implements Progression
 
 	@Override
 	public void tick() {
-		if (this.level().isClientSide()) {
-			this.idleAnimationState.startIfStopped(this.tickCount);
-		}
 		super.tick();
 	}
 
@@ -66,7 +61,7 @@ public class HarbingerVoyagerEntity extends PathfinderMob implements Progression
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 			DialogueTree tree = progressionDialogue(serverPlayer);
-			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "voyager", degree, 0f);
+			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "voyager");
 			tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withLetterInquiry(tree, "voyager",
 					com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.VOYAGER_LETTER,
 					com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.View.of(serverPlayer));

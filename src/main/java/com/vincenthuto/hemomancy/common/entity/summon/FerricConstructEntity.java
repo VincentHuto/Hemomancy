@@ -75,7 +75,7 @@ public abstract class FerricConstructEntity extends BloodConstructEntity {
         return creator;
     }
 
-    @Override protected boolean usesLegacyConstructLifecycle() { return !isPlayerConstruct(); }
+    @Override protected int constructLifetimeTicks() { return isPlayerConstruct() ? 0 : DEFAULT_LIFETIME_TICKS; }
     @Override public boolean canBeCollidedWith() { return isPlayerConstruct() && isAlive() && level().getGameTime() < expiresAt(); }
     @Override public boolean canCollideWith(Entity other) { return canBeCollidedWith() && !isPassengerOfSameVehicle(other); }
     @Override public boolean isPushable() { return false; }

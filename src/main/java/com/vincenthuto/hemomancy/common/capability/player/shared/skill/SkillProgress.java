@@ -115,10 +115,6 @@ public class SkillProgress implements INBTSerializable<CompoundTag> {
 		return completedMilestones.contains(milestone);
 	}
 
-	public Set<HemoMilestone> getCompletedMilestones() {
-		return EnumSet.copyOf(completedMilestones);
-	}
-
 	public int getCompletedMilestoneCount() {
 		return completedMilestones.size();
 	}

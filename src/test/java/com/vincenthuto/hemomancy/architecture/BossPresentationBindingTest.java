@@ -40,7 +40,7 @@ class BossPresentationBindingTest {
 					wrong.add(RepoPaths.display(file) + ": " + matcher.group(1));
 			}
 		}
-		assertEquals(14, found, "one bar per boss");
+		assertEquals(15, found, "one bar per boss");
 		assertEquals(Set.of(), wrong, "pass a BossPresentationIds.FRAME_* id as the bar's frame");
 	}
 
@@ -86,8 +86,7 @@ class BossPresentationBindingTest {
 
 	private static List<Path> sources() throws IOException {
 		try (Stream<Path> files = Files.walk(RepoPaths.MAIN_JAVA)) {
-			return files.filter(path -> path.toString().endsWith(".java"))
-					.filter(path -> !RepoPaths.display(path).contains("/compat/mna/")).toList();
+			return files.filter(path -> path.toString().endsWith(".java")).toList();
 		}
 	}
 }

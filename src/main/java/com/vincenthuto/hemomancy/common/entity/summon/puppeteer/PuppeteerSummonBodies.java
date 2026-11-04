@@ -29,7 +29,4 @@ public final class PuppeteerSummonBodies {
 		return type == null || level == null ? Optional.empty() : Optional.ofNullable(type.get().create(level));
 	}
 
-	public static boolean hasBody(String summonName) {
-		return summonName != null && BODIES.containsKey(summonName);
-	}
 }

@@ -53,10 +53,6 @@ public final class IronheartedRules {
 		return elapsed < 0L || elapsed >= 12L ? -1 : (int) (elapsed / 4L);
 	}
 
-	public static float addIronHeartHealth(float current, float maxIronHeartHealth) {
-		return Mth.clamp(current + IRON_HEART_HEALTH_PER_CAST, 0.0F, Math.max(0.0F, maxIronHeartHealth));
-	}
-
 	public static IronHeartAbsorption absorbWithIronHearts(float ironHeartHealth, float incomingDamage,
 			float maxIronHeartHealth) {
 		float resource = Mth.clamp(ironHeartHealth, 0.0F, Math.max(0.0F, maxIronHeartHealth));

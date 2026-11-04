@@ -53,10 +53,6 @@ public final class PossessionRules {
 		return new Hit(0, left, left <= 0f);
 	}
 
-	public static boolean mayBegin(boolean silentium, boolean mindBroken, boolean active) {
-		return silentium && !mindBroken && !active;
-	}
-
 	/** Vanilla's hurt cooldown: a hit while still invulnerable from the last one costs nothing. */
 	public static boolean ignoresHit(int invulnerableTime, boolean bypassesCooldown) {
 		return invulnerableTime > 10 && !bypassesCooldown;

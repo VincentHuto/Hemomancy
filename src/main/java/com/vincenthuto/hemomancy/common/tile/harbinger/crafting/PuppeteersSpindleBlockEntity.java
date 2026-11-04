@@ -23,7 +23,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-
 public class PuppeteersSpindleBlockEntity extends HemoContainerBlockEntity {
 	public static final int SLOT_CROSSBAR = 0;
 	public static final int SLOT_THREAD = 1;
@@ -90,7 +89,7 @@ public class PuppeteersSpindleBlockEntity extends HemoContainerBlockEntity {
 
 	private boolean consumeThreadInput() {
 		ItemStack stack = inventory.get(SLOT_THREAD);
-		if (stack.isEmpty() || !stack.is(ItemInit.puppeteering_thread.get()) || threadBuffer >= THREAD_BUFFER_CAPACITY) {
+		if (stack.isEmpty() || !stack.is(ItemInit.enthralling_filament.get()) || threadBuffer >= THREAD_BUFFER_CAPACITY) {
 			return false;
 		}
 		int acceptedItems = PuppeteerSummonRules.threadItemsAccepted(
@@ -135,10 +134,6 @@ public class PuppeteersSpindleBlockEntity extends HemoContainerBlockEntity {
 
 	public ItemStack getCrossbar() {
 		return inventory.get(SLOT_CROSSBAR);
-	}
-
-	public boolean hasSlottedCrossbar() {
-		return getCrossbar().getItem() instanceof MarionetteCrossbarItem;
 	}
 
 	@Override
@@ -188,7 +183,7 @@ public class PuppeteersSpindleBlockEntity extends HemoContainerBlockEntity {
 	public boolean canPlaceItem(int slot, ItemStack stack) {
 		return switch (slot) {
 			case SLOT_CROSSBAR -> stack.getItem() instanceof MarionetteCrossbarItem;
-			case SLOT_THREAD -> stack.is(ItemInit.puppeteering_thread.get());
+			case SLOT_THREAD -> stack.is(ItemInit.enthralling_filament.get());
 			default -> false;
 		};
 	}

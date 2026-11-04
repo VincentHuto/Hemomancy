@@ -21,10 +21,6 @@ final class VesperMountAttackRulesTest {
 
 	@Test
 	void carapaceVulnerabilityLastsThroughReformAndEndsAtRecovery() {
-		assertEquals(1.0F, VesperMountAttackRules.carapaceDamageMultiplier(24), 0.001F);
-		assertEquals(1.5F, VesperMountAttackRules.carapaceDamageMultiplier(25), 0.001F);
-		assertEquals(1.5F, VesperMountAttackRules.carapaceDamageMultiplier(104), 0.001F);
-		assertEquals(1.0F, VesperMountAttackRules.carapaceDamageMultiplier(105), 0.001F);
 		assertTrue(VesperMountAttackRules.isCarapaceExposed(85));
 		assertFalse(VesperMountAttackRules.isCarapaceExposed(105));
 	}
@@ -34,13 +30,6 @@ final class VesperMountAttackRulesTest {
 		assertEquals(240, VesperMountAttackRules.startAneurysmCooldown());
 		assertEquals(239, VesperMountAttackRules.tickCooldown(240));
 		assertEquals(0, VesperMountAttackRules.tickCooldown(0));
-		assertTrue(VesperMountAttackRules.mayStartAneurysm(0, false, false, false, false, false));
-		assertFalse(VesperMountAttackRules.mayStartAneurysm(1, false, false, false, false, false));
-		assertFalse(VesperMountAttackRules.mayStartAneurysm(0, true, false, false, false, false));
-		assertFalse(VesperMountAttackRules.mayStartAneurysm(0, false, true, false, false, false));
-		assertFalse(VesperMountAttackRules.mayStartAneurysm(0, false, false, true, false, false));
-		assertFalse(VesperMountAttackRules.mayStartAneurysm(0, false, false, false, true, false));
-		assertFalse(VesperMountAttackRules.mayStartAneurysm(0, false, false, false, false, true));
 	}
 
 	@Test

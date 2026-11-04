@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CombatTargetingGuardrailTest {
 	private static final String COMMON = "src/main/java/com/vincenthuto/hemomancy/common/";
 	private static final String[] UNCOMPILED = {
-			"src/main/java/com/vincenthuto/hemomancy/compat/mna/", "src/main/java/com/vincenthuto/hemomancy/compat/curios/" };
+			 };
 	private static final Pattern MONSTER_GATHER = Pattern.compile(
 			"(?:getEntitiesOfClass|getNearestEntity|getNearbyEntities)\\(\\s*(?:net\\.minecraft\\.world\\.entity\\.monster\\.)?Monster\\.class");
 	private static final Pattern HARM_PREDICATE = Pattern.compile("\\bboolean canHarm\\w*\\(");

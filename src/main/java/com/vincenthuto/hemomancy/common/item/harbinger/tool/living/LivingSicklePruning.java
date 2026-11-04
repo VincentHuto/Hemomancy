@@ -143,7 +143,6 @@ public final class LivingSicklePruning {
 				&& root.hasUUID(BLOOM_OWNER_KEY)
 				&& root.getUUID(BLOOM_OWNER_KEY).equals(bloom.ownerUUID())
 				&& (root.hasUUID(BLOOM_ID_KEY)
-						? root.getUUID(BLOOM_ID_KEY).equals(bloom.bloomId())
-						: bloom.migratesLegacyProgress());
+						&& root.getUUID(BLOOM_ID_KEY).equals(bloom.bloomId()));
 	}
 }

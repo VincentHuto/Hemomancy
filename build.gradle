@@ -30,11 +30,7 @@ sourceSets.main.resources {
     exclude('assets/hemomancy/models/entity/bbmodel/imports/**')
     exclude('assets/hemomancy/models/entity/bbmodel/reference/**') // Blockbench reference sheets
     exclude('assets/hemomancy/sounds/**/*.mp3')
-    exclude('assets/hemomancy/sounds/entity/colin/OLD*.ogg')
-    exclude('assets/hemomancy/shaders/program/ShaderBasicMethods.txt')
-    exclude('assets/hemomancy/shaders/program/HowToShaderTileEntities')
     exclude('assets/hemomancy/font/OFL-Jacquard24.txt')
-    exclude('assets/hemomancy/textures/entity/drudge/model_drudge_grey_old (*).png')
     exclude('assets/hemomancy/textures/gui/microscope/README.md')
 }
 
@@ -67,26 +63,8 @@ tasks.named('processResources', ProcessResources).configure {
     }
 }
 
-// ── Optional-dependency compat source exclusions ─────────────────────────────
-// The MnA (Mana and Artifice) jar and Curios are on the classpath below, but
-// Hemomancy's own compat packages for them are dormant: they predate the 1.21.1
-// APIs and are kept out of compilation (with hemomancy.mna.mixins.json unlisted)
-// until that integration is deliberately re-enabled.
-sourceSets.main.java {
-    exclude 'com/vincenthuto/hemomancy/compat/mna/**'
-    exclude 'com/vincenthuto/hemomancy/compat/curios/**'
-}
-
 repositories {
     mavenCentral()
-    maven {
-        name = 'GeckoLib'
-        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-    }
-    maven {
-        name = 'Curios'
-        url = 'https://maven.theillusivec4.top/'
-    }
     maven {
         name = 'Modrinth'
         url = 'https://api.modrinth.com/maven/'
@@ -223,11 +201,6 @@ dependencies {
     // Disabled: Distant Horizons crashes the GameTest server during startup.
     // implementation files("libs/DistantHorizons-3.3.3-1.21.1-fabric-neoforge.jar")
 
-    //libraries (GeckoLib, Curios and MnA are compiled only by the excluded compat packages; they stay
-    // implementation so re-enabling a compat source set needs no build change)
-    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-    //implementation files("libs/geckolib-neoforge-${minecraft_version}-${geckolib_version}.jar")
-    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 
     //Astral
     //    localRuntime files("libs/observerlib-1.10.3.jar")
@@ -239,9 +212,6 @@ dependencies {
 
     //Thaum
    //implementation files ("libs/thaumaturge-1.21.1-NeoForge-1.0.2.jar")
-
-    //Mna
-    implementation files ("libs/mna-3.1.11-neoforge.1.21.1.0.jar")
 
     // ── HutosLib – use the local workspace build when available ─────────────────
     implementation "com.vincenthuto.hutoslib:hutoslib:${hutoslib_version}"
@@ -343,7 +313,8 @@ tasks.register('verifyPackagedClientResources') {
             zip.entries().each { entry ->
                 // Authoring-only files must stay out of the jar (see the resource excludes at the top).
                 if (entry.name.startsWith('.cache/') || entry.name.contains('/old/') || entry.name.endsWith('.bbmodel')
-                        || entry.name.contains('/bbmodel/reference/')) {
+                        || entry.name.contains('/bbmodel/reference/') || entry.name.endsWith('.xcf') || entry.name.endsWith('.webp')
+                        || entry.name.endsWith('.wav') || entry.name.contains('/textures/block/test/') || entry.name.contains(' - Copy.')) {
                     problems.add("Authoring-only file packaged: ${entry.name}")
                 }
                 if (!entry.directory && entry.name.startsWith('assets/')) {

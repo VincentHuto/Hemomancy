@@ -136,10 +136,6 @@ public class ScarRecipe extends StationRecipe {
 		return scarType;
 	}
 
-	public void setScarType(ScarType scarType) {
-		this.scarType = scarType;
-	}
-
 	public Ingredient getIngredient1() {
 		return ingredient1;
 	}

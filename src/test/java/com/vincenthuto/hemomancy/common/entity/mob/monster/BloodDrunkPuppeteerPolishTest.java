@@ -37,13 +37,7 @@ public final class BloodDrunkPuppeteerPolishTest {
 				"minecraft:mangrove_swamp");
 		assertFileContains("puppeteer loot", Path.of(
 						"src/main/resources/data/hemomancy/loot_table/entities/blood_drunk_puppeteer.json"),
-				"hemomancy:puppeteering_thread");
-		assertFileContains("sporecrown thicket has a meaningful puppeteer spawn weight", Path.of(
-						"src/main/java/com/vincenthuto/hemomancy/common/init/BiomeInit.java"),
-				"EntityInit.blood_drunk_puppeteer.get(), 12, 1, 1");
-		assertFileContains("hemorrhagic plateau has a meaningful puppeteer spawn weight", Path.of(
-						"src/main/java/com/vincenthuto/hemomancy/common/init/BiomeInit.java"),
-				"EntityInit.blood_drunk_puppeteer.get(), 8, 1, 1");
+				"hemomancy:enthralling_filament");
 		String puppeteerEntity = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/BloodDrunkPuppeteerEntity.java"))
 				.replace("\r\n", "\n");

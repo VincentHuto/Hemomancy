@@ -73,10 +73,6 @@ public class MasonsEffigyBlockEntity extends HemoBlockEntity implements MenuProv
 		super(BlockEntityInit.mason_effigy.get(), pos, state);
 	}
 
-	public EffigyState getEffigyState() {
-		return effigyState;
-	}
-
 	public List<ResourceLocation> getSelectedScarIds() {
 		return List.copyOf(selectedScarIds);
 	}

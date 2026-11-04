@@ -27,7 +27,6 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
@@ -100,8 +99,6 @@ public class PutricielEntity extends SaintTrialEntity {
     private static final int ABSOLUTION_WINDOW_DURATION = PutricielVisualRules.ABSOLUTION_WINDOW;
 
     // ── animation states ──────────────────────────────────────────────────
-    public final AnimationState idleAnimationState = new AnimationState();
-    public final AnimationState absolvedAnimationState = new AnimationState();
 
     // ── server-side state ─────────────────────────────────────────────────
     private int absolveCycleTimer = ABSOLUTION_CYCLE;
@@ -187,8 +184,6 @@ public class PutricielEntity extends SaintTrialEntity {
         super.aiStep();
 
         if (this.level().isClientSide) {
-            idleAnimationState.animateWhen(this.isAlive() && !isAbsolved(), this.tickCount);
-            absolvedAnimationState.animateWhen(this.isAlive() && isAbsolved(), this.tickCount);
             return;
         }
 

@@ -20,7 +20,7 @@ Four Saints rest in four buried complexes, one each: Hemorath (The First Saint),
 | --- | --- | --- |
 | Beholding | Four witnesses flash in order; walk back and stand at each in that order within 400 ticks | `witness_stone`, Velorum's `witness_devotee` |
 | Litany | A stone by the door shows three words (Abocipher unless literate); offer those three of six candidates at the focus, in order, within a minute | `litany_stone`, six `offering_stand`s |
-| Downfall | Step on the gate; three waves of three Saint mobs (constructs, vexes, bog revenants, strays) rise from their seals; reach the focus | `spawn_mark` seals |
+| Downfall | Step on the gate; three waves of three Saint mobs (constructs, vexes, bog revenants, strays) rise from their seals; reach the focus | `downfall_seal` seals |
 | Repose | Stay still in the inlaid ring for 600 ticks while corner pylons pulse (2 magic damage every 60 ticks, never lethal; Silentium stillness counts double) | `pulse_pylon` |
 
 Slots: Hemorath Beholding/Litany/Downfall; Seraphae Beholding/Downfall/Repose; Putriciel Litany/Downfall/Repose; Velorum Beholding/Litany/Repose. A completed Chapel stays lit.
@@ -29,7 +29,7 @@ Slots: Hemorath Beholding/Litany/Downfall; Seraphae Beholding/Downfall/Repose; P
 
 **Sarcophagus and chamber.** The tomb is 2 by 4 on 23 fillers, centred on its main block, cut at z 32 into foot and head sections (`SectionedBakedModel`, shared with the door), retextured per Saint by `SarcophagusPalettes` and `RetexturedBakedModel`; the item is the tomb at half scale. The chamber is 37 by 27 by 17: processional, pillar ranks, a clear 15 by 15 boss floor, a three-step dais and an apse; `CHAMBER_SOCKETS` are filled by each theme's `chamber_sockets` hook. Consecration is three 100-blood offerings in the bowl; a vial draw with a dominant tendency matching the Saint's pair gives one peaceful Consecrated Syringe (Centrifuge makes Hallowed Residuum), otherwise the Saint wakes. Foul Paste or a Saint relic wakes it regardless.
 
-**Set pieces.** Eleven generator-authored blocks: `frozen_devotee`, `witness_stone`, `litany_stone`, `offering_stand`, `pulse_pylon`, `spawn_mark`, `containment_anchor_block`, `rot_pyre`, `sealed_niche`, `opened_niche`, `reliquary_sconce`, plus Hemorath's `blood_gutter` and `venous_basin`. No template carries an entity. Per-Saint looks are `style` or `flame` properties on the shared block, not new blocks.
+**Set pieces.** Eleven generator-authored blocks: `frozen_devotee`, `witness_stone`, `litany_stone`, `offering_stand`, `pulse_pylon`, `downfall_seal`, `containment_anchor_block`, `rot_pyre`, `sealed_niche`, `opened_niche`, `reliquary_sconce`, plus Hemorath's `blood_gutter` and `venous_basin`. No template carries an entity. Per-Saint looks are `style` or `flame` properties on the shared block, not new blocks.
 
 **Themes.** Every theme grades by depth, walked backwards from the chamber, and keeps the threshold corridor and the boss floor pinned open.
 

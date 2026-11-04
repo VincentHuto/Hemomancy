@@ -109,7 +109,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 							BodyAnswersAssignment.ADV_BRIEFED),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							BodyAnswersAssignment.ADV_COMPLETE),
-					HemoCapabilityAccess.muscleMemory(serverPlayer).knownCount(),
+					HemoCapabilityAccess.thelemicMemory(serverPlayer).knownCount(),
 					HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(serverPlayer),
 					HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
 					HarbingerAdvancementGranter.getEnzymeMasteryCount(serverPlayer),

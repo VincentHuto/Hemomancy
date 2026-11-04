@@ -31,8 +31,6 @@ import net.minecraft.world.phys.Vec3;
 public class BrinedVotaryEntity extends Monster {
 	private static final ParticleColor SEEP_COLOR = new ParticleColor(120, 24, 30);
 
-	public final AnimationState idleAnimationState = new AnimationState();
-	public final AnimationState swimAnimationState = new AnimationState();
 
 	private final WaterBoundPathNavigation waterNavigation;
 	private final GroundPathNavigation groundNavigation;
@@ -150,12 +148,6 @@ public class BrinedVotaryEntity extends Monster {
 	public void tick() {
 		super.tick();
 		if (this.level().isClientSide()) {
-			if (this.isSwimming()) {
-				this.swimAnimationState.startIfStopped(this.tickCount);
-			} else {
-				this.swimAnimationState.stop();
-				this.idleAnimationState.startIfStopped(this.tickCount);
-			}
 			if (this.random.nextInt(16) == 0
 					&& this.level().getFluidState(this.blockPosition()).is(FluidTags.WATER)) {
 				this.level().addParticle(HemoParticleData.bloodCell(SEEP_COLOR), this.getX(), this.getY() + 1.25D,

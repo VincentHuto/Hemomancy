@@ -99,12 +99,12 @@ public final class PlaythroughStates {
 		freshD0(player);
 		UUID hermitId = hermit == null ? UUID.randomUUID() : hermit.getUUID();
 		// A real charm-bearer has right-clicked a Hermit, which is what records the meeting (F-6).
-		DialogueHubFactory.markMetHermit(server);
+		DialogueHubFactory.markMetVicar(server);
 		TempleOathRules.bless(server, hermitId);
 		HemoCapabilityAccess.getEquipment(server).setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
 		TempleOathRules.recordHeartClaim(server, hermitId);
 		EarlyInitiation.activate(server);
-		EarlyInitiation.give(server, new ItemStack(ItemInit.covenant_waybill.get()));
+		EarlyInitiation.give(server, new ItemStack(ItemInit.harbinger_lodestone.get()));
 	}
 
 	/** {@link #charmBearerD0} with the temple's Display marked claimed by the player, as the touch marks it. */
@@ -389,8 +389,8 @@ public final class PlaythroughStates {
 		long origin = bloom == null ? server.blockPosition().asLong() : bloom.center().asLong();
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(server);
 		var blooms = QliphothBloomSavedData.get(server.server.overworld());
-		for (int husk = degree.getPomesConsumedFromBloom(bloomId, origin, false); husk < 9; husk++) {
-			degree.recordPomeConsumed(bloomId, origin, false);
+		for (int husk = degree.getPomesConsumedFromBloom(bloomId); husk < 9; husk++) {
+			degree.recordPomeConsumed(bloomId);
 			degree.incrementTotalPomesConsumed();
 			if (bloom != null) blooms.incrementPomesDropped(bloom);
 		}

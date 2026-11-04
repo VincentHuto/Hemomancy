@@ -70,8 +70,7 @@ class ParticleDataGuardrailTest {
 
 	private static List<Path> sources() throws IOException {
 		try (Stream<Path> files = Files.walk(RepoPaths.MAIN_JAVA)) {
-			return files.filter(path -> path.toString().endsWith(".java"))
-					.filter(path -> !RepoPaths.display(path).contains("/compat/mna/")).toList();
+			return files.filter(path -> path.toString().endsWith(".java")).toList();
 		}
 	}
 }

@@ -75,7 +75,7 @@ Call sites in `common/` (VERIFIED greps):
 - `addBloodSpend` is called at only **15** spend sites (`BloodManipulation:540`, `ScarBrazierRite:284`, `BrazierBlock:335`, `SanguineCondenserProjection:56`, `EarthenVeinTravelManager:143`, `MasonsEffigyBlockEntity:184` and others). Most other paid costs (rites, station operations, living tools, morphlings, menus) do not count toward debt.
 - Player sync uses two forms: `new BloodVolumeServerPacket` directly (49 calls in 41 files, including `BloodManipulation:545`) and `BloodVolumeEvents.syncVolume` (73 calls), which also pushes flow, max-blood and manipulation diagnostics.
 
-So `BloodFlowLedger` is the authority only for **passive income and upkeep**. Active payments bypass it, and so does some upkeep (see defect 6.2). The ledger's `applyDrain` (`BloodFlowLedger.java:99-140`) is also where the Sanguine Reserve skill protects categories ARMOR, MORPHLING, SCAR, TOOL, ORGAN, BLOODLINE and MUSCLE_MEMORY (line 141).
+So `BloodFlowLedger` is the authority only for **passive income and upkeep**. Active payments bypass it, and so does some upkeep (see defect 6.2). The ledger's `applyDrain` (`BloodFlowLedger.java:99-140`) is also where the Sanguine Reserve skill protects categories ARMOR, MORPHLING, SCAR, TOOL, ORGAN, BLOODLINE and THELEMIC_MEMORY (line 141).
 
 Paid-cost paths:
 - Manipulations: the base class.

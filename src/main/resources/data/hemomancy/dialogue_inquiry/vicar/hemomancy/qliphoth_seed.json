@@ -1,3 +1,16 @@
 {
-  "lines": ["hemomancy.vicar.item_inquiry.qliphoth.line1", "hemomancy.vicar.item_inquiry.qliphoth.line2"]
+  "conditions": [
+    {
+      "min_degree": 7,
+      "lines": [
+        "hemomancy.vicar.item_inquiry.qliphoth.line1",
+        "hemomancy.vicar.item_inquiry.qliphoth.line2"
+      ]
+    },
+    {
+      "lines": [
+        "hemomancy.vicar.item_inquiry.qliphoth.sealed"
+      ]
+    }
+  ]
 }

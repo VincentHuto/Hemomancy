@@ -67,7 +67,7 @@ final class CardinalRiteSync {
 			boolean revealPool) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		boolean unstained = recipe != null && recipe.isUnstained();
-		int totalRings = rite.getPhase() == CardinalRitePhase.LEGACY
+		int totalRings = rite.getPhase() == CardinalRitePhase.COUNTDOWN
 				? Math.max(1, (rite.getRiteSize() - 1) / 2) : rite.totalAnchorRings();
 		int upfront = rite.openRequirementMl();
 		int sharedBlood = -1;

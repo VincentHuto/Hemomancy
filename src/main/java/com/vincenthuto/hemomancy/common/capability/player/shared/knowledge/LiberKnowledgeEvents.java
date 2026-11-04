@@ -17,14 +17,6 @@ public final class LiberKnowledgeEvents {
 	private LiberKnowledgeEvents() {
 	}
 
-	/** A {@code PlayerDataMigrations} entry: once per save, since the advancement unlock now grants Scar Practice live. */
-	public static void migrateLegacyNotes(ServerPlayer player) {
-		MemoHelper.migrateLegacyFieldNotes(player);
-		if (HarbingerAdvancementGranter.isVeinMasonFirstLesson(player)) {
-			LiberKnowledgeHelper.unlockEntry(player, LiberEntryDefinitions.SCAR_PRACTICE,
-					CommonDiscoverySource.ADVANCEMENT);
-		}
-	}
 
 	public static void sync(ServerPlayer player) {
 		PacketHandler.sendToPlayer(player, new PacketSyncLiberKnowledge(HemoCapabilityAccess.getLiberKnowledge(player)));

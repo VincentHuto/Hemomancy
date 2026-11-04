@@ -14,7 +14,7 @@ import java.util.List;
 
 public record OpenInscriptionPacket(
 		Component title,
-		List<String> lines,
+		List<Component> lines,
 		boolean revealed,
 		@Nullable ResourceLocation riteId,
 		boolean requiresAbocipherLiteracy) implements CustomPacketPayload {
@@ -22,7 +22,7 @@ public record OpenInscriptionPacket(
 	public static final StreamCodec<RegistryFriendlyByteBuf, OpenInscriptionPacket> STREAM_CODEC =
 			StreamCodec.of(OpenInscriptionPacket::encode, OpenInscriptionPacket::decode);
 
-	public OpenInscriptionPacket(Component title, List<String> lines, boolean revealed,
+	public OpenInscriptionPacket(Component title, List<Component> lines, boolean revealed,
 			@Nullable ResourceLocation riteId) {
 		this(title, lines, revealed, riteId, false);
 	}
@@ -34,8 +34,8 @@ public record OpenInscriptionPacket(
 	public static void encode(RegistryFriendlyByteBuf buf, OpenInscriptionPacket msg) {
 		ComponentSerialization.TRUSTED_STREAM_CODEC.encode(buf, msg.title);
 		buf.writeVarInt(msg.lines.size());
-		for (String line : msg.lines) {
-			buf.writeUtf(line);
+		for (Component line : msg.lines) {
+			ComponentSerialization.TRUSTED_STREAM_CODEC.encode(buf, line);
 		}
 		buf.writeBoolean(msg.revealed);
 		buf.writeBoolean(msg.riteId != null);
@@ -48,9 +48,9 @@ public record OpenInscriptionPacket(
 	public static OpenInscriptionPacket decode(RegistryFriendlyByteBuf buf) {
 		Component title = ComponentSerialization.TRUSTED_STREAM_CODEC.decode(buf);
 		int count = buf.readVarInt();
-		List<String> lines = new ArrayList<>(count);
+		List<Component> lines = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
-			lines.add(buf.readUtf());
+			lines.add(ComponentSerialization.TRUSTED_STREAM_CODEC.decode(buf));
 		}
 		boolean revealed = buf.readBoolean();
 		ResourceLocation riteId = buf.readBoolean() ? buf.readResourceLocation() : null;

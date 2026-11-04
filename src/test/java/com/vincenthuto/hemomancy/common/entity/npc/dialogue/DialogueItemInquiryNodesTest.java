@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueItemInquiryNodes.ResolvedInventoryInquiry;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryCondition;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryContext;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryEntry;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
 import net.minecraft.resources.ResourceLocation;
@@ -14,6 +15,8 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DialogueItemInquiryNodesTest {
+    /** A player outside both paths: degree 0, no purity, no active blood. */
+    private static final ItemInquiryContext OUTSIDER = new ItemInquiryContext(0, 0F, 0F, false, false, false, false, false);
     @Test
     void inventoryItemsBecomeDistinctItemSpecificNodesInSlotOrder() {
         DialogueTree tree = inquiryTree();
@@ -66,9 +69,9 @@ class DialogueItemInquiryNodesTest {
                 new ItemInquiryCondition(3, -1, -1F, -1F, List.of("gated.line")))));
         ItemInquiryRegistry.INSTANCE.reload(Map.of("alchemist", entries));
         try {
-            assertTrue(DialogueItemInquiryNodes.registeredLines("alchemist", known, 0, 0F).isPresent());
-            assertFalse(DialogueItemInquiryNodes.registeredLines("alchemist", gated, 0, 0F).isPresent());
-            assertFalse(DialogueItemInquiryNodes.registeredLines("alchemist", unknown, 0, 0F).isPresent());
+            assertTrue(DialogueItemInquiryNodes.registeredLines("alchemist", known, OUTSIDER).isPresent());
+            assertFalse(DialogueItemInquiryNodes.registeredLines("alchemist", gated, OUTSIDER).isPresent());
+            assertFalse(DialogueItemInquiryNodes.registeredLines("alchemist", unknown, OUTSIDER).isPresent());
         } finally {
             ItemInquiryRegistry.INSTANCE.reload(Map.of());
         }

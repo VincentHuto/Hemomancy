@@ -6,10 +6,10 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionWheelRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -82,16 +82,15 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			float pTic = message.parTick;
 
 			IKnownManipulations knownCheck = HemoCapabilityAccess.getKnownManipulations(player);
-			if (knownCheck != null && knownCheck.getSelectedMemoryRef().kind() == MemoryEntryKind.MUSCLE_MEMORY) {
+			if (knownCheck != null && knownCheck.getSelectedMemoryRef().kind() == MemoryEntryKind.THELEMIC_MEMORY) {
 				if (bloodPowersBlocked) return;
-				handleMuscleMemoryUse(player, knownCheck);
+				handleThelemicMemoryUse(player, knownCheck);
 				return;
 			}
 			if (knownCheck != null && knownCheck.getSelectedManip() != null) {
 				BloodManipulation passive = ManipulationInit.getByName(knownCheck.getSelectedManip().getName());
 				if (passive != null && passive.getType() == EnumManipulationType.PASSIVE) {
-					if (ManipulationRetirementRules.isRetiredManipulation(passive)
-							|| !knownCheck.isManipEquipped(passive)) return;
+					if (!knownCheck.isManipEquipped(passive)) return;
 					if (passive instanceof SummonAvatarManip avatar) {
 						if (bloodPowersBlocked && !passive.getName().equals(knownCheck.getActiveAvatarForm())) return;
 						boolean wasSelected = passive.getName().equals(knownCheck.getActiveAvatarForm());
@@ -127,12 +126,6 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 					BloodManipulation selectedManip = ManipulationInit
 							.getByName(known.getSelectedManip().getName());
 					if (selectedManip != null) {
-						if (ManipulationRetirementRules.isRetiredManipulation(selectedManip)) {
-							player.displayClientMessage(
-									Component.translatable("message.hemomancy.use_manip_key_packet.that_manipulation_has_gone_dormant").withStyle(ChatFormatting.DARK_GRAY), true);
-							ManipulationRetirementRules.sanitizeKnownManipulations(known);
-							return;
-						}
 						// Check manipulation is equipped
 						if (!known.isManipEquipped(selectedManip)) {
 							player.displayClientMessage(
@@ -230,34 +223,34 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 		}
 	}
 
-	private static void handleMuscleMemoryUse(Player player, IKnownManipulations known) {
+	private static void handleThelemicMemoryUse(Player player, IKnownManipulations known) {
 		if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return;
 		var selected = known.getSelectedMemoryRef();
-		MuscleMemory memory = selected.muscleMemory().orElse(null);
+		ThelemicMemory memory = selected.thelemicMemory().orElse(null);
 		if (memory == null || !known.isMemoryEquipped(selected)) return;
-		var state = HemoCapabilityAccess.muscleMemory(player);
+		var state = HemoCapabilityAccess.thelemicMemory(player);
 		if (player.isShiftKeyDown()) {
 			if (state.isEnabled(memory)) {
 				state.armOverexertion(memory, player.level().getGameTime());
-				MuscleMemoryEvents.sync(serverPlayer);
+				ThelemicMemoryEvents.sync(serverPlayer);
 				player.displayClientMessage(Component.translatable(
-						"message.hemomancy.muscle_memory.overexertion_armed").withStyle(ChatFormatting.RED), true);
+						"message.hemomancy.thelemic_memory.overexertion_armed").withStyle(ChatFormatting.RED), true);
 			}
 			return;
 		}
 		if (state.isEnabled(memory)) {
 			state.deactivate(memory);
-			MuscleMemoryEvents.sync(serverPlayer);
+			ThelemicMemoryEvents.sync(serverPlayer);
 			return;
 		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		boolean dead = VascularSystemEvents.isSectionDead(player, memory.section());
 		if (volume == null || !volume.isActive() || dead || !state.activate(memory)) {
 			player.displayClientMessage(Component.translatable(
-					"message.hemomancy.muscle_memory.activation_failed").withStyle(ChatFormatting.RED), true);
+					"message.hemomancy.thelemic_memory.activation_failed").withStyle(ChatFormatting.RED), true);
 			return;
 		}
-		MuscleMemoryEvents.sync(serverPlayer);
+		ThelemicMemoryEvents.sync(serverPlayer);
 	}
 
 	private final Action action;

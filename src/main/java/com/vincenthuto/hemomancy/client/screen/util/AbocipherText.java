@@ -21,10 +21,6 @@ public final class AbocipherText {
 		return player != null && LiberKnowledgeHelper.hasEntry(player, LiberEntryDefinitions.ABOCIPHER_LITERACY);
 	}
 
-	public static Component veilIfUnread(@Nullable Player player, Component text) {
-		return canRead(player) ? text : veil(text);
-	}
-
 	public static Component veil(Component text) {
 		return veil(text.getString(), text.getStyle());
 	}

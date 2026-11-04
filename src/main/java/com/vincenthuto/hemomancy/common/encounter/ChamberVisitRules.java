@@ -32,10 +32,6 @@ public final class ChamberVisitRules {
 		return degree >= 1 && degree <= 2 && !activeVisit && !activeProjection;
 	}
 
-	public static boolean canUseArbor(ChamberVisitMode mode) {
-		return true;
-	}
-
 	public static boolean canBuild(ChamberVisitMode mode) {
 		return mode != ChamberVisitMode.DREAM && mode != ChamberVisitMode.GUIDED;
 	}

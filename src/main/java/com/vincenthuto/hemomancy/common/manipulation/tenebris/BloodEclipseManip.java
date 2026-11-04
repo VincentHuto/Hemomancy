@@ -38,9 +38,6 @@ public class BloodEclipseManip extends BloodManipulation {
 	/** Half-angle of the forward cone in degrees. */
 	private static final double CONE_HALF_ANGLE_DEG = 30.0;
 	private static final int BLINDNESS_TICKS = 100; // 5 s
-	private static final int BLINDNESS_AMP = 1;     // Blindness II
-	private static final int WEAKNESS_TICKS = 120;  // 6 s
-	private static final int WEAKNESS_AMP = 0;      // Weakness I
 	private static final float SHADOW_DAMAGE = 3.0f; // 1.5 hearts
 
 	public BloodEclipseManip(String name, double cost, double alignLevel, double xpCost,

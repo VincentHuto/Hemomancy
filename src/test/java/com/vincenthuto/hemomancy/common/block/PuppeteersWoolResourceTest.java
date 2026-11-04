@@ -45,7 +45,7 @@ public final class PuppeteersWoolResourceTest {
 		assertContains("puppeteers wool 2x2 pattern", recipe,
 				"\"pattern\": [\n    \"PP\",\n    \"PP\"\n  ]");
 		assertContains("puppeteers wool recipe thread", recipe,
-				"\"item\": \"hemomancy:puppeteering_thread\"");
+				"\"item\": \"hemomancy:enthralling_filament\"");
 		assertContains("puppeteers wool recipe result", recipe,
 				"\"id\": \"hemomancy:puppeteers_wool\"");
 	}

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,56 +10,56 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MemoryEquipRulesTest {
     @Test
-    void firstLearnedMuscleMemoryUsesAFreeSharedSlot() {
+    void firstLearnedThelemicMemoryUsesAFreeSharedSlot() {
         List<String> equipped = new ArrayList<>(List.of("blood_absorption", "blood_projection", "blood_lance"));
 
-        MemoryEquipRules.AutoEquipResult result = MemoryEquipRules.autoEquipMuscleMemory(
-                equipped, MuscleMemory.SANGUINE_FISTS, 3);
+        MemoryEquipRules.AutoEquipResult result = MemoryEquipRules.autoEquipThelemicMemory(
+                equipped, ThelemicMemory.SANGUINE_FISTS, 3);
 
         assertEquals(MemoryEquipRules.AutoEquipResult.ADDED, result);
-        assertTrue(equipped.contains("muscle_memory:sanguine_fists"));
+        assertTrue(equipped.contains("thelemic_memory:sanguine_fists"));
         assertEquals(2, ManipulationEquipHelper.countNormalEquippedNames(equipped));
     }
 
     @Test
-    void sameSectionMemoryReplacesTheEarlierMuscleMemoryWhenSlotsAreFull() {
+    void sameSectionMemoryReplacesTheEarlierThelemicMemoryWhenSlotsAreFull() {
         List<String> equipped = new ArrayList<>(List.of("blood_absorption", "blood_projection",
-                "blood_lance", "muscle_memory:sanguine_fists", "conjure_axe"));
+                "blood_lance", "thelemic_memory:sanguine_fists", "conjure_axe"));
 
-        MemoryEquipRules.AutoEquipResult result = MemoryEquipRules.autoEquipMuscleMemory(
-                equipped, MuscleMemory.LABORING_ARMS, 3);
+        MemoryEquipRules.AutoEquipResult result = MemoryEquipRules.autoEquipThelemicMemory(
+                equipped, ThelemicMemory.LABORING_ARMS, 3);
 
         assertEquals(MemoryEquipRules.AutoEquipResult.REPLACED_SECTION, result);
-        assertFalse(equipped.contains("muscle_memory:sanguine_fists"));
-        assertTrue(equipped.contains("muscle_memory:laboring_arms"));
+        assertFalse(equipped.contains("thelemic_memory:sanguine_fists"));
+        assertTrue(equipped.contains("thelemic_memory:laboring_arms"));
         assertEquals(3, ManipulationEquipHelper.countNormalEquippedNames(equipped));
     }
 
     @Test
     void fullUnrelatedLayoutLearnsWithoutChangingEquippedEntries() {
         List<String> equipped = new ArrayList<>(List.of("blood_absorption", "blood_projection",
-                "blood_lance", "conjure_axe", "muscle_memory:coursing_legs"));
+                "blood_lance", "conjure_axe", "thelemic_memory:coursing_legs"));
 
-        MemoryEquipRules.AutoEquipResult result = MemoryEquipRules.autoEquipMuscleMemory(
-                equipped, MuscleMemory.SANGUINE_FISTS, 3);
+        MemoryEquipRules.AutoEquipResult result = MemoryEquipRules.autoEquipThelemicMemory(
+                equipped, ThelemicMemory.SANGUINE_FISTS, 3);
 
         assertEquals(MemoryEquipRules.AutoEquipResult.FULL, result);
-        assertFalse(equipped.contains("muscle_memory:sanguine_fists"));
+        assertFalse(equipped.contains("thelemic_memory:sanguine_fists"));
     }
 
     @Test
     void manualEquipUsesTheSameVascularSectionReplacementRule() {
         KnownManipulations known = new KnownManipulations();
-        known.getEquippedManipNames().add("muscle_memory:sanguine_fists");
+        known.getEquippedManipNames().add("thelemic_memory:sanguine_fists");
 
-        assertTrue(known.equipMemory(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS), 3));
-        assertFalse(known.getEquippedManipNames().contains("muscle_memory:sanguine_fists"));
-        assertTrue(known.getEquippedManipNames().contains("muscle_memory:laboring_arms"));
+        assertTrue(known.equipMemory(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS), 3));
+        assertFalse(known.getEquippedManipNames().contains("thelemic_memory:sanguine_fists"));
+        assertTrue(known.getEquippedManipNames().contains("thelemic_memory:laboring_arms"));
     }
 
     @Test
     void cyclingAnExpiredMemoryWithNoPreparedReplacementRemovesIt() {
         assertNull(MemoryEquipRules.nextPreparedInSection(
-                List.of(), MuscleMemory.SANGUINE_FISTS, MuscleMemory.SANGUINE_FISTS.section()));
+                List.of(), ThelemicMemory.SANGUINE_FISTS, ThelemicMemory.SANGUINE_FISTS.section()));
     }
 }

@@ -10,15 +10,6 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OutpouringWorldEffectsTest {
-    @Test void neverByDefault() {
-        for (var rank : EnumManipulationRank.values()) assertFalse(OutpouringWorldEffects.allowed(rank, -1), rank.name());
-    }
-
-    @Test void gateOpensAtRank() {
-        assertTrue(OutpouringWorldEffects.allowed(EnumManipulationRank.SUMMA, 2));
-        assertTrue(OutpouringWorldEffects.allowed(EnumManipulationRank.PERFECTUS, 2));
-        assertFalse(OutpouringWorldEffects.allowed(EnumManipulationRank.MEDIOCRITAS, 2));
-    }
 
     @Test void allEffectsAreNoOps() {
         for (var school : EnumBloodTendency.values()) assertSame(OutpouringWorldEffects.NONE, OutpouringWorldEffects.effect(school));
@@ -26,7 +17,6 @@ class OutpouringWorldEffectsTest {
 
     @Test void configDefaultIsNever() throws IOException {
         String config = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/config/HemoServerConfig.java"));
-        assertTrue(config.contains("\"realEffectMinRank\", -1, -1, 4"));
     }
 
     @Test void releaseRunsTheHook() throws IOException {

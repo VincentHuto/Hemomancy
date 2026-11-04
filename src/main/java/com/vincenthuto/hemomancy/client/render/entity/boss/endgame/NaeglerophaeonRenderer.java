@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.*;
@@ -47,6 +48,7 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
         if(entity.isInvisible() && !outline) { super.render(entity,yaw,partial,stack,buffers,light); return; }
         State state=states.computeIfAbsent(entity,e->new State());
         long tick=entity.level().getGameTime();
+        double now=AnimationTime.gameTime(entity.level(),partial);
         if(state.lastRenderTick!=Long.MIN_VALUE && tick-state.lastRenderTick>5) {
             state.lastTail=null;
             state.lookDirection=null;
@@ -64,7 +66,7 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
         Vec3 origin=entity.getPosition(partial);
         Entity victim=entity.level().getEntity(entity.grabbedEntityId());
         if(victim!=null && (!victim.isAlive() || entity.distanceToSqr(victim)>32*32)) victim=null;
-        double renderTime=tick+partial;
+        double renderTime=now;
         double huntTarget=entity.isHunting()?1:0;
         if(Double.isNaN(state.lastHuntTime)) state.huntBlend=huntTarget;
         else state.huntBlend+=(huntTarget-state.huntBlend)
@@ -84,14 +86,14 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
             }
         }
         state.lastLookTime=renderTime;
-        var input=new NaeglerophaeonModel.Input(tick+partial,entity.getId(),
+        var input=new NaeglerophaeonModel.Input(now,entity.getId(),
                 Math.toRadians(Mth.rotLerp(partial,entity.yRotO,entity.getYRot())),
                 Math.toRadians(Mth.rotLerp(partial,entity.xRotO,entity.getXRot())),entity.animationPhase(),
-                tick+partial-entity.animationStart(),victim==null?null:victim.getPosition(partial).subtract(origin),
+                now-entity.animationStart(),victim==null?null:victim.getPosition(partial).subtract(origin),
                 victim==null?0:Math.toRadians(Mth.rotLerp(partial,victim.yRotO,victim.getYRot())),
                 victim==null?1.8:victim.getBbHeight(),state.pose.offsets(origin),
                 state.lastTail==null?null:Arrays.stream(state.lastTail).map(p->p.subtract(origin)).toArray(Vec3[]::new),
-                capturing || state.releaseTick==Long.MIN_VALUE?0:Math.max(0,1-(tick+partial-state.releaseTick)/40.0),
+                capturing || state.releaseTick==Long.MIN_VALUE?0:Math.max(0,1-(now-state.releaseTick)/40.0),
                 state.huntBlend,state.pose.turnLag(partial),entity.isEnraged());
         float lookWeight=switch(entity.animationPhase()) {
             case NaeglerophaeonEntity.CAPTURE -> (float)HemoEasing.smoothstep(input.phaseTicks()/20);

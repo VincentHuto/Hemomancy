@@ -39,13 +39,4 @@ public record ItemInquiryCondition(
         return true;
     }
 
-    public boolean matches(int degree, float purity) {
-        return matches(ItemInquiryContext.legacy(degree, purity));
-    }
-
-    public boolean isUnconstrained() {
-        return minDegree < 0 && maxDegree < 0 && minPurity < 0 && maxPurity < 0
-                && minClarity < 0 && maxClarity < 0 && clarityUnlocked == null
-                && requiresActiveBlood == null && requiresPurifying == null;
-    }
 }

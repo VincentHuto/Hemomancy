@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest.journey;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -125,11 +125,11 @@ public final class HemoJourneyChecks {
 						"The Alchemist's three Body Answers ingredients were not received.");
 			}
 			case BODY_ANSWERS_TINCTURE -> {
-				var memory = HemoCapabilityAccess.muscleMemory(player);
+				var memory = HemoCapabilityAccess.thelemicMemory(player);
 				require(unmet, HarbingerAdvancementGranter.hasAdvancement(player, BodyAnswersAssignment.ADV_COMPLETE),
 						"The Body Answers assignment is incomplete.");
-				require(unmet, memory.knows(MuscleMemory.SANGUINE_FISTS)
-						&& memory.reserveTicks(MuscleMemory.SANGUINE_FISTS) > 0,
+				require(unmet, memory.knows(ThelemicMemory.SANGUINE_FISTS)
+						&& memory.reserveTicks(ThelemicMemory.SANGUINE_FISTS) > 0,
 						"Sanguine Fists was not learned with an active tincture reserve.");
 			}
 			case RED_TAXONOMY -> {
@@ -452,8 +452,7 @@ public final class HemoJourneyChecks {
 						origin.above(), player.serverLevel().dimension().location().toString());
 				require(unmet, bloom != null && bloom.center().equals(origin.above())
 						&& bloom.ownerUUID().equals(player.getUUID())
-						&& degree.getPomesConsumedFromBloom(bloom.bloomId(), bloom.center().asLong(),
-								bloom.migratesLegacyProgress()) == 9
+						&& degree.getPomesConsumedFromBloom(bloom.bloomId()) == 9
 						&& degree.getTotalPomesConsumed() == 9 && degree.isQliphothCommunionDone(),
 						"Pick and consume all nine Qliphoth pomes from this bloom.");
 			}

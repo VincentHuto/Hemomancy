@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "hemomancy:block/blood_wood_log",
+    "side": "hemomancy:block/blood_wood_log"
+  }
+}

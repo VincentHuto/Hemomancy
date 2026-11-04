@@ -23,10 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * generate until then; finishing one means removing it here.
  */
 class StructureTemplateCoverageTest {
-	private static final Map<String, String> TEMPLATES_NOT_YET_AUTHORED = Map.of(
-			"hemomancy:crimson_lodge_annex", "structure set kept, template not authored",
-			"hemomancy:circus_pavilion", "orphan pool: the pavilion structure starts from crimson_troupe_pavilion");
-	private static final Set<String> EMPTY_BIOME_TAGS = Set.of("mausoleum");
+	private static final Map<String, String> TEMPLATES_NOT_YET_AUTHORED = Map.of();
+	private static final Set<String> EMPTY_BIOME_TAGS = Set.of();
 
 	@Test
 	void everyPooledTemplateIsCommitted() throws Exception {

@@ -43,7 +43,7 @@ public class PacketOpenScryingDiagnostics implements CustomPacketPayload {
 				}
 				var volume = HemoCapabilityAccess.getBloodVolume(player);
 				MaxBloodLedger.apply(player, volume);
-				BloodVolumeEvents.syncVolume(player, volume);
+				BloodVolumeEvents.sendVolume(player, volume);
 				player.closeContainer();
 				player.openMenu(new ScryingDiagnosticsMenuProvider());
 			}

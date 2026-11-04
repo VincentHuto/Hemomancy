@@ -43,14 +43,6 @@ public final class HarbingerVoyagerDialogueTrees {
 				"hemomancy.voyager.clarity.line2");
 	}
 
-	public static DialogueTree itemInquiry(ItemStack item, int degree, int entityId) {
-		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.getItem());
-		return ItemInquiryRegistry.INSTANCE
-				.resolve("voyager", itemId, degree, 0f)
-				.map(lines -> basicItemInquiry(entityId, lines.toArray(String[]::new)))
-				.orElseGet(() -> basicItemInquiry(entityId, "hemomancy.voyager.item_inquiry.unknown"));
-	}
-
 	private static DialogueTree basic(int entityId, String rootId, String... lines) {
 		return DialogueTree.builder(SPEAKER, VOYAGER_ICON, entityId)
 				.addNode(new DialogueNode(rootId, List.of(lines), List.of(
@@ -71,16 +63,6 @@ public final class HarbingerVoyagerDialogueTrees {
 						"hemomancy.voyager.wrecks.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_work", "work", null).withLore(),
-						new DialogueOption("hemomancy.dialogue.voyager.option.leave", null, null)
-				)))
-				.addNode(itemHintNode())
-				.build();
-	}
-
-	private static DialogueTree basicItemInquiry(int entityId, String... lines) {
-		return DialogueTree.builder(SPEAKER, VOYAGER_ICON, entityId)
-				.addNode(new DialogueNode("root", List.of(lines), List.of(
-						new DialogueOption("hemomancy.dialogue.voyager.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.voyager.option.leave", null, null)
 				)))
 				.addNode(itemHintNode())

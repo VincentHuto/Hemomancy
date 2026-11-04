@@ -82,15 +82,6 @@ public class LanternTickModel extends EntityModel<LanternTickEntity> {
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
-	private static void addAngledLeg(PartDefinition parent, String name, int texX, int texY, float x, float z,
-			float boxZ, float zRot) {
-		boolean rightSide = x > 0.0F;
-		parent.addOrReplaceChild(name, CubeListBuilder.create()
-					.texOffs(texX, texY).addBox(rightSide ? 0.0F : -5.0F, -0.5F, boxZ,
-								5.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offsetAndRotation(x, 0.95F, z, 0.0F, 0.0F, zRot));
-	}
-
 	@Override
 	public void setupAnim(LanternTickEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch) {

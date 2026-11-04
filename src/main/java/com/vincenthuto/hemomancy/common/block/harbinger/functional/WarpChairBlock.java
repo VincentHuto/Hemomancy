@@ -69,7 +69,7 @@ public final class WarpChairBlock extends BaseEntityBlock implements IMultiBlock
 	public void placeFillers(Level level, BlockPos mainPos, BlockState mainState) {
 		BlockPos fillerPos = WarpChairStructureRules.fillerPos(mainPos, mainState.getValue(FACING));
 		boolean waterlogged = level.getFluidState(fillerPos).getType() == Fluids.WATER;
-		level.setBlock(fillerPos, BlockInit.warp_chair_filler.get().defaultBlockState()
+		level.setBlock(fillerPos, BlockInit.somnolent_seat_filler.get().defaultBlockState()
 				.setValue(WarpChairFillerBlock.FACING, mainState.getValue(FACING))
 				.setValue(WarpChairFillerBlock.WATERLOGGED, waterlogged), 3);
 		if (level.getBlockEntity(fillerPos) instanceof FillerBlockEntity filler) filler.setMainBlockPos(mainPos);
@@ -79,7 +79,7 @@ public final class WarpChairBlock extends BaseEntityBlock implements IMultiBlock
 	public void removeFillers(Level level, BlockPos mainPos) {
 		BlockPos fillerPos = mainPos.above();
 		BlockState filler = level.getBlockState(fillerPos);
-		if (filler.is(BlockInit.warp_chair_filler.get())) {
+		if (filler.is(BlockInit.somnolent_seat_filler.get())) {
 			level.setBlock(fillerPos, filler.getValue(WarpChairFillerBlock.WATERLOGGED)
 					? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
 		}
@@ -114,11 +114,11 @@ public final class WarpChairBlock extends BaseEntityBlock implements IMultiBlock
 				ChamberVisitService.beginPairedChairExit(serverPlayer, pos);
 				return InteractionResult.CONSUME;
 			}
-			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.only_paired_exits"), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.somnolent_seat.only_paired_exits"), true);
 			return InteractionResult.FAIL;
 		}
 		if (!ProgressionGates.hasDegree(serverPlayer, 3)) {
-			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.degree"), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.somnolent_seat.degree"), true);
 			return InteractionResult.FAIL;
 		}
 		if (player.isShiftKeyDown()) {
@@ -182,13 +182,13 @@ public final class WarpChairBlock extends BaseEntityBlock implements IMultiBlock
 
 	public static void placePaired(ServerLevel level, BlockPos pos, Direction facing, UUID owner) {
 		BlockState existing = level.getBlockState(pos);
-		if (!existing.is(BlockInit.warp_chair.get())) {
-			level.setBlock(pos, BlockInit.warp_chair.get().defaultBlockState().setValue(FACING, facing), 3);
+		if (!existing.is(BlockInit.somnolent_seat.get())) {
+			level.setBlock(pos, BlockInit.somnolent_seat.get().defaultBlockState().setValue(FACING, facing), 3);
 		} else if (existing.getValue(FACING) != facing) {
 			level.setBlock(pos, existing.setValue(FACING, facing), 3);
 		}
-		if (!level.getBlockState(pos.above()).is(BlockInit.warp_chair_filler.get())) {
-			((WarpChairBlock) BlockInit.warp_chair.get()).placeFillers(level, pos, level.getBlockState(pos));
+		if (!level.getBlockState(pos.above()).is(BlockInit.somnolent_seat_filler.get())) {
+			((WarpChairBlock) BlockInit.somnolent_seat.get()).placeFillers(level, pos, level.getBlockState(pos));
 		}
 		if (level.getBlockEntity(pos) instanceof WarpChairBlockEntity chair) chair.setPaired(owner);
 	}

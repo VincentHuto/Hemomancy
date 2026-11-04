@@ -50,8 +50,4 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 		}
 	}
 
-	private void translateToBody(PoseStack matrixStack) {
-		this.getParentModel().body.translateAndRotate(matrixStack);
-	}
-
 }

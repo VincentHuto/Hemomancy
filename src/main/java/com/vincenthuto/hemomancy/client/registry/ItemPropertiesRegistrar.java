@@ -38,6 +38,22 @@ public final class ItemPropertiesRegistrar {
     public static void registerItemPropertyOverrides(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             // The Court house marker's stack picks its house's model (item/house_marker overrides).
+            ItemProperties.register(ItemInit.tincture_sanguine_fists.get(), Hemomancy.rloc("jug"),
+                    (stack, level, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(stack) ? 1.0F : 0.0F);
+            ItemProperties.register(ItemInit.tincture_laboring_arms.get(), Hemomancy.rloc("jug"),
+                    (stack, level, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(stack) ? 1.0F : 0.0F);
+            ItemProperties.register(ItemInit.tincture_coursing_legs.get(), Hemomancy.rloc("jug"),
+                    (stack, level, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(stack) ? 1.0F : 0.0F);
+            ItemProperties.register(ItemInit.tincture_hushed_gait.get(), Hemomancy.rloc("jug"),
+                    (stack, level, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(stack) ? 1.0F : 0.0F);
+            ItemProperties.register(ItemInit.tincture_predatory_eyes.get(), Hemomancy.rloc("jug"),
+                    (stack, level, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(stack) ? 1.0F : 0.0F);
+            ItemProperties.register(ItemInit.tincture_second_pulse.get(), Hemomancy.rloc("jug"),
+                    (stack, level, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(stack) ? 1.0F : 0.0F);
+            ItemProperties.register(ItemInit.tincture_enduring_viscera.get(), Hemomancy.rloc("jug"),
+                    (stack, level, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(stack) ? 1.0F : 0.0F);
+            ItemProperties.register(ItemInit.tincture_carrion_metabolism.get(), Hemomancy.rloc("jug"),
+                    (stack, level, entity, seed) -> com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(stack) ? 1.0F : 0.0F);
             ItemProperties.register(com.vincenthuto.hemomancy.common.init.BlockInit.house_marker.get().asItem(),
                     Hemomancy.rloc("house"), (stack, world, entity, seed) ->
                             com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.HouseMarkerBlockItem

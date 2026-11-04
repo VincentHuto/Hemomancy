@@ -98,9 +98,6 @@ public class OpenSSCScreenPacket implements CustomPacketPayload {
     // ── Accessors ────────────────────────────────────────────────────────────
 
     public BlockPos getPos()          { return pos; }
-    public double getSscBlood()       { return sscBlood; }
-    public double getSscMaxBlood()    { return sscMaxBlood; }
-    public List<DrudgeEntry> getDrudges() { return drudges; }
 
     @Override
     public Type<? extends CustomPacketPayload> type() {

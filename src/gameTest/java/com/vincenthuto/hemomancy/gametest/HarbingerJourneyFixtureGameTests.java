@@ -12,8 +12,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryActivationService;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryActivationService;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.CrimsonDoeEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
@@ -445,16 +445,16 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(tincture.is(ItemInit.tincture_sanguine_fists.get()),
 					"The prepared real recipe must distil Sanguine Fists");
 			tincture.getItem().finishUsingItem(tincture, helper.getLevel(), player);
-			var memory = HemoCapabilityAccess.muscleMemory(player);
+			var memory = HemoCapabilityAccess.thelemicMemory(player);
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.BODY_ANSWERS_TINCTURE, origin).passed()
-					&& memory.knows(MuscleMemory.SANGUINE_FISTS)
-					&& memory.reserveTicks(MuscleMemory.SANGUINE_FISTS) > 0,
+					&& memory.knows(ThelemicMemory.SANGUINE_FISTS)
+					&& memory.reserveTicks(ThelemicMemory.SANGUINE_FISTS) > 0,
 					"Drinking the real tincture must complete Body Answers and teach its Muscle Memory");
 
 			HemoJourneyFixtures.cleanup(player, origin);
 			HemoJourneyResult restored = HemoJourneySnapshot.restore(player);
 			helper.assertTrue(restored.passed(), "Body Answers restore must succeed: " + restored.message());
-			helper.assertTrue(!HemoCapabilityAccess.muscleMemory(player).knows(MuscleMemory.SANGUINE_FISTS)
+			helper.assertTrue(!HemoCapabilityAccess.thelemicMemory(player).knows(ThelemicMemory.SANGUINE_FISTS)
 					&& !HarbingerAdvancementGranter.hasAdvancement(player, BodyAnswersAssignment.ADV_BRIEFED)
 					&& !HarbingerAdvancementGranter.hasAdvancement(player, BodyAnswersAssignment.ADV_COMPLETE)
 					&& !player.getRecipeBook().contains(recipe),
@@ -1156,7 +1156,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(HemoJourneySnapshot.resetForJourney(player).passed(), "Degree-five journey reset must succeed");
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.VEIN_MASON_D5_STRAIN, origin);
-			helper.assertTrue(MuscleMemoryActivationService.tryTrigger(player, MuscleMemory.SANGUINE_FISTS, 20),
+			helper.assertTrue(ThelemicMemoryActivationService.tryTrigger(player, ThelemicMemory.SANGUINE_FISTS, 20),
 					"Sanguine Fists must trigger through the production activation service");
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.VEIN_MASON_D5_STRAIN, origin).passed(),
 					"The real Varicose transition must satisfy the strain checkpoint");

@@ -13,12 +13,6 @@ import java.util.function.Predicate;
 
 public final class FeatureLogic {
     public static final Predicate<BlockState> IS_REPLACEABLE_AIR = state -> state.canBeReplaced() || state.isAir();
-    public static boolean hasEmptyHorizontalNeighbor(LevelSimulatedReader worldReader, BlockPos pos) {
-        return worldReader.isStateAtPosition(pos.north(), IS_REPLACEABLE_AIR)
-                || worldReader.isStateAtPosition(pos.south(), IS_REPLACEABLE_AIR)
-                || worldReader.isStateAtPosition(pos.west(), IS_REPLACEABLE_AIR)
-                || worldReader.isStateAtPosition(pos.east(), IS_REPLACEABLE_AIR);
-    }
 
     public static boolean hasSolidNeighbor(LevelSimulatedReader worldReader, BlockPos pos) {
         return !(worldReader.isStateAtPosition(pos.below(), IS_REPLACEABLE_AIR)
@@ -27,15 +21,6 @@ public final class FeatureLogic {
                 && worldReader.isStateAtPosition(pos.west(), IS_REPLACEABLE_AIR)
                 && worldReader.isStateAtPosition(pos.east(), IS_REPLACEABLE_AIR)
                 && worldReader.isStateAtPosition(pos.above(), IS_REPLACEABLE_AIR));
-    }
-
-    public static boolean canRootGrowIn(LevelSimulatedReader worldReader, BlockPos pos) {
-        if (worldReader.isStateAtPosition(pos, IS_REPLACEABLE_AIR)) {
-            // roots can grow through air if they are near a solid block
-            return hasSolidNeighbor(worldReader, pos);
-        } else {
-            return worldReader.isStateAtPosition(pos, FeatureLogic::worldGenReplaceable);
-        }
     }
 
     public static boolean worldGenReplaceable(BlockState state) {
@@ -57,24 +42,6 @@ public final class FeatureLogic {
                 (int) Math.round(Math.cos(rtilt) * distance),
                 (int) Math.round(Math.cos(rangle) * Math.sin(rtilt) * distance)
         );
-    }
-
-    public static boolean isAreaClear(BlockGetter world, BlockPos min, BlockPos max) {
-        for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
-            BlockState state = world.getBlockState(pos);
-            if (!state.canBeReplaced() && state.isSolid() && !state.liquid()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean isBlockOk(BlockState state) {
-        return state.isSolid();
-    }
-
-    public static boolean isBlockNotOk(BlockState state) {
-        return state.liquid() || state.is(Blocks.BEDROCK);
     }
 
     /** Sets {@code state} where the world holds air or a replaceable block. */

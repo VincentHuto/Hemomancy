@@ -813,66 +813,6 @@
       }
     ]
   },
-  "entity.cruor_fiend.ambient": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.cruor_fiend.ambient",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/cruor_fiend/ambient",
-        "stream": true
-      }
-    ]
-  },
-  "entity.cruor_fiend.hurt": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.cruor_fiend.hurt",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/cruor_fiend/hurt",
-        "stream": true
-      }
-    ]
-  },
-  "entity.cruor_fiend.death": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.cruor_fiend.death",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/cruor_fiend/death",
-        "stream": true
-      }
-    ]
-  },
-  "entity.void_drinker.ambient": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.void_drinker.ambient",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/void_drinker/ambient",
-        "stream": true
-      }
-    ]
-  },
-  "entity.void_drinker.hurt": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.void_drinker.hurt",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/void_drinker/hurt",
-        "stream": true
-      }
-    ]
-  },
-  "entity.void_drinker.death": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.void_drinker.death",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/void_drinker/death",
-        "stream": true
-      }
-    ]
-  },
   "entity.desiccant.ambient": {
     "category": "entity",
     "subtitle": "subtitle.hemomancy.entity.desiccant.ambient",
@@ -903,111 +843,21 @@
       }
     ]
   },
-  "entity.synapse_hound.ambient": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.synapse_hound.ambient",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/synapse_hound/ambient",
-        "stream": true
-      }
-    ]
-  },
-  "entity.synapse_hound.hurt": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.synapse_hound.hurt",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/synapse_hound/hurt",
-        "stream": true
-      }
-    ]
-  },
-  "entity.synapse_hound.death": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.synapse_hound.death",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/synapse_hound/death",
-        "stream": true
-      }
-    ]
-  },
-  "entity.frozen_clot.ambient": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.frozen_clot.ambient",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/frozen_clot/ambient",
-        "stream": true
-      }
-    ]
-  },
-  "entity.frozen_clot.hurt": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.frozen_clot.hurt",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/frozen_clot/hurt",
-        "stream": true
-      }
-    ]
-  },
-  "entity.frozen_clot.death": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.frozen_clot.death",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/frozen_clot/death",
-        "stream": true
-      }
-    ]
-  },
-  "entity.abyssal_siphon.ambient": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.abyssal_siphon.ambient",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/abyssal_siphon/ambient",
-        "stream": true
-      }
-    ]
-  },
-  "entity.abyssal_siphon.hurt": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.abyssal_siphon.hurt",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/abyssal_siphon/hurt",
-        "stream": true
-      }
-    ]
-  },
-  "entity.abyssal_siphon.death": {
-    "category": "entity",
-    "subtitle": "subtitle.hemomancy.entity.abyssal_siphon.death",
-    "sounds": [
-      {
-        "name": "hemomancy:entity/abyssal_siphon/death",
-        "stream": true
-      }
-    ]
-  },
   "entity.tooth_pecks.ambient": {
     "sounds": [
-      "hemomancy:entity/tooth_pecks/ambient"
+      {"name": "hemomancy:entity/chthonian/ambient", "pitch": 1.45}
     ],
     "subtitle": "subtitle.hemomancy.entity.tooth_pecks.ambient"
   },
   "entity.tooth_pecks.hurt": {
     "sounds": [
-      "hemomancy:entity/tooth_pecks/hurt"
+      {"name": "hemomancy:entity/chthonian/hurt", "pitch": 1.45}
     ],
     "subtitle": "subtitle.hemomancy.entity.tooth_pecks.hurt"
   },
   "entity.tooth_pecks.death": {
     "sounds": [
-      "hemomancy:entity/tooth_pecks/death"
+      {"name": "hemomancy:entity/chthonian/death", "pitch": 1.45}
     ],
     "subtitle": "subtitle.hemomancy.entity.tooth_pecks.death"
   },

@@ -33,7 +33,7 @@ class EnglishLiteralAllowListTest {
 	private static final Pattern SKIP_LINE = Pattern.compile("LOGGER|Logger|\\.(?:info|warn|error|debug|trace)\\("
 			+ "|throw new|Exception\\(|AssertionError|@\\w+\\(|Commands\\.literal|Commands\\.argument|System\\.(?:out|err)"
 			+ "|\\.comment\\(|\\.define|IllegalArgument|IllegalState|requireNonNull|DataResult\\.error|assert ");
-	private static final List<String> DORMANT = List.of("compat/mna/", "compat/curios/");
+	private static final List<String> DORMANT = List.<String>of();
 
 	@Test
 	void englishLiteralsStayInTheirListedFiles() throws Exception {

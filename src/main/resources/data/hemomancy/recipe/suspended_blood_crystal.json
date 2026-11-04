@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "SGS",
+    " S "
+  ],
+  "key": {
+    "S": { "item": "hemomancy:blood_crystal_shard" },
+    "G": { "item": "hemomancy:sanguine_glass" }
+  },
+  "result": { "id": "hemomancy:suspended_blood_crystal", "count": 1 }
+}

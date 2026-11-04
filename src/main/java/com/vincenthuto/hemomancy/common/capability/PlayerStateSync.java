@@ -13,7 +13,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.Ha
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarStateSyncEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
@@ -36,7 +36,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncManipul
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncDegree;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncIchorianKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncLastDeathMemory;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMuscleMemory;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncThelemicMemory;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSkills;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncStationUpgrades;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.SyncEquipmentLayerVisibilityPacket;
@@ -81,7 +81,9 @@ public final class PlayerStateSync {
 		VASCULAR(HemoAttachmentTypes.VASCULAR_SYSTEM, VascularSystemServerPacket.class, ALWAYS,
 				player -> VascularSystemEvents.syncVascular(player, HemoCapabilityAccess.getVascularSystem(player))),
 		BLOOD_VOLUME(HemoAttachmentTypes.BLOOD_VOLUME, BloodVolumeServerPacket.class, ALWAYS,
-				player -> BloodVolumeEvents.syncVolume(player, HemoCapabilityAccess.getBloodVolume(player))),
+				player -> BloodVolumeEvents.sendVolume(player, HemoCapabilityAccess.getBloodVolume(player)),
+				player -> HemoCapabilityAccess.getBloodVolume(player).isSyncDirty(),
+				BloodVolumeEvents::flushVolume),
 		/** Login only, as before this table: a respawn or dimension resend would be new behaviour. */
 		SKILLS(HemoAttachmentTypes.SKILL_PROGRESS, PacketSyncSkills.class, EnumSet.of(Lifecycle.LOGIN),
 				SkillPointGainEvents::syncSkills),
@@ -96,7 +98,7 @@ public final class PlayerStateSync {
 				LivingStaffBondHelper::syncProgress),
 		EQUIPPED_MORPHLING(HemoAttachmentTypes.EQUIPPED_MORPHLING, SyncEquippedMorphlingPacket.class, ALWAYS,
 				EquippedMorphlingEvents::syncToClient),
-		MUSCLE_MEMORY(HemoAttachmentTypes.MUSCLE_MEMORY, PacketSyncMuscleMemory.class, ALWAYS, MuscleMemoryEvents::sync),
+		THELEMIC_MEMORY(HemoAttachmentTypes.THELEMIC_MEMORY, PacketSyncThelemicMemory.class, ALWAYS, ThelemicMemoryEvents::sync),
 		SCARS(HemoAttachmentTypes.SCARS, PacketSyncScarsState.class, ALWAYS, ScarStateSyncEvents::syncToClient),
 		/** One payload per equipment slot. */
 		EQUIPMENT_SLOTS(HemoAttachmentTypes.HARBINGER_EQUIPMENT, PacketEquipmentSync.class, ALWAYS,
@@ -144,20 +146,29 @@ public final class PlayerStateSync {
 		private final Set<Lifecycle> resendOn;
 		private final Consumer<ServerPlayer> send;
 		private final Predicate<ServerPlayer> dirty;
+		private final Consumer<ServerPlayer> flush;
 
 		Entry(DeferredHolder<AttachmentType<?>, ? extends AttachmentType<?>> attachment,
 				Class<? extends CustomPacketPayload> payload, Set<Lifecycle> resendOn, Consumer<ServerPlayer> send) {
-			this(attachment, payload, resendOn, send, null);
+			this(attachment, payload, resendOn, send, null, null);
 		}
 
 		Entry(DeferredHolder<AttachmentType<?>, ? extends AttachmentType<?>> attachment,
 				Class<? extends CustomPacketPayload> payload, Set<Lifecycle> resendOn, Consumer<ServerPlayer> send,
 				Predicate<ServerPlayer> dirty) {
+			this(attachment, payload, resendOn, send, dirty, null);
+		}
+
+		/** {@code flush} is what the dirty flush sends when it differs from the lifecycle send ({@code null}: the same). */
+		Entry(DeferredHolder<AttachmentType<?>, ? extends AttachmentType<?>> attachment,
+				Class<? extends CustomPacketPayload> payload, Set<Lifecycle> resendOn, Consumer<ServerPlayer> send,
+				Predicate<ServerPlayer> dirty, Consumer<ServerPlayer> flush) {
 			this.attachment = attachment;
 			this.payload = payload;
 			this.resendOn = resendOn;
 			this.send = send;
 			this.dirty = dirty;
+			this.flush = flush == null ? send : flush;
 		}
 
 		public AttachmentType<?> attachment() {
@@ -203,7 +214,7 @@ public final class PlayerStateSync {
 	/** Sends each dirty entry of one player once. Sending clears the entry's flag. */
 	public static void flushDirty(ServerPlayer player) {
 		for (Entry entry : Entry.values()) {
-			if (entry.tracksDirty() && entry.dirty.test(player)) entry.send(player);
+			if (entry.tracksDirty() && entry.dirty.test(player)) entry.flush.accept(player);
 		}
 	}
 }

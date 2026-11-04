@@ -51,7 +51,6 @@ class HealAndFlightGuardrailTest {
 		try (Stream<Path> files = Files.walk(RepoPaths.MAIN_JAVA)) {
 			for (Path file : files.filter(path -> path.toString().endsWith(".java")).toList()) {
 				String shown = RepoPaths.display(file);
-				if (shown.contains("/compat/mna/") || shown.contains("/compat/curios/")) continue;
 				Matcher matcher = pattern.matcher(SourceAssertions.read(file));
 				int count = 0;
 				while (matcher.find()) count++;

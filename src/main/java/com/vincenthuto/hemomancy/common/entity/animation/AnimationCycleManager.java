@@ -55,24 +55,6 @@ public class AnimationCycleManager {
 	private final Map<String, AnimationTracker> animationTrackers = new HashMap<>();
 
 	/**
-	 * Set whether animations should finish their cycles before transitioning.
-	 *
-	 * @param forceFinish true to finish cycles, false to snap immediately
-	 */
-	public void setForceFinish(boolean forceFinish) {
-		this.forceAnimationFinish = forceFinish;
-	}
-
-	/**
-	 * Check if animation cycle completion is enabled.
-	 *
-	 * @return true if animations finish their cycles
-	 */
-	public boolean isForceFinishEnabled() {
-		return forceAnimationFinish;
-	}
-
-	/**
 	 * Start an animation and register it for cycle tracking.
 	 *
 	 * @param animationState     The AnimationState to start
@@ -166,12 +148,5 @@ public class AnimationCycleManager {
 		}
 	}
 
-	/**
-	 * Clear all animation tracking data.
-	 * Useful if you need to reset the manager or when an entity dies.
-	 */
-	public void clearAllAnimations() {
-		animationTrackers.clear();
-	}
 }
 

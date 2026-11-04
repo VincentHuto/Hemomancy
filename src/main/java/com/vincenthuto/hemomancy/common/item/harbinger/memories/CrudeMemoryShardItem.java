@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.util.HemoText;
@@ -60,11 +60,6 @@ public class CrudeMemoryShardItem extends Item {
 		if (getManip() != null) {
 			tooltip.add(getManip().getDisplayName()
 					.withStyle(ChatFormatting.DARK_RED));
-			if (ManipulationRetirementRules.isRetiredMemoryItem(this, getManip())) {
-				tooltip.add(Component.translatable("tooltip.hemomancy.crude_memory_shard.this_echo_has_gone_dormant")
-						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
-				return;
-			}
 			tooltip.add(HemoText.translatable("tooltip.hemomancy.crude_memory_shard.blood_cost_to_absorb_ml",
 					(int) BLOOD_COST).withStyle(ChatFormatting.DARK_RED));
 			tooltip.add(HemoText.translatable("tooltip.hemomancy.crude_memory_shard.right_click_with_active_blood_learning",
@@ -93,12 +88,6 @@ public class CrudeMemoryShardItem extends Item {
 		}
 
 		BloodManipulation manipulation = getManip();
-		if (ManipulationRetirementRules.isRetiredMemoryItem(this, manipulation)) {
-			player.displayClientMessage(
-					Component.translatable("message.hemomancy.crude_memory_shard_item.this_echo_has_gone_dormant").withStyle(ChatFormatting.DARK_GRAY),
-					true);
-			return InteractionResultHolder.fail(stack);
-		}
 		if (manipulation == null) {
 			player.displayClientMessage(
 					Component.translatable("message.hemomancy.crude_memory_shard_item.this_memory_is_too_complex_to").withStyle(ChatFormatting.DARK_RED),

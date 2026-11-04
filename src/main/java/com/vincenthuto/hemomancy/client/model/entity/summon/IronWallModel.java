@@ -13,8 +13,8 @@ import net.minecraft.world.entity.Entity;
 
 public class IronWallModel<T extends Entity> extends EntityModel<T> {
 
-	public static final ModelLayerLocation iron_wall = new ModelLayerLocation(
-			Hemomancy.rloc("iron_wall"), "main");
+	public static final ModelLayerLocation ferric_rampart = new ModelLayerLocation(
+			Hemomancy.rloc("ferric_rampart"), "main");
 
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();

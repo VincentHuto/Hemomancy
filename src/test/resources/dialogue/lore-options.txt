@@ -109,6 +109,7 @@ vicar hemomancy.dialogue.vicar.option.tell_me_about_fane
 vicar hemomancy.dialogue.vicar.option.tell_me_about_founding_fane
 vicar hemomancy.dialogue.vicar.option.tell_me_about_hematic_order
 vicar hemomancy.dialogue.vicar.option.tell_me_about_tendencies
+vicar hemomancy.dialogue.vicar.option.tell_me_about_the_castles
 vicar hemomancy.dialogue.vicar.option.tell_me_about_the_saints
 vicar hemomancy.dialogue.vicar.option.tell_me_the_final_truth
 vicar hemomancy.dialogue.vicar.option.what_degree_next

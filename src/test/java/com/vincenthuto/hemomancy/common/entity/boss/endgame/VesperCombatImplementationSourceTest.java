@@ -106,7 +106,6 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(evening.contains("WeaponActionHitMask"));
 		assertTrue(evening.contains("WeaponOriginX"));
 		assertTrue(combat.contains("BloodBoltEntity"));
-		assertFalse(combat.contains("TrackingBloodOrbEntity"));
 		assertTrue(combat.contains("EntityManipulationEffects.cast"));
 		assertTrue(combat.contains("cleanupArenaEffects"));
 		assertTrue(temporaryIce.contains("clearEncounterOwned"));
@@ -313,7 +312,6 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(absorption.contains("VesperBloodAbsorptionInteractions.tryAbsorb"));
 		assertTrue(staff.contains("VesperBloodAbsorptionInteractions.tryAbsorb"));
 		assertTrue(model.contains("entity.isAwaitingAbsorption()"));
-		assertTrue(model.contains("defeatKneelProgress"));
 		assertTrue(sigils.contains("sigilFizzleProgress"));
 		assertTrue(weapon.contains("weaponDissolveProgress"));
 		assertTrue(weapon.contains("hermitFarewellDissolve"));

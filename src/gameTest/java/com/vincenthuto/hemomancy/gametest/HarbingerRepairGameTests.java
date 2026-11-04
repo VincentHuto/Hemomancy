@@ -539,7 +539,7 @@ public final class HarbingerRepairGameTests {
         var hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(origin), net.minecraft.core.Direction.UP, origin, false);
         try {
             blooms.setPendingPome(bloom, 0); blooms.markPendingPomeClaimed(bloom);
-            HemoCapabilityAccess.getInitiatoryDegree(actor).recordPomeConsumed(bloom.bloomId(), origin.asLong());
+            HemoCapabilityAccess.getInitiatoryDegree(actor).recordPomeConsumed(bloom.bloomId());
             level.getBlockState(origin).useWithoutItem(level, stranger, hit);
             helper.assertTrue(blooms.getPendingPomeHuskIndex(bloom) == 0, "A stranger must not reconcile another tree");
             level.getBlockState(origin).useWithoutItem(level, actor, hit);
@@ -677,7 +677,9 @@ public final class HarbingerRepairGameTests {
         for (int i = 0; i < 8; i++) rite.fillAnchor(i, 50);
         var threat = net.minecraft.world.entity.EntityType.COW.create(level);
         threat.setNoAi(true);
-        threat.moveTo(center.getX() + 12, center.getY() + 1, center.getZ());
+        // On the test's own force-loaded column: a chunk beside the one-block template may not be loaded yet, and an
+        // entity in an unloaded chunk reads as absent, so the engine would prune the threat before the deadline.
+        threat.moveTo(center.getX() + 0.5D, center.getY() + 1, center.getZ() + 0.5D);
         level.addFreshEntity(threat);
         rite.addRiteThreat(threat.getUUID());
         if (fulfilled) {
@@ -790,10 +792,14 @@ public final class HarbingerRepairGameTests {
             helper.getLevel().addFreshEntity(threat);
             try {
                 fixture.rite.addRiteThreat(threat.getUUID());
+                String before = fixture.describeThreat(threat);
                 fixture.tickAt(200);
                 var effect = threat.getEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN);
+                String state = "effect=" + (effect == null ? "none" : "amplifier " + effect.getAmplifier())
+                        + ", reserve=" + fixture.reserve() + ", before{" + before + "}, after{" + fixture.describeThreat(threat) + "}";
+                org.slf4j.LoggerFactory.getLogger(HarbingerRepairGameTests.class).info("WARDEN_THREAT_DIAG {}", state);
                 helper.assertTrue(effect != null && effect.getAmplifier() == 3 && fixture.reserve() == 975,
-                        "A living rite threat receives the authored slow for exactly 25 ml");
+                        "A living rite threat receives the authored slow for exactly 25 ml: " + state);
             } finally { threat.discard(); }
         });
     }
@@ -858,6 +864,23 @@ public final class HarbingerRepairGameTests {
         }
 
         int reserve() { return line.getNpcRiteReserve(ally.getUUID(), helper.getLevel().getGameTime()); }
+
+        String describeThreat(net.minecraft.world.entity.Entity threat) {
+            var level = helper.getLevel();
+            var center = rite.getCenterPos();
+            var centerChunk = new net.minecraft.world.level.ChunkPos(center);
+            return "structure=" + helper.absolutePos(net.minecraft.core.BlockPos.ZERO).toShortString()
+                    + ", center=" + center.toShortString() + " chunk " + centerChunk
+                    + ", station chunk " + stationChunk
+                    + ", threatIndexed=" + (level.getEntity(threat.getUUID()) == threat)
+                    + ", threatAlive=" + threat.isAlive()
+                    + ", centerEntitiesLoaded=" + level.areEntitiesLoaded(centerChunk.toLong())
+                    + ", centerEntityTicking=" + level.isPositionEntityTicking(center)
+                    + ", centerHasChunk=" + level.hasChunkAt(center)
+                    + ", allyAvailable=" + com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.isAvailable(level, rite, ally.getUUID())
+                    + ", pool=" + line.getBloodVolume()
+                    + ", threats=" + rite.getRiteThreats().size();
+        }
 
         void tickAt(int tick) {
             var saved = rite.serialize();

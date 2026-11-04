@@ -18,7 +18,7 @@ final class MycophantSubcommand {
 	}
 
 	static LiteralArgumentBuilder<CommandSourceStack> build() {
-		return Commands.literal("mycophant")
+		return Commands.literal("mycophant").requires(DevCommands::available)
 				.then(Commands.literal("fight")
 						.executes(ctx -> begin(ctx.getSource(), ctx.getSource().getPlayerOrException(), false))
 						.then(Commands.argument("player", EntityArgument.player())

@@ -1,5 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.BossEvent;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
+import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
@@ -53,6 +58,16 @@ public final class CircusRingmasterEntity extends PathfinderMob
 		implements com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSpeaker {
 	private static final EntityDataAccessor<Boolean> VULNERABLE = SynchedEntityData.defineId(
 			CircusRingmasterEntity.class, EntityDataSerializers.BOOLEAN);
+	/** The finale phase, as {@link CircusPavilionStateRules.Phase#ordinal()}, so the model can pose for it. */
+	private static final EntityDataAccessor<Integer> PHASE = SynchedEntityData.defineId(
+			CircusRingmasterEntity.class, EntityDataSerializers.INT);
+	private static final byte THROW_EVENT = 63;
+	/** Ticks of the finale opening before the bar shows; the opening scene runs this long. */
+	public static final int INTRO_TICKS = 60;
+	/** Started by the throw entity event; the model whips the free arm for its length. */
+	public final AnimationState throwState = new AnimationState();
+	private final BossBarBinding bar = new BossBarBinding("entity.hemomancy.circus_ringmaster",
+			BossPresentationIds.FRAME_CIRCUS_RINGMASTER, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
 	public static final String EVENT_ACCEPT = "circus_accept_pact";
 	public static final String EVENT_REJECT = "circus_reject_pact";
 	public static final String EVENT_REPAIR = "circus_repair_route";
@@ -80,6 +95,34 @@ public final class CircusRingmasterEntity extends PathfinderMob
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
 		builder.define(VULNERABLE, false);
+		builder.define(PHASE, CircusPavilionStateRules.Phase.IDLE.ordinal());
+	}
+
+	/** The finale phase the server last synced; IDLE outside a finale. */
+	public CircusPavilionStateRules.Phase phase() {
+		CircusPavilionStateRules.Phase[] phases = CircusPavilionStateRules.Phase.values();
+		int index = entityData.get(PHASE);
+		return index >= 0 && index < phases.length ? phases[index] : CircusPavilionStateRules.Phase.IDLE;
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id == THROW_EVENT) {
+			throwState.start(tickCount);
+		} else {
+			super.handleEntityEvent(id);
+		}
+	}
+
+	/** The bar reaches the owner once the opening is over, and only once. */
+	private void showBar(ServerPlayer owner) {
+		if (!bar.viewers().contains(owner)) bar.show(owner);
+	}
+
+	@Override
+	public void remove(RemovalReason reason) {
+		bar.hideAll();
+		super.remove(reason);
 	}
 
 	@Override
@@ -100,6 +143,8 @@ public final class CircusRingmasterEntity extends PathfinderMob
 		CircusPavilionSavedData.Site site = data.site(server, encounterOrigin);
 		if (site.activeOwner() == null) {
 			entityData.set(VULNERABLE, false);
+			entityData.set(PHASE, CircusPavilionStateRules.Phase.IDLE.ordinal());
+			bar.hideAll();
 			troupe().forEach(CircusPerformerEntity::resetFinale);
 			setTarget(null);
 			getNavigation().stop();
@@ -112,8 +157,10 @@ public final class CircusRingmasterEntity extends PathfinderMob
 		}
 		Player foundOwner = server.getPlayerByUUID(site.activeOwner());
 		if (!(foundOwner instanceof ServerPlayer owner) || !owner.isAlive()) return;
+		entityData.set(PHASE, site.phase().ordinal());
 		if (site.phase() == CircusPavilionStateRules.Phase.PERFORMANCE) {
 			entityData.set(VULNERABLE, false);
+			bar.hideAll();
 			setTarget(null);
 			return;
 		}
@@ -126,13 +173,20 @@ public final class CircusRingmasterEntity extends PathfinderMob
 			setPos(perch.getX() + 0.5D, perch.getY(), perch.getZ() + 0.5D);
 			setTarget(null);
 			phaseTicks++;
+			if (phaseTicks == 1) BossScenes.playTo(owner, this, BossPresentationIds.SCENE_CIRCUS_RINGMASTER, 0);
+			if (phaseTicks >= INTRO_TICKS) showBar(owner);
+			bar.setProgress(1.0F);
 			if (phaseTicks == 1 || phaseTicks % 100 == 0 && !hasSwarm(owner)) spawnSwarm(owner);
 			if (phaseTicks % 35 == 0) throwKnife(owner);
 		} else if (site.phase() == CircusPavilionStateRules.Phase.CAROUSEL) {
 			setTarget(null);
 			getNavigation().stop();
+			showBar(owner);
+			bar.setProgress(1.0F);
 		} else if (site.phase() == CircusPavilionStateRules.Phase.DESCENT) {
 			entityData.set(VULNERABLE, true);
+			showBar(owner);
+			bar.trackHealth(this);
 			noPhysics = false;
 			setNoGravity(false);
 			if (distanceToSqr(carousel) > 12.0D * 12.0D) {
@@ -146,6 +200,13 @@ public final class CircusRingmasterEntity extends PathfinderMob
 			data.setPhase(server, encounterOrigin, next);
 			phaseTicks = 0;
 			server.playSound(null, blockPosition(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 0.8F, 1.4F);
+			if (next == CircusPavilionStateRules.Phase.CAROUSEL) {
+				BossScenes.playTo(owner, this, BossPresentationIds.SCENE_CIRCUS_CAROUSEL_CARD, 0);
+			} else if (next == CircusPavilionStateRules.Phase.DESCENT) {
+				BossScenes.playTo(owner, this, BossPresentationIds.SCENE_CIRCUS_DESCENT_CARD, 0);
+			} else if (next == CircusPavilionStateRules.Phase.COMPLETE) {
+				bar.hideAll();
+			}
 		}
 	}
 
@@ -161,6 +222,7 @@ public final class CircusRingmasterEntity extends PathfinderMob
 	}
 
 	private void throwKnife(ServerPlayer owner) {
+		level().broadcastEntityEvent(this, THROW_EVENT);
 		CircusKnifeProjectileEntity knife = new CircusKnifeProjectileEntity(level(), this, 4.0F);
 		knife.setPos(getX(), getEyeY() - 0.2D, getZ());
 		knife.shoot(owner.getX() - getX(), owner.getEyeY() - getEyeY(), owner.getZ() - getZ(), 1.4F, 3.0F);
@@ -286,6 +348,7 @@ public final class CircusRingmasterEntity extends PathfinderMob
 		if (!player.getInventory().add(topper)) player.drop(topper, false);
 		troupe().forEach(performer -> { if (performer.isAlive()) performer.resetFinale(); });
 		removeSwarm();
+		bar.hideAll();
 		server.sendParticles(ParticleTypes.CRIMSON_SPORE, getX(), getY() + 1.0D, getZ(),
 				80, 1.5D, 1.5D, 1.5D, 0.08D);
 		server.playSound(null, blockPosition(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 0.7F);

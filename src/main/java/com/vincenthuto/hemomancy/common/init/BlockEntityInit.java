@@ -6,8 +6,6 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.decoration.*;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.*;
 import com.vincenthuto.hemomancy.common.tile.harbinger.plant.GourdvineTapBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.BloodBasinBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.BloodPylonBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.BloodTrialAltarBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.SuspendedBloodCrystalBlockEntity;
@@ -128,6 +126,11 @@ public class BlockEntityInit {
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.decoration.MarimoHeartBlockEntity::new,
 							BlockInit.marimo_heart.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartwoodCoreBlockEntity>> heartwood_core = TILES
+			.register("heartwood_core", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartwoodCoreBlockEntity::new,
+							BlockInit.heartwood_core.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity>> heart_node = TILES
 			.register("heart_node", () -> BlockEntityType.Builder
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity::new,
@@ -148,13 +151,13 @@ public class BlockEntityInit {
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.CovenantThroneBlockEntity::new,
 							BlockInit.covenant_throne.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WarpChairBlockEntity>> warp_chair = TILES
-			.register("warp_chair", () -> BlockEntityType.Builder
-					.of(WarpChairBlockEntity::new, BlockInit.warp_chair.get()).build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WarpChairBlockEntity>> somnolent_seat = TILES
+			.register("somnolent_seat", () -> BlockEntityType.Builder
+					.of(WarpChairBlockEntity::new, BlockInit.somnolent_seat.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WarpChairFillerBlockEntity>> warp_chair_filler = TILES
-			.register("warp_chair_filler", () -> BlockEntityType.Builder
-					.of(WarpChairFillerBlockEntity::new, BlockInit.warp_chair_filler.get()).build(null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WarpChairFillerBlockEntity>> somnolent_seat_filler = TILES
+			.register("somnolent_seat_filler", () -> BlockEntityType.Builder
+					.of(WarpChairFillerBlockEntity::new, BlockInit.somnolent_seat_filler.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HematicArmatureBlockEntity>> hematic_armature = TILES
 			.register("hematic_armature", () -> BlockEntityType.Builder
@@ -164,14 +167,6 @@ public class BlockEntityInit {
 			.register("sanguine_vigil", () -> BlockEntityType.Builder
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineVigilBlockEntity::new,
 							BlockInit.sanguine_vigil.get()).build(null));
-
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SerpentineIdolBlockEntity>> serpentine_idol = TILES
-			.register("serpentine_idol", () -> BlockEntityType.Builder
-					.of(SerpentineIdolBlockEntity::new, BlockInit.serpentine_idol.get()).build(null));
-
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HumaneIdolBlockEntity>> humane_idol = TILES.register(
-			"humane_idol",
-			() -> BlockEntityType.Builder.of(HumaneIdolBlockEntity::new, BlockInit.humane_idol.get()).build(null));
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EarthenVeinBlockEntity>> earthen_vein = TILES.register(
 			"earthen_vein",
@@ -243,13 +238,7 @@ public class BlockEntityInit {
 			.register("qliphoth_bloom", () -> BlockEntityType.Builder
 					.of(QliphothBloomBlockEntity::new, BlockInit.qliphoth_bloom.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<VisceralMirrorBlockEntity>> visceral_mirror = TILES
-			.register("visceral_mirror", () -> BlockEntityType.Builder
-					.of(VisceralMirrorBlockEntity::new, BlockInit.visceral_mirror.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NonEuclideanHallwayBlockEntity>> non_euclidean_hallway = TILES
-			.register("non_euclidean_hallway", () -> BlockEntityType.Builder
-					.of(NonEuclideanHallwayBlockEntity::new, BlockInit.non_euclidean_hallway.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilArchiveBlockEntity>> antecedent_vessel = TILES.register("antecedent_vessel", () -> BlockEntityType.Builder.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilArchiveBlockEntity::new, BlockInit.antecedent_vessel.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity>> clairaudiograph = TILES.register("clairaudiograph", () -> BlockEntityType.Builder.of(com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity::new, BlockInit.clairaudiograph.get()).build(null));
@@ -298,18 +287,8 @@ public class BlockEntityInit {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MycelialLanternBlockEntity>> mycelial_lantern = TILES
 			.register("mycelial_lantern", () -> BlockEntityType.Builder
 					.of(MycelialLanternBlockEntity::new, BlockInit.mycelial_lantern.get()).build(null));
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WitnessOrganBlockEntity>> witness_organ = TILES
-			.register("witness_organ", () -> BlockEntityType.Builder
-					.of(WitnessOrganBlockEntity::new, BlockInit.witness_organ.get()).build(null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloodBasinBlockEntity>> blood_basin = TILES
 			.register("blood_basin", () -> BlockEntityType.Builder
 					.of(BloodBasinBlockEntity::new, BlockInit.blood_basin.get()).build(null));
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloodPylonBlockEntity>> blood_pylon = TILES
-			.register("blood_pylon", () -> BlockEntityType.Builder
-					.of(BloodPylonBlockEntity::new, BlockInit.blood_pylon.get()).build(null));
-
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloodTrialAltarBlockEntity>> blood_trial_altar = TILES
-			.register("blood_trial_altar", () -> BlockEntityType.Builder
-					.of(BloodTrialAltarBlockEntity::new, BlockInit.blood_trial_altar.get()).build(null));
 }

@@ -34,7 +34,6 @@ public final class DesiccantStingSourceTest {
 		assertContains("telson child", model, "getChild(\"telson\")");
 		assertContains("sting progress drives model", model, "entity.getStingProgress()");
 		assertContains("telson inflates", model, "telson.xScale");
-		assertContains("telson red tint", model, "TELSON_STING_COLOR");
 
 		assertContains("reference documents blood loss", reference, "Blood Loss");
 		assertContains("reference documents blood sap", reference, "250 ml");

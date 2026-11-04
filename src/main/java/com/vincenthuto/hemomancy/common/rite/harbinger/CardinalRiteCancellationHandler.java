@@ -23,10 +23,6 @@ public final class CardinalRiteCancellationHandler {
 		return true;
 	}
 
-	public static boolean canStart(ServerPlayer player, double range) {
-		return targetedRite(player, range) != null;
-	}
-
 	private static ActiveCardinalRite targetedRite(ServerPlayer player, double range) {
 		ServerLevel level = player.serverLevel();
 		ActiveCardinalRite rite = CardinalRiteSavedData.get(level).getRite(player.getUUID());

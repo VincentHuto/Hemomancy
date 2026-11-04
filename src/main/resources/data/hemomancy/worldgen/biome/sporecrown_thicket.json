@@ -39,12 +39,6 @@
     "axolotls": [],
     "creature": [
       {
-        "type": "hemomancy:fungling",
-        "weight": 12,
-        "minCount": 2,
-        "maxCount": 5
-      },
-      {
         "type": "hemomancy:chitinite",
         "weight": 8,
         "minCount": 2,
@@ -53,6 +47,12 @@
     ],
     "misc": [],
     "monster": [
+      {
+        "type": "hemomancy:fungling",
+        "weight": 12,
+        "minCount": 2,
+        "maxCount": 5
+      },
       {
         "type": "hemomancy:erythromycelium_eruptus",
         "weight": 15,

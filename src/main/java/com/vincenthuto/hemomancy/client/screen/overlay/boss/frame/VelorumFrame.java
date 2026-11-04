@@ -8,7 +8,7 @@ import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.util.Mth;
 
 /**
- * Saint Velorum, the Frozen Martyr: frost-rimed rails with icicles hanging from the lower edge and a tenebrous dark
+ * Saint Velorum, the Frozen StillGuard: frost-rimed rails with icicles hanging from the lower edge and a tenebrous dark
  * orb under the middle. In the silence (below a quarter) frost creeps in over the fill from both ends.
  */
 public final class VelorumFrame implements BossBarFrame {

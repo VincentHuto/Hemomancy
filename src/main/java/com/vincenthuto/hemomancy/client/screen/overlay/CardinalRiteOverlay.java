@@ -29,7 +29,7 @@ public final class CardinalRiteOverlay {
 		Minecraft minecraft = Minecraft.getInstance();
 		if (minecraft.player == null || minecraft.options.hideGui) return;
 		ActiveRiteData.RiteEntry rite = ActiveRiteClientData.getActiveRites().stream()
-				.filter(entry -> !entry.isUnstained() && !entry.isLegacy())
+				.filter(entry -> !entry.isUnstained() && !entry.isCountdown())
 				.filter(entry -> entry.getCenter().distToCenterSqr(minecraft.player.position()) <= 128.0D * 128.0D)
 				.min(Comparator.comparingDouble(
 						entry -> entry.getCenter().distToCenterSqr(minecraft.player.position())))

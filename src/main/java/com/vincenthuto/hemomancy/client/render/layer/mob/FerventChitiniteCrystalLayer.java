@@ -17,9 +17,6 @@ import net.minecraft.world.entity.LivingEntity;
 public class FerventChitiniteCrystalLayer<T extends LivingEntity>
 		extends RenderLayer<FerventChitiniteEntity, FerventChitiniteModel> {
 
-	private static final RenderType GLOW = RenderType.entityTranslucent(
-			Hemomancy.rloc("textures/entity/fervent_chitinite/model_fervent_crystal.png"));
-
 	private final FerventChitiniteModel model;
 
 	public FerventChitiniteCrystalLayer(RenderLayerParent<FerventChitiniteEntity, FerventChitiniteModel> p_117346_,

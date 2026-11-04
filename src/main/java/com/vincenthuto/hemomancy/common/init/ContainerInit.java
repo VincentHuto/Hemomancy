@@ -20,8 +20,6 @@ public class ContainerInit {
 	public static final DeferredHolder<MenuType<?>, MenuType<ScarStationMenu>> scar_station = CONTAINERS
 			.register("scar_station", () -> IMenuTypeExtension.create(ScarStationMenu::new));
 
-	public static final DeferredHolder<MenuType<?>, MenuType<ScarBinderInventoryMenu>> scar_binder = CONTAINERS
-			.register("scar_binder", () -> IMenuTypeExtension.create(ScarBinderInventoryMenu::new));
 	public static final DeferredHolder<MenuType<?>, MenuType<MnemonicFolioMenu>> mnemonic_folio = CONTAINERS
 			.register("mnemonic_folio", () -> IMenuTypeExtension.create(MnemonicFolioMenu::new));
 

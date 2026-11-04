@@ -60,15 +60,6 @@ public class ManipulationTreeEntry {
 		return parentNames;
 	}
 
-	public List<String> getRequirementParentNames() {
-		if (softParentNames.isEmpty()) {
-			return parentNames;
-		}
-		List<String> parents = new ArrayList<>(parentNames);
-		parents.addAll(softParentNames);
-		return parents;
-	}
-
 	/** Builder-style setter for non-lineage dependency links that should not draw tree edges. */
 	public ManipulationTreeEntry setSoftParents(String... parents) {
 		this.softParentNames = List.of(parents);

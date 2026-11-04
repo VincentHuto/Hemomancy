@@ -23,7 +23,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -91,11 +90,9 @@ public class HemorathEntity extends SaintTrialEntity {
 	/** The victor's id, kept so a reload mid-burst can still find them. */
 	private UUID overloadVictorId;
 
-	public final AnimationState idleAnimationState = new AnimationState();
-	public final AnimationState collapseChargeAnimationState = new AnimationState();
 
 	public HemorathEntity(EntityType<? extends HemorathEntity> type, Level level) {
-		super(type, level, 80, new BossBarBinding("entity.hemomancy.hollow_vessel", BossPresentationIds.FRAME_HEMORATH, BossEvent.BossBarColor.RED,
+		super(type, level, 80, new BossBarBinding("entity.hemomancy.hemorath", BossPresentationIds.FRAME_HEMORATH, BossEvent.BossBarColor.RED,
 				BossEvent.BossBarOverlay.NOTCHED_10));
 	}
 
@@ -318,7 +315,7 @@ public class HemorathEntity extends SaintTrialEntity {
 				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
 		if (this.getTarget() instanceof Player player) {
 			player.displayClientMessage(
-					Component.translatable("message.hemomancy.hemorath.the_hollow_vessel_empties_further")
+					Component.translatable("message.hemomancy.hemorath.hemorath_empties_further")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 					false);
 		}
@@ -331,14 +328,6 @@ public class HemorathEntity extends SaintTrialEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if (this.level().isClientSide) {
-			this.idleAnimationState.startIfStopped(this.tickCount);
-			if (isCollapseCharging()) {
-				this.collapseChargeAnimationState.startIfStopped(this.tickCount);
-			} else {
-				this.collapseChargeAnimationState.stop();
-			}
-		}
 	}
 
 	@Override
@@ -346,7 +335,7 @@ public class HemorathEntity extends SaintTrialEntity {
 		super.startSeenByPlayer(player);
 		// Announce the encounter to the player who enters sight range
 		player.displayClientMessage(
-				Component.translatable("message.hemomancy.hemorath.the_hollow_vessel_stirs_blood_will")
+				Component.translatable("message.hemomancy.hemorath.hemorath_stirs_blood_will")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}

@@ -220,7 +220,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 				? SanguineMonolithDialogueTrees.unworthy()
 				: (heldItem.isEmpty()
 				? SanguineMonolithDialogueTrees.forPlayer(serverPlayer, degreeNumber)
-				: SanguineMonolithDialogueTrees.itemInquiry(heldItem, degreeNumber));
+				: SanguineMonolithDialogueTrees.itemInquiry(serverPlayer, heldItem));
 
 		MonolithDialogueContext.open(serverPlayer, pos, tree);
 		PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));

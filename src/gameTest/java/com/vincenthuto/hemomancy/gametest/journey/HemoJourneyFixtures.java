@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.CrimsonDoeEntity;
@@ -135,6 +135,7 @@ public final class HemoJourneyFixtures {
 	}
 
 	public static void prepare(ServerPlayer player, HemoJourneyStage stage, BlockPos origin) {
+		com.vincenthuto.hemomancy.gametest.FixtureChunks.hold(fixtureLevel(player), bounds(origin).inflate(8.0D));
 		ServerLevel level = fixtureLevel(player);
 		if (stage == HemoJourneyStage.APOTHEOS_CHOICE || stage == HemoJourneyStage.SILENT_REFUSAL) {
 			BlockPos root = origin.above();
@@ -1309,9 +1310,9 @@ public final class HemoJourneyFixtures {
 		HarbingerAdvancementGranter.grantIfNotDone(player,
 				HarbingerAdvancementGranter.ADV_VEIN_MASON_REWARD_CLAIMED);
 		HemoCapabilityAccess.getVascularSystem(player).getVascularSystem().put(EnumVeinSections.ARMS, 50.1F);
-		var memory = HemoCapabilityAccess.muscleMemory(player);
-		memory.learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 1_200);
-		memory.activate(MuscleMemory.SANGUINE_FISTS);
+		var memory = HemoCapabilityAccess.thelemicMemory(player);
+		memory.learnAndAddReserve(ThelemicMemory.SANGUINE_FISTS, 1_200);
+		memory.activate(ThelemicMemory.SANGUINE_FISTS);
 		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), 500.0D));
@@ -1389,7 +1390,7 @@ public final class HemoJourneyFixtures {
 			case DUCTILIS -> ManipulationInit.deadly_gaze.get();
 			case FERRIC -> ManipulationInit.sanguine_mending.get();
 			case FLAMMEUS -> ManipulationInit.crimson_flame_conjuration.get();
-			case LUX -> ManipulationInit.hemosynthesis.get();
+			case LUX -> ManipulationInit.prismatic_reproof.get();
 			case CONGEATIO -> ManipulationInit.glacial_grasp.get();
 			case TENEBRIS -> ManipulationInit.void_shroud.get();
 			case MORTEM -> ManipulationInit.hemorrhage.get();

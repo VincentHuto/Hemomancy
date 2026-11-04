@@ -136,7 +136,7 @@ def pool(face, lx, ly, w, h, key):
 
 
 def thread(face, lx, ly, w, h, key):
-    """Enthralling Filament (puppeteering_thread) wound round and round: slate twist with a crimson strand."""
+    """Enthralling Filament (enthralling_filament) wound round and round: slate twist with a crimson strand."""
     phase = (lx + ly) % 3
     if phase == 0:
         return THREAD_RED + (255,)

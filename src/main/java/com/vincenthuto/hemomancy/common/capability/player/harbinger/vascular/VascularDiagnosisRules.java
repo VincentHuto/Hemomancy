@@ -53,7 +53,7 @@ public final class VascularDiagnosisRules {
 		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		known.getEquippedMemoryRefs().forEach(ref -> {
 			if (ref.expression() == HematicMemoryExpression.THELEMIC) {
-				ref.muscleMemory().ifPresent(memory -> routes.add(new MemoryRoute(memory.section(),
+				ref.thelemicMemory().ifPresent(memory -> routes.add(new MemoryRoute(memory.section(),
 						HematicMemoryExpression.THELEMIC, memory.id(), 0)));
 			} else {
 				known.getKnownManips().keySet().stream().filter(manip -> manip.getName().equals(ref.id())).findFirst()

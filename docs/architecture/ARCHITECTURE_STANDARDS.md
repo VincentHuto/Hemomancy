@@ -98,6 +98,7 @@ because of one, it says so.
 | Drudge work | `DrudgeActions` |
 | Heal reductions | `HealModifier` entries, applied in one stage |
 | Flight | `FlightArbiter` grants and revokes |
+| A block a player's cast or payload places or breaks | `PlayerBlockEdits.place` / `mayBreak` (game mode, spawn protection, the NeoForge break or place event) |
 | Held attribute bonus | `AttributeModifiers.sync` |
 | Armour set check | `ArmorSets.isFullSet` |
 | Degree and Unstained-stage gates | `ProgressionGates` (never a literal degree) |
@@ -131,9 +132,9 @@ priorities and each site keeps its named preset.
 - Player accessors return the attachment itself (no `Optional`). Owner sync goes through the `PlayerStateSync`
   table, sent by `HemoCapabilityRegistrar` on login, respawn and dimension change; changes outside the senders raise
   the attachment's dirty flag for the end-of-tick flush.
-- Old player data is rewritten once, at login, by an entry in `PlayerDataMigrations` gated by `PlayerDataVersion`
-  (next version, a sunset date, an old-format fixture in `player_migration_validation`). Never rename keys inside an
-  existing attachment. A new `getPersistentData()` call needs an entry in
+- The mod is unreleased, so player data changes need no migration. After release, old player data is rewritten once, at
+  login, by an entry in `PlayerDataMigrations` gated by `PlayerDataVersion` (the table is empty; the next version is 12).
+  Never rename keys inside an existing attachment. A new `getPersistentData()` call needs an entry in
   `src/test/resources/architecture/persistent-data-allow-list.txt`.
 - An owned entity's synced owner UUID is a `SyncedOwner`. A block entity that syncs extends `HemoBlockEntity` or
   `HemoContainerBlockEntity`. A save from before the attachment-only rule still carries a block entity's own blood
@@ -237,6 +238,7 @@ test under `src/test/java/.../architecture/` is listed here.
 |---|---|---|---|
 | Registration | `RegistrationStyleGuardrailTest` | 8, 13 | Two subscriber forms, lifecycle-only constructor listeners, event-API client registration, registry lookups, typed components, one WIP list; GameTests registered only by annotation scan |
 | Registration | `EntityTypeBuildNameGuardrailTest` | 13 | Entity types built under their registry names (F-26) |
+| Registration | `RetiredNamesGuardrailTest` | 13 | Ids and code names renamed to what players see stay gone, with no aliases |
 | Registration | `ResourceLocationStyleGuardrailTest` | 13 | Every hemomancy resource location comes from `Hemomancy.rloc` |
 | Networking | `ClientBoundPayloadRegistrationTest` | 1 | Client-handled payloads registered once, client-bound |
 | Networking | `PayloadDirectionTest` | 4 | Sends match registered directions; one bidirectional payload |
@@ -255,14 +257,17 @@ test under `src/test/java/.../architecture/` is listed here.
 | Rendering | `MaterialQuadGuardrailTest` | 10 | Material vertices through `MaterialQuads` |
 | Rendering | `ShaderNoiseIncludeGuardrailTest` | 10 | Shared shader noise in includes |
 | Rendering | `ParticleDataGuardrailTest` | 10 | Particle data classes and types |
+| Rendering | `VanillaParticleRatchetTest` | cleanup A-33 | Vanilla particle references per file only go down; fallbacks listed with reasons |
 | Animation | `EasingCopyGuardrailTest` | 6 | No private easing copies |
 | Animation | `BossAnimationClockGuardrailTest` | 10 | Boss replay clocks |
 | Animation | `PlayerAnimationGuardrailTest` | 10 | Pose registry and hand-renderer priorities |
 | Rendering | `BossPresentationBindingTest` | boss presentation | Every boss bar names a frame and sends it on show; played scenes are named ids |
 | Animation | `AnimationTimeGuardrailTest` | 10 | Animation time through `AnimationTime` |
+| Animation | `EntityModelAnimationGuardrailTest` | cleanup A-11 | Every entity model animates; models still by design are listed |
 | Mechanics | `SmallUtilityGuardrailTest` | 6 | No copies of the shared small helpers; no literal degree comparisons |
 | Mechanics | `BloodAccountingGuardrailTest` | 7 | Player blood paid only through `BloodAccounting` |
 | Mechanics | `CombatTargetingGuardrailTest` | 9 | Monster gathers ask `canHarm`; one harm predicate |
+| Mechanics | `PlayerBlockEditGuardrailTest` | cleanup A-6 | Player casts and payloads edit blocks only through `PlayerBlockEdits`; non-player editors listed |
 | Mechanics | `HealAndFlightGuardrailTest` | 9 | One heal stage; flight only through `FlightArbiter` |
 | Mechanics | `RiteKindGuardrailTest` | 11 | Rite kinds as `RiteKind` hooks; rites built only by `CardinalRiteActivation` |
 | Mechanics | `DialogueRoutingGuardrailTest` | 11 | One `DialogueEvent` subscriber and its route table |
@@ -274,7 +279,7 @@ test under `src/test/java/.../architecture/` is listed here.
 | Mechanics | `MorphlingStrainTableGuardrailTest` | Brined Court 1 | Strain ids named only by `MorphlingStrains` and `ItemInit`; the deleted first-attempt strains leave no trace in `src/` |
 | Content | `BossFrameworkGuardrailTest` | 13 | Boss bars through `BossBarBinding`; all four Saints share `SaintTrialEntity` and its one ending (loot roll, tomb restore); a sarcophagus never picks a Saint at random |
 | Content | `ContentBoilerplateGuardrailTest` | 13 | `SyncedOwner`, `HemoContainerMenu`, `ProtectedNpc`, `ModelShapes.rotate`, effect categories |
-| Content | `ContentFamilyGuardrailTest` | 13 | Mob families, tracking orbs and combat-weapon storage share their base |
+| Content | `ContentFamilyGuardrailTest` | 13 | Mob families and combat-weapon storage share their base |
 | Content | `HardCodedEnglishGuardrailTest` | 13 | No literal shows English; every key the code names is in `en_us` |
 | Content | `EnglishLiteralAllowListTest` | 13 | Exact counts of the English literals no player reads, per file |
 | State | `AttachmentAccessTest` | 5 | Attachments through `HemoCapabilityAccess` |
@@ -286,7 +291,7 @@ test under `src/test/java/.../architecture/` is listed here.
 | State | `CooldownTierGuardrailTest` | 12 | Cooldowns keep their tier |
 | State | `BlockEntityBaseGuardrailTest` | 13 | Update packet only in the block-entity bases |
 | Data | `DataFolderNamingGuardrailTest` | 13 | Singular 1.21 data folders |
-| Data | `GeneratedResourceShadowGuardrailTest` | 13 | No shadowed generated files; three datagen providers |
+| Data | `GeneratedResourceShadowGuardrailTest` | 13 | No shadowed generated files; two datagen providers |
 | Data | `RecipeSerializerGuardrailTest` | 13 | One recipe JSON bridge; station recipes off `CustomRecipe` |
 | Data | `JigsawStructureGuardrailTest` | 13 | One jigsaw codec and placement call |
 | Packages | `EncounterPackageGuardrailTest` | 13 | Encounter managers in `common/encounter` |
@@ -312,5 +317,5 @@ and `BloodlineChatRateLimitTest` (4), `PendingDeliveryTest` (5), `HemoEasingTest
 `BloodAccountingGameTests` (7), `FrozenIdentifierGameTests` (8), the `combat_targeting_validation` namespace with
 `HealModifierGameTests` and `FlightSourceGameTests` (9), the `rite_kind_validation`, `dialogue_route_validation`,
 `hemo_command_validation`, `entity_cast_validation` and `scriptorium_operation_validation` namespaces (11),
-`player_migration_validation` (12), `RegistrationConsistencyGameTests` and `BlockBloodPersistenceGameTests` (13).
+`RegistrationConsistencyGameTests` and `BlockBloodPersistenceGameTests` (13).
 `verifyPackagedClientResources` and `verifyGameTestResourceLog` run in `alphaCheck`.

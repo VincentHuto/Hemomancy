@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlayerFacingAmountFormattingTest {
 	@Test
 	void widenedFloatCostsDoNotLeakIntoTooltips() throws Exception {
-		Method trimCost = MuscleMemoryTinctureItem.class.getDeclaredMethod("trimCost", double.class);
+		Method trimCost = ThelemicMemoryTinctureItem.class.getDeclaredMethod("trimCost", double.class);
 		trimCost.setAccessible(true);
 
 		assertEquals("0.3", trimCost.invoke(null, 0.30000001192092896D));

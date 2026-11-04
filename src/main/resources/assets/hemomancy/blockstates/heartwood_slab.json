@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "hemomancy:block/heartwood_slab"
+    },
+    "type=double": {
+      "model": "hemomancy:block/heartwood_planks"
+    },
+    "type=top": {
+      "model": "hemomancy:block/heartwood_slab_top"
+    }
+  }
+}

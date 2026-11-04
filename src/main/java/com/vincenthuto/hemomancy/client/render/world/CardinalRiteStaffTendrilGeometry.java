@@ -72,7 +72,7 @@ public final class CardinalRiteStaffTendrilGeometry {
 
 			for (int segment = 0; segment <= SEGMENTS_PER_STRAND; segment++) {
 				double progress = segment / (double) SEGMENTS_PER_STRAND;
-				double animatedWeight = Mth.smoothstep(progress);
+				double animatedWeight = HemoEasing.smoothstep(progress);
 				double writhePhase = time * (0.105D + strandIndex * 0.004D)
 						+ strandIndex * 1.73D;
 				double radialWrithe = Math.sin(writhePhase + progress * 8.4D)

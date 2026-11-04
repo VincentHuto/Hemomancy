@@ -116,12 +116,12 @@ public final class HarbingerAlchemistDialogueTrees {
 	public static DialogueTree forDegree(int degree, int entityId, boolean hasBloodline, boolean isNpcRecruited,
 			RedTaxonomySample heldRedTaxonomySample, HeldSpecimenJar heldSpecimenJar,
 			boolean canBriefFirstSeparation, boolean canClaimFirstSeparation, boolean canBriefBodyAnswers,
-			boolean canDiscussMuscleMemories) {
+			boolean canDiscussThelemicMemories) {
 		DialogueTree tree = switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
 			case 2 -> votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation,
-					canClaimFirstSeparation, canBriefBodyAnswers, canDiscussMuscleMemories);
+					canClaimFirstSeparation, canBriefBodyAnswers, canDiscussThelemicMemories);
 			case 3 -> initiate(entityId);
 			case 4 -> adept(entityId);
 			case 5 -> illuminatus(entityId, hasBloodline, isNpcRecruited);
@@ -131,10 +131,10 @@ public final class HarbingerAlchemistDialogueTrees {
 		};
 		boolean heldResearch = degree >= 2 && (heldRedTaxonomySample != null || heldSpecimenJar != null);
 		if (degree < 1 || degree == 2 || !(heldResearch || canBriefFirstSeparation || canClaimFirstSeparation
-				|| canBriefBodyAnswers || canDiscussMuscleMemories)) return tree;
+				|| canBriefBodyAnswers || canDiscussThelemicMemories)) return tree;
 		DialogueTree lessons = votary(entityId, heldResearch ? heldRedTaxonomySample : null,
 				heldResearch ? heldSpecimenJar : null, canBriefFirstSeparation,
-				canClaimFirstSeparation, canBriefBodyAnswers, canDiscussMuscleMemories);
+				canClaimFirstSeparation, canBriefBodyAnswers, canDiscussThelemicMemories);
 		var nodes = new java.util.LinkedHashMap<>(tree.nodes());
 		lessons.nodes().forEach(nodes::putIfAbsent);
 		List<DialogueOption> options = new ArrayList<>();
@@ -149,7 +149,7 @@ public final class HarbingerAlchemistDialogueTrees {
 					|| EVENT_FIRST_SEPARATION_BRIEF.equals(option.eventId())
 					|| EVENT_FIRST_SEPARATION_CLAIM.equals(option.eventId())
 					|| EVENT_BODY_ANSWERS_BRIEF.equals(option.eventId())
-					|| "muscle_memory_catalogue".equals(option.nextNodeId())) options.add(option);
+					|| "thelemic_memory_catalogue".equals(option.nextNodeId())) options.add(option);
 		}
 		options.addAll(tree.getStartNode().options());
 		nodes.put(tree.startNodeId(), new DialogueNode(tree.startNodeId(), tree.getStartNode().lines(), options));
@@ -414,7 +414,7 @@ public final class HarbingerAlchemistDialogueTrees {
 
 	public static DialogueTree votary(int entityId, RedTaxonomySample heldRedTaxonomySample,
 			HeldSpecimenJar heldSpecimenJar, boolean canBriefFirstSeparation, boolean canClaimFirstSeparation,
-			boolean canBriefBodyAnswers, boolean canDiscussMuscleMemories) {
+			boolean canBriefBodyAnswers, boolean canDiscussThelemicMemories) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		if (heldSpecimenJar != null && heldSpecimenJar.isResearchSpecimen()) {
 			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.record_living_specimen",
@@ -460,9 +460,9 @@ public final class HarbingerAlchemistDialogueTrees {
 					"body_answers_briefing", EVENT_BODY_ANSWERS_BRIEF,
 					DialogueOptionPresentation.prompt("hemomancy.alchemist.body_answers.prompt")));
 		}
-		if (canDiscussMuscleMemories) {
-			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.muscle_memory_catalogue",
-					"muscle_memory_catalogue", null));
+		if (canDiscussThelemicMemories) {
+			greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.thelemic_memory_catalogue",
+					"thelemic_memory_catalogue", null));
 		}
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
 				"centrifuge_lore", null).withLore());
@@ -496,7 +496,8 @@ public final class HarbingerAlchemistDialogueTrees {
 				)))
 				.addNode(new DialogueNode("bloodwood_lesson", List.of(
 					"hemomancy.alchemist.bloodwood_lesson.line1",
-					"hemomancy.alchemist.bloodwood_lesson.line2"
+					"hemomancy.alchemist.bloodwood_lesson.line2",
+					"hemomancy.alchemist.bloodwood_lesson.line3"
 				), List.of(
 					new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
@@ -586,10 +587,10 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.body_answers.line2",
 						"hemomancy.alchemist.body_answers.line3"
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
-				.addNode(new DialogueNode("muscle_memory_catalogue", List.of(
-						"hemomancy.alchemist.muscle_memory_catalogue.line1",
-						"hemomancy.alchemist.muscle_memory_catalogue.line2",
-						"hemomancy.alchemist.muscle_memory_catalogue.line3"
+				.addNode(new DialogueNode("thelemic_memory_catalogue", List.of(
+						"hemomancy.alchemist.thelemic_memory_catalogue.line1",
+						"hemomancy.alchemist.thelemic_memory_catalogue.line2",
+						"hemomancy.alchemist.thelemic_memory_catalogue.line3"
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.addNode(new DialogueNode("enzyme_uses", List.of(
 						"hemomancy.alchemist.enzyme_uses.brewing",
@@ -845,34 +846,6 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
 						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
-				)))
-				.addNode(new DialogueNode("item_hint", List.of(
-						"hemomancy.alchemist.item_hint"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
-				)))
-				.build();
-	}
-
-	/**
-	 * Item inquiry for the Alchemist. Degree gates apply to Loom (3+),
-	 * Scar Station (4+), and Morphling Incubator (5+) — these conditions are
-	 * expressed as {@code min_degree} fields in the JSON entries.
-	 * Unknown items receive a professional dismissal.
-	 */
-	public static DialogueTree itemInquiry(ItemStack item, int degree, int entityId) {
-		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.getItem());
-		return ItemInquiryRegistry.INSTANCE
-				.resolve("alchemist", itemId, degree, 0f)
-				.map(lines -> basicItemInquiry(entityId, lines.toArray(String[]::new)))
-				.orElseGet(() -> basicItemInquiry(entityId, "hemomancy.alchemist.item_inquiry.unknown"));
-	}
-
-	private static DialogueTree basicItemInquiry(int entityId, String... lines) {
-		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
-				.addNode(new DialogueNode("root", List.of(lines), List.of(
-						new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
-						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("item_hint", List.of(
 						"hemomancy.alchemist.item_hint"

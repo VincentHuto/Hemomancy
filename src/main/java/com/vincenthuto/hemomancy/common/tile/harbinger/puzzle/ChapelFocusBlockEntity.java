@@ -544,7 +544,7 @@ public class ChapelFocusBlockEntity extends HemoBlockEntity {
 		boolean waiting = phase == Phase.ACTIVE && wave.isEmpty() && step < ChapelRules.DOWNFALL_WAVES;
 		List<Mark> due = waiting ? ChapelRules.seals(marks, step) : List.of();
 		for (Mark seal : marksOf(MarkKind.SPAWN)) {
-			setOnMark(seal, BlockInit.spawn_mark.get(), SpawnMarkBlock.DUE, due.contains(seal));
+			setOnMark(seal, BlockInit.downfall_seal.get(), SpawnMarkBlock.DUE, due.contains(seal));
 		}
 	}
 

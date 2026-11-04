@@ -47,8 +47,6 @@ import net.minecraft.world.level.Level;
  */
 public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
 
-    public final AnimationState idleAnimationState = new AnimationState();
-
     public HarbingerAlchemistEntity(EntityType<? extends HarbingerAlchemistEntity> type, Level worldIn) {
         super(type, worldIn);
         this.setInvulnerable(true);
@@ -80,9 +78,6 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.e
 
     @Override
     public void tick() {
-        if (this.level().isClientSide()) {
-            this.idleAnimationState.startIfStopped(this.tickCount);
-        }
         super.tick();
     }
 
@@ -97,7 +92,7 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.e
             }
             com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.met(serverPlayer, "alchemist");
             DialogueTree tree = progressionDialogue(serverPlayer);
-            tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "alchemist", degree, 0f);
+            tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "alchemist");
             tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withLetterInquiry(tree, "alchemist",
                     com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.ALCHEMIST_LETTER,
                     com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.View.of(serverPlayer));
@@ -197,10 +192,6 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.e
     private static boolean hasClarityUnlocked(Player player) {
         return HemoCapabilityAccess.getUnstainedProgress(player)
                 .hasClarityUnlocked();
-    }
-
-    private static boolean hasBloodline(Player player) {
-        return HemoCapabilityAccess.getBloodVolume(player).getBloodLine().isValid();
     }
 
     private static boolean isNpcInPlayerBloodline(Player player, Entity npc) {

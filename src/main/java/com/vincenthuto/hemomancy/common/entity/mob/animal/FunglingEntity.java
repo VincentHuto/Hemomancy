@@ -268,7 +268,6 @@ public class FunglingEntity extends PathfinderMob {
 
 	}
 
-
 	public void attackInBox(AABB box, int disabledShieldTime) {
 		List<LivingEntity> attackables = level().getEntitiesOfClass(LivingEntity.class, box,
 				entity -> entity != this && !hasPassenger(entity));
@@ -322,25 +321,6 @@ public class FunglingEntity extends PathfinderMob {
 
 	}
 
-	public void sporePuff(Level world, AABB effectBounds, double x, double y, double z) {
-		List<Entity> list = world.getEntities(this, effectBounds);
-		for (Entity ent : list) {
-			if (!(ent instanceof FunglingEntity)) {
-				LivingEntity liv = (LivingEntity) ent;
-				liv.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 200));
-				for (int countparticles = 0; countparticles <= 10; ++countparticles) {
-					world.addParticle(HemoParticleData.glow(new ParticleColor(0, 150, 0)),
-							getX() + HLParticleUtils.inRange(-0.25, 0.25),
-							getY() + HLParticleUtils.inRange(-0.25, 0.25),
-							getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
-					world.addParticle(HemoParticleData.glow(new ParticleColor(0, 250, 0)),
-							getX() + HLParticleUtils.inRange(-0.25, 0.25), getY() + HLParticleUtils.inRange(-0.1, 0.1),
-							getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
-				}
-			}
-		}
-	}
-
 	@Override
 	public void tick() {
 		super.tick();
@@ -373,4 +353,9 @@ public class FunglingEntity extends PathfinderMob {
 		}
 	}
 
+	/** A hostile pack animal: it leaves on Peaceful like any monster. */
+	@Override
+	protected boolean shouldDespawnInPeaceful() {
+		return true;
+	}
 }

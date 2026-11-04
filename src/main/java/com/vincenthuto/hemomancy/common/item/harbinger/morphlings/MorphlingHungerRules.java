@@ -35,14 +35,6 @@ public final class MorphlingHungerRules {
 		return Math.max(0, baseAmplifier);
 	}
 
-	public static int capMaturityByHusbandry(int enzymeMaturity, int experienceProgress, int stageQuota) {
-		if (stageQuota <= 0 || enzymeMaturity <= 1) {
-			return enzymeMaturity;
-		}
-		int maxByExperience = 1 + Math.max(0, experienceProgress) / stageQuota;
-		return Math.min(enzymeMaturity, Math.min(maxByExperience, PrimalMorphlingRules.PRIMAL_LEVEL));
-	}
-
 	public static boolean shouldApplyStarvingDrain(HungerState state) {
 		return state == HungerState.STARVING;
 	}

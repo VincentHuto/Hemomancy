@@ -10,14 +10,11 @@ import com.vincenthuto.hemomancy.client.screen.item.SuccessionResidentsScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.HeartNodeScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SSCScreen;
-import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
 import com.vincenthuto.hemomancy.client.data.EarthenVeinTravelClientState;
 import com.vincenthuto.hemomancy.common.network.ClientPayloadHandlers;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenArborSkillsPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenSSCScreenPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketOpenBloodlinePoolScreen;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.OpenVisceralMirrorPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorUpdatePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueRewardResultPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenPendingWhisperPacket;
@@ -51,11 +48,9 @@ public final class ClientboundScreenHandlers {
 		ClientPayloadHandlers.register(OpenInscriptionPacket.TYPE, ClientboundScreenHandlers::handle);
 		ClientPayloadHandlers.register(OpenPendingWhisperPacket.TYPE, ClientboundScreenHandlers::handle);
 		ClientPayloadHandlers.register(OpenSSCScreenPacket.TYPE, ClientboundScreenHandlers::handle);
-		ClientPayloadHandlers.register(OpenVisceralMirrorPacket.TYPE, ClientboundScreenHandlers::handle);
 		ClientPayloadHandlers.register(PacketOpenBloodlinePoolScreen.TYPE, ClientboundScreenHandlers::handle);
 		ClientPayloadHandlers.register(PacketOpenHeartNodeScreen.TYPE, ClientboundScreenHandlers::handle);
 		ClientPayloadHandlers.register(ResidentsSnapshotPacket.TYPE, ClientboundScreenHandlers::handle);
-		ClientPayloadHandlers.register(VisceralMirrorUpdatePacket.TYPE, ClientboundScreenHandlers::handle);
 	}
 
 	static void handle(DialogueRewardResultPacket msg, IPayloadContext ctx) {
@@ -94,7 +89,7 @@ public final class ClientboundScreenHandlers {
 				msg.voyagerIntroduction(),
 				msg.circusDiscovered(),
 				msg.firstSeparation(),
-				msg.bodyAnswersBriefed(), msg.bodyAnswersComplete(), msg.muscleMemoryCount(),
+				msg.bodyAnswersBriefed(), msg.bodyAnswersComplete(), msg.thelemicMemoryCount(),
 				msg.redTaxonomyCount(), msg.redTaxonomyComplete(),
 				msg.enzymeMasteryCount(), msg.enzymeMasteryComplete(),
 				msg.firstCultureComplete(),
@@ -137,16 +132,6 @@ public final class ClientboundScreenHandlers {
 		ctx.enqueueWork(() -> SSCScreen.open(msg.pos(), msg.sscBlood(), msg.sscMaxBlood(), msg.drudges()));
 	}
 
-	static void handle(final OpenVisceralMirrorPacket msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			if (ctx.player() != null) {
-				VisceralMirrorScreen.open(
-						msg.pos(), msg.organLevels(), msg.hasEcho(),
-						msg.bloodVolume(), msg.maxBloodVolume(), msg.degree());
-			}
-		});
-	}
-
 	static void handle(final PacketOpenBloodlinePoolScreen msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			if (ctx.player() != null) {
@@ -163,11 +148,4 @@ public final class ClientboundScreenHandlers {
 		context.enqueueWork(() -> SuccessionResidentsScreen.update(msg.data()));
 	}
 
-	static void handle(final VisceralMirrorUpdatePacket msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			if (ctx.player() != null) {
-				VisceralMirrorScreen.applyServerUpdate(msg);
-			}
-		});
-	}
 }

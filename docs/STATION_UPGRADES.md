@@ -68,10 +68,10 @@ Each rite consumes **one of each of six items**: its upgrade item and the five c
 | True Groove | `grindstone`, `honeycomb`, `amethyst_shard`, `wax_cylinder`, `hematic_iron_block` |
 | Enduring Pattern | `anvil`, `netherite_scrap`, `mnemonic_ambergris_block`, `chalybeate_sclerite`, `suspended_blood_crystal` |
 | Armature Consecration | `armor_stand`, `chain`, `tendon_line`, `hemolytic_plating`, `sanguine_formation` |
-| Monolithic Armature | `netherite_scrap`, `monolith_fragment`, `monolith_imbued_cloth`, `calcified_blood_spine`, `sanguine_quintessence` |
+| Monolithic Armature | `netherite_scrap`, `monolith_fragment`, `monolith_imbued_cloth`, `barbed_splinter`, `sanguine_quintessence` |
 | Eightfold Script | `ink_sac`, `feather`, `lapis_block`, `cuttlefish_chromatophores`, `runic_motif_paper` |
 | Palimpsest | `echo_shard`, `glow_ink_sac`, `mnemonic_folio`, `axonal_slate`, `myelin_sheath` |
-| Ganglionic Weave | `neurotic_enzyme`, `nerve_fiber`, `puppeteering_thread`, `sanguine_formation`, `blood_crystal_shard` |
+| Ganglionic Weave | `neurotic_enzyme`, `nerve_fiber`, `enthralling_filament`, `sanguine_formation`, `blood_crystal_shard` |
 | Cortical Weave | `nerve_bundle`, `synaptic_node`, `mnemonic_ambergris`, `blood_stained_stone`, `sanguine_glass` |
 | First Clotting | `hematic_iron_scrap`, `befouling_ash_trail`, `venous_stone`, `blood_stained_stone`, `sanguine_formation` |
 | Druse Crystallization | `amethyst_shard`, `blood_crystal_shard`, `sanguine_glass`, `hematic_iron_block`, `sanguine_quintessence` |

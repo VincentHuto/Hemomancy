@@ -44,10 +44,6 @@ public final class LivingFlailRules {
 		return Math.round(interpolate(60.0F, 160.0F, charge));
 	}
 
-	public static int slownessAmplifier(float charge) {
-		return Mth.clamp(charge, 0.0F, 1.0F) < 0.5F ? 1 : 2;
-	}
-
 	public static int snowRadius(float charge) {
 		return Math.round(interpolate(1.0F, 5.0F, charge));
 	}

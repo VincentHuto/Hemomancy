@@ -160,10 +160,6 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         this.entityData.set(DATA_CARRIED_BLOOD, Math.max(0, Math.min(MAX_CARRY, amount)));
     }
 
-    public ThrallState getThrallState() {
-        return thrallState;
-    }
-
     /** How "full" the thrall is, 0..1 — used for rendering scale/color */
     public float getCarryRatio() {
         return Math.min(1f, getCarriedBlood() / MAX_CARRY);
@@ -214,7 +210,6 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                 0, 0.01, 0
         );
     }
-
 
     // ── Persistence ──
 

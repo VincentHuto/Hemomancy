@@ -128,6 +128,12 @@ public final class HemoCommandCharacterisationGameTests {
 			}
 			CompoundTag before = PlayerFingerprints.saved(player);
 			String result = run(dispatcher, player.createCommandSourceStack().withPermission(2), command);
+			// A command's blood change is sent by the end-of-tick flush; the outcome includes what that send touches.
+			// Only the blood volume is flushed: probing the other dirty flags would create their attachments.
+			if (com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.hasBloodVolume(player)
+					&& com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player).isSyncDirty()) {
+				com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents.flushVolume(player);
+			}
 			CompoundTag after = PlayerFingerprints.saved(player);
 			TreeMap<String, Integer> spawned = new TreeMap<>();
 			for (Entity entity : level.getEntities((Entity) null, new AABB(stand).inflate(24.0D),

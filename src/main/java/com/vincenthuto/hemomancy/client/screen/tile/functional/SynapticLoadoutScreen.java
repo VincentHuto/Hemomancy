@@ -512,7 +512,7 @@ public class SynapticLoadoutScreen extends Screen {
 
 	private ResourceLocation memoryOverlayTexture(String manipName) {
 		MemorySlotRef ref = MemorySlotRef.fromStorageKey(manipName);
-		if (ref.kind() == MemoryEntryKind.MUSCLE_MEMORY) {
+		if (ref.kind() == MemoryEntryKind.THELEMIC_MEMORY) {
 			return Hemomancy.rloc("textures/item/tincture_" + ref.id() + ".png");
 		}
 		return ManipulationIconResolver.overlay(ref.id());

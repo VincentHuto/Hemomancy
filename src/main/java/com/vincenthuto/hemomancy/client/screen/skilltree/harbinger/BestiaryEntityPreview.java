@@ -55,10 +55,6 @@ public final class BestiaryEntityPreview {
 		return id != null && PREVIEW_TYPES.containsKey(id);
 	}
 
-	public static boolean hasPreviewPath(String path) {
-		return path != null && hasPreview(Hemomancy.rloc(path));
-	}
-
 	public static float clampZoom(float zoom) {
 		return Mth.clamp(zoom, ZOOM_MIN, ZOOM_MAX);
 	}
@@ -69,10 +65,6 @@ public final class BestiaryEntityPreview {
 
 	static float previewAnimationTick(long gameTime, float partialTick) {
 		return gameTime % ANIMATION_LOOP_TICKS + partialTick;
-	}
-
-	static float previewGuiDepth() {
-		return PREVIEW_GUI_DEPTH;
 	}
 
 	public static void render(GuiGraphics gfx, ProgressScreenContext ctx, BestiaryTabState state,

@@ -13,8 +13,6 @@ public final class TriadAttributeCapsTest {
 	private static void aLoneLayerPassesThroughUnchanged() {
 		assertDouble("chitinite toughness alone is untouched", 2.0D,
 				TriadAttributeCaps.clampToughness(0.0D, 2.0D));
-		assertDouble("a single speed source under the cap is untouched", 0.15D,
-				TriadAttributeCaps.clampMoveSpeed(0.0D, 0.15D));
 	}
 
 	private static void stackedLayersAreClampedToTheBudget() {
@@ -22,8 +20,6 @@ public final class TriadAttributeCapsTest {
 				TriadAttributeCaps.clampToughness(3.0D, 2.0D));
 		assertDouble("a full budget grants nothing more", 0.0D,
 				TriadAttributeCaps.clampToughness(TriadAttributeCaps.MAX_TRIAD_TOUGHNESS_BONUS, 2.0D));
-		assertDouble("speed stacking clips at thirty percent", 0.10D,
-				TriadAttributeCaps.clampMoveSpeed(0.20D, 0.15D));
 	}
 
 	private static void degenerateInputsAreSafe() {

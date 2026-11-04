@@ -28,10 +28,6 @@ public class StillArtCooldownOverlay {
 		return cooldownRemaining > 0;
 	}
 
-	public static int getCooldownRemaining() {
-		return cooldownRemaining;
-	}
-
 	public static void tick() {
 		if (cooldownRemaining > 0) {
 			cooldownRemaining--;

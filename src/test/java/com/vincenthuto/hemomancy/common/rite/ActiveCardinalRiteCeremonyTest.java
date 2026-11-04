@@ -193,7 +193,7 @@ final class ActiveCardinalRiteCeremonyTest {
 		old.putInt("TotalTicks", 100);
 		old.putInt("RemainingTicks", 40);
 		old.putInt("RiteSize", 3);
-		assertEquals(CardinalRitePhase.LEGACY, ActiveCardinalRite.deserialize(old).getPhase());
+		assertEquals(CardinalRitePhase.COUNTDOWN, ActiveCardinalRite.deserialize(old).getPhase());
 	}
 
 	@Test

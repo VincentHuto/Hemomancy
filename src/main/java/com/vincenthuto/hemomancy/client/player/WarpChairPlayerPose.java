@@ -86,7 +86,7 @@ public final class WarpChairPlayerPose {
 		return entity.getSleepingPos()
 				.filter(entity.level()::hasChunkAt)
 				.map(entity.level()::getBlockState)
-				.filter(state -> state.is(BlockInit.warp_chair.get()));
+				.filter(state -> state.is(BlockInit.somnolent_seat.get()));
 	}
 
 	public record SeatedLegs(float xRot, float rightYRot, float leftYRot,

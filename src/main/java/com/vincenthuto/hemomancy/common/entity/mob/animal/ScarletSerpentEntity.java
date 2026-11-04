@@ -193,4 +193,10 @@ public class ScarletSerpentEntity extends PathfinderMob {
 			this.entityData.set(HOOD_FLARED, true);
 		}
 	}
+
+	/** Herd life stays where it was found, like a vanilla animal; it is not a monster that fades at range. */
+	@Override
+	public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+		return false;
+	}
 }

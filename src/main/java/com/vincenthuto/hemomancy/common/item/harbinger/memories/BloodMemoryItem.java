@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantStatus;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hemomancy.common.util.HemoText;
@@ -37,11 +36,6 @@ public class BloodMemoryItem extends Item {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (getManip() != null) {
 			tooltip.add(getManip().getDisplayName());
-			if (isRetiredMemoryItem()) {
-				tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.this_memory_has_gone_dormant")
-						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
-				return;
-			}
 			getManip().getDrudgeAction().ifPresentOrElse(da -> {
 				if (da == com.vincenthuto.hemomancy.common.manipulation.DrudgeAction.DRUDGE_UNSUPPORTED) {
 					tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.cnot_usable_by_drudges"));
@@ -69,9 +63,6 @@ public class BloodMemoryItem extends Item {
 		return manip.get();
 	}
 
-	public boolean isRetiredMemoryItem() {
-		return ManipulationRetirementRules.isRetiredMemoryItem(this, getManip());
-	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)

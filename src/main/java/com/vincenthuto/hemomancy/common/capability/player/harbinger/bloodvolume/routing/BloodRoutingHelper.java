@@ -58,7 +58,7 @@ public final class BloodRoutingHelper {
 
     public static double routeLinkedTarget(ServerLevel level, BlockPos sourcePos, BlockPos targetPos,
             DirectBloodLinkData link, double maxAmount) {
-        if (link == null || maxAmount <= 0) {
+        if (link == null || maxAmount <= 0 || !level.isLoaded(targetPos) || !canUseLink(level, sourcePos, link)) {
             return 0;
         }
 

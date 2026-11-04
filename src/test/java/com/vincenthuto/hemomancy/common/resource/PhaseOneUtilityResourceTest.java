@@ -62,7 +62,7 @@ public final class PhaseOneUtilityResourceTest {
 	}
 
 	private static void assertPhaseOneUtilityAssetsExist() throws IOException {
-		for (String id : new String[] { "blood_chum", "ossuary_clock", "humoral_barometer" }) {
+		for (String id : new String[] { "ossuary_clock", "humoral_barometer" }) {
 			assertJsonExists(DATA.resolve("recipe/" + id + ".json"));
 			assertJsonExists(ASSETS.resolve("models/item/" + id + ".json"));
 			assertFileExists(ASSETS.resolve("textures/item/" + id + ".png"));

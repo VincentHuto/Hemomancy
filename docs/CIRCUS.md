@@ -2,6 +2,15 @@
 
 Status (2026-11-01): built and uncommitted in parts; pavilion, camps, school, two endings, Puppeteer trial rite kind and the Trade box are in code; live-client, fresh-worldgen, multiplayer and cold-restart acceptance are still owed. Source tracks are archived under `docs/archive/tracks/circus/`; this page replaces reading them.
 
+## Ringmaster finale presentation (2026-11-02)
+
+The Ringmaster (`common/entity/npc/circus/CircusRingmasterEntity`) syncs the finale phase to the client and poses
+for it (`CircusRingmasterModel`: crouched on the beam in RAFTERS, presenting on the hub in CAROUSEL, walking and
+striking in DESCENT); every thrown knife whips the free arm through an entity event. It holds a `BossBarBinding`
+with the `circus_ringmaster` frame (striped big-top canvas, hanging knives), plays the `circus_ringmaster` opening
+scene when RAFTERS begins (the bar shows after `INTRO_TICKS`), and a phase card at CAROUSEL and DESCENT. None of it
+has been watched in a client yet (cleanup audit A-10).
+
 ## What it is
 
 The Circus is a specialist Harbinger sect built on puppetry, attention, spectacle and collective mental manifestation. It is a practice and a social identity inside the Hematic Order, not a class, a second degree ladder, a reputation bar or an enemy faction by default (`docs/archive/tracks/circus/01-faction-and-progression.md`, `docs/LORE_REFERENCE.md` 6.3b). Saints keep singular unstable powers; the Circus refines systems other Harbingers already know (C-08).

@@ -13,8 +13,8 @@ public final class EntityLootTableCoverageResourceTest {
 
 	private static final GuaranteedDrop[] GUARANTEED_MATERIAL_DROPS = {
 			new GuaranteedDrop("abhorrent_thought", "hemomancy:sanguine_formation"),
-			new GuaranteedDrop("barbed_urchin", "hemomancy:calcified_blood_spine"),
-			new GuaranteedDrop("blood_drunk_puppeteer", "hemomancy:puppeteering_thread"),
+			new GuaranteedDrop("barbed_urchin", "hemomancy:barbed_splinter"),
+			new GuaranteedDrop("blood_drunk_puppeteer", "hemomancy:enthralling_filament"),
 			new GuaranteedDrop("blood_thrall", "hemomancy:sanguine_formation"),
 			new GuaranteedDrop("chitinite", "hemomancy:chitinous_husk"),
 			new GuaranteedDrop("chthonian", "hemomancy:chitinous_husk"),

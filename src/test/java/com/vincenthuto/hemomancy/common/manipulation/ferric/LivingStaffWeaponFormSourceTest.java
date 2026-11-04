@@ -28,10 +28,6 @@ public final class LivingStaffWeaponFormSourceTest {
 		assertContains("spear form registered", manipInit, "conjure_spear");
 		assertContains("claws form registered", manipInit, "conjure_claws");
 		assertContains("crossbow form registered", manipInit, "conjure_crossbow");
-		assertContains("axe memory registered", itemInit, "memory_living_axe");
-		assertContains("spear memory registered", itemInit, "memory_living_spear");
-		assertContains("claws memory registered", itemInit, "memory_living_claws");
-		assertContains("crossbow memory registered", itemInit, "memory_living_crossbow");
 		assertContains("selection cycling applies staff weapon form", changePacket,
 				"LivingStaffWeaponFormHelper.applySelection");
 		assertContains("radial selection applies staff weapon form", updatePacket,

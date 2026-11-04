@@ -391,7 +391,7 @@ public final class GameplayCampaignDriver {
                     server.addProperty("selectedMemory", known.getSelectedMemoryRef().storageKey());
                     server.addProperty("legacySelectedManipulation", known.getSelectedManip().getName());
                     server.add("loadouts", JSON.toJsonTree(known.getLoadouts()));
-                    server.addProperty("muscleMemory", HemoCapabilityAccess.muscleMemory(player)
+                    server.addProperty("thelemicMemory", HemoCapabilityAccess.thelemicMemory(player)
                             .serializeNBT(player.registryAccess()).toString());
                     server.addProperty("channeling", com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager
                             .isChanneling(player.getUUID()));

@@ -24,39 +24,19 @@ public class CardinalRiteRecipe extends StationRecipe {
 				}).collect(Collectors.toList());
 	}
 
+	/** The rite with this id, its {@code cardinal_rite/} prefix added or stripped as needed; a keyed lookup, no scan (RT-8). */
 	public static CardinalRiteRecipe getRiteByLocation(Level world, ResourceLocation loc) {
-		CardinalRiteRecipe direct = world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get()).stream()
-				.filter(h -> h.id().equals(loc)).findFirst().map(holder -> {
-					CardinalRiteRecipe recipe = holder.value();
-					recipe.setId(holder.id());
-					return recipe;
-				}).orElse(null);
-		if (direct != null) {
-			return direct;
-		}
-
 		String path = loc.getPath();
-		ResourceLocation prefixed = path.startsWith("cardinal_rite/")
-				? loc
+		ResourceLocation prefixed = path.startsWith("cardinal_rite/") ? loc
 				: ResourceLocation.fromNamespaceAndPath(loc.getNamespace(), "cardinal_rite/" + path);
-		CardinalRiteRecipe withPrefix = world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get()).stream()
-				.filter(h -> h.id().equals(prefixed)).findFirst().map(holder -> {
-					CardinalRiteRecipe recipe = holder.value();
-					recipe.setId(holder.id());
-					return recipe;
-				}).orElse(null);
-		if (withPrefix != null) {
-			return withPrefix;
-		}
-
-		if (path.startsWith("cardinal_rite/")) {
-			ResourceLocation stripped = ResourceLocation.fromNamespaceAndPath(loc.getNamespace(), path.substring("cardinal_rite/".length()));
-			return world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get()).stream()
-					.filter(h -> h.id().equals(stripped)).findFirst().map(holder -> {
-						CardinalRiteRecipe recipe = holder.value();
-						recipe.setId(holder.id());
-						return recipe;
-					}).orElse(null);
+		ResourceLocation stripped = path.startsWith("cardinal_rite/")
+				? ResourceLocation.fromNamespaceAndPath(loc.getNamespace(), path.substring("cardinal_rite/".length())) : loc;
+		for (ResourceLocation candidate : java.util.List.of(loc, prefixed, stripped)) {
+			var holder = world.getRecipeManager().byKey(candidate).orElse(null);
+			if (holder != null && holder.value() instanceof CardinalRiteRecipe recipe) {
+				recipe.setId(holder.id());
+				return recipe;
+			}
 		}
 		return null;
 	}
@@ -188,11 +168,6 @@ public class CardinalRiteRecipe extends StationRecipe {
 				: CardinalRiteFloorRegistry.get(floorId)
 						.map(com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition::pattern)
 						.orElse(null);
-	}
-
-	public MultiblockPattern getPreviewPattern() {
-		return requiredStructure != null ? requiredStructure
-				: hasLayeredStation() ? getFloorPattern() : pattern;
 	}
 
 	public boolean hasLayeredStation() {
@@ -376,7 +351,9 @@ public class CardinalRiteRecipe extends StationRecipe {
 
 	private static String riteKeyId(ResourceLocation riteId) {
 		String path = riteId.getPath();
-		return path.startsWith("cardinal_rite/") ? path.substring("cardinal_rite/".length()) : path;
+		if (path.startsWith("cardinal_rite/")) path = path.substring("cardinal_rite/".length());
+		// a Working craft is cardinal_rite/working/<craft>: its key is hemomancy.rite.working.<craft>
+		return path.replace('/', '.');
 	}
 
 	@Override
@@ -402,24 +379,12 @@ public class CardinalRiteRecipe extends StationRecipe {
 		this.bloodCost = bloodCost;
 	}
 
-	public void setRiteType(CardinalRiteType riteType) {
-		this.riteType = riteType;
-	}
-
 	public void setPattern(MultiblockPattern pattern) {
 		this.pattern = pattern;
 	}
 
 	public void setResult(ItemStack result) {
 		this.result = result;
-	}
-
-	public void setRiteName(String riteName) {
-		this.riteName = riteName;
-	}
-
-	public void setRiteDescription(String riteDescription) {
-		this.riteDescription = riteDescription;
 	}
 
 	/**
@@ -449,10 +414,6 @@ public class CardinalRiteRecipe extends StationRecipe {
 		return breakBlocksOnCreation;
 	}
 
-	public void setBreakBlocksOnCreation(boolean breakBlocksOnCreation) {
-		this.breakBlocksOnCreation = breakBlocksOnCreation;
-	}
-
 	/**
 	 * Returns whether this rite belongs to the Unstained path.
 	 */
@@ -469,10 +430,6 @@ public class CardinalRiteRecipe extends StationRecipe {
 	 */
 	public boolean isRankup() {
 		return rankup;
-	}
-
-	public void setRankup(boolean rankup) {
-		this.rankup = rankup;
 	}
 
 	public CardinalRiteCeremonyDefinition getCeremony() {

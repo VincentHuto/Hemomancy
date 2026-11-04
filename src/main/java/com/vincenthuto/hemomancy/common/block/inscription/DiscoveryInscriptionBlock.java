@@ -189,7 +189,7 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 		boolean requiresAbocipherLiteracy = requiresAbocipherLiteracy(definition);
 		if (!definition.isReadable(pathLevel)) {
 			PacketHandler.sendToPlayer(player, new OpenInscriptionPacket(
-					obscuredTitle(definition), definition.obscuredText(), false, null, requiresAbocipherLiteracy));
+					obscuredTitle(definition), definition.displayObscuredText(), false, null, requiresAbocipherLiteracy));
 			return;
 		}
 
@@ -201,7 +201,7 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 			HarbingerAdvancementGranter.grantIfNotDone(player, advancement);
 		}
 		PacketHandler.sendToPlayer(player, new OpenInscriptionPacket(
-				Component.literal(definition.title()), revealedText(definition), true, definition.riteId(), requiresAbocipherLiteracy));
+				definition.displayTitle(), revealedText(definition), true, definition.riteId(), requiresAbocipherLiteracy));
 	}
 
 	private static int levelFor(Player player, DiscoveryInscriptionDefinition.Path path) {
@@ -210,8 +210,8 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 				: HemoCapabilityAccess.getPlayerDegreeNumber(player);
 	}
 
-	private static List<String> revealedText(DiscoveryInscriptionDefinition definition) {
-		return definition.revealedText().isEmpty() ? definition.obscuredText() : definition.revealedText();
+	private static List<Component> revealedText(DiscoveryInscriptionDefinition definition) {
+		return definition.revealedText().isEmpty() ? definition.displayObscuredText() : definition.displayRevealedText();
 	}
 
 	private static Component obscuredTitle(DiscoveryInscriptionDefinition definition) {

@@ -315,12 +315,12 @@ public final class SomaticLoomWeavingGameTests {
         bite.tick();
         int windup = bite.windup();
         CompoundTag saved = bite.saveWithoutId(new CompoundTag());
-        var reloaded = new FrayedThreadEntity(com.vincenthuto.hemomancy.common.init.EntityInit.frayed_thread.get(), helper.getLevel());
+        var reloaded = new FrayedThreadEntity(com.vincenthuto.hemomancy.common.init.EntityInit.intruding_memory.get(), helper.getLevel());
         reloaded.load(saved);
         helper.assertTrue(windup > 0 && reloaded.windup() == windup, "a reloaded bite keeps its tell: " + reloaded.windup());
         for (int i = 0; i < windup + 2; i++) bite.tick();
         CompoundTag spent = bite.saveWithoutId(new CompoundTag());
-        var afterwards = new FrayedThreadEntity(com.vincenthuto.hemomancy.common.init.EntityInit.frayed_thread.get(), helper.getLevel());
+        var afterwards = new FrayedThreadEntity(com.vincenthuto.hemomancy.common.init.EntityInit.intruding_memory.get(), helper.getLevel());
         afterwards.load(spent);
         helper.assertTrue(bite.unravelling() > 0 && afterwards.unravelling() > 0, "a spent bite reloads still unravelling, never striking again");
         bite.discard();
@@ -439,7 +439,7 @@ public final class SomaticLoomWeavingGameTests {
     @GameTest(template = "empty")
     public static void threadsSavedByTheWitnessedWeaveUnravel(GameTestHelper helper) {
         Setup s = axonal(helper, 60);
-        var legacy = new FrayedThreadEntity(com.vincenthuto.hemomancy.common.init.EntityInit.frayed_thread.get(), helper.getLevel());
+        var legacy = new FrayedThreadEntity(com.vincenthuto.hemomancy.common.init.EntityInit.intruding_memory.get(), helper.getLevel());
         legacy.moveTo(s.pos.getX() + 2, s.pos.getY() + 1, s.pos.getZ());
         helper.getLevel().addFreshEntity(legacy);
         legacy.tick();

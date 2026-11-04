@@ -241,7 +241,7 @@ Gourd Open/Closed", "active", "cork"); "four anchors" and "eight anchors".
 - In voice: "Your Ductilis record predicts a conductive response. The Mnemonist insists on calling that a Noetic
   Memory, and I've stopped arguing. The Loom formula's recorded."
 
-**Trade keys.** `hemomancy.trade.alchemist.<card>.title` / `.line` for `cold_reagent`, `ferric_draw`, `fresh_draw`, `pelagic_oil`, `reef_salts`, `spent_enzyme`, `spore_stock`; `hemomancy.trade.alchemist.*`: `thanks`, `thanks_fine`, `appraise.poor`; rapport lore `hemomancy.dialogue.rapport.alchemist.<slug>` (`.teaser`, `.lineN`) for `failed_assay`, `the_bench`.
+**Trade keys.** `hemomancy.trade.alchemist.<card>.title` / `.line` for `cold_reagent`, `ferric_draw`, `fresh_draw`, `living_syringe_reissue`, `pelagic_oil`, `reef_salts`, `spent_enzyme`, `spore_stock`; `hemomancy.trade.alchemist.*`: `thanks`, `thanks_fine`, `appraise.poor`; rapport lore `hemomancy.dialogue.rapport.alchemist.<slug>` (`.teaser`, `.lineN`) for `failed_assay`, `the_bench`.
 
 ### Harbinger Mnemonist
 

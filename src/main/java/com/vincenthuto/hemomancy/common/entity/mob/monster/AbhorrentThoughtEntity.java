@@ -36,8 +36,10 @@ import javax.annotation.Nullable;
 public class AbhorrentThoughtEntity extends Monster {
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+		// A large endgame Gardens hazard: slow, heavy and hard to shove.
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 40.0D).add(Attributes.MOVEMENT_SPEED, 0.27D)
+				.add(Attributes.ATTACK_DAMAGE, 7.0D).add(Attributes.ARMOR, 4.0D).add(Attributes.FOLLOW_RANGE, 32.0D)
+				.add(Attributes.KNOCKBACK_RESISTANCE, 0.4D);
 	}
 
 	public int puffCooldown = 0;
@@ -143,10 +145,6 @@ public class AbhorrentThoughtEntity extends Monster {
 	private boolean isMovingOnLand() {
 		return this.onGround() && this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6D
 				&& !this.isInWaterOrBubble();
-	}
-
-	private boolean isMovingInWater() {
-		return this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6D && this.isInWaterOrBubble();
 	}
 
 	@Override

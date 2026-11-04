@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "hemomancy:block/ravenous_heartwood_top",
+    "side": "hemomancy:block/ravenous_heartwood"
+  }
+}

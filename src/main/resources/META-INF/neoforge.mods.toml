@@ -73,25 +73,3 @@ with later boss, compat, and world-placement systems still being hardened.
     ordering="AFTER"
     side="BOTH"
 
-#[[dependencies.hemomancy]]
-#  modId="geckolib"
-#  type="optional"
-#  versionRange="[4.2,)"
-#   ordering="NONE"
-#  side="BOTH"
-
-# Mana and Artifice - optional, compat/mna is gated behind ModList.isLoaded("mna")
-# [[dependencies.hemomancy]]
-#     modId="mna"
-#     type="optional"
-#     versionRange="[1,)"
-#     ordering="NONE"
-#     side="BOTH"
-
-# Curios - optional, compat/curios gated behind ModList.isLoaded("curios")
-# [[dependencies.hemomancy]]
-#     modId="curios"
-#     type="optional"
-#     versionRange="[1,)"
-#     ordering="NONE"
-#     side="BOTH"

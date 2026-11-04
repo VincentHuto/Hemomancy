@@ -5,8 +5,8 @@
     {
       "type": "hemomancy:vampire_bat",
       "weight": 4,
-      "minCount": 8,
-      "maxCount": 20
+      "minCount": 4,
+      "maxCount": 8
     }
   ]
 }

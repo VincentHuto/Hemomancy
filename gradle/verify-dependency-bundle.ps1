@@ -7,7 +7,7 @@ $localJars = @(
     'create-1.21.1-6.0.10.jar', 'buildinggadgets2-1.3.9.jar', 'worldedit-mod-7.3.8.jar',
     'moonlight-neoforge-1.21.1-3.0.20.jar', 'theoneprobe-1.21_neo-12.0.8.jar',
     'dummmmmmy-1.21-2.0.12-neoforge.jar', 'jei-1.21.1-neoforge-19.27.0.340.jar',
-    'mna-3.1.11-neoforge.1.21.1.0.jar', 'TerraBlender-neoforge-1.21.1-4.1.0.8.jar'
+    'TerraBlender-neoforge-1.21.1-4.1.0.8.jar'
 )
 $libRoot = [IO.Path]::GetFullPath((Join-Path $repoRoot '../HutosLib'))
 if (-not (Test-Path -LiteralPath (Join-Path $libRoot 'build.gradle'))) {

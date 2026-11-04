@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_trapdoor_top",
+  "textures": {
+    "texture": "hemomancy:block/blood_wood_trapdoor"
+  },
+  "render_type": "minecraft:cutout"
+}

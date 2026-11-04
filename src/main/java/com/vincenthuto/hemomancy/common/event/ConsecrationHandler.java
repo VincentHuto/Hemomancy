@@ -42,8 +42,6 @@ import java.util.Map;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ConsecrationHandler {
 
-	/** Purity threshold to use consecration (CLEANSING = 50). */
-	private static final float CONSECRATION_PURITY_THRESHOLD = 50.0f;
 	/** Purity granted per block consecrated. */
 	private static final float PURITY_PER_CONSECRATION = 0.5f;
 

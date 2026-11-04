@@ -1,6 +1,6 @@
 # Registered Hemomancy payloads for this PROTOCOL_VERSION, checked by PayloadProtocolVersionTest.
 # When the set changes, bump PacketHandler.PROTOCOL_VERSION and rewrite this file.
-version 31
+version 34
 playToServer ActivateArmorSetAbilityC2SPacket
 playBidirectional AntecedentEffectPacket
 playToServer ArborFruitInteractPacket
@@ -65,7 +65,6 @@ playToClient OpenInscriptionPacket
 playToServer OpenMorphlingJarPacket
 playToClient OpenPendingWhisperPacket
 playToClient OpenSSCScreenPacket
-playToClient OpenVisceralMirrorPacket
 playToClient PacketAntecedentResearch
 playToClient PacketBloodCraftRing
 playToClient PacketBloodStructureFeed
@@ -113,7 +112,6 @@ playToClient PacketSyncManipulationCostDiagnostics
 playToClient PacketSyncManipulationHearts
 playToClient PacketSyncManipulationSlotDiagnostics
 playToClient PacketSyncMaxBloodDiagnostics
-playToClient PacketSyncMuscleMemory
 playToClient PacketSyncMycophantFightScene
 playToClient PacketSyncNpcProgressionMarkers
 playToClient PacketSyncPlayerAnimation
@@ -126,6 +124,7 @@ playToClient PacketSyncSpecimenBestiary
 playToClient PacketSyncSporeLoad
 playToClient PacketSyncStationUpgrades
 playToClient PacketSyncSutureLinks
+playToClient PacketSyncThelemicMemory
 playToClient PacketSyncUnstainedProgress
 playToClient PacketSyncVesperFightScene
 playToServer PacketToggleSkill
@@ -169,8 +168,5 @@ playToServer UpdateSelectedStillArtPacket
 playToServer UseManipKeyPacket
 playToServer UseStillArtKeyPacket
 playToClient VascularSystemServerPacket
-playToServer VisceralMirrorCancelPacket
-playToServer VisceralMirrorExtractPacket
-playToClient VisceralMirrorUpdatePacket
 playToClient WardStrikePacket
 playToClient WillPresenceCuePacket

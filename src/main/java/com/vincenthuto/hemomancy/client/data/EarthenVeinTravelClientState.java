@@ -63,8 +63,6 @@ public final class EarthenVeinTravelClientState {
 		VISUALS.retainDimension(dimension);
 	}
 
-	public static void closeSelection() { selection = null; }
-
 	public record Selection(UUID nonce, ResourceLocation sourceDimension, BlockPos source,
 			List<EarthenVeinDestination> destinations, long openedAt) {
 		public Selection {

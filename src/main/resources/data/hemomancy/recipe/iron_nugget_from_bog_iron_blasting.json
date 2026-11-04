@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "hemomancy:bog_iron"
+  },
+  "result": {
+    "id": "minecraft:iron_nugget",
+    "count": 1
+  },
+  "experience": 0.1,
+  "cookingtime": 100
+}

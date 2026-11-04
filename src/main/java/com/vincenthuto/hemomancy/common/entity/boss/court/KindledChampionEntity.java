@@ -151,11 +151,6 @@ public class KindledChampionEntity extends CourtMemberEntity {
 	}
 
 	@Nullable
-	public UUID challengerId() {
-		return challenger;
-	}
-
-	@Nullable
 	public Outcome outcome() {
 		return outcome;
 	}

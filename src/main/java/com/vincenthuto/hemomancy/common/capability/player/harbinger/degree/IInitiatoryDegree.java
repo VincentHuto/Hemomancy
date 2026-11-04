@@ -55,10 +55,8 @@ public interface IInitiatoryDegree {
 	 */
 	int recordPomeConsumed(long bloomOrigin);
 	int getPomesConsumedFromBloom(long bloomOrigin);
-	int recordPomeConsumed(java.util.UUID bloomId, long legacyOrigin);
-	int getPomesConsumedFromBloom(java.util.UUID bloomId, long legacyOrigin);
-	int recordPomeConsumed(java.util.UUID bloomId, long legacyOrigin, boolean migrateLegacyProgress);
-	int getPomesConsumedFromBloom(java.util.UUID bloomId, long legacyOrigin, boolean migrateLegacyProgress);
+	int recordPomeConsumed(java.util.UUID bloomId);
+	int getPomesConsumedFromBloom(java.util.UUID bloomId);
 
 	/**
 	 * Returns total pomes consumed (0–9, capped). Used for HUD display.

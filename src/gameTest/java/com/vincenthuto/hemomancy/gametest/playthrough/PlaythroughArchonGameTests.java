@@ -1125,7 +1125,7 @@ public final class PlaythroughArchonGameTests {
 				PlaythroughRites.wieldStack(owner, s -> huskOf(s) == 2, "the third husk");
 				Outcome early = owner.consume(ItemInit.qliphoth_pome.get());
 				early.said(POME_OUT_OF_ORDER);
-				helper.assertTrue(degree.getPomesConsumedFromBloom(bloom.bloomId(), root.asLong()) == 0, "an out-of-order husk is refused");
+				helper.assertTrue(degree.getPomesConsumedFromBloom(bloom.bloomId()) == 0, "an out-of-order husk is refused");
 				removeMatching(owner, s -> huskOf(s) == 2);
 
 				PlaythroughRites.wieldStack(owner, QliphothPomeItem::isBoundPome, "the bound pome");
@@ -1155,7 +1155,7 @@ public final class PlaythroughArchonGameTests {
 			Outcome eaten = owner.consume(ItemInit.qliphoth_pome.get());
 			eaten.said(POME_EAT_PREFIX + (husk + 1));
 			degree = HemoCapabilityAccess.getInitiatoryDegree(owner.player());
-			helper.assertTrue(degree.getPomesConsumedFromBloom(bloom.bloomId(), root.asLong()) == husk + 1,
+			helper.assertTrue(degree.getPomesConsumedFromBloom(bloom.bloomId()) == husk + 1,
 					"husk " + husk + " counts; " + eaten);
 			if (husk == 8) {
 				PlaythroughLog.note(helper, "the ninth pome: " + eaten.describe() + " HUD " + pomeProgress(eaten));
@@ -1484,8 +1484,8 @@ public final class PlaythroughArchonGameTests {
 		UUID first = UUID.randomUUID();
 		UUID second = UUID.randomUUID();
 		for (int husk = 0; husk < 9; husk++) { // ARRANGE: five pomes from one Bloom, four from another
-			if (husk < 5) degree.recordPomeConsumed(first, 1L, false);
-			else degree.recordPomeConsumed(second, 2L, false);
+			if (husk < 5) degree.recordPomeConsumed(first);
+			else degree.recordPomeConsumed(second);
 			degree.incrementTotalPomesConsumed();
 		}
 		InitiatoryDegreeEvents.syncDegree(split.player(), degree);
@@ -1915,7 +1915,7 @@ public final class PlaythroughArchonGameTests {
 				p.helper().getLevel().getGameTime());
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(p.player());
 		for (int husk = 0; husk < 8; husk++) {
-			degree.recordPomeConsumed(bloom.bloomId(), bloom.center().asLong(), false);
+			degree.recordPomeConsumed(bloom.bloomId());
 			degree.incrementTotalPomesConsumed();
 		}
 		InitiatoryDegreeEvents.syncDegree(p.player(), degree);

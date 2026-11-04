@@ -58,24 +58,4 @@ class QliphothBloomIdentityTest {
         assertNotEquals(original.bloomId(), replacement.bloomId());
         assertEquals(0, data.getPomesDropped(replacement));
     }
-
-    @Test
-    void legacyBloomRetainsMigrationMarkerAcrossSaves() {
-        var original = new QliphothBloomSavedData.BloomEntry(UUID.randomUUID(),
-                new BlockPos(8, 70, 8), "minecraft:overworld", 3, 100);
-        QliphothBloomSavedData data = new QliphothBloomSavedData();
-        data.addBloom(original);
-        CompoundTag oldSave = data.save(new CompoundTag(), null);
-        ((ListTag) oldSave.get("blooms")).getCompound(0).remove("BloomId");
-
-        var migrated = QliphothBloomSavedData.load(oldSave, null);
-        var legacyBloom = migrated.getBloomAt(original.center(), original.dimension());
-        assertTrue(legacyBloom.migratesLegacyProgress());
-        var reloaded = QliphothBloomSavedData.load(migrated.save(new CompoundTag(), null), null);
-        assertTrue(reloaded.getBloomById(legacyBloom.bloomId()).migratesLegacyProgress());
-
-        var replacement = new QliphothBloomSavedData.BloomEntry(original.ownerUUID(),
-                original.center(), original.dimension(), 3, 200);
-        assertFalse(replacement.migratesLegacyProgress());
-    }
 }

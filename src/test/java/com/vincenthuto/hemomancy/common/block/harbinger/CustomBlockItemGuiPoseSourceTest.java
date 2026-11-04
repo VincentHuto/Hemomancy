@@ -19,13 +19,7 @@ public final class CustomBlockItemGuiPoseSourceTest {
 				FUNCTIONAL_ITEM_RENDERER_PACKAGE, "EarthenVeinItemRenderer.java");
 		assertDownRightGuiPose("puppeteers spindle item renderer",
 				CRAFTING_ITEM_RENDERER_PACKAGE, "PuppeteersSpindleItemRenderer.java");
-		assertMirroredGuiPose("visceral mirror item renderer",
-				"VisceralMirrorItemRenderer.java");
-		String mirror = read(SOURCE_ROOT.resolve(FUNCTIONAL_ITEM_RENDERER_PACKAGE + "VisceralMirrorItemRenderer.java"));
-		assertContains("visceral mirror item renderer should preserve its GUI scale as a named constant",
-				mirror, "GUI_MODEL_SCALE = 0.45F");
-		assertContains("visceral mirror item renderer should flip local X so the authored front face is visible",
-				mirror, "poseStack.scale(-GUI_MODEL_SCALE, GUI_MODEL_SCALE, GUI_MODEL_SCALE)");
+
 		String spindle = read(SOURCE_ROOT.resolve(CRAFTING_ITEM_RENDERER_PACKAGE + "PuppeteersSpindleItemRenderer.java"));
 		assertContains("puppeteers spindle item renderer should name the mesh's visual centre",
 				spindle, "MODEL_CENTRE_Y = 16.25F / 16.0F");

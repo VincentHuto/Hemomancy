@@ -15,29 +15,4 @@ public final class MorphlingHeatRules {
 		return temperature >= 1.0F ? WARM : TEMPERATE;
 	}
 
-	public static double benefit(int level) {
-		return switch (level) {
-			case WARM -> 0.05D;
-			case HOT -> 0.10D;
-			case EXTREME -> 0.15D;
-			default -> 0.0D;
-		};
-	}
-
-	public static float exhaustionMultiplier(int level) {
-		return switch (level) {
-			case WARM -> 1.10F;
-			case HOT -> 1.25F;
-			case EXTREME -> 1.50F;
-			default -> 1.0F;
-		};
-	}
-
-	public static float incomingDamageMultiplier(int level) {
-		return switch (level) {
-			case HOT -> 1.05F;
-			case EXTREME -> 1.10F;
-			default -> 1.0F;
-		};
-	}
 }

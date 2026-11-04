@@ -425,8 +425,8 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		p.quickMove(menu, crossbarSlot);
 		helper.assertTrue(own.equals(MarionetteCrossbarItem.getCrossbarId(menu.getCrossbarStack())),
 				"shift-click seats the Crossbar on the Spindle");
-		p.give(new ItemStack(ItemInit.puppeteering_thread.get(), 16)); // ARRANGE: Filaments in the pack
-		p.quickMove(menu, menuSlotOf(menu, p, stack -> stack.is(ItemInit.puppeteering_thread.get())));
+		p.give(new ItemStack(ItemInit.enthralling_filament.get(), 16)); // ARRANGE: Filaments in the pack
+		p.quickMove(menu, menuSlotOf(menu, p, stack -> stack.is(ItemInit.enthralling_filament.get())));
 		PlaythroughClock.start(helper)
 				.idle(10)
 				.then(() -> {
@@ -699,7 +699,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		p.approach(keeper);
 		p.talkTo(keeper);
 		Outcome paid = p.choose(keeper, CLAIM);
-		paid.gave(ItemInit.puppeteering_thread.get(), 4);
+		paid.gave(ItemInit.enthralling_filament.get(), 4);
 		helper.assertTrue(state.getInt("guest.pending") == 0, "nothing stays set aside; " + paid);
 		PlaythroughLog.note(helper, "guestActPaymentLines", "full payment said " + paid.saidKeys());
 		// FIX: LF-7 - a payment delivered in full says so, not "0 Filaments are set aside".
@@ -710,12 +710,12 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		p.talkTo(keeper);
 		Outcome full = p.choose(keeper, CLAIM);
 		full.said(REWARD);
-		helper.assertTrue(full.delta(ItemInit.puppeteering_thread.get()) == 0 && state.getInt("guest.pending") == 4,
+		helper.assertTrue(full.delta(ItemInit.enthralling_filament.get()) == 0 && state.getInt("guest.pending") == 4,
 				"a full pack keeps the exact four set aside; " + full);
 		p.player().getInventory().items.set(20, ItemStack.EMPTY); // ARRANGE: the player makes room
 		p.talkTo(keeper);
 		Outcome collected = p.choose(keeper, CLAIM);
-		collected.gave(ItemInit.puppeteering_thread.get(), 4);
+		collected.gave(ItemInit.enthralling_filament.get(), 4);
 		helper.assertTrue(state.getInt("guest.pending") == 0, "made room collects the four; " + collected);
 		collected.said(REWARD_DELIVERED); // FIX: LF-7
 
@@ -1596,7 +1596,7 @@ public final class PlaythroughCrimsonTroupeGameTests {
 		NpcTradeResultPacket bought = p.trade(keeper, LEDGER_PAPER, paper);
 		helper.assertTrue(bought != null && bought.outcome() != NpcTradeService.Outcome.REFUSED,
 				"the Threadkeeper trades paper for Filaments; " + p.last());
-		p.last().gave(ItemInit.puppeteering_thread.get(), 2);
+		p.last().gave(ItemInit.enthralling_filament.get(), 2);
 
 		p.approach(rm);
 		int mark = p.mark();

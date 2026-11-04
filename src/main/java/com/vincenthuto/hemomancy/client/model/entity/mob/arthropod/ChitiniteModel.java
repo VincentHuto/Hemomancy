@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.mob.arthropod;
 
+import net.minecraft.util.Mth;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -15,9 +16,25 @@ public class ChitiniteModel extends HierarchicalModel<ChitiniteEntity> {
 			"main");
 
 	private final ModelPart whole;
+	private final ModelPart frontSegment;
+	private final ModelPart middleSegment;
+	private final ModelPart backSegment;
+	private final ModelPart tail;
+	private final ModelPart head;
+	private final ModelPart[] leftLegs;
+	private final ModelPart[] rightLegs;
 
 	public ChitiniteModel(ModelPart root) {
 		this.whole = root.getChild("whole");
+		this.frontSegment = whole.getChild("frontSegment");
+		this.middleSegment = whole.getChild("middleSegment");
+		this.backSegment = whole.getChild("backSegment");
+		this.tail = whole.getChild("tail");
+		this.head = whole.getChild("head");
+		this.leftLegs = new ModelPart[] {frontSegment.getChild("lLeg"), frontSegment.getChild("lLeg2"),
+				middleSegment.getChild("lLeg3"), backSegment.getChild("lLeg4"), backSegment.getChild("lLeg5")};
+		this.rightLegs = new ModelPart[] {frontSegment.getChild("rLeg5"), frontSegment.getChild("rLeg2"),
+				middleSegment.getChild("rLeg3"), backSegment.getChild("rLeg"), backSegment.getChild("rLeg4")};
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -163,10 +180,40 @@ public class ChitiniteModel extends HierarchicalModel<ChitiniteEntity> {
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
+	/**
+	 * An isopod: five leg pairs scuttle in a wave down the body, the segments ripple with the stride, the head
+	 * follows the look and the tail sways. Rolled up, the front and back segments curl under the middle, the head
+	 * and tail tuck in and the legs fold flat, so the ball the hits bounce off is one the player can see.
+	 */
 	@Override
-	public void setupAnim(ChitiniteEntity p_102618_, float p_102619_, float p_102620_, float p_102621_, float p_102622_,
-			float p_102623_) {
-
+	public void setupAnim(ChitiniteEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+			float netHeadYaw, float headPitch) {
+		whole.getAllParts().forEach(ModelPart::resetPose);
+		float roll = entity.rollAmount(ageInTicks - entity.tickCount);
+		float stride = Math.min(1.0F, limbSwingAmount * 3.0F) * (1.0F - roll);
+		float phase = limbSwing * 1.6F;
+		for (int i = 0; i < leftLegs.length; i++) {
+			float wave = phase + i * 0.9F;
+			leftLegs[i].yRot += Mth.cos(wave) * 0.5F * stride;
+			rightLegs[i].yRot -= Mth.cos(wave + Mth.PI) * 0.5F * stride;
+			leftLegs[i].zRot += Math.max(0.0F, Mth.sin(wave)) * 0.35F * stride;
+			rightLegs[i].zRot -= Math.max(0.0F, Mth.sin(wave + Mth.PI)) * 0.35F * stride;
+			// Folded flat against the body when rolled.
+			leftLegs[i].zRot -= 1.1F * roll;
+			rightLegs[i].zRot += 1.1F * roll;
+			leftLegs[i].xRot += 0.9F * roll;
+			rightLegs[i].xRot += 0.9F * roll;
+		}
+		float ripple = Mth.sin(phase) * 0.06F * stride;
+		frontSegment.xRot += ripple + 1.25F * roll;
+		backSegment.xRot -= ripple + 1.25F * roll;
+		middleSegment.yRot += Mth.sin(phase) * 0.04F * stride;
+		head.yRot += netHeadYaw * Mth.DEG_TO_RAD * 0.6F * (1.0F - roll);
+		head.xRot += headPitch * Mth.DEG_TO_RAD * 0.5F * (1.0F - roll) + 1.5F * roll;
+		tail.xRot -= 1.3F * roll;
+		tail.yRot += Mth.sin(ageInTicks * 0.08F) * 0.08F * (1.0F - roll);
+		whole.y += 1.5F * roll;
+		whole.yScale = 1.0F - 0.1F * roll;
 	}
 
 	@Override

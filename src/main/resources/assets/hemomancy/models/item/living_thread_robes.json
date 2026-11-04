@@ -1,9 +1,0 @@
-{
-   "parent": "item/generated",
-   "textures": {
-       "layer0": "hemomancy:item/mna/living_thread_robes",       
-       "layer1": "hemomancy:item/mna/living_thread_robes_overlay"
-       
-       
-   }
-}

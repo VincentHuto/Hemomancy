@@ -253,8 +253,8 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
                 var known = HemoCapabilityAccess.getKnownManipulations(player);
                 known.getEquippedMemoryRefs().forEach(ref -> {
                     if (ref.expression() == HematicMemoryExpression.THELEMIC) {
-                        ref.muscleMemory().filter(memory -> memory.section() == selectedSection).ifPresent(memory ->
-                                hoveredTooltip.add(Component.translatable("screen.hemomancy.vascular_view.thelemic", Component.translatable("muscle_memory.hemomancy." + memory.id()))));
+                        ref.thelemicMemory().filter(memory -> memory.section() == selectedSection).ifPresent(memory ->
+                                hoveredTooltip.add(Component.translatable("screen.hemomancy.vascular_view.thelemic", Component.translatable("thelemic_memory.hemomancy." + memory.id()))));
                     } else {
                         known.getKnownManips().keySet().stream()
                                 .filter(manip -> manip.getName().equals(ref.id()) && manip.getSection() == selectedSection)

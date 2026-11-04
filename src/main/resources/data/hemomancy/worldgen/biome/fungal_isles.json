@@ -31,12 +31,6 @@
     "axolotls": [],
     "creature": [
       {
-        "type": "hemomancy:fungling",
-        "weight": 8,
-        "minCount": 2,
-        "maxCount": 4
-      },
-      {
         "type": "hemomancy:facsimile_wolf",
         "weight": 4,
         "minCount": 1,
@@ -45,6 +39,12 @@
     ],
     "misc": [],
     "monster": [
+      {
+        "type": "hemomancy:fungling",
+        "weight": 8,
+        "minCount": 2,
+        "maxCount": 4
+      },
       {
         "type": "hemomancy:abhorrent_thought",
         "weight": 8,

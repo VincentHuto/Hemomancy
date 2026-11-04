@@ -42,11 +42,6 @@ public record ManipulationCastContext(
 		return range * rangeScale;
 	}
 
-	@Nullable
-	public Player casterAsPlayer() {
-		return caster instanceof Player player ? player : null;
-	}
-
 	private static ItemStack safeStack(@Nullable ItemStack stack) {
 		return stack == null ? ItemStack.EMPTY : stack;
 	}

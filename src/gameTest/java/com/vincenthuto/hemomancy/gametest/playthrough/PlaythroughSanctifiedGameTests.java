@@ -1501,7 +1501,7 @@ public final class PlaythroughSanctifiedGameTests {
 			case DUCTILIS -> ManipulationInit.deadly_gaze.get();
 			case FERRIC -> ManipulationInit.sanguine_mending.get();
 			case FLAMMEUS -> ManipulationInit.crimson_flame_conjuration.get();
-			case LUX -> ManipulationInit.hemosynthesis.get();
+			case LUX -> ManipulationInit.prismatic_reproof.get();
 			case CONGEATIO -> ManipulationInit.glacial_grasp.get();
 			case TENEBRIS -> ManipulationInit.void_shroud.get();
 			case MORTEM -> ManipulationInit.hemorrhage.get();

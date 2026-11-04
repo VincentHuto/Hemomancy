@@ -40,7 +40,6 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	/** The caster's Crimson Mastery when the cloud was cast, handed to the cloud it becomes. */
 	private float damageMultiplier = 1.0F;
 
-
 	public BloodCloudCarrierEntity(EntityType<? extends BloodCloudCarrierEntity> ent, Level world) {
 		super(ent, world);
 	}
@@ -221,15 +220,6 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		}
 	}
 
-	public void setDirectionMotion(Entity shooter, float x, float y, float z, float velocity, float inaccuracy) {
-		float f = -Mth.sin(y * ((float) Math.PI / 180F)) * Mth.cos(x * ((float) Math.PI / 180F));
-		float f1 = -Mth.sin((x + z) * ((float) Math.PI / 180F));
-		float f2 = Mth.cos(y * ((float) Math.PI / 180F)) * Mth.cos(x * ((float) Math.PI / 180F));
-		this.shoot(f, f1, f2, velocity, inaccuracy);
-		Vec3 Vec3 = shooter.getDeltaMovement();
-		this.setDeltaMovement(this.getDeltaMovement().add(Vec3.x, Vec3.y, Vec3.z));
-	}
-
 	@Override
 	public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
 		Vec3 Vec3 = (new Vec3(x, y, z)).normalize().scale(velocity);
@@ -260,7 +250,6 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		d0 = d0 * 64.0D;
 		return distance < d0 * d0;
 	}
-
 
 	@Override
 	public void tick() {

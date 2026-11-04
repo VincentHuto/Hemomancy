@@ -82,10 +82,6 @@ public final class LivingFlailHeadProjectileEntity extends ThrowableProjectile {
 		return owner != null ? owner.getUUID() : ownerId;
 	}
 
-	public InteractionHand getOriginalHand() {
-		return originalHand;
-	}
-
 	public EnumBloodTendency getPrimaryTendency() {
 		return parseTendency(entityData.get(PRIMARY_TENDENCY), EnumBloodTendency.CONGEATIO);
 	}

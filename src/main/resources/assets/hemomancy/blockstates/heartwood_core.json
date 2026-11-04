@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "fed=0": {
+      "model": "hemomancy:block/heartwood_core_0"
+    },
+    "fed=1": {
+      "model": "hemomancy:block/heartwood_core_1"
+    },
+    "fed=2": {
+      "model": "hemomancy:block/heartwood_core_2"
+    },
+    "fed=3": {
+      "model": "hemomancy:block/heartwood_core_3"
+    },
+    "fed=4": {
+      "model": "hemomancy:block/heartwood_core_4"
+    }
+  }
+}

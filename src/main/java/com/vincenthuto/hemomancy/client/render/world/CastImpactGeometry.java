@@ -23,7 +23,6 @@ import java.util.List;
  */
 final class CastImpactGeometry {
     private static final int TINT = 0xFFFFFF, CORE = 0xFFD2C4, CLOT = 0x7A1020, BLOOD = 0x9C263B;
-    private static final Vec3 UP = new Vec3(0, 1, 0);
     private static final double GOLDEN = 2.39996;
 
     private CastImpactGeometry() {}

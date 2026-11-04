@@ -26,7 +26,7 @@ final class CardinalRiteProgressionResourceTest {
 		assertPromotion("illuminatus_rite", 4, "greater",
 				List.of("hemomancy:hematic_memory", "minecraft:glowstone_dust"));
 		assertPromotion("sanctified_rite", 5, "greater",
-				List.of("hemomancy:sanguine_quintessence", "hemomancy:puppeteering_thread",
+				List.of("hemomancy:sanguine_quintessence", "hemomancy:enthralling_filament",
 						"minecraft:amethyst_shard"));
 		assertPromotion("archon_rite", 6, "grand",
 				List.of("hemomancy:sanguine_quintessence", "hemomancy:hematic_memory",

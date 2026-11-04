@@ -38,36 +38,9 @@ import java.util.function.Predicate;
 public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRiteRecipe> {
 	private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-	private static Block blockFromJson(JsonObject pItemObject) {
-		String s = GsonHelper.getAsString(pItemObject, "block");
-		Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(s));
-		if (block == Blocks.AIR) throw new JsonSyntaxException("Invalid block: " + s);
-		return block;
-	}
-
-	private static Predicate<BlockInWorld> blockPredFromHash(Map<String, Block> symbolList, String string) {
-		Block target = symbolList.get(string);
-		return BlockInWorld.hasState(state -> state.getBlock() == target);
-	}
-
 	private static Predicate<BlockInWorld> keyEntryPredFromHash(Map<String, PatternKeyEntry> symbolList, String string) {
 		PatternKeyEntry entry = symbolList.get(string);
 		return entry::matches;
-	}
-
-	private static BlockPattern generateBlockPatternFromArray(Map<String, Block> symbolList, String[][] schematic) {
-		BlockPatternBuilder builder = BlockPatternBuilder.start();
-		for (String[] element : schematic) {
-			builder.aisle(element);
-			for (String element3 : element) {
-				List<String> distinct = getDistinctChars(element3);
-				for (String element2 : distinct) {
-					if (" ".equals(element2)) continue;
-					builder.where(element2.toCharArray()[0], blockPredFromHash(symbolList, element2));
-				}
-			}
-		}
-		return builder.build();
 	}
 
 	private static BlockPattern generateBlockPatternFromKeyEntries(Map<String, PatternKeyEntry> symbolList,
@@ -94,34 +67,6 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			}
 		}
 		return distinct;
-	}
-
-	private static Map<String, PatternKeyEntry> keyEntriesFromJson(JsonObject pKeyEntry) {
-		Map<String, PatternKeyEntry> map = Maps.newHashMap();
-		for (Entry<String, JsonElement> entry : pKeyEntry.entrySet()) {
-			if (entry.getKey().length() != 1)
-				throw new JsonSyntaxException("Invalid key entry: '" + entry.getKey() + "' must be 1 character.");
-			if (" ".equals(entry.getKey()))
-				throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
-			map.put(entry.getKey(), PatternKeyEntry.fromJson(entry.getKey(), entry.getValue().getAsJsonObject()));
-		}
-		return map;
-	}
-
-	private static Map<String, MultiblockPatternKey> displayKeyMapFromKeyEntries(Map<String, PatternKeyEntry> keyEntries) {
-		Map<String, MultiblockPatternKey> map = Maps.newHashMap();
-		keyEntries.forEach((key, entry) -> map.put(key, entry.toMultiblockPatternKey()));
-		map.put(" ", MultiblockPatternKey.block(" ", Blocks.AIR));
-		return map;
-	}
-
-	private static String[][] patternFromJson(JsonArray pPatternArray) {
-		List<String[]> pattern = new ArrayList<>();
-		for (int i = 0; i < pPatternArray.size(); i++) {
-			String[] row = GSON.fromJson(pPatternArray.get(i), String[].class);
-			pattern.add(row);
-		}
-		return pattern.toArray(new String[0][]);
 	}
 
 	private static int requiredDegreeFromJson(JsonObject pJson) {

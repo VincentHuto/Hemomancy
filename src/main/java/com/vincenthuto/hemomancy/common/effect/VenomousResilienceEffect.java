@@ -7,16 +7,13 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * A beneficial effect that grants the player poison immunity and a small
- * movement speed bonus. Used by its standalone potion.
+ * movement speed bonus; the Poison Resistance potion registers it with its own name key.
  * The speed bonus is applied via attribute modifier in EffectInit.
  * Poison immunity is handled by removing the Poison effect each tick.
  */
 public class VenomousResilienceEffect extends MobEffect {
 	private final String displayKey;
 
-	public VenomousResilienceEffect(MobEffectCategory typeIn, int liquidColorIn) {
-		this(typeIn, liquidColorIn, "effect.hemomancy.venomous_resilience");
-	}
 
 	public VenomousResilienceEffect(MobEffectCategory typeIn, int liquidColorIn, String displayKey) {
 		super(typeIn, liquidColorIn);

@@ -49,10 +49,6 @@ public enum EnumInitiatoryDegree {
 		return Component.translatable(getLangKey());
 	}
 
-	public int getNumber() {
-		return number;
-	}
-
 	/** Returns the degree that follows this one, or null if already at the highest. */
 	public EnumInitiatoryDegree next() {
 		return (number < 8) ? values()[number] : null;

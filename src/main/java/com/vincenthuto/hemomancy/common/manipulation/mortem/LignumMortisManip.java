@@ -48,8 +48,6 @@ public class LignumMortisManip extends BloodManipulation {
 	private static final int FEED_VISIBLE_TICKS = 40;
 	private static final double FEED_SYNC_RANGE = 64.0D;
 	private static final float[] BAND_PROGRESS = { 0.92F, 0.68F, 0.44F, 0.20F };
-	private static final int OUTER_BLOOD = 0x58A40020;
-	private static final int INNER_BLOOD = 0x98FF4058;
 	private static final Map<UUID, Session> SESSIONS = new ConcurrentHashMap<>();
 	private final Mode mode;
 

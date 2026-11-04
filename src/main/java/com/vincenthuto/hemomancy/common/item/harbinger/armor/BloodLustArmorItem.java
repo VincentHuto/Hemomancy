@@ -73,8 +73,4 @@ public class BloodLustArmorItem extends ArmorItem implements PlayerLayerHidingAr
 		return false;
 	}
 
-	public void setMaskType(MaskType maskType) {
-		this.maskType = maskType;
-	}
-
 }

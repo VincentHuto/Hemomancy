@@ -19,12 +19,10 @@ class CorticalDriftBiomeRegistrationSourceTest {
 	}
 
 	@Test
-	void biomeKeyIsRegisteredAndBootstrapped() throws IOException {
+	void biomeKeyIsRegistered() throws IOException {
 		String source = biomeInit();
 		assertTrue(source.contains("CORTICAL_DRIFT = register(\"cortical_drift\")"),
 				"the biome key must exist");
-		assertTrue(source.contains("register(context, CORTICAL_DRIFT, corticalDrift("),
-				"the biome must be bootstrapped like its siblings");
 	}
 
 	@Test
@@ -57,7 +55,7 @@ class CorticalDriftBiomeRegistrationSourceTest {
 	}
 
 	@Test
-	void biomeJsonExistsAndMatchesTheBuilder() throws IOException {
+	void biomeJsonExists() throws IOException {
 		Path biomeJson = Path.of("").toAbsolutePath()
 				.resolve("src/main/resources/data/hemomancy/worldgen/biome/cortical_drift.json");
 		assertTrue(Files.exists(biomeJson),
@@ -76,14 +74,6 @@ class CorticalDriftBiomeRegistrationSourceTest {
 		assertFalse(monsters.toString().contains("hemomancy:abhorrent_thought"),
 				"Abhorrent Thought must not spawn in Cortical Drift");
 
-		String source = biomeInit();
-		int builderStart = source.indexOf("private static Biome corticalDrift(");
-		int builderEnd = source.indexOf("public static void commonSetup", builderStart);
-		String builder = source.substring(builderStart, builderEnd);
-		assertFalse(builder.contains("EntityInit.abhorrent_thought"),
-				"the corticalDrift() builder should also exclude Abhorrent Thought");
-		assertTrue(builder.contains("EntityInit.myelin_borer"),
-				"the corticalDrift() builder should retain Myelin Borer");
 
 		assertFalse(biome.get("has_precipitation").getAsBoolean(),
 				"cortical_drift must have has_precipitation=false in the JSON, matching the "

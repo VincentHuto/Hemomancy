@@ -15,7 +15,7 @@ class BossBarFramePhaseSaintTest {
 	@Test
 	void hemorathEmptiedFromName() {
 		assertEquals(2, HemorathFrame.phaseOf(Component.translatable("message.hemomancy.hemorath.saint_hemorath_the_vessel_empties")));
-		assertEquals(1, HemorathFrame.phaseOf(Component.translatable("entity.hemomancy.hollow_vessel")));
+		assertEquals(1, HemorathFrame.phaseOf(Component.translatable("entity.hemomancy.hemorath")));
 	}
 
 	@Test

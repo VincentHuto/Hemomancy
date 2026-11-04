@@ -377,8 +377,8 @@ def spire(p, top, finial):
 
 
 def vicar(p, top):
-    p.put(6, 3, 5, 'hemomancy:warp_chair', {'facing': 'south'})
-    p.put(6, 4, 5, 'hemomancy:warp_chair_filler', {'facing': 'south'})
+    p.put(6, 3, 5, 'hemomancy:somnolent_seat', {'facing': 'south'})
+    p.put(6, 4, 5, 'hemomancy:somnolent_seat_filler', {'facing': 'south'})
     p.put(6, 3, 6, 'hemomancy:harbinger_escritoire', {'facing': 'north'})
     # The altar shelf of venous stone with candles, a vein banner over it, the memory echo on the north wall.
     p.box(5, 8, 3, 3, 9, 9, CUT_SMOOTH)

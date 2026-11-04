@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.damage;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -265,6 +266,8 @@ public final class SchoolCombatEvents {
 
     @SubscribeEvent public static void tick(EntityTickEvent.Pre event) {
         if (!(event.getEntity() instanceof LivingEntity target) || target.level().isClientSide) return;
+        // Most living entities never enter school combat: reading the attachment would create and save it (RT-3).
+        if (!HemoCapabilityAccess.hasSchoolCombat(target)) return;
         var data = SchoolStates.data(target);
         data.observe(target.level().getGameTime());
         var heat = data.get(SchoolState.SEARING);
@@ -283,13 +286,14 @@ public final class SchoolCombatEvents {
         }
         if (SchoolStates.has(target, SchoolState.DISRUPTED)) SchoolStates.interrupt(target);
         if (data.takeDirty()) PacketHandler.sendTracking(target,
-                new SyncSchoolCombatS2CPacket(target.getId(), data.serializeNBT(target.registryAccess())));
+                new SyncSchoolCombatS2CPacket(target.getId(), data.syncTag(target.registryAccess())));
     }
 
     @SubscribeEvent public static void tracking(PlayerEvent.StartTracking event) {
-        if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof LivingEntity target)
+        if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof LivingEntity target
+                && HemoCapabilityAccess.hasSchoolCombat(target) && !SchoolStates.data(target).isEmpty())
             PacketHandler.sendToPlayer(player, new SyncSchoolCombatS2CPacket(target.getId(),
-                    SchoolStates.data(target).serializeNBT(target.registryAccess())));
+                    SchoolStates.data(target).syncTag(target.registryAccess())));
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST) public static void death(LivingDeathEvent event) {

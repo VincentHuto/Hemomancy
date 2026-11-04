@@ -120,7 +120,7 @@ final class RiteWorldStateTest {
 
 	@Test
 	void unstainedAndLegacyRitesAreIgnored() {
-		tick(List.of(entry(FOCUS, "ORDEAL", 2, 5, true, 0), entry(FOCUS.east(40), "LEGACY", 0, 3)), List.of());
+		tick(List.of(entry(FOCUS, "ORDEAL", 2, 5, true, 0), entry(FOCUS.east(40), "COUNTDOWN", 0, 3)), List.of());
 
 		assertTrue(RiteWorldState.worlds().isEmpty());
 	}

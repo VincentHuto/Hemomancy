@@ -11,8 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.Ha
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphling;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.VisceralOrgans;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryState;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummons;
@@ -58,14 +57,6 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("clinical_blood", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress::new).copyOnDeath().build());
 
-    // Legacy: ADVANCED_BREWING and RESONANT_FORGE are read once by StationUpgradeMigration, then removed from the player.
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingProgress>> ADVANCED_BREWING =
-            ATTACHMENT_TYPES.register("advanced_brewing", () -> AttachmentType.serializable(
-                    com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingProgress::new).copyOnDeath().build());
-
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.enchanting.ResonantForgeProgress>> RESONANT_FORGE =
-            ATTACHMENT_TYPES.register("resonant_forge", () -> AttachmentType.serializable(
-                    com.vincenthuto.hemomancy.common.enchanting.ResonantForgeProgress::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeProgress>> STATION_UPGRADES =
             ATTACHMENT_TYPES.register("station_upgrades", () -> AttachmentType.serializable(
@@ -163,9 +154,6 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("white_humor_volume",
                     () -> AttachmentType.serializable(WhiteHumorVolume::new).copyOnDeath().build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<VisceralOrgans>> VISCERAL_ORGANS =
-            ATTACHMENT_TYPES.register("visceral_organs",
-                    () -> AttachmentType.serializable(VisceralOrgans::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ScarsContainer>> SCARS =
             ATTACHMENT_TYPES.register("scars",
@@ -179,9 +167,9 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("last_death_memory",
                     () -> AttachmentType.serializable(LastDeathMemoryAttachment::new).copyOnDeath().build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MuscleMemoryState>> MUSCLE_MEMORY =
-            ATTACHMENT_TYPES.register("muscle_memory",
-                    () -> AttachmentType.serializable(MuscleMemoryState::new).copyOnDeath().build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ThelemicMemoryState>> THELEMIC_MEMORY =
+            ATTACHMENT_TYPES.register("thelemic_memory",
+                    () -> AttachmentType.serializable(ThelemicMemoryState::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerDataVersion>> DATA_VERSION =
             ATTACHMENT_TYPES.register("data_version",

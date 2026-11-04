@@ -225,7 +225,7 @@ public enum RiteKind {
 
 	/** A legacy or Unstained rite, or one whose recipe is gone, counts down rather than running a ceremony. */
 	static boolean countsDown(ActiveCardinalRite rite, @Nullable CardinalRiteRecipe recipe) {
-		return rite.getPhase() == CardinalRitePhase.LEGACY || recipe == null || !recipe.hasInteractiveCeremony();
+		return rite.getPhase() == CardinalRitePhase.COUNTDOWN || recipe == null || !recipe.hasInteractiveCeremony();
 	}
 
 	abstract boolean matches(ActiveCardinalRite rite, @Nullable CardinalRiteRecipe recipe);

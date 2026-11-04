@@ -31,7 +31,7 @@ public class VelorumFrostGlowLayer<T extends VelorumEntity> extends RenderLayer<
         var action=VelorumVisualRules.pose(motion.phase());
         float frost=Math.max(action.gather(),action.frost());
         float pulse=(Mth.sin(age*.055F)+1)*.5F;
-        int alpha=(int)Math.min(255,135+pulse*35+frost*85+action.silence()*70+action.martyr()*50);
+        int alpha=(int)Math.min(255,135+pulse*35+frost*85+action.silence()*70+action.stillGuard()*50);
         int color=FastColor.ARGB32.color(alpha,205,225,255);
         getParentModel().renderToBuffer(poseStack, buffer.getBuffer(GLOW), 0x00F000F0,
                 OverlayTexture.NO_OVERLAY, color);

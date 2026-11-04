@@ -144,7 +144,7 @@ public class HarbingerCardinalRiteEvents {
 			}
 
 			if (caster == null || caster.level() != sLevel) {
-				if (rite.getPhase() != CardinalRitePhase.LEGACY) {
+				if (rite.getPhase() != CardinalRitePhase.COUNTDOWN) {
 					rite.setDisconnectTicks(rite.getDisconnectTicks() + 1);
 					if (rite.getDisconnectTicks() > CardinalRiteCeremonyRules.DISCONNECT_GRACE_TICKS) {
 						CardinalRiteTermination.end(sLevel, usable(caster), rite, Outcome.ABANDONED);
@@ -159,7 +159,7 @@ public class HarbingerCardinalRiteEvents {
 
 			BlockPos center = rite.getCenterPos();
 			int riteSize = rite.getRiteSize();
-			if ((recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY)
+			if ((recipe == null && rite.getPhase() != CardinalRitePhase.COUNTDOWN)
 					|| rite.getRecipeId().getPath().equals("cardinal_rite/sanguine_initiation")
 					|| rite.getRecipeId().getPath().equals("cardinal_rite/votary_rite")) {
 				Hemomancy.LOGGER.warn("Retiring active cardinal rite {} at {} because its recipe no longer exists",
@@ -514,7 +514,7 @@ public class HarbingerCardinalRiteEvents {
 			AABB bounds) {
 		List<LivingEntity> entities = sLevel.getEntitiesOfClass(LivingEntity.class, bounds,
 				entity -> entity != caster && entity.isAlive()
-						&& (rite.getPhase() == CardinalRitePhase.LEGACY || entity.hasCustomName())
+						&& (rite.getPhase() == CardinalRitePhase.COUNTDOWN || entity.hasCustomName())
 						&& CardinalRiteThreatRules.isEligiblePassiveSacrifice(
 								entity.getPersistentData().getBoolean(CardinalRiteThreatRules.RITE_BOUND_TAG),
 								entity instanceof Player,
@@ -535,7 +535,7 @@ public class HarbingerCardinalRiteEvents {
 			entity.hurt(caster.damageSources().playerAttack(caster), SACRIFICE_DAMAGE_PER_TICK);
 			int drawnMl = Math.round(Math.max(0.0F, before - entity.getHealth()) * SACRIFICE_ML_PER_HEALTH);
 
-			if (rite.getPhase() == CardinalRitePhase.LEGACY) {
+			if (rite.getPhase() == CardinalRitePhase.COUNTDOWN) {
 				// The first valid sacrifice each interval grants a bonus tick to speed the rite
 				if (!fedThisTick && rite.getRemainingTicks() > 1) {
 					rite.tick();
@@ -606,7 +606,7 @@ public class HarbingerCardinalRiteEvents {
 		if (sprite == null) {
 			// Rite data may tick before the chunk's saved entities become searchable on restart.
 			if (!level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(center))) return;
-			sprite = EntityInit.humanity_sprite.get().create(level);
+			sprite = EntityInit.daemon.get().create(level);
 			if (sprite == null) return;
 			sprite.initialize(new Vec3(sourceX, sourceY, sourceZ),
 					(float) (CardinalRiteFinaleTiming.daemonScale(0) * contraction));

@@ -38,8 +38,9 @@ public class FargoneEntity extends Monster {
 	public final AnimationState walkAnimationState = new AnimationState();
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+		// A quick mosquito-like castle guard; every Dynasty variant shares this block.
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 16.0D).add(Attributes.MOVEMENT_SPEED, 0.32D)
+				.add(Attributes.ATTACK_DAMAGE, 3.0D).add(Attributes.FOLLOW_RANGE, 24.0D);
 	}
 
 	public FargoneEntity(EntityType<? extends FargoneEntity> type, Level worldIn) {

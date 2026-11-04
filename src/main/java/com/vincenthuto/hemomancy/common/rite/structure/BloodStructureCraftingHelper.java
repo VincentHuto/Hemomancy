@@ -134,20 +134,6 @@ public final class BloodStructureCraftingHelper {
 				match -> PatternOrigins.contains(match, blockPattern, hitPos));
 	}
 
-	public static List<BlockPos> getMatchPositions(
-			BlockPattern.BlockPatternMatch match, BlockPattern blockPattern) {
-		List<BlockPos> positions = new ArrayList<>();
-		for (int i = 0; i < blockPattern.getWidth(); ++i) {
-			for (int j = 0; j < blockPattern.getHeight(); ++j) {
-				for (int k = 0; k < blockPattern.getDepth(); ++k) {
-					positions.add(match.getBlock(i, j, k).getPos());
-				}
-			}
-		}
-		positions.sort(Comparator.comparingLong(BlockPos::asLong));
-		return List.copyOf(positions);
-	}
-
 	public static List<BlockPos> getVisibleMatchPositions(
 			BlockPattern.BlockPatternMatch match, BlockPattern blockPattern, String[][] patternArray) {
 		List<BlockPos> positions = new ArrayList<>();
@@ -170,10 +156,6 @@ public final class BloodStructureCraftingHelper {
 			return Component.translatable("message.hemomancy.blood_structure_crafting_helper.purification_bars_access_to_the_hematic").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
 		}
 		return null;
-	}
-
-	public static Component projectionHintMessage() {
-		return Component.translatable("message.hemomancy.blood_structure_crafting_helper.use_blood_projection_on_this_formation").withStyle(ChatFormatting.DARK_RED);
 	}
 
 	private static Component missingOffhandCatalystMessage(BloodStructureRecipe recipe) {

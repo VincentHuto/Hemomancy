@@ -16,8 +16,12 @@ public class DialogueKnowledge implements INBTSerializable<CompoundTag> {
 	private static final int TAG_STRING = 8;
 	private final Set<ResourceLocation> readTopics = new LinkedHashSet<>();
 
+	/** The most lore topics one player can have read; far above the authored count, it only bounds a hostile client. */
+	public static final int MAX_READ_TOPICS = 2048;
+
 	public boolean markRead(ResourceLocation topicId) {
-		return topicId != null && readTopics.add(topicId);
+		if (topicId == null || readTopics.contains(topicId) || readTopics.size() >= MAX_READ_TOPICS) return false;
+		return readTopics.add(topicId);
 	}
 
 	public boolean hasRead(ResourceLocation topicId) {

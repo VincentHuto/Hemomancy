@@ -14,7 +14,6 @@ public final class HematicMemoryToolRulesTest {
         lastDeathMemoryRoundTripsDimensionAndPosition();
         memoryThreadCapsAndThinsRoutePoints();
         veinSpiderRejectsInvalidLinks();
-        witnessOrganCapsRecordingsAndModes();
         huskEffigyProfilesAreBoundedProtoPuppets();
     }
 
@@ -61,26 +60,6 @@ public final class HematicMemoryToolRulesTest {
         assertFalse(VeinSpiderRules.isValidLink(tooFar), "over range rejected");
         assertTrue(VeinSpiderRules.shouldTransferAt(200L), "transfer cadence hit");
         assertFalse(VeinSpiderRules.shouldTransferAt(201L), "transfer cadence miss");
-    }
-
-    private static void witnessOrganCapsRecordingsAndModes() {
-        List<WitnessOrganRules.SoundMemory> memories = new ArrayList<>();
-        for (int i = 0; i < WitnessOrganRules.MAX_SOUNDS + 4; i++) {
-            WitnessOrganRules.append(memories,
-                    new WitnessOrganRules.SoundMemory("hemomancy:test_sound_" + i,
-                            WitnessOrganRules.packPosition(i, 64, 0), 1.0F, 1.0F));
-        }
-
-        assertEquals(WitnessOrganRules.MAX_SOUNDS, memories.size(), "sound cap");
-        assertEquals("hemomancy:test_sound_4", memories.get(0).sound(), "oldest sound trimmed");
-        assertTrue(WitnessOrganRules.Mode.ONCE.shouldStopAfterPass(), "once mode stops");
-        assertFalse(WitnessOrganRules.Mode.LOOP.shouldStopAfterPass(), "loop mode repeats");
-        assertTrue(WitnessOrganRules.shouldRecordNote(WitnessOrganRules.packPosition(3, 64, 0),
-                WitnessOrganRules.packPosition(0, 64, 0)), "nearby note block is heard");
-        assertFalse(WitnessOrganRules.shouldRecordNote(WitnessOrganRules.packPosition(9, 64, 0),
-                WitnessOrganRules.packPosition(0, 64, 0)), "distant note block is ignored");
-        assertEquals(1.0F, WitnessOrganRules.notePitch(12), "middle F sharp pitch");
-        assertTrue(WitnessOrganRules.notePitch(24) > WitnessOrganRules.notePitch(0), "higher note has higher pitch");
     }
 
     private static void huskEffigyProfilesAreBoundedProtoPuppets() {

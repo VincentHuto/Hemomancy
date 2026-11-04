@@ -53,7 +53,6 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
     public static final int SLOT_COUNT = 7;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
-    private int legacyStage;
     private Operation operation = Operation.NONE;
     private int progress;
     private int totalTicks;
@@ -113,7 +112,6 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
     @Override public boolean canProvideBlood() { return !riteLocked && operation == Operation.NONE; }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, ResonantForgeBlockEntity forge) {
-        forge.applyLegacyStage();
         if (forge.needsFootprintCleanup) {
             forge.needsFootprintCleanup = false;
             BlockPos above = pos.above();
@@ -365,9 +363,8 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
     public boolean wheelWorn() { return ResonantForgeRules.wheelServiceRequired(wheelUses); }
     public boolean idle() { return operation == Operation.NONE && !riteLocked; }
     public ResonantForgeTier tier() {
-        return ResonantForgeTier.values()[Math.max(StationTierProperty.stage(getBlockState()), legacyStage)];
+        return ResonantForgeTier.values()[StationTierProperty.stage(getBlockState())];
     }
-    public void applyLegacyStage() { StationTierProperty.applyLegacyStage(this, legacyStage); legacyStage = 0; }
     public Operation operation() { return operation; }
     public int progress() { return progress; }
     public int totalTicks() { return totalTicks; }
@@ -451,8 +448,6 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
         super.loadAdditional(tag, registries);
         items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, items, registries);
-        // Pre-consolidation saves kept the tier here; applyLegacyStage moves it into the blockstate.
-        legacyStage = tag.contains("Tier") ? Math.clamp(tag.getInt("Tier"), 0, 2) : 0;
         operation = Operation.values()[Math.clamp(tag.getInt("Operation"), 0, Operation.values().length - 1)];
         progress = tag.getInt("Progress"); totalTicks = tag.getInt("TotalTicks"); reservedBlood = tag.getInt("ReservedBlood");
         hammerUses = tag.getInt("HammerUses"); wheelUses = tag.getInt("WheelUses"); selection = tag.getString("Selection");
@@ -470,7 +465,6 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
     @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         ContainerHelper.saveAllItems(tag, items, registries);
-        if (legacyStage > 0) tag.putInt("Tier", legacyStage);
         tag.putInt("Operation", operation.ordinal()); tag.putInt("Progress", progress);
         tag.putInt("TotalTicks", totalTicks); tag.putInt("ReservedBlood", reservedBlood); tag.putInt("HammerUses", hammerUses);
         tag.putInt("WheelUses", wheelUses); tag.putString("Selection", selection); tag.putBoolean("MasterMode", masterMode);

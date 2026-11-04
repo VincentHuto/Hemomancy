@@ -26,6 +26,9 @@ public final class BossSceneCatalog {
 		BossSceneRegistry.register(BossPresentationIds.SCENE_HYDRA_RISE, HydraRiseScene::new);
 		BossSceneRegistry.register(BossPresentationIds.SCENE_BLOOM_WARDEN, BloomWardenScene::new);
 		BossSceneRegistry.register(BossPresentationIds.SCENE_KINDLED_CHAMPION, KindledChampionScene::new);
+		BossSceneRegistry.register(BossPresentationIds.SCENE_CIRCUS_RINGMASTER, CircusRingmasterScene::new);
+		BossSceneRegistry.register(BossPresentationIds.SCENE_CIRCUS_CAROUSEL_CARD, () -> new PhaseCardScene("impaled_procession", 0xC02A34));
+		BossSceneRegistry.register(BossPresentationIds.SCENE_CIRCUS_DESCENT_CARD, () -> new PhaseCardScene("circus_descent", 0xE8DCC4));
 		for (PossessionSceneRules.Scene scene : PossessionSceneRules.Scene.values()) {
 			BossSceneRegistry.register(BossPresentationIds.possessionScene(scene), () -> new PossessionScene(scene));
 		}

@@ -54,7 +54,7 @@ class CircusPavilionPerformerTemplateTest {
 	@Test
 	void pavilionContainsOneCenteredCarousel() {
 		var carousel = CircusPavilionTemplate.carousel();
-		assertEquals("hemomancy:circus_carousel", carousel.entityId());
+		assertEquals("hemomancy:impaled_procession", carousel.entityId());
 		assertEquals(16.5D, carousel.x());
 		assertEquals(1.0D, carousel.y());
 		assertEquals(16.5D, carousel.z());

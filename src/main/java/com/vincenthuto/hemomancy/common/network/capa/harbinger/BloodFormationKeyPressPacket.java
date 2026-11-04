@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
+import com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
@@ -40,10 +42,9 @@ public class BloodFormationKeyPressPacket implements CustomPacketPayload {
 	public static void handle(final BloodFormationKeyPressPacket message, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
-			if (player == null)
-				return;
-			if (player instanceof ServerPlayer serverPlayer
-					&& com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isObservational(serverPlayer)) return;
+			if (!(player instanceof ServerPlayer serverPlayer) || !ServerboundGuards.activePlayer(serverPlayer)
+					|| !ServerboundRateLimiter.tryAcquire(serverPlayer, "blood_formation", 10)) return;
+			if (com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isObservational(serverPlayer)) return;
 			if (UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player))) return;
 			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
 					;

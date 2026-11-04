@@ -179,8 +179,6 @@ public final class NaeglerophaeonEntity extends Monster {
     public boolean isEnraged() { return entityData.get(ENRAGED); }
     public boolean isDrained() { return entityData.get(DRAINED_STATE); }
     public boolean isOverloading() { return animationPhase()==ASCEND || animationPhase()==OVERLOAD; }
-    public Vec3 moveVector() { return new Vec3(entityData.get(MOVE_VECTOR)); }
-    public boolean isCharging() { return animationPhase()==CHARGE || animationPhase()==CAPTURE; }
     public Vec3 captureStart() { return position().add(new Vec3(entityData.get(CAPTURE_OFFSET))); }
     public Vec3 gripPosition(float partial) {
         Entity victim=level().getEntity(grabbedEntityId());

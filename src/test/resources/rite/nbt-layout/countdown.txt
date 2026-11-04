@@ -30,7 +30,7 @@ NpcReserves: []
 OfferingDwellTicks: 0
 OfferingItineraryCaptured: 0b
 OfferingVisitIndex: 0
-Phase: "LEGACY"
+Phase: "COUNTDOWN"
 PhaseTicks: 0
 PlayerUUID: [I;0,0,0,49374]
 PuppeteerTrialDefeated: 0b

@@ -23,7 +23,7 @@ final class ChamberSubcommand {
 	}
 
 	static LiteralArgumentBuilder<CommandSourceStack> build() {
-		return Commands.literal("chamber")
+		return Commands.literal("chamber").requires(DevCommands::available)
 				.then(Commands.literal("theme")
 						.then(Commands.literal("cycle")
 								.executes(ctx -> cycleChamberTheme(ctx.getSource(),

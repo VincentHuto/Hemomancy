@@ -85,8 +85,6 @@ public final class HemoCapabilityRegistrar {
                 (player, ctx) -> player.getData(HemoAttachmentTypes.NPC_TRADE_LEDGER));
         event.registerEntity(HemoCapabilityKeys.WHITE_HUMOR_VOLUME, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.WHITE_HUMOR_VOLUME));
-        event.registerEntity(HemoCapabilityKeys.VISCERAL_ORGANS, EntityType.PLAYER,
-                (player, ctx) -> player.getData(HemoAttachmentTypes.VISCERAL_ORGANS));
         event.registerEntity(HemoCapabilityKeys.SCARS, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.SCARS));
         event.registerEntity(HemoCapabilityKeys.HARBINGER_EQUIPMENT, EntityType.PLAYER,
@@ -138,7 +136,6 @@ public final class HemoCapabilityRegistrar {
 					return handler;
 				}, ItemInit.mnemonic_folio.get());
 
-        // ── ItemScarBinder IItemHandler capability ──
         // ── LivingSyringe IItemHandler capability ──
         event.registerItem(Capabilities.ItemHandler.ITEM,
                 (stack, ctx) -> {

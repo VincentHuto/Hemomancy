@@ -20,7 +20,6 @@ import org.joml.Vector3f;
 // Made with Blockbench 5.1.6
 // Exported for Minecraft version 1.17 or later with Mojang mappings
 
-
 public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEveningStarEntity> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
@@ -207,7 +206,6 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 						new CubeDeformation(0.0F))
 				.texOffs(51, 48).addBox(-6.3F, -9.25F, -5.85F, 12.6F, 4.8F, 0.7F,
 						new CubeDeformation(0.0F)), PartPose.ZERO);
-
 
 		PartDefinition ClothBack = body.addOrReplaceChild("ClothBack", CubeListBuilder.create(), PartPose.offset(19.4937F, 1.583F, 7.5716F));
 
@@ -518,42 +516,8 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 		KeyframeAnimations.animate(this, animation, (long) (ticks * 50.0F), 1.0F, animationVectorCache);
 	}
 
-	private void applyDefeatPose(float downedFrame) {
-		float recoil = VesperCombatRules.defeatRecoilProgress(downedFrame);
-		float kneel = VesperCombatRules.defeatKneelProgress(downedFrame);
-		this.body.xRot -= recoil * 0.22F;
-		this.head.xRot -= recoil * 0.16F;
-		this.rightArm.xRot += recoil * 0.28F;
-		this.leftArm.xRot += recoil * 0.28F;
-
-		this.whole.y = Mth.lerp(kneel, this.whole.y, -8.0F);
-		this.head.xRot = pose(this.head.xRot, 0.48F, kneel);
-		this.head.yRot = pose(this.head.yRot, 0.0F, kneel);
-		this.body.xRot = pose(this.body.xRot, 0.24F, kneel);
-		this.body.yRot = pose(this.body.yRot, 0.0F, kneel);
-		this.rightArm.xRot = pose(this.rightArm.xRot, -0.38F, kneel);
-		this.rightArm.yRot = pose(this.rightArm.yRot, 0.0F, kneel);
-		this.rightArm.zRot = pose(this.rightArm.zRot, 0.18F, kneel);
-		this.rElbow.xRot = pose(this.rElbow.xRot, -0.72F, kneel);
-		this.leftArm.xRot = pose(this.leftArm.xRot, -0.18F, kneel);
-		this.leftArm.yRot = pose(this.leftArm.yRot, 0.0F, kneel);
-		this.leftArm.zRot = pose(this.leftArm.zRot, -0.14F, kneel);
-		this.lElbow.xRot = pose(this.lElbow.xRot, -0.66F, kneel);
-		this.rightLeg.xRot = pose(this.rightLeg.xRot, -1.18F, kneel);
-		this.rightLeg2.xRot = pose(this.rightLeg2.xRot, 1.82F, kneel);
-		this.leftLeg.xRot = pose(this.leftLeg.xRot, 0.18F, kneel);
-		this.leftLeg2.xRot = pose(this.leftLeg2.xRot, 0.55F, kneel);
-		this.ClothBack.xRot = pose(this.ClothBack.xRot, 0.82F, kneel);
-		this.ClothBack1.xRot = pose(this.ClothBack1.xRot, 0.24F, kneel);
-		this.ClothBack2.xRot = pose(this.ClothBack2.xRot, 0.18F, kneel);
-		this.ClothBackL3.xRot = pose(this.ClothBackL3.xRot, 0.12F, kneel);
-	}
-
 	private void resetCombatPose() {
 		this.whole.getAllParts().forEach(ModelPart::resetPose);
 	}
 
-	private static float pose(float current, float target, float blend) {
-		return Mth.lerp(blend, current, target);
-	}
 }

@@ -25,21 +25,12 @@ public final class VesperMountAttackRules {
 		return tick >= 25 && tick < 105;
 	}
 
-	public static float carapaceDamageMultiplier(int tick) {
-		return isCarapaceExposed(tick) ? 1.5F : 1.0F;
-	}
-
 	public static int startAneurysmCooldown() {
 		return ANEURYSM_COOLDOWN_TICKS;
 	}
 
 	public static int tickCooldown(int cooldown) {
 		return Math.max(0, cooldown - 1);
-	}
-
-	public static boolean mayStartAneurysm(int cooldown, boolean anchorExposed, boolean transitioning,
-			boolean grabActive, boolean wingGrowth, boolean flightSortie) {
-		return cooldown <= 0 && !anchorExposed && !transitioning && !grabActive && !wingGrowth && !flightSortie;
 	}
 
 	public static VesperPhaseOneAttack selectAttack(int attackStep, VesperPhaseOneAttack previous,

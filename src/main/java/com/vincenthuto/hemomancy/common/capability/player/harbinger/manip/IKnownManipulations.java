@@ -57,10 +57,6 @@ public interface IKnownManipulations {
 
 	public void setActiveAvatarForm(String manipulationId);
 
-	default boolean isAvatarActive() {
-		return !getActiveAvatarForm().isBlank();
-	}
-
 	default void setAvatarActive(boolean avatarActive) {
 		setActiveAvatarForm(avatarActive ? "summon_avatar" : "");
 	}

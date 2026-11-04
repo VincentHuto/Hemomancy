@@ -182,11 +182,6 @@ public class BloomWardenEntity extends CourtMemberEntity {
 		return outcome == null && player.getUUID().equals(target);
 	}
 
-	@Nullable
-	public UUID huntedId() {
-		return target;
-	}
-
 	/** The wrong the Warden is answering, which the chorus names if the player wins. */
 	public String wrong() {
 		return wrong;

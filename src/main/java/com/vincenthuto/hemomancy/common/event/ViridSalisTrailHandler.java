@@ -28,7 +28,7 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
  * second. Blood constructs and visibly blood-type mobs take double damage and
  * receive Slowness II for three seconds.
  *
- * <p>Harbinger players at Initiatory Degree 5 (Perfected) or higher are also
+ * <p>Harbinger players at Initiatory Degree 5 (Illuminatus) or higher are also
  * affected: they take base damage and Slowness I, reflecting the salt's
  * reaction to deeply-saturated blood-work.
  *

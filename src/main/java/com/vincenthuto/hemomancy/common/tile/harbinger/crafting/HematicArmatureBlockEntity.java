@@ -81,7 +81,6 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 	private ArmatureUpgradeRules.ArmatureSlot pendingSlot;
 	private int pendingBowlSlot = -1;
 	private long craftStartTick = -1L;
-	private int legacyStage;
 	private boolean riteLocked;
 	private UUID machineIdentity = UUID.randomUUID();
 	@Nullable
@@ -92,7 +91,6 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, HematicArmatureBlockEntity armature) {
-		armature.applyLegacyStage();
 		if (armature.riteLocked) return;
 		boolean changed = armature.processBloodContainerInputSlot(armature, armature);
 		changed |= armature.tryProcessRestrainedPlayer(level);
@@ -421,13 +419,9 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 	}
 
 	public ArmatureUpgradeRules.ArmatureTier getArmatureTier() {
-		return ArmatureUpgradeRules.ArmatureTier.byId(Math.max(StationTierProperty.stage(getBlockState()), legacyStage));
+		return ArmatureUpgradeRules.ArmatureTier.byId(StationTierProperty.stage(getBlockState()));
 	}
 
-	public void applyLegacyStage() {
-		StationTierProperty.applyLegacyStage(this, legacyStage);
-		legacyStage = 0;
-	}
 	public boolean isRiteLocked() { return riteLocked; }
 	public boolean idleForRite() { return !riteLocked && pendingSlot == null && restrainedPlayer == null; }
 	@Override public boolean canReceiveBlood() { return !riteLocked; }
@@ -489,11 +483,6 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 		this.restrainedPlayer = playerId;
 		clearPendingCraft();
 		sendUpdates();
-	}
-
-	@Nullable
-	public UUID getRestrainedPlayer() {
-		return restrainedPlayer;
 	}
 
 	public boolean hasRestrainedPlayer() {
@@ -645,9 +634,6 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 		items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(tag, items, registries);
 		restrainedPlayer = tag.hasUUID(TAG_RESTRAINED_PLAYER) ? tag.getUUID(TAG_RESTRAINED_PLAYER) : null;
-		// Pre-consolidation saves kept the tier here; applyLegacyStage moves it into the blockstate.
-		legacyStage = tag.contains(TAG_ARMATURE_TIER)
-				? ArmatureUpgradeRules.ArmatureTier.byName(tag.getString(TAG_ARMATURE_TIER)).id() : 0;
 		riteLocked = tag.getBoolean(TAG_RITE_LOCKED);
 		if (tag.hasUUID(TAG_MACHINE_IDENTITY)) machineIdentity = tag.getUUID(TAG_MACHINE_IDENTITY);
 		lastUpgradeRite = tag.hasUUID(TAG_LAST_UPGRADE_RITE) ? tag.getUUID(TAG_LAST_UPGRADE_RITE) : null;
@@ -667,7 +653,6 @@ public class HematicArmatureBlockEntity extends HemoContainerBlockEntity impleme
 		if (restrainedPlayer != null) {
 			tag.putUUID(TAG_RESTRAINED_PLAYER, restrainedPlayer);
 		}
-		if (legacyStage > 0) tag.putString(TAG_ARMATURE_TIER, ArmatureUpgradeRules.ArmatureTier.byId(legacyStage).serializedName());
 		tag.putBoolean(TAG_RITE_LOCKED, riteLocked);
 		tag.putUUID(TAG_MACHINE_IDENTITY, machineIdentity);
 		if (lastUpgradeRite != null) tag.putUUID(TAG_LAST_UPGRADE_RITE, lastUpgradeRite);

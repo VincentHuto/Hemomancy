@@ -417,27 +417,6 @@ public final class EntityCasts {
 		return controlled;
 	}
 
-	public static boolean glacialBastion(ManipulationCastContext context) {
-		if (!(context.level() instanceof ServerLevel serverLevel)) return false;
-		BlockPos base = context.caster().blockPosition();
-		int placed = 0;
-		for (int dx = -2; dx <= 2; dx++) {
-			for (int dz = -2; dz <= 2; dz++) {
-				int dist = Math.abs(dx) + Math.abs(dz);
-				if (dist < 2 || dist > 3) continue;
-				for (int dy = 0; dy < 3; dy++) {
-					BlockPos pos = base.offset(dx, dy, dz);
-					if (pos.equals(base) || pos.equals(base.above())) continue;
-					if (TemporaryIceManager.place(serverLevel, pos, BlockInit.frozen_cruor.get().defaultBlockState(),
-							420 + context.level().random.nextInt(120))) {
-						placed++;
-					}
-				}
-			}
-		}
-		context.level().playSound(null, base, SoundEvents.GLASS_PLACE, SoundSource.HOSTILE, 1.0F, 0.5F);
-		return placed > 0;
-	}
 
 	public static boolean glacialRampart(ManipulationCastContext context) {
 		if (!(context.level() instanceof ServerLevel serverLevel)) return false;
@@ -554,17 +533,6 @@ public final class EntityCasts {
 		return hits > 0;
 	}
 
-	public static boolean bloodEclipseMantle(ManipulationCastContext context) {
-		context.caster().addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 360, 1, false, true));
-		context.caster().addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 360, 0, false, true));
-		context.caster().addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 240, 0, false, true));
-		context.level().playSound(null, context.origin(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE, 0.75F, 0.6F);
-		if (context.level() instanceof ServerLevel level) {
-            ManipulationVisuals.attached(context.caster(), ManipulationVisuals.Form.VEIL, 1, 18, 1);
-            ManipulationParticles.accent(level, EnumBloodTendency.TENEBRIS, context.caster().position().add(0, 1, 0), Vec3.ZERO);
-        }
-		return true;
-	}
 
     private static void thermalBurst(ManipulationCastContext context,ManipulationVisuals.Form form,Vec3 at,double radius,int ticks) {
         if(context.level() instanceof ServerLevel level)ManipulationVisuals.burst(level,form,at,at,radius,ticks);
@@ -651,10 +619,6 @@ public final class EntityCasts {
 			}
 		}
 		return null;
-	}
-
-	private static Vec3 midpoint(LivingEntity a, LivingEntity b) {
-		return a.getEyePosition().add(b.getEyePosition()).scale(0.5D);
 	}
 
 	private static void sendParticles(Level level, Vec3 center, int count, ParticleColor color, double spread) {

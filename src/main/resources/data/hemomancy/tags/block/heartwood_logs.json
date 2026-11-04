@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:heartwood_log",
+    "hemomancy:heartwood_bark",
+    "hemomancy:stripped_heartwood_log",
+    "hemomancy:stripped_heartwood_bark"
+  ]
+}

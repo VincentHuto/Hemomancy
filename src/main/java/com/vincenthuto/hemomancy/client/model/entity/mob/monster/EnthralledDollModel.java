@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.mob.monster;
 
+import net.minecraft.util.Mth;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -69,8 +70,12 @@ public class EnthralledDollModel<T extends Entity> extends EntityModel<T> {
 	private final ModelPart leftArm;
 
 	private final ModelPart rightArm;
+	private final ModelPart headTentacles;
+	private final ModelPart jingles;
 
 	public EnthralledDollModel(ModelPart root) {
+		this.headTentacles = root.getChild("head").getChild("headTentacles");
+		this.jingles = this.headTentacles.getChild("jingles");
 		this.head = root.getChild("head");
 		this.body = root.getChild("body");
 		this.leftArm = root.getChild("leftArm");
@@ -85,9 +90,38 @@ public class EnthralledDollModel<T extends Entity> extends EntityModel<T> {
 		rightArm.render(poseStack, buffer, packedLight, packedOverlay);
 	}
 
+	/**
+	 * A puppet on strings: it totters with stiff arms, the head lolls on its neck, the head tentacles trail and the
+	 * bells jingle with every step. The attack beat throws both arms straight out.
+	 */
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch) {
-
+		head.resetPose();
+		body.resetPose();
+		leftArm.resetPose();
+		rightArm.resetPose();
+		headTentacles.resetPose();
+		jingles.resetPose();
+		float stride = Math.min(1.0F, limbSwingAmount * 2.0F);
+		float phase = limbSwing * 0.9F;
+		float loll = Mth.sin(ageInTicks * 0.07F);
+		head.yRot = netHeadYaw * Mth.DEG_TO_RAD + 0.1F * loll;
+		head.xRot = headPitch * Mth.DEG_TO_RAD + 0.08F * stride * Mth.sin(phase);
+		head.zRot = 0.12F * loll + 0.1F * stride * Mth.cos(phase);
+		body.zRot = 0.08F * stride * Mth.cos(phase);
+		body.y += 0.4F * stride * Mth.abs(Mth.sin(phase));
+		leftArm.xRot = Mth.cos(phase) * 0.7F * stride;
+		rightArm.xRot = Mth.cos(phase + Mth.PI) * 0.7F * stride;
+		leftArm.zRot = -0.2F - 0.05F * loll;
+		rightArm.zRot = 0.2F + 0.05F * loll;
+		headTentacles.xRot += 0.15F * Mth.sin(ageInTicks * 0.12F) - 0.2F * stride * Mth.abs(Mth.sin(phase));
+		jingles.xRot += 0.3F * stride * Mth.sin(phase * 2.0F) + 0.05F * Mth.sin(ageInTicks * 0.3F);
+		if (attackTime > 0.0F) {
+			float jab = Mth.sin(attackTime * Mth.PI);
+			leftArm.xRot = -1.5F * jab + leftArm.xRot * (1.0F - jab);
+			rightArm.xRot = -1.5F * jab + rightArm.xRot * (1.0F - jab);
+			head.xRot -= 0.35F * jab;
+		}
 	}
 }

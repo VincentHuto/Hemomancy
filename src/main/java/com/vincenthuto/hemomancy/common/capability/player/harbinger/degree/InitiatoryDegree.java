@@ -83,32 +83,15 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	}
 
 	@Override
-	public int recordPomeConsumed(UUID bloomId, long legacyOrigin) {
-		return recordPomeConsumed(bloomId, legacyOrigin, false);
-	}
-
-	@Override
-	public int recordPomeConsumed(UUID bloomId, long legacyOrigin, boolean migrateLegacyProgress) {
-		int newCount = getPomesConsumedFromBloom(bloomId, legacyOrigin, migrateLegacyProgress) + 1;
+	public int recordPomeConsumed(UUID bloomId) {
+		int newCount = getPomesConsumedFromBloom(bloomId) + 1;
 		pomeCommunionProgressByBloom.put(bloomId, newCount);
 		return newCount;
 	}
 
 	@Override
-	public int getPomesConsumedFromBloom(UUID bloomId, long legacyOrigin) {
-		return getPomesConsumedFromBloom(bloomId, legacyOrigin, false);
-	}
-
-	@Override
-	public int getPomesConsumedFromBloom(UUID bloomId, long legacyOrigin, boolean migrateLegacyProgress) {
-		Integer count = pomeCommunionProgressByBloom.get(bloomId);
-		if (count != null) return count;
-		if (migrateLegacyProgress && pomeCommunionProgress.containsKey(legacyOrigin)) {
-			int legacyCount = pomeCommunionProgress.remove(legacyOrigin);
-			pomeCommunionProgressByBloom.put(bloomId, legacyCount);
-			return legacyCount;
-		}
-		return 0;
+	public int getPomesConsumedFromBloom(UUID bloomId) {
+		return pomeCommunionProgressByBloom.getOrDefault(bloomId, 0);
 	}
 
 	@Override

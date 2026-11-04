@@ -7,10 +7,10 @@
   ],
   "key": {
     "S": {
-      "item": "minecraft:stick"
+      "item": "minecraft:string"
     },
     "B": {
-      "item": "hemomancy:puppeteering_thread"
+      "item": "hemomancy:enthralling_filament"
     }
   },
   "result": {

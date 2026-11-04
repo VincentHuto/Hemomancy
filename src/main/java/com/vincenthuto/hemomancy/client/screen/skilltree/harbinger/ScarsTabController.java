@@ -152,7 +152,7 @@ public final class ScarsTabController implements IProgressTab {
 	@Override public int getContentH() { return ScarTreeLayout.CONTENT_H; }
 
 	static boolean isTierLocked(int tier, int playerDegree) {
-		return playerDegree < (tier >= 3 ? 5 : 4);
+		return playerDegree < (tier >= 3 ? 6 : 4);
 	}
 
 	private String familyLabel() {

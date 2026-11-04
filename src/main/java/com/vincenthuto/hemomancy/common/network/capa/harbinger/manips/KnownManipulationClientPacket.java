@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
+import com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -29,7 +30,7 @@ public class KnownManipulationClientPacket implements CustomPacketPayload {
 	public static void handle(final KnownManipulationClientPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
-			if (player instanceof ServerPlayer sender) {
+			if (player instanceof ServerPlayer sender && ServerboundRateLimiter.tryAcquire(sender, "request_manipulations", 10)) {
 				IKnownManipulations manips = HemoCapabilityAccess.getKnownManipulations(sender)
 						;
 				PacketHandler.sendToPlayer(sender,

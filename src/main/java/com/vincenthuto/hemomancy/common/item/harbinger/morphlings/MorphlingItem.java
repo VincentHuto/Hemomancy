@@ -143,15 +143,6 @@ public class MorphlingItem extends Item implements IMorphling {
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 	}
 
-	public static void clearWildBound(ItemStack stack) {
-		if (!stack.has(DataComponents.CUSTOM_DATA)) {
-			return;
-		}
-		CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
-		tag.remove(WILD_BOUND_KEY);
-		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-	}
-
 	public static void markEquipped(Player player, ItemStack stack) {
 		if (player == null || stack.isEmpty() || !isHungerEnabled()) {
 			return;
@@ -403,12 +394,6 @@ public class MorphlingItem extends Item implements IMorphling {
 	/** Names a Primal's own blood source, so the diagnostics show which power paid. */
 	public static BloodAccounting.Source primalSource(String id) {
 		return BloodAccounting.Source.of(id, Category.MORPHLING, false, false);
-	}
-
-	/** True when the Primal named {@code abilityKey} is still recovering. */
-	public static boolean isPrimalRecovering(Player player, ItemStack stack, String abilityKey, int cooldownTicks) {
-		long last = getLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey);
-		return last > 0L && player.level().getGameTime() - last < cooldownTicks;
 	}
 
 	public static boolean tryBeginPrimalAbility(Player player, ItemStack stack, String abilityKey,

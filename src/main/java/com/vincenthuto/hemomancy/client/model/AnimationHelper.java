@@ -47,17 +47,6 @@ public final class AnimationHelper {
 	}
 
 	/**
-	 * Apply the initial state (time = 0) of the given {@link AnimationDefinition}
-	 * to the given {@link IAnimatedModel}
-	 * 
-	 * @param model      The model being animated
-	 * @param definition The animation to be applied
-	 */
-	public static void applyStatic(IAnimatedModel<?> model, AnimationDefinition definition) {
-		animate(model, definition, 0, 1F, ANIMATION_VECTOR_CACHE);
-	}
-
-	/**
 	 * Animate the given {@link IAnimatedModel} based on the given
 	 * {@link AnimationState} of the given {@link AnimationDefinition} at the given
 	 * time with the given speed

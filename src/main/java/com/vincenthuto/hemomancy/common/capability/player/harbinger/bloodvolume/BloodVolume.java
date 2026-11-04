@@ -20,6 +20,35 @@ public class BloodVolume implements IBloodVolume, INBTSerializable<CompoundTag> 
 	private double autoDrawThreshold = 0.25;
 	private boolean bloodRoutingOptInEnabled = false;
 
+	// ── Owner sync (not saved) ──
+	private boolean syncDirty = false;
+	private long lastDiagnosticsSync = -1L;
+
+	@Override
+	public boolean isSyncDirty() {
+		return syncDirty;
+	}
+
+	@Override
+	public void markSyncDirty() {
+		syncDirty = true;
+	}
+
+	@Override
+	public void clearSyncDirty() {
+		syncDirty = false;
+	}
+
+	@Override
+	public long lastDiagnosticsSync() {
+		return lastDiagnosticsSync;
+	}
+
+	@Override
+	public void setLastDiagnosticsSync(long gameTime) {
+		lastDiagnosticsSync = gameTime;
+	}
+
 	/***
 	 * only use if you want to explicitly bypass max volume limits
 	 */

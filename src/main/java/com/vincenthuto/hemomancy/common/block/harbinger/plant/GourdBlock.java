@@ -112,11 +112,4 @@ public class GourdBlock extends PumpkinBlock implements SimpleWaterloggedBlock {
 		return InteractionResult.PASS;
 	}
 
-	public StemBlock getStem() {
-		return (StemBlock) BlockInit.gourd_stem.get();
-	}
-
-	public AttachedStemBlock getAttachedStem() {
-		return (AttachedStemBlock) BlockInit.attached_gourd_stem.get();
-	}
 }

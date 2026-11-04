@@ -22,7 +22,6 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -91,7 +90,7 @@ public class VelorumEntity extends SaintTrialEntity {
     private static final double DARKNESS_RADIUS = 12.0;
 
     // ── stillness resistance ──────────────────────────────────────────────
-    private static final int STILL_GUARD_DURATION = VelorumVisualRules.MARTYRDOM;
+    private static final int STILL_GUARD_DURATION = VelorumVisualRules.STILL_GUARD;
     private static final int STILL_GUARD_AMP = 0;
 
     // ── silence drain (Phase 2, ≤ 25% HP) ────────────────────────────────
@@ -101,8 +100,6 @@ public class VelorumEntity extends SaintTrialEntity {
     private static final double SILENCE_DRAIN_RADIUS = 8.0;
 
     // ── animation states ──────────────────────────────────────────────────
-    public final AnimationState idleAnimationState = new AnimationState();
-    public final AnimationState martyrdomAnimationState = new AnimationState();
 
     private int stillGuardTimer = 0;
     private static final EntityDataAccessor<Integer> DATA_STILLNESS_PRESSURE = SynchedEntityData.defineId(VelorumEntity.class, EntityDataSerializers.INT);
@@ -160,7 +157,7 @@ public class VelorumEntity extends SaintTrialEntity {
     }
 
     /** The brief stillness resistance after a hit (public names kept for the client model). */
-    public boolean isMartyrdom() {
+    public boolean isStillGuard() {
         return this.entityData.get(DATA_STILL_GUARD);
     }
 
@@ -174,7 +171,7 @@ public class VelorumEntity extends SaintTrialEntity {
     public int getFrostRelease() { return this.entityData.get(DATA_FROST_RELEASE); }
     public int getVeilRelease() { return this.entityData.get(DATA_VEIL_RELEASE); }
     public int getDrainRelease() { return this.entityData.get(DATA_DRAIN_RELEASE); }
-    public int getMartyrdomTicks() { return this.entityData.get(DATA_STILL_GUARD_TICKS); }
+    public int getStillGuardTicks() { return this.entityData.get(DATA_STILL_GUARD_TICKS); }
 
     public boolean isSilencePhase() { return getHealth() <= getMaxHealth() * SILENCE_PHASE_THRESHOLD; }
     public int getStillnessPressure() { return entityData.get(DATA_STILLNESS_PRESSURE); }
@@ -215,8 +212,6 @@ public class VelorumEntity extends SaintTrialEntity {
         super.aiStep();
 
         if (this.level().isClientSide) {
-            idleAnimationState.animateWhen(this.isAlive() && !isMartyrdom(), this.tickCount);
-            martyrdomAnimationState.animateWhen(this.isAlive() && isMartyrdom(), this.tickCount);
             return;
         }
 
@@ -342,7 +337,7 @@ public class VelorumEntity extends SaintTrialEntity {
             setStillGuard(true);
             stillGuardTimer = STILL_GUARD_DURATION;
             this.entityData.set(DATA_STILL_GUARD_TICKS, stillGuardTimer);
-            VelorumEffects.burst((ServerLevel) this.level(), this.position().add(0, 1.5, 0), VelorumVisualRules.MARTYR, 1);
+            VelorumEffects.burst((ServerLevel) this.level(), this.position().add(0, 1.5, 0), VelorumVisualRules.GUARD_CAST, 1);
         }
         return hurt;
     }

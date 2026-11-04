@@ -20,6 +20,9 @@ public class LivingSyringeMenu extends HemoContainerMenu {
 
 	private int slotID;
 
+	/** The syringe this menu edits, kept by identity. */
+	private ItemStack syringe = ItemStack.EMPTY;
+
 	public String itemKey = "";
 
 	private Inventory playerInv;
@@ -49,6 +52,7 @@ public class LivingSyringeMenu extends HemoContainerMenu {
 		}
 
 		if (stack.getCapability(Capabilities.ItemHandler.ITEM) instanceof LivingSyringeItemHandler syringeHandler) {
+			syringe = stack;
 			handler = syringeHandler;
 			handler.load();
 			slotcount = handler.getSlots();
@@ -95,17 +99,9 @@ public class LivingSyringeMenu extends HemoContainerMenu {
 
 	@Override
 	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
+		if (wouldMoveOpenItem(syringe, playerInv, slot, dragType, clickTypeIn)) return;
 		super.clicked(slot, dragType, clickTypeIn, player);
-
-		if (slot >= 0) {
-			if (getSlot(slot).getItem().getItem() instanceof LivingSyringeItem) {
-
-			}
-		}
-		if (clickTypeIn == ClickType.SWAP)
-
-			if (slot >= 0)
-				getSlot(slot).container.setChanged();
+		if (clickTypeIn == ClickType.SWAP && slot >= 0) getSlot(slot).container.setChanged();
 		if (handler != null) handler.save();
 	}
 
@@ -145,7 +141,7 @@ public class LivingSyringeMenu extends HemoContainerMenu {
 	public ItemStack quickMoveStack(Player playerIn, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
-		if (slot != null && slot.hasItem()) {
+		if (slot != null && slot.hasItem() && slot.getItem() != syringe) {
 			int bagslotcount = slots.size() - playerIn.getInventory().items.size();
 			ItemStack itemstack1 = slot.getItem();
 			if (itemstack1.getCount() < 1) {
@@ -167,8 +163,6 @@ public class LivingSyringeMenu extends HemoContainerMenu {
 
 	@Override
 	public boolean stillValid(Player playerIn) {
-		if (slotID == -106)
-			return playerIn.getOffhandItem().getItem() instanceof LivingSyringeItem;
-		return playerIn.getInventory().getItem(slotID).getItem() instanceof LivingSyringeItem;
+		return handler != null && !syringe.isEmpty() && carriesExactStack(playerIn, syringe);
 	}
 }

@@ -94,6 +94,12 @@ public final class VampireBatModel extends HierarchicalModel<VampireBatEntity> {
 		}
 		float partialTick = ageInTicks - entity.tickCount;
 		fly(entity.isHunting(), ageInTicks, entity.flightPitch(partialTick), entity.flightBank(partialTick));
+		// The bite: the jaw clamps shut and the head jerks down for a few ticks.
+		float bite = entity.biteSnap(partialTick);
+		if (bite > 0.0F) {
+			jaw.xRot = Mth.lerp(bite, jaw.xRot, 0.05F);
+			head.xRot += 0.35F * bite;
+		}
 		head.yRot = netHeadYaw * Mth.DEG_TO_RAD * 0.6F;
 		neck.yRot = netHeadYaw * Mth.DEG_TO_RAD * 0.4F;
 		head.xRot += headPitch * Mth.DEG_TO_RAD * 0.5F;

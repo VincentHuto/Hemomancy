@@ -16,8 +16,8 @@ import net.minecraft.world.phys.Vec3;
  * call this once per frame; each discards the other's geometry. Points are offsets from the collapse point.
  */
 final class LodestoneCollapseGeometry {
+    private static final int FOCUS = 4;
     private static final int FIELD = 0xBE8C73, CORE = 0xFFD2C4, CLOT = 0x7A1020;
-    private static final int RIBBON = 0, FOCUS = 4;
 
     private LodestoneCollapseGeometry() {}
 

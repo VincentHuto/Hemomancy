@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.client.event;
 
+import com.vincenthuto.hemomancy.client.render.entity.projectile.RecallBarbRenderer;
+import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.PhlegethonticBombardierModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.monster.ExcoriatedModel;
+import com.vincenthuto.hemomancy.client.model.entity.boss.phlegethosoma.PhlegethosomaModel;
 import com.vincenthuto.hemomancy.client.model.entity.morphling.FungalHeadAttachmentModel;
 import com.vincenthuto.hemomancy.client.model.entity.morphling.MorphlingStrainModels;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.HunterFungusModel;
@@ -85,7 +89,6 @@ public class LayerEvents {
 				HemoBookLayers::createHarbingerAssignmentLedgerLayer);
 		event.registerLayerDefinition(HemoBookLayers.MNEMONIC_FOLIO, HemoBookLayers::createMnemonicFolioLayer);
 		event.registerLayerDefinition(FloatingHeartModel.mortal_display, FloatingHeartModel::createBodyLayer);
-		event.registerLayerDefinition(VisceralMirrorModel.LAYER_LOCATION, VisceralMirrorModel::createBodyLayer);
 		event.registerLayerDefinition(SanguisLanceaModel.LAYER_LOCATION, SanguisLanceaModel::createBodyLayer);
 		event.registerLayerDefinition(AnnettasSanguisLanceaModel.LAYER_LOCATION, AnnettasSanguisLanceaModel::createBodyLayer);
 		event.registerLayerDefinition(SporiticThuribleModel.LAYER_LOCATION, SporiticThuribleModel::createBodyLayer);
@@ -101,11 +104,14 @@ public class LayerEvents {
 		event.registerLayerDefinition(CovenantThroneModel.LAYER_LOCATION, CovenantThroneModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedShieldModel.barbed_shield, BarbedShieldModel::createLayers);
 		event.registerLayerDefinition(ChitiniteShieldModel.chitinite_shield, ChitiniteShieldModel::createBodyLayer);
-		event.registerLayerDefinition(IronWallModel.iron_wall, IronWallModel::createBodyLayer);
+		event.registerLayerDefinition(IronWallModel.ferric_rampart, IronWallModel::createBodyLayer);
 		event.registerLayerDefinition(IronSpikeModel.iron_spike, IronSpikeModel::createBodyLayer);
 		event.registerLayerDefinition(IronPillarModel.iron_pillar, IronPillarModel::createBodyLayer);
 		event.registerLayerDefinition(BloodBulletModel.blood_bullet, BloodBulletModel::createBodyLayer);
-		event.registerLayerDefinition(WretchedWillModel.wretched_will, WretchedWillModel::createBodyLayer);
+		event.registerLayerDefinition(PhlegethosomaModel.LAYER_LOCATION, PhlegethosomaModel::createBodyLayer);
+		event.registerLayerDefinition(ExcoriatedModel.LAYER_LOCATION, ExcoriatedModel::createBodyLayer);
+		event.registerLayerDefinition(PhlegethonticBombardierModel.LAYER_LOCATION, PhlegethonticBombardierModel::createBodyLayer);
+		event.registerLayerDefinition(RecallBarbRenderer.LAYER, RecallBarbRenderer::layer);
 		event.registerLayerDefinition(WillModel.LAYER_LOCATION, WillModel::createBodyLayer);
 		event.registerLayerDefinition(BloodGourdModel.blood_gourd, BloodGourdModel::createBodyLayer);
 		event.registerLayerDefinition(CurvedHornModel.curved_horn, CurvedHornModel::createBodyLayer);
@@ -187,6 +193,8 @@ public class LayerEvents {
                 com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.IceFishMesh::create);
 		event.registerLayerDefinition(MnemonicWhaleModel.LAYER_LOCATION, MnemonicWhaleModel::createBodyLayer);
 		event.registerLayerDefinition(BrinedVotaryModel.LAYER_LOCATION, BrinedVotaryModel::createBodyLayer);
+		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.mob.monster.HematicConstructModel.LAYER_LOCATION,
+				com.vincenthuto.hemomancy.client.model.entity.mob.monster.HematicConstructModel::createBodyLayer);
         event.registerLayerDefinition(AntibodyModel.LAYER_LOCATION, AntibodyModel::createBodyLayer);
         event.registerLayerDefinition(HunterFungusModel.LAYER_LOCATION, HunterFungusModel::createBodyLayer);
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
@@ -383,7 +391,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new BloodGourdLayer<>(livingRenderer));
 			livingRenderer.addLayer(new BloodAvatarLayer(livingRenderer));
 			livingRenderer.addLayer(new CellHandLayer(livingRenderer));
-			livingRenderer.addLayer(new MuscleMemoryLayer(livingRenderer));
+			livingRenderer.addLayer(new ThelemicMemoryLayer(livingRenderer));
 			livingRenderer.addLayer(new LivingTorchBreathLayer(livingRenderer));
 			livingRenderer.addLayer(new RenderScarsLayer(livingRenderer));
 			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));

@@ -54,10 +54,6 @@ public final class KnownManipulationGrantHelper {
 		if (UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player))) {
 			return new MemoryGrantResult(MemoryGrantStatus.NO_ACTIVE_BLOOD, manipulation, 0);
 		}
-		if (ManipulationRetirementRules.isRetiredManipulation(manipulation)
-				|| (memoryItem != null && ManipulationRetirementRules.isRetiredMemoryItem(memoryItem, manipulation))) {
-			return new MemoryGrantResult(MemoryGrantStatus.RETIRED, manipulation, 0);
-		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
 			return new MemoryGrantResult(MemoryGrantStatus.NO_ACTIVE_BLOOD, manipulation, 0);
@@ -107,10 +103,6 @@ public final class KnownManipulationGrantHelper {
 		if (player == null || manipulation == null || manipulation == BloodManipulation.BLANK) {
 			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, 0);
 		}
-		if (ManipulationRetirementRules.isRetiredManipulation(manipulation)
-				|| (memoryItem != null && ManipulationRetirementRules.isRetiredMemoryItem(memoryItem, manipulation))) {
-			return new MemoryGrantResult(MemoryGrantStatus.RETIRED, manipulation, 0);
-		}
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null) {
 			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, 0);
@@ -138,8 +130,7 @@ public final class KnownManipulationGrantHelper {
 
 	public static boolean learnAndEquipIfPossible(IKnownManipulations known, BloodManipulation manipulation,
 			int maxSlots) {
-		if (known == null || manipulation == null || manipulation == BloodManipulation.BLANK
-				|| ManipulationRetirementRules.isRetiredManipulation(manipulation)) return false;
+		if (known == null || manipulation == null || manipulation == BloodManipulation.BLANK) return false;
 		boolean changed = learnAndEquipIfPossible(known.getKnownManips(), known.getEquippedManipNames(), manipulation,
 				maxSlots);
 		if (changed) known.markSyncDirty();
@@ -149,8 +140,7 @@ public final class KnownManipulationGrantHelper {
 	public static boolean learnAndEquipIfPossible(LinkedHashMap<BloodManipulation, ManipLevel> knownManips,
 			List<String> equippedNames, BloodManipulation manipulation, int maxSlots) {
 		if (knownManips == null || equippedNames == null || manipulation == null
-				|| manipulation == BloodManipulation.BLANK
-				|| ManipulationRetirementRules.isRetiredManipulation(manipulation)) {
+				|| manipulation == BloodManipulation.BLANK) {
 			return false;
 		}
 

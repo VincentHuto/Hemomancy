@@ -40,7 +40,7 @@ import net.neoforged.neoforge.common.Tags;
 /**
  * Corpse wax crusted on the wall of an old dark room: a monster room, a stronghold, an ancient city. Scraped once, by
  * hand or with any tool, it comes away as adipocere (two with an axe) and does not grow back. {@link #FACING} is the
- * way it faces out of its wall. Grown by the decoration pass ({@code AdipocereCrustDecoration}), or crafted from four
+ * way it faces out of its wall. Crafted from four
  * adipocere and hung on any sturdy wall for decor; broken, it drops itself.
  * Model from tools/model_export/adipocere_crust.py.
  */

@@ -33,6 +33,8 @@ public class MorphlingJarMenu extends HemoContainerMenu {
 	public int slotcount = 0;
 	/** Inventory slot index, or -106 for offhand, or -200 for scar-equip slot. */
 	private int slotID;
+	/** The jar this menu edits, kept by identity. */
+	private ItemStack jar = ItemStack.EMPTY;
 	public String itemKey = "";
 	private Inventory playerInv;
 	public MorphlingJarItemHandler handler;
@@ -67,6 +69,7 @@ public class MorphlingJarMenu extends HemoContainerMenu {
 		}
 
 		if (stack.getCapability(Capabilities.ItemHandler.ITEM) instanceof MorphlingJarItemHandler mjh) {
+			jar = stack;
 			handler = mjh;
 			handler.load();
 			slotcount = handler.getSlots();
@@ -118,6 +121,7 @@ public class MorphlingJarMenu extends HemoContainerMenu {
 
 	@Override
 	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
+		if (wouldMoveOpenItem(jar, playerInv, slot, dragType, clickTypeIn)) return;
 		if (player instanceof ServerPlayer serverPlayer) EquippedMorphlingEvents.persistEquippedMorphling(serverPlayer);
 		super.clicked(slot, dragType, clickTypeIn, player);
 		if (slot >= 0 && clickTypeIn != ClickType.SWAP
@@ -141,7 +145,7 @@ public class MorphlingJarMenu extends HemoContainerMenu {
 		if (playerIn instanceof ServerPlayer serverPlayer) EquippedMorphlingEvents.persistEquippedMorphling(serverPlayer);
 		ItemStack result = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
-		if (slot != null && slot.hasItem()) {
+		if (slot != null && slot.hasItem() && slot.getItem() != jar) {
 			ItemStack stack = slot.getItem();
 			result = stack.copy();
 			if (index < slotcount) {
@@ -166,14 +170,10 @@ public class MorphlingJarMenu extends HemoContainerMenu {
 
 	@Override
 	public boolean stillValid(Player playerIn) {
+		if (handler == null || jar.isEmpty()) return false;
 		// Equipped in scar slot
-		if (slotID == -200) {
-			return HemoCapabilityAccess.getEquipment(playerIn).getStackInSlot(7).getItem() instanceof ItemMorphlingJar;
-		}
-		if (slotID == -106)
-			return playerIn.getOffhandItem().getItem() instanceof ItemMorphlingJar;
-		ItemStack s = playerIn.getInventory().getItem(slotID);
-		return !s.isEmpty() && s.getItem() instanceof ItemMorphlingJar;
+		if (slotID == -200) return HemoCapabilityAccess.getEquipment(playerIn).getStackInSlot(7) == jar;
+		return carriesExactStack(playerIn, jar);
 	}
 
 	// ─── Accessors ───────────────────────────────────────────────────────────────
@@ -186,11 +186,6 @@ public class MorphlingJarMenu extends HemoContainerMenu {
 			if (!handler.getStackInSlot(i).isEmpty()) count++;
 		}
 		return count;
-	}
-
-	/** Returns 0.0–1.0 representing how full the jar is. */
-	public float getFillRatio() {
-		return slotcount == 0 ? 0f : (float) getFilledSlotCount() / slotcount;
 	}
 
 	// ─── Helpers ─────────────────────────────────────────────────────────────────

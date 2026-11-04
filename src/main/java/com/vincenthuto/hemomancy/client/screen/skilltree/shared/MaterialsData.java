@@ -65,7 +65,6 @@ public final class MaterialsData {
                 "material.hemomancy.ambergris_cylinder.desc",
                 "material.hemomancy.category.clinical_tools", () -> new ItemStack(ItemInit.ambergris_cylinder.get())));
 
-
         // ── Functional Blocks ──
         list.add(new MaterialEntry("dendritic_distributor", "block.hemomancy.dendritic_distributor",
                 "material.hemomancy.dendritic_distributor.desc",
@@ -137,11 +136,6 @@ public final class MaterialsData {
                 "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.mortal_display.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("visceral_mirror", "block.hemomancy.visceral_mirror",
-                "material.hemomancy.visceral_mirror.desc",
-                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.visceral_mirror.get()),
-                true, UnlockPredicate.minDegree(4)));
-
         list.add(new MaterialEntry("blood_crystal_block", "material.hemomancy.blood_crystal_block",
                 "material.hemomancy.blood_crystal_block.desc",
                 "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.blood_crystal.get()),
@@ -156,11 +150,6 @@ public final class MaterialsData {
                 "material.hemomancy.blood_basin.desc",
                 "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.blood_basin.get()),
                 true, UnlockPredicate.minDegree(2)));
-
-        list.add(new MaterialEntry("blood_pylon", "block.hemomancy.blood_pylon",
-                "material.hemomancy.blood_pylon.desc",
-                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.blood_pylon.get()),
-                true, UnlockPredicate.minDegree(3)));
 
         list.add(new MaterialEntry("consecrated_bloodwell", "block.hemomancy.consecrated_bloodwell",
                 "material.hemomancy.consecrated_bloodwell.desc",
@@ -190,17 +179,12 @@ public final class MaterialsData {
         list.add(new MaterialEntry("morphling_cradle", "block.hemomancy.morphling_cradle",
                 "material.hemomancy.morphling_cradle.desc",
                 "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.morphling_cradle.get()),
-                true, UnlockPredicate.minDegree(3)));
+                true, UnlockPredicate.minDegree(4)));
 
         list.add(new MaterialEntry("mycelial_crucible", "block.hemomancy.mycelial_crucible",
                 "material.hemomancy.mycelial_crucible.desc",
                 "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.mycelial_crucible.get()),
                 true, UnlockPredicate.minDegree(4)));
-
-        list.add(new MaterialEntry("blood_trial_altar", "block.hemomancy.blood_trial_altar",
-                "material.hemomancy.blood_trial_altar.desc",
-                "material.hemomancy.category.functional_blocks", () -> new ItemStack(BlockInit.blood_trial_altar.get()),
-                true, UnlockPredicate.minDegree(5)));
 
         list.add(new MaterialEntry("bog_body", "block.hemomancy.bog_body",
                 "material.hemomancy.bog_body.desc",
@@ -273,6 +257,16 @@ public final class MaterialsData {
                 "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.infested_venous_stone.get()),
                 true, UnlockPredicate.minDegree(4)));
 
+        list.add(new MaterialEntry("heartwood_log", "block.hemomancy.heartwood_log",
+                "material.hemomancy.heartwood_log.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.HEARTWOOD.log().get()),
+                true, UnlockPredicate.minDegree(3)));
+
+        list.add(new MaterialEntry("ravenous_heartwood", "block.hemomancy.ravenous_heartwood",
+                "material.hemomancy.ravenous_heartwood.desc",
+                "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.ravenous_heartwood.get()),
+                true, UnlockPredicate.minDegree(3)));
+
         list.add(new MaterialEntry("blood_wood_log", "block.hemomancy.blood_wood_log",
                 "material.hemomancy.blood_wood_log.desc",
                 "material.hemomancy.category.building_blocks", () -> new ItemStack(BlockInit.blood_wood_log.get()),
@@ -344,19 +338,14 @@ public final class MaterialsData {
                 "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.sanguine_conduit.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-        list.add(new MaterialEntry("puppeteering_thread", "item.hemomancy.puppeteering_thread",
-                "material.hemomancy.puppeteering_thread.desc",
-                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.puppeteering_thread.get()),
+        list.add(new MaterialEntry("enthralling_filament", "item.hemomancy.enthralling_filament",
+                "material.hemomancy.enthralling_filament.desc",
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.enthralling_filament.get()),
                 true, UnlockPredicate.minDegree(2)));
 
         list.add(new MaterialEntry("bleeding_bulb", "item.hemomancy.bleeding_bulb",
                 "material.hemomancy.bleeding_bulb.desc",
                 "material.hemomancy.category.plants", () -> new ItemStack(ItemInit.bleeding_bulb.get()),
-                true, UnlockPredicate.always()));
-
-        list.add(new MaterialEntry("blood_chum", "item.hemomancy.blood_chum",
-                "material.hemomancy.blood_chum.desc",
-                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.blood_chum.get()),
                 true, UnlockPredicate.always()));
 
         list.add(new MaterialEntry("vivianite_cluster", "item.hemomancy.vivianite_cluster",
@@ -817,9 +806,9 @@ public final class MaterialsData {
                 "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.adipocere.get()),
                 true, UnlockPredicate.minDegree(1)));
 
-        list.add(new MaterialEntry("calcified_blood_spine", "material.hemomancy.calcified_blood_spine",
+        list.add(new MaterialEntry("barbed_splinter", "material.hemomancy.barbed_splinter",
                 "",
-                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.calcified_blood_spine.get()),
+                "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.barbed_splinter.get()),
                 true, UnlockPredicate.minDegree(1)));
 
         list.add(new MaterialEntry("chalybeate_sclerite", "item.hemomancy.chalybeate_sclerite",
@@ -979,11 +968,6 @@ public final class MaterialsData {
                 "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.hematic_stake.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("humane_idol", "block.hemomancy.humane_idol",
-                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
-                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.humane_idol.get()),
-                true, UnlockPredicate.minDegree(4)));
-
         list.add(new MaterialEntry("mason_effigy", "material.hemomancy.mason_effigy",
                 "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
                 "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.mason_effigy.get()),
@@ -1009,19 +993,9 @@ public final class MaterialsData {
                 "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.sanguine_omen.get()),
                 true, UnlockPredicate.minDegree(4)));
 
-        list.add(new MaterialEntry("serpentine_idol", "block.hemomancy.serpentine_idol",
-                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
-                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.serpentine_idol.get()),
-                true, UnlockPredicate.minDegree(4)));
-
         list.add(new MaterialEntry("specimen_jar", "block.hemomancy.specimen_jar",
                 "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
                 "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.specimen_jar.get()),
-                true, UnlockPredicate.minDegree(4)));
-
-        list.add(new MaterialEntry("witness_organ", "item.hemomancy.witness_organ",
-                "material.hemomancy.shared.a_ritual_fixture_or_idol_used",
-                "material.hemomancy.category.idols_fixtures", () -> new ItemStack(BlockInit.witness_organ.get()),
                 true, UnlockPredicate.minDegree(4)));
 
         list.add(new MaterialEntry("annettas_sanguis_lancea", "item.hemomancy.annettas_sanguis_lancea",
@@ -1474,31 +1448,6 @@ public final class MaterialsData {
                 "material.hemomancy.category.spores_cultures", () -> new ItemStack(ItemInit.vivacious_spores.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-        list.add(new MaterialEntry("echo_of_heart", "item.hemomancy.echo_of_heart",
-                "material.hemomancy.shared.a_visceral_echo_reflected_through_the",
-                "material.hemomancy.category.organ_echoes", () -> new ItemStack(ItemInit.echo_of_heart.get()),
-                true, UnlockPredicate.minDegree(4)));
-
-        list.add(new MaterialEntry("echo_of_kidneys", "item.hemomancy.echo_of_kidneys",
-                "material.hemomancy.shared.a_visceral_echo_reflected_through_the",
-                "material.hemomancy.category.organ_echoes", () -> new ItemStack(ItemInit.echo_of_kidneys.get()),
-                true, UnlockPredicate.minDegree(4)));
-
-        list.add(new MaterialEntry("echo_of_liver", "item.hemomancy.echo_of_liver",
-                "material.hemomancy.shared.a_visceral_echo_reflected_through_the",
-                "material.hemomancy.category.organ_echoes", () -> new ItemStack(ItemInit.echo_of_liver.get()),
-                true, UnlockPredicate.minDegree(4)));
-
-        list.add(new MaterialEntry("echo_of_lungs", "item.hemomancy.echo_of_lungs",
-                "material.hemomancy.shared.a_visceral_echo_reflected_through_the",
-                "material.hemomancy.category.organ_echoes", () -> new ItemStack(ItemInit.echo_of_lungs.get()),
-                true, UnlockPredicate.minDegree(4)));
-
-        list.add(new MaterialEntry("echo_of_spleen", "item.hemomancy.echo_of_spleen",
-                "material.hemomancy.shared.a_visceral_echo_reflected_through_the",
-                "material.hemomancy.category.organ_echoes", () -> new ItemStack(ItemInit.echo_of_spleen.get()),
-                true, UnlockPredicate.minDegree(4)));
-
         list.add(new MaterialEntry("hematic_iron_chestplate", "item.hemomancy.hematic_iron_chestplate",
                 "",
                 "material.hemomancy.category.materials", () -> new ItemStack(ItemInit.hematic_iron_chestplate.get()),
@@ -1641,11 +1590,6 @@ public final class MaterialsData {
                 "material.hemomancy.hemolytic_plating.desc",
                 "material.hemomancy.category.anti_blood", () -> new ItemStack(ItemInit.hemolytic_plating.get()),
                 true, UnlockPredicate.minPurity(15.0f)));
-
-        list.add(new MaterialEntry("neutralizing_gasket", "item.hemomancy.neutralizing_gasket",
-                "material.hemomancy.neutralizing_gasket.desc",
-                "material.hemomancy.category.anti_blood", () -> new ItemStack(ItemInit.neutralizing_gasket.get()),
-                true, UnlockPredicate.minPurity(25.0f)));
 
         list.add(new MaterialEntry("hemolytic_plating_block", "block.hemomancy.hemolytic_plating_block",
                 "material.hemomancy.hemolytic_plating_block.desc",

@@ -51,6 +51,10 @@ public final class BloodRoutingEvents {
 
         BloodRoutingSavedData data = BloodRoutingSavedData.get(level);
         for (Map.Entry<BlockPos, DirectBloodLinkData> entry : data.entries()) {
+            // An unloaded link stays unloaded: getBlockEntity would pull its chunk in twice a second (RT-2).
+            if (!level.isLoaded(entry.getKey())) {
+                continue;
+            }
             BlockEntity be = level.getBlockEntity(entry.getKey());
             if (be instanceof HematicSutureNodeBlockEntity) {
                 continue;

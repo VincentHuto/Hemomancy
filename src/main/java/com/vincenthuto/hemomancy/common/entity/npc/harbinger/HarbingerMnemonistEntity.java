@@ -30,7 +30,6 @@ import net.minecraft.world.level.Level;
  * tools used to order and weave refined memories.
  */
 public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
-	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerMnemonistEntity(EntityType<? extends HarbingerMnemonistEntity> type, Level level) {
 		super(type, level);
@@ -63,9 +62,6 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.e
 
 	@Override
 	public void tick() {
-		if (this.level().isClientSide()) {
-			this.idleAnimationState.startIfStopped(this.tickCount);
-		}
 		super.tick();
 	}
 
@@ -80,7 +76,7 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.e
 			}
 			com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.met(serverPlayer, "mnemonist");
             DialogueTree tree = progressionDialogue(serverPlayer);
-			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "mnemonist", degree, 0f);
+			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "mnemonist");
 			tree = DialogueHubFactory.decorate(tree, "mnemonist", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
@@ -135,10 +131,6 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.e
 	private static boolean isPurifying(Player player) {
 		return HemoCapabilityAccess.getUnstainedProgress(player)
 				.hasBegunPurification();
-	}
-
-	private static boolean hasBloodline(Player player) {
-		return HemoCapabilityAccess.getBloodVolume(player).getBloodLine().isValid();
 	}
 
 	private static boolean isNpcInPlayerBloodline(Player player, Entity npc) {

@@ -34,7 +34,7 @@ public final class CardinalRiteFogLightning {
 			ActiveRiteData.RiteEntry rite = scheduled.rite();
 			float radius = CardinalRiteFogGeometry.perimeterRadius(
 					rite.getFootprintRadius(), rite.getRiteSize(), rite.getCompletedRings(),
-					rite.getTotalRings(), rite.isLegacy());
+					rite.getTotalRings(), rite.isCountdown());
 			StrikeGeometry strike = geometry(rite.getCenter(), radius, scheduled.seed());
 			strike(strike.start(), strike.end(), scheduled.seed(), partialTick);
 		}

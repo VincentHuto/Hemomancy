@@ -15,7 +15,6 @@ class SchoolStateRulesTest {
         assertEquals(2, SchoolStateRules.rime(1, 1, 100, 90));
         assertEquals(1, SchoolStateRules.rime(1, 2, 99, 90));
         assertEquals(3, SchoolStateRules.rime(2, 2, 100, 90));
-        assertEquals(0.45, SchoolStateRules.rimeSlow(3), 0.0001);
     }
 
     @Test void necrosisStoresOnlyActualDirectHealthDamageAndCapsItsDebt() {
@@ -23,8 +22,6 @@ class SchoolStateRulesTest {
         assertEquals(6, SchoolStateRules.necrosisDebt(5, 20, true));
         assertEquals(5, SchoolStateRules.necrosisDebt(5, 20, false));
         assertEquals(5, SchoolStateRules.necrosisDebt(5, -2, true));
-        assertEquals(0.25, SchoolStateRules.healingMultiplier(true, true), 0.0001);
-        assertEquals(0.75, SchoolStateRules.healingMultiplier(true, false), 0.0001);
     }
 
     @Test void combustionSpendsRemainingHeatWithoutInventingMoreDamage() {

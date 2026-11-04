@@ -63,10 +63,6 @@ public class MnemonicReliquaryBlockEntity extends HemoBlockEntity {
 		return Mth.lerp(partialTick, prevLidAngle, lidAngle);
 	}
 
-	public int getOpenCount() {
-		return openCount;
-	}
-
 	@Override
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 		super.saveAdditional(tag, provider);

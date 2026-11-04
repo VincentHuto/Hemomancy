@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.init.StillArtInit;
@@ -75,7 +75,7 @@ public final class CastingAnimationManager {
     }
     private static boolean canPresent(ServerPlayer player,BloodManipulation manipulation) {
         var known=HemoCapabilityAccess.getKnownManipulations(player);
-        return player.isAlive() && !ManipulationRetirementRules.isRetiredManipulation(manipulation)
+        return player.isAlive()
                 && !com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)
                 && known!=null && known.getSelectedMemoryRef().kind()==MemoryEntryKind.MANIPULATION
                 && known.getSelectedManip()!=null

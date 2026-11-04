@@ -1,12 +1,14 @@
-﻿{
+{
   "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
   "ingredients": [
     {
-      "item": "hemomancy:blood_wood_log"
+      "tag": "hemomancy:blood_wood_logs"
     }
   ],
   "result": {
-    "id": "hemomancy:blood_wood_planks",
-    "count": 4
+    "count": 4,
+    "id": "hemomancy:blood_wood_planks"
   }
 }

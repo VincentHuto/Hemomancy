@@ -42,16 +42,7 @@ public final class HarbingerAssignmentReturnReadySourceTest {
 		for (String helper : new String[] {
 				"isFirstSeparationComplete",
 				"isMnemonistWovenVesselFinished",
-				"isVeinMasonContinuationReady",
-				"isArtificerWornVowLessonReady",
-				"isArtificerThreeAnswersLessonReady",
-				"isArtificerCrimsonVestmentLessonReady",
-				"isArtificerAssumedLimbLessonReady",
-				"isArtificerWornVowFittingReady",
-				"isArtificerThreeAnswersFittingReady",
-				"isArtificerCrimsonVestmentFittingReady",
-				"isArtificerWeightOfTheFrameFittingReady",
-				"isArtificerAssumedLimbFittingReady"
+				"isVeinMasonContinuationReady"
 		}) {
 			assertContains("return-ready helper exists: " + helper, advancementGranter, helper);
 		}

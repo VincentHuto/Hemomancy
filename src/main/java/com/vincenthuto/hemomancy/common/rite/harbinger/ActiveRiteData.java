@@ -84,7 +84,7 @@ public final class ActiveRiteData {
 		private float carriedSpinTicks;
 
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained) {
-			this(center, riteSize, progress, recipeId, unstained, "LEGACY", 0, 0, 0,
+			this(center, riteSize, progress, recipeId, unstained, "COUNTDOWN", 0, 0, 0,
 					Math.max(1, (riteSize - 1) / 2), Math.max(1, (riteSize - 1) / 2),
 					0, 0, 0, 0, -1, "", List.of(), List.of(), List.of());
 		}
@@ -179,7 +179,7 @@ public final class ActiveRiteData {
 			this.progress = progress;
 			this.recipeId = recipeId;
 			this.unstained = unstained;
-			this.phase = phase == null ? "LEGACY" : phase;
+			this.phase = phase == null ? "COUNTDOWN" : phase;
 			this.ritePhase = SUCCESSION_PHASE.equals(this.phase) ? null : CardinalRitePhase.byName(this.phase);
 			this.phaseTicks = Math.max(0, phaseTicks);
 			this.instability = instability;
@@ -247,7 +247,7 @@ public final class ActiveRiteData {
 		/** The typed phase, or {@code null} for the client-only SUCCESSION phase. */
 		public CardinalRitePhase ritePhase() { return ritePhase; }
 		public boolean isPhase(CardinalRitePhase candidate) { return ritePhase == candidate; }
-		public boolean isLegacy() { return ritePhase == CardinalRitePhase.LEGACY; }
+		public boolean isCountdown() { return ritePhase == CardinalRitePhase.COUNTDOWN; }
 		public boolean isSuccession() { return ritePhase == null; }
 		public int getPhaseTicks() { return phaseTicks; }
 		public int getInstability() { return instability; }

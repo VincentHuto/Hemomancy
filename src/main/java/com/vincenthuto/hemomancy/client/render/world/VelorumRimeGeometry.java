@@ -72,11 +72,11 @@ final class VelorumRimeGeometry {
         }
         if(f.phase().veilUntil()>0 && f.phase().veilUntil()<=VelorumVisualRules.VEIL_WARNING)
             square(p,shade,f.floor(),12.5,camera,.1,f.seed(),.6F);
-        if(action.martyr()>.01) {
+        if(action.stillGuard()>.01) {
             for(int i=0;i<7;i++) {
                 double a=i*2.39996;
                 Vec3 at=f.core().add(Math.cos(a)*.3,(i-3)*.13,Math.sin(a)*.3);
-                spire(p,ice,at,.025,.12*action.martyr(),new Vec3(Math.cos(a)*.07,0,Math.sin(a)*.07),f.seed()+i,action.martyr()*.8F);
+                spire(p,ice,at,.025,.12*action.stillGuard(),new Vec3(Math.cos(a)*.07,0,Math.sin(a)*.07),f.seed()+i,action.stillGuard()*.8F);
             }
         }
     }

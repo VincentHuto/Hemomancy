@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.mob.monster;
 
+import net.minecraft.util.Mth;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -108,8 +109,27 @@ public class RougeDrudgeModel<T extends Entity> extends EntityModel<T> {
 		brain.render(poseStack, buffer, packedLight, packedOverlay);
 	}
 
+	/**
+	 * A brain walking on eight tentacles: each tentacle crawls on its own phase of the stride and wriggles at rest,
+	 * the brain bobs and pulses over them, and the attack beat is the brain lunging forward on the legs.
+	 */
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+		ModelPart[] tentacles = {tent, tent2, tent3, tent4, tent5, tent6, tent7, tent8};
+		for (ModelPart tentacle : tentacles) tentacle.resetPose();
+		brain.resetPose();
+		float stride = Math.min(1.0F, limbSwingAmount * 2.5F);
+		float lunge = attackTime > 0.0F ? Mth.sin(attackTime * Mth.PI) : 0.0F;
+		for (int i = 0; i < tentacles.length; i++) {
+			float phase = limbSwing * 1.1F + i * 0.8F;
+			tentacles[i].xRot += Mth.sin(phase) * 0.55F * stride + Mth.sin(ageInTicks * 0.11F + i * 1.3F) * 0.07F;
+			tentacles[i].zRot += Mth.cos(phase) * 0.25F * stride * (i % 2 == 0 ? 1.0F : -1.0F)
+					+ Mth.cos(ageInTicks * 0.09F + i) * 0.05F - 0.35F * lunge;
+		}
+		brain.y += Mth.sin(ageInTicks * 0.14F) * 0.3F - 0.6F * stride * Mth.abs(Mth.sin(limbSwing * 1.1F));
+		brain.xRot += 0.05F * stride * Mth.sin(limbSwing * 1.1F) - 0.45F * lunge;
+		brain.yRot += netHeadYaw * Mth.DEG_TO_RAD * 0.5F;
+		float pulse = 1.0F + 0.03F * Mth.sin(ageInTicks * 0.2F) + 0.08F * lunge;
+		brain.xScale = brain.yScale = brain.zScale = pulse;
 	}
 }

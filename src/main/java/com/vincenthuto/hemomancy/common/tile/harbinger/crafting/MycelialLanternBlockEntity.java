@@ -37,7 +37,6 @@ public class MycelialLanternBlockEntity extends HemoContainerBlockEntity impleme
 
     public static final String TAG_BLOOD_LEVEL = "bloodLevel";
     private static final float MAX_BLOOD = 4_000F;
-    private static final AABB RENDER_BOUNDS = new AABB(-0.5D, -0.25D, -0.5D, 1.5D, 2.75D, 1.5D);
 
     public static final int SLOT_CULTURE = MycelialLanternAutomationRules.SLOT_CULTURE;
     public static final int SLOT_BLOOD = MycelialLanternAutomationRules.SLOT_BLOOD;

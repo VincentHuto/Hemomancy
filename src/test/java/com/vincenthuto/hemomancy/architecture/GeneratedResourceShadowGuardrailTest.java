@@ -39,7 +39,7 @@ class GeneratedResourceShadowGuardrailTest {
 		String generation = SourceAssertions.readMainJava("common/data/gen/DataGeneration.java");
 		List<String> providers = Pattern.compile("addProvider\\([^,]+,\\s*new (\\w+)\\(")
 				.matcher(generation).results().map(match -> match.group(1)).toList();
-		assertEquals(List.of("HemoBlockStateProvider", "HemoItemModelProvider", "CircusPavilionStructureProvider"),
+		assertEquals(List.of("HemoBlockStateProvider", "HemoItemModelProvider"),
 				providers);
 	}
 }

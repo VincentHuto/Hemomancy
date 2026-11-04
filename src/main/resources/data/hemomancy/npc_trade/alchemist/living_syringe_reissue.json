@@ -1,0 +1,27 @@
+{
+  "title": "hemomancy.trade.alchemist.living_syringe_reissue.title",
+  "line": "hemomancy.trade.alchemist.living_syringe_reissue.line",
+  "order": 90,
+  "requires": {
+    "degree_at_least": 3,
+    "blood_active": true
+  },
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "count": 8
+  },
+  "give": [
+    {
+      "item": "hemomancy:living_syringe",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 1,
+    "restock_days": 7
+  },
+  "show_locked": true
+}

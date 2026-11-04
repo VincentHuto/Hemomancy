@@ -23,10 +23,7 @@ class ContentFamilyGuardrailTest {
 			"common/entity/mob/arthropod/ChitiniteEntity.java", "AbstractChitiniteEntity",
 			"common/entity/mob/arthropod/FerventChitiniteEntity.java", "AbstractChitiniteEntity",
 			"common/entity/mob/arthropod/ChthonianEntity.java", "AbstractChthonianEntity",
-			"common/entity/mob/arthropod/ChthonianQueenEntity.java", "AbstractChthonianEntity",
-			"common/entity/projectile/TrackingBloodOrbEntity.java", "AbstractTrackingOrbEntity",
-			"common/entity/projectile/TrackingPestsEntity.java", "AbstractTrackingOrbEntity",
-			"common/entity/projectile/TrackingSerpentEntity.java", "AbstractTrackingOrbEntity");
+			"common/entity/mob/arthropod/ChthonianQueenEntity.java", "AbstractChthonianEntity");
 
 	@Test
 	void eachKindExtendsItsFamilyAndKeepsOnlyItsDifferences() {

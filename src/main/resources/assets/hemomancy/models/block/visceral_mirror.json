@@ -1,7 +1,0 @@
-{
-  "credit": "Made with Blockbench - rendered by BlockEntityRenderer",
-  "parent": "block/block",
-  "textures": {
-    "particle": "hemomancy:block/venous_stone"
-  }
-}

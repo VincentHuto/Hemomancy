@@ -283,32 +283,4 @@ public final class ZealotDialogueTrees {
                 .build();
     }
 
-    /**
-     * Item inquiry for the Zealot. Responds to Unstained-path items. Purity-gated
-     * responses (e.g. pallid_infusion requires 75+) are expressed as {@code min_purity}
-     * conditions in the JSON entries. Harbinger items and unknowns are dismissed with
-     * no mention of Harbinger NPCs.
-     */
-    public static DialogueTree itemInquiry(ItemStack item, int entityId, float purity, boolean clarityUnlocked) {
-        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.getItem());
-        return ItemInquiryRegistry.INSTANCE
-                .resolve("zealot", itemId, 0, purity)
-                .map(lines -> itemInquiryTree(entityId, lines.toArray(String[]::new)))
-                .orElseGet(() -> itemInquiryTree(entityId, "hemomancy.zealot.item_inquiry.unknown"));
-    }
-
-    private static DialogueTree itemInquiryTree(int entityId, String... lineKeys) {
-        return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
-                .theme(DialogueTheme.UNSTAINED)
-                .addNode(new DialogueNode("root", List.of(lineKeys), List.of(
-                        new DialogueOption("hemomancy.dialogue.zealot.option.ask_about_item", "item_hint", null),
-                        new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
-                )))
-                .addNode(new DialogueNode("item_hint", List.of(
-                        "hemomancy.zealot.item_hint"
-                ), List.of(
-                        new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
-                )))
-                .build();
-    }
 }

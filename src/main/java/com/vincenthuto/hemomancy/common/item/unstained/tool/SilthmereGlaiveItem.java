@@ -29,8 +29,6 @@ import java.util.stream.Collectors;
  */
 public class SilthmereGlaiveItem extends SwordItem {
 
-	/** Extra entity reach granted by this weapon (in blocks). */
-	public static final double REACH_BONUS = 1.5;
 	private static final int MAX_HIT_TARGETS = 3;
 	private static final int ADDITIONAL_CLEAVE_TARGETS = MAX_HIT_TARGETS - 1;
 	private static final double CLEAVE_RANGE = 3.25D;

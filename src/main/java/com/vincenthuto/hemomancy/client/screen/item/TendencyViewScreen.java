@@ -53,16 +53,8 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
     private static final int[] GAUGE_RINGS = {0xFF6B1010, 0xFF4A0C0C, 0xFF300808, 0xFF1A0404};
     private static final int GAUGE_CORNER = 0xFF8A1818;
 
-
     public TendencyViewScreen(TendencyViewMenu container, Inventory inventory, Component name) {
         super(container, inventory, name);
-    }
-
-    private static Point rotatePointAbout(Point in, Point about, double degrees) {
-        double rad = degrees * Math.PI / 180.0;
-        double newX = Math.cos(rad) * (in.x - about.x) - Math.sin(rad) * (in.y - about.y) + about.x;
-        double newY = Math.sin(rad) * (in.x - about.x) + Math.cos(rad) * (in.y - about.y) + about.y;
-        return new Point((int) newX, (int) newY);
     }
 
     @Override
@@ -84,7 +76,6 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
     public boolean isPauseScreen() {
         return false;
     }
-
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
@@ -281,10 +272,7 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
             rotAngle += 45;
         }
 
-
     }
-
-
 
     /**
      * Renders a dark red/black background covered in swimming, squiggling vein tendrils.
@@ -299,6 +287,5 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         this.dragUpDown -= dragUpDown / 2.0;
         return super.mouseDragged(xPos, yPos, button, dragLeftRight, dragUpDown);
     }
-
 
 }

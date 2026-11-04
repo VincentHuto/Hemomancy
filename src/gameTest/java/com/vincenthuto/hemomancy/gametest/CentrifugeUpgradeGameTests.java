@@ -186,51 +186,6 @@ public final class CentrifugeUpgradeGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "empty", timeoutTicks = 100, batch = "centrifuge_legacy_recovery")
-    public static void legacyOverflowSurvivesReloadAndRetainsStageCredit(GameTestHelper helper) {
-        var machine = machine(helper, 2);
-        var player = StationUpgradeGameTests.claimant(helper, 6);
-        try {
-            var registries = helper.getLevel().registryAccess();
-            var saved = machine.saveWithoutMetadata(registries);
-            var old = net.minecraft.core.NonNullList.withSize(28, ItemStack.EMPTY);
-            for (int slot = 10; slot < 18; slot++) old.set(slot, new ItemStack(Items.DIAMOND, 64));
-            var named = new ItemStack(ItemInit.neurotic_enzyme.get(), 3);
-            named.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Legacy fraction"));
-            old.set(20, named);
-            net.minecraft.world.ContainerHelper.saveAllItems(saved, old, registries);
-            var completed = net.minecraft.core.NonNullList.withSize(16, ItemStack.EMPTY);
-            completed.set(8, named.copyWithCount(1));
-            var completedTag = new CompoundTag();
-            net.minecraft.world.ContainerHelper.saveAllItems(completedTag, completed, registries);
-            saved.put("CompletedOutputs", completedTag);
-            int[] quantities = new int[48];
-            quantities[24] = 1;
-            quantities[26] = 2;
-            saved.putIntArray("CompletedQuantities", quantities);
-            machine.loadWithComponents(saved, registries);
-            helper.assertTrue(machine.getContainerSize() == 20
-                    && machine.attemptStartup(null) == VialCentrifugeStartupResult.BLOCKED_ENZYME_OUTPUT,
-                    "legacy overflow vanished or allowed new processing");
-            machine.loadWithComponents(machine.saveWithoutMetadata(registries), registries);
-            machine.setItem(10, ItemStack.EMPTY);
-            VialCentrifugeBlockEntity.serverTick(helper.getLevel(), machine.getBlockPos(), machine.getBlockState(), machine);
-            helper.assertTrue(ItemStack.matches(machine.getItem(10), named), "legacy components/count changed");
-            var menu = new VialCentrifugeMenu(1, player.getInventory(), machine);
-            helper.assertTrue(menu.slots.size() == 55, "menu retained extra fraction slots");
-            menu.clicked(9, 1, net.minecraft.world.inventory.ClickType.PICKUP, player);
-            var progress = HemoCapabilityAccess.stationUpgrades(player);
-            helper.assertTrue(progress.hasUsed(UpgradeStation.CENTRIFUGE, StationUpgradeCatalog.SEPARATE_CALIBRATED),
-                    "ordinary extraction lost migrated calibrated credit");
-            var remaining = net.minecraft.core.NonNullList.withSize(8, ItemStack.EMPTY);
-            net.minecraft.world.ContainerHelper.loadAllItems(machine.saveWithoutMetadata(registries)
-                    .getCompound("LegacyRecovery"), remaining, registries);
-            helper.assertTrue(remaining.stream().allMatch(ItemStack::isEmpty),
-                    "legacy output remained queued after recovery");
-        } finally { player.discard(); }
-        helper.succeed();
-    }
-
     @GameTest(template = "empty", timeoutTicks = 100, batch = "centrifuge_native_fractions")
     public static void mixedSamplesRecoverOnlyDistinctNativeFractions(GameTestHelper helper) {
         var machine = machine(helper, 2);
@@ -423,30 +378,6 @@ public final class CentrifugeUpgradeGameTests {
                         StationUpgradeCatalog.SEPARATE), "untracked replacement inherited spent hopper credit");
             } finally { other.discard(); }
         } finally { player.discard(); }
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 100, batch = "centrifuge_legacy_drops")
-    public static void breakingDropsQueuedLegacyFractionsExactlyOnce(GameTestHelper helper) {
-        var machine = machine(helper, 2);
-        var registries = helper.getLevel().registryAccess();
-        var saved = machine.saveWithoutMetadata(registries);
-        var old = net.minecraft.core.NonNullList.withSize(28, ItemStack.EMPTY);
-        for (int slot = 10; slot < 18; slot++) old.set(slot, new ItemStack(Items.DIAMOND, 64));
-        old.set(27, new ItemStack(ItemInit.neurotic_enzyme.get(), 5));
-        net.minecraft.world.ContainerHelper.saveAllItems(saved, old, registries);
-        machine.loadWithComponents(saved, registries);
-        var bounds = new net.minecraft.world.phys.AABB(machine.getBlockPos()).inflate(2);
-        helper.getLevel().removeBlock(machine.getBlockPos(), false);
-        int count = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, bounds)
-                .stream().map(net.minecraft.world.entity.item.ItemEntity::getItem)
-                .filter(stack -> stack.is(ItemInit.neurotic_enzyme.get())).mapToInt(ItemStack::getCount).sum();
-        helper.assertTrue(count == 5, "breaking lost or duplicated queued legacy fractions: " + count);
-        machine.dropLegacyRecovery(helper.getLevel(), machine.getBlockPos());
-        helper.assertTrue(helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, bounds)
-                .stream().map(net.minecraft.world.entity.item.ItemEntity::getItem)
-                .filter(stack -> stack.is(ItemInit.neurotic_enzyme.get())).mapToInt(ItemStack::getCount).sum() == 5,
-                "repeated recovery duplicated drops");
         helper.succeed();
     }
 

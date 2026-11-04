@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,7 +19,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -32,8 +30,6 @@ public class VitricCombustionManip extends BloodManipulation {
 	private static final double BASE_BLAST_RADIUS = 4.0;
 	private static final float BLAST_DAMAGE = 8.0f; // 4 hearts
 	private static final double KNOCKBACK_STRENGTH = 1.2;
-	private static final DustParticleOptions COMBUSTION_DUST =
-			new DustParticleOptions(new Vector3f(1.0F, 0.35F, 0.05F), 1.0F);
 
 	public VitricCombustionManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,

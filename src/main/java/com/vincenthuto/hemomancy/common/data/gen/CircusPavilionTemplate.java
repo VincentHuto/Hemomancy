@@ -122,7 +122,7 @@ final class CircusPavilionTemplate {
 	}
 
 	static PerformerPlacement carousel() {
-		return new PerformerPlacement("hemomancy:circus_carousel", 16.5D, 1.0D, 16.5D);
+		return new PerformerPlacement("hemomancy:impaled_procession", 16.5D, 1.0D, 16.5D);
 	}
 
 	static PerformerPlacement ringmaster() {

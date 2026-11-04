@@ -36,8 +36,8 @@ public class CovenantWaybillItem extends Item {
 	private final int searchRadiusChunks;
 
 	public CovenantWaybillItem(Properties properties) {
-		this(properties, Hemomancy.rloc("covenant_waybill_targets"),
-				"item.hemomancy.covenant_waybill", 160);
+		this(properties, Hemomancy.rloc("harbinger_lodestone_targets"),
+				"item.hemomancy.harbinger_lodestone", 160);
 	}
 
 	protected CovenantWaybillItem(Properties properties, ResourceLocation targetTag,

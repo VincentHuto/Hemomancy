@@ -125,10 +125,6 @@ public class VeinLocation extends DimensionalPosition {
 		this.name = name;
 	}
 
-	public void setRandomName() {
-		this.name = getRandomName();
-	}
-
 	public void setUUID(UUID uuid) {
 		this.uuid = uuid;
 	}

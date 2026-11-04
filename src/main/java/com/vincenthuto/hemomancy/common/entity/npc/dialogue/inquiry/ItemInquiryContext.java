@@ -17,9 +17,6 @@ public record ItemInquiryContext(
         boolean silentArchon,
         boolean apotheos
 ) {
-    public static ItemInquiryContext legacy(int degree, float purity) {
-        return new ItemInquiryContext(degree, purity, 0F, false, degree > 0, purity > 0F, false, degree >= 8);
-    }
 
     public static ItemInquiryContext from(Player player) {
         int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);

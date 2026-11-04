@@ -165,7 +165,7 @@ public final class ManipulationBalancePass2SchoolAGameTests {
             scoreboard.addPlayerToTeam(p.getScoreboardName(), team);
             scoreboard.addPlayerToTeam(ally.getScoreboardName(), team);
             var shooter = husk(h, h.absoluteVec(new Vec3(4.5, 2, 4.5)));
-            FerricConstructEntity wall = EntityInit.iron_wall.get().create(h.getLevel());
+            FerricConstructEntity wall = EntityInit.ferric_rampart.get().create(h.getLevel());
             wall.setPos(h.absoluteVec(CENTRE));
             wall.configure(p, Kind.WALL, Direction.NORTH, FerricBarrierManip.durationTicks(Kind.WALL));
             h.getLevel().addFreshEntity(wall);

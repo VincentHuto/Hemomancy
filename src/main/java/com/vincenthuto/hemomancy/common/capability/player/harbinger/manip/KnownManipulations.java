@@ -310,9 +310,9 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	@Override
 	public boolean equipMemory(MemorySlotRef ref, int maxSlots) {
 		if (ref == null) return false;
-		if (ref.muscleMemory().isPresent()) {
-			MemoryEquipRules.AutoEquipResult result = MemoryEquipRules.autoEquipMuscleMemory(
-					equippedManipNames, ref.muscleMemory().orElseThrow(), maxSlots);
+		if (ref.thelemicMemory().isPresent()) {
+			MemoryEquipRules.AutoEquipResult result = MemoryEquipRules.autoEquipThelemicMemory(
+					equippedManipNames, ref.thelemicMemory().orElseThrow(), maxSlots);
 			boolean equipped = result == MemoryEquipRules.AutoEquipResult.ADDED
 					|| result == MemoryEquipRules.AutoEquipResult.REPLACED_SECTION;
 			if (equipped) markSyncDirty();
@@ -481,7 +481,6 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		LinkedHashMap<BloodManipulation, ManipLevel> map = new LinkedHashMap<>();
 		List<VeinLocation> veinList = new ArrayList<>();
 		int veinCount = 0;
-		boolean legacyAvatarActive = false;
 		String savedAvatarForm = "";
 		int familyMemoryVersion = 0;
 		Set<String> savedGrandfatheredForms = new LinkedHashSet<>();
@@ -511,9 +510,6 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 						VeinLocation vein = VeinLocation.deserializeToLoc(parsedNbt.getCompound("Vein" + j));
 						veinList.add(vein);
 					}
-				}
-				if (parsedNbt.contains("avatarActive")) {
-					legacyAvatarActive = parsedNbt.getBoolean("avatarActive");
 				}
 				if (parsedNbt.contains("avatarForm", Tag.TAG_STRING)) {
 					savedAvatarForm = parsedNbt.getString("avatarForm");
@@ -566,8 +562,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		}
 		setGrandfatheredFamilyForms(savedGrandfatheredForms);
 		setVeinList(veinList);
-		String restoredAvatar = !savedAvatarForm.isBlank() ? savedAvatarForm
-				: legacyAvatarActive ? "summon_avatar" : "";
+		String restoredAvatar = !savedAvatarForm.isBlank() ? savedAvatarForm : "";
 		setActiveAvatarForm(canRestoreAvatarForm(restoredAvatar) ? restoredAvatar : "");
 	}
 

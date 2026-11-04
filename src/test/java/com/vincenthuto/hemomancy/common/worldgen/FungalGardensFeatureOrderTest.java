@@ -57,33 +57,6 @@ class FungalGardensFeatureOrderTest {
 		}
 	}
 
-	@Test
-	void javaBiomeBootstrapUsesTheSameCanonicalOrder() throws IOException {
-		String source = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/init/BiomeInit.java"));
-
-		assertSourceOrder(methodBody(source, "fungalIsles"), "PATCH_HYPHAE", "SMALL_INFECTED_FUNGUS");
-		assertSourceOrder(methodBody(source, "fungalGardens"),
-				"BLEEDING_HEARTS", "PATCH_HYPHAE", "SMALL_INFECTED_FUNGUS");
-		assertSourceOrder(methodBody(source, "sporecrownThicket"),
-				"BLEEDING_HEARTS", "PATCH_HYPHAE", "SMALL_INFECTED_FUNGUS");
-	}
-
-	private static String methodBody(String source, String methodName) {
-		int start = source.indexOf("Biome " + methodName);
-		int end = source.indexOf("\n\t}", start);
-		return source.substring(start, end);
-	}
-
-	private static void assertSourceOrder(String source, String... features) {
-		int previous = -1;
-		for (String feature : features) {
-			int current = source.indexOf(feature);
-			assertTrue(current > previous, feature + " is out of canonical order");
-			previous = current;
-		}
-	}
-
 	private static void assertCanonicalRelativeOrder(String biome, JsonArray features) {
 		int bleeding = indexOf(features, BLEEDING_HEARTS);
 		int patch = indexOf(features, PATCH_HYPHAE);

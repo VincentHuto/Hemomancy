@@ -21,7 +21,6 @@ class MonolithFragmentResourceTest {
 				"com/vincenthuto/hemomancy/client/render/item/MonolithFragmentItemRenderer.java"));
 		String model = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/monolith_fragment.json"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
-		String tag = read(RESOURCE_ROOT.resolve("data/hemomancy/tags/item/progression/monolith_fragments.json"));
 
 		assertContains("item registry includes monolith fragments", itemInit,
 				"monolith_fragment = BASEITEMS.register(\"monolith_fragment\"");
@@ -49,8 +48,6 @@ class MonolithFragmentResourceTest {
 				"morphPhase");
 		assertContains("fragment display name is localized", lang,
 				"\"item.hemomancy.monolith_fragment\": \"Monolith Fragment\"");
-		assertContains("fragment tag exposes late-game recipe hook", tag,
-				"\"hemomancy:monolith_fragment\"");
 	}
 
 	private static String read(Path path) throws IOException {

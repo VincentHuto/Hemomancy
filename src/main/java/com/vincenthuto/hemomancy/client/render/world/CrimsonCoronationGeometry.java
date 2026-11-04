@@ -24,7 +24,6 @@ import java.util.List;
 final class CrimsonCoronationGeometry {
     static final int SLOTS = 8;
     static final double CROWN_HEIGHT = 2.25, CROWN_RADIUS = .38;
-    private static final Vec3 UP = new Vec3(0, 1, 0);
 
     private CrimsonCoronationGeometry() {}
 

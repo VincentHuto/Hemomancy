@@ -18,8 +18,7 @@ public final class DialogueItemInquiryNodes {
 
     private DialogueItemInquiryNodes() {}
 
-    public static DialogueTree withInventoryItemInquiries(DialogueTree tree, Player player, String speakerKey,
-            int degree, float purity) {
+    public static DialogueTree withInventoryItemInquiries(DialogueTree tree, Player player, String speakerKey) {
         tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.AntecedentDialogue.append(tree, player, speakerKey);
         List<ItemStack> inventory = new ArrayList<>(player.getInventory().getContainerSize());
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
@@ -42,11 +41,6 @@ public final class DialogueItemInquiryNodes {
         tree = withInventoryItemInquiries(tree, inventory, speakerKey, context);
         return InquiryAccessPolicy.accessFor(speakerKey, context) == InquiryAccessPolicy.Access.NONE ? tree
                 : addResolvedInventoryItemInquiries(tree, clinical);
-    }
-
-    static DialogueTree withInventoryItemInquiries(DialogueTree tree, Iterable<ItemStack> inventory,
-            String speakerKey, int degree, float purity) {
-        return withInventoryItemInquiries(tree, inventory, speakerKey, ItemInquiryContext.legacy(degree, purity));
     }
 
     static DialogueTree withInventoryItemInquiries(DialogueTree tree, Iterable<ItemStack> inventory,
@@ -147,11 +141,6 @@ public final class DialogueItemInquiryNodes {
     static Optional<List<String>> registeredLines(String speakerKey, ResourceLocation itemId,
             ItemInquiryContext context) {
         return ItemInquiryRegistry.INSTANCE.resolve(speakerKey, itemId, context);
-    }
-
-    static Optional<List<String>> registeredLines(String speakerKey, ResourceLocation itemId, int degree,
-            float purity) {
-        return registeredLines(speakerKey, itemId, ItemInquiryContext.legacy(degree, purity));
     }
 
     record ResolvedInventoryInquiry(String presentationKey, ResourceLocation itemId, List<String> lines) {}

@@ -20,18 +20,12 @@ import java.util.*;
 @PrefixGameTestTemplate(false)
 public final class CrimsonTroupeStructureGameTests {
     @GameTest(template="empty", timeoutTicks=40)
-    public static void realTemplatesRetainTheArenaAndCoverEveryProfessor(GameTestHelper h) {
+    public static void realTemplatesCoverEveryProfessor(GameTestHelper h) {
         var manager = h.getLevel().getStructureManager();
-        var legacy = manager.get(Hemomancy.rloc("circus_pavilion")).orElseThrow();
         var expanded = manager.get(Hemomancy.rloc("crimson_troupe_pavilion")).orElseThrow();
         h.assertTrue(expanded.getSize().equals(new BlockPos(65,14,65)), "new pavilion bounds do not bind");
         var authored = new HashMap<BlockPos, StructureTemplate.StructureBlockInfo>();
         for (var block : ((VigilTemplateAccessor)expanded).hemomancy$palettes().getFirst().blocks()) authored.put(block.pos(), block);
-        for (var block : ((VigilTemplateAccessor)legacy).hemomancy$palettes().getFirst().blocks()) {
-            var actual = authored.get(block.pos().offset(16,0,16));
-            h.assertTrue(actual != null && actual.state().equals(block.state()) && Objects.equals(actual.nbt(), block.nbt()),
-                    "original arena state or block-entity data changed at " + block.pos());
-        }
         h.assertTrue(faculty(h, expanded).size() == 9, "pavilion lost a faculty role or original performer");
         var covered = new HashSet<String>();
         for (String variant : List.of("air","blades","pageantry","embers","memory")) {
@@ -74,7 +68,7 @@ public final class CrimsonTroupeStructureGameTests {
         for (Tag entry : template.save(new CompoundTag()).getList("entities", Tag.TAG_COMPOUND)) {
             String id = ((CompoundTag)entry).getCompound("nbt").getString("id");
             h.assertTrue(BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse(id)), "template references unknown actor: " + id);
-            if (id.startsWith("hemomancy:circus_") && !id.equals("hemomancy:circus_carousel")) roles.add(id);
+            if (id.startsWith("hemomancy:circus_") && !id.equals("hemomancy:impaled_procession")) roles.add(id);
         }
         return roles;
     }

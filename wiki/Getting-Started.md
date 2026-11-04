@@ -23,7 +23,7 @@ Install the required mods, find a Blood Temple, and use the Mortal Display to de
 
 ### Optional Mods
 - **Just Enough Items (JEI)**: Adds recipe viewing for custom crafting stations. It is the recommended alpha companion mod.
-- **Mana and Artifice** - Dormant on the NeoForge 1.21.1 branch; integration design/source is preserved but not active
+- **Mana and Artifice** - Not supported; the old integration was removed.
 - **Curios API** - Dormant on the NeoForge 1.21.1 branch; Charm of Vascularium behavior currently uses Hemomancy's own equipment surfaces instead of a Curios slot
 
 See **[[Public Alpha Readiness]]** for the current alpha status and known limitations.

@@ -425,11 +425,39 @@ public class BloodVolumeEvents {
 		}
 	}
 
+	/** Diagnostics are rebuilt and resent at most this often per player outside lifecycle sends. */
+	public static final int DIAGNOSTICS_INTERVAL_TICKS = 20;
+
+	/**
+	 * Marks the volume for the end-of-tick flush ({@code PlayerStateSync.BLOOD_VOLUME}). Every payment, income and
+	 * command ends here; a per-tick source (Sanguine Surge, Blood Loss) no longer costs five packets a tick (RT-1).
+	 */
 	public static void syncVolume(ServerPlayer player, IBloodVolume volume) {
+		volume.markSyncDirty();
+	}
+
+	/** Sends the volume now, with its four diagnostics payloads; lifecycle resends and opened diagnostics use this. */
+	public static void sendVolume(ServerPlayer player, IBloodVolume volume) {
+		sendVolume(player, volume, true);
+	}
+
+	/** The flush: the volume every time it is dirty, the diagnostics at most every {@link #DIAGNOSTICS_INTERVAL_TICKS}. */
+	public static void flushVolume(ServerPlayer player) {
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
+		long now = player.serverLevel().getGameTime();
+		long last = volume.lastDiagnosticsSync();
+		sendVolume(player, volume, last < 0 || now - last >= DIAGNOSTICS_INTERVAL_TICKS);
+	}
+
+	private static void sendVolume(ServerPlayer player, IBloodVolume volume, boolean withDiagnostics) {
 		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
-		PacketHandler.sendToPlayer(player, new PacketSyncBloodFlowDiagnostics(BloodFlowLedger.collect(player, volume)));
-		PacketHandler.sendToPlayer(player, new PacketSyncMaxBloodDiagnostics(MaxBloodLedger.collect(player, volume)));
-		ManipulationDiagnosticsSync.sync(player);
+		if (withDiagnostics) {
+			PacketHandler.sendToPlayer(player, new PacketSyncBloodFlowDiagnostics(BloodFlowLedger.collect(player, volume)));
+			PacketHandler.sendToPlayer(player, new PacketSyncMaxBloodDiagnostics(MaxBloodLedger.collect(player, volume)));
+			ManipulationDiagnosticsSync.sync(player);
+			volume.setLastDiagnosticsSync(player.serverLevel().getGameTime());
+		}
+		volume.clearSyncDirty();
 	}
 
 	@SubscribeEvent

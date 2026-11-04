@@ -62,8 +62,6 @@ final class LivingFlailRulesTest {
 		assertFalse((boolean) maxCue.invoke(null, 99));
 		assertTrue((boolean) maxCue.invoke(null, 100));
 		assertFalse((boolean) maxCue.invoke(null, 101));
-		assertEquals(1, ((Number) rules().getMethod("slownessAmplifier", float.class).invoke(null, 0.49F)).intValue());
-		assertEquals(2, ((Number) rules().getMethod("slownessAmplifier", float.class).invoke(null, 0.5F)).intValue());
 	}
 
 	@Test

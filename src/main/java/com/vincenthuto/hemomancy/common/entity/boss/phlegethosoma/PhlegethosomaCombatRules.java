@@ -8,12 +8,10 @@ public final class PhlegethosomaCombatRules {
     public static final float MAX_HEALTH = 120;
     public static final float BITE_DAMAGE = 7;
     public static final int STAGGER_TICKS = 35;
-    public static final int CLOT_LIFETIME = 160;
     public static final int MAX_CLOTS = 6;
     public static final int INTRO_TICKS = 60;
     /** The opening rear peaks here; the model's head arc and the scene's title share it. */
     public static final int INTRO_REAR_AT = INTRO_TICKS / 2;
-    public static final double SUCTION_RANGE = 10;
     private PhlegethosomaCombatRules() {}
 
     /** Bar colour per phase, so the frame can read the phase: arterial, then swollen, then stripped raw. */

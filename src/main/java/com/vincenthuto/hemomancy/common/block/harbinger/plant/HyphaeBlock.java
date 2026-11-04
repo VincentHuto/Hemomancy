@@ -19,7 +19,6 @@ import net.neoforged.neoforge.common.util.TriState;
 
 public class HyphaeBlock extends BushBlock implements BonemealableBlock {
 	public static final MapCodec<HyphaeBlock> CODEC = simpleCodec(HyphaeBlock::new);
-	protected static final float AABB_OFFSET = 6.0F;
 	protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
 
 	public HyphaeBlock(BlockBehaviour.Properties pProperties) {
@@ -48,14 +47,16 @@ public class HyphaeBlock extends BushBlock implements BonemealableBlock {
 		return true;
 	}
 
+	/** Bonemeal spreads the hyphae to the ground around them, the way the mycelium creeps; never vanilla grass. */
 	@Override
 	public void performBonemeal(ServerLevel pLevel, RandomSource pRandom, BlockPos pPos, BlockState pState) {
-		DoublePlantBlock doubleplantblock = (DoublePlantBlock) (pState.is(Blocks.FERN) ? Blocks.LARGE_FERN
-				: Blocks.TALL_GRASS);
-		if (doubleplantblock.defaultBlockState().canSurvive(pLevel, pPos) && pLevel.isEmptyBlock(pPos.above())) {
-			DoublePlantBlock.placeAt(pLevel, doubleplantblock.defaultBlockState(), pPos, 2);
+		BlockState hyphae = defaultBlockState();
+		for (int attempt = 0; attempt < 8; attempt++) {
+			BlockPos spot = pPos.offset(pRandom.nextInt(5) - 2, pRandom.nextInt(3) - 1, pRandom.nextInt(5) - 2);
+			if (pLevel.isEmptyBlock(spot) && hyphae.canSurvive(pLevel, spot)) {
+				pLevel.setBlock(spot, hyphae, 3);
+			}
 		}
-
 	}
 
 	@Override

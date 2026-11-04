@@ -23,7 +23,6 @@ import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
 import com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -42,7 +41,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
@@ -58,7 +56,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrierProjectile {
 	private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(BloodBoltEntity.class,
@@ -73,8 +70,6 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 		return CompoundTag.contains("CustomPotionColor", 99) ? CompoundTag.getInt("CustomPotionColor") : -1;
 	}
 
-	@Nullable
-	private Holder<Potion> potion = null;
 	private final Set<MobEffectInstance> customPotionEffects = Sets.newHashSet();
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
 	private boolean hasChained;
@@ -118,7 +113,7 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 				listnbt.add(effectinstance.save());
 			}
 
-			compound.put("CustomPotionEffects", listnbt);
+			compound.put("custom_potion_effects", listnbt);
 		}
 
 	}
@@ -131,9 +126,7 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 	public void addEffect(MobEffectInstance effect) {
 		this.customPotionEffects.add(effect);
 		this.getEntityData().set(COLOR,
-				PotionContents.getColor(Stream.concat(
-						potion != null ? potion.value().getEffects().stream() : Stream.empty(),
-						this.customPotionEffects.stream()).toList()));
+				PotionContents.getColor(new java.util.ArrayList<>(this.customPotionEffects)));
 	}
 
 	@Override
@@ -159,12 +152,12 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 
 	@Override
 	protected ItemStack getPickupItem() {
-		if (this.customPotionEffects.isEmpty() && this.potion == null) {
+		if (this.customPotionEffects.isEmpty()) {
 			return new ItemStack(ItemInit.blood_bolt.get());
 		} else {
 			ItemStack itemstack = new ItemStack(Items.TIPPED_ARROW);
 			itemstack.set(net.minecraft.core.component.DataComponents.POTION_CONTENTS,
-				new PotionContents(java.util.Optional.ofNullable(this.potion), java.util.Optional.empty(), new java.util.ArrayList<>(this.customPotionEffects)));
+				new PotionContents(java.util.Optional.empty(), java.util.Optional.empty(), new java.util.ArrayList<>(this.customPotionEffects)));
 			if (this.fixedColor) {
 				CompoundTag colorTag = itemstack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 				colorTag.putInt("CustomPotionColor", this.getColor());
@@ -291,11 +284,6 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 		this.entityData.set(DUCTILIS_TRAIL,
 				compound.contains("DuctilisTrail") ? compound.getBoolean("DuctilisTrail")
 						: isDuctilisWeapon(this.combatWeaponItem));
-		if (compound.contains("Potion", 8)) {
-			String potionId = compound.getString("Potion");
-			this.potion = potionId.isEmpty() ? null : BuiltInRegistries.POTION.getHolder(ResourceLocation.parse(potionId)).orElse(null);
-		}
-
 		if (compound.contains("custom_potion_effects", 9)) {
 			ListTag listnbt2 = compound.getList("custom_potion_effects", 10);
 			for (int i = 0; i < listnbt2.size(); ++i) {
@@ -314,13 +302,11 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 
 	private void refreshColor() {
 		this.fixedColor = false;
-		if (this.potion == null && this.customPotionEffects.isEmpty()) {
+		if (this.customPotionEffects.isEmpty()) {
 			this.entityData.set(COLOR, -1);
 		} else {
 			this.entityData.set(COLOR,
-					PotionContents.getColor(Stream.concat(
-							potion != null ? potion.value().getEffects().stream() : Stream.empty(),
-							this.customPotionEffects.stream()).toList()));
+					PotionContents.getColor(new java.util.ArrayList<>(this.customPotionEffects)));
 		}
 
 	}
@@ -328,31 +314,6 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 	private void setFixedColor(int p_191507_1_) {
 		this.fixedColor = true;
 		this.entityData.set(COLOR, p_191507_1_);
-	}
-
-	public void setPotionEffect(ItemStack stack) {
-		if (stack.getItem() == Items.TIPPED_ARROW) {
-			PotionContents contents2 = stack.get(net.minecraft.core.component.DataComponents.POTION_CONTENTS);
-			this.potion = contents2 != null && contents2.potion().isPresent() ? contents2.potion().get() : null;
-			Collection<MobEffectInstance> collection = contents2 != null ? contents2.customEffects() : List.of();
-			if (!collection.isEmpty()) {
-				for (MobEffectInstance effectinstance : collection) {
-					this.customPotionEffects.add(new MobEffectInstance(effectinstance));
-				}
-			}
-
-			int i = getCustomColor(stack);
-			if (i == -1) {
-				this.refreshColor();
-			} else {
-				this.setFixedColor(i);
-			}
-		} else if (stack.getItem() == Items.ARROW) {
-			this.potion = null;
-			this.customPotionEffects.clear();
-			this.entityData.set(COLOR, -1);
-		}
-
 	}
 
 	private void spawnPotionParticles(int particleCount) {
@@ -461,7 +422,6 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 		} else if (this.inGround && this.inGroundTime != 0 && !this.customPotionEffects.isEmpty()
 				&& this.inGroundTime >= 600) {
 			this.level().broadcastEntityEvent(this, (byte) 0);
-			this.potion = null;
 			this.customPotionEffects.clear();
 			this.entityData.set(COLOR, -1);
 		}

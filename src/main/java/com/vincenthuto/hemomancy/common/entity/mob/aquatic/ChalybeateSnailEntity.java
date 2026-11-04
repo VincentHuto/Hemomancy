@@ -47,9 +47,6 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 			Hemomancy.rloc("chalybeate_snail_climbable"));
 	private static final int HARVEST_COOLDOWN_TICKS = 6000;
 
-	public final AnimationState crawlAnimationState = new AnimationState();
-	public final AnimationState retractAnimationState = new AnimationState();
-
 	private int retractTicks;
 	private int harvestCooldownTicks;
 	/** Client-only: the foot turns onto the vent it climbs. */
@@ -93,10 +90,6 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 			this.entityData.set(RETRACTED, retracted);
 			this.refreshDimensions();
 		}
-	}
-
-	public int getHarvestCooldownTicks() {
-		return this.harvestCooldownTicks;
 	}
 
 	private void retractFor(int ticks) {
@@ -204,12 +197,6 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 			// Turn onto the vent only while rising; client motion is interpolated, so read the position change.
 			boolean rising = this.getY() - this.yo > 0.002D;
 			this.climbPose.tick(this, this.isInWater() && !this.isRetracted() && !this.onGround() && rising);
-			this.crawlAnimationState.startIfStopped(this.tickCount);
-			if (this.isRetracted()) {
-				this.retractAnimationState.startIfStopped(this.tickCount);
-			} else {
-				this.retractAnimationState.stop();
-			}
 		}
 
 		if (!this.level().isClientSide()) {

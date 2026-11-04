@@ -40,7 +40,7 @@ class PutricielFireResourceTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"rot_pyre_lit", "reliquary_sconce_smoulder", "pulse_pylon_pyre_upper", "spawn_mark_ash_0_due"})
+	@ValueSource(strings = {"rot_pyre_lit", "reliquary_sconce_smoulder", "pulse_pylon_pyre_upper", "downfall_seal_ash_0_due"})
 	void putricielsFireIsNeverGreenOrYellow(String model) throws IOException {
 		JsonObject json = ResourceReader.asset("models/block/" + model + ".json");
 		String texture = json.getAsJsonObject("textures").get("atlas").getAsString().replace("hemomancy:", "");
@@ -76,7 +76,7 @@ class PutricielFireResourceTest {
 				"reliquary_sconce", "facing=north,flame=smoulder",
 				"pulse_pylon", "facing=north,part=upper,style=pyre",
 				"litany_stone", "charred=true,facing=north,half=lower",
-				"spawn_mark", "due=true,style=ash,wave=0");
+				"downfall_seal", "due=true,style=ash,wave=0");
 		for (Map.Entry<String, String> entry : variants.entrySet()) {
 			JsonObject states = ResourceReader.asset("blockstates/" + entry.getKey() + ".json").getAsJsonObject("variants");
 			assertTrue(states.has(entry.getValue()), entry.getKey() + " has " + entry.getValue());

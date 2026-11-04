@@ -30,7 +30,7 @@ public class ActiveCardinalRite {
 	private final int riteSize;
 	private int remainingTicks;
 
-	private CardinalRitePhase phase = CardinalRitePhase.LEGACY;
+	private CardinalRitePhase phase = CardinalRitePhase.COUNTDOWN;
 	private int degree;
 	private boolean abbreviated;
 	private boolean altarSealed;
@@ -121,7 +121,7 @@ public class ActiveCardinalRite {
 
 	/**
 	 * Compatibility constructor. Rites created through it retain the former
-	 * countdown behavior and deserialize as LEGACY.
+	 * countdown behavior and deserialize as COUNTDOWN.
 	 */
 	public ActiveCardinalRite(UUID playerUUID, BlockPos centerPos, ResourceLocation recipeId, int totalTicks,
 			int riteSize) {
@@ -209,7 +209,7 @@ public class ActiveCardinalRite {
 	}
 
 	public void tick() {
-		if (phase == CardinalRitePhase.LEGACY) {
+		if (phase == CardinalRitePhase.COUNTDOWN) {
 			if (remainingTicks > 0) remainingTicks--;
 			return;
 		}
@@ -367,7 +367,7 @@ public class ActiveCardinalRite {
 	}
 
 	public void captureOfferingItinerary(List<RiteOffering> offerings) {
-		if (phase == CardinalRitePhase.LEGACY || offeringVisitIndex > 0 || returningFromOfferings) return;
+		if (phase == CardinalRitePhase.COUNTDOWN || offeringVisitIndex > 0 || returningFromOfferings) return;
 		offeringItinerary.clear();
 		offeringItineraryCaptured = true;
 		if (offerings != null) {
@@ -407,16 +407,6 @@ public class ActiveCardinalRite {
 				.OFFERING_DWELL_TICKS;
 		phaseTicks = 0;
 		return true;
-	}
-
-	public boolean tickOfferingDwell() {
-		if (offeringDwellTicks <= 0) return false;
-		offeringDwellTicks--;
-		return true;
-	}
-
-	public int getOfferingDwellTicks() {
-		return offeringDwellTicks;
 	}
 
 	public int getOfferingVisitIndex() {
@@ -605,7 +595,6 @@ public class ActiveCardinalRite {
 		setPhase(CardinalRitePhase.CULMINATION);
 		return true;
 	}
-
 
 	public int drainAnchor(int anchorIndex, int requestedMl) {
 		if (!isAnchorOpen(anchorIndex) || requestedMl <= 0) return 0;
@@ -847,7 +836,7 @@ public class ActiveCardinalRite {
 	}
 
 	public boolean isComplete() {
-		return phase == CardinalRitePhase.LEGACY ? remainingTicks <= 0 : phase == CardinalRitePhase.COMPLETE;
+		return phase == CardinalRitePhase.COUNTDOWN ? remainingTicks <= 0 : phase == CardinalRitePhase.COMPLETE;
 	}
 
 	public boolean isTerminal() {
@@ -994,7 +983,6 @@ public class ActiveCardinalRite {
 	public int getRiteSize() { return riteSize; }
 	public CardinalRitePhase getPhase() { return phase; }
 	public int getDegree() { return degree; }
-	public boolean isAbbreviated() { return abbreviated; }
 	public boolean isAltarSealed() { return altarSealed; }
 	public int getPhaseTicks() { return phaseTicks; }
 	public int getCancellationTicks() { return cancellationTicks; }
@@ -1018,7 +1006,6 @@ public class ActiveCardinalRite {
 	public int getTotalWaves() { return totalWaves; }
 	public int getCommittedBloodMl() { return committedBloodMl; }
 	public int getCarriedIchorMl() { return carriedIchorMl; }
-	public int getCarriedIchorTicks() { return carriedIchorTicks; }
 	public int getReservoirBloodMl() { return reservoirBloodMl; }
 	public int[] getAnchorBloodMl() { return anchorBloodMl.clone(); }
 	public Set<Integer> getBrokenInstabilityAnchors() { return Set.copyOf(brokenInstabilityAnchors); }
@@ -1059,7 +1046,7 @@ public class ActiveCardinalRite {
 	}
 
 	public double getProgress(int stillIntervalTicks) {
-		if (phase == CardinalRitePhase.LEGACY) {
+		if (phase == CardinalRitePhase.COUNTDOWN) {
 			return 1.0D - (double) remainingTicks / totalTicks;
 		}
 		return switch (phase) {

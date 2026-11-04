@@ -256,25 +256,4 @@ public final class RiteSurface {
 		MaterialQuads.vertex(v, m, x, y, z, color, alpha, (float) u, (float) texV);
 	}
 
-	/**
-	 * A soft flat-colour disc for {@code POSITION_COLOR} glow types: opaque at the centre, clear at the rim. Used where
-	 * a colour must survive, since the blood materials multiply every tint into crimson.
-	 */
-	public static void colourDisc(Matrix4f m, VertexConsumer v, View view, double x, double y, double z,
-			double radius, int segments, int rgb, float alpha) {
-		if (alpha <= 0.003F || radius <= 0) return;
-		int r = (rgb >> 16) & 255, g = (rgb >> 8) & 255, b = rgb & 255;
-		int a = (int) (Mth.clamp(alpha, 0.0F, 1.0F) * 255.0F);
-		for (int i = 0; i < segments; i++) {
-			double a0 = i * Math.PI * 2.0D / segments, a1 = (i + 1) * Math.PI * 2.0D / segments;
-			double c0 = Math.cos(a0) * radius, s0 = Math.sin(a0) * radius;
-			double c1 = Math.cos(a1) * radius, s1 = Math.sin(a1) * radius;
-			v.addVertex(m, (float) x, (float) y, (float) z).setColor(r, g, b, a);
-			v.addVertex(m, (float) (x + view.rightX * c0 + view.upX * s0), (float) (y + view.rightY * c0 + view.upY * s0),
-					(float) (z + view.rightZ * c0 + view.upZ * s0)).setColor(r, g, b, 0);
-			v.addVertex(m, (float) (x + view.rightX * c1 + view.upX * s1), (float) (y + view.rightY * c1 + view.upY * s1),
-					(float) (z + view.rightZ * c1 + view.upZ * s1)).setColor(r, g, b, 0);
-			v.addVertex(m, (float) x, (float) y, (float) z).setColor(r, g, b, a);
-		}
-	}
 }

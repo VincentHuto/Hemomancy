@@ -117,12 +117,12 @@ public class HarbingerOutpostStructure extends HemoJigsawStructure {
 							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 							spawnMob(level, resident, pos, outpostKey);
 						}
-					} else if (state.is(BlockInit.warp_chair.get())) {
+					} else if (state.is(BlockInit.somnolent_seat.get())) {
 						BlockPos above = pos.above();
-						if (level.getBlockState(above).is(BlockInit.warp_chair_filler.get())) {
+						if (level.getBlockState(above).is(BlockInit.somnolent_seat_filler.get())) {
 							bindFiller(level, above, pos);
 						} else if (chunkBox.isInside(above)) {
-							level.setBlock(above, BlockInit.warp_chair_filler.get().defaultBlockState()
+							level.setBlock(above, BlockInit.somnolent_seat_filler.get().defaultBlockState()
 									.setValue(WarpChairFillerBlock.FACING, state.getValue(WarpChairBlock.FACING))
 									.setValue(WarpChairFillerBlock.WATERLOGGED, level.getFluidState(above).is(FluidTags.WATER)), 2);
 							bindFiller(level, above, pos);

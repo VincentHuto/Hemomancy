@@ -37,7 +37,6 @@ final class ChamberVisitRulesTest {
 
 	@Test
 	void permissionsDistinguishDreamTimedAndAttunedVisits() {
-		assertTrue(ChamberVisitRules.canUseArbor(ChamberVisitMode.DREAM));
 		assertFalse(ChamberVisitRules.canBuild(ChamberVisitMode.DREAM));
 		assertFalse(ChamberVisitRules.canMoveItems(ChamberVisitMode.DREAM));
 		assertTrue(ChamberVisitRules.isProtected(ChamberVisitMode.DREAM));

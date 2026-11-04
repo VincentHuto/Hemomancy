@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -27,7 +26,6 @@ import net.minecraft.world.level.Level;
 
 public class UnstainedZealotEntity extends PathfinderMob implements ProgressionDialogueNpc, ProtectedNpc {
 
-    public final AnimationState idleAnimationState = new AnimationState();
 
     public UnstainedZealotEntity(EntityType<? extends UnstainedZealotEntity> type, Level worldIn) {
         super(type, worldIn);
@@ -60,9 +58,6 @@ public class UnstainedZealotEntity extends PathfinderMob implements ProgressionD
 
     @Override
     public void tick() {
-        if (this.level().isClientSide()) {
-            this.idleAnimationState.startIfStopped(this.tickCount);
-        }
         super.tick();
     }
 
@@ -71,7 +66,7 @@ public class UnstainedZealotEntity extends PathfinderMob implements ProgressionD
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			float purity = HemoCapabilityAccess.getUnstainedProgress(player).getPurity();
 			DialogueTree tree = progressionDialogue(serverPlayer);
-            tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "zealot", 0, purity);
+            tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "zealot");
             tree = DialogueHubFactory.decorate(tree, "zealot", serverPlayer);
 
             PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));

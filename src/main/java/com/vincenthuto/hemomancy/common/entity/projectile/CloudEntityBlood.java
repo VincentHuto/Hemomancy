@@ -138,7 +138,6 @@ public class CloudEntityBlood extends BloodConstructEntity {
         if (target.hurt(cloudDamage(nativeSource, first), amount) && first) struck.add(target.getUUID());
     }
 
-    @Override protected boolean usesLegacyConstructParticles() { return false; }
 
 	@Override
 	public void aiStep() {

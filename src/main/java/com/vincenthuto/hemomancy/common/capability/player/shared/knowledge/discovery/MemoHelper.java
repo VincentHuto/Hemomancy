@@ -24,14 +24,10 @@ import java.util.*;
 public final class MemoHelper {
 	private static final BloodAccounting.Source DICTATION = BloodAccounting.Source.of("memo_dictation", Category.OTHER, false, false);
 	public static final String EVENT_PREFIX = "memo_capture:";
-	public static final int MAX_FIELD_NOTES_MEMOS = 15;
 	public static final int DICTATION_BASE_BLOOD_COST = 100;
 	public static final int DICTATION_BLOOD_COST_PER_MEMO = 75;
 	public static final int DICTATION_UNSTAINED_XP_LEVEL_COST = 1;
 
-	private static final String TAG_REMAINING = "RemainingMemos";
-	private static final String TAG_MEMOS = "Memos";
-	private static final String TAG_INK_PATH = "InkPath";
 	private static final String TAG_KNOWN_MEMOS = "KnownMemos";
 	private static final String TAG_LIBER_ENTRIES = "UnlockedLiberEntries";
 	private static final int TAG_STRING = 8;
@@ -45,7 +41,7 @@ public final class MemoHelper {
 
 	public static boolean handleMemoEvent(ServerPlayer player, String eventId) {
 		ResourceLocation memoId = ResourceLocation.tryParse(eventId.substring(EVENT_PREFIX.length()));
-		if (memoId == null) {
+		if (memoId == null || MemoDefinitions.get(memoId).isEmpty()) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.invalid")
 					.withStyle(ChatFormatting.RED), true);
 			return true;
@@ -55,12 +51,11 @@ public final class MemoHelper {
 	}
 
 	public static CaptureResult captureMemo(ServerPlayer player, ResourceLocation memoId) {
-		if (memoId == null) {
+		if (memoId == null || MemoDefinitions.get(memoId).isEmpty()) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.invalid")
 					.withStyle(ChatFormatting.RED), true);
 			return CaptureResult.INVALID;
 		}
-		migrateLegacyFieldNotes(player);
 		LiberKnowledge knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
 		if (knowledge.knowsMemo(memoId)) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.already_written")
@@ -80,11 +75,6 @@ public final class MemoHelper {
 		return CaptureResult.CAPTURED;
 	}
 
-	public static DictationResult dictateToLiber(ServerPlayer player, ItemStack notes, ItemStack liber) {
-		migrateLegacyFieldNotes(player);
-		return dictatePendingToLiber(player, liber);
-	}
-
 	public static DictationResult dictatePendingToLiber(ServerPlayer player, ItemStack liber) {
 		if (!isLiber(liber)) {
 			return DictationResult.NO_LIBER;
@@ -92,7 +82,6 @@ public final class MemoHelper {
 
 		LiberKnowledge knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
 		migrateLegacyLiberStack(liber, knowledge);
-		migrateLegacyFieldNotes(player);
 
 		if (knowledge.getPendingMemos().isEmpty()) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.no_memos")
@@ -179,11 +168,14 @@ public final class MemoHelper {
 		return dictatable;
 	}
 
+	/** A memo with no definition is still written down, but it names no Liber entry to unlock. */
 	private static void unlockDictatedMemos(IBookKnowledge knowledge, Collection<ResourceLocation> memos) {
 		for (ResourceLocation memoLocation : memos) {
 			ResourceLocation liberEntry = liberEntryForMemo(memoLocation);
 			if (liberEntry != null) {
 				knowledge.unlockMemo(memoLocation, liberEntry);
+			} else {
+				knowledge.recordMemo(memoLocation);
 			}
 		}
 	}
@@ -209,110 +201,19 @@ public final class MemoHelper {
 		LiberKnowledgeEvents.sync(player);
 	}
 
-	public static boolean migrateLegacyFieldNotes(ServerPlayer player) {
-		LiberKnowledge knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
-		boolean changed = false;
-		changed |= migrateLegacyFieldNotesStack(player.getMainHandItem(), knowledge);
-		changed |= migrateLegacyFieldNotesStack(player.getOffhandItem(), knowledge);
-		for (ItemStack stack : player.getInventory().items) {
-			changed |= migrateLegacyFieldNotesStack(stack, knowledge);
-		}
-		if (changed) {
-			LiberKnowledgeEvents.sync(player);
-		}
-		return changed;
-	}
-
-	public static Set<String> getLegacyUnlockedLiberEntries(ItemStack stack) {
-		return readStringSet(stack, TAG_LIBER_ENTRIES);
-	}
-
-	public static Set<String> getLegacyKnownMemos(ItemStack stack) {
-		return readStringSet(stack, TAG_KNOWN_MEMOS);
-	}
-
-	private static Set<String> readStringSet(ItemStack stack, String tagName) {
-		Set<String> values = new HashSet<>();
-		ListTag list = getCustomData(stack).getList(tagName, TAG_STRING);
-		for (int i = 0; i < list.size(); i++) {
-			values.add(list.getString(i));
-		}
-		return values;
-	}
-
 	public static String memoEvent(ResourceLocation memoId) {
 		return EVENT_PREFIX + memoId;
-	}
-
-	public static int getRemainingMemos(ItemStack stack) {
-		CompoundTag tag = getCustomData(stack);
-		if (!tag.contains(TAG_REMAINING)) {
-			return 0;
-		}
-		return Math.max(0, Math.min(MAX_FIELD_NOTES_MEMOS, tag.getInt(TAG_REMAINING)));
-	}
-
-	public static int getMemoCount(ItemStack stack) {
-		return getMemoList(stack).size();
-	}
-
-	public static RefillResult refillFieldNotes(ItemStack stack, ItemStack ink) {
-		MemoDefinition.MemoPath inkPath = pathForInk(ink);
-		if (inkPath == null) {
-			return RefillResult.NO_INK;
-		}
-		MemoDefinition.MemoPath currentPath = getInkPath(stack);
-		if (getMemoCount(stack) > 0 && currentPath != null && currentPath != inkPath) {
-			return RefillResult.WRONG_INK_PATH;
-		}
-		CompoundTag tag = getCustomData(stack);
-		tag.putInt(TAG_REMAINING, MAX_FIELD_NOTES_MEMOS);
-		tag.putString(TAG_INK_PATH, inkPath.name());
-		setCustomData(stack, tag);
-		return RefillResult.REFILLED;
-	}
-
-	public static MemoDefinition.MemoPath getInkPath(ItemStack stack) {
-		CompoundTag tag = getCustomData(stack);
-		if (!tag.contains(TAG_INK_PATH, TAG_STRING)) {
-			return null;
-		}
-		try {
-			return MemoDefinition.MemoPath.valueOf(tag.getString(TAG_INK_PATH));
-		} catch (IllegalArgumentException ignored) {
-			return null;
-		}
-	}
-
-	public static boolean isInk(ItemStack stack) {
-		return pathForInk(stack) != null;
 	}
 
 	public static boolean isLiber(ItemStack stack) {
 		return !stack.isEmpty() && (stack.is(ItemInit.liber_sanguinum.get()) || stack.is(ItemInit.liber_immaculatus.get()));
 	}
 
-	public static boolean canDictateInto(ItemStack liber, MemoDefinition.MemoPath path) {
-		if (path == MemoDefinition.MemoPath.SHARED) {
-			return isLiber(liber);
-		}
-		if (path == MemoDefinition.MemoPath.HARBINGER) {
-			return !liber.isEmpty() && liber.is(ItemInit.liber_sanguinum.get());
-		}
-		if (path == MemoDefinition.MemoPath.UNSTAINED) {
-			return !liber.isEmpty() && liber.is(ItemInit.liber_immaculatus.get());
-		}
-		return false;
-	}
-
-	private static ListTag getMemoList(ItemStack stack) {
-		return getCustomData(stack).getList(TAG_MEMOS, TAG_STRING);
-	}
-
+	/** Null for an id that is not a memo: an unknown id never names a Liber entry. */
 	private static ResourceLocation liberEntryForMemo(ResourceLocation memoId) {
 		return MemoDefinitions.get(memoId)
 				.map(MemoDefinition::liberEntry)
-				.orElse(memoId);
+				.orElse(null);
 	}
 
 	private static MemoDefinition.MemoPath pathForLiber(ItemStack liber) {
@@ -323,6 +224,12 @@ public final class MemoHelper {
 			return MemoDefinition.MemoPath.UNSTAINED;
 		}
 		return null;
+	}
+
+	private static boolean pathsCompatible(MemoDefinition.MemoPath notesPath, MemoDefinition.MemoPath memoPath) {
+		return notesPath == MemoDefinition.MemoPath.SHARED
+				|| memoPath == MemoDefinition.MemoPath.SHARED
+				|| notesPath == memoPath;
 	}
 
 	private static MemoDefinition.MemoPath pathForMemo(ResourceLocation memoId) {
@@ -340,20 +247,6 @@ public final class MemoHelper {
 			return ChatFormatting.GRAY;
 		}
 		return ChatFormatting.DARK_RED;
-	}
-
-	private static MemoDefinition.MemoPath pathForInk(ItemStack ink) {
-		return null;
-	}
-
-	private static boolean pathsCompatible(MemoDefinition.MemoPath notesPath, MemoDefinition.MemoPath memoPath) {
-		return notesPath == MemoDefinition.MemoPath.SHARED
-				|| memoPath == MemoDefinition.MemoPath.SHARED
-				|| notesPath == memoPath;
-	}
-
-	private static boolean migrateLegacyFieldNotesStack(ItemStack stack, LiberKnowledge knowledge) {
-		return false;
 	}
 
 	private static void migrateLegacyLiberStack(ItemStack liber, IBookKnowledge knowledge) {
@@ -408,12 +301,6 @@ public final class MemoHelper {
 		NO_FIELD_NOTES,
 		FIELD_NOTES_FULL,
 		NO_INK_PATH,
-		WRONG_INK_PATH
-	}
-
-	public enum RefillResult {
-		REFILLED,
-		NO_INK,
 		WRONG_INK_PATH
 	}
 

@@ -4,7 +4,6 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 public final class ConcentricTreeGeometry {
 	public static final int CENTER_X = 480;
 	public static final int CENTER_Y = 480;
-	public static final int CONTENT_PADDING = 80;
 	private static final int[] DEGREE_RING_RADII = {72, 120, 170, 220, 270, 320, 370, 420, 470};
 
 	private ConcentricTreeGeometry() {}

@@ -38,16 +38,12 @@ class AttachmentAccessTest {
 					"bridges capabilities to attachments"),
 			Map.entry("src/main/java/com/vincenthuto/hemomancy/common/tile/IBloodReservoir.java",
 					"owns the block blood attachment for every reservoir"),
-			Map.entry("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/station/StationUpgradeMigration.java",
-					"one-shot migration out of the retired brewing and forge attachments"),
 			Map.entry("src/main/java/com/vincenthuto/hemomancy/common/worldgen/terrain/phlegethontic/PhlegethonticOreReservations.java",
 					"chunk attachment"),
 			Map.entry("src/main/java/com/vincenthuto/hemomancy/common/worldgen/feature/PhlegethonticWorldgenFeature.java",
 					"chunk attachment"),
 			Map.entry("src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinPhlegethonticVeinCompletion.java",
-					"chunk attachment"),
-			Map.entry("src/gameTest/java/com/vincenthuto/hemomancy/gametest/StationUpgradeGameTests.java",
-					"seeds the retired brewing attachment to prove the migration"));
+					"chunk attachment"));
 
 	@Test
 	void attachmentsAreReadThroughTheAccessClass() throws Exception {

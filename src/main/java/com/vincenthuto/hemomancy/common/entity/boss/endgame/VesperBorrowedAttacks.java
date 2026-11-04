@@ -50,10 +50,6 @@ public final class VesperBorrowedAttacks {
 		return List.copyOf(attacks);
 	}
 
-	public static boolean isBorrowed(VesperWeaponAction action) {
-		return BY_SHAPE.containsValue(action);
-	}
-
 	/** Chance to slot a borrowed attack between strings; the sickles stay the focus of the last act. */
 	public static float weight(VesperEveningStarAct act) {
 		return act == VesperEveningStarAct.SICKLES ? 0.1F : 0.2F;

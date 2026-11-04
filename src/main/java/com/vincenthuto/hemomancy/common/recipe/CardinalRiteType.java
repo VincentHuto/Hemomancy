@@ -37,12 +37,4 @@ public enum CardinalRiteType {
 		throw new IllegalArgumentException("Unknown cardinal rite type: " + name);
 	}
 
-	public static CardinalRiteType bySize(int size) {
-		for (CardinalRiteType type : values()) {
-			if (type.size == size) {
-				return type;
-			}
-		}
-		throw new IllegalArgumentException("No cardinal rite type for size: " + size + ". Valid sizes are 3, 5, 7, 9.");
-	}
 }

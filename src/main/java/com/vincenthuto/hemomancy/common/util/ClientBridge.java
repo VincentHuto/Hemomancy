@@ -92,9 +92,6 @@ public interface ClientBridge {
 	default void openLedger() {
 	}
 
-	default void openScarBinderViewer(ItemStack binder) {
-	}
-
 	default void openVascularStatus() {
 	}
 

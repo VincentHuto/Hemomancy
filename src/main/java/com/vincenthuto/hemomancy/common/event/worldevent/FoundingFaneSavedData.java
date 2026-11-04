@@ -95,11 +95,6 @@ public class FoundingFaneSavedData extends SavedData {
 		return fanes.containsKey(playerUUID) && fanes.get(playerUUID).heart() != null;
 	}
 
-	public BlockPos getFaneCenter(UUID playerUUID) {
-		FaneEntry entry = fanes.get(playerUUID);
-		return entry != null ? entry.center() : null;
-	}
-
 	public BlockPos getHeart(UUID playerUUID) {
 		FaneEntry entry = fanes.get(playerUUID);
 		return entry != null ? entry.heart() : null;
@@ -130,15 +125,6 @@ public class FoundingFaneSavedData extends SavedData {
 		return entry != null ? entry.footprint().effectStrength(pos) : 0.0D;
 	}
 
-	public boolean canPlaceBloodwell(BlockPos pos) {
-		for (FaneEntry entry : fanes.values()) {
-			if (entry.heart() != null && entry.footprint().contains(pos)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	public boolean addStake(UUID playerUUID, BlockPos pos, int budget) {
 		FaneEntry entry = fanes.get(playerUUID);
 		if (entry == null || !entry.footprint().canAddStake(pos, budget)) {
@@ -158,14 +144,6 @@ public class FoundingFaneSavedData extends SavedData {
 		FaneEntry entry = fanes.get(playerUUID);
 		if (entry != null && entry.stakes().contains(pos)) {
 			fanes.put(playerUUID, entry.withoutStake(pos));
-			setDirty();
-		}
-	}
-
-	public void removeHeart(UUID playerUUID, BlockPos pos) {
-		FaneEntry entry = fanes.get(playerUUID);
-		if (entry != null && pos.equals(entry.heart())) {
-			fanes.put(playerUUID, entry.withoutHeart());
 			setDirty();
 		}
 	}
@@ -219,16 +197,6 @@ public class FoundingFaneSavedData extends SavedData {
 		return null;
 	}
 
-	public Map<UUID, BlockPos> getAllFanes() {
-		Map<UUID, BlockPos> centers = new LinkedHashMap<>();
-		for (Map.Entry<UUID, FaneEntry> entry : fanes.entrySet()) {
-			if (entry.getValue().heart() != null) {
-				centers.put(entry.getKey(), entry.getValue().center());
-			}
-		}
-		return centers;
-	}
-
 	public Map<UUID, FaneFootprint> getAllFootprints() {
 		Map<UUID, FaneFootprint> footprints = new LinkedHashMap<>();
 		for (Map.Entry<UUID, FaneEntry> entry : fanes.entrySet()) {
@@ -240,9 +208,6 @@ public class FoundingFaneSavedData extends SavedData {
 	}
 
 	private record FaneEntry(BlockPos heart, List<BlockPos> stakes, BlockPos legacyCenter, BlockPos recallPoint) {
-		private BlockPos center() {
-			return heart != null ? heart : legacyCenter;
-		}
 
 		private FaneFootprint footprint() {
 			return new FaneFootprint(heart, stakes, legacyCenter);

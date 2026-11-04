@@ -46,7 +46,6 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 
 	private float animTime = 0f;
 
-
 	public SporeImplantScreen(SporeImplantMenu container, Inventory inventory, Component name) {
 		super(container, inventory, name);
 		this.imageWidth = 176;
@@ -291,35 +290,6 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 	}
 
 	// ───── Pulsing glow around the central fungal slot ─────
-
-	private void renderFungalSlotGlow(GuiGraphics gfx, int gx, int gy) {
-		// Center fungal scar slot is at (80, 35) in GUI coords
-		int cx = gx + 80 + 8; // center of the 16px slot
-		int cy = gy + 35 + 8;
-		animTime += 0.016f; // ~60 FPS approximation
-
-		float time = animTime;
-		int outerRadius = 18;
-		int innerRadius = 12;
-
-		for (int ring = outerRadius; ring >= innerRadius; ring--) {
-			float t = (float) (ring - innerRadius) / (outerRadius - innerRadius);
-			float pulse = 0.4f + 0.6f * Mth.sin(time * 2.5f + t * 3f);
-
-			int alpha = (int) (30 * pulse * (1f - t));
-			int r = (int) (180 * pulse);
-			int g = (int) (80 * pulse);
-			int b = (int) (10 * pulse);
-
-			int color = (alpha << 24) | (r << 16) | (g << 8) | b;
-
-			// Draw ring approximation as a filled square with inner cut-out effect
-			gfx.fill(cx - ring, cy - ring, cx + ring, cy - ring + 1, color);
-			gfx.fill(cx - ring, cy + ring - 1, cx + ring, cy + ring, color);
-			gfx.fill(cx - ring, cy - ring, cx - ring + 1, cy + ring, color);
-			gfx.fill(cx + ring - 1, cy - ring, cx + ring, cy + ring, color);
-		}
-	}
 
 	// ───── Red-to-yellow gradient border ─────
 

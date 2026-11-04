@@ -32,5 +32,5 @@ public final class TemporaryCoagulumEntity extends Entity {
                 || boss.action()==PhlegethosomaEntity.Action.DORMANT))discard();
     }
     @Override protected void addAdditionalSaveData(CompoundTag tag) {OWNER.save(this,tag);tag.putLong("Expiry",expires);}
-    @Override protected void readAdditionalSaveData(CompoundTag tag) {OWNER.load(this,tag);expires=0;}
+    @Override protected void readAdditionalSaveData(CompoundTag tag) {OWNER.load(this,tag);expires=tag.getLong("Expiry");}
 }

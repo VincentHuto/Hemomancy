@@ -44,14 +44,6 @@ public final class HarbingerVotaryWayfarerDialogueTrees {
 				"hemomancy.votary_wayfarer.clarity.line2");
 	}
 
-	public static DialogueTree itemInquiry(ItemStack item, int degree, int entityId) {
-		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.getItem());
-		return ItemInquiryRegistry.INSTANCE
-				.resolve("votary_wayfarer", itemId, degree, 0f)
-				.map(lines -> basicItemInquiry(entityId, lines.toArray(String[]::new)))
-				.orElseGet(() -> basicItemInquiry(entityId, "hemomancy.votary_wayfarer.item_inquiry.unknown"));
-	}
-
 	private static DialogueTree basic(int entityId, String rootId, String... lines) {
 		return DialogueTree.builder(SPEAKER, VOTARY_ICON, entityId)
 				.addNode(new DialogueNode(rootId, List.of(lines), List.of(
@@ -72,16 +64,6 @@ public final class HarbingerVotaryWayfarerDialogueTrees {
 						"hemomancy.votary_wayfarer.fear.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_voyage", "voyage", null).withLore(),
-						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.leave", null, null)
-				)))
-				.addNode(itemHintNode())
-				.build();
-	}
-
-	private static DialogueTree basicItemInquiry(int entityId, String... lines) {
-		return DialogueTree.builder(SPEAKER, VOTARY_ICON, entityId)
-				.addNode(new DialogueNode("root", List.of(lines), List.of(
-						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.votary_wayfarer.option.leave", null, null)
 				)))
 				.addNode(itemHintNode())

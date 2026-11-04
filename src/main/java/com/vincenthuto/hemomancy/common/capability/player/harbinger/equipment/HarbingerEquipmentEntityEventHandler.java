@@ -39,7 +39,7 @@ public class HarbingerEquipmentEntityEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onGlideTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
-        if (!player.hasEffect(EffectInit.fungal_elytra)) return;
+        if (!player.hasEffect(EffectInit.noctifly_agaric)) return;
 
         // This runs AFTER vanilla updateFallFlying (which cancels fall-flying when no
         // elytra is equipped). Re-enable elytra gliding every tick while the player is
@@ -144,6 +144,6 @@ public class HarbingerEquipmentEntityEventHandler {
         HemoCapabilityAccess.getEquipment(player).tick();
         // Fungal Elytra needs the modifier too so canFallFly() returns ALLOW (onGlideTick does the gliding)
         AttributeModifiers.sync(player.getAttribute(AttributeInit.getFlightAttribute()), AttributeInit.getElytraModifier(),
-                player.getItemBySlot(EquipmentSlot.CHEST).canElytraFly(player) || player.hasEffect(EffectInit.fungal_elytra));
+                player.getItemBySlot(EquipmentSlot.CHEST).canElytraFly(player) || player.hasEffect(EffectInit.noctifly_agaric));
     }
 }

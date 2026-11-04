@@ -81,8 +81,12 @@ public class LiberKnowledge extends BookKnowledge {
 		return Collections.unmodifiableSet(pendingMemos);
 	}
 
+	/** No more pending memos than there are memos defined: the set cannot grow without bound. */
+	public static final int MAX_PENDING_MEMOS = 64;
+
 	public boolean recordPendingMemo(ResourceLocation memoId) {
-		return memoId != null && !knowsMemo(memoId) && pendingMemos.add(memoId);
+		return memoId != null && !knowsMemo(memoId) && pendingMemos.size() < MAX_PENDING_MEMOS
+				&& pendingMemos.add(memoId);
 	}
 
 	public boolean removePendingMemos(Collection<ResourceLocation> memoIds) {

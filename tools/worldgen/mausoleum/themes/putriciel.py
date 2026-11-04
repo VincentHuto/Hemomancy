@@ -161,7 +161,7 @@ def motif(name, room, c):
     for (x, y, z), (block, props, nbt) in list(room.blocks.items()):
         if block == 'hemomancy:pulse_pylon':
             room.set(x, y, z, block, dict(props, style='pyre'), nbt)
-        elif block == 'hemomancy:spawn_mark':
+        elif block == 'hemomancy:downfall_seal':
             room.set(x, y, z, block, dict(props, style='ash'), nbt)
         elif block == 'hemomancy:litany_stone':
             room.set(x, y, z, block, dict(props, charred='true'), nbt)

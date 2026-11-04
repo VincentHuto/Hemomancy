@@ -37,7 +37,7 @@ final class QliphothSubcommand {
 	}
 
 	static LiteralArgumentBuilder<CommandSourceStack> build() {
-		return Commands.literal("qliphoth")
+		return Commands.literal("qliphoth").requires(DevCommands::available)
 				.then(Commands.literal("tree")
 						.then(Commands.argument("stage", StringArgumentType.word())
 								.suggests((ctx, builder) -> {

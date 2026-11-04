@@ -96,6 +96,24 @@ public final class PendingWhispers {
                         .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/hemowhisper")))), false);
     }
 
+    /** The whisper this player has open right now lists {@code eventId} among its options. */
+    public static boolean openWhisperOffers(ServerPlayer player, String eventId) {
+        UUID openId = OPEN.get(player);
+        if (openId == null) return false;
+        ListTag list = inbox(player);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag entry = list.getCompound(i);
+            if (!openId.equals(entry.getUUID("id"))) continue;
+            FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(entry.getByteArray("tree")));
+            try {
+                return DialogueTree.fromNetwork(buffer).nodes().values().stream()
+                        .flatMap(node -> node.options().stream())
+                        .anyMatch(option -> eventId.equals(option.eventId()));
+            } finally { buffer.release(); }
+        }
+        return false;
+    }
+
     public static boolean open(ServerPlayer player) {
         if (!hearsTheHive(player)) {
             // Whispers queued before the antenna was cut go unheard.
@@ -156,19 +174,4 @@ public final class PendingWhispers {
         if (event.getEntity() instanceof ServerPlayer player) notifyPending(player);
     }
 
-    /**
-     * A {@code PlayerDataMigrations} entry: moves the root-key inbox into the attachment, after anything already
-     * there, skipping a tree the attachment already holds, and removes the root key.
-     */
-    public static void migrateLegacyInbox(ServerPlayer player) {
-        CompoundTag data = player.getPersistentData();
-        ListTag legacy = data.getList(LEGACY_KEY, Tag.TAG_COMPOUND);
-        ListTag list = inbox(player);
-        for (Tag tag : legacy) {
-            byte[] tree = ((CompoundTag) tag).getByteArray("tree");
-            if (list.stream().noneMatch(held -> Arrays.equals(((CompoundTag) held).getByteArray("tree"), tree)))
-                list.add(tag.copy());
-        }
-        data.remove(LEGACY_KEY);
-    }
 }

@@ -415,21 +415,4 @@ public final class HarbingerMnemonistDialogueTrees {
 		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
 	}
 
-	public static DialogueTree itemInquiry(ItemStack item, int degree, int entityId) {
-		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.getItem());
-		return ItemInquiryRegistry.INSTANCE
-				.resolve("mnemonist", itemId, degree, 0f)
-				.map(lines -> basicItemInquiry(entityId, lines.toArray(String[]::new)))
-				.orElseGet(() -> basicItemInquiry(entityId, "hemomancy.mnemonist.item_inquiry.unknown"));
-	}
-
-	private static DialogueTree basicItemInquiry(int entityId, String... lines) {
-		return DialogueTree.builder(SPEAKER, MNEMONIST_ICON, entityId)
-				.addNode(new DialogueNode("root", List.of(lines), List.of(
-						new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_item", "item_hint", null),
-						new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)
-				)))
-				.addNode(itemHintNode())
-				.build();
-	}
 }

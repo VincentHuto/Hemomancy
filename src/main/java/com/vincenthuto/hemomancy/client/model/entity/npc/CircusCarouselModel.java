@@ -17,7 +17,7 @@ import net.minecraft.util.Mth;
 
 public final class CircusCarouselModel extends EntityModel<CircusCarouselEntity> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			Hemomancy.rloc("circus_carousel"), "main");
+			Hemomancy.rloc("impaled_procession"), "main");
 	private static final float HORSE_BASE_Y = 68.0F;
 	private final ModelPart root;
 	private final ModelPart turntable;

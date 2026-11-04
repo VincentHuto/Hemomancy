@@ -101,10 +101,6 @@ public final class CircusPlayerProgress {
 		PacketHandler.sendToPlayer(player, new PacketSyncCircusPerception(acclimation(player), active));
 	}
 
-	/** A {@code PlayerDataMigrations} entry: folds the circus root keys into the attachment and removes them. */
-	public static void migrateLegacyRootKeys(ServerPlayer player) {
-		foldLegacyRootKeys(player.getPersistentData(), progress(player));
-	}
 
 	/**
 	 * Moves the old circus root keys out of {@code data} into {@code progress}. Root keys that are present win over

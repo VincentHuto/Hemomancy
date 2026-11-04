@@ -85,7 +85,7 @@ public class VasculariumCharmItem extends Item implements IHarbingerEquipment {
 			if (pLevel instanceof ServerLevel) {
 				ServerLevel serverlevel = (ServerLevel) pLevel;
 				BlockPos blockpos = serverlevel.findNearestMapStructure(
-						TagKey.create(Registries.STRUCTURE, Hemomancy.rloc("structures/blood_temple")),
+						TagKey.create(Registries.STRUCTURE, Hemomancy.rloc("blood_temple_targets")),
 						pPlayer.blockPosition(), 100, false);
 
 				if (blockpos != null) {

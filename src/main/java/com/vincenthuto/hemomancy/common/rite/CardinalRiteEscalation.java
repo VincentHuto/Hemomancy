@@ -73,7 +73,7 @@ public final class CardinalRiteEscalation {
 	 * @return true when the stage rose, so the caller announces the step
 	 */
 	public static boolean update(ActiveCardinalRite rite) {
-		if (rite.getPhase() == CardinalRitePhase.LEGACY) return false;
+		if (rite.getPhase() == CardinalRitePhase.COUNTDOWN) return false;
 		Plan plan = plan(rite);
 		Marks marks = rite.getEscalationMarks().raise(reached(rite), plan);
 		rite.setEscalationMarks(marks);
@@ -85,7 +85,7 @@ public final class CardinalRiteEscalation {
 
 	/** Rebuilds the marks of a rite saved before escalation existed, without announcing anything. */
 	public static void rebuild(ActiveCardinalRite rite) {
-		if (rite.getPhase() == CardinalRitePhase.LEGACY) return;
+		if (rite.getPhase() == CardinalRitePhase.COUNTDOWN) return;
 		Plan plan = plan(rite);
 		Marks marks = Marks.NONE.raise(reached(rite), plan);
 		rite.setEscalationMarks(marks);

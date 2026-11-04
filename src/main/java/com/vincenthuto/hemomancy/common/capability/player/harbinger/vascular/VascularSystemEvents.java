@@ -129,7 +129,7 @@ public class VascularSystemEvents {	/**
 		syncVascular(player, vascular);
 	}
 
-	/** A DEAD section carries no blood: muscle memories and manipulations routed through it refuse to fire. */
+	/** A DEAD section carries no blood: Thelemic memories and manipulations routed through it refuse to fire. */
 	public static boolean isSectionDead(Player player, EnumVeinSections section) {
 		return section != null && (HemoCapabilityAccess.getVascularSystem(player).getBloodFlowBySection(section) == EnumBloodFlow.DEAD);
 	}

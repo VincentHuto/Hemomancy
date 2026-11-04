@@ -1,0 +1,23 @@
+{
+  "title": "hemomancy.trade.guardian.silthmere_glaive.title",
+  "line": "hemomancy.trade.guardian.silthmere_glaive.line",
+  "order": 40,
+  "requires": {
+    "path": "unstained",
+    "stage_at_least": 3
+  },
+  "want": {
+    "kind": "items",
+    "ingredient": {
+      "item": "hemomancy:pale_silver_ingot"
+    },
+    "count": 4
+  },
+  "give": [
+    {
+      "item": "hemomancy:silthmere_glaive",
+      "count": 1
+    }
+  ],
+  "show_locked": true
+}

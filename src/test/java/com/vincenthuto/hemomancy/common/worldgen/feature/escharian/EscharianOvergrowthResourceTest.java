@@ -71,15 +71,11 @@ class EscharianOvergrowthResourceTest {
         }
     }
 
-    @Test void configuredResourceAndJavaBiomeOrderMatchTheApprovedContract() throws Exception {
+    @Test void configuredResourceMatchesTheApprovedContract() throws Exception {
         JsonObject configured = json("data/hemomancy/worldgen/configured_feature/escharian_overgrowth.json");
         var decoded = EscharianOvergrowthConfiguration.CODEC.parse(JsonOps.INSTANCE, configured.get("config"))
                 .result().orElseThrow();
         assertEquals(EscharianOvergrowthConfiguration.DEFAULT, decoded);
-
-        String biomeSource = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/init/BiomeInit.java"));
-        String registration = "generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION,PlacedFeatureInit.ESCHARIAN_OVERGROWTH)";
-        assertEquals(1, occurrences(biomeSource, registration));
     }
 
     @Test void scyphusResourcesKeepTheAuthoredModelAndSixFaceRotations() throws Exception {

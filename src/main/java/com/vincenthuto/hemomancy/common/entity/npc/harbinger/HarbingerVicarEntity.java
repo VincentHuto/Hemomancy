@@ -71,8 +71,6 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
         entityData.set(INITIATING, value);
     }
 
-    public final AnimationState idleAnimationState = new AnimationState();
-
     public HarbingerVicarEntity(EntityType<? extends HarbingerVicarEntity> type, Level worldIn) {
         super(type, worldIn);
         this.setInvulnerable(true);
@@ -104,13 +102,6 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
                     .hasClarityUnlocked();
         }
         return false;
-    }
-
-    /** Returns true if the given player has an established (valid) bloodline.
-     * Recruit and expel dialogue options are only offered when this is true.
-     */
-    private static boolean hasBloodline(Player player) {
-        return HemoCapabilityAccess.getBloodVolume(player).getBloodLine().isValid();
     }
 
     private static boolean isNpcInPlayerBloodline(Player player, Entity npc) {
@@ -162,9 +153,6 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
 
     @Override
     public void tick() {
-        if (this.level().isClientSide()) {
-            this.idleAnimationState.startIfStopped(this.tickCount);
-        }
         super.tick();
     }
 
@@ -183,7 +171,7 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
                 grantOrRecoverAssignmentLedger(serverPlayer);
             }
             DialogueTree tree = progressionDialogue(serverPlayer);
-            tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "vicar", degree, 0f);
+            tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "vicar");
             tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.withLetterInquiry(tree, "vicar",
                     com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.VICAR_LETTER,
                     com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialogue.View.of(serverPlayer));

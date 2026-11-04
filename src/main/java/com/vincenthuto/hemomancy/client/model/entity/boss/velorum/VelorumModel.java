@@ -1250,8 +1250,8 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
             setRotationFromMatrix(clawIce,armInverse(chest,rightArm,rightForearm,rightHand));
         }
     }
-    void pose(int visual,boolean martyrdom,float remaining,float age,float yaw,float pitch) {
-        pose(VelorumVisualRules.legacy(visual,martyrdom,remaining),age,yaw,pitch,0,0,0);
+    void pose(int visual,boolean stillGuard,float remaining,float age,float yaw,float pitch) {
+        pose(VelorumVisualRules.phase(visual,stillGuard,remaining),age,yaw,pitch,0,0,0);
     }
     void pose(VelorumVisualRules.Phase phase,float age,float yaw,float pitch,float attack,float movement,float death) {
         pose(phase,age,yaw,pitch,attack,movement,death,0,0);
@@ -1260,15 +1260,15 @@ public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T> 
         root.getAllParts().forEach(ModelPart::resetPose);
         var action=VelorumVisualRules.pose(phase);
         float life=1-death,gather=action.gather()*life,frost=action.frost()*life;
-        float veil=action.veil()*life,drain=action.silence()*life,martyr=action.martyr()*life;
+        float veil=action.veil()*life,drain=action.silence()*life,stillGuard=action.stillGuard()*life;
         float breath=Mth.sin(age*.045F),swipe=Mth.sin(Mth.sqrt(attack)*Mth.PI)*life;
         float opening = release > 0 ? (float)com.vincenthuto.hemomancy.common.util.HemoEasing.smoothstep((60-release)/8)
                 *(float)com.vincenthuto.hemomancy.common.util.HemoEasing.smoothstep(release/12) : 0;
         hips.y+=death*3;
-        chest.xRot+=breath*.014F+gather*.16F-frost*.23F+drain*.12F+martyr*.14F+death*.55F+opening*.25F;
+        chest.xRot+=breath*.014F+gather*.16F-frost*.23F+drain*.12F+stillGuard*.14F+death*.55F+opening*.25F;
         chest.zRot+=Mth.sin(age*.06F)*veil*.025F-swipe*.08F;
         head.yRot+=Mth.clamp(yaw,-20,20)*Mth.DEG_TO_RAD;
-        head.xRot+=Mth.clamp(pitch,-15,15)*Mth.DEG_TO_RAD+gather*.08F-frost*.15F+veil*.17F+martyr*.2F+death*.25F;
+        head.xRot+=Mth.clamp(pitch,-15,15)*Mth.DEG_TO_RAD+gather*.08F-frost*.15F+veil*.17F+stillGuard*.2F+death*.25F;
         rightArm.xRot-=gather*.35F+frost*.8F+veil*.35F+swipe*.75F;
         rightArm.zRot+=gather*.15F+frost*.28F+veil*.4F;
         rightForearm.xRot-=drain*.6F+swipe*.3F;

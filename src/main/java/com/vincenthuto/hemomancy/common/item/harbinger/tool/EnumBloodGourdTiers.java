@@ -13,7 +13,6 @@ public enum EnumBloodGourdTiers {
 	RIB(5, 5000, 5, 2.5, 1.25, 0.25),
 	DRIED(0, 0, 0, 0, 0, 0);
 
-
 	private final int tierLevel;
 	private final float maxVolume;
 	private final int enchantability;
@@ -29,10 +28,6 @@ public enum EnumBloodGourdTiers {
 		this.transferRate = transferRateIn;
 		this.killSiphonMultiplier = killSiphonMultiplierIn;
 		this.passiveGenerationRate = passiveGenerationRateIn;
-	}
-
-	public int getEnchantability() {
-		return this.enchantability;
 	}
 
 	public float getMaxVolume() {
@@ -55,7 +50,4 @@ public enum EnumBloodGourdTiers {
 		return Component.translatable("tooltip.hemomancy.blood_gourd.role." + name().toLowerCase(Locale.ROOT));
 	}
 
-	public int getTierLevel() {
-		return tierLevel;
-	}
 }

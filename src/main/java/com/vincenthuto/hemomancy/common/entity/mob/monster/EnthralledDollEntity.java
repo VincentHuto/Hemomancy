@@ -69,10 +69,6 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 
 	}
 
-	public BloodDrunkPuppeteerEntity getPuppeteer() {
-		return getSummoner() instanceof BloodDrunkPuppeteerEntity puppeteer ? puppeteer : null;
-	}
-
 	@Override
 	public void tick() {
 		super.tick();

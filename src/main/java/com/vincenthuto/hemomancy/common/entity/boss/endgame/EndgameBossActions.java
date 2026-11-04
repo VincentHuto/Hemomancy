@@ -43,7 +43,6 @@ import net.neoforged.neoforge.entity.PartEntity;
 import java.util.List;
 
 final class EndgameBossActions {
-	private static final double MYCOPHANT_ATTACK_RANGE = 64.0D;
 
 	private EndgameBossActions() {
 	}

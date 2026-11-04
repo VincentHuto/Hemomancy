@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -35,7 +34,6 @@ import net.minecraft.world.level.Level;
  */
 public class UnstainedAcolyteEntity extends PathfinderMob implements ProgressionDialogueNpc, ProtectedNpc {
 
-    public final AnimationState idleAnimationState = new AnimationState();
 
     public UnstainedAcolyteEntity(EntityType<? extends UnstainedAcolyteEntity> type, Level worldIn) {
         super(type, worldIn);
@@ -68,9 +66,6 @@ public class UnstainedAcolyteEntity extends PathfinderMob implements Progression
 
     @Override
     public void tick() {
-        if (this.level().isClientSide()) {
-            this.idleAnimationState.startIfStopped(this.tickCount);
-        }
         super.tick();
     }
 

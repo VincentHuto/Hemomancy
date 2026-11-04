@@ -58,14 +58,6 @@ public final class PuppeteerSummonRulesTest {
 		assertEquals("sanguine hound upkeep", 15, hound.threadUpkeepPerMinute());
 		assertDouble("sanguine hound health", 30.0, hound.baseHealth());
 		assertDouble("sanguine hound damage", 6.0, hound.baseDamage());
-		assertFalse("degree 2 only foreshadows puppeteering", PuppeteerSummonRules.canUnlockAtDegree(vulture, 2));
-		assertTrue("degree 3 can unlock vulture", PuppeteerSummonRules.canUnlockAtDegree(vulture, 3));
-		assertFalse("degree 2 cannot unlock spitter", PuppeteerSummonRules.canUnlockAtDegree(spitter, 2));
-		assertTrue("degree 4 can unlock hulk", PuppeteerSummonRules.canUnlockAtDegree(hulk, 4));
-		assertTrue("degree 4 can unlock scarlet mummer", PuppeteerSummonRules.canUnlockAtDegree(mummer, 4));
-		assertTrue("degree 4 can unlock sanguine hound", PuppeteerSummonRules.canUnlockAtDegree(hound, 4));
-		assertFalse("degree 4 cannot unlock mnemonist puppet", PuppeteerSummonRules.canUnlockAtDegree(puppet, 4));
-		assertTrue("degree 5 can unlock mnemonist puppet", PuppeteerSummonRules.canUnlockAtDegree(puppet, 5));
 
 		assertEquals("base active cap", 1, PuppeteerSummonRules.activeSummonCap(0));
 		assertEquals("puppet skein level 3 cap", 4, PuppeteerSummonRules.activeSummonCap(3));

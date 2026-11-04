@@ -129,8 +129,6 @@ public final class ApotheosFloorFunnelSourceTest {
 				"new ApotheosChamberEffects(apotheos)");
 		assertContains("registry keeps apotheos shader motion alive", registry,
 				".motion(1.0F)\n\t\t\t\t.layers(0, 0, 0, 0)");
-		assertNotContains("registry should not keep apotheos blank-slate renderer", registry,
-				"new BlankChamberThemeEffects(apotheos)");
 
 		assertContains("shader init declares apotheos floor shader", shaderInit,
 				"APOTHEOS_FLOOR_FUNNEL");

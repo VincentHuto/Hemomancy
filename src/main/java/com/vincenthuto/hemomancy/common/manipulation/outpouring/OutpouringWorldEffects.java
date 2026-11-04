@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
-import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,15 +28,10 @@ public final class OutpouringWorldEffects {
 
     private OutpouringWorldEffects() {}
 
-    public static boolean allowed(EnumManipulationRank rank, int minRank) {
-        return minRank >= 0 && rank != null && rank.ordinal() >= minRank;
-    }
 
     public static Effect effect(EnumBloodTendency school) { return NONE; }
 
     public static void release(ServerPlayer caster, BloodManipulation manipulation) {
-        if (!allowed(manipulation.getRank(), com.vincenthuto.hemomancy.config.HemoConfigValues.get(
-                HemoServerConfig.CAST_OUTPOURING_REAL_EFFECT_MIN_RANK, -1))) return;
         var effect = effect(manipulation.getTend());
         if (effect == NONE) return;
         int rank = manipulation.getRank().ordinal();

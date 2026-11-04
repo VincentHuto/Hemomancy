@@ -20,7 +20,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.phys.Vec3;
 
 public class BloodLanternJellyEntity extends PathfinderMob {
-	public final AnimationState idleAnimationState = new AnimationState();
 
 	public BloodLanternJellyEntity(EntityType<? extends BloodLanternJellyEntity> type, Level level) {
 		super(type, level);
@@ -76,7 +75,6 @@ public class BloodLanternJellyEntity extends PathfinderMob {
 		super.tick();
 		this.setNoGravity(this.isInWater());
 		if (this.level().isClientSide()) {
-			this.idleAnimationState.startIfStopped(this.tickCount);
 			if (this.random.nextInt(12) == 0) {
 				this.level().addParticle(ParticleTypes.CRIMSON_SPORE, this.getX(), this.getY() + 0.25D, this.getZ(),
 						0.0D, 0.01D, 0.0D);

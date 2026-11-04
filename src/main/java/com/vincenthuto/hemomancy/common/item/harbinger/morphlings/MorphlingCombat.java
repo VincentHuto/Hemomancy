@@ -37,17 +37,4 @@ public final class MorphlingCombat {
         }
     }
 
-    public static boolean afflict(IMorphling morphling, Player caster, LivingEntity target, int ticks) {
-        SchoolHitContext hit = SchoolDamage.current();
-        if (hit == null) hit = SchoolHitContext.direct(BuiltInRegistries.ITEM.getKey(
-                (net.minecraft.world.item.Item)morphling), morphling.getPreferredTendency(), morphling.getSecondaryTendency(), caster);
-        SchoolState state = SchoolStates.primaryState(morphling.getPreferredTendency());
-        if (SchoolStates.data(target).hasApplied(hit.rootAttack(), state)) {
-            SchoolStates.refresh(target, state, ticks);
-            return false;
-        }
-        boolean applied = SchoolStates.apply(hit, caster, target, state, ticks, 1);
-        if (applied) SchoolStates.data(target).recordApplication(hit.rootAttack(), state, target.level().getGameTime());
-        return applied;
-    }
 }

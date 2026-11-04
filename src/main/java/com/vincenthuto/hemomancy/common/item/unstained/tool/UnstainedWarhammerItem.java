@@ -74,13 +74,6 @@ public class UnstainedWarhammerItem extends DiggerItem {
 		return super.hurtEnemy(stack, target, attacker);
 	}
 
-	/**
-	 * Purity-scaling damage bonus: up to +4 additional damage at full purity.
-	 */
-	public static float getPurityDamageBonus(Player player) {
-		return HemoCapabilityAccess.getUnstainedProgress(player).getPurity() / 100.0f * 4.0f;
-	}
-
 	@Override
 	public Component getName(ItemStack stack) {
 		return Component.translatable(this.getDescriptionId(stack))

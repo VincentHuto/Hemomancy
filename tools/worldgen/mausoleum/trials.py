@@ -61,7 +61,7 @@ def spawn_seal(room, c, mark):
     room.set(x, y - 1, z, c['floor_alt'])
     for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
         room.set(x + dx, y - 1, z + dz, c['inlay'])
-    room.set(x, y, z, 'hemomancy:spawn_mark', {'wave': str(mark.index), 'due': 'false'})
+    room.set(x, y, z, 'hemomancy:downfall_seal', {'wave': str(mark.index), 'due': 'false'})
 
 
 def pylon(room, c, mark, facing, style='venous'):

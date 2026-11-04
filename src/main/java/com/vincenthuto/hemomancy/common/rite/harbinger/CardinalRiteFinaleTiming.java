@@ -7,7 +7,6 @@ public final class CardinalRiteFinaleTiming {
 	public static final int MERGE_TICKS = 40;
 	public static final int TOTAL_TICKS = GROWTH_TICKS + MERGE_TICKS;
 	public static final int OFFERING_DWELL_TICKS = 10;
-	public static final double DAEMON_TRAVEL_BLOCKS_PER_TICK = 0.24D;
 	public static final float PROCESSION_SCALE = 0.35F;
 	/** Ticks between successive offerings being drawn out of their braziers. */
 	public static final int OFFERING_DRAW_INTERVAL_TICKS = 12;

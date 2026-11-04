@@ -252,8 +252,7 @@ final class ManipulationsSubcommand {
 	}
 
 	private static boolean isAvailableManipulation(BloodManipulation manipulation) {
-		return manipulation != null && manipulation != BloodManipulation.BLANK
-				&& !ManipulationRetirementRules.isRetiredManipulation(manipulation);
+		return manipulation != null && manipulation != BloodManipulation.BLANK;
 	}
 
 	private static CompletableFuture<Suggestions> suggestManipulations(SuggestionsBuilder builder) {

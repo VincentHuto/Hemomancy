@@ -13,10 +13,6 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.*;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.*;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.summon.KnownSummonsRequestPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.summon.KnownSummonsServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.OpenVisceralMirrorPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorCancelPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorExtractPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorUpdatePacket;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.*;
 import com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusPerception;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
@@ -71,7 +67,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "31";
+    public static final String PROTOCOL_VERSION = "34";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -189,8 +185,8 @@ public class PacketHandler {
         // ── Vascular System capability ────────────────────────────────────────
         net.playToClient(VascularSystemServerPacket.TYPE,
                 VascularSystemServerPacket.STREAM_CODEC, VascularSystemServerPacket::handle);
-        net.playToClient(PacketSyncMuscleMemory.TYPE,
-                PacketSyncMuscleMemory.STREAM_CODEC, PacketSyncMuscleMemory::handle);
+        net.playToClient(PacketSyncThelemicMemory.TYPE,
+                PacketSyncThelemicMemory.STREAM_CODEC, PacketSyncThelemicMemory::handle);
 		net.playToClient(PacketSyncManipulationHearts.TYPE,
 				PacketSyncManipulationHearts.STREAM_CODEC, PacketSyncManipulationHearts::handle);
 
@@ -380,10 +376,6 @@ public class PacketHandler {
         net.playToClient(PacketSyncBloodMoon.TYPE, PacketSyncBloodMoon.STREAM_CODEC, PacketSyncBloodMoon::handle);
 
         // ── Visceral Mirror ───────────────────────────────────────────────────
-        net.playToClient(OpenVisceralMirrorPacket.TYPE, OpenVisceralMirrorPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
-        net.playToServer(VisceralMirrorExtractPacket.TYPE, VisceralMirrorExtractPacket.STREAM_CODEC, VisceralMirrorExtractPacket::handle);
-        net.playToServer(VisceralMirrorCancelPacket.TYPE, VisceralMirrorCancelPacket.STREAM_CODEC, VisceralMirrorCancelPacket::handle);
-        net.playToClient(VisceralMirrorUpdatePacket.TYPE, VisceralMirrorUpdatePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
 
         // ── Semi-Sentient Construct screen ────────────────────────────────────
         net.playToClient(OpenSSCScreenPacket.TYPE, OpenSSCScreenPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);

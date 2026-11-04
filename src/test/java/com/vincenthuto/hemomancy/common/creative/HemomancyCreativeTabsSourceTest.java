@@ -14,42 +14,15 @@ public final class HemomancyCreativeTabsSourceTest {
 			"debug_showcase",
 			"drudge_electrode",
 			"drudge_submission_device",
-			"hematic_suture_needle",
-			"unsigned_ancestral_ledger",
-			"sanguine_blob",
-			"vascular_poultice",
-			"memory_thread",
-			"void_eye_organ",
 			"zombie_husk_effigy",
 			"desert_husk_effigy",
 			"spider_husk_effigy",
-			"vitality_chalice",
 			"vein_spider",
 			"blood_thrall_effigy",
-			"blood_bolt",
-			"vascular_status_gauge",
-			"echo_of_spleen",
-			"echo_of_liver",
-			"echo_of_heart",
-			"echo_of_lungs",
-			"echo_of_kidneys",
-			"draught_of_still_mercy",
-			"lethean_brew",
-			"spawn_egg_peacock_spider");
+			"blood_bolt");
 	private static final List<String> WIP_BLOCKS = List.of(
 			"semi_sentient_construct",
-			"humane_idol",
-			"serpentine_idol",
-			"morphling_cradle",
-			"witness_organ",
-			"gourdvine_tap",
-			"sanguine_vigil",
-			"visceral_mirror",
-			"blood_pylon",
-			"blood_trial_altar",
-			"offering_gate",
-			"crucible_of_nether_ichor",
-			"voidtouched_vessel");
+			"gourdvine_tap");
 
 	private HemomancyCreativeTabsSourceTest() {
 	}
@@ -97,14 +70,10 @@ public final class HemomancyCreativeTabsSourceTest {
 				"if (item.get() == ItemInit.chitinous_husk.get())");
 		assertContains("main tab should accept the Fervent Husk beside the regular Chitinite Husk", hemomancy,
 				"populator.accept(ItemInit.fervent_husk.get())");
-		assertNotContains("Hearty Compass should not be added to the WIP tab", hemomancy,
-				"populator.accept(ItemInit.hearty_compass.get())");
 		assertNotContains("Constrictor Cord should not be added to the WIP tab", hemomancy,
 				"populator.accept(ItemInit.constrictor_cord.get())");
 		assertNotContains("Infested Wood should not be added to the WIP tab", hemomancy,
 				"populator.accept(BlockInit.infested_wood.get())");
-		assertNotContains("Hearty Compass should not be excluded from the main tab", hemomancy,
-				"|| item == ItemInit.hearty_compass.get()");
 		assertNotContains("Constrictor Cord should not be excluded from the main tab", hemomancy,
 				"|| item == ItemInit.constrictor_cord.get()");
 		assertNotContains("Infested Wood should not be excluded from the main tab", hemomancy,
@@ -113,8 +82,6 @@ public final class HemomancyCreativeTabsSourceTest {
 				structureSpawner, "if (!player.isCreative())");
 		assertContains("Structure Spawner packet should reject non-creative world mutation",
 				placeStructurePacket, "if (!player.isCreative())");
-		assertContains("legacy Tome of the Unstained alias should stay out of the normal tab",
-				hemomancy, "item != ItemInit.tome_of_the_unstained.get()");
 
 		String reference = read("docs/HEMOMANCY_REFERENCE.md");
 		String readiness = read("wiki/Public-Alpha-Readiness.md");

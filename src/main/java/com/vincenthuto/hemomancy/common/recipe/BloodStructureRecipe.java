@@ -172,14 +172,6 @@ public class BloodStructureRecipe extends StationRecipe {
 		this.bloodCost = bloodCost;
 	}
 
-	public void setHeldItem(ItemStack heldItem) {
-		this.heldItem = heldItem;
-	}
-
-	public void setHitBlock(Block hitBlock) {
-		this.hitBlock = hitBlock;
-	}
-
 	public void setPattern(MultiblockPattern pattern) {
 		this.pattern = pattern;
 	}

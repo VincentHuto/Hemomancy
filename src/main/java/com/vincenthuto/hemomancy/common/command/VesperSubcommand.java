@@ -26,7 +26,7 @@ final class VesperSubcommand {
 
 	static LiteralArgumentBuilder<CommandSourceStack> build() {
 		return Commands.literal("vesper")
-				.then(Commands.literal("fight")
+				.then(Commands.literal("fight").requires(DevCommands::available)
 						.executes(ctx -> fight(ctx.getSource(), ctx.getSource().getPlayerOrException()))
 						.then(Commands.argument("player", EntityArgument.player())
 								.executes(ctx -> fight(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))));

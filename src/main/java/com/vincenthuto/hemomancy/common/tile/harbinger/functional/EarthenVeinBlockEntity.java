@@ -13,7 +13,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,8 +21,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.UUID;
 
 public class EarthenVeinBlockEntity extends HemoBlockEntity {
-
-	public final AnimationState idleAnimationState = new AnimationState();
 
 	static final String TAG_VEIN_LOC = "veinlocation";
 	static final String TAG_NAME = "name";
@@ -156,10 +153,6 @@ public class EarthenVeinBlockEntity extends HemoBlockEntity {
 		name = tag.getString(TAG_NAME);
 		loadTemporaryData(tag);
 
-	}
-
-	public boolean isHasTicked() {
-		return hasTicked;
 	}
 
 	// NBT JUNK

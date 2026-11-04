@@ -64,14 +64,6 @@ public interface UnlockPredicate {
 	}
 
 	/**
-	 * Visible when the player's inventory contains at least one stack matching
-	 * {@code test}. This checks only the main inventory (not armor/offhand).
-	 */
-	static UnlockPredicate hasItemInInventory(Predicate<ItemStack> test) {
-		return player -> player.getInventory().items.stream().anyMatch(test);
-	}
-
-	/**
 	 * Visible when the player's initiatory degree is at least {@code degree}.
 	 * Returns {@code false} when the capability is absent (e.g. a non-Harbinger).
 	 */

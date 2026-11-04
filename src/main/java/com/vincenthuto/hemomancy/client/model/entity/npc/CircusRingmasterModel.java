@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.model.entity.npc;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionStateRules;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity;
 import net.minecraft.client.model.HumanoidModel;
@@ -137,14 +139,46 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 		return LayerDefinition.create(mesh, 128, 128);
 	}
 
+	/** Ticks the free arm takes to wind back and whip a knife out. */
+	private static final float THROW_TICKS = 12.0F;
+
+	/**
+	 * Perched in the rafters he crouches on the beam, staff planted, only the head and the throwing arm moving. On
+	 * the carousel he stands and presents, staff raised, the free arm thrown wide. Descended, he walks and strikes
+	 * like any man, the calves bending under the vanilla stride and the vanilla swing on the staff arm.
+	 */
 	@Override
 	public void setupAnim(CircusRingmasterEntity entity, float limbSwing, float limbSwingAmount,
 			float ageInTicks, float netHeadYaw, float headPitch) {
-		super.setupAnim(entity, 0.0F, 0.0F, ageInTicks, 0.0F, 0.0F);
+		CircusPavilionStateRules.Phase phase = entity.phase();
+		boolean onFoot = phase == CircusPavilionStateRules.Phase.DESCENT
+				|| phase == CircusPavilionStateRules.Phase.COMPLETE;
+		super.setupAnim(entity, onFoot ? limbSwing : 0.0F, onFoot ? limbSwingAmount : 0.0F, ageInTicks, netHeadYaw,
+				headPitch);
+		leftCalf.resetPose();
+		rightCalf.resetPose();
 		float breath = Mth.sin(ageInTicks * 0.045F) * 0.025F;
+		if (onFoot) {
+			stride(breath);
+		} else if (phase == CircusPavilionStateRules.Phase.CAROUSEL) {
+			present(ageInTicks, breath);
+		} else {
+			perch(breath);
+		}
+		entity.throwState.updateTime(ageInTicks, 1.0F);
+		if (entity.throwState.isStarted()) {
+			float ticks = entity.throwState.getAccumulatedTime() / 50.0F;
+			if (ticks > THROW_TICKS) entity.throwState.stop();
+			else throwBeat(ticks / THROW_TICKS);
+		}
+		float pulse = 1.0F + Mth.sin(ageInTicks * 0.11F) * (phase == CircusPavilionStateRules.Phase.CAROUSEL ? 0.09F : 0.04F);
+		staffTopper.xScale = staffTopper.yScale = staffTopper.zScale = pulse;
+	}
+
+	/** Crouched on the beam: the body leans out over the ring, the staff arm plants, the legs fold under. */
+	private void perch(float breath) {
 		body.xRot = 0.18F + breath;
-		head.xRot = -0.1F - breath;
-		head.yRot = 0.0F;
+		head.xRot += -0.1F - breath;
 		rightArm.xRot = -0.55F;
 		rightArm.zRot = 0.12F;
 		leftArm.xRot = -0.2F;
@@ -153,7 +187,43 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 		rightLeg.yRot = 0.12F;
 		leftLeg.yRot = -0.12F;
 		rightCalf.xRot = leftCalf.xRot = 1.38F;
-		float pulse = 1.0F + Mth.sin(ageInTicks * 0.11F) * 0.04F;
-		staffTopper.xScale = staffTopper.yScale = staffTopper.zScale = pulse;
+	}
+
+	/** Standing on the carousel's hub, presenting: staff raised high, the free arm thrown out to the crowd. */
+	private void present(float ageInTicks, float breath) {
+		float sway = Mth.sin(ageInTicks * 0.07F);
+		body.xRot = -0.08F + breath;
+		body.zRot = 0.03F * sway;
+		head.xRot += -0.15F;
+		rightArm.xRot = -2.6F + 0.05F * sway;
+		rightArm.zRot = 0.25F;
+		leftArm.xRot = -0.35F;
+		leftArm.zRot = -1.15F + 0.06F * sway;
+		leftArm.yRot = 0.2F;
+		rightLeg.xRot = -0.05F;
+		leftLeg.xRot = 0.05F;
+		rightLeg.yRot = 0.1F;
+		leftLeg.yRot = -0.1F;
+	}
+
+	/** Walking and striking: the vanilla stride and swing stand, the calves bend behind the knee, the staff plants. */
+	private void stride(float breath) {
+		body.xRot += 0.06F + breath;
+		rightCalf.xRot = Math.max(0.0F, -rightLeg.xRot) * 0.9F;
+		leftCalf.xRot = Math.max(0.0F, -leftLeg.xRot) * 0.9F;
+		rightArm.xRot -= 0.35F;
+		rightArm.zRot += 0.1F;
+	}
+
+	/** The free arm draws back behind the shoulder, holds, then whips out and down as the knife leaves. */
+	private void throwBeat(float t) {
+		float wind = HemoEasing.smoothstep(0.0F, 0.3F, t) * (1.0F - HemoEasing.smoothstep(0.4F, 0.55F, t));
+		float whip = HemoEasing.smoothstep(0.4F, 0.55F, t) * (1.0F - HemoEasing.smoothstep(0.8F, 1.0F, t));
+		leftArm.xRot = Mth.lerp(wind, leftArm.xRot, -2.9F);
+		leftArm.zRot = Mth.lerp(wind, leftArm.zRot, -0.4F);
+		leftArm.xRot = Mth.lerp(whip, leftArm.xRot, -0.9F);
+		leftArm.yRot = Mth.lerp(whip, leftArm.yRot, 0.45F);
+		body.yRot = Mth.lerp(whip, body.yRot, -0.25F);
+		head.yRot = Mth.lerp(whip, head.yRot, 0.2F);
 	}
 }

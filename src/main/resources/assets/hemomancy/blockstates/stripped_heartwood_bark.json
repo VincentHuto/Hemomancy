@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "hemomancy:block/stripped_heartwood_bark",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "hemomancy:block/stripped_heartwood_bark"
+    },
+    "axis=z": {
+      "model": "hemomancy:block/stripped_heartwood_bark",
+      "x": 90
+    }
+  }
+}

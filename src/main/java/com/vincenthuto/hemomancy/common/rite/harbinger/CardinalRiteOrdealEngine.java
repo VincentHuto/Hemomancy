@@ -335,7 +335,7 @@ public final class CardinalRiteOrdealEngine {
 				level, rite.getPlayerUUID(), rite.getCenterPos());
 		if (daemon != null) return daemon;
 		if (!level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(rite.getCenterPos()))) return null;
-		daemon = EntityInit.humanity_sprite.get().create(level);
+		daemon = EntityInit.daemon.get().create(level);
 		if (daemon == null) return null;
 		daemon.initialize(centerPosition(rite, scale), scale);
 		daemon.bindToRite(rite.getPlayerUUID());

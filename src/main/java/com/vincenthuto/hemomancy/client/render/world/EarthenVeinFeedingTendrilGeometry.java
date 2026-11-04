@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hemomancy.common.world.vein.EarthenVeinFeedingVortexProfile;
 import com.vincenthuto.hemomancy.common.world.vein.EarthenVeinTravelPhase;
 import net.minecraft.util.Mth;
@@ -32,7 +33,7 @@ public final class EarthenVeinFeedingTendrilGeometry {
 			List<Joint> joints = new ArrayList<>(SEGMENTS + 1);
 			for (int segment = 0; segment <= SEGMENTS; segment++) {
 				double progress = segment / (double) SEGMENTS;
-				double pull = Mth.smoothstep(progress);
+				double pull = HemoEasing.smoothstep(progress);
 				double taper = 1.0D - pull;
 				double angle = rootAngle + progress * (1.15D + strength * 0.55D)
 						+ Math.sin(motion * 0.73D + strandIndex * 1.31D + progress * 8.0D)

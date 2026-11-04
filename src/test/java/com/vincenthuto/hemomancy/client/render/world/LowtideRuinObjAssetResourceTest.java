@@ -154,8 +154,6 @@ public final class LowtideRuinObjAssetResourceTest {
 				"float scale = skyDistance * Mth.lerp(distanceFade, Mth.lerp(random.nextFloat(), 0.026F, 0.040F),");
 		assertContains("distant OBJ ruins are smallest", effects,
 				"float scale = skyDistance * Mth.lerp(random.nextFloat(), 0.007F, 0.014F);");
-		assertContains("far OBJ ruins are darker than foreground hero values", effects,
-				"LOWTIDE_RUIN_FAR_LIGHT");
 		assertContains("distant OBJ ruins are darkest", effects,
 				"LOWTIDE_RUIN_DISTANT_LIGHT");
 		assertContains("renderer draws lowtide ruins before the glossy lake overlay", effects,

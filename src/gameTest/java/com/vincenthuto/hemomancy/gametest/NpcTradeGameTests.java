@@ -76,7 +76,7 @@ import java.util.function.Supplier;
 public final class NpcTradeGameTests {
 	private static final String EMPTY = "empty";
 	/** Every shipped card (docs/archive/tracks/npc_trade/05 and 06 Status). */
-	private static final int SHIPPED_CARDS = 56;
+	private static final int SHIPPED_CARDS = 58;
 	private static final BlockPos NPC = new BlockPos(2, 2, 2);
 	private static final BlockPos STAND = new BlockPos(4, 2, 2);
 

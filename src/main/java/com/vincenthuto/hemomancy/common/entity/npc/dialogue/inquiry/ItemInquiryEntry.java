@@ -13,7 +13,4 @@ public record ItemInquiryEntry(List<ItemInquiryCondition> conditions) {
         return Optional.empty();
     }
 
-    public Optional<List<String>> resolve(int degree, float purity) {
-        return resolve(ItemInquiryContext.legacy(degree, purity));
-    }
 }

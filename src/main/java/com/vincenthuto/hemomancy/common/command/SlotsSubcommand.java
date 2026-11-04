@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.command;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.mojang.brigadier.arguments.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
@@ -62,30 +63,32 @@ final class SlotsSubcommand {
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		if (known.equipManip(manipName, maxSlots)) {
 			int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
+			KnownManipulationEvents.syncPlayerEvent(player);
 			source.sendSuccess(() -> Component.translatable("commands.hemomancy.slots.equipped",
 					Component.literal(manipName).withStyle(ChatFormatting.GREEN),
 					Component.literal(" (" + normalSlots + "/" + maxSlots + ")")
 							.withStyle(ChatFormatting.GRAY)),
 					true);
-		} else {
-			int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
-			source.sendFailure(HemoText.translatable("commands.hemomancy.slots.cannot_equip_no_free_slot_or",
-					normalSlots,
-					maxSlots));
+			return 1;
 		}
-		return 1;
+		int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
+		source.sendFailure(HemoText.translatable("commands.hemomancy.slots.cannot_equip_no_free_slot_or",
+				normalSlots,
+				maxSlots));
+		return 0;
 	}
 
 	private static int unequipManip(CommandSourceStack source, ServerPlayer player, String manipName) {
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				;
 		if (known.unequipManip(manipName)) {
+			KnownManipulationEvents.syncPlayerEvent(player);
 			source.sendSuccess(() -> Component.translatable("commands.hemomancy.slots.unequipped",
 					Component.literal(manipName).withStyle(ChatFormatting.YELLOW)),
 					true);
-		} else {
-			source.sendFailure(HemoText.translatable("commands.hemomancy.slots.manipulation_was_not_equipped", manipName));
+			return 1;
 		}
-		return 1;
+		source.sendFailure(HemoText.translatable("commands.hemomancy.slots.manipulation_was_not_equipped", manipName));
+		return 0;
 	}
 }

@@ -97,7 +97,7 @@ public final class ClientInputEvents {
         }
 
         if (KeyMappings.bloodCrafting.consumeClick()) {
-            PacketHandler.sendToServer(new BloodCraftingKeyPressPacket(HLClientUtils.getClientPlayer().getMainHandItem()));
+            PacketHandler.sendToServer(new BloodCraftingKeyPressPacket());
         }
 
         if (KeyMappings.bloodDraw.isDown()) {

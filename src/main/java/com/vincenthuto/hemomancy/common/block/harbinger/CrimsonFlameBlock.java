@@ -316,15 +316,6 @@ public class CrimsonFlameBlock extends BaseFireBlock {
 		builder.add(AGE, NORTH, EAST, SOUTH, WEST, UP);
 	}
 
-	private void setFireInfo(Block blockIn, int encouragement, int flammability) {
-		if (blockIn == Blocks.AIR) {
-			throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
-		} else {
-			this.encouragements.put(blockIn, encouragement);
-			this.flammabilities.put(blockIn, flammability);
-		}
-	}
-
 	public boolean canCatchFire(BlockGetter world, BlockPos pos, Direction face) {
 		return world.getBlockState(pos).isFlammable(world, pos, face);
 	}

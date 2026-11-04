@@ -29,18 +29,13 @@ public class BloodBindingEffect extends MobEffect {
 			if (entity instanceof net.minecraft.server.level.ServerPlayer) entity.hurtMarked = true;
 			Level level = entity.level();
 			Vector3 centerVec = Vector3.fromEntityCenter(entity);
-			if (binding.isVisible() && !level.isClientSide && level instanceof ServerLevel sr) {
+			// Two motes every four ticks trace the orbit as well as eight a tick did, at a sixteenth of the packets (RT-5).
+			if (binding.isVisible() && !level.isClientSide && level instanceof ServerLevel sr && level.getGameTime() % 4 == 0) {
 					double time = level.getGameTime();
 					double orbitX = Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05);
 					double orbitY = Math.sin(time * 0.1) * 0.55;
 					double orbitZ = Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05);
 					sr.sendParticles(serpent(new ParticleColor(50, 50, 50)),
-							centerVec.x + orbitX, centerVec.y + orbitY, centerVec.z + orbitZ,
-							1, 0, 0, 0, 0);
-					sr.sendParticles(serpent(new ParticleColor(100, 0, 0)),
-							centerVec.x + orbitX, centerVec.y + orbitY, centerVec.z + orbitZ,
-							1, 0, 0, 0, 0);
-					sr.sendParticles(serpent(new ParticleColor(255, 0, 0)),
 							centerVec.x + orbitX, centerVec.y + orbitY, centerVec.z + orbitZ,
 							1, 0, 0, 0, 0);
 					sr.sendParticles(serpent(new ParticleColor(255, 0, 0)),

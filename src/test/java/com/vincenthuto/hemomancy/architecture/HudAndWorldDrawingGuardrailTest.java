@@ -74,7 +74,7 @@ class HudAndWorldDrawingGuardrailTest {
 				"renderWhiteHumorScreenOverlay(graphics)"));
 		assertTrue(registrar.contains("event.registerBelowAll(Hemomancy.rloc(\"screen_effects\")"),
 				"full-screen effects draw under every HUD layer");
-		String markers = SourceAssertions.section(registrar, "Hemomancy.rloc(\"hud_markers\")", "});");
+		String markers = SourceAssertions.section(registrar, "Hemomancy.rloc(\"hud_markers\")", "})");
 		assertInOrder(markers, List.of("translate(0.0F, 0.0F, -graphics.pose().last().pose().m32())",
 				"EarthenVeinTravelClientEvents.renderTooltip(graphics)", "ManipulationVisualRenderer.hud(graphics)",
 				"AntecedentClientEffects.render(graphics)"));
@@ -95,8 +95,7 @@ class HudAndWorldDrawingGuardrailTest {
 
 	private static List<Path> sources() throws IOException {
 		try (Stream<Path> files = Files.walk(RepoPaths.MAIN_JAVA)) {
-			return files.filter(path -> path.toString().endsWith(".java"))
-					.filter(path -> !RepoPaths.display(path).contains("/compat/mna/")).toList();
+			return files.filter(path -> path.toString().endsWith(".java")).toList();
 		}
 	}
 }

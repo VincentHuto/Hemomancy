@@ -282,17 +282,6 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 		return InteractionResult.sidedSuccess(level().isClientSide);
 	}
 
-	private DialogueTree dialogueTree(boolean firstVisit) {
-		String key = "hemomancy.dialogue." + roleId();
-		List<String> lines = firstVisit
-				? List.of("hemomancy.dialogue.circus_performer.welcome", key + ".line1", key + ".line2", key + ".line3")
-				: List.of(key + ".line1", key + ".line2", key + ".line3");
-		return DialogueTree.builder(getType().getDescriptionId(), Hemomancy.rloc(texturePath()), getId())
-				.addNode(new DialogueNode("greeting", lines,
-						List.of(new DialogueOption("hemomancy.dialogue.circus_performer.leave", null, null))))
-				.build();
-	}
-
 	public ActState getActState() {
 		int index = Byte.toUnsignedInt(entityData.get(ACT_STATE));
 		return index < ActState.values().length ? ActState.values()[index] : ActState.REST;

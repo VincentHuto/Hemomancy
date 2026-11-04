@@ -132,7 +132,7 @@ Findings from the earlier audit (the 60 player-tick handlers, the KnownManipulat
    - `MaxBloodLedger.apply`: a new `ArrayList` of contributions, plus organ and scar iteration;
    - 4–5 config `.get()` calls and 3 skill-helper queries.
 3. **HarbingerEquipmentEntityEventHandler.playerTick** (:182): both sides, plus attribute churn (2.1).
-4. **MuscleMemoryWorldEvents.tick** (:77): `getData`, `migrateLegacyPriming`, reserve tick, 3 attribute lookups and a new `TickSnapshot` record plus `Vec3` per player per tick. Its modifier updates are idempotent.
+4. **ThelemicMemoryWorldEvents.tick** (:77): `getData`, `migrateLegacyPriming`, reserve tick, 3 attribute lookups and a new `TickSnapshot` record plus `Vec3` per player per tick. Its modifier updates are idempotent.
 5. **ScarsEntityEventHandler.playerTickScars** (:64): both sides, `IScars::tick`, then 3 helper ticks (Rooted, AfflictionDigest, Conserve) each tick; a remove-plus-add of a permanent modifier every 20 ticks while synergy holds (:147-151).
 6. **BodyIdiomEvents** (:72): `reconcileIronHeartCapacity` every tick, plus the broadcast in 2.5.
 7. **EquippedMorphlingEvents** (:61): morphling hunger and passive ticks every tick for equipped players.
@@ -204,7 +204,7 @@ The matrix shows which lifecycle events a system's own file handles. Key: **in**
 | MycophantEncounterManager / VesperOrdealManager | ✔ | – | – | ✔ | – | – | – | rely on persistent data (acceptable) |
 | ManipulationChannelManager, CastingAnimationManager, HematicRiposteEvents, ConductionManager | – | ✔ | – | ✔ | ✔ | mixed | – | no stop for some (ChannelManager, Riposte) |
 | AxonalTransductionManager, EarlyInitiation | ✔ | – | – | ✔ | ✔ | ✔ | – | no respawn; dead-player paths rely on per-tick checks |
-| MuscleMemoryEvents | ✔ | ✔ | – | ✔ | ✔ | – | ✔ | complete |
+| ThelemicMemoryEvents | ✔ | ✔ | – | ✔ | ✔ | – | ✔ | complete |
 | StationUpgradeProgress.deliver | via level tick every 20 ticks | | | | | | | **no `isAlive` check** (see below) |
 
 **ScaleGrip item loss (VERIFIED code path).**

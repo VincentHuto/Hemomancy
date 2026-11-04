@@ -22,7 +22,6 @@ public final class LanternTickAnimationResourceTest {
 		assertContains("entity exposes latched state", entity, "ANIMATION_LATCHED");
 		assertContains("entity exposes bite pulse", entity, "BITE_ANIMATION_TICKS");
 		assertContains("model has abdomen glow part", model, "abdomenGlow");
-		assertContains("model has angled legs", model, "addAngledLeg");
 		assertContains("model legs roll outward instead of folding in", model, "LEG_OUTWARD_Z_ROT");
 		assertContains("model keeps top abdomen glow above shell", model,
 				"addBox(-3.25F, -4.05F, -2.25F, 6.5F, 0.25F, 9.0F");

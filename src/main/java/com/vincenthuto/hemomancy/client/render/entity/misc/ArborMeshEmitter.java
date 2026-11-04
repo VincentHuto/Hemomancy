@@ -304,12 +304,6 @@ final class ArborMeshEmitter {
         texturedVertex(pose,out,light,p.x()+nx*radius,p.y()+ny*radius,p.z()+nz*radius,u,v,nx,ny,nz,color);
     }
 
-    private static void fruitEllipsoid(PoseStack.Pose pose, VertexConsumer out, int light,
-            double cx,double cy,double cz,double rx,double ry,double rz,int color) {
-        texturedEllipsoid(pose,out,light,cx,cy,cz,rx,ry,rz,color,
-                ArborRenderBudget.FOCAL_ELLIPSOID_LATITUDES,ArborRenderBudget.FOCAL_ELLIPSOID_LONGITUDES);
-    }
-
     static void minorEllipsoid(PoseStack.Pose pose, VertexConsumer out, int light,
             double cx,double cy,double cz,double rx,double ry,double rz,int color) {
         texturedEllipsoid(pose,out,light,cx,cy,cz,rx,ry,rz,color,

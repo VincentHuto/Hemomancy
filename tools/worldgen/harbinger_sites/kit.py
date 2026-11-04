@@ -198,7 +198,7 @@ class Piece(Room):
         if name.endswith('_wall') and 'up' not in props:
             props.update(wall())
         if name in (LANTERN, CHAIN, CANDLE, JAR, BRAZIER, BARS, 'minecraft:ladder', 'hemomancy:sanguine_pane',
-                    'hemomancy:harbinger_escritoire', 'hemomancy:warp_chair_filler', 'hemomancy:filler_block') \
+                    'hemomancy:harbinger_escritoire', 'hemomancy:somnolent_seat_filler', 'hemomancy:filler_block') \
                 and 'waterlogged' not in props:
             props['waterlogged'] = 'false'
         self.set(x, y, z, name, props, nbt)

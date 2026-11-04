@@ -33,8 +33,6 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 public class VerdigrisMothEntity extends PathfinderMob {
-	public final AnimationState flyAnimationState = new AnimationState();
-	public final AnimationState idleAnimationState = new AnimationState();
 
 	private int naturalShedCooldownTicks;
 	private int brushShedCooldownTicks;
@@ -102,13 +100,6 @@ public class VerdigrisMothEntity extends PathfinderMob {
 	}
 
 	private void updateClientAnimation() {
-		if (this.onGround()) {
-			this.flyAnimationState.stop();
-			this.idleAnimationState.startIfStopped(this.tickCount);
-		} else {
-			this.idleAnimationState.stop();
-			this.flyAnimationState.startIfStopped(this.tickCount);
-		}
 		if (this.random.nextInt(14) == 0) {
 			this.level().addParticle(ParticleTypes.END_ROD,
 					this.getX() + (this.random.nextDouble() - 0.5D) * 0.4D,

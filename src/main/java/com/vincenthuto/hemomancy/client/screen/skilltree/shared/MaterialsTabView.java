@@ -421,18 +421,6 @@ public final class MaterialsTabView {
 		return null;
 	}
 
-	private static LinkedHashMap<String, List<MaterialAtlasNode>> groupByBucket(MaterialAtlasPath path,
-			List<MaterialAtlasNode> nodes) {
-		LinkedHashMap<String, List<MaterialAtlasNode>> map = new LinkedHashMap<>();
-		for (MaterialAtlasBucket bucket : MaterialAtlasSpec.buckets(path)) {
-			map.put(bucket.id(), new ArrayList<>());
-		}
-		for (MaterialAtlasNode node : nodes) {
-			map.computeIfAbsent(node.atlasEntry().bucket().id(), k -> new ArrayList<>()).add(node);
-		}
-		return map;
-	}
-
 	private static int jitter(String id, int maxAbs) {
 		int range = maxAbs * 2 + 1;
 		int raw = Math.floorMod(id.hashCode(), range);

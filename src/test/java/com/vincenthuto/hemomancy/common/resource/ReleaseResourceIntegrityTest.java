@@ -171,7 +171,7 @@ class ReleaseResourceIntegrityTest {
 	private static void assertIronWallIsDormantAndSinglyRendered() throws IOException {
 		String clientEvents = Files.readString(JAVA.resolve("client/registry/EntityRendererRegistrar.java"));
 		assertOccurrenceCount(clientEvents,
-				"event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);", 1,
+				"event.registerEntityRenderer(EntityInit.ferric_rampart.get(), IronWallRenderer::new);", 1,
 				"Iron Wall renderer should be registered exactly once");
 		String reference = Files.readString(Path.of("docs/HEMOMANCY_REFERENCE.md"));
 		assertContains(reference, "Dormant future encounter state",

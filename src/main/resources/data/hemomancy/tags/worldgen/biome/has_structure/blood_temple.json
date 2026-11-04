@@ -37,11 +37,6 @@
     "minecraft:stony_peaks",
     "minecraft:mushroom_fields",
     "minecraft:dripstone_caves",
-    "minecraft:lush_caves",
-    "minecraft:nether_wastes",
-    "minecraft:warped_forest",
-    "minecraft:crimson_forest",
-    "minecraft:soul_sand_valley",
-    "minecraft:basalt_deltas"
+    "minecraft:lush_caves"
   ]
 }

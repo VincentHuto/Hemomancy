@@ -1,0 +1,6 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:oak_log",
+  "blood_cost": 60,
+  "result": "hemomancy:blood_wood_log"
+}

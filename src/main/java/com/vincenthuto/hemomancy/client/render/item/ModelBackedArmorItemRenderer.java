@@ -89,11 +89,6 @@ public class ModelBackedArmorItemRenderer extends BlockEntityWithoutLevelRendere
 			default -> model.setAllVisible(true);
 		}
 	}
-	private static void applyManualFirstPersonTransforms(ItemStack stack, ItemDisplayContext displayContext,
-	                                             PoseStack poseStack) {
-		if (displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND  ) {
-		}
-	}
 
 	private static void applyManualGuiTransforms(ItemStack stack, ItemDisplayContext displayContext,
 			PoseStack poseStack) {

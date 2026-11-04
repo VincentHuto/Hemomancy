@@ -20,9 +20,6 @@ public final class LivingStaffFocusRules {
 	private static final double VESPER_ABSORPTION_DAMAGE_BONUS = 0.5D;
 	private static final double VESPER_REFUSAL_ABSORPTION_DAMAGE_BONUS = 0.25D;
 
-	private static final int STAFF_BASE_ABSORPTION_PULSE_INTERVAL = 4;
-	private static final int VESPER_ABSORPTION_PULSE_INTERVAL_BONUS = 1;
-
 	private static final double BARE_TILE_ABSORPTION_RATE = 100.0D;
 	private static final double STAFF_TILE_ABSORPTION_RATE = 150.0D;
 	private static final double STAFF_TILE_ABSORPTION_RATE_PER_DRAW_LEVEL = 75.0D;
@@ -120,17 +117,6 @@ public final class LivingStaffFocusRules {
 			damage += safeFocus.vespersRefusalLevel() * VESPER_REFUSAL_ABSORPTION_DAMAGE_BONUS;
 		}
 		return damage;
-	}
-
-	public static int absorptionPulseIntervalTicks(LivingStaffFocusProfile focus) {
-		LivingStaffFocusProfile safeFocus = safeFocus(focus);
-		int interval = STAFF_BASE_ABSORPTION_PULSE_INTERVAL - safeFocus.vascularDrawLevel()
-				- safeFocus.hematicFocusLevel() / 2;
-		if (safeFocus.vesperMemoryAwakened()) {
-			interval -= VESPER_ABSORPTION_PULSE_INTERVAL_BONUS;
-			interval -= safeFocus.vespersRefusalLevel() / 2;
-		}
-		return Math.max(3, interval);
 	}
 
 	public static double structureProjectionRate(boolean usingLivingStaff, LivingStaffFocusProfile focus) {

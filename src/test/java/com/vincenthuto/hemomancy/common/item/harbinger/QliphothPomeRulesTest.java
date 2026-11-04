@@ -22,9 +22,6 @@ public final class QliphothPomeRulesTest {
 		assertTrue("survival bound pomes are protected", QliphothPomeRules.shouldProtectBoundPome(true, false));
 		assertFalse("creative bound pomes are not protected", QliphothPomeRules.shouldProtectBoundPome(true, true));
 		assertFalse("ordinary pomes are not protected", QliphothPomeRules.shouldProtectBoundPome(false, false));
-		assertTrue("pruned bloom resets existing pome progress", QliphothPomeRules.shouldResetProgressOnPrune(true, 3));
-		assertFalse("missing bloom does not reset pome progress", QliphothPomeRules.shouldResetProgressOnPrune(false, 3));
-		assertFalse("no pome progress needs no reset", QliphothPomeRules.shouldResetProgressOnPrune(true, 0));
 		assertFalse("eighth pome does not grant the spine", QliphothPomeRules.shouldGrantFungalSpine(8, false));
 		assertTrue("ninth pome grants the spine once", QliphothPomeRules.shouldGrantFungalSpine(9, false));
 		assertFalse("an already granted spine is not duplicated", QliphothPomeRules.shouldGrantFungalSpine(9, true));

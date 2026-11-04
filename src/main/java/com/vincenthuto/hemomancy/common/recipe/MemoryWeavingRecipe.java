@@ -17,8 +17,6 @@ public class MemoryWeavingRecipe extends StationRecipe {
 
 	public static final int MAX_ENZYMES_PER_TENDENCY = 8;
 	private static final double LEGACY_BLOOD_COST_PER_TENDENCY = 50.0;
-	private static final int BASE_CRAFT_TIME_TICKS = 100;
-	private static final int CRAFT_TIME_PER_ORB = 20;
 
 	private final ResourceLocation id;
 	private final List<Ingredient> catalysts;
@@ -221,10 +219,6 @@ public class MemoryWeavingRecipe extends StationRecipe {
 		enzymeRequirements.putAll(legacyEnzymes(tendency));
 	}
 
-	public boolean isTendencyRequired(EnumBloodTendency tendency) {
-		return getEnzymeRequirement(tendency) > 0;
-	}
-
 	public int getRequiredTendencyCount() {
 		int count = 0;
 		for (int amount : enzymeRequirements.values()) {
@@ -237,10 +231,6 @@ public class MemoryWeavingRecipe extends StationRecipe {
 
 	public double getBloodCost() {
 		return bloodCost;
-	}
-
-	public int getCraftTimeTicks() {
-		return BASE_CRAFT_TIME_TICKS + getTotalOrbCount() * CRAFT_TIME_PER_ORB;
 	}
 
 	public int getTotalOrbCount() {

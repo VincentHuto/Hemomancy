@@ -39,11 +39,6 @@ public class CovenantThroneSeatEntity extends Entity {
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 	}
 
-	@Nullable
-	public BlockPos getThronePos() {
-		return thronePos;
-	}
-
 	public boolean isForThrone(BlockPos pos) {
 		return thronePos != null && thronePos.equals(pos);
 	}

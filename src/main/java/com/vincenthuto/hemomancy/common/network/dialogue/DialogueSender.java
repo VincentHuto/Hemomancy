@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.OfferedDialogues;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MonolithDialogueContext;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SuccessionDialogue;
@@ -31,7 +33,8 @@ public final class DialogueSender {
 			MonolithDialogueContext.clear(player);
 		}
 		var entity = player.level().getEntity(open.tree().entityId());
-		PacketDistributor.sendToPlayer(player,
-				new OpenDialoguePacket(SuccessionDialogue.decorate(player, entity, open.tree())));
+		DialogueTree tree = SuccessionDialogue.decorate(player, entity, open.tree());
+		OfferedDialogues.record(player, tree);
+		PacketDistributor.sendToPlayer(player, new OpenDialoguePacket(tree));
 	}
 }

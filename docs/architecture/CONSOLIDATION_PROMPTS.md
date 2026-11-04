@@ -109,7 +109,7 @@ Consolidation step 5 of 13: roadmap Phase 3, player-state plumbing. Follow docs/
 
 Behaviour preserving, with no NBT key or packet-content changes:
 1. HemoCapabilityAccess accessors:
-   - Add muscleMemory() and dialogueKnowledge().
+   - Add thelemicMemory() and dialogueKnowledge().
    - Player-attachment accessors return concrete types; collapse the Optional ceremony.
    - Replace the 6 direct getCapability calls in HarbingerEquipmentContainer.
 2. TransientServerStateEvents becomes the single hub for every static session or per-player map, with logout removal. Delete the private stop and logout handlers it replaces.

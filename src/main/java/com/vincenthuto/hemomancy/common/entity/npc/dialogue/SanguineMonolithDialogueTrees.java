@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import net.minecraft.server.level.ServerPlayer;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryContext;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -143,10 +145,10 @@ public final class SanguineMonolithDialogueTrees {
 				.build();
 	}
 
-	public static DialogueTree itemInquiry(ItemStack item, int degree) {
+	public static DialogueTree itemInquiry(ServerPlayer player, ItemStack item) {
 		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.getItem());
 		return ItemInquiryRegistry.INSTANCE
-				.resolve("monolith", itemId, degree, 0f)
+				.resolve("monolith", itemId, ItemInquiryContext.from(player))
 				.map(lines -> basicItemInquiry(lines.toArray(String[]::new)))
 				.orElseGet(() -> basicItemInquiry("hemomancy.monolith.item_inquiry.unknown"));
 	}

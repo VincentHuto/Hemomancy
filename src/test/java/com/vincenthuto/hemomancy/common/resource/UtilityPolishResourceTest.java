@@ -29,7 +29,6 @@ public final class UtilityPolishResourceTest {
 		assertMycelialCrucibleHasBasinShader();
 		assertLetheanPoppyWreathIsWallMountedDecoration();
 		assertMnemonicCandleHasWickParticles();
-		assertBloodChumIsThrownWaterAreaUtility();
 		assertDicentraSapLegacyOnlyAcrossData();
 	}
 
@@ -241,21 +240,6 @@ public final class UtilityPolishResourceTest {
 		// The flame is modelled geometry on the lit candle, not a particle.
 		String litModel = read(ASSETS.resolve("models/block/mnemonic_candle_lit.json"));
 		assertContains("mnemonic candle lit model carries the flame", litModel, "\"flame\"");
-	}
-
-	private static void assertBloodChumIsThrownWaterAreaUtility() throws IOException {
-		String item = read(SRC.resolve("common/item/shared/BloodChumItem.java"));
-		String entityInit = read(SRC.resolve("common/init/EntityInit.java"));
-		String mixin = read(SRC.resolve("mixin/core/MixinFishingHook.java"));
-		String clientEvents = read(SRC.resolve("client/registry/EntityRendererRegistrar.java"));
-		String areaManager = read(SRC.resolve("common/effect/ChummedWatersAreaManager.java"));
-		assertNotContains("blood chum should not add player mob effects", item, "addEffect");
-		assertContains("blood chum throws projectile", item, "BloodChumEntity");
-		assertContains("blood chum projectile registered", entityInit, "blood_chum_projectile");
-		assertContains("blood chum projectile rendered", clientEvents, "EntityInit.blood_chum_projectile.get()");
-		assertContains("fishing hook checks chummed water area", mixin, "ChummedWatersAreaManager.isChummed");
-		assertContains("chummed waters emits ambient particles", areaManager, "ServerTickEvent.Post");
-		assertContains("chummed waters uses visible dye-like particles", areaManager, "DustParticleOptions");
 	}
 
 	private static void assertJsonExists(Path path) throws IOException {

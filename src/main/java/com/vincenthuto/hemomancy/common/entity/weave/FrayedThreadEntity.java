@@ -57,7 +57,7 @@ public class FrayedThreadEntity extends PathfinderMob {
 	/** Raises a false fragment's bite over its tip, `at` being the tip on the engram's floor. */
 	public static FrayedThreadEntity spawnIntrusion(ServerLevel level, SomaticLoomBlockEntity loom, EnumBloodTendency tendency,
 			Vec3 at, EnumManipulationRank rank) {
-		FrayedThreadEntity thread = new FrayedThreadEntity(EntityInit.frayed_thread.get(), level);
+		FrayedThreadEntity thread = new FrayedThreadEntity(EntityInit.intruding_memory.get(), level);
 		thread.intrusion = true;
 		thread.entityData.set(TENDENCY, (byte) tendency.ordinal());
 		thread.entityData.set(RANK, (byte) rank.ordinal());

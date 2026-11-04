@@ -450,7 +450,7 @@ class MausoleumComplexResourceTest {
 						assertEquals(4, here.nbt().getCompound("Item").getInt("count"), where + " holds a stack of four");
 					}
 					case "SPAWN" -> {
-						assertEquals("hemomancy:spawn_mark", here.name(), where);
+						assertEquals("hemomancy:downfall_seal", here.name(), where);
 						assertEquals(String.valueOf(index), here.properties().getString("wave"), where + " answers its wave");
 						assertFalse(hallTemplate.at(x, y - 1, z).name().equals("minecraft:air"), where + " has a floor");
 					}

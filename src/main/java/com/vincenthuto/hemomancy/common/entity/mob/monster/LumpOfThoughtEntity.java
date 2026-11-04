@@ -19,8 +19,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 public class LumpOfThoughtEntity extends Monster {
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+		// A slow, heavy blob that is hard to knock about.
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 24.0D).add(Attributes.MOVEMENT_SPEED, 0.22D)
+				.add(Attributes.ATTACK_DAMAGE, 5.0D).add(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
 	}
 
 	public LumpOfThoughtEntity(EntityType<? extends LumpOfThoughtEntity> type, Level worldIn) {
@@ -72,6 +73,7 @@ public class LumpOfThoughtEntity extends Monster {
 
 	@Override
 	protected void registerGoals() {
+		this.goalSelector.addGoal(7, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(this, 0.8D));
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
 		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));

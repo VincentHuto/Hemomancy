@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -20,7 +19,6 @@ import java.util.*;
 public final class CastingAnimationGameTests {
     @GameTest(template="empty") public static void everyActiveRegistryEntryHasPresentation(GameTestHelper h) {
         for(var manipulation:ManipulationInit.MANIPS_TYPE_REGISTRY) {
-            if(ManipulationRetirementRules.isRetiredManipulation(manipulation))continue;
             h.assertTrue(CastPresentation.hasExplicit(manipulation.getName()),"Missing presentation: "+manipulation.getName());
             h.assertTrue(!manipulation.serialize().contains("cast_purpose"),"Presentation polluted saved memories");
         }

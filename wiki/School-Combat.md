@@ -198,7 +198,7 @@ Non-damaging exceptions retain their specific jobs: Binding forms bind; Marionet
 | Living Staff | Uses its weapon assignment, with captured secondary metadata where present. Holding it does not reschool another spell. |
 | Blood Needle, Shot, Bolt, Bullet | Use captured manipulation/weapon metadata, including family form identity. Legacy untyped launches remain untyped rather than taking the current held weapon's school. |
 | Blood cloud carrier / blood cloud | Carrier passes the launch identity and the caster's Crimson Mastery to its persisted cloud. A cloud's first contact with each creature is a direct hit (Pressure once); later ticks are periodic damage only. |
-| Tracking blood orb, pests, serpent; sickle hook; iron spike | Captured source/owner and actual projectile retained through custom collision damage. |
+| Sickle hook; iron spike | Captured source/owner and actual projectile retained through custom collision damage. |
 | Ferric constructs / magnetic pillar | Ferric origins apply Lodestone on damaging strikes; magnetism exploits the mark and preserves construct ownership and terrain collision. |
 | Summoned attackers | Retain cast origin/owner; later natural melee attacks receive fresh root identities. |
 | Wills | Use the Will's authored school for melee and weapon-controller actions. Ductilis ordinary weapon hits mark; other ordinary school hits apply their primary state. |

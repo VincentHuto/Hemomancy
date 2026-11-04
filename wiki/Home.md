@@ -108,7 +108,7 @@ Do not read this as a good-versus-evil system. Neither path is objectively corre
 - Minecraft version **1.21.1**
 - Java **21** required
 - JEI support is alpha-ready through the current local NeoForge JEI jar
-- Mana and Artifice and Curios integrations are dormant on the NeoForge 1.21.1 branch until compatible dependencies are available
+- Mana and Artifice and Curios integrations were removed; a future integration would be written fresh.
 - Depends on **HutosLib** (required library mod)
 
 ---

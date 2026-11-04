@@ -27,7 +27,7 @@ public class DiscoveryInscriptionScreen extends Screen {
 	private static final int TEXT_REVEALED = 0xFFD4C2B5;
 	private static final int TEXT_OBSCURED = 0xFF8A8F94;
 
-	private final List<String> lines;
+	private final List<Component> lines;
 	private final boolean revealed;
 	@Nullable
 	private final ResourceLocation riteId;
@@ -36,7 +36,7 @@ public class DiscoveryInscriptionScreen extends Screen {
 	private int top;
 	private int scroll;
 
-	private DiscoveryInscriptionScreen(Component title, List<String> lines, boolean revealed,
+	private DiscoveryInscriptionScreen(Component title, List<Component> lines, boolean revealed,
 			@Nullable ResourceLocation riteId, boolean requiresAbocipherLiteracy) {
 		super(title);
 		this.lines = List.copyOf(lines);
@@ -45,7 +45,7 @@ public class DiscoveryInscriptionScreen extends Screen {
 		this.requiresAbocipherLiteracy = requiresAbocipherLiteracy;
 	}
 
-	public static void open(Component title, List<String> lines, boolean revealed,
+	public static void open(Component title, List<Component> lines, boolean revealed,
 			@Nullable ResourceLocation riteId, boolean requiresAbocipherLiteracy) {
 		Minecraft.getInstance().setScreen(new DiscoveryInscriptionScreen(title, lines, revealed, riteId,
 				requiresAbocipherLiteracy));
@@ -113,12 +113,13 @@ public class DiscoveryInscriptionScreen extends Screen {
 	private List<FormattedCharSequence> wrappedLines(int width) {
 		List<FormattedCharSequence> wrapped = new ArrayList<>();
 		boolean veilText = shouldVeilText();
-		for (String line : lines) {
-			if (line == null || line.isBlank()) {
+		for (Component line : lines) {
+			String shown = line == null ? "" : line.getString();
+			if (shown.isBlank()) {
 				wrapped.add(FormattedCharSequence.EMPTY);
 				continue;
 			}
-			Component component = veilText ? AbocipherText.veil(line) : Component.literal(line);
+			Component component = veilText ? AbocipherText.veil(shown) : line;
 			wrapped.addAll(font.split(component, width));
 		}
 		return wrapped;

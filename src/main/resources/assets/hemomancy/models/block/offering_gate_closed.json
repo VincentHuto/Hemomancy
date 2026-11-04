@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "hemomancy:block/polished_venous_stone_bricks",
-    "side": "hemomancy:block/chiseled_polished_venous_stone"
-  }
-}

@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.feature.config.HyphaeConfig;
 import com.vincenthuto.hemomancy.common.worldgen.feature.config.EscharianOvergrowthConfiguration;
-import com.vincenthuto.hemomancy.common.worldgen.feature.config.SmallInfectedMushroomConfig;
 import com.vincenthuto.hemomancy.common.worldgen.feature.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -41,9 +40,6 @@ public class BaseFeatureInit {
 	public static final Feature<NoneFeatureConfiguration> HUGE_FUNGUS = register("huge_fungus",
 			new FungusFeature(NoneFeatureConfiguration.CODEC));
 
-	public static final Feature<SmallInfectedMushroomConfig> SMALL_FUNGUS = register("small_fungus",
-			new SmallInfectedMushroomFeature(SmallInfectedMushroomConfig.CODEC));
-
 	public static final Feature<HyphaeConfig> PATCH_HYPHAE = register("patch_hyphae",
 			new HyphaeFeature(HyphaeConfig.CODEC));
 
@@ -71,9 +67,6 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> SPORE_NEXUS_TOWER = register("spore_nexus_tower",
 			new SporeNexusTowerFeature(NoneFeatureConfiguration.CODEC));
-
-	public static final Feature<NoneFeatureConfiguration> SILVER_BELLS_TOWER = register("silver_bells_tower",
-			new SilverBellsTowerFeature(NoneFeatureConfiguration.CODEC));
 
 	public static final Feature<NoneFeatureConfiguration> MORPHIC_POOL = register("morphic_pool",
 			new MorphicPoolFeature(NoneFeatureConfiguration.CODEC,

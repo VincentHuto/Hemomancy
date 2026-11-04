@@ -33,7 +33,6 @@ public final class VesperManipulationCoverage {
 
 	static {
 		// Animus
-		variant("venous_travel", DUCTILIS, Kind.BLINK, Form.TELEPORT, 0.0F);
 		castable("blood_shot", ANIMUS);
 		variant("guided_blood_shot", ANIMUS, Kind.STRIKE, Form.ANIMUS_IMPACT, 6.0F);
 		variant("hematic_mortar", ANIMUS, Kind.AREA, Form.ANIMUS_IMPACT, 7.0F);
@@ -61,7 +60,6 @@ public final class VesperManipulationCoverage {
 		variant("blood_rush", ANIMUS, Kind.SELF_BUFF, Form.RUSH, 0.0F);
 		castable("blood_aneurysm", ANIMUS);
 		excluded("vital_effusion", "heals; healing himself would undo the player's damage");
-		excluded("ferric_transmutation", "transmutes materials; no fight effect");
 		castable("activation_potential", DUCTILIS);
 		castable("synaptic_jolt", DUCTILIS);
 		castable("conductive_mark", DUCTILIS);
@@ -73,17 +71,11 @@ public final class VesperManipulationCoverage {
 		}
 		excluded("blood_absorption", "the player's channel; his wounds and defeat answer it instead");
 		excluded("blood_projection", "fills vessels and stations; no fight effect");
-		excluded("summon_thrall", "summons a thrall; his summons are his puppet roster");
 		castable("crimson_flame_conjuration", FLAMMEUS);
 		excluded("sanguine_mending", "heals; healing himself would undo the player's damage");
-		excluded("hemosynthesis", "heals; healing himself would undo the player's damage");
-		excluded("blood_lamp", "a light utility");
 		castable("hematic_flare", LUX);
-		excluded("crimson_harvest", "a harvesting utility");
 		castable("glacial_grasp", CONGEATIO);
-		excluded("sanguine_excavation", "a digging utility");
 		excluded("vascular_dowsing", "a detection utility");
-		excluded("ferric_resonance", "a detection utility");
 		castable("iron_retort", FERRIC);
 		excluded("ironhearted", "grants extra Iron Hearts; would pad his health bar");
 		castable("sanguine_magnetism", FERRIC);
@@ -92,15 +84,11 @@ public final class VesperManipulationCoverage {
 		castable("pyretic_forge", FLAMMEUS);
 		// The shared entity umbral step is a plain teleport; his version arrives through the real umbral visuals.
 		variant("umbral_step", TENEBRIS, Kind.BLINK, Form.UMBRA_ARRIVAL, 0.0F);
-		excluded("crimson_sight", "a vision utility");
 		castable("prismatic_reproof", LUX);
 		castable("hematic_beacon", LUX);
 		excluded("lumen_suture", "heals; healing himself would undo the player's damage");
-		excluded("vital_reservoir", "stores blood; no fight effect");
 		castable("cryogenic_pulse", CONGEATIO);
-		variant("glacial_circulation", CONGEATIO, Kind.SELF_BUFF, Form.FROZEN_VEINS, 0.0F);
-		variant("glacial_bastion", CONGEATIO, Kind.WALL, Form.ICE, 0.0F);
-		castable("glacial_rampart", CONGEATIO);
+		variant("glacial_rampart", CONGEATIO, Kind.WALL, Form.ICE, 0.0F);
 		variant("osseous_bloom", CONGEATIO, Kind.AREA, Form.BONE, 8.0F);
 		castable("sanguine_ignition", FLAMMEUS);
 		castable("vitric_combustion", FLAMMEUS);
@@ -109,12 +97,11 @@ public final class VesperManipulationCoverage {
 		variant("soaring_updraft", FLAMMEUS, Kind.LAUNCH, Form.UPDRAFT, 4.0F);
 		variant("suspended_updraft", FLAMMEUS, Kind.LAUNCH, Form.UPDRAFT, 2.0F);
 		variant("expulsive_updraft", FLAMMEUS, Kind.PUSH, Form.UPDRAFT, 5.0F);
-		castable("void_shroud", TENEBRIS);
+		variant("void_shroud", TENEBRIS, Kind.SELF_BUFF, Form.VEIL, 0.0F);
 		castable("gloam_laceration", TENEBRIS);
 		castable("blood_eclipse", TENEBRIS);
 		excluded("black_veil_covenant", "binds a covenant between allies");
 		variant("umbral_reversal", TENEBRIS, Kind.SWAP, Form.UMBRA_SLASH, 0.0F);
-		variant("blood_eclipse_mantle", TENEBRIS, Kind.SELF_BUFF, Form.VEIL, 0.0F);
 		castable("hemorrhage", MORTEM);
 		excluded("lignum_mortis", "grows wood; a building utility");
 		excluded("canopy_mortis", "grows a canopy; a building utility");
@@ -129,12 +116,10 @@ public final class VesperManipulationCoverage {
 		variant("living_circuit", DUCTILIS, Kind.STRIKE, Form.CIRCUIT, 7.0F);
 		variant("synaptic_storm", DUCTILIS, Kind.AREA, Form.NERVE_PULSE, 9.0F);
 		variant("white_verdict", LUX, Kind.STRIKE, Form.WHITE_VERDICT, 12.0F);
-		variant("vigil_of_glass", LUX, Kind.AREA, Form.GLASS, 7.0F);
 		variant("furnace_veins", FLAMMEUS, Kind.SELF_BUFF, Form.FURNACE, 0.0F);
 		excluded("phoenix_debt", "cheats death; would let him skip his defeat");
 		variant("absolute_stillness", CONGEATIO, Kind.FREEZE, Form.STILLNESS, 0.0F);
 		variant("rimebound_sentence", CONGEATIO, Kind.FREEZE, Form.RIMEBOUND, 6.0F);
-		variant("hematic_ballast", FERRIC, Kind.STRIKE, Form.FERRIC_IMPACT, 8.0F);
 		variant("iron_choir", FERRIC, Kind.AREA, Form.CHOIR, 7.0F);
 		variant("funeral_bell", MORTEM, Kind.PUSH, Form.BELL, 7.0F);
 		excluded("carrion_communion", "feeds on corpses; the arena has none");

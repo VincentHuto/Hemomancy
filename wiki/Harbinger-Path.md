@@ -627,7 +627,7 @@ A: Not easily. Starting the Unstained path will zero your degree, but it's traum
 A: The ritual fails and you lose the consumed materials. Make sure you're prepared.
 
 **Q: Can I be Harbinger and use non-blood magic?**
-A: Yes, but the current NeoForge 1.21.1 alpha does not have active Mana and Artifice compatibility. The blood/mana synergy design is preserved as dormant compat until MnA has a compatible build.
+A: Hemomancy has no Mana and Artifice compatibility; the old integration was removed.
 
 **Q: Is there a max degree?**
 A: Degree 8 is the Apotheos endpoint in the current reference docs. Staying at Archon after the revelation fork is also a valid endpoint, and the late-game boss/summoning layer remains partial for alpha.

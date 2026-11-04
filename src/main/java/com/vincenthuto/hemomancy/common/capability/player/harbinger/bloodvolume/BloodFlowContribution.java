@@ -13,7 +13,7 @@ public record BloodFlowContribution(String sourceId, String label, Category cate
 		WORLD,
 		ORGAN,
 		TOOL,
-		MUSCLE_MEMORY,
+		THELEMIC_MEMORY,
 		VESSEL,
 		OTHER,
 		/** Payments through BloodAccounting that none of the older categories describe. */

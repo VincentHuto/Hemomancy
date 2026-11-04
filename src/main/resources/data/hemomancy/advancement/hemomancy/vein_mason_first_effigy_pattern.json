@@ -1,4 +1,5 @@
 {
+  "parent": "hemomancy:hemomancy/root",
   "criteria": {
     "manual": {
       "trigger": "minecraft:impossible"

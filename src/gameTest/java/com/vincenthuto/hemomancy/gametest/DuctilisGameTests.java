@@ -106,7 +106,7 @@ public final class DuctilisGameTests {
     @GameTest(templateNamespace="hemomancy",template=EMPTY,batch="ductilis",timeoutTicks=50)
     public static void energizedWallOnlyDischargesOnContact(GameTestHelper h) {
         var owner=player(h);
-        var wall=com.vincenthuto.hemomancy.common.init.EntityInit.iron_wall.get().create(h.getLevel());
+        var wall=com.vincenthuto.hemomancy.common.init.EntityInit.ferric_rampart.get().create(h.getLevel());
         wall.setPos(h.absoluteVec(new Vec3(8,2,8)));
         wall.configure(owner,com.vincenthuto.hemomancy.common.manipulation.ferric.FerricConstructShapes.Kind.WALL,
                 net.minecraft.core.Direction.NORTH,100); h.getLevel().addFreshEntity(wall);

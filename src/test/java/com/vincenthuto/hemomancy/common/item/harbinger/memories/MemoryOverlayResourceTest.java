@@ -30,10 +30,6 @@ public final class MemoryOverlayResourceTest {
 		}
 
 		String registry = Files.readString(JAVA.resolve("common/init/ManipulationInit.java"));
-		String retirement = Files.readString(JAVA.resolve("common/capability/player/harbinger/manip/ManipulationRetirementRules.java"));
-		String retiredBlock = retirement.substring(retirement.indexOf("RETIRED_MANIPULATION_IDS"), retirement.indexOf("RETIRED_MEMORY_ITEM_IDS"));
-		Set<String> retired = new HashSet<>();
-		Pattern.compile("\"([^\"]+)\"").matcher(retiredBlock).results().forEach(m -> retired.add(m.group(1)));
 		String resolver = Files.readString(JAVA.resolve("client/screen/manips/ManipulationIconResolver.java"));
 		Map<String, String> aliases = new HashMap<>();
 		Pattern.compile("case \"([^\"]+)\" -> \"([^\"]+)\"").matcher(resolver).results()
@@ -44,7 +40,6 @@ public final class MemoryOverlayResourceTest {
 		int count = 0;
 		for (var match : Pattern.compile("MANIPS.register\\(\"([^\"]+)\"").matcher(registry).results().toList()) {
 			String id = match.group(1);
-			if (retired.contains(id)) continue;
 			String stem = "memory_" + (id.startsWith("conjure_") ? id.replace("conjure_", "living_") : id);
 			String texture = stem + "_overlay";
 			check(aliases.getOrDefault(id, "memory_" + id + "_overlay").equals(texture), id + " UI borrows another ability's overlay");
@@ -73,9 +68,9 @@ public final class MemoryOverlayResourceTest {
 			check(colors.size() <= 12, id + " composite exceeds 12 colors");
 			check(silhouettes.add(silhouette.toString()), id + " duplicates another silhouette");
 			Path model = ASSETS.resolve("models/item/" + stem + ".json");
-			if (id.equals("conjure_staff")) model = ASSETS.resolve("models/item/memory_conjure_living_staff.json");
-			// Vesper teaches the sickle through its own item; only its manipulation icon uses this base.
-			if (!id.equals("conjure_sickle")) {
+			
+			// Living-weapon forms come from grafts, not memory items; only their manipulation icons use this base.
+			if (!id.startsWith("conjure_") && !id.equals("blood_absorption") && !id.equals("blood_projection")) {
 				check(Files.exists(model), id + " item model missing");
 				String json = Files.readString(model);
 				check(json.contains("hemomancy:item/memories/memory_blank"), id + " lost the shared base");

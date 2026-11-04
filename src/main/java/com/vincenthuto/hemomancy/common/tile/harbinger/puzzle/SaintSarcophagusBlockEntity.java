@@ -145,10 +145,6 @@ public class SaintSarcophagusBlockEntity extends HemoBlockEntity implements IMul
 		}
 	}
 
-	public int getExtractionAttempts() {
-		return extractionAttempts;
-	}
-
 	public void incrementExtractionAttempts() {
 		this.extractionAttempts++;
 		// After 3 failed attempts, the corpus awakens

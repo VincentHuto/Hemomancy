@@ -77,7 +77,7 @@ public final class RiteWorldState {
 			List<CardinalRiteEventClientState.Ghost> ghosts, Function<BlockPos, RiteFloor> floors) {
 		for (Tracked tracked : TRACKED.values()) tracked.seen = false;
 		for (ActiveRiteData.RiteEntry entry : active) {
-			if (entry.isUnstained() || entry.isLegacy() || entry.getEscalationTotal() <= 0) continue;
+			if (entry.isUnstained() || entry.isCountdown() || entry.getEscalationTotal() <= 0) continue;
 			float target = RiteWorldMath.level(entry.getEscalation(), entry.getEscalationTotal());
 			Tracked tracked = TRACKED.get(entry.getCenter());
 			if (tracked == null || tracked.ending != RiteWorldMath.Ending.NONE) {

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
+import net.minecraft.world.level.LevelReader;
 import org.joml.Vector3f;
 
 import net.minecraft.core.BlockPos;
@@ -44,6 +45,12 @@ public final class PeacockSpiderEntity extends Spider {
 		return time < 12000L && level.canSeeSky(pos) && level.getMaxLocalRawBrightness(pos) >= 9
 				&& level.getBlockState(pos.below()).is(BlockTags.DIRT)
 				&& level.getBlockState(pos).getCollisionShape(level, pos).isEmpty();
+	}
+
+	/** A courting spider of open daylight: the vanilla monster rule that refuses bright ground does not apply. */
+	@Override
+	public float getWalkTargetValue(BlockPos pos, LevelReader level) {
+		return 0.0F;
 	}
 
 	@Override

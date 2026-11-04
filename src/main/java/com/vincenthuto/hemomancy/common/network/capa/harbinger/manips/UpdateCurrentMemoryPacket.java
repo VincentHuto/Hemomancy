@@ -24,8 +24,8 @@ public record UpdateCurrentMemoryPacket(String storageKey) implements CustomPack
             var known = HemoCapabilityAccess.getKnownManipulations(player);
             if (known == null) return;
             MemorySlotRef ref = MemorySlotRef.fromStorageKey(packet.storageKey);
-            if (ref.kind() != MemoryEntryKind.MUSCLE_MEMORY || !known.isMemoryEquipped(ref)
-                    || ref.muscleMemory().filter(HemoCapabilityAccess.muscleMemory(player)::knows).isEmpty()) {
+            if (ref.kind() != MemoryEntryKind.THELEMIC_MEMORY || !known.isMemoryEquipped(ref)
+                    || ref.thelemicMemory().filter(HemoCapabilityAccess.thelemicMemory(player)::knows).isEmpty()) {
                 return;
             }
             known.setSelectedMemoryRef(ref);

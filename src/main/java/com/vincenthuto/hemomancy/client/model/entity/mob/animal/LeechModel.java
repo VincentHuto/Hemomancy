@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.mob.animal;
 
+import net.minecraft.util.Mth;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -64,8 +65,23 @@ public class LeechModel<T extends Entity> extends EntityModel<T> {
 		tailTop.render(poseStack, buffer, packedLight, packedOverlay);
 	}
 
+	/**
+	 * Three segments that are not parented, so the inchworm is built from each one: the middle arches up and the
+	 * head and tail pitch toward it on the stride, and at rest the head probes side to side.
+	 */
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+		for (ModelPart part : new ModelPart[] {Head, headTop, Body, bodyTop, Tail, tailTop}) part.resetPose();
+		float stride = Math.min(1.0F, limbSwingAmount * 3.0F);
+		float arch = Mth.abs(Mth.sin(limbSwing * 1.3F)) * stride;
+		float probe = Mth.sin(ageInTicks * 0.07F) * 0.18F * (1.0F - stride);
+		Body.y -= 1.1F * arch;
+		bodyTop.y -= 1.1F * arch;
+		Head.xRot = 0.45F * arch;
+		headTop.xRot = 0.45F * arch;
+		Tail.xRot = -0.45F * arch;
+		tailTop.xRot = -0.45F * arch;
+		Head.yRot = probe + netHeadYaw * Mth.DEG_TO_RAD * 0.4F;
+		headTop.yRot = Head.yRot;
 	}
 }

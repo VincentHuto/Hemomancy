@@ -166,38 +166,6 @@ public class MarionetteCrossbarItem extends Item {
 		return Optional.empty();
 	}
 
-	public static Optional<ItemStack> findFirstCrossbar(Player player) {
-		if (player == null) {
-			return Optional.empty();
-		}
-		for (InteractionHand hand : InteractionHand.values()) {
-			ItemStack held = player.getItemInHand(hand);
-			if (held.getItem() instanceof MarionetteCrossbarItem && isBoundTo(held, player)) {
-				return Optional.of(held);
-			}
-		}
-		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-			ItemStack stack = player.getInventory().getItem(slot);
-			if (stack.getItem() instanceof MarionetteCrossbarItem && isBoundTo(stack, player)) {
-				return Optional.of(stack);
-			}
-		}
-		return Optional.empty();
-	}
-
-	public static Optional<ItemStack> findFirstItem(Player player, Item item) {
-		if (player == null) {
-			return Optional.empty();
-		}
-		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-			ItemStack stack = player.getInventory().getItem(slot);
-			if (stack.getItem() == item) {
-				return Optional.of(stack);
-			}
-		}
-		return Optional.empty();
-	}
-
 	public static Optional<ItemStack> findEquippedCrossbar(Player player, UUID crossbarId) {
 		if (player == null || crossbarId == null) {
 			return Optional.empty();

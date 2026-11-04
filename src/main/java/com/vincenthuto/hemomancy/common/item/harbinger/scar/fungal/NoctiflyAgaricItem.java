@@ -22,14 +22,14 @@ public class NoctiflyAgaricItem extends ItemFungalScar {
 	@Override
 	public void onEquipped(LivingEntity player) {
 		super.onEquipped(player);
-		player.addEffect(new MobEffectInstance(EffectInit.fungal_elytra, -1, 0, true, true));
+		player.addEffect(new MobEffectInstance(EffectInit.noctifly_agaric, -1, 0, true, true));
 
 	}
 
 	@Override
 	public void onUnequipped(LivingEntity player) {
 		super.onUnequipped(player);
-		player.removeEffect(EffectInit.fungal_elytra);
+		player.removeEffect(EffectInit.noctifly_agaric);
 	}
 
 

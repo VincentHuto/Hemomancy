@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.util.PlayerBlockEdits;
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -47,7 +49,7 @@ public class GroundBloodDrawPacket implements CustomPacketPayload {
 	public static void handle(final GroundBloodDrawPacket message, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
-			if (player == null)
+			if (player == null || !ServerboundGuards.activePlayer(player))
 				return;
 			float pTic = ServerboundGuards.partialTick(message.parTick);
 			if (player.getMainHandItem().getItem() == ItemInit.living_staff.get()) {
@@ -76,14 +78,15 @@ public class GroundBloodDrawPacket implements CustomPacketPayload {
 								sLevel.sendParticles(HemoParticleData.glow(new ParticleColor(100, 0, 0)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y - 1,
 										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
-								sLevel.setBlockAndUpdate(bHit.getBlockPos().offset(0, 1, 0),
-										BlockInit.smouldering_ash_trail.get().defaultBlockState());
-								player.getOffhandItem().shrink(1);
+								if (PlayerBlockEdits.place(player, bHit.getBlockPos().offset(0, 1, 0),
+										BlockInit.smouldering_ash_trail.get().defaultBlockState())) {
+									player.getOffhandItem().shrink(1);
+								}
 							}
 						}
 
 						if (sLevel.getBlockState(bHit.getBlockPos()).getBlock() == BlockInit.smouldering_ash_trail
-								.get()) {
+								.get() && ManipulationCombatHelper.mayAlter(player, bHit.getBlockPos())) {
 							sLevel.sendParticles(HemoParticleData.glow(new ParticleColor(255, 100, 0)),
 									x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y - 1,
 									z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
@@ -118,13 +121,14 @@ public class GroundBloodDrawPacket implements CustomPacketPayload {
 								sLevel.sendParticles(HemoParticleData.glow(new ParticleColor(100, 0, 0)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y - 1,
 										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
-								sLevel.setBlockAndUpdate(bHit.getBlockPos().offset(0, 1, 0),
-										BlockInit.befouling_ash_trail.get().defaultBlockState());
-								player.getOffhandItem().shrink(1);
+								if (PlayerBlockEdits.place(player, bHit.getBlockPos().offset(0, 1, 0),
+										BlockInit.befouling_ash_trail.get().defaultBlockState())) {
+									player.getOffhandItem().shrink(1);
+								}
 							}
 						}
 						if (sLevel.getBlockState(bHit.getBlockPos()).getBlock() == BlockInit.befouling_ash_trail
-								.get()) {
+								.get() && ManipulationCombatHelper.mayAlter(player, bHit.getBlockPos())) {
 							sLevel.sendParticles(HemoParticleData.glow(new ParticleColor(100, 255, 0)),
 									x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y - 1,
 									z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);

@@ -11,7 +11,6 @@ public class HemoClientConfig {
 
 	public static ModConfigSpec.IntValue HUD_LOCATION;
 	public static ModConfigSpec.EnumValue<MorphlingHudMode> MORPHLING_HUD_MODE;
-	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_FEEDING_ANIMATION;
 	public static ModConfigSpec.DoubleValue MORPHLING_HUD_SCALE;
 	public static ModConfigSpec.BooleanValue USE_COOLDOWN_VIGNETTE;
 	public static ModConfigSpec.BooleanValue RENDER_CROWN_POMES_AS_ITEMS;
@@ -80,10 +79,6 @@ public class HemoClientConfig {
 	MORPHLING_HUD_MODE = CLIENT_BUILDER
 		.comment("Equipped morphling display: ATTACHED uses a static 32px gripping sprite, LEGACY_ICON uses the item sprite, and OFF hides it.")
 		.defineEnum("morphlingHudMode", MorphlingHudMode.ATTACHED);
-
-	RENDER_MORPHLING_FEEDING_ANIMATION = CLIENT_BUILDER
-		.comment("Legacy compatibility setting. Attached Morphling sprites are now static and ignore this value.")
-		.define("renderMorphlingFeedingAnimation", false);
 
 	MORPHLING_HUD_SCALE = CLIENT_BUILDER
 		.comment("Scale the attached Morphling around its feeding point on the vessel. 1.0 displays a 32px sprite.")

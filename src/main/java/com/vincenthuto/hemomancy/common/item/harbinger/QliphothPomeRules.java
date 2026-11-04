@@ -41,10 +41,6 @@ public final class QliphothPomeRules {
 		return boundPome && !creativePlayer;
 	}
 
-	public static boolean shouldResetProgressOnPrune(boolean removedBloom, int totalPomesConsumed) {
-		return removedBloom && totalPomesConsumed > 0;
-	}
-
 	public static boolean shouldGrantFungalSpine(int pomesConsumed, boolean alreadyGranted) {
 		return pomesConsumed >= MAX_POMES_PER_BLOOM && !alreadyGranted;
 	}

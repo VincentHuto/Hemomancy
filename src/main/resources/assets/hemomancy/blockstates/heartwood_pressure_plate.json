@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "hemomancy:block/heartwood_pressure_plate"
+    },
+    "powered=true": {
+      "model": "hemomancy:block/heartwood_pressure_plate_down"
+    }
+  }
+}

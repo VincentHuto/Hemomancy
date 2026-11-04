@@ -136,14 +136,6 @@ public final class DrudgeActions {
 		return grew;
 	}
 
-	/** ferric_transmutation */
-	public static boolean ferricTransmutation(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		if (!(world instanceof ServerLevel sLevel)) return false;
-		sLevel.addFreshEntity(new ItemEntity(sLevel,
-				centre.getX() + 0.5, centre.getY() + 0.5, centre.getZ() + 0.5,
-				new ItemStack(Items.IRON_INGOT)));
-		return true;
-	}
 
 	/** activation_potential */
 	public static boolean activationPotential(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
@@ -225,37 +217,7 @@ public final class DrudgeActions {
 		return true;
 	}
 
-	/** hemosynthesis */
-	public static boolean hemosynthesis(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		AABB area = new AABB(centre).inflate(radius);
-		Player target = world.getEntitiesOfClass(Player.class, area).stream()
-				.filter(p -> p.getHealth() < p.getMaxHealth())
-				.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-		if (target == null) return false;
-		target.heal(4.0f);
-		return true;
-	}
 
-	/** blood_lamp */
-	public static boolean bloodLamp(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		BlockPos darkest = null;
-		int darkestLight = 15;
-		int half = radius / 2;
-		for (BlockPos p : BlockPos.betweenClosed(
-				centre.offset(-half, -2, -half), centre.offset(half, 4, half))) {
-			if (world.getBlockState(p).isAir()
-					&& !world.getBlockState(p.below()).isAir()) {
-				int light = world.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, p);
-				if (light < darkestLight) {
-					darkestLight = light;
-					darkest = p.immutable();
-				}
-			}
-		}
-		if (darkest == null || darkestLight >= 10) return false;
-		world.setBlockAndUpdate(darkest, Blocks.TORCH.defaultBlockState());
-		return true;
-	}
 
 	/** hematic_flare */
 	public static boolean hematicFlare(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
@@ -266,23 +228,6 @@ public final class DrudgeActions {
 		return true;
 	}
 
-	/** crimson_harvest */
-	public static boolean crimsonHarvest(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		if (!(world instanceof ServerLevel sLevel)) return false;
-		boolean grew = false;
-		int half = radius / 2;
-		for (BlockPos p : BlockPos.betweenClosed(
-				centre.offset(-half, -1, -half), centre.offset(half, 2, half))) {
-			BlockState state = world.getBlockState(p);
-			if (state.getBlock() instanceof BonemealableBlock growable
-					&& growable.isValidBonemealTarget(world, p, state)
-					&& growable.isBonemealSuccess(world, world.random, p, state)) {
-				growable.performBonemeal(sLevel, world.random, p, state);
-				grew = true;
-			}
-		}
-		return grew;
-	}
 
 	/** glacial_grasp */
 	public static boolean glacialGrasp(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
@@ -294,17 +239,6 @@ public final class DrudgeActions {
 		return true;
 	}
 
-	/** sanguine_excavation */
-	public static boolean sanguineExcavation(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		if (!(world instanceof ServerLevel)) return false;
-		Vec3 look = drudge.getLookAngle();
-		BlockPos target = BlockPos.containing(
-				drudge.getEyePosition().add(look.scale(2.5)));
-		BlockState state = world.getBlockState(target);
-		if (state.isAir() || state.getDestroySpeed(world, target) < 0) return false;
-		world.destroyBlock(target, true);
-		return true;
-	}
 
 	/** iron_retort */
 	public static boolean ironRetort(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
@@ -352,14 +286,6 @@ public final class DrudgeActions {
 		return true;
 	}
 
-	/** crimson_sight */
-	public static boolean crimsonSight(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		AABB area = new AABB(centre).inflate(radius);
-		List<Monster> mobs = monsters(drudge, world, area);
-		if (mobs.isEmpty()) return false;
-		mobs.forEach(m -> SchoolStates.apply(drudge, m, SchoolState.ILLUMINATED, 600));
-		return true;
-	}
 
 	/** prismatic_reproof */
 	public static boolean prismaticReproof(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
@@ -395,21 +321,6 @@ public final class DrudgeActions {
 		return true;
 	}
 
-	/** vital_reservoir */
-	public static boolean vitalReservoir(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		if (drudge instanceof DrudgeEntity drudgeEntity
-				&& drudgeEntity.getBloodCharge() >= DrudgeEntity.MAX_BLOOD_CHARGE * 0.9f) return false;
-		AABB area = new AABB(centre).inflate(radius);
-		Monster target = nearestMonster(drudge, world, area);
-		if (target == null) return false;
-		target.hurt(world.damageSources().magic(), 2.0f);
-		if (drudge instanceof DrudgeEntity drudgeEntity) {
-			drudgeEntity.fillBloodCharge(200f);
-		} else {
-			drudge.heal(4.0F);
-		}
-		return true;
-	}
 
 	/** cryogenic_pulse */
 	public static boolean cryogenicPulse(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
@@ -420,25 +331,6 @@ public final class DrudgeActions {
 		return true;
 	}
 
-	/** glacial_bastion */
-	public static boolean glacialBastion(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		if (!(world instanceof ServerLevel sLevel)) return false;
-		BlockPos base = drudge.blockPosition();
-		int placed = 0;
-		for (int r = 0; r < 8; r++) {
-			double angle = r * Math.PI / 4.0;
-			for (int dy = 0; dy < 3; dy++) {
-				BlockPos wallPos = BlockPos.containing(
-						base.getX() + 0.5 + 2.0 * Math.cos(angle),
-						base.getY() + dy,
-						base.getZ() + 0.5 + 2.0 * Math.sin(angle));
-				if (TemporaryIceManager.place(sLevel, wallPos, BlockInit.frozen_cruor.get().defaultBlockState(), 500)) {
-					placed++;
-				}
-			}
-		}
-		return placed > 0;
-	}
 
 	/** glacial_rampart */
 	public static boolean glacialRampart(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
@@ -528,13 +420,6 @@ public final class DrudgeActions {
 		return true;
 	}
 
-	/** blood_eclipse_mantle */
-	public static boolean bloodEclipseMantle(PathfinderMob drudge, Level world, BlockPos centre, int radius) {
-		drudge.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 300, 1, false, true));
-		drudge.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 300, 0, false, true));
-		drudge.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 300, 0, false, true));
-		return true;
-	}
 
 	/** hemorrhage */
 	public static boolean hemorrhage(PathfinderMob drudge, Level world, BlockPos centre, int radius) {

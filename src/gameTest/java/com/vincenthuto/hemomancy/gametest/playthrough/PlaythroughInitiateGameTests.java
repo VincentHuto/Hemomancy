@@ -1189,7 +1189,7 @@ public final class PlaythroughInitiateGameTests {
 		ServerLevel level = helper.getLevel();
 		PlaythroughPlayer player = d3(helper);
 		BlockPos chair = PlaythroughSites.stand(helper, WING_X + 2, WING_Z);
-		level.setBlock(chair, BlockInit.warp_chair.get().defaultBlockState(), Block.UPDATE_ALL); // ARRANGE: a chair
+		level.setBlock(chair, BlockInit.somnolent_seat.get().defaultBlockState(), Block.UPDATE_ALL); // ARRANGE: a chair
 		// ARRANGE: a timed visit still on the books (the state a visit leaves while the player is between dimensions).
 		CompoundTag data = player.player().getPersistentData();
 		data.putBoolean("hemomancy:chamber_visit_active", true);

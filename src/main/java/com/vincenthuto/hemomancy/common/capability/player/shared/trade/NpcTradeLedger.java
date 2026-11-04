@@ -110,10 +110,6 @@ public class NpcTradeLedger implements INBTSerializable<CompoundTag> {
 		return true;
 	}
 
-	public Map<String, Integer> rapportView() {
-		return Collections.unmodifiableMap(rapport);
-	}
-
 	public Map<ResourceLocation, Window> usesView() {
 		return Collections.unmodifiableMap(uses);
 	}

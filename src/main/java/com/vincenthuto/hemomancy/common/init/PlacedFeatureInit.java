@@ -76,7 +76,6 @@ public class PlacedFeatureInit {
 
 	// Spore Nexus Tower - rare mega-structure
 	public static final ResourceKey<PlacedFeature> SPORE_NEXUS_TOWER = createKey("spore_nexus_tower");
-	public static final ResourceKey<PlacedFeature> SILVER_BELLS_TOWER = createKey("silver_bells_tower");
 
 	// Sporite Crystal cluster patches (for Mycelial Depths)
 	public static final ResourceKey<PlacedFeature> SPORITE_CRYSTAL_CLUSTER = createKey("sporite_crystal_cluster");
@@ -206,7 +205,6 @@ public class PlacedFeatureInit {
 				HeightRangePlacement.uniform(VerticalAnchor.absolute(-50), VerticalAnchor.absolute(30)),
 				BiomeFilter.biome());
 
-
 		
 		//Blobs
 		context.register(PLACED_MYCELIUM_BLOB,
@@ -271,12 +269,6 @@ public class PlacedFeatureInit {
 		register(context, PlacedFeatureInit.SPORE_NEXUS_TOWER, SPORE_NEXUS_TOWER, List.of(
 				RarityFilter.onAverageOnceEvery(150), InSquarePlacement.spread(),
 				PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome()));
-
-		final Holder<ConfiguredFeature<?, ?>> SILVER_BELLS_TOWER = configuredFeatureGetter
-				.getOrThrow(ConfiguredFeatureInit.SILVER_BELLS_TOWER);
-		register(context, PlacedFeatureInit.SILVER_BELLS_TOWER, SILVER_BELLS_TOWER, List.of(
-				RarityFilter.onAverageOnceEvery(120), InSquarePlacement.spread(),
-				PlacementUtils.HEIGHTMAP, BiomeFilter.biome()));
 
 		// Sporite Crystal patches - occasional glowing clusters
 		final Holder<ConfiguredFeature<?, ?>> SPORITE_CRYSTAL_CLUSTER = configuredFeatureGetter

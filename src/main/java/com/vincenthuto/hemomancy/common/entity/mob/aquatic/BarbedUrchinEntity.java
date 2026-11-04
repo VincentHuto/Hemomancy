@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
-
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.worldgen.feature.ErythrocoralReefTuning;
 import net.minecraft.core.BlockPos;
@@ -51,8 +50,6 @@ public class BarbedUrchinEntity extends AbstractFish {
 	static final TargetingConditions targetingConditions = TargetingConditions.forNonCombat()
 			.ignoreInvisibilityTesting().ignoreLineOfSight().selector(SCARY_MOB);
 	public static final int STATE_SMALL = 0;
-	public static final int STATE_MID = 1;
-	public static final int STATE_FULL = 2;
 
 	public BarbedUrchinEntity(EntityType<? extends BarbedUrchinEntity> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);

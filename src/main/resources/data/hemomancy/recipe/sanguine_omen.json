@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "SFS",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "hemomancy:blood_crystal_shard"
+    },
+    "F": {
+      "item": "hemomancy:sanguine_formation"
+    }
+  },
+  "result": {
+    "id": "hemomancy:sanguine_omen",
+    "count": 1
+  }
+}

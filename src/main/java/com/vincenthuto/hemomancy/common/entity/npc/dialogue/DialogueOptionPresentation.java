@@ -57,11 +57,6 @@ public record DialogueOptionPresentation(ResourceLocation icon, String detailKey
 		return attention(attention).withPrompt(promptKey);
 	}
 
-	/** A plain lore option. Not {@code lore()}: that name is the record's accessor. */
-	public static DialogueOptionPresentation loreLine() {
-		return normal().withLore();
-	}
-
 	/** A plain quest option. */
 	public static DialogueOptionPresentation questWork() {
 		return normal().withQuest();

@@ -22,8 +22,6 @@ import net.minecraft.world.level.LevelAccessor;
  */
 public class VenousStriderEntity extends PathfinderMob {
 
-	public final AnimationState idleAnimationState = new AnimationState();
-	public final AnimationState walkAnimationState = new AnimationState();
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes()
@@ -79,14 +77,11 @@ public class VenousStriderEntity extends PathfinderMob {
 	@Override
 	public void tick() {
 		super.tick();
-		if (this.level().isClientSide()) {
-			if (this.isMovingOnLand()) {
-				this.walkAnimationState.startIfStopped(this.tickCount);
-				this.idleAnimationState.stop();
-			} else {
-				this.walkAnimationState.stop();
-				this.idleAnimationState.startIfStopped(this.tickCount);
-			}
-		}
+	}
+
+	/** Herd life stays where it was found, like a vanilla animal; it is not a monster that fades at range. */
+	@Override
+	public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+		return false;
 	}
 }

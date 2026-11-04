@@ -28,16 +28,15 @@
   "spawners": {
     "ambient": [],
     "axolotls": [],
-    "creature": [
+    "creature": [],
+    "misc": [],
+    "monster": [
       {
         "type": "hemomancy:fungling",
         "weight": 8,
         "minCount": 2,
         "maxCount": 4
-      }
-    ],
-    "misc": [],
-    "monster": [
+      },
       {
         "type": "hemomancy:abhorrent_thought",
         "weight": 15,

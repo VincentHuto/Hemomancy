@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.model.entity.mob.arthropod;
 
+import net.minecraft.world.entity.Mob;
+import net.minecraft.util.Mth;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -50,7 +52,9 @@ public class ThirsterModel<T extends Entity> extends EntityModel<T> {
 	private final ModelPart RightLeg;
 
 	private final ModelPart LeftLeg;
+	private final ModelPart lowerJaw;
 	public ThirsterModel(ModelPart root) {
+		this.lowerJaw = root.getChild("Head").getChild("head2").getChild("lowerJaw");
 		this.Head = root.getChild("Head");
 		this.Body = root.getChild("Body");
 		this.RightArm = root.getChild("RightArm");
@@ -69,8 +73,43 @@ public class ThirsterModel<T extends Entity> extends EntityModel<T> {
 		LeftLeg.render(poseStack, buffer, packedLight, packedOverlay);
 	}
 
+	/**
+	 * A gaunt, hungry biped: a stooped walk with the arms hanging loose, the jaw working whenever it has prey in
+	 * sight, and a two-handed grab for the attack beat.
+	 */
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+		Head.resetPose();
+		Body.resetPose();
+		RightArm.resetPose();
+		LeftArm.resetPose();
+		RightLeg.resetPose();
+		LeftLeg.resetPose();
+		lowerJaw.resetPose();
+		boolean hungry = entity instanceof Mob mob && mob.isAggressive();
+		float stride = Math.min(1.0F, limbSwingAmount * 1.5F);
+		float phase = limbSwing * 0.6662F;
+		Head.yRot += netHeadYaw * Mth.DEG_TO_RAD;
+		Head.xRot += headPitch * Mth.DEG_TO_RAD + 0.08F * stride;
+		Body.xRot = 0.12F + 0.04F * stride;
+		RightLeg.xRot = Mth.cos(phase) * 1.2F * stride;
+		LeftLeg.xRot = Mth.cos(phase + Mth.PI) * 1.2F * stride;
+		RightArm.xRot = Mth.cos(phase + Mth.PI) * 0.9F * stride + 0.15F;
+		LeftArm.xRot = Mth.cos(phase) * 0.9F * stride + 0.15F;
+		RightArm.zRot = 0.08F + Mth.cos(ageInTicks * 0.09F) * 0.03F;
+		LeftArm.zRot = -0.08F - Mth.cos(ageInTicks * 0.09F + 1.0F) * 0.03F;
+		// The jaw chatters when it is hunting and hangs slack otherwise.
+		lowerJaw.xRot += hungry ? 0.25F + Mth.abs(Mth.sin(ageInTicks * 0.35F)) * 0.3F : 0.12F;
+		if (attackTime > 0.0F) {
+			// Both arms come up and lunge forward together, the head thrown back and the jaw wide.
+			float reach = Mth.sin(attackTime * Mth.PI);
+			RightArm.xRot = -1.3F * reach + RightArm.xRot * (1.0F - reach);
+			LeftArm.xRot = -1.3F * reach + LeftArm.xRot * (1.0F - reach);
+			RightArm.yRot = -0.35F * reach;
+			LeftArm.yRot = 0.35F * reach;
+			Head.xRot -= 0.3F * reach;
+			lowerJaw.xRot += 0.5F * reach;
+			Body.xRot += 0.2F * reach;
+		}
 	}
 }

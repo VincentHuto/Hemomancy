@@ -53,7 +53,7 @@ public final class VelorumFightClientReview {
     private static EmbeddedChannel channel,inactiveChannel;
     private static volatile int scene=-1,tick;
     private static volatile boolean done;
-    private static boolean launched,rootChecked,drainChecked,concurrentChecked,martyrChecked;
+    private static boolean launched,rootChecked,drainChecked,concurrentChecked,stillGuardChecked;
     private static boolean advanceSeen,crossSeen;
     private static int capturedScene=-1,capturedTick=-1,closing,rewardsBefore,originalFov;
     private static boolean originalPause;
@@ -131,10 +131,10 @@ public final class VelorumFightClientReview {
                 drainChecked=paid.isPresent() && paid.get().appliedPerTick()==-200 && dormantUntouched;
                 if(!drainChecked)throw new IllegalStateException("Drain did not charge exactly 200 active blood only");
             }
-            if(scene==4 && tick==8)martyrChecked=boss.getStillnessBreakTicks()>0 && !boss.isMartyrdom()
+            if(scene==4 && tick==8)stillGuardChecked=boss.getStillnessBreakTicks()>0 && !boss.isStillGuard()
                     && !boss.hasEffect(MobEffects.DAMAGE_RESISTANCE);
             if(scene==6 && boss.getFrostRelease()==18)
-                concurrentChecked=boss.getVeilRelease()==22 && boss.getDrainRelease()==20 && boss.getMartyrdomTicks()>0;
+                concurrentChecked=boss.getVeilRelease()==22 && boss.getDrainRelease()==20 && boss.getStillGuardTicks()>0;
             if(scene==8 && tick==6){boss.setHealth(1);boss.invulnerableTime=0;boss.hurt(boss.damageSources().playerAttack(observer),10000);}
             if(++tick>=LENGTHS[scene]) {
                 verify();
@@ -175,7 +175,7 @@ public final class VelorumFightClientReview {
                     && !victim.getEffect(MobEffects.BLINDNESS).isVisible() && victim.hasEffect(MobEffects.CONFUSION)
                     && !victim.getEffect(MobEffects.CONFUSION).isVisible() && !inactive.hasEffect(MobEffects.CONFUSION);
             case 3 -> husk.getHealth()<husk.getMaxHealth();
-            case 4 -> martyrChecked && boss.getStillnessBreakTicks()>0 && !boss.isMartyrdom() && !boss.hasEffect(MobEffects.DAMAGE_RESISTANCE);
+            case 4 -> stillGuardChecked && boss.getStillnessBreakTicks()>0 && !boss.isStillGuard() && !boss.hasEffect(MobEffects.DAMAGE_RESISTANCE);
             case 5 -> drainChecked;
             case 6 -> concurrentChecked && drainChecked;
             case 7 -> advanceSeen && crossSeen;

@@ -396,7 +396,7 @@ public final class SuccessionClientReview {
             state.addProperty("uuid",participant.getUUID().toString());
             state.addProperty("gameMode",participant.gameMode.getGameModeForPlayer().getName());
             state.addProperty("pomes",degree.getTotalPomesConsumed());
-            state.addProperty("fromBloom",degree.getPomesConsumedFromBloom(bloom.bloomId(),bloom.center().asLong(),false));
+            state.addProperty("fromBloom",degree.getPomesConsumedFromBloom(bloom.bloomId()));
             state.addProperty("communion",degree.isQliphothCommunionDone());
             state.addProperty("degree",degree.getDegreeNumber());
             state.addProperty("archonPath",degree.getArchonPath().name());

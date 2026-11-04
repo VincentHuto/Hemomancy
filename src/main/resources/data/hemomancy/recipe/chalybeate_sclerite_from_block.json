@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:sclerite_block"
+    }
+  ],
+  "result": {
+    "id": "hemomancy:chalybeate_sclerite",
+    "count": 4
+  }
+}

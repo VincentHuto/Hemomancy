@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IH
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.IEquippedMorphling;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarItem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
@@ -76,8 +75,6 @@ public final class HemoCapabilityKeys {
     public static final EntityCapability<IWhiteHumorVolume, Void> WHITE_HUMOR_VOLUME =
             EntityCapability.createVoid(Hemomancy.rloc("white_humor_volume"), IWhiteHumorVolume.class);
 
-    public static final EntityCapability<IVisceralOrgans, Void> VISCERAL_ORGANS =
-            EntityCapability.createVoid(Hemomancy.rloc("visceral_organs"), IVisceralOrgans.class);
 
     public static final EntityCapability<IScars, Void> SCARS =
             EntityCapability.createVoid(Hemomancy.rloc("scars"), IScars.class);

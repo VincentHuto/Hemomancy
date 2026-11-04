@@ -248,26 +248,6 @@ final class ChamberOfWillRenderHelpers {
         BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
-    static void renderCorticalFolds(PoseStack poseStack, Tesselator tesselator, float time, float skyDistance) {
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.disableDepthTest();
-        RenderSystem.disableCull();
-        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        RenderSystem.depthMask(false);
-
-        for (int face = 0; face < 6; face++) {
-            poseStack.pushPose();
-            rotateSkyFace(poseStack, face);
-            renderCorticalFoldFace(poseStack, tesselator, time, skyDistance, face);
-            poseStack.popPose();
-        }
-
-        RenderSystem.enableCull();
-        RenderSystem.depthMask(true);
-        RenderSystem.enableDepthTest();
-    }
-
     static void renderCorticalFoldFace(PoseStack poseStack, Tesselator tesselator, float time, float skyDistance, int face) {
         for (int fold = 0; fold < 4; fold++) {
             int seed = 1700 + face * 89 + fold * 31;

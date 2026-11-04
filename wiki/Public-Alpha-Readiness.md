@@ -46,7 +46,7 @@ These are the rough edges to expect in the public alpha:
 ## Compatibility Status
 
 - **JEI: alpha-ready.** Hemomancy currently uses a local NeoForge JEI jar and exposes custom recipe categories for major crafting systems.
-- **Mana and Artifice: dormant.** Design and source are preserved, but MnA compatibility is excluded from the NeoForge 1.21.1 build until a compatible MnA dependency is available.
+- **Mana and Artifice: removed.** No compatibility ships; a future integration would be written fresh.
 - **Curios: dormant.** Curios compatibility source is preserved, but it is excluded/unregistered until a compatible NeoForge 1.21.1 Curios dependency is available.
 
 ---

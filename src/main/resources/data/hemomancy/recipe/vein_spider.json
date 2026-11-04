@@ -3,7 +3,7 @@
   "ingredients": [
     { "item": "minecraft:spider_eye" },
     { "item": "hemomancy:chitinous_husk" },
-    { "item": "hemomancy:puppeteering_thread" },
+    { "item": "hemomancy:enthralling_filament" },
     { "item": "hemomancy:sanguine_conduit" }
   ],
   "result": {

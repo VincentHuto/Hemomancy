@@ -71,7 +71,7 @@ public final class PuppeteeringGameTests {
 		helper.getLevel().setBlockAndUpdate(pos, BlockInit.puppeteers_spindle.get().defaultBlockState());
 		PuppeteersSpindleBlockEntity spindle = (PuppeteersSpindleBlockEntity) helper.getLevel().getBlockEntity(pos);
 		spindle.setItem(PuppeteersSpindleBlockEntity.SLOT_THREAD,
-				new ItemStack(ItemInit.puppeteering_thread.get(), 1));
+				new ItemStack(ItemInit.enthralling_filament.get(), 1));
 
 		PuppeteersSpindleBlockEntity.serverTick(helper.getLevel(), pos,
 				helper.getLevel().getBlockState(pos), spindle);

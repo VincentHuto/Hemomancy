@@ -60,19 +60,6 @@ public final class RitesTabView {
 	//  Degree gate
 	// ────────────────────────────────────────────────────────────
 
-	/**
-	 * Minimum initiatory degree required to browse legacy rite-size groups.
-	 */
-	@Deprecated
-	public static int minDegree(CardinalRiteType type) {
-		return switch (type) {
-			case MINOR   -> 0;
-			case LESSER  -> 1;
-			case GREATER -> 3;
-			case GRAND   -> 5;
-		};
-	}
-
 	private static int rankupTextColor() {
 		float pulse = (Mth.sin((System.currentTimeMillis() % 4000L) / 4000.0F * (float) (Math.PI * 2.0)) + 1.0F) * 0.5F;
 		return lerpArgb(0xFFFF3030, 0xFFFFD45A, pulse);
@@ -1005,14 +992,6 @@ public final class RitesTabView {
 			}
 		}
 		return y;
-	}
-
-	/** @deprecated Use {@link #measureInfoPanelHeight(net.minecraft.client.gui.Font, int, CardinalRiteRecipe, int, boolean)} */
-	@Deprecated
-	public static int measureInfoPanelHeight(net.minecraft.client.gui.Font font,
-											  int playerDegree,
-											  CardinalRiteRecipe rite, int panelW) {
-		return measureInfoPanelHeight(font, playerDegree, rite, panelW, true);
 	}
 
 	// ────────────────────────────────────────────────────────────

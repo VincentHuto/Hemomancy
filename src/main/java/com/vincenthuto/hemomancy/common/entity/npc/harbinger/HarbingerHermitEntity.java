@@ -19,7 +19,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -55,7 +54,6 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
     private static final double FAREWELL_FRONT_SURFACE_VARIANCE = 0.020D;
     private static final double FAREWELL_SIDE_SURFACE_VARIANCE = 0.025D;
 
-    public final AnimationState idleAnimationState = new AnimationState();
 
     public HarbingerHermitEntity(EntityType<? extends HarbingerHermitEntity> type, Level worldIn) {
         super(type, worldIn);
@@ -129,9 +127,6 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
 
     @Override
     public void tick() {
-        if (this.level().isClientSide()) {
-            this.idleAnimationState.startIfStopped(this.tickCount);
-        }
         if (isFarewellDying()) {
             this.setDeltaMovement(Vec3.ZERO);
         }
@@ -364,7 +359,6 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
             return InteractionResult.sidedSuccess(player.level().isClientSide);
         }
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
-            DialogueHubFactory.markMetHermit(serverPlayer);
             DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueHubFactory.decorate(tree, "hermit", serverPlayer);
 

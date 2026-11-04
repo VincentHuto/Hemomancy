@@ -25,8 +25,4 @@ final class VesperFlammeusBreathRulesTest {
 		assertFalse(VesperFlammeusBreathRules.palette().contains(0xFF6508));
 	}
 
-	@Test
-	void vesperNeverPaysPlayerBlood() {
-		assertEquals(0.0D, VesperFlammeusBreathRules.bloodCostPerTick());
-	}
 }

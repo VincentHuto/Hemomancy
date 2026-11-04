@@ -24,7 +24,7 @@ public enum EnumModArmorTiers {
 	CHITINITE("chitinite", 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F,
 			() -> Ingredient.of(ItemInit.chitinous_husk.get())),
 	BARBED("barbed", 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F,
-			() -> Ingredient.of(ItemInit.calcified_blood_spine.get())),
+			() -> Ingredient.of(ItemInit.barbed_splinter.get())),
 	PRISMATIC("prismatic", 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F,
 			() -> Ingredient.of(Items.GLOW_INK_SAC)),
 	UNSTAINED("unstained", 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F,

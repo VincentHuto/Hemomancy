@@ -456,10 +456,6 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 		return entityData.get(DATA_ABSORPTION_PROGRESS);
 	}
 
-	public int getAbsorptionStage() {
-		return entityData.get(DATA_ABSORPTION_STAGE);
-	}
-
 	public float absorbWithBlood(ServerPlayer player, float progressPerTick) {
 		if (!canBloodAbsorb(player)) {
 			return 0.0F;

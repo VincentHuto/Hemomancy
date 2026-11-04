@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +17,6 @@ public final class ManipulationIconResolver {
 
 	public static ResourceLocation base(String manipulationId) {
 		if (manipulationId.startsWith("conjure_")) return CONJURE_BASE;
-		if (ManipulationRetirementRules.isRetiredManipulation(manipulationId)) return MEMORY_BASE;
 		var manipulation = ManipulationInit.MANIPS_TYPE_REGISTRY.get(Hemomancy.rloc(manipulationId));
 		if (manipulation == null || manipulation.getRank() == EnumManipulationRank.HUMILIS) return MEMORY_BASE;
 		return Hemomancy.rloc("textures/item/memories/memory_rank_"
@@ -35,8 +34,6 @@ public final class ManipulationIconResolver {
 			case "conjure_staff" -> "memory_living_staff_overlay";
 			case "conjure_torch" -> "memory_living_torch_overlay";
 			case "conjure_sickle" -> "memory_living_sickle_overlay";
-			case "vigil_of_glass" -> "memory_unclosing_eye_overlay";
-			case "hematic_ballast" -> "memory_iron_retort_overlay";
 			default -> "memory_" + manipulationId + "_overlay";
 		};
 		return Hemomancy.rloc("textures/item/memories/" + texture + ".png");

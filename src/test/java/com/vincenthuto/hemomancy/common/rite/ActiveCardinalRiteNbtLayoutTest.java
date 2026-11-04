@@ -115,16 +115,6 @@ final class ActiveCardinalRiteNbtLayoutTest {
 		ActiveCardinalRite rite = stationRite();
 		assertLayout("station_upgrade", rite);
 	}
-
-	@Test
-	void aStationUpgradeSavedUnderTheAlembicKeyLoadsAsAStationUpgrade() {
-		CompoundTag modern = stationRite().serialize();
-		CompoundTag legacy = modern.copy();
-		legacy.put("AlembicUpgrade", legacy.get("StationUpgrade"));
-		legacy.remove("StationUpgrade");
-		assertEquals(modern, ActiveCardinalRite.deserialize(legacy).serialize());
-	}
-
 	@Test
 	void succession() {
 		ActiveCardinalRite rite = ActiveCardinalRite.interactive(CASTER, CENTER, rite("hematic_succession"), 1200, 7, 5,

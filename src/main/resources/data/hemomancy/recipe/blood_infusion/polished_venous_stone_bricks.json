@@ -1,0 +1,6 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:stone_bricks",
+  "blood_cost": 75,
+  "result": "hemomancy:polished_venous_stone_bricks"
+}

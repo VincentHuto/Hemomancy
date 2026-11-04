@@ -117,7 +117,7 @@ public final class CrimsonTroupeGameTests {
             helper.assertTrue(CircusApprenticeshipProgress.state(clone).getInt("guest.pending") == 4 && !CircusSchoolQuests.guestEligible(clone), "clone lost escrow or daily lock");
             for (int i = 0; i < clone.getInventory().items.size(); i++) clone.getInventory().items.set(i, new ItemStack(Items.STONE, 64));
             clone.getInventory().items.set(0, ItemStack.EMPTY);
-            helper.assertTrue(CircusSchoolQuests.claim(clone) && clone.getInventory().items.get(0).is(ItemInit.puppeteering_thread.get())
+            helper.assertTrue(CircusSchoolQuests.claim(clone) && clone.getInventory().items.get(0).is(ItemInit.enthralling_filament.get())
                     && clone.getInventory().items.get(0).getCount() == 4 && !CircusSchoolQuests.claim(clone), "reserved payment duplicated or changed");
             helper.succeed();
         } finally { player.discard(); clone.discard(); }

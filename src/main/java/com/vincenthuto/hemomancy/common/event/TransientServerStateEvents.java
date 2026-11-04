@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.event;
 
-import com.vincenthuto.hemomancy.common.world.AdipocereCrustDecoration;
 import com.vincenthuto.hemomancy.common.world.GardensNetwork;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.BloodwoodGrowthHandler;
@@ -15,12 +14,11 @@ import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingHomeC
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingLinks;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingRegrowthQueue;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingSession;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryWorldEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryWorldEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.RootedStateHelper;
 import com.vincenthuto.hemomancy.common.mission.circus.CircusPracticalController;
-import com.vincenthuto.hemomancy.common.effect.ChummedWatersAreaManager;
 import com.vincenthuto.hemomancy.common.effect.LanternTickLightManager;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialInjectionAnimation;
@@ -41,7 +39,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ThermalStatusVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager;
 import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager;
 import com.vincenthuto.hemomancy.common.manipulation.animus.HematicRiposteEvents;
-import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.TemporaryIceManager;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager;
@@ -96,6 +93,7 @@ public final class TransientServerStateEvents {
 	}
 
 	private static void clearTransientState() {
+		com.vincenthuto.hemomancy.common.entity.npc.dialogue.OfferedDialogues.clearSessionState();
 		BloodManipulation.clearSessionState();
 		HematicCommandManager.clearSessionState();
 		StillArt.clearSessionState();
@@ -110,7 +108,6 @@ public final class TransientServerStateEvents {
 		MorphlingFeeding.clearSessionState();
 		MorphlingSession.clearSessionState();
 		HoldfastMorphlingItem.clearSessionState();
-		ChummedWatersAreaManager.clearSessionState();
 		BlackVeilCovenantManager.clearSessionState();
 		TemporaryIceManager.clearSessionState();
 		BloodStructureFeedManager.clear();
@@ -120,13 +117,13 @@ public final class TransientServerStateEvents {
 		HematicSalvageEvents.clearSessionState();
 		RootedStateHelper.clearSessionState();
 		ConserveStateHelper.clearSessionState();
-		MuscleMemoryEvents.clearSessionState();
-		MuscleMemoryWorldEvents.clearSessionState();
+		ThelemicMemoryEvents.clearSessionState();
+		ThelemicMemoryWorldEvents.clearSessionState();
 		SynapticLoadoutLockout.clearSessionState();
 		ManipulationChargeClock.clearSessionState();
 		BloodlineChatRateLimit.clearSessionState();
 		com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeRequestLimiter.clearSessionState();
-		SummonThrallManip.clearSessionState();
+		com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter.clearSessionState();
 		CastingAnimationManager.clearSessionState();
 		AvatarManifestationManager.clearSessionState();
 		AxonalTransductionManager.clearSessionState();
@@ -158,8 +155,8 @@ public final class TransientServerStateEvents {
 		BloodFlowLedger.clearSessionState();
 		CorticalArchipelagoFeature.clearSessionState();
 		GardensNetwork.clearSessionState();
-		AdipocereCrustDecoration.clearSessionState();
 		com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.WardAnchors.clearServer();
+		com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilSites.clearServer();
 		MausoleumEvents.clearSessionState();
 		HeartNodeEnvelopeSync.clearSessionState();
 		HeartNodeEvents.clearSessionState();
@@ -169,6 +166,8 @@ public final class TransientServerStateEvents {
 	/** Ends one player's session state. Teardowns that cancel, restore or move something run before plain removals. */
 	public static void endPlayerSession(Player player) {
 		if (player instanceof ServerPlayer serverPlayer) {
+			com.vincenthuto.hemomancy.common.entity.npc.dialogue.OfferedDialogues.logout(serverPlayer);
+			com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter.logout(serverPlayer);
 			ManipulationChannelManager.logout(serverPlayer);
 			CastingAnimationManager.logout(serverPlayer);
 			AvatarManifestationManager.logout(serverPlayer);
@@ -191,9 +190,8 @@ public final class TransientServerStateEvents {
 		MicroscopeExamination.logout(player);
 		EngramTracing.end(player);
 
-		SummonThrallManip.clearPendingThrall(player.getUUID());
 		SynapticLoadoutLockout.clear(player.getUUID());
-		MuscleMemoryEvents.logout(player);
+		ThelemicMemoryEvents.logout(player);
 		HematicRiposteEvents.logout(player);
 		ManipulationChargeClock.release(player);
 		NpcProgressionMarkerEvents.logout(player);

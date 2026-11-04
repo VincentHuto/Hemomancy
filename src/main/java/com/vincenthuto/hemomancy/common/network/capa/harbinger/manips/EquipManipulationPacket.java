@@ -51,9 +51,9 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 			if (known == null) return;
 
 			MemorySlotRef ref = MemorySlotRef.fromStorageKey(msg.manipName);
-			if (ref.kind() == MemoryEntryKind.MUSCLE_MEMORY) {
-				var memory = ref.muscleMemory().orElse(null);
-				if (memory == null || !HemoCapabilityAccess.muscleMemory(player).knows(memory)) {
+			if (ref.kind() == MemoryEntryKind.THELEMIC_MEMORY) {
+				var memory = ref.thelemicMemory().orElse(null);
+				if (memory == null || !HemoCapabilityAccess.thelemicMemory(player).knows(memory)) {
 					player.displayClientMessage(Component.translatable("message.hemomancy.equip_manipulation_packet.that_thelemic_memory_is_still_unknown").withStyle(ChatFormatting.RED), true);
 					return;
 				}
@@ -65,13 +65,6 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 							maxSlots).withStyle(ChatFormatting.RED), true);
 				}
 			} else if (msg.equip) {
-				if (ManipulationRetirementRules.isRetiredManipulation(msg.manipName)) {
-					player.displayClientMessage(
-							Component.translatable("message.hemomancy.equip_manipulation_packet.that_manipulation_has_gone_dormant").withStyle(ChatFormatting.DARK_GRAY), true);
-					ManipulationRetirementRules.sanitizeKnownManipulations(known);
-					KnownManipulationEvents.syncPlayerEvent(player);
-					return;
-				}
 				boolean knownExact = known.getManipList().stream().anyMatch(manipulation -> manipulation != null
 						&& msg.manipName.equals(manipulation.getName()));
 				if (!knownExact) {

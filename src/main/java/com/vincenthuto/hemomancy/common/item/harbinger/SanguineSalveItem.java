@@ -140,7 +140,4 @@ public class SanguineSalveItem extends Item {
 		return stack;
 	}
 
-	public float getHealAmount() {
-		return healAmount;
-	}
 }

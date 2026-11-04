@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import net.minecraft.core.BlockPos;
@@ -43,7 +43,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 	private Set<String> grandfatheredFamilyForms = new LinkedHashSet<>();
 
 	public KnownManipulationServerPacket(IKnownManipulations known) {
-		ManipulationRetirementRules.sanitizeKnownManipulations(known);
+		KnownManipulationUpkeep.sanitizeKnownManipulations(known);
 		this.known = snapshot(known.getKnownManips());
 		this.selected = known.getSelectedManip();
 		this.selectedMemoryKey = known.getSelectedMemoryRef().storageKey();
@@ -188,7 +188,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			known.setLoadouts(msg.loadouts);
 			known.setSelectedMemoryRef(com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef
 					.fromStorageKey(msg.selectedMemoryKey));
-			ManipulationRetirementRules.sanitizeKnownManipulations(known);
+			KnownManipulationUpkeep.sanitizeKnownManipulations(known);
 
 	
 		});

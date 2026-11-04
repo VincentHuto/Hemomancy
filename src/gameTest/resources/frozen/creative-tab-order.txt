@@ -7,7 +7,7 @@ hemomancy:mnemonic_folio
 hemomancy:engram_stamp
 hemomancy:stained_church_map
 hemomancy:masons_respite_map
-hemomancy:covenant_waybill
+hemomancy:harbinger_lodestone
 hemomancy:heart_pattern
 hemomancy:veins_pattern
 hemomancy:blood_absorption
@@ -24,9 +24,13 @@ hemomancy:blood_gourd_black
 hemomancy:curved_horn
 hemomancy:hematic_microscope
 hemomancy:scrying_dish
-hemomancy:hearty_compass
+hemomancy:hematic_suture_needle
+hemomancy:vascular_poultice
+hemomancy:vitality_chalice
+hemomancy:vascular_status_gauge
 hemomancy:sanguine_conduit
 hemomancy:charm_of_vascularium
+hemomancy:unsigned_ancestral_ledger
 hemomancy:terrestrial_speculum
 hemomancy:sporitic_thurible
 hemomancy:mind_spike
@@ -34,6 +38,7 @@ hemomancy:listening_scar
 hemomancy:ahaematic_colloid
 hemomancy:wax_cylinder
 hemomancy:ambergris_cylinder
+hemomancy:memory_thread
 hemomancy:gourd
 hemomancy:vial_centrifuge
 hemomancy:centrifugal_governor_kit
@@ -58,6 +63,8 @@ hemomancy:clotting_lattice
 hemomancy:druse_heart
 hemomancy:scarlet_vanity
 hemomancy:morphling_incubator
+hemomancy:morphling_cradle
+hemomancy:sanguine_vigil
 hemomancy:specimen_jar
 hemomancy:enzymatic_scriptorium
 hemomancy:rubricators_quill
@@ -81,7 +88,7 @@ hemomancy:dendritic_distributor
 hemomancy:mortal_display
 hemomancy:earthen_vein
 hemomancy:hematic_stake
-hemomancy:warp_chair
+hemomancy:somnolent_seat
 hemomancy:harbinger_escritoire
 hemomancy:dictation_table
 hemomancy:humoral_barometer
@@ -252,21 +259,21 @@ hemomancy:umbral_enzyme
 hemomancy:recycled_enzyme
 hemomancy:cured_clay_jug
 hemomancy:tincture_sanguine_fists
+hemomancy:tincture_sanguine_fists *
 hemomancy:tincture_laboring_arms
+hemomancy:tincture_laboring_arms *
 hemomancy:tincture_coursing_legs
+hemomancy:tincture_coursing_legs *
 hemomancy:tincture_hushed_gait
+hemomancy:tincture_hushed_gait *
 hemomancy:tincture_predatory_eyes
+hemomancy:tincture_predatory_eyes *
 hemomancy:tincture_second_pulse
+hemomancy:tincture_second_pulse *
 hemomancy:tincture_enduring_viscera
+hemomancy:tincture_enduring_viscera *
 hemomancy:tincture_carrion_metabolism
-hemomancy:tincture_sanguine_fists_jug
-hemomancy:tincture_laboring_arms_jug
-hemomancy:tincture_coursing_legs_jug
-hemomancy:tincture_hushed_gait_jug
-hemomancy:tincture_predatory_eyes_jug
-hemomancy:tincture_second_pulse_jug
-hemomancy:tincture_enduring_viscera_jug
-hemomancy:tincture_carrion_metabolism_jug
+hemomancy:tincture_carrion_metabolism *
 hemomancy:sanguine_salve
 hemomancy:foul_paste
 hemomancy:ferric_binder
@@ -361,8 +368,9 @@ hemomancy:telson
 hemomancy:venous_pinion
 hemomancy:spore_sac
 hemomancy:queens_physogastrism
-hemomancy:calcified_blood_spine
+hemomancy:barbed_splinter
 hemomancy:sanguine_formation
+hemomancy:sanguine_blob
 hemomancy:blood_crystal_shard
 hemomancy:sanguine_quintessence
 hemomancy:hematic_iron_scrap
@@ -408,9 +416,40 @@ hemomancy:hematic_iron_door
 hemomancy:hematic_iron_trapdoor
 hemomancy:hematic_iron_chain
 hemomancy:hematic_lantern
+hemomancy:sanguine_omen
 hemomancy:blood_wood_log
 hemomancy:blood_wood_planks
+hemomancy:blood_wood_bark
+hemomancy:stripped_blood_wood_log
+hemomancy:stripped_blood_wood_bark
+hemomancy:blood_wood_slab
+hemomancy:blood_wood_stairs
+hemomancy:blood_wood_fence
+hemomancy:blood_wood_fence_gate
+hemomancy:blood_wood_door
+hemomancy:blood_wood_trapdoor
+hemomancy:blood_wood_button
+hemomancy:blood_wood_pressure_plate
+hemomancy:blood_wood_sign
+hemomancy:blood_wood_hanging_sign
 hemomancy:blood_wood_leaves
+hemomancy:heartwood_log
+hemomancy:heartwood_planks
+hemomancy:heartwood_bark
+hemomancy:stripped_heartwood_log
+hemomancy:stripped_heartwood_bark
+hemomancy:heartwood_slab
+hemomancy:heartwood_stairs
+hemomancy:heartwood_fence
+hemomancy:heartwood_fence_gate
+hemomancy:heartwood_door
+hemomancy:heartwood_trapdoor
+hemomancy:heartwood_button
+hemomancy:heartwood_pressure_plate
+hemomancy:heartwood_sign
+hemomancy:heartwood_hanging_sign
+hemomancy:heartwood_core
+hemomancy:ravenous_heartwood
 hemomancy:infested_wood
 hemomancy:sanguine_glass
 hemomancy:sanguine_pane
@@ -441,6 +480,7 @@ hemomancy:spawn_egg_hemolymphopoda
 hemomancy:spawn_egg_hematic_burrower
 hemomancy:spawn_egg_crimson_doe
 hemomancy:spawn_egg_venous_strider
+hemomancy:spawn_egg_peacock_spider
 hemomancy:spawn_egg_scarlet_serpent
 hemomancy:spawn_egg_desiccant
 hemomancy:spawn_egg_venom_rib_centipede
@@ -465,13 +505,14 @@ hemomancy:cleansed_blood_crystal_shard
 hemomancy:self_reflection_mirror
 hemomancy:hemolytic_solution
 hemomancy:hemolytic_plating
-hemomancy:neutralizing_gasket
 hemomancy:consecrated_copper_ingot
 hemomancy:pale_humor_flask
 hemomancy:hemolytic_vial
 hemomancy:draught_of_still_waters
+hemomancy:draught_of_still_mercy
 hemomancy:pallid_infusion
 hemomancy:lethean_dew
+hemomancy:lethean_brew
 hemomancy:tears_of_silthmere
 hemomancy:lethean_poppy_wreath
 hemomancy:silver_chalice
@@ -516,7 +557,7 @@ hemomancy:spawn_egg_unstained_guardian
 hemomancy:spawn_egg_unstained_scout
 hemomancy:spawn_egg_unstained_zealot
 hemomancy:circus_waybill
-hemomancy:puppeteering_thread
+hemomancy:enthralling_filament
 hemomancy:veinwing_harness
 hemomancy:cinder_bellows_frame
 hemomancy:marrow_spitter_carriage
@@ -532,7 +573,7 @@ hemomancy:puppeteers_spindle
 hemomancy:circus_stage_record
 hemomancy:circus_loft_record
 hemomancy:circus_quarters_record
-hemomancy:circus_carousel_record
+hemomancy:impaled_procession_record
 hemomancy:laughing_mask
 hemomancy:mourning_mask
 hemomancy:blank_mask
@@ -564,7 +605,6 @@ hemomancy:cuttlefish_chromatophores
 hemomancy:erythrocoral_fragment
 hemomancy:mnemonic_ambergris
 hemomancy:salt_stained_voyager_log
-hemomancy:blood_chum
 hemomancy:morphling_polyp
 hemomancy:morphling_sunburst
 hemomancy:morphling_holdfast
@@ -705,7 +745,7 @@ hemomancy:witness_stone
 hemomancy:litany_stone
 hemomancy:offering_stand
 hemomancy:pulse_pylon
-hemomancy:spawn_mark
+hemomancy:downfall_seal
 hemomancy:containment_anchor_block
 hemomancy:bone_outgrowth
 hemomancy:spore_shelf
@@ -756,7 +796,7 @@ hemomancy:fungal_gill
 hemomancy:heart_node
 hemomancy:mycelial_synapse
 hemomancy:spawn_egg_fungling
-hemomancy:spawn_egg_eruptor
+hemomancy:spawn_egg_erythromycelium_eruptus
 hemomancy:spawn_egg_lump_of_thought
 hemomancy:spawn_egg_abhorrent_thought
 hemomancy:spawn_egg_facsimile_bat
@@ -800,40 +840,11 @@ hemomancy:structure_scanner
 hemomancy:debug_showcase
 hemomancy:drudge_electrode
 hemomancy:drudge_submission_device
-hemomancy:hematic_suture_needle
-hemomancy:unsigned_ancestral_ledger
-hemomancy:sanguine_blob
-hemomancy:vascular_poultice
-hemomancy:memory_thread
-hemomancy:void_eye_organ
 hemomancy:zombie_husk_effigy
 hemomancy:desert_husk_effigy
 hemomancy:spider_husk_effigy
-hemomancy:vitality_chalice
 hemomancy:vein_spider
 hemomancy:blood_thrall_effigy
 hemomancy:blood_bolt
-hemomancy:vascular_status_gauge
-hemomancy:echo_of_spleen
-hemomancy:echo_of_liver
-hemomancy:echo_of_heart
-hemomancy:echo_of_lungs
-hemomancy:echo_of_kidneys
-hemomancy:draught_of_still_mercy
-hemomancy:lethean_brew
-hemomancy:spawn_egg_peacock_spider
 hemomancy:semi_sentient_construct
-hemomancy:humane_idol
-hemomancy:serpentine_idol
-hemomancy:morphling_cradle
-hemomancy:witness_organ
 hemomancy:gourdvine_tap
-hemomancy:sanguine_vigil
-hemomancy:sanguine_omen
-hemomancy:visceral_mirror
-hemomancy:non_euclidean_hallway
-hemomancy:blood_pylon
-hemomancy:blood_trial_altar
-hemomancy:offering_gate
-hemomancy:crucible_of_nether_ichor
-hemomancy:voidtouched_vessel

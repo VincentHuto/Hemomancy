@@ -51,11 +51,6 @@ public class ScarStationBlockEntity extends HemoContainerBlockEntity implements 
 		return IMultiBlockEntity.computeMultiBlockAABB(this);
 	}
 
-	public void clearScarList() {
-		scarsList = ScarRecipe.blank();
-		BlockEntitySync.markAndSync(this);
-	}
-
 	public void setScarList(byte[][] bs) {
 		scarsList = bs;
 		BlockEntitySync.markAndSync(this);
@@ -210,21 +205,6 @@ public class ScarStationBlockEntity extends HemoContainerBlockEntity implements 
 		} else {
 			return super.triggerEvent(id, type);
 		}
-	}
-
-	public static int getPlayersUsing(BlockGetter reader, BlockPos pos) {
-		BlockState blockstate = reader.getBlockState(pos);
-		if (blockstate.hasBlockEntity()) {
-			BlockEntity BlockEntity = reader.getBlockEntity(pos);
-			if (BlockEntity instanceof ScarStationBlockEntity) {
-				return ((ScarStationBlockEntity) BlockEntity).numPlayersUsing;
-			}
-		}
-		return 0;
-	}
-
-	protected void onOpenOrClose() {
-
 	}
 
 	@Override

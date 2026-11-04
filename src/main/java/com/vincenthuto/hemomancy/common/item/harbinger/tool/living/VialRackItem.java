@@ -190,12 +190,4 @@ public class VialRackItem extends Item {
 		return countEmptyVials(rack) > 0;
 	}
 
-	public static boolean hasFilledVials(ItemStack rack) {
-		for (ItemStack vial : getVials(rack)) {
-			if (!vial.isEmpty() && !isEmptyVial(vial)) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

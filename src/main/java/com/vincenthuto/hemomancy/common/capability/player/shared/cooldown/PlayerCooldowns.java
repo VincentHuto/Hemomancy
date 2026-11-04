@@ -56,22 +56,6 @@ public class PlayerCooldowns implements INBTSerializable<CompoundTag> {
 		until.put(id, gameTime);
 	}
 
-	/**
-	 * A {@code PlayerDataMigrations} entry: moves the cooldown root keys into the attachment and removes them. A root
-	 * key that is present wins.
-	 */
-	public static void migrateLegacyRootKeys(ServerPlayer player) {
-		CompoundTag data = player.getPersistentData();
-		PlayerCooldowns cooldowns = of(player);
-		for (String key : List.copyOf(data.getAllKeys())) {
-			String id = key.startsWith(LEGACY_ARMOR_SET_ABILITY_PREFIX)
-					? ARMOR_SET_ABILITY_PREFIX + key.substring(LEGACY_ARMOR_SET_ABILITY_PREFIX.length())
-					: LEGACY_KEYS.get(key);
-			if (id == null) continue;
-			cooldowns.setUntil(id, data.getLong(key));
-			data.remove(key);
-		}
-	}
 
 	@Override
 	public CompoundTag serializeNBT(HolderLookup.Provider provider) {

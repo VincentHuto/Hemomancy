@@ -472,7 +472,7 @@ them green.
     - `HemoCapabilityAccess` player overloads return the attachment's own class straight from `getData`, so callers no longer bypass them to reach `serializeNBT` or other class-only methods.
     - `Entity`, `BlockEntity` and `ItemStack` overloads keep `Optional`. The 18 `require*` methods are gone (831 calls renamed).
     - About 1,000 `Optional` chains in main and gameTest were collapsed. A javac-driven rewriter handled the mechanical ones; 75 were rewritten by hand (guards inverted, returns kept, method extraction where a lambda returned early mid-method).
-    - New `muscleMemory()` and `dialogueKnowledge()`. Direct `getData` reads: 106 → 16, all on the allow-list (block reservoir owner, retired-attachment migration, chunk attachments, one migration fixture).
+    - New `thelemicMemory()` and `dialogueKnowledge()`. Direct `getData` reads: 106 → 16, all on the allow-list (block reservoir owner, retired-attachment migration, chunk attachments, one migration fixture).
     - `HarbingerEquipmentContainer` uses `getScar(stack)`. Block reservoirs reach their attachment through `IBloodReservoir.super.getBloodCapability()`.
   - **Session hub (S-8):**
     - `TransientServerStateEvents` clears every session map on server start and stop.
@@ -519,7 +519,7 @@ them green.
   - **Low-risk, accepted:** a few setters mark `KnownManipulations` dirty by reference or unconditionally, which means at most one extra end-of-tick resend. First Separation tools now store unparseable entries after the remaining ones instead of in their old positions.
   - Everything else was checked clean: inlined returns, `orElse` defaults, `isEmpty` semantics, shadowing, precedence, frozen identifiers and client isolation.
 - **Verified afterwards in a live multiplayer session (2026-10-22):** one dedicated server and two driven clients, using the opt-in `/hemoverify` command (`-Dhemomancy.mpVerify=true`) and the driver's `connect`, `peers` and `screen` actions, both in `src/gameTest`.
-  - **Tracking:** player A was given a fungal scar, an equipped morphling, two active muscle memories and jar, charm and gourd equipment. Player B's client copy of A matched the server's copy exactly after each of these:
+  - **Tracking:** player A was given a fungal scar, an equipped morphling, two active Thelemic memories and jar, charm and gourd equipment. Player B's client copy of A matched the server's copy exactly after each of these:
     - the initial change;
     - layer-visibility toggles;
     - A's respawn;
@@ -527,7 +527,7 @@ them green.
     - A's relog;
     - B's relog;
     - removing everything and putting it back.
-  - Screenshots from B show the layers rendering. The morphling and active muscle memories leaving on death is the existing death rule (the morphling goes back to its jar).
+  - Screenshots from B show the layers rendering. The morphling and active Thelemic memories leaving on death is the existing death rule (the morphling goes back to its jar).
   - **Chamber relog, case 1:** all six claims were recorded during a guided visit while the player had free space. They stayed owed through the visit, and the player relogged mid-visit. Everything arrived once at login in the Overworld, the player's own items were untouched, and later retries added nothing.
   - **Chamber relog, case 2:** the real inventory was full and only the visit copy had space. Nothing landed in the copy. After the relog the inventory and equipment came back intact and every claim was still owed. All of it arrived once on the first retry after real space was freed.
   - **Screens:** each of these opened with synced data and threw no errors:
@@ -572,7 +572,7 @@ them green.
     - About 100 private copies in 81 classes are gone. `lerp(t, a, b)` callers had their arguments reordered.
     - The only value differences are negative zero against positive zero, as listed in `48127a923`.
   - **Attribute modifiers (P-1 / G-5):** `AttributeModifiers.sync` / `syncPermanent` do nothing while a modifier is unchanged.
-    - It replaced ten remove-then-add copies: muscle memory, High-Strung, body refinement, Emberfang heat, avatar form, chitinite toughness, pelagic motion, Marrow Crown, brew poise and scar synergy (permanent), plus Excoriated clotting.
+    - It replaced ten remove-then-add copies: Thelemic memory, High-Strung, body refinement, Emberfang heat, avatar form, chitinite toughness, pelagic motion, Marrow Crown, brew poise and scar synergy (permanent), plus Excoriated clotting.
     - The Elytra flight modifier no longer comes off and goes back on every tick on both sides. It is held while the chestplate can glide or Fungal Elytra is active, which was its end-of-tick state before. This ends a flight-attribute update packet every tick for every player wearing an elytra.
     - Chitinite toughness also stops re-adding its modifier on every equipment change when the toughness cap clamps the bonus.
   - **Armour sets (G-6):** `ArmorSets.isFullSet` handles exact pieces, a list of helms, a slot map and a whole material. `ArmorSetHelper`, the material count in `ArmorSetBonusHandler`, `SimpleArmorSetAbility` and both Silent Archon copies use it. The public method names stay; the source tests pin them.
@@ -671,7 +671,7 @@ them green.
     - hostile drains: wound (the damage drain), Mycophant claim and siphon, Desiccant, Lantern Tick, frayed thread, Stained Priestess, Velorum
     - the 12 former ledger drains, each keeping the reserve flag its category used to imply
   - **Flags reproduce each site's previous behaviour.**
-    - Only the wound drain and the old ledger categories (morphling, armour, organ, tool, bloodline, muscle memory) are reserve-protected.
+    - Only the wound drain and the old ledger categories (morphling, armour, organ, tool, bloodline, Thelemic memory) are reserve-protected.
     - The 13 sites that called `addBloodSpend` count as spend.
     - `HemorathEntity.onPlayerBloodSpend` stays at its 2 call sites.
     - Guards before each payment, including the missing `isActive` checks, are unchanged.
@@ -693,7 +693,7 @@ them green.
 - **Approved items implemented:** none. F-12, F-13, F-14 and F-15 are all PENDING, so none was built, and `HEMOMANCY_REFERENCE.md` / the wiki needed no balance updates for them.
 - **Pending approvals:** F-12, F-13, F-14, F-15. Each is now a one- or two-line change; the *Decisions* notes say where.
 - **Deviations from the roadmap:**
-  - **`Source` has a label.** It is a fifth component beside the four the roadmap names. The diagnostics already showed a label per source (muscle memory uses the memory's display name); `Source.of` derives it from the id otherwise.
+  - **`Source` has a label.** It is a fifth component beside the four the roadmap names. The diagnostics already showed a label per source (Thelemic memory uses the memory's display name); `Source.of` derives it from the id otherwise.
   - **Two entry points.** `pay` keeps `drain()`'s semantics; `payUpkeep` keeps `applyDrain`'s (dormant gate, interval, full-amount refusal). One method could not reproduce both without a behaviour change at about 20 sites that never checked `isActive`.
   - **`ProjectedBloodSink`'s default does not ask `canReceiveBlood()`.** The roadmap's "defaulting to `receiveBlood`" would have implemented F-12, which is pending. It uses `receiveBlood`'s transfer arithmetic on the raw attachment instead.
   - **The sync half of F-13 arrived.** Scar upkeep now ends in `syncVolume` like every payment. It already did each tick for the Living Torch and the ledger drains. Its reserve protection, the balance half, is untouched.
@@ -1450,7 +1450,7 @@ them green.
   |---|---|---|---|---|
   | 1 | `fungal_scar_items` | five retired fungal scar ids in the scar slot and inventory | the surviving scar | 2027-04-23 |
   | 2 | `station_upgrade_claims` | `advanced_brewing` / `resonant_forge` attachments, two Armature root flags (still behind its own `LegacyMigrated` flag) | `station_upgrades` | 2027-04-23 |
-  | 3 | `muscle_memory_priming` | Muscle Memory's legacy `Primed` map | reserves | 2027-04-23 |
+  | 3 | `thelemic_memory_priming` | Thelemic Memory's legacy `Primed` map | reserves | 2027-04-23 |
   | 4 | `liber_legacy_notes` | field-note items (now a no-op scan); Scar Practice backfill from the Vein Mason advancement | `liber_knowledge` | 2027-04-23 |
   | 5 | `archon_choice` | root `hemomancy:archon_choice_made` (removed) | the degree's Archon path, only if NONE | 2027-04-23 |
   | 6 | `circus_progress` | root `hemomancy.circus_*` durable keys (removed) | `circus_progress` | 2027-04-23 |
@@ -1463,7 +1463,7 @@ them green.
   change while the player is offline); the per-login eligibility backfills (degree, manipulations, Still Arts, staff,
   clinical recipes, station lessons); deserialize-time reads inside existing attachments (Liber book-id rename,
   `familyMemoryVersion`, bestiary normalising), which run before login; the Scriptorium chunk mixin (world-level, not
-  per player). Muscle Memory still migrates legacy priming lazily on read; that map is empty once saved.
+  per player). Thelemic Memory still migrates legacy priming lazily on read; that map is empty once saved.
 - **S-9:** `PlayerDataVersion` (`data_version`, copyOnDeath, key `Version`). The per-100-tick fungal scar inventory sweep
   and the Liber respawn/dimension re-runs are gone. `FungalScarMigrationEvents` was deleted (its sweep is
   `FungalScarMigrationRules.migrateCarried`); its source test was updated. The five retired scar ids are unregistered
@@ -1487,7 +1487,7 @@ them green.
 - **S-7:** `PlayerCooldowns` (`cooldowns`) holds the persisted tier. Its copy handler returns null, so it survives relog
   and resets on death and End return exactly as the root longs did. `ManipulationReactiveEvents.PASSIVE_COOLDOWNS` is
   keyed by player UUID (same clears). Deviation: cooldowns that are fields of a system's own copyOnDeath attachment
-  (Last Rite, Blackhearted, Mycophant retry, Muscle Memory, Will ambush) stay there; moving them would rewrite keys
+  (Last Rite, Blackhearted, Mycophant retry, Thelemic Memory, Will ambush) stay there; moving them would rewrite keys
   inside existing attachments, which the step forbids. Effect windows (`silent_slipping_until`, `sheolic_bastion_*`,
   `weave_*_until`) and the `ScriptoriumLastShot` same-tick dedup are not cooldowns and stay root keys.
 - **Manual load of an existing development world:** `run/saves/New World (28)` (5.9 GB, last played 2026-10-23),
@@ -1792,7 +1792,7 @@ Owner request: convert the English the first follow-up left (the "Still English"
   Charm and Unstained book tooltips, the scar binder and station hints, the Living Grasp warning, the blood-volume
   greeting). They now use `withStyle`.
 - **Visible text changes, all from raw ids:** upper-case tendencies ("FERRIC") and flows ("RAGING") read as their names;
-  the scrying category `MUSCLE_MEMORY` reads "Thelemic Memory" (the player-facing term); max-blood scar rows show the
+  the scrying category `THELEMIC_MEMORY` reads "Thelemic Memory" (the player-facing term); max-blood scar rows show the
   scar's item name ("Scar of the Heart", was "Scar Heart"); the rite overlay title and Mnemonic Blueprints show the rite
   name; the skill toggle message shows the skill name; "greater Working floor" reads "Greater Working floor".
 - **Guardrails:** `HardCodedEnglishGuardrailTest` checks every whole key literal of any `*.hemomancy.*` family, not

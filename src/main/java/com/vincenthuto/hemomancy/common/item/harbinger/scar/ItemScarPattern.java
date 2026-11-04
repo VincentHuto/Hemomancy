@@ -102,14 +102,6 @@ public class ItemScarPattern extends Item {
 		return entries;
 	}
 
-	public static ScarRecipe getPrimaryRecipe(ItemStack stack, Level level) {
-		List<ResourceLocation> scarIds = getScarIds(stack);
-		if (scarIds.isEmpty()) {
-			return null;
-		}
-		return getRecipeForScarId(scarIds.get(0), level);
-	}
-
 	public static ScarRecipe getRecipeForScarId(ResourceLocation scarId, Level level) {
 		String recipePath = recipePathForScarId(scarId);
 		if (level != null) return getRecipeFromLevel(level, recipePath);

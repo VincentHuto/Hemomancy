@@ -1,4 +1,4 @@
-﻿{
+{
   "parent": "neoforge:item/default",
   "loader": "neoforge:composite",
   "textures": {

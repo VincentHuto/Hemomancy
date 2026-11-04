@@ -189,8 +189,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		}
 		int huskIndex = data.getPendingPomeHuskIndex(bloom);
 		boolean claimed = data.isPendingPomeClaimed(bloom);
-		int consumedHere = HemoCapabilityAccess.getInitiatoryDegree(player).getPomesConsumedFromBloom(bloom.bloomId(), pos.asLong(),
-						bloom.migratesLegacyProgress());
+		int consumedHere = HemoCapabilityAccess.getInitiatoryDegree(player).getPomesConsumedFromBloom(bloom.bloomId());
 		if (emptyHand && bloomState == SeveredQliphothState.LIVING && player.isShiftKeyDown()
 				&& data.getRemainingPomes(bloom) == 0 && consumedHere >= 9
 				&& player instanceof ServerPlayer serverPlayer

@@ -20,7 +20,6 @@ public class DataGeneration {
 				new HemoBlockStateProvider(packOutput, event.getExistingFileHelper()));
 		generator.addProvider(event.includeClient(),
 				new HemoItemModelProvider(packOutput, event.getExistingFileHelper()));
-		generator.addProvider(event.includeServer(), new CircusPavilionStructureProvider(packOutput));
 		// Language, recipes, tags and loot are authored by hand in src/main/resources (D-5).
 		// DynastyCastlePieceProvider is intentionally NOT registered: the dynasty castle pieces are now
 		// hand-editable assets under src/main/resources/data/hemomancy/structure/dynasty_castle. The

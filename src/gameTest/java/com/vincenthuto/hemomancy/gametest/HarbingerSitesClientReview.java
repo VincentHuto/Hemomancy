@@ -157,7 +157,7 @@ public final class HarbingerSitesClientReview {
 						b.add(spout.scale(5)).add(0, -0.5, 0)});
 			}
 			String[] names = {"seat", "forge", "centrifuge", "loom"};
-			Block[] stations = {BlockInit.warp_chair.get(), BlockInit.resonant_forge.get(),
+			Block[] stations = {BlockInit.somnolent_seat.get(), BlockInit.resonant_forge.get(),
 					BlockInit.vial_centrifuge.get(), BlockInit.somatic_loom.get()};
 			for (int i = 0; i < stations.length; i++) {
 				BlockPos station = find(level, brazier, 34, stations[i]);

@@ -7,8 +7,16 @@
     "item": "hemomancy:ferric_enzyme"
   },
   "consume_catalyst": true,
-  "result": "hemomancy:tincture_laboring_arms_jug",
-  "count": 1,
+  "result": {
+    "id": "hemomancy:tincture_laboring_arms",
+    "count": 1,
+    "components": {
+      "hemomancy:tincture_doses": {
+        "remaining": 6,
+        "maximum": 6
+      }
+    }
+  },
   "experience": 1.0,
   "cookingtime": 300,
   "id": "hemomancy:distillation/tincture_laboring_arms_jug",

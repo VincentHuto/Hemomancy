@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.mob.animal;
 
+import net.minecraft.util.Mth;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -181,8 +182,42 @@ public class LumpOfThoughtModel<T extends Entity> extends EntityModel<T> {
 		bone.render(poseStack, buffer, packedLight, packedOverlay);
 	}
 
+	/**
+	 * A sentient blob: it breathes with a slow squash and stretch, lurches forward on each crawl, and its five
+	 * tentacle arms sway on their own clocks, segment behind segment. The attack beat is a heave of the whole mass.
+	 */
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+		bone.getAllParts().forEach(ModelPart::resetPose);
+		float stride = Math.min(1.0F, limbSwingAmount * 2.0F);
+		float breath = Mth.sin(ageInTicks * 0.16F);
+		float crawl = Mth.sin(limbSwing * 0.9F);
+		float heave = attackTime > 0.0F ? Mth.sin(attackTime * Mth.PI) : 0.0F;
+		bone.yScale = 1.0F + 0.05F * breath - 0.12F * stride * Math.max(0.0F, crawl) - 0.2F * heave;
+		bone.xScale = bone.zScale = 1.0F - 0.03F * breath + 0.08F * stride * Math.max(0.0F, crawl) + 0.12F * heave;
+		bone.xRot = 0.12F * stride * crawl - 0.25F * heave;
+		bone.yRot = netHeadYaw * Mth.DEG_TO_RAD * 0.3F;
+		int index = 0;
+		for (String arm : TENTACLES) {
+			ModelPart segment = bone.getChild(arm);
+			float clock = ageInTicks * (0.1F + 0.012F * index) + index * 1.7F;
+			for (int depth = 0; depth < 5 && segment != null; depth++) {
+				float lag = depth * 0.55F;
+				segment.xRot += Mth.sin(clock - lag) * (0.08F + 0.04F * depth) + 0.15F * stride * crawl * depth / 4.0F;
+				segment.zRot += Mth.cos(clock * 0.8F - lag) * (0.06F + 0.03F * depth) + 0.3F * heave * depth / 4.0F;
+				segment = nextSegment(segment);
+			}
+			index++;
+		}
+	}
 
+	private static final String[] TENTACLES = {"arm", "arm6", "arm21", "arm11", "arm16"};
+
+	/** A tentacle is a chain of single children; the first child of each segment is the next one out. */
+	private static ModelPart nextSegment(ModelPart segment) {
+		for (ModelPart child : segment.getAllParts().toList()) {
+			if (child != segment) return child;
+		}
+		return null;
 	}
 }

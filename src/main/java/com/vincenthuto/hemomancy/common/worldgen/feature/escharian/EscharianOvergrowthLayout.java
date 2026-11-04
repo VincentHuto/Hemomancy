@@ -19,8 +19,6 @@ public final class EscharianOvergrowthLayout {
         public Cell offset(int dx, int dy, int dz) { return new Cell(x+dx,y+dy,z+dz); }
     }
     public record Bounds(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
-        public int spanX() { return maxX-minX+1; }
-        public int spanZ() { return maxZ-minZ+1; }
         public int height() { return maxY-minY+1; }
     }
     public record Plan(boolean ground, Map<Cell,Layer> backing, Map<Cell,Plant> plants) {

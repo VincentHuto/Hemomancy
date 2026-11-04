@@ -21,8 +21,6 @@ class LivingStaffArmamentSourceTest {
 
 		assertContains("torch item registration", itemInit, "living_torch = SPECIALITEMS.register(\"living_torch\"");
 		assertContains("flail item registration", itemInit, "living_flail = SPECIALITEMS.register(\"living_flail\"");
-		assertContains("torch memory registration", itemInit, "memory_living_torch = registerBloodMemoryItem(\"memory_living_torch\", ManipulationInit.conjure_torch)");
-		assertContains("flail memory registration", itemInit, "memory_living_flail = registerBloodMemoryItem(\"memory_living_flail\", ManipulationInit.conjure_flail)");
 		assertContains("torch uses item class", itemInit, "new LivingTorchItem");
 		assertContains("flail uses item class", itemInit, "new LivingFlailItem");
 		assertContains("living staff defaults to iron sword attack attributes", compact(itemInit),
@@ -56,13 +54,9 @@ class LivingStaffArmamentSourceTest {
 
 		assertContains("torch lang", lang, "\"item.hemomancy.living_torch\": \"Living Torch\"");
 		assertContains("flail lang", lang, "\"item.hemomancy.living_flail\": \"Living Flail\"");
-		assertContains("torch memory lang", lang, "\"item.hemomancy.memory_living_torch\": \"Memory Living Torch\"");
-		assertContains("flail memory lang", lang, "\"item.hemomancy.memory_living_flail\": \"Memory Living Flail\"");
 
 		assertResource("torch item model", "src/main/resources/assets/hemomancy/models/item/living_torch.json");
 		assertResource("flail item model", "src/main/resources/assets/hemomancy/models/item/living_flail.json");
-		assertResource("torch memory model", "src/main/resources/assets/hemomancy/models/item/memory_living_torch.json");
-		assertResource("flail memory model", "src/main/resources/assets/hemomancy/models/item/memory_living_flail.json");
 		assertResource("torch renderer texture", "src/main/resources/assets/hemomancy/textures/entity/model_living_torch.png");
 		assertResource("flail renderer texture", "src/main/resources/assets/hemomancy/textures/entity/model_living_flail.png");
 		assertResource("torch memory overlay", "src/main/resources/assets/hemomancy/textures/item/memories/memory_living_torch_overlay.png");

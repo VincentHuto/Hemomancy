@@ -78,16 +78,6 @@ public class BloodVolumeOverlay {
     private static final ResourceLocation[] POME_TEXTURES = textureRange("pomes_", 10);
     private static final ResourceLocation[] APOTHEOS_FILL_TEXTURES = textureRange("fill_apotheos_", APOTHEOS_FILL_FRAMES);
 
-    private static final int BORDER_OUTER = 0xFF330808;
-    private static final int BORDER_INNER = 0xFF220606;
-    private static final int BAR_BG = 0xFF060102;
-    private static final int FERRIC = 0xFF7D4A24;
-    private static final int GOLD_SEAL = 0xFFB66D2A;
-    private static final int POME_EMPTY = 0xFF120813;
-    private static final int POME_FILLED = 0xFF1B061F;
-    private static final int POME_STROKE_EMPTY = 0x885A1A39;
-    private static final int POME_STROKE_FILLED = 0xFFC73764;
-
     public static BloodVolumeOverlay instance;
 
     private final Minecraft mc = Minecraft.getInstance();
@@ -442,233 +432,8 @@ public class BloodVolumeOverlay {
         }
     }
 
-    private void renderDegreeOrnament(GuiGraphics gfx, int centerX, int vesselY, int degree, float time) {
-        if (degree >= 2) {
-            drawSidePlate(gfx, centerX - 22, vesselY + 28, false, BORDER_OUTER, BORDER_INNER);
-            drawSidePlate(gfx, centerX + 22, vesselY + 28, true, BORDER_OUTER, BORDER_INNER);
-        }
-        if (degree >= 3) {
-            drawBand(gfx, centerX, vesselY + 30, 19, FERRIC);
-            drawBand(gfx, centerX, vesselY + 56, 17, FERRIC);
-            drawBand(gfx, centerX, vesselY + 82, 15, FERRIC);
-        }
-        if (degree >= 4) {
-            for (int i = 0; i < 4; i++) {
-                int y = vesselY + 38 + i * 11;
-                drawLine(gfx, centerX - 17, y, centerX - 12, y + 4, 0xFF9A1C1A);
-                drawLine(gfx, centerX + 17, y, centerX + 12, y + 4, 0xFF9A1C1A);
-            }
-        }
-        if (degree >= 5) {
-            drawDiamond(gfx, centerX, vesselY + 22, 3, 0xFF2B0707, GOLD_SEAL);
-            drawDiamond(gfx, centerX - 18, vesselY + 88, 3, 0xFF2B0707, GOLD_SEAL);
-            drawDiamond(gfx, centerX + 18, vesselY + 88, 3, 0xFF2B0707, GOLD_SEAL);
-            drawBand(gfx, centerX, vesselY + 26, 20, 0xCCB66D2A);
-        }
-        if (degree >= 6) {
-            float pulse = 0.55f + 0.45f * Mth.sin(time * 1.7f);
-            int veinColor = ((int) (120 + 70 * pulse) << 24) | 0x2B0306;
-            drawLine(gfx, centerX - 8, vesselY + 32, centerX + 7, vesselY + 100, veinColor);
-            drawLine(gfx, centerX + 8, vesselY + 32, centerX - 7, vesselY + 100, veinColor);
-        }
-        if (degree >= 7) {
-            drawCrownArc(gfx, centerX, vesselY, 0x884A1516);
-        }
-    }
-
-    private void drawSidePlate(GuiGraphics gfx, int x, int y, boolean right, int outer, int inner) {
-        int dir = right ? 1 : -1;
-        for (int i = 0; i < 52; i++) {
-            int inset = i < 10 ? i / 4 : i > 40 ? (52 - i) / 4 : 2;
-            int px = x + dir * inset;
-            gfx.fill(px - (right ? 0 : 2), y + i, px + (right ? 3 : 1), y + i + 1, outer);
-            if (i > 4 && i < 47) {
-                gfx.fill(px - (right ? 0 : 1), y + i, px + (right ? 2 : 1), y + i + 1, inner);
-            }
-        }
-    }
-
-    private void drawBand(GuiGraphics gfx, int centerX, int y, int halfWidth, int color) {
-        gfx.fill(centerX - halfWidth, y - 1, centerX + halfWidth + 1, y + 2, 0xAA210606);
-        gfx.fill(centerX - halfWidth + 2, y, centerX + halfWidth - 1, y + 1, color);
-    }
-
-    private void renderCrownVessel(GuiGraphics gfx, int x, int y, double ratio, float corruption, int degree, float time) {
-        int centerX = x + VESSEL_W / 2;
-        boolean apotheos = degree >= 8;
-        int fillTop = y + VESSEL_H - (int) Math.round(VESSEL_H * ratio);
-
-        for (int py = 0; py < VESSEL_H; py++) {
-            int halfOuter = vesselHalfWidth(py, true);
-            int halfInner = Math.max(0, vesselHalfWidth(py, false));
-            int screenY = y + py;
-
-            gfx.fill(centerX - halfOuter, screenY, centerX + halfOuter + 1, screenY + 1, BORDER_OUTER);
-            if (halfOuter > halfInner) {
-                gfx.fill(centerX - halfOuter + 2, screenY, centerX + halfOuter - 1, screenY + 1, BORDER_INNER);
-            }
-            gfx.fill(centerX - halfInner, screenY, centerX + halfInner + 1, screenY + 1, BAR_BG);
-
-            if (screenY < fillTop || halfInner <= 1) {
-                continue;
-            }
-
-            if (apotheos) {
-                float depth = Mth.clamp((screenY - fillTop) / (float) Math.max(VESSEL_H, 1), 0.0f, 1.0f);
-                float pulse = 0.82f + 0.18f * Mth.sin(time * 1.35f + py * 0.08f);
-                int voidColor = multiplyColor(blendColor(0xEE08010B, 0xEE000000, depth), 0.95f);
-                int veinColor = multiplyColor(blendColor(0xEEC91F25, 0xEE5C0508, depth), pulse);
-                gfx.fill(centerX - halfInner, screenY, centerX + halfInner + 1, screenY + 1, voidColor);
-
-                int pitch = 15;
-                int stripeWidth = 5;
-                int phase = Math.floorMod((int) (py * 0.55f - time * 10.0f), pitch);
-                for (int start = -halfInner - pitch + phase; start <= halfInner; start += pitch) {
-                    int x0 = Math.max(-halfInner, start);
-                    int x1 = Math.min(halfInner + 1, start + stripeWidth);
-                    if (x1 > x0) {
-                        gfx.fill(centerX + x0, screenY, centerX + x1, screenY + 1, veinColor);
-                    }
-                }
-
-                if (Math.abs(screenY - fillTop) <= 1) {
-                    gfx.fill(centerX - halfInner, screenY, centerX + halfInner + 1, screenY + 1, 0xAA560710);
-                }
-                continue;
-            }
-
-            for (int px = -halfInner; px <= halfInner; px++) {
-                float depth = Mth.clamp((screenY - fillTop) / (float) Math.max(VESSEL_H, 1), 0.0f, 1.0f);
-                float pulse = 0.78f + 0.22f * Mth.sin(time * 1.45f + py * 0.11f);
-                int color;
-                float fade = 1.0f - corruption * 0.76f;
-                color = multiplyColor(blendColor(0xEECF2527, 0xEE520507, depth), pulse * fade);
-                if (corruption > 0) {
-                    color = alphaBlend(color, ((int) (120 * corruption) << 24) | 0x00030106);
-                }
-                gfx.fill(centerX + px, screenY, centerX + px + 1, screenY + 1, color);
-            }
-
-            if (Math.abs(screenY - fillTop) <= 1) {
-                int meniscus = alphaBlend(0xBBDD2F2F, ((int) (120 * corruption) << 24) | 0x00030106);
-                gfx.fill(centerX - halfInner, screenY, centerX + halfInner + 1, screenY + 1, meniscus);
-            }
-        }
-
-        int capColor = degree >= 5 ? GOLD_SEAL : BORDER_OUTER;
-        gfx.fill(centerX - 6, y - 5, centerX + 7, y + 1, BORDER_OUTER);
-        gfx.fill(centerX - 4, y - 4, centerX + 5, y + 1, BORDER_INNER);
-        gfx.fill(centerX - 13, y - 1, centerX + 14, y + 3, capColor);
-        gfx.fill(centerX - 10, y, centerX + 11, y + 2, BORDER_OUTER);
-        gfx.fill(centerX - 12, y + VESSEL_H, centerX + 13, y + VESSEL_H + 3, BORDER_OUTER);
-
-        for (int tick = 1; tick <= 3; tick++) {
-            int tickY = y + VESSEL_H - (VESSEL_H * tick / 4);
-            gfx.fill(centerX + 17, tickY, centerX + 20, tickY + 1, 0x50FFFFFF);
-        }
-
-        Random bubbleRand = new Random(7777L);
-        for (int i = 0; i < 7 && ratio > 0; i++) {
-            float bSpeed = 0.25f + bubbleRand.nextFloat() * 0.55f;
-            float bPhase = bubbleRand.nextFloat() * 100f;
-            float bProgress = ((time * bSpeed + bPhase) % 1.0f);
-            int by = y + VESSEL_H - (int) (bProgress * VESSEL_H * ratio);
-            if (by < fillTop + 2 || by > y + VESSEL_H - 4) continue;
-            int localY = Mth.clamp(by - y, 0, VESSEL_H - 1);
-            int half = Math.max(2, vesselHalfWidth(localY, false) - 3);
-            int bx = centerX - half + bubbleRand.nextInt(half * 2);
-            int alpha = (int) (60 * (1f - Math.abs(bProgress - 0.5f) * 2f));
-            gfx.fill(bx, by, bx + 1, by + 1, (alpha << 24) | 0x00FF4A40);
-        }
-
-        gfx.fill(centerX - 10, y + 8, centerX - 8, y + VESSEL_H - 12, 0x44FF9B8F);
-    }
-
     private int vesselHalfWidth(int py, boolean outer) {
         return BloodVesselShape.halfWidth(py, outer);
-    }
-
-    private void renderPomeCrown(GuiGraphics gfx, int centerX, int vesselY, int progress, boolean apotheos, float time) {
-        int[][] points = {
-                {0, -13}, {-15, -7}, {15, -7}, {-27, 5}, {27, 5},
-                {-31, 23}, {31, 23}, {-20, 40}, {20, 40}
-        };
-        float pulse = apotheos ? 0.75f + 0.25f * Mth.sin(time * 2.3f) : 0.45f + 0.18f * Mth.sin(time * 1.7f);
-
-        for (int i = 0; i < points.length; i++) {
-            int x = centerX + points[i][0];
-            int y = vesselY + points[i][1];
-            boolean filled = i < progress;
-            int fill = filled ? POME_FILLED : POME_EMPTY;
-            int stroke = filled ? POME_STROKE_FILLED : POME_STROKE_EMPTY;
-            if (filled && apotheos) {
-                renderEllipse(gfx, x, y, 6, 6, ((int) (90 * pulse) << 24) | 0x00481864);
-            }
-            drawDiamond(gfx, x, y, 4, fill, stroke);
-            if (filled) {
-                gfx.fill(x, y, x + 1, y + 1, 0xFFCF4B78);
-            }
-        }
-    }
-
-    private void drawCrownArc(GuiGraphics gfx, int centerX, int vesselY, int color) {
-        drawLine(gfx, centerX - 31, vesselY + 23, centerX - 27, vesselY + 5, color);
-        drawLine(gfx, centerX - 27, vesselY + 5, centerX - 15, vesselY - 7, color);
-        drawLine(gfx, centerX - 15, vesselY - 7, centerX, vesselY - 13, color);
-        drawLine(gfx, centerX, vesselY - 13, centerX + 15, vesselY - 7, color);
-        drawLine(gfx, centerX + 15, vesselY - 7, centerX + 27, vesselY + 5, color);
-        drawLine(gfx, centerX + 27, vesselY + 5, centerX + 31, vesselY + 23, color);
-    }
-
-    private void renderApotheosHalo(GuiGraphics gfx, int cx, int cy, float time) {
-        float pulse = 0.65f + 0.35f * Mth.sin(time * 1.9f);
-        renderEllipse(gfx, cx, cy, 36, 48, ((int) (58 * pulse) << 24) | 0x0028083B);
-        renderEllipse(gfx, cx, cy, 24, 34, ((int) (42 * pulse) << 24) | 0x00590418);
-    }
-
-    private void renderEllipse(GuiGraphics gfx, int cx, int cy, int rx, int ry, int color) {
-        for (int y = -ry; y <= ry; y++) {
-            float dy = y / (float) ry;
-            float row = 1.0f - dy * dy;
-            if (row <= 0.0f) {
-                continue;
-            }
-            int half = Math.max(1, Math.round(rx * (float) Math.sqrt(row)));
-            gfx.fill(cx - half, cy + y, cx + half + 1, cy + y + 1, color);
-        }
-    }
-
-    private void drawDiamond(GuiGraphics gfx, int cx, int cy, int r, int fill, int stroke) {
-        for (int y = -r; y <= r; y++) {
-            int half = r - Math.abs(y);
-            gfx.fill(cx - half, cy + y, cx + half + 1, cy + y + 1, fill);
-        }
-        drawLine(gfx, cx, cy - r, cx + r, cy, stroke);
-        drawLine(gfx, cx + r, cy, cx, cy + r, stroke);
-        drawLine(gfx, cx, cy + r, cx - r, cy, stroke);
-        drawLine(gfx, cx - r, cy, cx, cy - r, stroke);
-    }
-
-    private void drawLine(GuiGraphics gfx, int x0, int y0, int x1, int y1, int color) {
-        int dx = Math.abs(x1 - x0);
-        int sx = x0 < x1 ? 1 : -1;
-        int dy = -Math.abs(y1 - y0);
-        int sy = y0 < y1 ? 1 : -1;
-        int err = dx + dy;
-
-        while (true) {
-            gfx.fill(x0, y0, x0 + 1, y0 + 1, color);
-            if (x0 == x1 && y0 == y1) break;
-            int e2 = 2 * err;
-            if (e2 >= dy) {
-                err += dy;
-                x0 += sx;
-            }
-            if (e2 <= dx) {
-                err += dx;
-                y0 += sy;
-            }
-        }
     }
 
     private void drawScaledCenteredString(GuiGraphics gfx, Font font, Component text, int centerX, int y, int color, float scale) {
@@ -845,29 +610,12 @@ public class BloodVolumeOverlay {
         }
     }
 
-    private int blendColor(int from, int to, float t) {
-        t = Mth.clamp(t, 0.0f, 1.0f);
-        int a = (int) (alpha(from) + (alpha(to) - alpha(from)) * t);
-        int r = (int) (red(from) + (red(to) - red(from)) * t);
-        int g = (int) (green(from) + (green(to) - green(from)) * t);
-        int b = (int) (blue(from) + (blue(to) - blue(from)) * t);
-        return (a << 24) | (r << 16) | (g << 8) | b;
-    }
-
     private int alphaBlend(int base, int overlay) {
         float overlayA = alpha(overlay) / 255.0f;
         int a = Math.max(alpha(base), alpha(overlay));
         int r = (int) HemoEasing.crossfade(red(base), red(overlay), overlayA);
         int g = (int) HemoEasing.crossfade(green(base), green(overlay), overlayA);
         int b = (int) HemoEasing.crossfade(blue(base), blue(overlay), overlayA);
-        return (a << 24) | (r << 16) | (g << 8) | b;
-    }
-
-    private int multiplyColor(int color, float factor) {
-        int a = alpha(color);
-        int r = (int) Mth.clamp(red(color) * factor, 0, 255);
-        int g = (int) Mth.clamp(green(color) * factor, 0, 255);
-        int b = (int) Mth.clamp(blue(color) * factor, 0, 255);
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 

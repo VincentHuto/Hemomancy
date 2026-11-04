@@ -26,11 +26,11 @@ public final class StationTierProperty {
     }
 
     /** Moves a tier saved by pre-consolidation builds (block-entity NBT) into the blockstate. */
-    public static void applyLegacyStage(BlockEntity station, int legacyStage) {
+    public static void raiseStage(BlockEntity station, int stage) {
         Level level = station.getLevel();
         BlockState state = station.getBlockState();
-        if (level == null || level.isClientSide || legacyStage <= 0 || !state.hasProperty(STAGE)
-                || state.getValue(STAGE) >= legacyStage) return;
-        level.setBlock(station.getBlockPos(), state.setValue(STAGE, Math.min(2, legacyStage)), 3);
+        if (level == null || level.isClientSide || stage <= 0 || !state.hasProperty(STAGE)
+                || state.getValue(STAGE) >= stage) return;
+        level.setBlock(station.getBlockPos(), state.setValue(STAGE, Math.min(2, stage)), 3);
     }
 }

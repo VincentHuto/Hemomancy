@@ -4,6 +4,25 @@ public interface IBloodVolume {
 
 	public void addBloodVolume(double points);
 
+	/** Owner sync (player volumes only): a change raises the flag; {@code PlayerStateSync.flushDirty} sends and clears it. */
+	default boolean isSyncDirty() {
+		return false;
+	}
+
+	default void markSyncDirty() {
+	}
+
+	default void clearSyncDirty() {
+	}
+
+	/** Game time of the last diagnostics send, or a negative number when none was sent; player volumes only. */
+	default long lastDiagnosticsSync() {
+		return -1L;
+	}
+
+	default void setLastDiagnosticsSync(long gameTime) {
+	}
+
 	public void addMaxBloodVolume(double points);
 
 	public boolean drain(double points);

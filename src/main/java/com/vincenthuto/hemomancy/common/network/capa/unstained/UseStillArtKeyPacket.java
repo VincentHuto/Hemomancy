@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.unstained;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
@@ -26,7 +27,7 @@ public class UseStillArtKeyPacket implements CustomPacketPayload {
 
 	public static void handle(final UseStillArtKeyPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			if (!(ctx.player() instanceof ServerPlayer player)) {
+			if (!(ctx.player() instanceof ServerPlayer player) || !ServerboundGuards.activePlayer(player)) {
 				return;
 			}
 			HemoCapabilityAccess.getKnownStillArts(player).getSelectedArt().performAction(player, player.level(), player.getMainHandItem(), player.blockPosition());

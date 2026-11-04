@@ -75,7 +75,7 @@ public final class WorkingCraftGameTests {
 		ServerPlayer player = player(helper);
 		List<CardinalRiteRecipe> all = CardinalRiteRecipe.getAllRecipes(level);
 		List<CardinalRiteRecipe> crafts = all.stream().filter(CardinalRiteRecipe::isWorkingCraft).toList();
-		helper.assertTrue(crafts.size() == 20, "All twenty Working crafts must load; got " + crafts.size());
+		helper.assertTrue(crafts.size() == 18, "All eighteen Working crafts must load; got " + crafts.size());
 		for (CardinalRiteRecipe craft : crafts) {
 			clear(level, focus);
 			helper.assertTrue(PlaceStructurePacket.placeLayeredCardinalRite(level, focus, craft, player) > 0,
@@ -469,8 +469,8 @@ public final class WorkingCraftGameTests {
 				"horn_of_culmination_rite", "exsanguination", "working/somatic_loom", "working/vascular_effigy")) {
 			helper.assertTrue(catalogued.contains("cardinal_rite/" + rite), rite + " must appear among Working crafts");
 		}
-		helper.assertTrue(catalogued.stream().filter(path -> path.startsWith("cardinal_rite/working/")).count() == 20,
-				"All twenty Working crafts must be catalogued");
+		helper.assertTrue(catalogued.stream().filter(path -> path.startsWith("cardinal_rite/working/")).count() == 18,
+				"All eighteen Working crafts must be catalogued");
 		for (String rite : List.of("sanguine_athanor", "true_groove")) {
 			helper.assertTrue(catalogued.contains("cardinal_rite/" + rite), rite + " is a making rite and must be listed");
 		}

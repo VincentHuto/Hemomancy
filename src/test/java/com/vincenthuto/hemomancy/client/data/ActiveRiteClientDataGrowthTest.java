@@ -189,11 +189,11 @@ public final class ActiveRiteClientDataGrowthTest {
 	void successionIsItsOwnClientPhaseRatherThanLegacy() {
 		ActiveRiteClientData.set(List.of(riteInPhase("SUCCESSION", 0)));
 		assertTrue(currentRite().isSuccession(), "succession recognised");
-		assertTrue(!currentRite().isLegacy(), "succession is not a legacy rite");
+		assertTrue(!currentRite().isCountdown(), "succession is not a legacy rite");
 		assertTrue(currentRite().ritePhase() == null, "succession has no server phase");
 
-		ActiveRiteClientData.set(List.of(riteInPhase("LEGACY", 0)));
-		assertTrue(currentRite().isLegacy(), "legacy recognised");
+		ActiveRiteClientData.set(List.of(riteInPhase("COUNTDOWN", 0)));
+		assertTrue(currentRite().isCountdown(), "legacy recognised");
 		ActiveRiteClientData.set(List.of(riteInPhase("CULMINATION", 0)));
 		assertTrue(currentRite().isPhase(
 				com.vincenthuto.hemomancy.common.rite.CardinalRitePhase.CULMINATION), "typed phase");

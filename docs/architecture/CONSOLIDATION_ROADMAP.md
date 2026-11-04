@@ -247,7 +247,7 @@ machine, and session maps that are never cleared.
 **Scope, behaviour preserving**
 
 1. **Accessors (S-4).**
-   - Add `HemoCapabilityAccess.muscleMemory(Player)` and `dialogueKnowledge(Player)`.
+   - Add `HemoCapabilityAccess.thelemicMemory(Player)` and `dialogueKnowledge(Player)`.
    - Player-attachment accessors return the concrete type. Collapse the `Optional`
      ceremony at about 110 sites; this is mechanical.
    - Replace the 6 direct `getCapability` calls in `HarbingerEquipmentContainer`.

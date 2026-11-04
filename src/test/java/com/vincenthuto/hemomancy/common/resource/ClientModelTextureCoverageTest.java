@@ -53,7 +53,6 @@ class ClientModelTextureCoverageTest {
             "silent_archon_chestplate",
             "silent_archon_helm",
             "silent_archon_leggings",
-            "tome_of_the_unstained",
             "unstained_boots",
             "unstained_chestplate",
             "unstained_helm",

@@ -10,7 +10,7 @@ Read-only audit. Paths are relative to `src/main/java/com/vincenthuto/hemomancy/
 | Armor | `event/ArmorSetBonusHandler`, `armor/ArmorSetHelper`, `armor/ability/{ArmorSetAbilityRegistry,SimpleArmorSetAbility,SilentArchon…,SheolicBastion…,PhanstmalBloodlust…,EdaciousBloodburst…}` |
 | Morphlings | `item/harbinger/morphlings/*` (30 files incl. `MorphlingItem`, `MorphlingCombat`), `capability/player/harbinger/morphling/EquippedMorphlingEvents` |
 | Scars | `init/ScarInit`, `item/harbinger/scar/ScarDefinition`, `capability/player/harbinger/scar/{ScarsContainer,ScarsEntityEventHandler,fungal/*}` |
-| Skills / body | `SkillPointHelper`, `event/BodyRefinementSkillEvents`, `event/ToggleableSkillEvents`, `musclememory/*`, `bloodvolume/BloodVolumeEvents` |
+| Skills / body | `SkillPointHelper`, `event/BodyRefinementSkillEvents`, `event/ToggleableSkillEvents`, `thelemicmemory/*`, `bloodvolume/BloodVolumeEvents` |
 | Mob effects | `effect/*` (BloodLoss, Hemolysis, Elytra, SilverWard, …), `item/harbinger/BloodInjectionEvents`, `brewing/AdvancedBrewEffects` |
 | Living weapons and memories | `item/harbinger/tool/living/*` (Blade, Axe, Crossbow, Tool, Sickle, Torch, Spear, Staff), `item/harbinger/memory/*`, `memories/CrudeMemoryShardItem` |
 | Unstained | `rite/unstained/*` (StillWaters, LetheCovenant, PaleConsecration; all extend `RiteZoneSavedData`), `event/UnstainedMilestoneHandler`, `capability/player/unstained/*` (PurityGainEvents, WhiteHumorVolume), `init/StillArtInit` |
@@ -51,7 +51,7 @@ All handlers are registered through `@EventBusSubscriber` annotation scanning (2
 | Incoming LOWEST | `manipulation/BodyIdiomEvents.java:34-68` | Blackhearted wither metabolism, Iron Heart pool absorption |
 | Incoming LOWEST | `entity/weave/WeaveDamageEvents.java:31` | health floor |
 | Pre HIGH | `event/UnstainedMilestoneHandler.java:152-180` | Silver Ward ×(1−r) against `HEMOMANCY_MOB` attackers; +flat damage dealt to them at ABSOLVED purity |
-| Pre HIGH | `musclememory/MuscleMemoryEvents.java:77-88` | Second Pulse −flat |
+| Pre HIGH | `thelemicmemory/ThelemicMemoryEvents.java:77-88` | Second Pulse −flat |
 | Pre NORMAL | `bloodvolume/BloodVolumeEvents.java:275-302` | Iron Will ×, then **blood drain ∝ current damage** |
 | Pre NORMAL | `vascular/VascularSystemEvents.java:37-64` | **vein strain ∝ current damage** |
 | Pre NORMAL | `manip/KnownManipulationEvents.java:72-87` | Avatar ×(1−dr) |
@@ -62,7 +62,7 @@ All handlers are registered through `@EventBusSubscriber` annotation scanning (2
 | Pre NORMAL | `rite/unstained/StillWatersEvents.java:23-32` | MAGIC damage ×0.70 in zone |
 | Pre NORMAL | `memory/HematicMemoryToolEvents.java:80-91` | husk effigy damage to owner set to 0 |
 | Pre NORMAL | `scar/ScarsEntityEventHandler:103`, `armor/ability/PhanstmalBloodlust…:58`, `summon/MnemonistPuppetEvents:18` | hooks / recorders |
-| Pre LOWEST | `musclememory/MuscleMemoryEvents.java:44-74` | Sanguine Fists +flat |
+| Pre LOWEST | `thelemicmemory/ThelemicMemoryEvents.java:44-74` | Sanguine Fists +flat |
 | Pre LOWEST | `manipulation/ManipulationReactiveEvents.java:220-262` | Endless Hour deferral, Penumbral ×, Phoenix Debt death-save |
 | Post | 16 handlers (lifesteal, school commit, on-hit hooks) | no damage change |
 
@@ -105,7 +105,7 @@ Difficulty: Medium. Worthwhile: **yes**. This is the highest-value item in this 
 | Path | Ledger record? | Hemorath `addBloodSpend`? | Borrowed-blood cover? | Sanguine-Reserve? |
 |---|---|---|---|---|
 | Manipulation cast `BloodManipulation.java:534-545` | no (own cost ledger) | yes | yes | n/a |
-| Toggleable skills, Thurible, Muscle Memory, Covenant Mantle, morphling upkeep/starvation, organs, Blood Loss/Hemolysis, Blood Moon | yes (`applyDrain`) | some | Muscle Memory only | yes |
+| Toggleable skills, Thurible, Thelemic Memory, Covenant Mantle, morphling upkeep/starvation, organs, Blood Loss/Hemolysis, Blood Moon | yes (`applyDrain`) | some | Thelemic Memory only | yes |
 | Armor abilities `ArmorSetAbilityRegistry.java:137-147`, Silent Slipping `SilentArchon…:89-91`, Silent Archon refusal `ArmorSetBonusHandler.java:340` | **no** | **no** | no | **no**, though Category.ARMOR exists |
 | Morphling primal `MorphlingItem.java:408-414`, Ink Mantle `LumenlaceMorphlingItem.java:143-146`, Deadman's transfusion `:94` | **no** | no | no | **no** (MORPHLING) |
 | Cerebral scar upkeep `ScarDefinition.java:162-177` (every tick, 3 scars) | **no**, and **no sync** | no | no | **no** (SCAR); fungal scars *do* use the ledger |
@@ -139,7 +139,7 @@ Add one entry point next to `BloodFlowLedger.applyDrain`, for example `BloodFlow
 
 | File:line | Variant |
 |---|---|
-| `musclememory/MuscleMemoryWorldEvents.java:247` | compares amount (ε) and operation |
+| `thelemicmemory/ThelemicMemoryWorldEvents.java:247` | compares amount (ε) and operation |
 | `entity/summon/BoundSummonBehavior.java:542` | `!=` amount, add only if >0 |
 | `event/BodyRefinementSkillEvents.java:73` | `!=` amount, add if ≠0 |
 | `morphlings/EmberfangMorphlingItem.java:160` | ε amount, add if >0 |
@@ -183,7 +183,7 @@ There are 356 `getEntitiesOfClass`/`getEntities(` calls. The independent "is thi
 | 4 | `BoundSummonBehavior.canAttack` `:579-600` | owner, bound summons, circus | n/a | trial only | puppets |
 | 5 | `MarionetteCrossbarItem.isFriendlyBoundSummon` `:571` | bound summons | — | — | crossbar |
 | 6 | `LivingSickleItem.java:112-114`, `LivingTorchItem.java:136-139` | team | vanilla `canAttack` only | partial | living weapons |
-| 7 | Morphlings, Still Arts, scar trail, Muscle Memory, Prismatic flash: `Monster.class` filter | **none** | n/a | n/a | ~25 sites |
+| 7 | Morphlings, Still Arts, scar trail, Thelemic Memory, Prismatic flash: `Monster.class` filter | **none** | n/a | n/a | ~25 sites |
 | 8 | `SilentArchon…:132-134`, `StillArtInit.java:52-53,152-153` | **none** | **none** | partial | armor, Still Arts |
 | 9 | `PallidShadowRules.canTarget`, `HuskEffigyRules.shouldRejectTarget`, `LivingFlailImpactRules.isValidTarget`, `BloodAbsorptionItem.isValidAbsorptionTarget` | domain rules | varies | | rites, memories, tools |
 | 10 | `MorphlingItem.findLookTarget` `:436-447` | **none** | **none** | no | Bootlace, Emberfang |
@@ -229,7 +229,7 @@ Medium difficulty because of the number of sites, mechanical edits. **Worthwhile
 ---
 
 ## 9. Conditional passives (per-tick "if wearing / has / equipped")
-- There are 58 `PlayerTickEvent` handlers. The combat-passive ones: 4 armor (`ArmorSetBonusHandler:128`, `Edacious:68`, `Sheolic:66`, `SilentArchon:186`), morphling, scars, muscle memory ×2, body refinement, toggleable skills, organs, vascular, blood volume, Avatar, BodyIdiom, Axonal, Channel, ManipulationReactive, BlackVeil, Thurible, Silthmere Glaive, staff form, brew, Unstained milestone, purity, candle aura.
+- There are 58 `PlayerTickEvent` handlers. The combat-passive ones: 4 armor (`ArmorSetBonusHandler:128`, `Edacious:68`, `Sheolic:66`, `SilentArchon:186`), morphling, scars, Thelemic memory ×2, body refinement, toggleable skills, organs, vascular, blood volume, Avatar, BodyIdiom, Axonal, Channel, ManipulationReactive, BlackVeil, Thurible, Silthmere Glaive, staff form, brew, Unstained milestone, purity, candle aura.
 - **Full-set detection is written three ways:**
   - material count `ArmorSetBonusHandler.java:85-100` (12 uses);
   - item identity `ArmorSetHelper` (11 methods, 23 uses);
@@ -261,7 +261,7 @@ Avatar upkeep is a 20-tick pulse inside `AvatarManifestationManager.java:108-114
   - Logout handlers exist in 17 files.
   - `TransientServerStateEvents` resets 19 stores on server start/stop.
   - `ManipulationReactiveEvents`, `AvatarManifestationManager`, `HematicRiposteEvents`, `LivingAxeLodestoneFields` and `MortemStatusVisuals` each do their own stop/logout handling and are **not** in the hub.
-  - Stores with no per-player logout clear (they grow until server stop): `HematicCommandManager` (5 maps, `:35-42`), `TemporaryIceManager`, `LignumMortisManip.SESSIONS`, `SporiticThuribleEvents.LAST_YAW`, `ConserveStateHelper`/`RootedStateHelper`, `BodyIdiomEvents.RUPTURING` (respawn only). `MuscleMemoryWorldEvents`' 4 maps are cleared indirectly through `MuscleMemoryEvents.onLogout:138` (verified).
+  - Stores with no per-player logout clear (they grow until server stop): `HematicCommandManager` (5 maps, `:35-42`), `TemporaryIceManager`, `LignumMortisManip.SESSIONS`, `SporiticThuribleEvents.LAST_YAW`, `ConserveStateHelper`/`RootedStateHelper`, `BodyIdiomEvents.RUPTURING` (respawn only). `ThelemicMemoryWorldEvents`' 4 maps are cleared indirectly through `ThelemicMemoryEvents.onLogout:138` (verified).
 - Timed states are stored four ways: game-time longs in `getPersistentData()` (armor, brew, Endless Hour), attachments (`PowerGuardrailState`), static maps with `until` fields, and MobEffects.
 
 **Recommendation:** extend `TransientServerStateEvents` with a `PlayerLoggedOutEvent`/`Clone` fan-out. Each manager registers `clearPlayer(UUID)` once, and the ad-hoc logout handlers fold into it. Low difficulty, no behaviour change. Worthwhile for leak hygiene. Don't unify the timed-state storage itself.

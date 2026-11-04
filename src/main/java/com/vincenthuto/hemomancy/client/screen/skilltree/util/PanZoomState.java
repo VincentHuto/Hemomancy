@@ -138,12 +138,4 @@ public final class PanZoomState {
 		this.zoom = other.zoom;
 	}
 
-	/**
-	 * Restores state to another instance (for per-tab save/restore).
-	 */
-	public void copyTo(PanZoomState other) {
-		other.panX = this.panX;
-		other.panY = this.panY;
-		other.zoom = this.zoom;
-	}
 }

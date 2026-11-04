@@ -11,10 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class ChamberSkyThemeRegistry {
-	public static final ResourceLocation DEFAULT_SKY =
-			Hemomancy.rloc("textures/environment/chamber_of_will_sky.png");
-	public static final ResourceLocation DEFAULT_CLOUDS =
-			Hemomancy.rloc("textures/environment/chamber_of_will_clouds.png");
 	public static final ResourceLocation DEFAULT_WISP =
 			Hemomancy.rloc("textures/environment/single_cloud.png");
 	public static final ResourceLocation DEFAULT_NOISE =

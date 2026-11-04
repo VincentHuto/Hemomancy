@@ -1,1 +1,14 @@
-{"parent":"minecraft:item/generated","textures":{"layer0":"hemomancy:item/tincture_carrion_metabolism"}}
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/tincture_carrion_metabolism"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "hemomancy:jug": 1
+      },
+      "model": "hemomancy:item/tincture_carrion_metabolism_jug"
+    }
+  ]
+}

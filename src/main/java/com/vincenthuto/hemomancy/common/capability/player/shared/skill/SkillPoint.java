@@ -213,14 +213,6 @@ public class SkillPoint {
 		this.name = name;
 	}
 
-	public void setParent(SkillPoint parent) {
-		this.parent = parent;
-		this.parents.clear();
-		if (parent != null) {
-			this.parents.add(parent);
-		}
-	}
-
 	public SkillPoint addParents(SkillPoint... additionalParents) {
 		if (additionalParents == null) return this;
 		for (SkillPoint additionalParent : additionalParents) {

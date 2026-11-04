@@ -34,13 +34,6 @@ import java.util.function.Predicate;
 public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStructureRecipe> {
 	private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-	private static Block blockFromJson(JsonObject pItemObject) {
-		String s = GsonHelper.getAsString(pItemObject, "block");
-		Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(s));
-		if (block == Blocks.AIR) throw new JsonSyntaxException("Invalid block: " + s);
-		return block;
-	}
-
 	private static Block blockFromString(String s) {
 		Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(s));
 		if (block == Blocks.AIR) throw new JsonSyntaxException("Invalid block: " + s);

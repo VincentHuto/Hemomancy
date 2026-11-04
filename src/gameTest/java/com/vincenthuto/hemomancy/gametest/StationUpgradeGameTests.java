@@ -12,7 +12,6 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeMigration;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
@@ -73,41 +72,6 @@ public final class StationUpgradeGameTests {
                     block + " dropped without its stage");
             helper.getLevel().removeBlock(pos, false);
         }
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 60, batch = "station_upgrade")
-    public static void legacyBlockEntityTierMovesIntoBlockstate(GameTestHelper helper) {
-        var registries = helper.getLevel().registryAccess();
-        BlockPos alembicPos = helper.absolutePos(new BlockPos(1, 2, 1));
-        helper.getLevel().setBlockAndUpdate(alembicPos, BlockInit.ghastly_alembic.get().defaultBlockState());
-        var alembic = (GhastlyAlembicBlockEntity) helper.getLevel().getBlockEntity(alembicPos);
-        CompoundTag alembicTag = alembic.saveWithoutMetadata(registries);
-        alembicTag.putInt("AlembicTier", 2);
-        alembic.loadWithComponents(alembicTag, registries);
-        alembic.applyLegacyStage();
-        helper.assertTrue(StationTierProperty.stage(helper.getLevel().getBlockState(alembicPos)) == 2,
-                "Legacy Alembic tier was lost");
-
-        BlockPos forgePos = helper.absolutePos(new BlockPos(5, 2, 5));
-        helper.getLevel().setBlockAndUpdate(forgePos, BlockInit.resonant_forge.get().defaultBlockState());
-        var forge = (ResonantForgeBlockEntity) helper.getLevel().getBlockEntity(forgePos);
-        CompoundTag forgeTag = forge.saveWithoutMetadata(registries);
-        forgeTag.putInt("Tier", 1);
-        forge.loadWithComponents(forgeTag, registries);
-        forge.applyLegacyStage();
-        helper.assertTrue(StationTierProperty.stage(helper.getLevel().getBlockState(forgePos)) == 1,
-                "Legacy Forge tier was lost");
-
-        BlockPos armaturePos = helper.absolutePos(new BlockPos(1, 2, 6));
-        helper.getLevel().setBlockAndUpdate(armaturePos, BlockInit.hematic_armature.get().defaultBlockState());
-        var armature = (HematicArmatureBlockEntity) helper.getLevel().getBlockEntity(armaturePos);
-        CompoundTag armatureTag = armature.saveWithoutMetadata(registries);
-        armatureTag.putString("ArmatureTier", "monolithic");
-        armature.loadWithComponents(armatureTag, registries);
-        armature.applyLegacyStage();
-        helper.assertTrue(StationTierProperty.stage(helper.getLevel().getBlockState(armaturePos)) == 2,
-                "Legacy Armature tier was lost");
         helper.succeed();
     }
 
@@ -240,53 +204,7 @@ public final class StationUpgradeGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "empty", timeoutTicks = 100, batch = "station_upgrade_recover")
-    public static void legacySavedRitesResumeOrUnlock(GameTestHelper helper) {
-        var registries = helper.getLevel().registryAccess();
-        var level = helper.getLevel();
-        ActiveCardinalRite forgeRite = upgradeRite(helper, StationUpgradeCatalog.get(UpgradeStation.RESONANT_FORGE, 1));
-        helper.assertTrue(StationUpgradeRites.prepare(level, forgeRite), "prepare");
-        CompoundTag saved = forgeRite.serialize(registries);
-        saved.putString("Phase", "ALEMBIC_PROJECTION");
-        saved.put("AlembicUpgrade", saved.getCompound("StationUpgrade"));
-        saved.remove("StationUpgrade");
-        ActiveCardinalRite resumed = ActiveCardinalRite.deserialize(saved, registries);
-        helper.assertTrue(resumed.getPhase() == CardinalRitePhase.STATION_PROJECTION
-                && resumed.upgrade().tag().getString("EscrowState").equals("ESCROWED"), "legacy projection did not resume");
-        StationUpgradeRites.recover(level, resumed);
-        level.removeBlock(StationUpgradeRites.seat(forgeRite), false);
-
-        ActiveCardinalRite scriptRite = upgradeRite(helper, StationUpgradeCatalog.get(UpgradeStation.SCRIPTORIUM, 2));
-        UpgradeableStation subject = StationUpgradeRites.station(level, scriptRite);
-        subject.setRiteLocked(true);
-        CompoundTag old = scriptRite.serialize(registries);
-        old.putString("RecipeId", "hemomancy:cardinal_rite/monolithic_script");
-        old.putString("Phase", "SCRIPTORIAL_INSCRIPTION");
-        old.remove("StationUpgrade");
-        ActiveCardinalRite legacy = ActiveCardinalRite.deserialize(old, registries);
-        helper.assertTrue(legacy.getRecipeId().getPath().equals("cardinal_rite/palimpsest")
-                && legacy.getPhase() == CardinalRitePhase.COLLAPSED, "legacy Scriptorium rite was not collapsed onto the new id");
-        StationUpgradeRites.recover(level, legacy);
-        helper.assertTrue(!subject.isRiteLocked(), "legacy Scriptorium rite left the station locked");
-        helper.succeed();
-    }
-
     // ---- final-review regressions ----
-    @GameTest(template = "empty", timeoutTicks = 60, batch = "station_upgrade_review")
-    public static void legacyAlembicTierSurvivesHeatChangeOnFirstTick(GameTestHelper helper) {
-        var registries = helper.getLevel().registryAccess();
-        BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
-        helper.getLevel().setBlockAndUpdate(pos, BlockInit.ghastly_alembic.get().defaultBlockState());
-        var alembic = (GhastlyAlembicBlockEntity) helper.getLevel().getBlockEntity(pos);
-        CompoundTag tag = alembic.saveWithoutMetadata(registries);
-        tag.putInt("AlembicTier", 2);
-        tag.putBoolean("Heated", true); // no heat source below, so the first tick flips LIT
-        alembic.loadWithComponents(tag, registries);
-        GhastlyAlembicBlockEntity.serverTick(helper.getLevel(), pos, helper.getLevel().getBlockState(pos), alembic);
-        helper.assertTrue(StationTierProperty.stage(helper.getLevel().getBlockState(pos)) == 2,
-                "the first tick's LIT update reverted the migrated Alembic tier");
-        helper.succeed();
-    }
 
     @GameTest(template = "empty", timeoutTicks = 60, batch = "station_upgrade_review")
     public static void riteLockedScriptoriumRefusesBloodTransfer(GameTestHelper helper) {
@@ -471,30 +389,6 @@ public final class StationUpgradeGameTests {
         progress.deliver(player);
         helper.assertTrue(!progress.hasPending(UpgradeStation.SCRIPTORIUM, 1)
                 && player.getInventory().contains(new ItemStack(ItemInit.rubricators_quill.get())), "pending quill not delivered");
-        player.discard();
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 60, batch = "station_upgrade_claims")
-    public static void legacyClaimsMigrateWithoutSecondKit(GameTestHelper helper) {
-        ServerPlayer player = claimant(helper, 7);
-        player.getPersistentData().putBoolean("hemomancy.vicar_consecration_kit_claimed", true);
-        CompoundTag legacy = new CompoundTag();
-        legacy.putBoolean("Distilled", true);
-        legacy.putBoolean("CondenserClaimed", true);
-        player.getData(HemoAttachmentTypes.ADVANCED_BREWING).deserializeNBT(helper.getLevel().registryAccess(), legacy);
-        StationUpgradeMigration.migrate(player);
-        var progress = HemoCapabilityAccess.stationUpgrades(player);
-        helper.assertTrue(progress.hasClaimed(UpgradeStation.ARMATURE, 1) && progress.hasClaimed(UpgradeStation.ALEMBIC, 1)
-                && progress.hasUsed(UpgradeStation.ALEMBIC, StationUpgradeCatalog.DISTILL), "legacy state lost");
-        helper.assertTrue(!player.getInventory().contains(new ItemStack(ItemInit.vicars_consecration_kit.get()))
-                && !player.getInventory().contains(new ItemStack(ItemInit.hematic_condenser_kit.get())),
-                "legacy claim re-issued a kit");
-        helper.assertTrue(player.getRecipeBook().contains(Hemomancy.rloc("vicars_consecration_kit"))
-                && player.getRecipeBook().contains(Hemomancy.rloc("hematic_condenser_kit")),
-                "legacy claimant lacks the repeat recipe");
-        helper.assertTrue(!player.getPersistentData().contains("hemomancy.vicar_consecration_kit_claimed"),
-                "legacy flag kept");
         player.discard();
         helper.succeed();
     }

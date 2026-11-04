@@ -20,6 +20,5 @@ class SanguineHoundRulesTest {
 		assertEquals(5, SanguineHoundRules.curCount(2));
 		assertEquals(3, SanguineHoundRules.curCount(3));
 		assertEquals(220, SanguineHoundRules.CUR_LIFETIME_TICKS);
-		assertEquals(0, SanguineHoundRules.dissolutionBloodRefund(850));
 	}
 }

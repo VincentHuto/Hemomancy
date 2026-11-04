@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import net.minecraft.server.level.ServerPlayer;
@@ -119,7 +119,6 @@ public final class ManipulationChannelManager {
 				|| known.getSelectedManip() == null) return null;
 		BloodManipulation selected = ManipulationInit.getByName(known.getSelectedManip().getName());
 		if (selected == null || selected.getType() != EnumManipulationType.CONTINUOUS
-				|| ManipulationRetirementRules.isRetiredManipulation(selected)
 				|| !known.isManipEquipped(selected)) return null;
 		return selected;
 	}

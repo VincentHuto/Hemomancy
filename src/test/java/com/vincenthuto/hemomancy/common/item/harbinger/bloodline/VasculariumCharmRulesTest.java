@@ -5,10 +5,6 @@ public final class VasculariumCharmRulesTest {
 	}
 
 	public static void main(String[] args) {
-		assertFalse("equipped vascularium charms stay in Scarlet Vanity through death",
-				VasculariumCharmRules.shouldDropEquippedSlot(true));
-		assertFalse("all other Scarlet Vanity equipment stays through death",
-				VasculariumCharmRules.shouldDropEquippedSlot(false));
 
 		assertFalse("the charm cannot be removed from an unvalidated equipment menu",
 				VasculariumCharmRules.canRemoveFromEquipmentMenu(false));

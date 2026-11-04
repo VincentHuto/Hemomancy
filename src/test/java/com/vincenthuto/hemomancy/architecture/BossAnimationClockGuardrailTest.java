@@ -28,7 +28,7 @@ class BossAnimationClockGuardrailTest {
 	private static final Pattern RAW_SYNCED = Pattern.compile("get\\w*Ticks?\\(\\)\\s*\\+\\s*partial");
 	/** Where boss animation time is read: the client code, and the boss entities' own per-frame getters. */
 	private static final List<String> BOSS_CODE = List.of("client/model/entity/boss/", "client/render/entity/boss/",
-			"client/render/layer/mob/endgame/", "common/entity/boss/");
+			"client/render/layer/mob/endgame/", "common/entity/boss/", "client/model/entity/summon/");
 
 	@Test
 	void oldNamesAreGone() throws IOException {
@@ -60,6 +60,11 @@ class BossAnimationClockGuardrailTest {
 			String path = relative(file);
 			if (BOSS_CODE.stream().anyMatch(path::startsWith) && RAW_SYNCED.matcher(SourceAssertions.read(file)).find())
 				found.add(path);
+		}
+		// The animation fragments the generators write into those models carry the same rule.
+		for (Path file : files(RepoPaths.TOOLS.resolve("model_export"))) {
+			if (file.toString().endsWith("_anim.java") && RAW_SYNCED.matcher(SourceAssertions.read(file)).find())
+				found.add(RepoPaths.display(file));
 		}
 		assertEquals(Set.of(), found, "replay the synced counter with BossReplayClock instead of adding the partial tick");
 	}

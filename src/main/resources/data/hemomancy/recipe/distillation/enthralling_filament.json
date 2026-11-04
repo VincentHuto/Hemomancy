@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:distillation_recipe",
+  "ingredient": {
+    "item": "hemomancy:enthralling_filament"
+  },
+  "result": "hemomancy:foul_paste",
+  "count": 3,
+  "experience": 0.6,
+  "cookingtime": 150,
+  "id": "hemomancy:distillation/enthralling_filament"
+}

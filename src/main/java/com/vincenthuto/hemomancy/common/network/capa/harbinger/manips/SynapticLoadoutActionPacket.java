@@ -207,16 +207,16 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 				equipped.imposeCooldown(player, NEWLY_EQUIPPED_COOLDOWN_TICKS);
 			}
 		}
-		var muscleState = HemoCapabilityAccess.muscleMemory(player);
-		boolean muscleStateChanged = false;
-		for (var memory : com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.values()) {
-			if (muscleState.isEnabled(memory)
-					&& !loadout.manipNames().contains(MemorySlotRef.muscleMemory(memory).storageKey())) {
-				muscleStateChanged |= muscleState.deactivate(memory);
+		var thelemicState = HemoCapabilityAccess.thelemicMemory(player);
+		boolean thelemicStateChanged = false;
+		for (var memory : com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory.values()) {
+			if (thelemicState.isEnabled(memory)
+					&& !loadout.manipNames().contains(MemorySlotRef.thelemicMemory(memory).storageKey())) {
+				thelemicStateChanged |= thelemicState.deactivate(memory);
 			}
 		}
-		if (muscleStateChanged) {
-			com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents.sync(player);
+		if (thelemicStateChanged) {
+			com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryEvents.sync(player);
 		}
 		MemorySlotRef selected = MemorySlotRef.fromStorageKey(loadout.selectedManipName());
 		if (!isKnownMemory(player, known, selected.storageKey()) && !loadout.manipNames().isEmpty()) {
@@ -266,9 +266,6 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		if (manipName == null || manipName.isBlank()) {
 			return null;
 		}
-		if (ManipulationRetirementRules.isRetiredManipulation(manipName)) {
-			return null;
-		}
 		for (BloodManipulation manipulation : known.getManipList()) {
 			if (manipulation != null && manipName.equals(manipulation.getName())
 					&& known.isManipulationAvailable(manipulation)) {
@@ -283,7 +280,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		if (ref.kind() == MemoryEntryKind.MANIPULATION) {
 			return findKnownManipulation(known, ref.id()) != null;
 		}
-		return ref.muscleMemory().filter(memory -> HemoCapabilityAccess.muscleMemory(player).knows(memory)).isPresent();
+		return ref.thelemicMemory().filter(memory -> HemoCapabilityAccess.thelemicMemory(player).knows(memory)).isPresent();
 	}
 
 	private static int currentRawExperience(Player player) {

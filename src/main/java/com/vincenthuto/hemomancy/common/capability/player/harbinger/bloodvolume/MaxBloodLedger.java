@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
@@ -57,14 +56,6 @@ public final class MaxBloodLedger {
 		double capacityBonus = SkillPointHelper.getCapacityBonus(player);
 		if (capacityBonus > 0.0D) {
 			contributions.add(MaxBloodContribution.bonus("capacity", "message.hemomancy.max_blood_ledger.capacity", Category.SKILL, capacityBonus));
-		}
-
-		var organs = HemoCapabilityAccess.getVisceralOrgans(player);
-		if (organs.isExtracted(EnumOrgan.SPLEEN)) {
-			double spleenBonus = Math.max(0, organs.getOrganLevel(EnumOrgan.SPLEEN)) * 1000.0D;
-			if (spleenBonus > 0.0D) {
-				contributions.add(MaxBloodContribution.bonus("spleen", "message.hemomancy.max_blood_ledger.spleen", Category.ORGAN, spleenBonus));
-			}
 		}
 
 		if (player.getPersistentData().getBoolean(ETERNAL_COVENANT_TAG)) {

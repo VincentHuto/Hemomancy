@@ -65,7 +65,8 @@ public final class AntecedentEvents {
         if(!(event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) || player.tickCount%200!=0 || player.containerMenu!=player.inventoryMenu) return;
         var research=HemoCapabilityAccess.antecedent(player);
         if(!research.complete() || research.has(EPILOGUE) || !ProgressionGates.hasDegree(player, 7)
-                || !HemoCapabilityAccess.getBloodVolume(player).isActive()) return;
+                || !HemoCapabilityAccess.getBloodVolume(player).isActive()
+                || !com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.hearsTheHive(player)) return;
         if(player.getLastHurtByMob()!=null && player.tickCount-player.getLastHurtByMobTimestamp()<200) return;
         PacketHandler.sendToPlayer(player,new AntecedentEffectPacket(4,BlockPos.ZERO));
     }

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/fence_post",
+  "textures": {
+    "texture": "hemomancy:block/blood_wood_planks"
+  }
+}

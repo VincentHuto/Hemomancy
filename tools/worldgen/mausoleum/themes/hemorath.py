@@ -423,7 +423,7 @@ def downfall_hall(saint):
         floor = DOWNFALL_LANDINGS[landing][2]
         for x in xs:
             mark = trials.Mark(x, floor + 1, zc, 'SPAWN', wave)
-            room.set(x, floor + 1, zc, 'hemomancy:spawn_mark', {'wave': str(wave), 'due': 'false'})
+            room.set(x, floor + 1, zc, 'hemomancy:downfall_seal', {'wave': str(wave), 'due': 'false'})
             marks.append(mark)
     room.jigsaw(0, top, zc, 'west_up', pieces.conn('hall_in'), pieces.conn('approach_out'), pieces.EMPTY,
                 c['runner'])

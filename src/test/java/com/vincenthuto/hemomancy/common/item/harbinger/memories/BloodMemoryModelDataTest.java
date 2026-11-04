@@ -9,7 +9,6 @@ public final class BloodMemoryModelDataTest {
 	private static final Path OVERLAY_ROOT = Path.of("src/main/resources/assets/hemomancy/textures/item/memories");
 
 	private static final String[] MEMORIES_WITH_NEW_OVERLAYS = {
-			"glacial_circulation",
 			"osseous_bloom"
 	};
 

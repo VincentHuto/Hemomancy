@@ -31,9 +31,6 @@ public class SkillsTabController implements IProgressTab {
     private static final int CONTENT_EDGE_PADDING = 60;
     private static final int DEGREE_LABEL_WIDTH = 46;
     private static final int DEGREE_LABEL_HEIGHT = 9;
-    private static final int DEGREE_LABEL_X = COMPASS_CENTER_X - DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + 10;
-    private static final int DEGREE_LABEL_TOP_Y = COMPASS_CENTER_Y - DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + 28;
-    private static final int DEGREE_LABEL_GAP_Y = 34;
     private static final int TRACE_DEGREE_LABEL = 0x88D66458;
     private static final int COL_NODE_BG           = 0xCC1A0505;
     private static final float SKILL_TOOLTIP_Z = 900.0F;
@@ -274,10 +271,6 @@ public class SkillsTabController implements IProgressTab {
         pose.translate(0.0F, 0.0F, SKILL_TOOLTIP_Z);
         drawTooltip(gfx, ctx, mouseX, mouseY);
         pose.popPose();
-    }
-
-    public float getDeepFade() {
-        return deepFade;
     }
 
     public float updateAndGetDeepFade(ProgressScreenContext ctx) {

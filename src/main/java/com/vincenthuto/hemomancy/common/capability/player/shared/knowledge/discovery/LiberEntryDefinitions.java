@@ -193,13 +193,10 @@ public final class LiberEntryDefinitions {
 		return RITE_UNLOCKS.getOrDefault(ritePath, java.util.Set.of());
 	}
 
+	/** Only events registered here unlock entries; a client cannot name an entry in the event id. */
 	public static java.util.Set<ResourceLocation> forDialogueEvent(String eventId) {
 		if (eventId == null || eventId.isEmpty()) {
 			return java.util.Set.of();
-		}
-		if (eventId.startsWith(DIALOGUE_EVENT_PREFIX)) {
-			ResourceLocation entryId = ResourceLocation.tryParse(eventId.substring(DIALOGUE_EVENT_PREFIX.length()));
-			return entryId == null ? java.util.Set.of() : java.util.Set.of(entryId);
 		}
 		return DIALOGUE_UNLOCKS.getOrDefault(eventId, java.util.Set.of());
 	}

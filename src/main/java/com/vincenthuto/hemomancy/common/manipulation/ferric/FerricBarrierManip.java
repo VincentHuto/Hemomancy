@@ -44,7 +44,7 @@ public final class FerricBarrierManip extends BloodManipulation {
         var placement = FerricPlacement.aimed(player, kind, 18 * SkillPointHelper.getSanguineReachMultiplier(player));
         if (placement == null) return;
         for (var at : placement.origins()) {
-            FerricConstructEntity entity = kind == Kind.WALL ? new EntityIronWall(EntityInit.iron_wall.get(), level, player)
+            FerricConstructEntity entity = kind == Kind.WALL ? new EntityIronWall(EntityInit.ferric_rampart.get(), level, player)
                     : new EntityIronSpike(EntityInit.iron_spike.get(), level, player);
             entity.moveTo(at.x, at.y, at.z, placement.facing().toYRot(), 0);
             entity.configure(player, kind, placement.facing(), durationTicks(kind));

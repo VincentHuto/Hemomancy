@@ -9,7 +9,4 @@ public class DictationTableBlockEntity extends com.vincenthuto.hutoslib.common.b
     public DictationTableBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityInit.dictation_table.get(), pos, state);
     }
-    @Deprecated public net.minecraft.world.item.ItemStack getLiber() { return getBook(); }
-    @Deprecated public void setLiber(net.minecraft.world.item.ItemStack stack) { setBook(stack); }
-    @Deprecated public net.minecraft.world.item.ItemStack removeLiber() { return removeBook(); }
 }

@@ -39,12 +39,6 @@ public class ManipulationInit {
 			.makeRegistry(builder -> builder.maxId(Integer.MAX_VALUE - 1)
 					.defaultKey(Hemomancy.rloc("blood_shot")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> venous_travel = MANIPS.register("venous_travel",
-			() -> new BloodManipulation("venous_travel", 1000, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.ARMS)
-					.setSecondaryTend(EnumBloodTendency.ANIMUS)
-					.setCooldownTicks(20)
-					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_shot = MANIPS.register("blood_shot",
 			() -> new BloodShotManip("blood_shot", 100, 0, 0, EnumManipulationType.QUICK, EnumManipulationRank.HUMILIS,
@@ -245,12 +239,6 @@ public class ManipulationInit {
 					.setCooldownTicks(60)
 					.setDrudgeAction(DrudgeActions::vitalEffusion, Component.translatable("manipulation.hemomancy.vital_effusion.drudge")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> ferric_transmutation = MANIPS.register("ferric_transmutation",
-			() -> new FerricTransmutationManip("ferric_transmutation", 1000, 50, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.SUMMA, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
-					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
-					.setCooldownTicks(20)
-					.setDrudgeAction(DrudgeActions::ferricTransmutation, Component.translatable("manipulation.hemomancy.ferric_transmutation.drudge")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> activation_potential = MANIPS.register("activation_potential",
 			() -> new ActivationPotentialManip("activation_potential", 200, 10, 0, EnumManipulationType.CHARGED,
@@ -359,11 +347,6 @@ public class ManipulationInit {
 					.setCooldownTicks(40)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> summon_thrall = MANIPS.register("summon_thrall",
-			() -> new SummonThrallManip("summon_thrall", 500, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
-					.setCooldownTicks(60)
-					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_flame_conjuration = MANIPS.register("crimson_flame_conjuration",
 			() -> new CrimsonFlameConjurationManip("crimson_flame_conjuration", 150, 0, 0, EnumManipulationType.QUICK,
@@ -382,18 +365,7 @@ public class ManipulationInit {
 					.setCooldownTicks(30)
 					.setDrudgeAction(DrudgeActions::sanguineMending, Component.translatable("manipulation.hemomancy.sanguine_mending.drudge")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> hemosynthesis = MANIPS.register("hemosynthesis",
-			() -> new HemosynthesisManip("hemosynthesis", 200, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.BODY)
-					.setSecondaryTend(EnumBloodTendency.ANIMUS)
-					.setCooldownTicks(40)
-					.setDrudgeAction(DrudgeActions::hemosynthesis, Component.translatable("manipulation.hemomancy.hemosynthesis.drudge")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_lamp = MANIPS.register("blood_lamp",
-			() -> new BloodLampManip("blood_lamp", 75, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.ARMS)
-					.setCooldownTicks(10)
-					.setDrudgeAction(DrudgeActions::bloodLamp, Component.translatable("manipulation.hemomancy.blood_lamp.drudge")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_flare = MANIPS.register("hematic_flare",
 			() -> new HematicFlareManip("hematic_flare", 125, 0, 0, EnumManipulationType.QUICK,
@@ -403,12 +375,6 @@ public class ManipulationInit {
 					.setEntityCast(EntityCasts::hematicFlare)
 					.setDrudgeAction(DrudgeActions::hematicFlare, Component.translatable("manipulation.hemomancy.hematic_flare.drudge")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_harvest = MANIPS.register("crimson_harvest",
-			() -> new CrimsonHarvestManip("crimson_harvest", 200, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.LEGS)
-					.setSecondaryTend(EnumBloodTendency.ANIMUS)
-					.setCooldownTicks(60)
-					.setDrudgeAction(DrudgeActions::crimsonHarvest, Component.translatable("manipulation.hemomancy.crimson_harvest.drudge")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_grasp = MANIPS.register("glacial_grasp",
 			() -> new GlacialGraspManip("glacial_grasp", 125, 0, 0, EnumManipulationType.QUICK,
@@ -420,12 +386,6 @@ public class ManipulationInit {
 
 	// ── Mid-Game Utilitarian Manipulations (MEDIOCRITAS) ──
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_excavation = MANIPS.register("sanguine_excavation",
-			() -> new SanguineExcavationManip("sanguine_excavation", 400, 10, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)
-					.setSecondaryTend(EnumBloodTendency.MORTEM)
-					.setCooldownTicks(40)
-					.setDrudgeAction(DrudgeActions::sanguineExcavation, Component.translatable("manipulation.hemomancy.sanguine_excavation.drudge")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> vascular_dowsing = MANIPS.register("vascular_dowsing",
 			() -> new VascularDowsingManip("vascular_dowsing", 75, 0, 0, EnumManipulationType.CONTINUOUS,
@@ -434,12 +394,6 @@ public class ManipulationInit {
 					.setCooldownTicks(40)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> ferric_resonance = MANIPS.register("ferric_resonance",
-			() -> new FerricResonanceManip("ferric_resonance", 600, 20, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)
-					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
-					.setCooldownTicks(200)
-					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> iron_retort = MANIPS.register("iron_retort",
 			() -> new IronRetortManip("iron_retort", 250, 10, 0, EnumManipulationType.QUICK,
@@ -489,12 +443,6 @@ public class ManipulationInit {
 					.setEntityCast(EntityCasts::umbralStep)
 					.setDrudgeAction(DrudgeActions::umbralStep, Component.translatable("manipulation.hemomancy.umbral_step.drudge")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_sight = MANIPS.register("crimson_sight",
-			() -> new CrimsonSightManip("crimson_sight", 250, 10, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
-					.setSecondaryTend(EnumBloodTendency.TENEBRIS)
-					.setCooldownTicks(60)
-					.setDrudgeAction(DrudgeActions::crimsonSight, Component.translatable("manipulation.hemomancy.crimson_sight.drudge")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> prismatic_reproof = MANIPS.register("prismatic_reproof",
 			() -> new PrismaticReproofManip("prismatic_reproof", 325, 10, 0, EnumManipulationType.QUICK,
@@ -519,12 +467,6 @@ public class ManipulationInit {
 					.setCooldownTicks(120)
 					.setDrudgeAction(DrudgeActions::lumenSuture, Component.translatable("manipulation.hemomancy.lumen_suture.drudge")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> vital_reservoir = MANIPS.register("vital_reservoir",
-			() -> new VitalReservoirManip("vital_reservoir", 50, 10, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
-					.setSecondaryTend(EnumBloodTendency.ANIMUS)
-					.setCooldownTicks(60)
-					.setDrudgeAction(DrudgeActions::vitalReservoir, Component.translatable("manipulation.hemomancy.vital_reservoir.drudge")));
 
 	// ── CONGEATIO — expanded tendencies ──
 
@@ -536,19 +478,7 @@ public class ManipulationInit {
 					.setEntityCast(EntityCasts::cryogenicPulse)
 					.setDrudgeAction(DrudgeActions::cryogenicPulse, Component.translatable("manipulation.hemomancy.cryogenic_pulse.drudge")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_circulation = MANIPS.register("glacial_circulation",
-			() -> new GlacialCirculationManip("glacial_circulation", 175, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY)
-					.setSecondaryTend(EnumBloodTendency.ANIMUS)
-					.setCooldownTicks(100));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_bastion = MANIPS.register("glacial_bastion",
-			() -> new GlacialBastionManip("glacial_bastion", 350, 10, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS)
-					.setSecondaryTend(EnumBloodTendency.FERRIC)
-					.setCooldownTicks(50)
-					.setEntityCast(EntityCasts::glacialBastion)
-					.setDrudgeAction(DrudgeActions::glacialBastion, Component.translatable("manipulation.hemomancy.glacial_bastion.drudge")));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_rampart = MANIPS.register("glacial_rampart",
 			() -> new GlacialRampartManip("glacial_rampart", 350, 10, 0, EnumManipulationType.QUICK,
@@ -660,13 +590,6 @@ public class ManipulationInit {
 					.setCooldownTicks(100)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
 
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_eclipse_mantle = MANIPS.register("blood_eclipse_mantle",
-			() -> new BloodEclipseMantleManip("blood_eclipse_mantle", 325, 10, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.BODY)
-					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
-					.setCooldownTicks(180)
-					.setEntityCast(EntityCasts::bloodEclipseMantle)
-					.setDrudgeAction(DrudgeActions::bloodEclipseMantle, Component.translatable("manipulation.hemomancy.blood_eclipse_mantle.drudge")));
 
 	// ── MORTEM — expanded tendencies ──
 
@@ -754,10 +677,6 @@ public class ManipulationInit {
 			() -> new WhiteVerdictManip("white_verdict", 800, 65, 0, EnumManipulationType.CHARGED,
 					EnumManipulationRank.PERFECTUS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
 					.setCooldownTicks(100).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> vigil_of_glass = MANIPS.register("vigil_of_glass",
-			() -> new VigilOfGlassManip("vigil_of_glass", 300, 55, 0, EnumManipulationType.PASSIVE,
-					EnumManipulationRank.MAGISTER, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
-					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> furnace_veins = MANIPS.register("furnace_veins",
 			() -> new FurnaceVeinsManip("furnace_veins", 150, 55, 0, EnumManipulationType.CONTINUOUS,
 					EnumManipulationRank.MAGISTER, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
@@ -774,10 +693,6 @@ public class ManipulationInit {
 			() -> new RimeboundSentenceManip("rimebound_sentence", 750, 55, 0, EnumManipulationType.CHARGED,
 					EnumManipulationRank.MAGISTER, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS)
 					.setCooldownTicks(120).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
-	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_ballast = MANIPS.register("hematic_ballast",
-			() -> new HematicBallastManip("hematic_ballast", 200, 55, 0, EnumManipulationType.PASSIVE,
-					EnumManipulationRank.MAGISTER, EnumBloodTendency.FERRIC, EnumVeinSections.LEGS)
-					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported")));
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> iron_choir = MANIPS.register("iron_choir",
 			() -> new IronChoirManip("iron_choir", 250, 60, 0, EnumManipulationType.CONTINUOUS,
 					EnumManipulationRank.MAGISTER, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)

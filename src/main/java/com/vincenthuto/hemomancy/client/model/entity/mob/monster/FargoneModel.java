@@ -166,7 +166,7 @@ public class FargoneModel extends HierarchicalModel<FargoneEntity> {
 		applyVariant(pEntity.getVariant());
 		this.animate(pEntity.idleAnimationState, FargoneModel.IDLE, pAgeInTicks);
 		if(pEntity.isMovingOnLand()) {
-			this.animate(pEntity.idleAnimationState, FargoneModel.WALK, pAgeInTicks);
+			this.animate(pEntity.walkAnimationState, FargoneModel.WALK, pAgeInTicks);
 		}
 
 	}

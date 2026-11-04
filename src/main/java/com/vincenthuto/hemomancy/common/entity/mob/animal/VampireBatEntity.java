@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
+import net.minecraft.sounds.SoundEvents;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -34,6 +35,29 @@ public final class VampireBatEntity extends Bat {
 
 	/** Client only: the body's lean into its flight, eased so the model doesn't snap with each tick's movement. */
 	private float flightPitch, flightPitchO, flightBank, flightBankO;
+	private static final byte BITE_EVENT = 64;
+	private static final int BITE_TICKS = 6;
+	private static final ParticleColor BITE_BLOOD = new ParticleColor(170, 14, 24);
+	/** Client only: ticks left of the jaw snapping shut on a bite. */
+	private int biteTicks;
+
+	/** 1 as the jaw snaps shut on a bite, falling to 0 over a few ticks. */
+	public float biteSnap(float partialTick) {
+		return biteTicks <= 0 ? 0.0F : Math.max(0.0F, biteTicks - partialTick) / BITE_TICKS;
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id == BITE_EVENT) {
+			biteTicks = BITE_TICKS;
+			for (int i = 0; i < 5; i++) {
+				level().addParticle(HemoParticleData.bloodCell(BITE_BLOOD), getX(), getEyeY() - 0.1D, getZ(),
+						(random.nextDouble() - 0.5D) * 0.08D, 0.02D, (random.nextDouble() - 0.5D) * 0.08D);
+			}
+		} else {
+			super.handleEntityEvent(id);
+		}
+	}
 
 	public VampireBatEntity(EntityType<? extends VampireBatEntity> type, Level level) {
 		super(type, level);
@@ -94,7 +118,7 @@ public final class VampireBatEntity extends Bat {
 
 	@Override
 	public int getMaxSpawnClusterSize() {
-		return 20;
+		return 8;
 	}
 
 	@Override
@@ -106,6 +130,7 @@ public final class VampireBatEntity extends Bat {
 	public void tick() {
 		super.tick();
 		if (level().isClientSide) {
+			if (biteTicks > 0) biteTicks--;
 			easeFlightLean();
 			if (isManifestedAggregate() && random.nextBoolean()) level().addParticle(HemoParticleData.bloodCell(SWARM_MOTE),
 					getRandomX(2.5D), getRandomY(), getRandomZ(2.5D), 0.0D, 0.01D, 0.0D);
@@ -127,8 +152,11 @@ public final class VampireBatEntity extends Bat {
 		setYRot(facing);
 		yBodyRot = facing;
 		yHeadRot = facing;
-		if (tickCount % (isManifestedAggregate() ? 25 : 60) == 0 && distanceToSqr(prey) < 2.25D)
-			prey.hurt(damageSources().mobAttack(this), isManifestedAggregate() ? 2.0F : 1.0F);
+		if (tickCount % (isManifestedAggregate() ? 25 : 60) == 0 && distanceToSqr(prey) < 2.25D
+				&& prey.hurt(damageSources().mobAttack(this), isManifestedAggregate() ? 2.0F : 1.0F)) {
+			level().broadcastEntityEvent(this, BITE_EVENT);
+			playSound(SoundEvents.BAT_AMBIENT, 0.35F, 1.7F);
+		}
 	}
 
 	private LivingEntity aggregateOwner() {
@@ -139,7 +167,8 @@ public final class VampireBatEntity extends Bat {
 
 	private LivingEntity bleedingPrey() {
 		return level().getEntitiesOfClass(LivingEntity.class, new AABB(blockPosition()).inflate(8.0D),
-				living -> living != this && living.isAlive() && living.getHealth() < living.getMaxHealth())
+				living -> living != this && !(living instanceof VampireBatEntity) && living.isAlive()
+						&& living.getHealth() < living.getMaxHealth())
 				.stream().min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
 	}
 

@@ -75,7 +75,7 @@ public final class CardinalRiteFogRenderer {
 			ActiveRiteData.RiteEntry rite = sample.rite();
 			float radius = CardinalRiteFogGeometry.perimeterRadius(
 					rite.getFootprintRadius(), rite.getRiteSize(), rite.getCompletedRings(),
-					rite.getTotalRings(), rite.isLegacy());
+					rite.getTotalRings(), rite.isCountdown());
 			float opacity = sample.opacity() * endingSurge(rite.getCenter(), sample.active(), time);
 			if (opacity <= 0.001F || !CardinalRiteFogGeometry.isWithinRenderDistance(
 					rite.getCenter(), cameraPosition, radius, renderDistance)) {

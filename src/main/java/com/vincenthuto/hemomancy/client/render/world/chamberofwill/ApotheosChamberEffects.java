@@ -52,7 +52,6 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	private static final int APOTHEOS_CEILING_TENDRIL_COUNT = 14;
 	private static final int APOTHEOS_CEILING_TENDRIL_SEGMENTS = 18;
 	private static final int APOTHEOS_CEILING_OUTWARD_TENDRIL_COUNT = 18;
-	private static final int APOTHEOS_CEILING_OUTWARD_TENDRIL_SEGMENTS = 15;
 	private static final int APOTHEOS_CEILING_ORB_COUNT = 9;
 
 	private static final float APOTHEOS_CEILING_DOME_SPAN_SCALE = 0.78F;

@@ -96,8 +96,6 @@ public class CardinalRiteBoundaryRenderer {
 	private static final int SOCKET_SEGMENTS = 24;
 	private static final float SOCKET_RADIUS = CardinalRiteCeremonyLayout.SOCKET_RADIUS;
 	private static final float SOCKET_CORE_WIDTH = CardinalRiteCeremonyLayout.SOCKET_CORE_WIDTH;
-	private static final float SOCKET_GLOW_WIDTH = 0.14F;
-	private static final float SOCKET_UNDULATION_SCALE = 0.15F;
 	private static final double BOUNDARY_SOCKET_WAVE_FADE_ANGLE = 0.20D;
 	private static final int SOCKET_STAIN_SEGMENTS = 16;
 	private static final int SIGIL_VESSEL_SEGMENTS = 7;
@@ -111,7 +109,6 @@ public class CardinalRiteBoundaryRenderer {
 	private static final float UNDULATE_AMP2 = 0.04F;
 	private static final double UNDULATE_SPEED2 = 0.09D;
 	private static final float RING_SURFACE_WAVE = 0.012F;
-	private static final float SOCKET_SURFACE_WAVE = 0.006F;
 
 	// ── Veins ──
 	private static final int VEIN_COUNT = 18;
@@ -277,7 +274,7 @@ public class CardinalRiteBoundaryRenderer {
 			CardinalRiteEventKind ending, float endingAge, float time, float partialTick, Vec3 cam,
 			int renderDistance) {
 		BlockPos center = rite.getCenter();
-		boolean legacy = rite.isLegacy();
+		boolean legacy = rite.isCountdown();
 		int riteTier = (rite.getRiteSize() - 1) / 2;
 		int ringCount = legacy ? Math.max(1, riteTier) : rite.getTotalRings();
 		double cx = center.getX() + 0.5D;

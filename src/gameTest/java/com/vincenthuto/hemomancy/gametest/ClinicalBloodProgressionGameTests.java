@@ -10,7 +10,7 @@ import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
@@ -153,24 +153,24 @@ public final class ClinicalBloodProgressionGameTests {
         volume.setActive(true);
         volume.setBloodVolume(1000);
         p.giveExperiencePoints(100);
-        var memory = MuscleMemory.SANGUINE_FISTS;
-        String key = MemorySlotRef.muscleMemory(memory).storageKey();
+        var memory = ThelemicMemory.SANGUINE_FISTS;
+        String key = MemorySlotRef.thelemicMemory(memory).storageKey();
         known.setEquippedManipNames(List.of(key));
-        known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(memory));
+        known.setSelectedMemoryRef(MemorySlotRef.thelemicMemory(memory));
         try {
             distributorAction(p, pos, 0,
                     com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.SAVE_OR_OVERWRITE);
             h.assertTrue(known.getLoadout(0).isEmpty() && volume.getBloodVolume() == 1000
                             && p.totalExperience == 100,
                     "An unlearned equipped Thelemic key must not save or spend blood/XP");
-            HemoCapabilityAccess.muscleMemory(p).learnAndAddReserve(memory, 200);
+            HemoCapabilityAccess.thelemicMemory(p).learnAndAddReserve(memory, 200);
             distributorAction(p, pos, 0,
                     com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.SAVE_OR_OVERWRITE);
             h.assertTrue(known.getLoadout(0).manipNames().equals(List.of(key))
                             && known.getLoadout(0).selectedManipName().equals(key)
                             && volume.getBloodVolume() == 900 && p.totalExperience == 75,
                     "Learning the same Thelemic memory must allow normal paid Save");
-            h.assertTrue(HemoCapabilityAccess.muscleMemory(p).reserveTicks(memory) == 200,
+            h.assertTrue(HemoCapabilityAccess.thelemicMemory(p).reserveTicks(memory) == 200,
                     "Saving a pattern must not consume its Thelemic reserve");
             h.succeed();
         } finally { p.discard(); }
@@ -186,15 +186,15 @@ public final class ClinicalBloodProgressionGameTests {
         volume.setActive(true);
         volume.setBloodVolume(1000);
         p.giveExperiencePoints(100);
-        var memory = MuscleMemory.SANGUINE_FISTS;
-        HemoCapabilityAccess.muscleMemory(p).learnAndAddReserve(memory, 200);
-        String key = MemorySlotRef.muscleMemory(memory).storageKey();
+        var memory = ThelemicMemory.SANGUINE_FISTS;
+        HemoCapabilityAccess.thelemicMemory(p).learnAndAddReserve(memory, 200);
+        String key = MemorySlotRef.thelemicMemory(memory).storageKey();
         var saved = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
                 "Retained pattern", key, List.of(key), 0);
         known.setLoadout(0, saved);
-        HemoCapabilityAccess.muscleMemory(p).learnAndAddReserve(MuscleMemory.LABORING_ARMS, 200);
-        known.setEquippedMemoryRefs(List.of(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS)));
-        known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+        HemoCapabilityAccess.thelemicMemory(p).learnAndAddReserve(ThelemicMemory.LABORING_ARMS, 200);
+        known.setEquippedMemoryRefs(List.of(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS)));
+        known.setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS));
         var equipped = List.copyOf(known.getEquippedManipNames());
         var selected = known.getSelectedMemoryRef();
         try {
@@ -220,33 +220,33 @@ public final class ClinicalBloodProgressionGameTests {
         volume.setActive(true);
         volume.setBloodVolume(1000);
         p.giveExperiencePoints(100);
-        var muscle = HemoCapabilityAccess.muscleMemory(p);
-        muscle.learnAndAddReserve(MuscleMemory.LABORING_ARMS, 200);
-        muscle.activate(MuscleMemory.LABORING_ARMS);
-        known.setEquippedMemoryRefs(List.of(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS)));
-        known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+        var muscle = HemoCapabilityAccess.thelemicMemory(p);
+        muscle.learnAndAddReserve(ThelemicMemory.LABORING_ARMS, 200);
+        muscle.activate(ThelemicMemory.LABORING_ARMS);
+        known.setEquippedMemoryRefs(List.of(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS)));
+        known.setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS));
         var equipped = List.copyOf(known.getEquippedManipNames());
         var selected = known.getSelectedMemoryRef();
         try {
-            var unknownThelemic = List.of(MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS).storageKey());
+            var unknownThelemic = List.of(MemorySlotRef.thelemicMemory(ThelemicMemory.SANGUINE_FISTS).storageKey());
             var unknownNoetic = List.of("missing_distributor_test_memory");
-            var allThelemic = java.util.Arrays.stream(MuscleMemory.values())
-                    .map(memory -> MemorySlotRef.muscleMemory(memory).storageKey()).toList();
+            var allThelemic = java.util.Arrays.stream(ThelemicMemory.values())
+                    .map(memory -> MemorySlotRef.thelemicMemory(memory).storageKey()).toList();
             for (var names : List.of(unknownThelemic, unknownNoetic, allThelemic)) {
                 if (names == allThelemic) {
-                    for (var memory : MuscleMemory.values()) muscle.learnAndAddReserve(memory, 200);
+                    for (var memory : ThelemicMemory.values()) muscle.learnAndAddReserve(memory, 200);
                     h.assertTrue(names.size() > com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper.getMaxSlots(p),
                             "The capacity fixture must exceed this player's actual shared limit");
                 }
                 var saved = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
                         "Rejected pattern", names.getFirst(), names, 0);
                 known.setLoadout(0, saved);
-                int reserve = muscle.reserveTicks(MuscleMemory.LABORING_ARMS);
+                int reserve = muscle.reserveTicks(ThelemicMemory.LABORING_ARMS);
                 distributorAction(p, pos, 0,
                         com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.APPLY);
                 h.assertTrue(known.getLoadout(0).equals(saved) && known.getEquippedManipNames().equals(equipped)
-                                && known.getSelectedMemoryRef().equals(selected) && muscle.isEnabled(MuscleMemory.LABORING_ARMS)
-                                && muscle.reserveTicks(MuscleMemory.LABORING_ARMS) == reserve
+                                && known.getSelectedMemoryRef().equals(selected) && muscle.isEnabled(ThelemicMemory.LABORING_ARMS)
+                                && muscle.reserveTicks(ThelemicMemory.LABORING_ARMS) == reserve
                                 && volume.getBloodVolume() == 1000 && p.totalExperience == 100,
                         "Rejected Apply must retain saved pattern, current memories, activation, reserve and costs: " + names);
             }
@@ -264,8 +264,8 @@ public final class ClinicalBloodProgressionGameTests {
         volume.setActive(true);
         volume.setBloodVolume(1000);
         p.giveExperiencePoints(100);
-        HemoCapabilityAccess.muscleMemory(p).learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 200);
-        String key = MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS).storageKey();
+        HemoCapabilityAccess.thelemicMemory(p).learnAndAddReserve(ThelemicMemory.SANGUINE_FISTS, 200);
+        String key = MemorySlotRef.thelemicMemory(ThelemicMemory.SANGUINE_FISTS).storageKey();
         known.setLoadout(1, com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
                 "Fists", key, List.of(key), 1));
         var distributor = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.DendriticDistributorBlockEntity)
@@ -316,8 +316,8 @@ public final class ClinicalBloodProgressionGameTests {
     }
 
     @GameTest(template = "empty") public static void distributorApplySynchronizesOmittedThelemicMemory(GameTestHelper h) {
-        var states = new ArrayList<com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMuscleMemory>();
-        var p = player(h, 5, h.getLevel(), packet -> captureDistributorMuscleState(packet, states));
+        var states = new ArrayList<com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncThelemicMemory>();
+        var p = player(h, 5, h.getLevel(), packet -> captureDistributorThelemicState(packet, states));
         h.getLevel().addNewPlayer(p);
         var pos = h.absolutePos(new BlockPos(1, 2, 1));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
@@ -326,31 +326,31 @@ public final class ClinicalBloodProgressionGameTests {
         var volume = HemoCapabilityAccess.getBloodVolume(p);
         volume.setActive(true);
         volume.setBloodVolume(1000);
-        var muscle = HemoCapabilityAccess.muscleMemory(p);
-        muscle.learnAndAddReserve(MuscleMemory.LABORING_ARMS, 200);
-        muscle.learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 300);
-        muscle.activate(MuscleMemory.LABORING_ARMS);
-        known.setEquippedMemoryRefs(List.of(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS)));
-        known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
-        String key = MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS).storageKey();
+        var muscle = HemoCapabilityAccess.thelemicMemory(p);
+        muscle.learnAndAddReserve(ThelemicMemory.LABORING_ARMS, 200);
+        muscle.learnAndAddReserve(ThelemicMemory.SANGUINE_FISTS, 300);
+        muscle.activate(ThelemicMemory.LABORING_ARMS);
+        known.setEquippedMemoryRefs(List.of(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS)));
+        known.setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS));
+        String key = MemorySlotRef.thelemicMemory(ThelemicMemory.SANGUINE_FISTS).storageKey();
         known.setLoadout(0, com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
                 "Fists", key, List.of(key), 0));
         states.clear();
         try {
             distributorAction(p, pos, 0,
                     com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.APPLY);
-            h.assertTrue(!muscle.hasEnabledMemories() && muscle.reserveTicks(MuscleMemory.LABORING_ARMS) == 200
-                            && muscle.reserveTicks(MuscleMemory.SANGUINE_FISTS) == 300
+            h.assertTrue(!muscle.hasEnabledMemories() && muscle.reserveTicks(ThelemicMemory.LABORING_ARMS) == 200
+                            && muscle.reserveTicks(ThelemicMemory.SANGUINE_FISTS) == 300
                             && known.getSelectedMemoryRef().storageKey().equals(key)
                             && volume.getBloodVolume() == 1000 && p.totalExperience == 0,
                     "Apply must stop the omitted memory, preserve reserves, select the saved memory and remain free");
             h.assertTrue(states.size() == 1 && states.getFirst().playerId() == p.getId(),
                     "Stopping the final active Thelemic memory must synchronize it immediately to its player; packets=" + states.size());
-            var clientState = new com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState();
+            var clientState = new com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryState();
             clientState.deserializeNBT(null, states.getFirst().state());
-            h.assertTrue(!clientState.hasEnabledMemories() && clientState.knows(MuscleMemory.LABORING_ARMS)
-                            && clientState.reserveTicks(MuscleMemory.LABORING_ARMS) == 200
-                            && clientState.reserveTicks(MuscleMemory.SANGUINE_FISTS) == 300,
+            h.assertTrue(!clientState.hasEnabledMemories() && clientState.knows(ThelemicMemory.LABORING_ARMS)
+                            && clientState.reserveTicks(ThelemicMemory.LABORING_ARMS) == 200
+                            && clientState.reserveTicks(ThelemicMemory.SANGUINE_FISTS) == 300,
                     "The sent state must retain knowledge/reserves and clear the omitted activation");
             distributorAction(p, pos, 0,
                     com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.APPLY);
@@ -359,13 +359,13 @@ public final class ClinicalBloodProgressionGameTests {
         } finally { p.discard(); }
     }
 
-    private static void captureDistributorMuscleState(net.minecraft.network.protocol.Packet<?> packet,
-            List<com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMuscleMemory> states) {
+    private static void captureDistributorThelemicState(net.minecraft.network.protocol.Packet<?> packet,
+            List<com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncThelemicMemory> states) {
         if (packet instanceof net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket custom
-                && custom.payload() instanceof com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMuscleMemory state)
+                && custom.payload() instanceof com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncThelemicMemory state)
             states.add(state);
         if (packet instanceof net.minecraft.network.protocol.game.ClientboundBundlePacket bundle)
-            bundle.subPackets().forEach(child -> captureDistributorMuscleState(child, states));
+            bundle.subPackets().forEach(child -> captureDistributorThelemicState(child, states));
     }
 
     @GameTest(template = "empty", timeoutTicks = 260) public static void distributorPatternsRetainMixedAndLegacySelectionsAcrossNbt(GameTestHelper h) {
@@ -379,16 +379,16 @@ public final class ClinicalBloodProgressionGameTests {
         volume.setBloodVolume(1000);
         com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.learnAndEquipIfPossible(
                 known, ManipulationInit.getByName("blood_shot"), 5);
-        var muscle = HemoCapabilityAccess.muscleMemory(p);
-        muscle.learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 300);
-        String key = MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS).storageKey();
+        var muscle = HemoCapabilityAccess.thelemicMemory(p);
+        muscle.learnAndAddReserve(ThelemicMemory.SANGUINE_FISTS, 300);
+        String key = MemorySlotRef.thelemicMemory(ThelemicMemory.SANGUINE_FISTS).storageKey();
         var legacy = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
                 "Old shot", "blood_shot", List.of("blood_shot"), 0);
         var mixed = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
                 "Mixed field", key, List.of("blood_shot", key), 2);
         known.setLoadout(0, legacy);
         known.setLoadout(2, mixed);
-        known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS));
+        known.setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.SANGUINE_FISTS));
         try {
             var source = HemoCapabilityAccess.getKnownManipulations(p);
             var restored = new com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations();
@@ -409,7 +409,7 @@ public final class ClinicalBloodProgressionGameTests {
                                 && known.getSelectedMemoryRef().storageKey().equals(pattern.selectedManipName())
                                 && known.getLoadout(0).equals(legacy) && known.getLoadout(2).equals(mixed)
                                 && volume.getBloodVolume() == 1000 && p.totalExperience == 0
-                                && muscle.reserveTicks(MuscleMemory.SANGUINE_FISTS) == 300,
+                                && muscle.reserveTicks(ThelemicMemory.SANGUINE_FISTS) == 300,
                         "Restored pattern must Apply without record mutation, costs or lost reserve: " + slot);
             };
             applyAndCheck.accept(0);
@@ -886,9 +886,9 @@ public final class ClinicalBloodProgressionGameTests {
         known.getKnownManips().put(ManipulationInit.blood_shot.get(), new ManipLevel(4, 185));
         known.getKnownManips().put(noetic, new ManipLevel(4, 185));
         known.setEquippedManipNames(List.of(noetic.getName(),
-                MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS).storageKey()));
+                MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS).storageKey()));
         known.setSelectedManip(noetic);
-        HemoCapabilityAccess.muscleMemory(player).learnAndAddReserve(MuscleMemory.LABORING_ARMS, 6000);
+        HemoCapabilityAccess.thelemicMemory(player).learnAndAddReserve(ThelemicMemory.LABORING_ARMS, 6000);
         var blood = HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true);
         blood.setBloodVolume(2000);
@@ -2270,7 +2270,7 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
                             .isLivingStaffUtilityUse(p, staff), "Selected Staff utility was unavailable at D2");
 
-            known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+            known.setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS));
             h.assertTrue(known.getSelectedManip() == utility, "Fixture did not retain the legacy utility selection");
             h.assertTrue(!com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
                             .isLivingStaffUtilityUse(p, staff), "Thelemic selection retained the hidden Staff utility");
@@ -2290,7 +2290,7 @@ public final class ClinicalBloodProgressionGameTests {
         try {
             prepareSharedSelection(p, ManipulationInit.sanguine_ward.get());
             var known = HemoCapabilityAccess.getKnownManipulations(p);
-            known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+            known.setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS));
             ManipulationChannelManager.start(p);
             h.assertTrue(!ManipulationChannelManager.isChanneling(p.getUUID()),
                     "Thelemic selection started the previously selected Noetic channel");
@@ -2308,7 +2308,7 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(ManipulationChannelManager.isChanneling(p.getUUID()), "Noetic channel fixture did not start");
             double blood = HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
             HemoCapabilityAccess.getKnownManipulations(p)
-                    .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+                    .setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS));
             ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
             h.assertTrue(!ManipulationChannelManager.isChanneling(p.getUUID()),
                     "Switching to a Thelemic memory retained the hidden Noetic channel");
@@ -2327,7 +2327,7 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(CastingAnimationManager.current(p) != null, "Charged presentation fixture did not start");
             CastingAnimationManager.charge(p, mortar.getName(), 0);
             HemoCapabilityAccess.getKnownManipulations(p)
-                    .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+                    .setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS));
             CastingAnimationManager.charge(p, mortar.getName(), 4);
             h.assertTrue(!CastingAnimationManager.current(p).phase().sustained(),
                     "Thelemic selection reopened the previous Noetic charge pose");
@@ -2343,7 +2343,7 @@ public final class ClinicalBloodProgressionGameTests {
             CastingAnimationManager.charge(p, mortar.getName(), 4);
             h.assertTrue(CastingAnimationManager.current(p) != null, "Active charge fixture did not start");
             HemoCapabilityAccess.getKnownManipulations(p)
-                    .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+                    .setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS));
             CastingAnimationManager.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
             h.assertTrue(!CastingAnimationManager.current(p).phase().sustained(),
                     "Switching to a Thelemic memory retained an active Noetic charge pose");
@@ -2362,15 +2362,15 @@ public final class ClinicalBloodProgressionGameTests {
             try {
                 prepareSharedSelection(p, noetic);
                 HemoCapabilityAccess.getKnownManipulations(p)
-                        .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+                        .setSelectedMemoryRef(MemorySlotRef.thelemicMemory(ThelemicMemory.LABORING_ARMS));
                 var context = new net.neoforged.neoforge.network.handling.ServerPayloadContext(
                         p.connection, UseManipKeyPacket.TYPE.id());
-                var state = HemoCapabilityAccess.muscleMemory(p);
+                var state = HemoCapabilityAccess.thelemicMemory(p);
                 UseManipKeyPacket.handle(new UseManipKeyPacket(), context);
-                h.assertTrue(state.isEnabled(MuscleMemory.LABORING_ARMS), "Use did not activate the selected Thelemic memory");
+                h.assertTrue(state.isEnabled(ThelemicMemory.LABORING_ARMS), "Use did not activate the selected Thelemic memory");
                 UseManipKeyPacket.handle(new UseManipKeyPacket(), context);
-                h.assertTrue(!state.isEnabled(MuscleMemory.LABORING_ARMS), "Second use did not deactivate the memory");
-                h.assertTrue(state.reserveTicks(MuscleMemory.LABORING_ARMS) == 6000,
+                h.assertTrue(!state.isEnabled(ThelemicMemory.LABORING_ARMS), "Second use did not deactivate the memory");
+                h.assertTrue(state.reserveTicks(ThelemicMemory.LABORING_ARMS) == 6000,
                         "Selection toggle spent reserve without a running tick");
                 h.assertTrue(HemoCapabilityAccess.getBloodVolume(p).getBloodVolume() == 2000,
                         "Thelemic use cast the previous Noetic");
@@ -2725,7 +2725,7 @@ public final class ClinicalBloodProgressionGameTests {
             HarbingerJourneyAutomation.perform(actor, HemoJourneyStage.QLIPHOTH_COMMUNION.id(), center);
             var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
             h.assertTrue(degree.isQliphothCommunionDone()
-                            && degree.getPomesConsumedFromBloom(bloom.bloomId(), bloom.center().asLong()) == 9
+                            && degree.getPomesConsumedFromBloom(bloom.bloomId()) == 9
                             && blooms.getPomesDropped(bloom) == 9 && !blooms.hasPendingPome(bloom),
                     "Journey automation must pick and consume nine sequential fruit from its Bloom");
             HemoJourneyFixtures.cleanup(actor, center);
@@ -2772,7 +2772,7 @@ public final class ClinicalBloodProgressionGameTests {
                 pome.getItem().finishUsingItem(pome, h.getLevel(), owner);
                 h.assertTrue(!blooms.hasPendingPome(bloom)
                                 && HemoCapabilityAccess.getInitiatoryDegree(owner)
-                                        .getPomesConsumedFromBloom(bloom.bloomId(), root.asLong()) == husk + 1,
+                                        .getPomesConsumedFromBloom(bloom.bloomId()) == husk + 1,
                         "Eating the picked husk did not release the tree for the next fruit");
             }
             var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
@@ -3010,40 +3010,6 @@ public final class ClinicalBloodProgressionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void legacySickleCanSeverMigratedBloom(GameTestHelper h) {
-        var actor = player(h, 7);
-        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
-        degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_PENDING);
-        degree.setQliphothCommunionDone(true);
-        degree.syncTotalPomesConsumed(9);
-        var origin = HemoJourneyFixtures.findClearOrigin(actor);
-        var dimension = h.getLevel().dimension().location().toString();
-        actor.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY, dimension);
-        var blooms = QliphothBloomSavedData.get(h.getLevel().getServer().overworld());
-        try {
-            HemoJourneyFixtures.prepare(actor, HemoJourneyStage.QLIPHOTH_COMMUNION, origin);
-            blooms.removeBloomInChunk(origin.above(), dimension);
-            var migrated = new QliphothBloomSavedData.BloomEntry(actor.getUUID(), origin.above(),
-                    dimension, 3, h.getLevel().getGameTime(), UUID.randomUUID(), true);
-            blooms.addBloom(migrated);
-            actor.setItemInHand(InteractionHand.MAIN_HAND, livingBlade());
-            LivingSicklePruning.interact(h.getLevel(), origin.above(), actor, InteractionHand.MAIN_HAND);
-            ItemStack oldSickle = actor.getMainHandItem();
-            h.assertTrue(LivingSicklePruning.isTemporarySickle(oldSickle), "Legacy test could not shape a Sickle");
-            CompoundTag tag = oldSickle.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-            tag.remove(LivingSicklePruning.BLOOM_ID_KEY);
-            oldSickle.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-            LivingSicklePruning.interact(h.getLevel(), origin.above(), actor, InteractionHand.MAIN_HAND);
-            h.assertTrue(blooms.getState(migrated) == com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState.OPEN,
-                    "A pre-ID Sickle could not finish cutting its migrated Bloom");
-        } finally {
-            HemoJourneyFixtures.cleanup(actor, origin);
-            actor.discard();
-        }
-        h.succeed();
-    }
-
-    @GameTest(template = "empty")
     public static void refusalPortalRemainsRetryableWithoutChamber(GameTestHelper h) {
         var owner = player(h, 7);
         var stranger = player(h, 7);
@@ -3177,8 +3143,8 @@ public final class ClinicalBloodProgressionGameTests {
                     "Eating an old picked pome cleared the replacement Bloom's pending fruit");
             ItemStack newPome = QliphothPomeItem.createPickedPomeStack(replacement, 0);
             newPome.getItem().finishUsingItem(newPome, h.getLevel(), actor);
-            h.assertTrue(degree.getPomesConsumedFromBloom(original.bloomId(), original.center().asLong()) == 1
-                            && degree.getPomesConsumedFromBloom(replacement.bloomId(), replacement.center().asLong()) == 1,
+            h.assertTrue(degree.getPomesConsumedFromBloom(original.bloomId()) == 1
+                            && degree.getPomesConsumedFromBloom(replacement.bloomId()) == 1,
                     "Pomes from separate lifecycles shared Communion sequence progress");
             h.assertTrue(!blooms.hasPendingPome(replacement),
                     "Eating the new pome did not clear its own pending fruit");

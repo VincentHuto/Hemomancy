@@ -9,7 +9,6 @@ public final class MorphlingHungerRulesTest {
 		matureWildBoundMorphlingsAreExempt();
 		enabledMatureMorphlingsMoveThroughHungerStates();
 		hungryAndStarvingPreservePassiveAmplifier();
-		husbandryQuotaCapsMaturityOnlyWhenConfigured();
 	}
 
 	private static void disabledHungerIsInert() {
@@ -46,19 +45,6 @@ public final class MorphlingHungerRulesTest {
 				MorphlingHungerRules.adjustedAmplifier(2, MorphlingHungerRules.HungerState.STARVING));
 		assertEquals("zero remains zero", 0,
 				MorphlingHungerRules.adjustedAmplifier(0, MorphlingHungerRules.HungerState.HUNGRY));
-	}
-
-	private static void husbandryQuotaCapsMaturityOnlyWhenConfigured() {
-		assertEquals("quota disabled preserves maturity", 5,
-				MorphlingHungerRules.capMaturityByHusbandry(5, 0, 0));
-		assertEquals("no progress caps at fledgling", 1,
-				MorphlingHungerRules.capMaturityByHusbandry(4, 0, 4));
-		assertEquals("one quota allows developing", 2,
-				MorphlingHungerRules.capMaturityByHusbandry(4, 4, 4));
-		assertEquals("two quotas allow mature", 3,
-				MorphlingHungerRules.capMaturityByHusbandry(4, 8, 4));
-		assertEquals("progress never raises enzyme maturity", 2,
-				MorphlingHungerRules.capMaturityByHusbandry(2, 100, 4));
 	}
 
 	private static void assertEquals(String label, Object expected, Object actual) {

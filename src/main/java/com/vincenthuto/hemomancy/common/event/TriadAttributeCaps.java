@@ -36,7 +36,4 @@ public final class TriadAttributeCaps {
 		return clampContribution(othersContribution, requested, MAX_TRIAD_TOUGHNESS_BONUS);
 	}
 
-	public static double clampMoveSpeed(double othersContribution, double requested) {
-		return clampContribution(othersContribution, requested, MAX_TRIAD_MOVE_SPEED_BONUS);
-	}
 }

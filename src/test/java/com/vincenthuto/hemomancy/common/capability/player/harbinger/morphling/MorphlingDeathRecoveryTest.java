@@ -12,12 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MorphlingDeathRecoveryTest {
 
     @Test
-    void ScarletVanityEquipmentIsNeverEmittedAsDeathDrops() {
-        assertFalse(VasculariumCharmRules.shouldDropEquippedSlot(true));
-        assertFalse(VasculariumCharmRules.shouldDropEquippedSlot(false));
-    }
-
-    @Test
     void equippedMorphlingReplacesItsJarEntryWhenARecoveryJarExists() throws Exception {
         String recovery = Files.readString(Path.of(
                 "src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/morphling/MorphlingDeathRecovery.java"));

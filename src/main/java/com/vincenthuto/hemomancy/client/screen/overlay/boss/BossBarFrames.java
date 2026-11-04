@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay.boss;
 
+import com.vincenthuto.hemomancy.client.screen.overlay.boss.frame.CircusRingmasterFrame;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public final class BossBarFrames {
 		FRAMES.put(BossPresentationIds.FRAME_SERAPHAE, new SeraphaeFrame());
 		FRAMES.put(BossPresentationIds.FRAME_BLOOM_WARDEN, new BloomWardenFrame());
 		FRAMES.put(BossPresentationIds.FRAME_KINDLED_CHAMPION, new KindledChampionFrame());
+		FRAMES.put(BossPresentationIds.FRAME_CIRCUS_RINGMASTER, new CircusRingmasterFrame());
 	}
 
 	private BossBarFrames() {

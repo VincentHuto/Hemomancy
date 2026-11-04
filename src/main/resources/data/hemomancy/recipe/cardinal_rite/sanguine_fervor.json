@@ -10,7 +10,7 @@
   "brazier_signature": [
     {
       "ingredient": {
-        "item": "hemomancy:blood_chum"
+        "item": "hemomancy:dried_leech"
       },
       "count": 1
     }

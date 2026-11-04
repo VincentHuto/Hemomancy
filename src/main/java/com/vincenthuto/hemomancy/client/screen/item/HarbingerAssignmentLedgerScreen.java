@@ -194,7 +194,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final FirstSeparationLedgerProgress firstSeparation;
 	private final boolean bodyAnswersBriefed;
 	private final boolean bodyAnswersComplete;
-	private final int muscleMemoryCount;
+	private final int thelemicMemoryCount;
 	private final int redTaxonomyCount;
 	private final boolean redTaxonomyComplete;
 	private final int enzymeMasteryCount;
@@ -268,7 +268,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			VoyagerIntroductionProgress voyagerIntroduction,
 			boolean circusDiscovered,
 			FirstSeparationLedgerProgress firstSeparation,
-			boolean bodyAnswersBriefed, boolean bodyAnswersComplete, int muscleMemoryCount,
+			boolean bodyAnswersBriefed, boolean bodyAnswersComplete, int thelemicMemoryCount,
 			int redTaxonomyCount, boolean redTaxonomyComplete,
 			int enzymeMasteryCount, boolean enzymeMasteryComplete, boolean firstCultureComplete,
 			MorphlingHandlingProgress morphlingHandling,
@@ -310,7 +310,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.firstSeparation = firstSeparation;
 		this.bodyAnswersBriefed = bodyAnswersBriefed;
 		this.bodyAnswersComplete = bodyAnswersComplete;
-		this.muscleMemoryCount = muscleMemoryCount;
+		this.thelemicMemoryCount = thelemicMemoryCount;
 		this.redTaxonomyCount = redTaxonomyCount;
 		this.redTaxonomyComplete = redTaxonomyComplete;
 		this.enzymeMasteryCount = enzymeMasteryCount;
@@ -372,7 +372,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			VoyagerIntroductionProgress voyagerIntroduction,
 			boolean circusDiscovered,
 			FirstSeparationLedgerProgress firstSeparation,
-			boolean bodyAnswersBriefed, boolean bodyAnswersComplete, int muscleMemoryCount,
+			boolean bodyAnswersBriefed, boolean bodyAnswersComplete, int thelemicMemoryCount,
 			int redTaxonomyCount, boolean redTaxonomyComplete,
 			int enzymeMasteryCount, boolean enzymeMasteryComplete, boolean firstCultureComplete,
 			MorphlingHandlingProgress morphlingHandling,
@@ -405,7 +405,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				voyagerIntroduction,
 				circusDiscovered,
 				firstSeparation,
-				bodyAnswersBriefed, bodyAnswersComplete, muscleMemoryCount,
+				bodyAnswersBriefed, bodyAnswersComplete, thelemicMemoryCount,
 				redTaxonomyCount, redTaxonomyComplete, enzymeMasteryCount, enzymeMasteryComplete,
 				firstCultureComplete,
 				morphlingHandling,
@@ -1203,10 +1203,10 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				"screen.hemomancy.harbinger_assignment_ledger.step.body_answers_complete",
 				"screen.hemomancy.harbinger_assignment_ledger.step.body_answers_complete.desc", mouseX, mouseY);
 		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
-		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, muscleMemoryCount >= 8,
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, thelemicMemoryCount >= 8,
 				ALCHEMIST_PORTRAIT,
-				"screen.hemomancy.harbinger_assignment_ledger.step.muscle_memory_catalogue",
-				"screen.hemomancy.harbinger_assignment_ledger.step.muscle_memory_catalogue.desc", mouseX, mouseY);
+				"screen.hemomancy.harbinger_assignment_ledger.step.thelemic_memory_catalogue",
+				"screen.hemomancy.harbinger_assignment_ledger.step.thelemic_memory_catalogue.desc", mouseX, mouseY);
 	}
 
 	private void renderAssignmentCard(GuiGraphics gfx, int x, int y, int w, int h, boolean done,
@@ -1894,7 +1894,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		int completed = 0;
 		if (bodyAnswersBriefed) completed++;
 		if (bodyAnswersComplete) completed++;
-		if (muscleMemoryCount >= 8) completed++;
+		if (thelemicMemoryCount >= 8) completed++;
 		return completed;
 	}
 

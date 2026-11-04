@@ -26,16 +26,16 @@ final class WarpChairAssetTest {
 
 	@Test
 	void regularBlockAndItemModelsAreWiredTogether() throws IOException {
-		JsonObject model = readJson(ASSETS.resolve("models/block/warp_chair.json"));
+		JsonObject model = readJson(ASSETS.resolve("models/block/somnolent_seat.json"));
 		JsonArray elements = model.getAsJsonArray("elements");
 		assertFalse(elements.isEmpty(), "chair needs authored cubes");
-		JsonObject item = readJson(ASSETS.resolve("models/item/warp_chair.json"));
-		assertEquals("hemomancy:block/warp_chair", item.get("parent").getAsString());
+		JsonObject item = readJson(ASSETS.resolve("models/item/somnolent_seat.json"));
+		assertEquals("hemomancy:block/somnolent_seat", item.get("parent").getAsString());
 	}
 
 	@Test
 	void runtimeResourcesExposeAllFourFacingsAndNoFillerItem() throws IOException {
-		JsonObject blockstate = readJson(ASSETS.resolve("blockstates/warp_chair.json"));
+		JsonObject blockstate = readJson(ASSETS.resolve("blockstates/somnolent_seat.json"));
 		JsonObject variants = blockstate.getAsJsonObject("variants");
 		assertEquals(4, variants.size());
 		for (String facing : new String[] { "north", "south", "east", "west" }) {
@@ -45,22 +45,22 @@ final class WarpChairAssetTest {
 		assertEquals(180, rotation(variants, "south"));
 		assertEquals(90, rotation(variants, "east"));
 		assertEquals(270, rotation(variants, "west"));
-		assertTrue(Files.isRegularFile(ASSETS.resolve("models/item/warp_chair.json")));
-		assertFalse(Files.exists(ASSETS.resolve("models/item/warp_chair_filler.json")));
+		assertTrue(Files.isRegularFile(ASSETS.resolve("models/item/somnolent_seat.json")));
+		assertFalse(Files.exists(ASSETS.resolve("models/item/somnolent_seat_filler.json")));
 	}
 
 	@Test
 	void survivalAndProgressionResourcesArePresent() throws IOException {
 		Path data = Path.of("src/main/resources/data/hemomancy");
-		Path recipePath = data.resolve("recipe/cardinal_rite/working/warp_chair.json");
-		assertFalse(Files.exists(data.resolve("recipe/warp_chair.json")));
+		Path recipePath = data.resolve("recipe/cardinal_rite/working/somnolent_seat.json");
+		assertFalse(Files.exists(data.resolve("recipe/somnolent_seat.json")));
 		JsonObject recipe = readJson(recipePath);
 		assertEquals("hemomancy:cardinal_rite_recipe", recipe.get("type").getAsString());
 		assertEquals("making", recipe.get("purpose").getAsString());
 		assertEquals(250, recipe.getAsJsonObject("subject").get("feed").getAsInt());
 		assertEquals(3, recipe.get("required_degree").getAsInt());
 		assertEquals("hemomancy:sanguine_formation", recipe.getAsJsonObject("medium").get("item").getAsString());
-		assertEquals("hemomancy:warp_chair",
+		assertEquals("hemomancy:somnolent_seat",
 				recipe.getAsJsonObject("result").get("id").getAsString());
 
 		JsonArray pattern = recipe.getAsJsonObject("subject").getAsJsonArray("pattern");
@@ -77,8 +77,8 @@ final class WarpChairAssetTest {
 		assertEquals(2, offerings.size());
 		assertOffering(offerings.get(0).getAsJsonObject(), "hemomancy:blood_crystal", 2);
 		assertOffering(offerings.get(1).getAsJsonObject(), "minecraft:ender_pearl", 2);
-		assertTrue(Files.isRegularFile(data.resolve("loot_table/blocks/warp_chair.json")));
-		assertTrue(Files.isRegularFile(data.resolve("advancement/hemomancy/warp_chair_bound.json")));
+		assertTrue(Files.isRegularFile(data.resolve("loot_table/blocks/somnolent_seat.json")));
+		assertTrue(Files.isRegularFile(data.resolve("advancement/hemomancy/somnolent_seat_bound.json")));
 		assertTrue(Files.isRegularFile(data.resolve("advancement/hemomancy/chamber_rite_attuned.json")));
 		assertTrue(Files.isRegularFile(ASSETS.resolve("textures/entity/model_sanguine_monolith.png")));
 	}

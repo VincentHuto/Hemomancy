@@ -41,11 +41,6 @@ public final class MorphlingAllies {
 				.filter(other -> other.distanceToSqr(host) <= range * range).toList();
 	}
 
-	public static LivingEntity nearestHostile(Player host, double range) {
-		return hostiles(host, range).stream()
-				.min(Comparator.comparingDouble(other -> other.distanceToSqr(host))).orElse(null);
-	}
-
 	/** True for monsters and anything hunting the host: the hostiles a power aimed at "hostiles" means. */
 	public static boolean isHostile(Player host, LivingEntity other) {
 		return ManipulationCombatHelper.canHarm(host, other, Reach.STRICT)

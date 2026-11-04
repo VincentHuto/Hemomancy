@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -21,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class HarbingerCicatrixAnchoriteEntity extends com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
-	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerCicatrixAnchoriteEntity(EntityType<? extends HarbingerCicatrixAnchoriteEntity> type,
 			Level level) {
@@ -55,9 +53,6 @@ public class HarbingerCicatrixAnchoriteEntity extends com.vincenthuto.hemomancy.
 
 	@Override
 	public void tick() {
-		if (this.level().isClientSide()) {
-			this.idleAnimationState.startIfStopped(this.tickCount);
-		}
 		super.tick();
 	}
 
@@ -69,7 +64,7 @@ public class HarbingerCicatrixAnchoriteEntity extends com.vincenthuto.hemomancy.
 			int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 			DialogueTree tree = progressionDialogue(serverPlayer);
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer,
-					"cicatrix_anchorite", degree, 0f);
+					"cicatrix_anchorite");
 			tree = DialogueHubFactory.decorate(tree, "cicatrix_anchorite", serverPlayer);
 
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
@@ -92,8 +87,4 @@ public class HarbingerCicatrixAnchoriteEntity extends com.vincenthuto.hemomancy.
 				.hasClarityUnlocked();
 	}
 
-	private static boolean isPurifying(Player player) {
-		return HemoCapabilityAccess.getUnstainedProgress(player)
-				.hasBegunPurification();
-	}
 }

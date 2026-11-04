@@ -26,8 +26,6 @@ class ServerboundGuardsCoverageTest {
 			Map.entry("AntecedentEffectPacket", "The client half only records the sender's own epilogue, gated on completed research and degree."),
 			Map.entry("ArborFruitInteractPacket", "Reach and line of sight follow ArborOfWillInteractionRules, which differ from block reach."),
 			Map.entry("AxonalInputPacket", "AxonalTransductionManager checks the session token and clamps the direction."),
-			Map.entry("BloodCraftingKeyPressPacket", "Trusts no client data: the server re-derives the structure from the world."),
-			Map.entry("BloodFormationKeyPressPacket", "Acts on the sender's held sword, gated by chamber visits and Unstained progress."),
 			Map.entry("BloodVolumeClientPacket", "Requests a resync of the sender's own data."),
 			Map.entry("CPacketFlight", "The server re-checks every flight condition itself."),
 			Map.entry("CastingChargePacket", "ManipulationChargeClock and CastingAnimationManager.charge bound the reported charge."),
@@ -62,7 +60,6 @@ class ServerboundGuardsCoverageTest {
 			Map.entry("UpdateCurrentMemoryPacket", "Selects from the sender's own known muscle memories."),
 			Map.entry("UpdateSelectedStillArtPacket", "Selects from the sender's own unlocked Still Arts."),
 			Map.entry("UseManipKeyPacket", "BloodManipulation.tryPerformAction holds the cast gates; the reported charge is clamped by ManipulationCastingRules."),
-			Map.entry("UseStillArtKeyPacket", "StillArt.performAction holds the gates."),
 			Map.entry("BurnSporeLoadKeyPacket", "Acts on the sender's own spore load; SporeLoadService checks the gates."));
 
 	@Test

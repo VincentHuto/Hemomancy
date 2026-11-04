@@ -174,21 +174,6 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 		}
 	}
 
-	private void renderModelLists(BakedModel pModel, ItemStack pStack, int pCombinedLight, int pCombinedOverlay,
-			PoseStack pMatrixStack, VertexConsumer pBuffer) {
-		RandomSource random = RandomSource.create();
-
-		for (Direction direction : Direction.values()) {
-			random.setSeed(42L);
-			this.renderQuadList(pMatrixStack, pBuffer, pModel.getQuads((BlockState) null, direction, random), pStack,
-					pCombinedLight, pCombinedOverlay);
-		}
-
-		random.setSeed(42L);
-		this.renderQuadList(pMatrixStack, pBuffer, pModel.getQuads((BlockState) null, (Direction) null, random), pStack,
-				pCombinedLight, pCombinedOverlay);
-	}
-
 	public void renderQuadList(PoseStack pMatrixStack, VertexConsumer pBuffer, List<BakedQuad> pQuads,
 			ItemStack pItemStack, int pCombinedLight, int pCombinedOverlay) {
 		boolean flag = !pItemStack.isEmpty();

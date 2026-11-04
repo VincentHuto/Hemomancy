@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
@@ -212,7 +212,7 @@ public final class ManipulationBalancePass2RosterGameTests {
 
         KnownManipulations restored = new KnownManipulations();
         restored.deserializeNBT(h.getLevel().registryAccess(), save);
-        ManipulationRetirementRules.sanitizeKnownManipulations(restored);
+        KnownManipulationUpkeep.sanitizeKnownManipulations(restored);
 
         BloodManipulation registered = ManipulationInit.sanguine_marionette.get();
         BloodManipulation marionette = named(restored, "sanguine_marionette");

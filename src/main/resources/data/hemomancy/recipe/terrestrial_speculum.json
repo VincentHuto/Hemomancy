@@ -8,7 +8,7 @@
   "key": {
     "B": { "item": "minecraft:iron_bars" },
     "S": { "item": "hemomancy:sanguine_formation" },
-    "H": { "item": "hemomancy:hearty_compass" },
+    "H": { "item": "minecraft:recovery_compass" },
     "D": { "item": "hemomancy:scrying_dish" }
   },
   "result": {

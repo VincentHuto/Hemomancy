@@ -56,13 +56,13 @@ public final class AncestralCommunionDialogueTrees {
 						"hemomancy.communion.v0.line3"
 				), List.of(
 						new DialogueOption("hemomancy.communion.option.tell_me_more", "origin", null),
-						new DialogueOption("hemomancy.communion.option.enough", null, "communion_end")
+						new DialogueOption("hemomancy.communion.option.enough", null, null)
 				)))
 				.addNode(new DialogueNode("origin", List.of(
 						"hemomancy.communion.v0.origin1",
 						"hemomancy.communion.v0.origin2"
 				), List.of(
-						new DialogueOption("hemomancy.communion.option.i_understand", null, "communion_lore_origin")
+						new DialogueOption("hemomancy.communion.option.i_understand", null, null)
 				)))
 				.build();
 	}
@@ -77,14 +77,14 @@ public final class AncestralCommunionDialogueTrees {
 						"hemomancy.communion.v1.line2"
 				), List.of(
 						new DialogueOption("hemomancy.communion.option.the_schism", "schism", null),
-						new DialogueOption("hemomancy.communion.option.enough", null, "communion_end")
+						new DialogueOption("hemomancy.communion.option.enough", null, null)
 				)))
 				.addNode(new DialogueNode("schism", List.of(
 						"hemomancy.communion.v1.schism1",
 						"hemomancy.communion.v1.schism2",
 						"hemomancy.communion.v1.schism3"
 				), List.of(
-						new DialogueOption("hemomancy.communion.option.i_understand", null, "communion_lore_schism")
+						new DialogueOption("hemomancy.communion.option.i_understand", null, null)
 				)))
 				.build();
 	}
@@ -99,19 +99,19 @@ public final class AncestralCommunionDialogueTrees {
 						"hemomancy.communion.v2.line2" + address
 				), List.of(
 						new DialogueOption("hemomancy.communion.option.tell_me_more", "infection", null),
-						new DialogueOption("hemomancy.communion.option.enough", null, "communion_end")
+						new DialogueOption("hemomancy.communion.option.enough", null, null)
 				)))
 				.addNode(new DialogueNode("infection", List.of(
 						"hemomancy.communion.v2.infection1",
 						"hemomancy.communion.v2.infection2"
 				), List.of(
 						new DialogueOption("hemomancy.communion.option.what_does_it_want", "purpose", null),
-						new DialogueOption("hemomancy.communion.option.i_understand", null, "communion_lore_infection")
+						new DialogueOption("hemomancy.communion.option.i_understand", null, null)
 				)))
 				.addNode(new DialogueNode("purpose", List.of(
 						"hemomancy.communion.v2.purpose1"
 				), List.of(
-						new DialogueOption("hemomancy.communion.option.i_understand", null, "communion_lore_infection")
+						new DialogueOption("hemomancy.communion.option.i_understand", null, null)
 				)))
 				.build();
 	}
@@ -127,13 +127,13 @@ public final class AncestralCommunionDialogueTrees {
 						"hemomancy.communion.v3.line3" + address
 				), List.of(
 						new DialogueOption("hemomancy.communion.option.tell_me_more", "harbingers", null),
-						new DialogueOption("hemomancy.communion.option.enough", null, "communion_end")
+						new DialogueOption("hemomancy.communion.option.enough", null, null)
 				)))
 				.addNode(new DialogueNode("harbingers", List.of(
 						"hemomancy.communion.v3.harbingers1",
 						"hemomancy.communion.v3.harbingers2"
 				), List.of(
-						new DialogueOption("hemomancy.communion.option.i_understand", null, "communion_lore_harbingers")
+						new DialogueOption("hemomancy.communion.option.i_understand", null, null)
 				)))
 				.build();
 	}
@@ -148,14 +148,14 @@ public final class AncestralCommunionDialogueTrees {
 						"hemomancy.communion.v4.line2"
 				), List.of(
 						new DialogueOption("hemomancy.communion.option.speak_the_name", "name", null),
-						new DialogueOption("hemomancy.communion.option.enough", null, "communion_end")
+						new DialogueOption("hemomancy.communion.option.enough", null, null)
 				)))
 				.addNode(new DialogueNode("name", List.of(
 						"hemomancy.communion.v4.name1",
 						"hemomancy.communion.v4.name2",
 						"hemomancy.communion.v4.name3"
 				), List.of(
-						new DialogueOption("hemomancy.communion.option.i_understand", null, "communion_lore_true_name")
+						new DialogueOption("hemomancy.communion.option.i_understand", null, null)
 				)))
 				.build();
 	}

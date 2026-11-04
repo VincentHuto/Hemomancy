@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftItem;
@@ -63,43 +63,14 @@ public final class CreativeTabInit {
 			ItemInit.debug_showcase,
 			ItemInit.drudge_electrode,
 			ItemInit.drudge_submission_device,
-			ItemInit.hematic_suture_needle,
-			ItemInit.unsigned_ancestral_ledger,
-			ItemInit.sanguine_blob,
-			ItemInit.vascular_poultice,
-			ItemInit.memory_thread,
-			ItemInit.void_eye_organ,
 			ItemInit.zombie_husk_effigy,
 			ItemInit.desert_husk_effigy,
 			ItemInit.spider_husk_effigy,
-			ItemInit.vitality_chalice,
 			ItemInit.vein_spider,
 			ItemInit.blood_thrall_effigy,
 			ItemInit.blood_bolt,
-			ItemInit.vascular_status_gauge,
-			ItemInit.echo_of_spleen,
-			ItemInit.echo_of_liver,
-			ItemInit.echo_of_heart,
-			ItemInit.echo_of_lungs,
-			ItemInit.echo_of_kidneys,
-			ItemInit.draught_of_still_mercy,
-			ItemInit.lethean_brew,
-			ItemInit.spawn_egg_peacock_spider,
 			BlockInit.semi_sentient_construct,
-			BlockInit.humane_idol,
-			BlockInit.serpentine_idol,
-			BlockInit.morphling_cradle,
-			BlockInit.witness_organ,
-			BlockInit.gourdvine_tap,
-			BlockInit.sanguine_vigil,
-			BlockInit.sanguine_omen,
-			BlockInit.visceral_mirror,
-			BlockInit.non_euclidean_hallway,
-			BlockInit.blood_pylon,
-			BlockInit.blood_trial_altar,
-			BlockInit.offering_gate,
-			BlockInit.crucible_of_nether_ichor,
-			BlockInit.voidtouched_vessel);
+			BlockInit.gourdvine_tap);
 
 	// Ids, so the block check works while items are still being registered.
 	private static final Set<ResourceLocation> WIP_ITEMS = wipIds(Registries.ITEM.location());
@@ -140,6 +111,9 @@ public final class CreativeTabInit {
 				} else if (shouldShowItemInCreativeTab(item.get()) && item.get() != ItemInit.fervent_husk.get()
 						&& item.get() != ItemInit.cleansing_hemolymph.get()) {
 					populator.accept(item.get());
+if (item.get() instanceof com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem) {
+	populator.accept(com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.jugOf(item.get()));
+}
 					if (item.get() == ItemInit.bloody_vial.get()) {
 						populator.accept(ItemInit.cleansing_hemolymph.get());
 					}
@@ -173,27 +147,14 @@ public final class CreativeTabInit {
 		// The dictation table's item comes from BlockInit's RegisterEvent, so this item loop never
 		// meets it and the check does nothing (audit F-22, awaiting a decision).
 		return item != BlockInit.dictation_table.get().asItem()
-				&& item != ItemInit.tome_of_the_unstained.get()
 				&& item != ItemInit.active_befouling_ash.get()
 				&& item != ItemInit.active_smouldering_ash.get()
 				&& item != ItemInit.living_weapon_graft.get()
 				&& item != ItemInit.living_sickle.get()
 				&& item != ItemInit.synaptic_step.get()
-				&& item != ItemInit.memory_conjure_living_staff.get()
-				&& !isLegacyLivingWeaponMemory(item)
-				&& !ManipulationRetirementRules.isRetiredMemoryItem(item)
 				&& !isWipItem(item);
 	}
 
-	private static boolean isLegacyLivingWeaponMemory(Item item) {
-		return item == ItemInit.memory_living_blade.get()
-				|| item == ItemInit.memory_living_axe.get()
-				|| item == ItemInit.memory_living_spear.get()
-				|| item == ItemInit.memory_living_claws.get()
-				|| item == ItemInit.memory_living_crossbow.get()
-				|| item == ItemInit.memory_living_torch.get()
-				|| item == ItemInit.memory_living_flail.get();
-	}
 
 	private static boolean shouldShowBlockInCreativeTab(Block block) {
 		var decision = BlockInit.itemDecision(BuiltInRegistries.BLOCK.getKey(block));

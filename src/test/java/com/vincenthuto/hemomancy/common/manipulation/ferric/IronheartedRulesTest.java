@@ -8,7 +8,6 @@ class IronheartedRulesTest {
 
 	@Test
 	void ironHeartsClampAndAbsorbBeforeHealth() {
-		assertEquals(10.0F, IronheartedRules.addIronHeartHealth(9.0F, 10.0F));
 
 		IronheartedRules.IronHeartAbsorption partial = IronheartedRules.absorbWithIronHearts(2.0F, 1.0F, 10.0F);
 		assertEquals(1.0F, partial.ironHeartHealth(), 0.001F);

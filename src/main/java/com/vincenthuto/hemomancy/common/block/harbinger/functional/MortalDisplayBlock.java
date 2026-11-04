@@ -105,7 +105,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
         display.claim(player.getUUID());
         TempleOathRules.recordHeartClaim(player, display.getLinkedHermit());
         com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(serverPlayer);
-        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.give(serverPlayer, new ItemStack(ItemInit.covenant_waybill.get()));
+        com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.give(serverPlayer, new ItemStack(ItemInit.harbinger_lodestone.get()));
         player.displayClientMessage(Component.translatable("hemomancy.mortal_display.charm_equipped"), false);
         for (int i = 0; i < 10; i++) {
             Vec3 start = Vec3.atCenterOf(pos);

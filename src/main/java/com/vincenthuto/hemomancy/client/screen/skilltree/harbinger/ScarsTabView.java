@@ -266,7 +266,7 @@ final class ScarsTabView {
 		return 0xFF000000 | (red << 16) | (green << 8) | blue;
 	}
 
-	private static int requiredDegree(int tier) { return tier >= 3 ? 5 : 4; }
+	private static int requiredDegree(int tier) { return tier >= 3 ? 6 : 4; }
 	private static String roman(int tier) { return tier == 1 ? "I" : tier == 2 ? "II" : "III"; }
 	private static String proper(String value) {
 		String lower = value.toLowerCase(java.util.Locale.ROOT).replace('_', ' ');

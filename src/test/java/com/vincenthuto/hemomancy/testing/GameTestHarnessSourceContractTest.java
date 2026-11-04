@@ -187,7 +187,7 @@ class GameTestHarnessSourceContractTest {
 		assertTrue(snapshot.contains("skill_progress"));
 		assertTrue(snapshot.contains("liber_knowledge"));
 		assertTrue(snapshot.contains("known_manipulations"));
-		assertTrue(snapshot.contains("muscle_memory"));
+		assertTrue(snapshot.contains("thelemic_memory"));
 		assertTrue(snapshot.contains("recipe_book"));
 		assertTrue(snapshot.contains("vasc_equipment"));
 		assertTrue(snapshot.contains("getContainerSize()"));
@@ -206,7 +206,7 @@ class GameTestHarnessSourceContractTest {
 		assertTrue(snapshot.contains("HemoJourneyManipulationState.matches(manipulations"));
 		assertTrue(snapshot.contains("new KnownManipulations()"));
 		assertTrue(snapshot.contains("new KnownManipulationServerPacket"));
-		assertTrue(snapshot.contains("MuscleMemoryEvents.sync(player)"));
+		assertTrue(snapshot.contains("ThelemicMemoryEvents.sync(player)"));
 		assertTrue(snapshot.contains("sendInitialRecipeBook(player)"));
 		assertTrue(snapshot.contains("validateAdvancementOperations"));
 		assertTrue(snapshot.contains("captureLiveState(player)"));

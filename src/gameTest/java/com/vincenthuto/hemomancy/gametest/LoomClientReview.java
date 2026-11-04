@@ -104,7 +104,7 @@ public final class LoomClientReview {
                 var source = player.createCommandSourceStack().withPermission(4).withSuppressedOutput();
                 for (String cmd : new String[]{"gamemode spectator", "time set 6000", "gamerule doDaylightCycle false",
                         "weather clear", "gamerule doMobSpawning false", "kill @e[type=item]",
-                        "kill @e[type=hemomancy:frayed_thread]"})
+                        "kill @e[type=hemomancy:intruding_memory]"})
                     server.getCommands().performPrefixedCommand(source, cmd);
                 for (BlockPos pos : BlockPos.betweenClosed(row.offset(-40, -3, -40), row.offset(40, 8, 12)))
                     level.setBlock(pos, pos.getY() < row.getY() ? (pos.getZ() < row.getZ() - 14 ? Blocks.GRASS_BLOCK : Blocks.DEEPSLATE_TILES).defaultBlockState()

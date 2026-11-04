@@ -16,7 +16,6 @@ import com.vincenthuto.hemomancy.client.screen.item.guide.BloodStructureBookRend
 import com.vincenthuto.hemomancy.client.screen.item.guide.HemoBloodStructureGuidePage;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
-import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScreenScarBinderViewer;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
@@ -88,11 +87,6 @@ public final class ClientBridgeImpl implements ClientBridge {
 	@Override
 	public void openLedger() {
 		LedgerScreen.openScreen();
-	}
-
-	@Override
-	public void openScarBinderViewer(ItemStack binder) {
-		ScreenScarBinderViewer.openScreenViaItem(binder);
 	}
 
 	@Override

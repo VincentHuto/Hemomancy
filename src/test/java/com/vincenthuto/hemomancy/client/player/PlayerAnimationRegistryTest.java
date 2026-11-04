@@ -12,7 +12,7 @@ class PlayerAnimationRegistryTest {
 	void thirdPersonPosesKeepTheirPriorityOrder() {
 		assertEquals(List.of("cardinal_staff_planting", "offset_reset", "casting", "hematic_microscope",
 						"blood_vial_injection", "living_torch_breath", "unstained_weapon_swing", "living_weapon_stroke",
-						"warp_chair"),
+						"somnolent_seat"),
 				PlayerAnimationRegistry.THIRD_PERSON.stream().map(PlayerAnimationRegistry.Entry::name).toList());
 	}
 

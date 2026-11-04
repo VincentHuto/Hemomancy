@@ -103,6 +103,7 @@ public final class ClientSessionEvents {
         com.vincenthuto.hemomancy.client.render.world.HeartNodeMomentRenderer.clear();
         com.vincenthuto.hemomancy.client.sound.MausoleumAmbience.clear();
         com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.WardAnchors.clearClient();
+        com.vincenthuto.hemomancy.common.tile.harbinger.functional.VigilSites.clearClient();
     }
 
     @SubscribeEvent

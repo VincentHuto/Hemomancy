@@ -60,13 +60,6 @@ public enum MnemonistStarterMemoryChoice {
 		root.put(Player.PERSISTED_NBT_TAG, durable);
 	}
 
-	/** The mnemonist_starter_claim migration: the claim was once a root key, which a death clone drops. */
-	public static void migrateLegacyRootKey(ServerPlayer player) {
-		CompoundTag root = root(player);
-		if (!root.contains(CLAIM_KEY)) return;
-		if (root.getBoolean(CLAIM_KEY)) markClaimed(player);
-		root.remove(CLAIM_KEY);
-	}
 
 	private static CompoundTag root(Player player) {
 		return player.getPersistentData();

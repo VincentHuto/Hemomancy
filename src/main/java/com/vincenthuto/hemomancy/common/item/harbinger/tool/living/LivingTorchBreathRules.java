@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 /** Pure timing, resource, cone, and cancellation rules for the Living Torch channel. */
 public final class LivingTorchBreathRules {
-	public static final int MAX_USE_TICKS = 72_000;
 	public static final int WINDUP_TICKS = 6;
 	public static final int PULSE_INTERVAL_TICKS = 4;
 	public static final double RANGE = 7.0D;

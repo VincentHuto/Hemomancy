@@ -1228,21 +1228,6 @@ public final class FloorMesh {
 			}
 		}
 
-		/** The root to a brazier centred at {@code socket} (x, z) whose mound stands on {@code ground}. */
-		private static Root toward(int half, float[] socket, float ground) {
-			float[] rim = FloorRimRules.rimPoint(half, socket[0], socket[1]);
-			float dx = socket[0] - rim[0];
-			float dz = socket[1] - rim[1];
-			float length = Math.max(1.0e-4F, (float) Math.sqrt(dx * dx + dz * dz));
-			// It dives into the mound's flank, short of the brazier's stem.
-			float into = Math.min(0.32F, length * 0.4F);
-			float[] start = {rim[0], SURFACE_Y - 0.02F, rim[1]};
-			float[] end = {socket[0] - dx / length * into, ground + 0.1F, socket[1] - dz / length * into};
-			float phase = (float) (Math.floorMod((long) Math.floor(socket[0] * 31.0F + socket[1] * 17.0F), 628L) / 100.0D);
-			return new Root((float) Math.hypot(socket[0] - 0.5F, socket[1] - 0.5F),
-					FloorRimRules.rootPath(start, end, SAMPLES), phase);
-		}
-
 		private void emit(VertexConsumer consumer, Matrix4f matrix, float rise, float swelling, int alpha) {
 			// The root grows out from the rim to the brazier as the floor forms.
 			int reach = Math.max(1, Math.round(SAMPLES * rise));

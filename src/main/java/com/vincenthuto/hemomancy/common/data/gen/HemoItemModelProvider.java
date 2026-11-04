@@ -87,6 +87,12 @@ public class HemoItemModelProvider extends ItemModelProvider {
     }
 
     private void registerBlockModel(Block block) {
+        // A block without an item of its own name (itemless, or carried by a manually registered item) has no item model.
+        net.minecraft.world.item.Item asItem = block.asItem();
+        if (asItem == net.minecraft.world.item.Items.AIR || !BuiltInRegistries.ITEM.getKey(asItem).getPath()
+                .equals(BuiltInRegistries.BLOCK.getKey(block).getPath())) {
+            return;
+        }
         String path = BuiltInRegistries.BLOCK.getKey(block).getPath();
         if (hasHandAuthoredItemModel(path)) {
             return;

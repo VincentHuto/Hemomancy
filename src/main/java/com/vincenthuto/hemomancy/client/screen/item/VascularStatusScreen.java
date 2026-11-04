@@ -409,11 +409,11 @@ public class VascularStatusScreen extends Screen {
 			LocalPlayer player = Minecraft.getInstance().player;
 			if (player != null) {
 				EnumVeinSections selectedSection = hoveredSection;
-				var memoryState = HemoCapabilityAccess.muscleMemory(player);
+				var memoryState = HemoCapabilityAccess.thelemicMemory(player);
 				memoryState.getPrimed(selectedSection, player.level().getGameTime()).ifPresent(memory -> {
 					long seconds = (memoryState.remainingTicks(selectedSection,
 							player.level().getGameTime()) + 19L) / 20L;
-					tooltip.add(Component.translatable("muscle_memory.hemomancy." + memory.id())
+					tooltip.add(Component.translatable("thelemic_memory.hemomancy." + memory.id())
 							.append(HemoText.translatable("screen.hemomancy.vascular_status.s", seconds))
 							.withStyle(s -> s.withColor(0xCC3344)));
 				});

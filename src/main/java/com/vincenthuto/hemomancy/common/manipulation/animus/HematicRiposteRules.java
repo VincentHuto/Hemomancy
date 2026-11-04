@@ -5,7 +5,6 @@ package com.vincenthuto.hemomancy.common.manipulation.animus;
  * can be checked without a running game; vectors are {@code {x, y, z}} arrays in Minecraft's world axes.
  */
 public final class HematicRiposteRules {
-    public static final int COST = 60;
     public static final int COOLDOWN = 40;
     /** Cooldown left after any successful parry in the cast. */
     public static final int REFUND_COOLDOWN = 10;

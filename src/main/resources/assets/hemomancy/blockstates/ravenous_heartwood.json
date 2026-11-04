@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "hemomancy:block/ravenous_heartwood_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "hemomancy:block/ravenous_heartwood"
+    },
+    "axis=z": {
+      "model": "hemomancy:block/ravenous_heartwood_horizontal",
+      "x": 90
+    }
+  }
+}

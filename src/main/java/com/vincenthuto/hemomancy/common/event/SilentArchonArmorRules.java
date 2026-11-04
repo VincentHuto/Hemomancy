@@ -5,8 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.Harbi
 
 public final class SilentArchonArmorRules {
 	public static final String SILENT_CHOICE = "silent";
-	public static final int SILENT_ARCHON_DEGREE = 8;
-	public static final int APOTHEOS_DEGREE = 8;
 	public static final int DEATH_REFUSAL_COOLDOWN_TICKS = 12_000;
 	public static final double DEATH_REFUSAL_BLOOD_COST = 3_000D;
 

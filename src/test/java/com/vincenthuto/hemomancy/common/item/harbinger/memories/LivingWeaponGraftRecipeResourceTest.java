@@ -14,9 +14,9 @@ public final class LivingWeaponGraftRecipeResourceTest {
 	private static final Map<String, String> CATALYSTS = Map.of(
 			"blade", "hematic_iron_powder",
 			"axe", "chalybeate_sclerite",
-			"spear", "calcified_blood_spine",
+			"spear", "barbed_splinter",
 			"claws", "chitinous_husk",
-			"crossbow", "puppeteering_thread",
+			"crossbow", "enthralling_filament",
 			"torch", "fervent_spores",
 			"flail", "frigid_spores");
 

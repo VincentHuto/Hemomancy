@@ -45,6 +45,11 @@ pointers, not a third reference: a number lives in one place, and a topic doc li
 and awaits review, what proof is owed, and what to work on next. Topic docs keep their own "Open questions" sections;
 the roll-up links to them rather than restating every item.
 
+[audits/2026-11-02-cleanup/README.md](audits/2026-11-02-cleanup/README.md) is the consolidated ledger of the
+2026-11-02 whole-mod cleanup audit (eleven read-only reports in the same folder: progression, dead code, dialogue, books,
+animation and effects, ecology, materials, visuals, systems, resources and lang, runtime, docs drift). It is worked from
+in order; a row that needs a call moves into OPEN_QUESTIONS.md, a fixed row is struck.
+
 ## Engineering docs
 
 | Folder or file | Role |

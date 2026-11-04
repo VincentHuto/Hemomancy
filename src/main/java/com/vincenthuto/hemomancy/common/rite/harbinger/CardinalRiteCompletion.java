@@ -48,7 +48,7 @@ import java.util.UUID;
  * the rite through {@link CardinalRiteTermination}.
  */
 public final class CardinalRiteCompletion {
-	private static final BloodAccounting.Source LEGACY_COMPLETION = BloodAccounting.Source.of("legacy_rite_completion", Category.RITE, false, false);
+	private static final BloodAccounting.Source COUNTDOWN_COMPLETION = BloodAccounting.Source.of("countdown_rite_completion", Category.RITE, false, false);
 
 	/** A kind's own claim on the reward, checked against the matched structure before the medium is spent. */
 	@FunctionalInterface
@@ -118,8 +118,8 @@ public final class CardinalRiteCompletion {
 
 		// Interactive Harbinger ceremonies already paid their base cost node by
 		// node. Only legacy/Unstained countdown rites retain the completion drain.
-		if (rite.getPhase() == CardinalRitePhase.LEGACY) {
-			BloodAccounting.pay(caster, recipe.getBloodCost(), LEGACY_COMPLETION);
+		if (rite.getPhase() == CardinalRitePhase.COUNTDOWN) {
+			BloodAccounting.pay(caster, recipe.getBloodCost(), COUNTDOWN_COMPLETION);
 		}
 
 		// Floors are reusable. A recipe may explicitly consume only its matched upper structure.

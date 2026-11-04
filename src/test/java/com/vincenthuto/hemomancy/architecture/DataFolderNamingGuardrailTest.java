@@ -21,11 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class DataFolderNamingGuardrailTest {
 	private static final Set<String> PLURAL_FOLDERS = Set.of("items", "blocks", "fluids", "entity_types", "game_events",
 			"recipes", "loot_tables", "advancements", "structures", "functions", "predicates", "item_modifiers");
-	private static final Map<String, String> IGNORED_ON_PURPOSE = Map.of(
-			"src/main/resources/data/curios/tags/items/belt.json", "names the unregistered harbinger_grimore (Curios compat is off)",
-			"src/main/resources/data/curios/tags/items/spell.json", "names the unregistered harbinger_grimore (Curios compat is off)",
-			"src/main/resources/data/forge/tags/fluids/test_fluid.json", "names the unregistered test fluids, in the retired forge namespace",
-			"src/main/resources/data/mna/tags/items/dusts/purified_vinteum.json", "names the unregistered befouled_vinteum_dust (MnA compat is off)");
+	private static final Map<String, String> IGNORED_ON_PURPOSE = Map.of();
 
 	@Test
 	void noDataFileSitsInAPluralFolder() throws Exception {

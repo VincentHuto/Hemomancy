@@ -10,7 +10,6 @@ import java.util.List;
  * without maintaining hundreds of long-lived translucent particles.
  */
 public final class CardinalRiteHumanityGeometry {
-	public static final int EMISSION_INTERVAL_TICKS = 8;
 	public static final double DEFAULT_ENTITY_HEIGHT = 4.0D;
 	private static final int OUTLINE_LEVELS = 16;
 	private static final int EYE_RED = 145;

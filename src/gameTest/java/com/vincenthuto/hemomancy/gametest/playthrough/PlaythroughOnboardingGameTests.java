@@ -77,8 +77,8 @@ public final class PlaythroughOnboardingGameTests {
 	private static final String SPEAK_WITH_HERMIT = "message.hemomancy.mortal_display_block.speak_with_this_temple_s_hermit";
 	private static final String ALREADY_CLAIMED = "message.hemomancy.mortal_display_block.the_heart_has_already_been_claimed";
 	private static final String NO_LIVING_OATH = "message.hemomancy.mortal_display_block.this_heart_has_no_living_oath";
-	private static final String LODESTONE_NOT_FOUND = "item.hemomancy.covenant_waybill.not_found";
-	private static final String LODESTONE_ATTUNED = "item.hemomancy.covenant_waybill.attuned";
+	private static final String LODESTONE_NOT_FOUND = "item.hemomancy.harbinger_lodestone.not_found";
+	private static final String LODESTONE_ATTUNED = "item.hemomancy.harbinger_lodestone.attuned";
 	private static final String RELEASED = "hemomancy.initiation.released";
 	private static final String OFFICIANT_BUSY = "hemomancy.initiation.officiant_busy";
 	private static final String DEGREE_LINE = "hemomancy.initiation.degree";
@@ -172,10 +172,10 @@ public final class PlaythroughOnboardingGameTests {
 		helper.assertTrue(player.player().getMainHandItem().isEmpty(), "the touch is empty-handed");
 
 		Outcome touch = player.useOn(temple.display());
-		touch.said(CHARM_EQUIPPED).earned(AWAKENING).gave(ItemInit.covenant_waybill.get(), 1);
+		touch.said(CHARM_EQUIPPED).earned(AWAKENING).gave(ItemInit.harbinger_lodestone.get(), 1);
 		helper.assertTrue(player.hasCharm(), "the charm sits in slot 5; " + touch);
 		helper.assertTrue(player.bloodActive(), "the blood is awake; " + touch);
-		helper.assertTrue(player.count(ItemInit.covenant_waybill.get()) == 1, "exactly one lodestone is carried");
+		helper.assertTrue(player.count(ItemInit.harbinger_lodestone.get()) == 1, "exactly one lodestone is carried");
 		helper.assertTrue(temple.displayEntity(helper.getLevel()).isClaimedBy(player.uuid()), "the Display is claimed by the player");
 		assertClaimedInBothHomes(helper, player, hermit.getUUID());
 		helper.succeed();
@@ -219,12 +219,12 @@ public final class PlaythroughOnboardingGameTests {
 		PlaythroughPlayer player = PlaythroughPlayer.create(helper, temple.stand());
 		claimAtTemple(player, temple);
 
-		player.wield(ItemInit.covenant_waybill.get());
+		player.wield(ItemInit.harbinger_lodestone.get());
 		Outcome use = player.use(InteractionHand.MAIN_HAND);
 		CompoundTag tag = player.player().getMainHandItem().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		String dimension = player.player().level().dimension().location().toString();
 		PlaythroughLog.note(helper, "lodestone use: " + use + " data=" + tag);
-		helper.assertTrue(player.player().getMainHandItem().is(ItemInit.covenant_waybill.get()), "the lodestone is still held");
+		helper.assertTrue(player.player().getMainHandItem().is(ItemInit.harbinger_lodestone.get()), "the lodestone is still held");
 		helper.assertTrue(dimension.equals(tag.getString(LODESTONE_CHECKED)), "the lodestone records the checked dimension: " + tag);
 		helper.assertTrue(use.chat().stream().noneMatch(line -> line.has(LODESTONE_ATTUNED)),
 				"the flat test world has no outpost to attune to; " + use);
@@ -295,7 +295,7 @@ public final class PlaythroughOnboardingGameTests {
 							&& LiberKnowledgeHelper.hasEntry(player.player(), LiberEntryDefinitions.THE_HARBINGERS),
 							"the Liber's Hemomancy and Harbingers entries are unlocked");
 					helper.assertTrue(!vicar.isInitiating() && !vicar.isNoAi(), "the Vicar's AI and flag are restored");
-					helper.assertTrue(player.count(ItemInit.covenant_waybill.get()) == 1, "the lodestone is kept");
+					helper.assertTrue(player.count(ItemInit.harbinger_lodestone.get()) == 1, "the lodestone is kept");
 				})
 				.run();
 	}
@@ -886,7 +886,7 @@ public final class PlaythroughOnboardingGameTests {
 			PlaythroughLog.note(helper, (occupied ? "slot taken" : "blood awake") + ": " + touch.describe());
 			touch.said("hemomancy.initiation.cannot_attach");
 			helper.assertFalse(player.hasCharm(), "no charm is fitted; " + touch);
-			helper.assertTrue(player.count(ItemInit.covenant_waybill.get()) == 0, "no lodestone is given; " + touch);
+			helper.assertTrue(player.count(ItemInit.harbinger_lodestone.get()) == 0, "no lodestone is given; " + touch);
 			helper.assertFalse(temple.displayEntity(helper.getLevel()).isClaimedBy(player.uuid()),
 					"the Display is not claimed by a refused touch");
 			player.offline();
@@ -924,8 +924,8 @@ public final class PlaythroughOnboardingGameTests {
 		int hand = player.player().getInventory().selected;
 		player.fillInventory(hand); // ARRANGE: every slot full but the empty hand the touch needs
 		Outcome touch = player.useOn(temple.display());
-		int held = player.count(ItemInit.covenant_waybill.get());
-		int dropped = touch.dropped(ItemInit.covenant_waybill.get(), Outcome.Near.ANY);
+		int held = player.count(ItemInit.harbinger_lodestone.get());
+		int dropped = touch.dropped(ItemInit.harbinger_lodestone.get(), Outcome.Near.ANY);
 		PlaythroughLog.note(helper, "full-pack touch: held " + held + ", dropped " + dropped + "; " + touch.describe());
 		helper.assertTrue(player.hasCharm(), "the charm is fitted; " + touch);
 		helper.assertTrue(held + dropped == 1, "exactly one lodestone, held or dropped: held " + held + ", dropped " + dropped);

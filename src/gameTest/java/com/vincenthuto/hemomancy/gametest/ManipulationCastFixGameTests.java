@@ -5,11 +5,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
-import com.vincenthuto.hemomancy.common.entity.summon.EntityWretchedWill;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -80,38 +78,10 @@ public final class ManipulationCastFixGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void retiredVenousTravelCannotCast(GameTestHelper helper) {
-		ServerPlayer player = player(helper, "venous-travel-test");
-		try {
-			BloodManipulation.clearSessionState();
-			var blood = HemoCapabilityAccess.getBloodVolume(player);
-			blood.setActive(true);
-			blood.setBloodVolume(2_000.0D);
-			var known = HemoCapabilityAccess.getKnownManipulations(player);
-			ManipLevel level = new ManipLevel(0, 0);
-			known.getKnownManips().put(ManipulationInit.venous_travel.get(), level);
-
-			boolean cast = ManipulationInit.venous_travel.get().tryPerformAction(player, helper.getLevel(),
-					ItemStack.EMPTY, player.blockPosition(), 0.0F);
-
-			helper.assertTrue(!cast, "Retired Venous Travel still cast");
-			helper.assertTrue(Math.abs(blood.getBloodVolume() - 2_000.0D) < 0.001D,
-					"Retired Venous Travel spent blood");
-			helper.assertTrue(level.getXp() == 0.0D, "Retired Venous Travel gained manipulation mastery");
-			helper.assertTrue(ManipulationInit.venous_travel.get().getRemainingCooldownTicks(player) == 0L,
-					"Retired Venous Travel started a cooldown");
-			helper.succeed();
-		} finally {
-			BloodManipulation.clearSessionState();
-			player.discard();
-		}
-	}
-
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void registryTypesMatchUnifiedInputSemantics(GameTestHelper helper) {
 		var manipulations = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get()).toList();
-		helper.assertTrue(manipulations.size() == 123, "Expected 123 registered manipulations, got " + manipulations.size());
-		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 81,
+		helper.assertTrue(manipulations.size() == 108, "Expected 108 registered manipulations, got " + manipulations.size());
+		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 68,
 				"Quick manipulation count changed");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CHARGED).equals(Set.of(
 				"blood_needle", "activation_potential", "blood_aneurysm", "ironhearted", "vitric_combustion",
@@ -125,7 +95,7 @@ public final class ManipulationCastFixGameTests {
 				"penumbral_drift", "lignum_mortis", "canopy_mortis", "worked_lignum", "sanguine_marionette", "radiant_wake")),
 				"Continuous manipulation set is incorrect");
 		helper.assertTrue(names(manipulations, EnumManipulationType.PASSIVE).equals(Set.of(
-				"blackhearted", "sovereign_instinct", "vigil_of_glass", "phoenix_debt", "hematic_ballast",
+				"blackhearted", "sovereign_instinct", "phoenix_debt",
 				"summon_avatar", "summon_avatar_arms", "summon_avatar_armor", "summon_avatar_legs",
 				"summon_avatar_complete", "axonal_transduction")),
 				"Passive manipulation set is incorrect");
@@ -145,29 +115,6 @@ public final class ManipulationCastFixGameTests {
 		mastery.tryLevelUp();
 		helper.assertTrue(known.size() == 1, "Mastery automatically taught a Blood Shot family form");
 		helper.assertTrue(known.containsKey(baseline), "Blood Shot baseline was replaced by its stronger forms");
-		helper.succeed();
-	}
-
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void retirementAndAvatarContractsMatchRosterDecision(GameTestHelper helper) {
-		helper.assertTrue(ManipulationRetirementRules.isRetiredManipulation("ferric_resonance"),
-				"Ferric Resonance remains active");
-		helper.assertTrue(ManipulationRetirementRules.isRetiredManipulation("glacial_bastion"),
-				"Glacial Bastion remains active");
-		helper.assertTrue(ManipulationRetirementRules.isRetiredManipulation("blood_eclipse_mantle"),
-				"Blood Eclipse Mantle remains active");
-		for (String id : Set.of("crimson_sight", "glacial_circulation", "ferric_transmutation",
-				"vigil_of_glass", "hematic_ballast", "summon_thrall", "venous_travel")) {
-			helper.assertTrue(ManipulationRetirementRules.isRetiredManipulation(id), id + " remains active");
-		}
-		long active = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get())
-				.filter(manipulation -> !ManipulationRetirementRules.isRetiredManipulation(manipulation)).count();
-		helper.assertTrue(active == 108, "Expected 108 active manipulations after pruning, got " + active);
-		helper.assertTrue(!ManipulationRetirementRules.isRetiredManipulation("summon_avatar"),
-				"Summon Avatar was retired");
-		helper.assertTrue(ManipulationInit.deadly_gaze.get().getType() == EnumManipulationType.CHARGED
-				&& ManipulationInit.deadly_gaze.get().getRequiredChargeTicks() == 40,
-				"Deadly Gaze is not a 40-tick charged manipulation");
 		helper.succeed();
 	}
 
@@ -411,21 +358,6 @@ public final class ManipulationCastFixGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void bloodRushNoLongerSummonsAWretchedWill(GameTestHelper helper) {
-		ServerPlayer player = player(helper, "blood-rush-rework-test");
-		try {
-			ManipulationInit.blood_rush.get().getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition());
-			helper.assertTrue(helper.getLevel().getEntitiesOfClass(EntityWretchedWill.class,
-					player.getBoundingBox().inflate(8)).isEmpty(), "Blood Rush still summoned a Wretched Will");
-			helper.assertTrue(player.getDeltaMovement().horizontalDistanceSqr() > 0.25D,
-					"Blood Rush did not surge the caster forward");
-			helper.succeed();
-		} finally {
-			player.discard();
-		}
-	}
-
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void hemolymphalPulseMarksWoundedBloodButIgnoresBloodless(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "hemolymphal-rework-test");
 		Zombie wounded = zombie(helper, player.position().add(2, 0, 0));
@@ -579,12 +511,10 @@ public final class ManipulationCastFixGameTests {
 		assertImplementation(helper, "synaptic_storm", "SynapticStormManip");
 		assertImplementation(helper, "living_circuit", "LivingCircuitManip");
 		assertImplementation(helper, "white_verdict", "WhiteVerdictManip");
-		assertImplementation(helper, "vigil_of_glass", "VigilOfGlassManip");
 		assertImplementation(helper, "furnace_veins", "FurnaceVeinsManip");
 		assertImplementation(helper, "phoenix_debt", "PhoenixDebtManip");
 		assertImplementation(helper, "absolute_stillness", "AbsoluteStillnessManip");
 		assertImplementation(helper, "rimebound_sentence", "RimeboundSentenceManip");
-		assertImplementation(helper, "hematic_ballast", "HematicBallastManip");
 		assertImplementation(helper, "iron_choir", "IronChoirManip");
 		assertImplementation(helper, "funeral_bell", "FuneralBellManip");
 		assertImplementation(helper, "carrion_communion", "CarrionCommunionManip");
@@ -600,8 +530,6 @@ public final class ManipulationCastFixGameTests {
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY, 0, 80);
 		assertMeta(helper, "white_verdict", 800, 65, EnumManipulationType.CHARGED,
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.LUX, EnumVeinSections.HEAD, 60, 100);
-		assertMeta(helper, "vigil_of_glass", 300, 55, EnumManipulationType.PASSIVE,
-				EnumManipulationRank.MAGISTER, EnumBloodTendency.LUX, EnumVeinSections.HEAD, 0, 0);
 		assertMeta(helper, "furnace_veins", 150, 55, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY, 0, 100);
 		assertMeta(helper, "phoenix_debt", 1200, 75, EnumManipulationType.PASSIVE,
@@ -610,8 +538,6 @@ public final class ManipulationCastFixGameTests {
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY, 0, 160);
 		assertMeta(helper, "rimebound_sentence", 750, 55, EnumManipulationType.CHARGED,
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS, 70, 120);
-		assertMeta(helper, "hematic_ballast", 200, 55, EnumManipulationType.PASSIVE,
-				EnumManipulationRank.MAGISTER, EnumBloodTendency.FERRIC, EnumVeinSections.LEGS, 0, 0);
 		assertMeta(helper, "iron_choir", 250, 60, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.FERRIC, EnumVeinSections.BODY, 0, 100);
 		assertMeta(helper, "funeral_bell", 1000, 75, EnumManipulationType.CHARGED,

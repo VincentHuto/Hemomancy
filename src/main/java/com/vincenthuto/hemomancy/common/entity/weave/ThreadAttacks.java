@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 
 /** Each tendency's way of moving and striking. */
 public final class ThreadAttacks {
-	private static final BloodAccounting.Source ANIMUS_THREAD = BloodAccounting.Source.of("frayed_thread", Category.HAZARD, false, false);
+	private static final BloodAccounting.Source ANIMUS_THREAD = BloodAccounting.Source.of("intruding_memory", Category.HAZARD, false, false);
 	/** Preferred distance and height from the weaver, orbit speed (radians/tick) and steering speed. */
 	public record Profile(double distance, double height, double orbit, double speed) {}
 

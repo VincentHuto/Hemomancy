@@ -190,7 +190,6 @@ public class MycophantEntity extends Monster implements BroodMother {
 	public float getGazeYaw() { return this.entityData.get(DATA_GAZE_YAW); }
 	/** What the current hold is; meaningful only while {@link #isHolding()}. */
 	public MycophantHoldKind getHoldKind() { return MycophantHoldKind.byOrdinal(this.entityData.get(DATA_HOLD_KIND)); }
-	public boolean isSplitComplete() { return getPhase() >= 2; }
 	public boolean isHolding() { return getClaimedId() >= 0; }
 
 	void setState(MycophantState state) {

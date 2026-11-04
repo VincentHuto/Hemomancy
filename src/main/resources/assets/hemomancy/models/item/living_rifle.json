@@ -10,7 +10,7 @@
 		"6": "hemomancy:block/jar_bottom_side",
 		"7": "hemomancy:block/sanguine_pane",
 		"8": "hemomancy:block/chiseled_hematic_iron_block",
-		"10": "hemomancy:block/cracked_polished_venous_stone_brick",
+		"10": "hemomancy:block/cracked_polished_venous_stone_bricks",
 		"particle": "hemomancy:block/blood_wood_log"
 	},
 	"elements": [

@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.init;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,22 +18,15 @@ import java.util.Map;
  */
 public class ManipulationTreeInit {
 
-	/** Horizontal offset (in content-space) from x=0 where the manip tree begins. */
-	public static final int TREE_OFFSET_X = 350;
-	/** Y position of the top row. */
-	public static final int TREE_TOP_Y = 40;
-
 	/** All registered manipulation tree entries. */
 	public static final List<ManipulationTreeEntry> ENTRIES = new ArrayList<>();
 
 	/** Quick lookup by name. */
 	public static final Map<String, ManipulationTreeEntry> BY_NAME = new HashMap<>();
 
-
 	public static void init() {
 		ENTRIES.clear();
 		BY_NAME.clear();
-
 
 		// Row 0 (top) — SUMMA
 		register("blood_aneurysm",470,243, "blood_cloud");
@@ -166,7 +158,6 @@ public class ManipulationTreeInit {
 		register("exsanguinate",2270,-104, "hemorrhage");
 	}
 
-
 	private static ManipulationTreeEntry register(String name, int x, int y, String... parents) {
 		ManipulationTreeEntry entry = new ManipulationTreeEntry(name, x, y, parents);
 		ENTRIES.add(entry);
@@ -174,8 +165,4 @@ public class ManipulationTreeInit {
 		return entry;
 	}
 
-	/** Look up an entry by manipulation name. */
-	public static ManipulationTreeEntry getEntry(String name) {
-		return BY_NAME.get(name);
-	}
 }

@@ -1,8 +1,8 @@
 {
   "credit": "Hemomancy - editable source in tools/model_export/hematic_microscope.py",
   "textures": {
-    "0": "hemomancy:item/hematic_microscope",
-    "particle": "hemomancy:item/hematic_microscope"
+    "0": "hemomancy:block/blood_wood_log",
+    "particle": "hemomancy:block/blood_wood_log"
   },
   "elements": [
     {

@@ -11,8 +11,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryPrimingRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.VasculariumCharmItem;
@@ -147,12 +147,12 @@ public class RadialChooseManipScreen extends Screen {
 				this.cachedMenuItems.add(createManipulationItem(
 						entry.manipulation(), entry.knownIndex(), selectedManipName));
 			}
-			var memoryState = HemoCapabilityAccess.muscleMemory(mc.player);
+			var memoryState = HemoCapabilityAccess.thelemicMemory(mc.player);
 			EnumSet<EnumVeinSections> shownSections = EnumSet.noneOf(EnumVeinSections.class);
 			for (String key : equippedNames) {
 				MemorySlotRef ref = MemorySlotRef.fromStorageKey(key);
-				ref.muscleMemory().filter(memoryState::knows).filter(memory -> shownSections.add(memory.section()))
-						.ifPresent(memory -> this.cachedMenuItems.add(createMuscleMemoryItem(memory, ref, selectedMemory)));
+				ref.thelemicMemory().filter(memoryState::knows).filter(memory -> shownSections.add(memory.section()))
+						.ifPresent(memory -> this.cachedMenuItems.add(createThelemicMemoryItem(memory, ref, selectedMemory)));
 			}
 			this.menu.clear();
 			this.menu.addAllInner(this.cachedMechanicalItems);
@@ -304,13 +304,13 @@ public class RadialChooseManipScreen extends Screen {
 		return item;
 	}
 
-	private MuscleMemoryRadialMenuItem createMuscleMemoryItem(MuscleMemory memory, MemorySlotRef ref,
+	private ThelemicMemoryRadialMenuItem createThelemicMemoryItem(ThelemicMemory memory, MemorySlotRef ref,
 			MemorySlotRef selected) {
-		var state = HemoCapabilityAccess.muscleMemory(mc.player);
+		var state = HemoCapabilityAccess.thelemicMemory(mc.player);
 		java.util.function.Supplier<EnumBloodFlow> flow = () -> HemoCapabilityAccess.getVascularSystem(mc.player).getBloodFlowBySection(memory.section());
-		java.util.function.Supplier<MuscleMemoryRadialPresentation.State> presentation = () -> {
+		java.util.function.Supplier<ThelemicMemoryRadialPresentation.State> presentation = () -> {
 			long now = mc.level != null ? mc.level.getGameTime() : 0L;
-			return MuscleMemoryRadialPresentation.resolve(state.reserveTicks(memory), state.isEnabled(memory),
+			return ThelemicMemoryRadialPresentation.resolve(state.reserveTicks(memory), state.isEnabled(memory),
 					state.isOverexertionArmed(memory, now), flow.get(), now);
 		};
 		long seconds = (state.reserveTicks(memory) + 19L) / 20L;
@@ -323,22 +323,22 @@ public class RadialChooseManipScreen extends Screen {
 				: "screen.hemomancy.radial_choose_manip.prepared_activate_to_use");
 		List<Component> tooltip = List.of(
 				Component.translatable("screen.hemomancy.radial_choose_manip.vascular_section", BloodManipulation.sectionName(memory.section())).withStyle(ChatFormatting.RED),
-				Component.translatable("muscle_memory.hemomancy." + memory.id()),
+				Component.translatable("thelemic_memory.hemomancy." + memory.id()),
 				Component.translatable("screen.hemomancy.radial_choose_manip.thelemic_memory"),
 				HemoText.translatable("screen.hemomancy.radial_choose_manip.reserve_blood_strain",
 						reserve,
 						trimNumber(memory.bloodCost()),
 						trimNumber(memory.vascularStrain())),
 				status);
-		MuscleMemoryRadialMenuItem item = new MuscleMemoryRadialMenuItem(this.menu,
+		ThelemicMemoryRadialMenuItem item = new ThelemicMemoryRadialMenuItem(this.menu,
 				Hemomancy.rloc("textures/item/vascular_status_gauge.png"), tooltip, presentation,
-				() -> state.reserveTicks(memory) / (double) MuscleMemoryPrimingRules.TICKS_PER_DOSE,
+				() -> state.reserveTicks(memory) / (double) ThelemicMemoryPrimingRules.TICKS_PER_DOSE,
 				memory.section().name().substring(0, 1), () -> {
 					PacketHandler.sendToServer(new UpdateCurrentMemoryPacket(ref.storageKey()));
 					RadialChooseManipScreen.this.menu.close();
 				});
 		if (ref.equals(selected)) item.setCentralText(Component.translatable(
-				"muscle_memory.hemomancy." + memory.id()).append(Component.translatable("screen.hemomancy.radial_choose_manip.selected")));
+				"thelemic_memory.hemomancy." + memory.id()).append(Component.translatable("screen.hemomancy.radial_choose_manip.selected")));
 		item.setVisible(true);
 		return item;
 	}

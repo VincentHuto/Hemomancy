@@ -1,20 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "SSS",
-    "SBS",
-    "SSS"
-  ],
-  "key": {
-    "S": {
-      "item": "minecraft:stick"
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "hemomancy:blank_mask"
     },
-    "B": {
-      "item": "hemomancy:puppeteering_thread"
+    {
+      "item": "minecraft:yellow_dye"
     }
-  },
+  ],
   "result": {
     "id": "hemomancy:laughing_mask",
-    "count": 4
+    "count": 1
   }
 }

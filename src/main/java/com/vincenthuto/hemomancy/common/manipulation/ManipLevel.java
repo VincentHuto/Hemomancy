@@ -97,18 +97,6 @@ public class ManipLevel {
 		return Math.max(0.0, 1.0 - currentLevel * COOLDOWN_REDUCTION_PER_LEVEL);
 	}
 
-	/**
-	 * XP remaining until the next level-up, or 0 if already at max level.
-	 */
-	public double getXpToNextLevel() {
-		if (currentLevel >= MAX_LEVEL) return 0;
-		int cumulative = 0;
-		for (int i = 0; i <= currentLevel && i < XP_THRESHOLDS.length; i++) {
-			cumulative += XP_THRESHOLDS[i];
-		}
-		return Math.max(0, cumulative - xp);
-	}
-
 	public CompoundTag serialize() {
 		CompoundTag nbt = new CompoundTag();
 		nbt.putInt("level", currentLevel);

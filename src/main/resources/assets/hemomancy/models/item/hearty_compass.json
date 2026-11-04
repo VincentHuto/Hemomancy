@@ -1,8 +1,0 @@
-{
-  "parent": "builtin/entity",
-  "textures": {
-    "layer0": "hemomancy:item/hearty_compass_renderer",
-    "particle": "hemomancy:item/hearty_compass_renderer"
-  },
-  "gui_light": "front"
-}

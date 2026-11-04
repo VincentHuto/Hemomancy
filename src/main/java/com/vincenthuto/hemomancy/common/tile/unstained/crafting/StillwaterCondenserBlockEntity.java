@@ -62,6 +62,9 @@ public class StillwaterCondenserBlockEntity extends BaseContainerBlockEntity {
 		@Override public int getCount() { return DATA_COUNT; }
 	};
 
+	private static final int SCAN_INTERVAL_TICKS = 40;
+	private int scanCooldown;
+
 	public StillwaterCondenserBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.stillwater_condenser.get(), pos, state);
 	}
@@ -71,8 +74,12 @@ public class StillwaterCondenserBlockEntity extends BaseContainerBlockEntity {
 		boolean previousGhostPipe = be.hasGhostPipe;
 		boolean previousLattice = be.latticeBoosted;
 		be.hasWater = hasStillWater(level, pos);
-		be.hasGhostPipe = hasGhostPipe(level, pos);
-		be.latticeBoosted = VerdigrisLatticeBlock.hasActiveLattice(level, pos, 5);
+		// The pipe and lattice scans read about 1,700 blocks; once every two seconds is plenty for a plant and a wall (RT-4).
+		if (be.scanCooldown-- <= 0) {
+			be.hasGhostPipe = hasGhostPipe(level, pos);
+			be.latticeBoosted = VerdigrisLatticeBlock.hasActiveLattice(level, pos, 5);
+			be.scanCooldown = SCAN_INTERVAL_TICKS;
+		}
 		ItemStack bottles = be.items.get(SLOT_BOTTLES);
 		ItemStack output = be.items.get(SLOT_DEW);
 		int amount = be.latticeBoosted ? 2 : 1;

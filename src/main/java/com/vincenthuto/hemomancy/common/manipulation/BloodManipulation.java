@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnown
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostSnapshot;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.CrawlingChoirHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.RootedStateHelper;
@@ -90,7 +90,6 @@ public class BloodManipulation implements EntityCastableManipulation {
 	EnumManipulationType type;
 
 	private static final double TICKS_PER_SECOND = 20.0;
-	private static final String MNA_MANIP_COMBO_HELPER = "com.vincenthuto.hemomancy.compat.mna.spell.ManipComboHelper";
 
 	private static final ManipulationCooldownState COOLDOWNS = new ManipulationCooldownState();
 
@@ -139,9 +138,6 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	@Override
 	public boolean castFromEntity(ManipulationCastContext context) {
-		if (ManipulationRetirementRules.isRetiredManipulation(this)) {
-			return false;
-		}
 		return EntityManipulationEffects.cast(this, context);
 	}
 
@@ -181,11 +177,6 @@ public class BloodManipulation implements EntityCastableManipulation {
 	/** The ID-derived name; the fallback for {@link #getDisplayName()} and for logs/save data. */
 	public String getProperName() {
 		return HLTextUtils.convertInitToLang(name);
-	}
-
-	/** Lang key for this manipulation's display name, e.g. {@code hemomancy.manipulation.osseous_bloom}. */
-	public String getDisplayNameKey() {
-		return displayNameKey(name);
 	}
 
 	public static String displayNameKey(String manipulationName) {
@@ -240,10 +231,6 @@ public class BloodManipulation implements EntityCastableManipulation {
 
 	public EnumManipulationType getType() {
 		return type;
-	}
-
-	public double getXpCost() {
-		return xpCost;
 	}
 
 	public int getCooldownTicks() {
@@ -340,15 +327,6 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return COOLDOWNS.remainingTicks(player.getUUID(), name, player.level().getGameTime());
 	}
 
-	private void invokeMnAComboHelper(Player player) {
-		try {
-			Class<?> helperClass = Class.forName(MNA_MANIP_COMBO_HELPER);
-			Method onManipulationUsed = helperClass.getMethod("onManipulationUsed", Player.class);
-			onManipulationUsed.invoke(null, player);
-		} catch (Exception ignored) {
-			// MnA compat classes unavailable or incompatible — skip silently
-		}
-	}
 
 	private long startCooldown(Player player) {
 		if (cooldownTicks > 0) {
@@ -502,10 +480,6 @@ public class BloodManipulation implements EntityCastableManipulation {
 				player.displayClientMessage(Component.translatable("message.hemomancy.blood_manipulation.you_have_not_absorbed_this_form").withStyle(ChatFormatting.DARK_RED), true);
 				return false;
 			}
-			if (ManipulationRetirementRules.isRetiredManipulation(this)) {
-				player.displayClientMessage(Component.translatable("message.hemomancy.blood_manipulation.that_manipulation_has_gone_dormant").withStyle(ChatFormatting.DARK_GRAY), true);
-				return false;
-			}
 			if (enforceCooldown && isOnCooldown(player)) {
 				long remaining = getRemainingCooldownTicks(player);
 				double seconds = remaining / TICKS_PER_SECOND;
@@ -623,7 +597,6 @@ public class BloodManipulation implements EntityCastableManipulation {
 	public void recordSuccessfulUse(ServerPlayer player, float rewardScale) {
 		KnownManipulationEvents.onManipulationUsed(player, this, rewardScale);
 		PurityGainEvents.onBloodManipulationUsed(player);
-		if (ModList.get().isLoaded("mna")) invokeMnAComboHelper(player);
 	}
 
 	protected boolean canPerformAction(Player player, float chargeTicks) {
@@ -654,20 +627,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return nbt;
 	}
 
-	public void setAlignLevel(float alignLevel) {
-		this.alignLevel = alignLevel;
-	}
-
 	public void setCost(double cost) {
 		this.cost = cost;
 	}
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public void setRank(EnumManipulationRank rank) {
-		this.rank = rank;
 	}
 
 	public void setSection(EnumVeinSections section) {
@@ -705,18 +670,9 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return changed;
 	}
 
-	public void setType(EnumManipulationType type) {
-		this.type = type;
-	}
-
-	public void setXpCost(double xpCost) {
-		this.xpCost = xpCost;
-	}
-
 	@Override
 	public String toString() {
 		return HLTextUtils.convertInitToLang(name);
 	}
-
 
 }

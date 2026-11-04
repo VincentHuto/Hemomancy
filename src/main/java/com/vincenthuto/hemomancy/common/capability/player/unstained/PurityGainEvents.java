@@ -76,7 +76,6 @@ public class PurityGainEvents {
     private static final float PURITY_ABSTINENCE         = 1.0f;
     private static final long  ABSTINENCE_INTERVAL_TICKS = 6000L;  // 5 minutes (5 * 60 * 20)
     private static final float PURITY_EMPTY_BLOOD        = 0.30f;
-    private static final long  EMPTY_BLOOD_INTERVAL      = 1200L;  // 1 minute
 
     //  Mercy 
     private static final float PURITY_HEAL_TAMED         = 1.0f;

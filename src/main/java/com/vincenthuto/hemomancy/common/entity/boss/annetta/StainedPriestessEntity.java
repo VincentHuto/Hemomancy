@@ -812,10 +812,21 @@ public class StainedPriestessEntity extends Monster {
         return getMode() != Mode.EMERGING && super.isPushable();
     }
 
+    /** Who a kill counts for: the player who landed it, or the owner of the thrall or puppet that did. */
+    public static net.minecraft.world.entity.Entity creditedPlayer(DamageSource source) {
+        net.minecraft.world.entity.Entity killer = source.getEntity();
+        if (killer instanceof net.minecraft.world.entity.OwnableEntity owned) return owned.getOwner();
+        if (killer instanceof net.minecraft.world.entity.Mob mob
+                && killer instanceof com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon summon) {
+            return com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior.ownerFor(mob, summon).orElse(null);
+        }
+        return killer;
+    }
+
     @Override
     public void die(DamageSource source) {
         setFlying(false);
-        if (!this.level().isClientSide && source.getEntity() instanceof ServerPlayer player
+        if (!this.level().isClientSide && creditedPlayer(source) instanceof ServerPlayer player
                 && HemoCapabilityAccess.getInitiatoryDegree(player).hasFoundedBloodline()) {
             var progress = HemoCapabilityAccess.getUnstainedProgress(player);
             progress.setAnnettaSeveranceUnlocked(true);

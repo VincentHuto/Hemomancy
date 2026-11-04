@@ -118,7 +118,7 @@ final class CardinalRiteLayeredRecipeDataTest {
 				selectors.computeIfAbsent(selector, ignored -> new java.util.ArrayList<>()).add(recipe);
 			}
 		}
-		assertTrue(workingCrafts >= 20, "the selector check must reach the Working crafts, found " + workingCrafts);
+		assertTrue(workingCrafts >= 17, "the selector check must reach the Working crafts, found " + workingCrafts);
 		for (java.util.List<JsonObject> duplicates : selectors.values()) {
 			if (duplicates.size() < 2) continue;
 			Set<Integer> degrees = new HashSet<>();

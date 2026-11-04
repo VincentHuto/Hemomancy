@@ -33,7 +33,6 @@ import com.mojang.authlib.GameProfile;
 import java.util.UUID;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
-
 @GameTestHolder("advanced_brewing_validation")
 @PrefixGameTestTemplate(false)
 public final class AdvancedBrewingGameTests {

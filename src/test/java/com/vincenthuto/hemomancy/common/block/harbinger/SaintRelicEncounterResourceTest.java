@@ -31,8 +31,6 @@ public final class SaintRelicEncounterResourceTest {
 				"com/vincenthuto/hemomancy/common/item/harbinger/SaintRelicItem.java"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
 		String relicTag = read(RESOURCE_ROOT.resolve("data/hemomancy/tags/item/progression/saint_relics.json"));
-		String mausoleumBiomes = read(RESOURCE_ROOT.resolve(
-				"data/hemomancy/tags/worldgen/biome/has_structure/mausoleum.json"));
 
 		assertContains("saint relic item stores a saint type", relicItem, "private final EnumSaintType saintType;");
 		assertContains("saint relic item exposes its saint type", relicItem, "public EnumSaintType getSaintType()");
@@ -79,12 +77,6 @@ public final class SaintRelicEncounterResourceTest {
 					"\"item\": \"" + relic.ingredientC + "\"");
 		}
 
-		assertContains("mausoleum natural placement is temporarily disabled", mausoleumBiomes,
-				"\"values\": []");
-		assertExists("mausoleum structure data stays in place",
-				RESOURCE_ROOT.resolve("data/hemomancy/worldgen/structure/mausoleum.json"));
-		assertExists("mausoleum structure set data stays in place",
-				RESOURCE_ROOT.resolve("data/hemomancy/worldgen/structure_set/mausoleum.json"));
 	}
 
 	private static String read(Path path) throws IOException {

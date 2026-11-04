@@ -76,9 +76,7 @@ public class EntityInit {
 
     public static final TagKey<EntityType<?>> HEMOMANCY_MOB = createTag("hemomancy_mob");
     public static final TagKey<EntityType<?>> SPECIMEN_JAR_CAPTURABLE = createTag("specimen_jar_capturable");
-    public static final TagKey<EntityType<?>> WILLS = createTag("wills");
     public static final TagKey<EntityType<?>> PUPPET_ATTENTION_IMMUNE = createTag("puppet_attention_immune");
-    public static final TagKey<EntityType<?>> CIRCUS_PERFORMERS = createTag("circus_performers");
 
     public static final DeferredHolder<EntityType<?>, EntityType<CovenantThroneSeatEntity>> covenant_throne_seat =
             ENTITY_TYPES.register("covenant_throne_seat",
@@ -125,13 +123,13 @@ public class EntityInit {
                             .updateInterval(2)
                             .build(Hemomancy.rloc("awakened_ichorian_sigil").toString()));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanitySpriteEntity>> humanity_sprite =
-            ENTITY_TYPES.register("humanity_sprite",
+    public static final DeferredHolder<EntityType<?>, EntityType<HumanitySpriteEntity>> daemon =
+            ENTITY_TYPES.register("daemon",
                     () -> EntityType.Builder.<HumanitySpriteEntity>of(HumanitySpriteEntity::new, MobCategory.MISC)
                             .sized(1.25F, 4.25F)
                             .clientTrackingRange(32)
                             .updateInterval(1)
-                            .build(Hemomancy.rloc("humanity_sprite").toString()));
+                            .build(Hemomancy.rloc("daemon").toString()));
 
     // Mobs
     public static final DeferredHolder<EntityType<?>, EntityType<UnstainedZealotEntity>> unstained_zealot = ENTITY_TYPES.register(
@@ -284,10 +282,10 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<CircusFacultyEntity>> circus_beast_tamer = ENTITY_TYPES.register("circus_beast_tamer", () -> EntityType.Builder.of(CircusFacultyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.95F).clientTrackingRange(10).build(Hemomancy.rloc("circus_beast_tamer").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<CircusFacultyEntity>> circus_threadkeeper = ENTITY_TYPES.register("circus_threadkeeper", () -> EntityType.Builder.of(CircusFacultyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.95F).clientTrackingRange(10).build(Hemomancy.rloc("circus_threadkeeper").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<CircusFacultyEntity>> circus_understudy = ENTITY_TYPES.register("circus_understudy", () -> EntityType.Builder.of(CircusFacultyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.95F).clientTrackingRange(10).build(Hemomancy.rloc("circus_understudy").toString()));
-    public static final DeferredHolder<EntityType<?>, EntityType<CircusCarouselEntity>> circus_carousel = ENTITY_TYPES.register(
-            "circus_carousel", () -> EntityType.Builder.<CircusCarouselEntity>of(CircusCarouselEntity::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<CircusCarouselEntity>> impaled_procession = ENTITY_TYPES.register(
+            "impaled_procession", () -> EntityType.Builder.<CircusCarouselEntity>of(CircusCarouselEntity::new, MobCategory.MISC)
                     .sized(1.0F, 7.0F).clientTrackingRange(12).updateInterval(2)
-                    .build(Hemomancy.rloc("circus_carousel").toString()));
+                    .build(Hemomancy.rloc("impaled_procession").toString()));
 	public static final DeferredHolder<EntityType<?>, EntityType<CircusRingmasterEntity>> circus_ringmaster = ENTITY_TYPES.register(
 			"circus_ringmaster", () -> EntityType.Builder.of(CircusRingmasterEntity::new, MobCategory.CREATURE)
 					.sized(0.7F, 1.8F).clientTrackingRange(12)
@@ -327,11 +325,11 @@ public class EntityInit {
                     .build(Hemomancy.rloc("seraphae").toString()));
 
     // Seraphae fragment (spawned during fracturing)
-    public static final DeferredHolder<EntityType<?>, EntityType<FrayedThreadEntity>> frayed_thread = ENTITY_TYPES.register(
-            "frayed_thread",
+    public static final DeferredHolder<EntityType<?>, EntityType<FrayedThreadEntity>> intruding_memory = ENTITY_TYPES.register(
+            "intruding_memory",
             () -> EntityType.Builder.of(FrayedThreadEntity::new, MobCategory.MISC)
                     .sized(0.4F, 0.4F).clientTrackingRange(10).updateInterval(1)
-                    .build(Hemomancy.rloc("frayed_thread").toString()));
+                    .build(Hemomancy.rloc("intruding_memory").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<ThreadBoltEntity>> thread_bolt = ENTITY_TYPES.register(
             "thread_bolt",
             () -> EntityType.Builder.<ThreadBoltEntity>of(ThreadBoltEntity::new, MobCategory.MISC)
@@ -416,7 +414,7 @@ public class EntityInit {
                     .fireImmune()
                     .build(Hemomancy.rloc("putriciel").toString()));
 
-    // Boss: Velorum (The Frozen Martyr)
+    // Boss: Velorum (Velorum)
     public static final DeferredHolder<EntityType<?>, EntityType<VelorumEntity>> velorum = ENTITY_TYPES.register(
             "velorum",
             () -> EntityType.Builder.of(VelorumEntity::new, MobCategory.MONSTER)
@@ -763,7 +761,7 @@ public class EntityInit {
                     .build(Hemomancy.rloc("facsimile_spider").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<FunglingEntity>> fungling = ENTITY_TYPES.register("fungling",
-            () -> EntityType.Builder.of(FunglingEntity::new, MobCategory.CREATURE).sized(1F, 1F)
+            () -> EntityType.Builder.of(FunglingEntity::new, MobCategory.MONSTER).sized(1F, 1F)
                     .build(Hemomancy.rloc("fungling").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ToothPecksEntity>> tooth_pecks = ENTITY_TYPES.register("tooth_pecks",
@@ -888,11 +886,6 @@ public class EntityInit {
                     .setTrackingRange(150).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).sized(0.5F, 0.5F)
                     .build(Hemomancy.rloc("directed_blood_orb").toString()));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<TrackingBloodOrbEntity>> tracking_blood_orb = ENTITY_TYPES.register(
-            "tracking_blood_orb",
-            () -> EntityType.Builder.<TrackingBloodOrbEntity>of(TrackingBloodOrbEntity::new, MobCategory.MISC)
-                    .setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).sized(0.5F, 0.5F)
-                    .build(Hemomancy.rloc("tracking_blood_orb").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<BloodCloudCarrierEntity>> blood_cloud_carrier = ENTITY_TYPES.register(
             "blood_cloud_carrier",
             () -> EntityType.Builder.<BloodCloudCarrierEntity>of(BloodCloudCarrierEntity::new, MobCategory.MISC)
@@ -910,11 +903,6 @@ public class EntityInit {
                     .setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).sized(0.5F, 0.5F)
                     .build(Hemomancy.rloc("blood_cloud").toString()));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<TrackingSerpentEntity>> tracking_snake = ENTITY_TYPES.register(
-            "tracking_snake",
-            () -> EntityType.Builder.<TrackingSerpentEntity>of(TrackingSerpentEntity::new, MobCategory.MISC)
-                    .setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true)
-                    .sized(0.25F, 0.25F).build(Hemomancy.rloc("tracking_snake").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<ConstrictorCordEntity>> constrictor_cord_projectile =
             ENTITY_TYPES.register("constrictor_cord_projectile",
                     () -> EntityType.Builder.<ConstrictorCordEntity>of(ConstrictorCordEntity::new, MobCategory.MISC)
@@ -922,27 +910,15 @@ public class EntityInit {
                             .clientTrackingRange(4)
                             .updateInterval(4)
                             .build(Hemomancy.rloc("constrictor_cord_projectile").toString()));
-    public static final DeferredHolder<EntityType<?>, EntityType<BloodChumEntity>> blood_chum_projectile =
-            ENTITY_TYPES.register("blood_chum_projectile",
-                    () -> EntityType.Builder.<BloodChumEntity>of(BloodChumEntity::new, MobCategory.MISC)
-                            .sized(0.25F, 0.25F)
-                            .clientTrackingRange(4)
-                            .updateInterval(4)
-                            .build(Hemomancy.rloc("blood_chum_projectile").toString()));
-    public static final DeferredHolder<EntityType<?>, EntityType<TrackingPestsEntity>> tracking_pests = ENTITY_TYPES.register(
-            "tracking_pests",
-            () -> EntityType.Builder.<TrackingPestsEntity>of(TrackingPestsEntity::new, MobCategory.MISC)
-                    .setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true)
-                    .sized(0.25F, 0.25F).build(Hemomancy.rloc("tracking_pests").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityIronPillar>> iron_pillar = ENTITY_TYPES.register("iron_pillar",
             () -> EntityType.Builder.<EntityIronPillar>of(EntityIronPillar::new, MobCategory.MISC).sized(0.75F, 2.8F)
                     .build(Hemomancy.rloc("iron_pillar").toString()));
 
-    // Ferric Rampart uses a thin oriented player shape; legacy saves retain their original entity id.
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityIronWall>> iron_wall = ENTITY_TYPES.register("iron_wall",
+    // Ferric Rampart uses a thin oriented player shape.
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityIronWall>> ferric_rampart = ENTITY_TYPES.register("ferric_rampart",
             () -> EntityType.Builder.<EntityIronWall>of(EntityIronWall::new, MobCategory.MISC).sized(1.6F, 2.8F)
-                    .build(Hemomancy.rloc("iron_wall").toString()));
+                    .build(Hemomancy.rloc("ferric_rampart").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityIronSpike>> iron_spike = ENTITY_TYPES.register("iron_spike",
             () -> EntityType.Builder.<EntityIronSpike>of(EntityIronSpike::new, MobCategory.MISC).sized(1.4F, 1.5F)
@@ -1007,16 +983,7 @@ public class EntityInit {
                     .clientTrackingRange(4).setUpdateInterval(20)
                     .build(Hemomancy.rloc("blood_shot").toString()));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityWretchedWill>> wretched_will = ENTITY_TYPES.register(
-            "wretched_will",
-            () -> EntityType.Builder.<EntityWretchedWill>of(EntityWretchedWill::new, MobCategory.MISC).sized(0.5F, 0.5F)
-                    .clientTrackingRange(4).setUpdateInterval(20)
-                    .build(Hemomancy.rloc("wretched_will").toString()));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<DarkArrowEntity>> dark_arrow = ENTITY_TYPES.register("dark_arrow",
-            () -> EntityType.Builder.<DarkArrowEntity>of(DarkArrowEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
-                    .clientTrackingRange(4).setUpdateInterval(20)
-                    .build(Hemomancy.rloc("dark_arrow").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SanguisLanceaEntity>> sanguis_lancea = ENTITY_TYPES.register(
             "sanguis_lancea", () -> EntityType.Builder.<SanguisLanceaEntity>of(SanguisLanceaEntity::new, MobCategory.MISC)
@@ -1102,6 +1069,9 @@ public class EntityInit {
                 RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.crimson_doe.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CrimsonDoeEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(EntityInit.leech.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.verdigris_moth.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VerdigrisMothEntity::canSpawnHere,
@@ -1211,9 +1181,8 @@ public class EntityInit {
         event.put(EntityInit.hematic_construct.get(), HematicConstructEntity.setAttributes().build());
         event.put(EntityInit.blood_cloud.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.iron_pillar.get(), BloodConstructEntity.setAttributes().build());
-        event.put(EntityInit.iron_wall.get(), BloodConstructEntity.setAttributes().build());
+        event.put(EntityInit.ferric_rampart.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.iron_spike.get(), BloodConstructEntity.setAttributes().build());
-        event.put(EntityInit.wretched_will.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.leech.get(), LeechEntity.setAttributes().build());
         event.put(EntityInit.bloodlicker.get(), BloodlickerEntity.setAttributes().build());
         event.put(EntityInit.bog_revenant.get(), BogRevenantEntity.setAttributes().build());
@@ -1296,7 +1265,7 @@ public class EntityInit {
         event.put(EntityInit.hemorath.get(), HemorathEntity.setAttributes().build());
         event.put(EntityInit.seraphae.get(), SeraphaeEntity.setAttributes().build());
         event.put(EntityInit.seraphae_fragment.get(), SeraphaeFragmentEntity.setAttributes().build());
-        event.put(EntityInit.frayed_thread.get(), FrayedThreadEntity.setAttributes().build());
+        event.put(EntityInit.intruding_memory.get(), FrayedThreadEntity.setAttributes().build());
         event.put(EntityInit.annetta_knowles.get(), AnnettaKnowlesEntity.setAttributes().build());
         event.put(EntityInit.stained_priestess.get(), StainedPriestessEntity.setAttributes().build());
         event.put(EntityInit.latent_annetta_infection.get(), LatentAnnettaInfectionEntity.setAttributes().build());

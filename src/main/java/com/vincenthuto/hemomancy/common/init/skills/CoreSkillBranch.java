@@ -83,7 +83,7 @@ public final class CoreSkillBranch {
 			SkillPointInit.skill_sanguine_reach = SkillPointInit.registerSkill(branch,
 					new SkillPoint(13, "skill_sanguine_reach", 400, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_crimson_mastery)
 							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(505, 312).setBranch("core").setBranchColor(0xFFD00000).addParents(SkillPointInit.deep_base_skill)
-							.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.enthralling_filament.get())));
 			SkillPointInit.skill_manip_slots = SkillPointInit.registerSkill(branch,
 					new SkillPoint(14, "skill_manip_slots", 200, 5, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
 							.setSkillPointCost(2).setRequiredDegree(1).setTreePosition(416, 456).setBranch("core").setBranchColor(0xFFD00000)

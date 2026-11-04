@@ -99,7 +99,6 @@ public final class WorldEffectDispatcher {
             HematicSutureLinkRenderer.render(event.getPoseStack(), partialTick);
             TendonLineRenderer.render(event.getPoseStack(), partialTick);
             MemoryThreadLineRenderer.render(event.getPoseStack(), partialTick);
-            HeartyCompassTendrilRenderer.render(event.getPoseStack(), partialTick);
             VeinSpiderCourierRenderer.render(event.getPoseStack(), partialTick);
             com.vincenthuto.hemomancy.client.render.entity.npc.SuccessionBrazierLabels.renderWorld(event.getPoseStack());
         }

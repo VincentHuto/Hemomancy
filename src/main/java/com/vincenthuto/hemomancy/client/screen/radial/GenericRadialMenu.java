@@ -168,13 +168,6 @@ public class GenericRadialMenu {
 		}
 	}
 
-	public void addInner(RadialMenuItem item) {
-		innerItems.add(item);
-		if (item.isVisible()) {
-			visibleInnerItems.add(item);
-		}
-	}
-
 	public void addAllInner(Collection<? extends RadialMenuItem> cachedMenuItems) {
 		innerItems.addAll(cachedMenuItems);
 		for (RadialMenuItem cachedMenuItem : cachedMenuItems) {
@@ -358,10 +351,6 @@ public class GenericRadialMenu {
 		});
 	}
 
-	private void iterateVisible(TriConsumer<RadialMenuItem, Float, Float> consumer) {
-		iterateBand(visibleItems, consumer);
-	}
-
 	private void iterateBand(List<RadialMenuItem> visible, TriConsumer<RadialMenuItem, Float, Float> consumer) {
 		int numItems = visible.size();
 		for (int i = 0; i < numItems; i++) {
@@ -520,46 +509,6 @@ public class GenericRadialMenu {
 			buffer.addVertex(pos2InX, pos2InY, z).setColor(r, g, b, a);
 			buffer.addVertex(pos2OutX, pos2OutY, z).setColor(r, g, b, a);
 		}
-	}
-
-	public void cyclePrevious() {
-		int numItems = getVisibleItemCount();
-		int which = getHovered();
-		which--;
-		if (which < 0)
-			which = numItems - 1;
-		setHovered(which);
-
-		moveMouseToItem(which, numItems);
-	}
-
-	public void cycleNext() {
-		int numItems = getVisibleItemCount();
-		int which = getHovered();
-		if (which < 0)
-			which = 0;
-		else {
-			which++;
-			if (which >= numItems)
-				which = 0;
-		}
-		moveMouseToItem(which, numItems);
-		setHovered(which);
-	}
-
-	private void moveMouseToItem(int which, int numItems) {
-		Screen owner = host.getScreen();
-		int x = owner.width / 2;
-		int y = owner.height / 2;
-		float angle = (float) getAngleFor(which, numItems);
-		setMousePosition(x + itemRadius * Math.cos(angle), y + itemRadius * Math.sin(angle));
-	}
-
-	private void setMousePosition(double x, double y) {
-		Screen owner = host.getScreen();
-		Window mainWindow = minecraft.getWindow();
-		GLFW.glfwSetCursorPos(mainWindow.getWindow(), (int) (x * mainWindow.getScreenWidth() / owner.width),
-				(int) (y * mainWindow.getScreenHeight() / owner.height));
 	}
 
 	private static final double TWO_PI = 2.0 * Math.PI;

@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.client.screen.item.*;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.*;
-import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarBinderScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScarStationScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.HarbingerEquipmentScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.MasonsEffigyScreen;
@@ -38,7 +37,6 @@ public final class MenuScreenRegistrar {
         event.register(ContainerInit.pallid_retort.get(), PallidRetortScreen::new);
         event.register(ContainerInit.stillwater_condenser.get(), StillwaterCondenserScreen::new);
         event.register(ContainerInit.scar_station.get(), ScarStationScreen::new);
-        event.register(ContainerInit.scar_binder.get(), ScarBinderScreen::new);
         event.register(ContainerInit.mnemonic_folio.get(), MnemonicFolioScreen::new);
         event.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
         event.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);

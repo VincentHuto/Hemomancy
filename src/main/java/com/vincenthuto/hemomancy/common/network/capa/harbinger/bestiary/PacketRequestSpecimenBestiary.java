@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.bestiary;
 
+import com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryEvents;
@@ -29,7 +30,7 @@ public class PacketRequestSpecimenBestiary implements CustomPacketPayload {
 	public static void handle(PacketRequestSpecimenBestiary msg, IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player packetPlayer = ctx.player();
-			if (!(packetPlayer instanceof ServerPlayer player)) {
+			if (!(packetPlayer instanceof ServerPlayer player) || !ServerboundRateLimiter.tryAcquire(player, "request_bestiary", 10)) {
 				return;
 			}
 			SpecimenBestiaryEvents.sync(player, HemoCapabilityAccess.getSpecimenBestiary(player));

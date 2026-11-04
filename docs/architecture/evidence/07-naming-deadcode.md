@@ -53,7 +53,7 @@ The largest third-level packages are:
 - **Managers (22)** are static per-level or per-player runtime state plus a tick. Examples: `ChummedWatersAreaManager`, `LanternTickLightManager`, `BloodInfusionManager`, `BloodStructureFeedManager`, `PendingBloodCraftManager`, `CastingAnimationManager`, `TemporaryIceManager`, `ConductionManager`, `AxonalTransductionManager`, `ManipulationChannelManager`, `HematicCommandManager`, `BlackVeilCovenantManager`, `EarthenVeinTravelManager`, `FoldedHallwayManager`, and the encounter managers `ChamberOfWillManager`, `CorticalArcManager`, `MycophantEncounterManager`, `VagrantMindEncounterManager` and `VesperOrdealManager`.
 - **Services (4)** do the same job as a Manager:
   - `ChamberVisitService`: visit safety/snapshots.
-  - `MuscleMemoryActivationService`
+  - `ThelemicMemoryActivationService`
   - `PaleIntercessionSummonService`
   - `CardinalRiteAllyService`
 
@@ -380,7 +380,7 @@ Every other value is read directly or through a getter (`enablePelagicWorldgen`,
 1. **Datagen.** AGENTS.md and HEMOMANCY_REFERENCE §300/§350 say `runData` generates only blockstates, models and lang, and that the "server recipe/tag/loot providers remain commented in `DataGeneration.java`". In the code, `DataGeneration` also registers the server-side `CircusPavilionStructureProvider`. The recipe, tag and loot providers are not commented out; nothing references them at all.
 2. **Common config.** REFERENCE §3 says "`HemoCommonConfig` is currently an empty reserved common spec". In the code it defines 7 worldgen options (Pelagic, Phlegethontic Nether, Fungal Gardens, Cortical Drift, with their weights).
 3. **GeckoLib.** REFERENCE §300 says it uses "local jars for TerraBlender, GeckoLib, and JEI". GeckoLib now comes from Maven (`software.bernie.geckolib:geckolib-neoforge`), and the local-jar line is commented out.
-4. **Capability access.** AGENTS says to "read/write through `HemoCapabilityAccess` only". 23 non-registrar files call `getData(HemoAttachmentTypes…)` directly, for example `MuscleMemoryLayer`, `MuscleMemoryHandRenderer`, `VascularStatusScreen`, `MnemonicReliquaryScreen` and `MuscleMemory*Events`.
+4. **Capability access.** AGENTS says to "read/write through `HemoCapabilityAccess` only". 23 non-registrar files call `getData(HemoAttachmentTypes…)` directly, for example `ThelemicMemoryLayer`, `ThelemicMemoryHandRenderer`, `VascularStatusScreen`, `MnemonicReliquaryScreen` and `ThelemicMemory*Events`.
 5. **ResourceLocation style.** `docs/agents/hemomancy-mod-agent.md` says to "Use … `Hemomancy.rloc("path")`". 85 call sites in 60 files use `fromNamespaceAndPath("hemomancy"/MOD_ID, …)` or `parse("hemomancy:…")`.
 
 Also: `build.gradle`'s compat comment ("MnA has no NeoForge 1.21.1 build yet; Curios … pending") contradicts its own MnA jar and Curios Maven dependencies. AGENTS describes `mixin/` as backing `hemomancy.mixins.json`, but a second, unregistered `hemomancy.mna.mixins.json` also exists.

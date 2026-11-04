@@ -36,7 +36,6 @@ public final class MnemonicWhaleTuning {
 	public static final int MODEL_BODY_SEGMENTS = 3;
 	public static final int MODEL_HEAD_WIDTH_UNITS = 20;
 	public static final int MODEL_MID_BODY_WIDTH_UNITS = 16;
-	public static final int MODEL_REAR_BODY_WIDTH_UNITS = 14;
 	public static final int MODEL_TOTAL_LENGTH_UNITS = 84;
 
 	private MnemonicWhaleTuning() {

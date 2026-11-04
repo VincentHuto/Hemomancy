@@ -19,8 +19,7 @@ public final class BrokenChurchBiomePlacementResourceTest {
 				"\"biomes\": \"#hemomancy:has_structure/broken_church\"");
 		assertContains("broken church should spawn in fungal gardens", tag,
 				"\"hemomancy:fungal_gardens\"");
-		assertDoesNotContain("broken church should not spawn in vanilla overworld biomes", tag,
-				"\"minecraft:");
+		assertContains("broken church also spawns outside the optional Gardens region", tag, "\"minecraft:swamp\"");
 		assertDoesNotContain("broken church should not spawn in other fungal dimension biomes", tag,
 				"\"hemomancy:fungal_isles\"");
 		assertDoesNotContain("broken church should not spawn in sporecrown thicket", tag,

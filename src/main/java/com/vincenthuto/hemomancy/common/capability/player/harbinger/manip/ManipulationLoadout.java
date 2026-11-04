@@ -118,8 +118,7 @@ public record ManipulationLoadout(String name, String selectedManipName, List<St
 				}
 				String cleaned = name.trim();
 				if (!cleaned.isEmpty()
-						&& !ManipulationEquipHelper.isFixedMechanicalManip(cleaned)
-						&& !ManipulationRetirementRules.isRetiredManipulation(cleaned)) {
+						&& !ManipulationEquipHelper.isFixedMechanicalManip(cleaned)) {
 					unique.add(cleaned);
 				}
 			}

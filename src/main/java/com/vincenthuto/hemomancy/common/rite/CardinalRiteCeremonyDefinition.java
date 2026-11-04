@@ -59,12 +59,6 @@ public record CardinalRiteCeremonyDefinition(
 		return waveCount >= 0;
 	}
 
-	public int anchorBloodCostMl() {
-		int total = 0;
-		for (int rank : CardinalRiteRingRules.ranksOf(anchors)) total += CardinalRiteRingRules.bloodForRank(rank);
-		return total;
-	}
-
 	public boolean abbreviated() {
 		return profile == CardinalRiteCeremonyProfile.SIMPLE;
 	}

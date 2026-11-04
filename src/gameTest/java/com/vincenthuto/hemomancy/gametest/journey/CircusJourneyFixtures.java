@@ -34,12 +34,13 @@ final class CircusJourneyFixtures {
 	}
 
 	static void prepare(ServerPlayer player, BlockPos origin) {
+		com.vincenthuto.hemomancy.gametest.FixtureChunks.hold(HemoJourneyFixtures.fixtureLevel(player), new net.minecraft.world.phys.AABB(origin).inflate(20.0D));
 		ServerLevel level = HemoJourneyFixtures.fixtureLevel(player);
 		if (!canPrepare(level, origin)) throw new IllegalStateException("The selected Circus fixture volume is occupied");
 		player.getPersistentData().put(HemoJourneyFixtures.OWNED_BLOCKS_KEY, new ListTag());
 		for (int x = -8; x <= 8; x++) for (int z = -8; z <= 8; z++)
 			HemoJourneyFixtures.set(player, origin.offset(x, 0, z), Blocks.SMOOTH_STONE);
-		spawn(level, EntityInit.circus_carousel.get(), origin.above(), origin);
+		spawn(level, EntityInit.impaled_procession.get(), origin.above(), origin);
 		spawn(level, EntityInit.circus_ringmaster.get(), origin.offset(0, 8, 5), origin);
 		for (var placement : List.of(
 				new Placement(EntityInit.circus_fire_eater.get(), -4, -4),
@@ -86,7 +87,8 @@ final class CircusJourneyFixtures {
 	}
 
 	private static <T extends Entity> T one(ServerPlayer player, BlockPos origin, Class<T> type) {
-		List<T> entities = HemoJourneyFixtures.fixtureLevel(player).getEntitiesOfClass(type, HemoJourneyFixtures.bounds(origin));
+		List<T> entities = HemoJourneyFixtures.fixtureLevel(player).getEntitiesOfClass(type, HemoJourneyFixtures.bounds(origin),
+				entity -> entity.getTags().contains(HemoJourneyFixtures.entityMarker(origin)));
 		if (entities.size() != 1) throw new IllegalStateException("Expected one " + type.getSimpleName() + ", found " + entities.size());
 		return entities.getFirst();
 	}

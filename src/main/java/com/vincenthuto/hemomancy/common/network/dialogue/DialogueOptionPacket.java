@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.OfferedDialogues;
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
@@ -45,27 +47,45 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 
 	public static void handle(final DialogueOptionPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Player player = ctx.player();
-			if (player instanceof ServerPlayer sender && msg.eventId != null && !msg.eventId.isEmpty()) {
-				var speaking = sender.level().getEntity(msg.entityId);
-                if (speaking instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity npc
-                        && (npc.isMisbegotten() || npc.isSuccessor()
-                        && !com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionResidents.mayServe(sender, npc))) return;
-                if (MemoHelper.isMemoEvent(msg.eventId)) {
-					MemoHelper.handleMemoEvent(sender, msg.eventId);
-					return;
-				}
-				if (LiberKnowledgeHelper.handleDialogueEvent(sender, msg.eventId)) {
-					return;
-				}
-				dispatch(sender, msg.eventId, msg.entityId);
-			}
+			if (ctx.player() instanceof ServerPlayer sender) accept(sender, msg.eventId, msg.entityId);
 		});
+	}
+
+	/** The server's whole response to a chosen option; the payload handler and tests call this. */
+	public static void accept(ServerPlayer sender, String eventId, int entityId) {
+		if (eventId == null || eventId.isEmpty()) return;
+		var speaking = sender.level().getEntity(entityId);
+		if (speaking instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.ProfessionalHarbingerEntity npc
+				&& (npc.isMisbegotten() || npc.isSuccessor()
+				&& !com.vincenthuto.hemomancy.common.entity.npc.harbinger.succession.SuccessionResidents.mayServe(sender, npc))) return;
+		if (MemoHelper.isMemoEvent(eventId)) {
+			// A memo is noted only from the whisper that is open or the speaker in reach who offers it (RT-18).
+			if (ServerboundGuards.activePlayer(sender) && offeredNow(sender, eventId, entityId)) {
+				MemoHelper.handleMemoEvent(sender, eventId);
+			}
+			return;
+		}
+		if (LiberKnowledgeHelper.handleDialogueEvent(sender, eventId)) {
+			return;
+		}
+		dispatch(sender, eventId, entityId);
+	}
+
+	/** The tree last sent to the player, or the whisper they have open, lists {@code eventId}; a speaker is in reach. */
+	private static boolean offeredNow(ServerPlayer sender, String eventId, int entityId) {
+		if (entityId != 0 && ServerboundGuards.nearEntity(sender, entityId, 8.0D) == null) return false;
+		return OfferedDialogues.offers(sender, entityId, eventId)
+				|| entityId == 0 && PendingWhispers.openWhisperOffers(sender, eventId);
 	}
 
 	public static DialogueEvent dispatch(ServerPlayer sender, String eventId, int entityId) {
 		// A dead or spectating player cannot take a lesson or a reward; the screen they chose it from is stale.
 		if (!ServerboundGuards.activePlayer(sender)) return null;
+		// An event with no speaker is taken only when the server offered it: the tree it last sent, or an open whisper
+		// (RT-20). Everything else names a speaker, and that speaker must be in reach below.
+		if (entityId == 0 && !OfferedDialogues.offers(sender, 0, eventId) && !PendingWhispers.openWhisperOffers(sender, eventId)) {
+			return null;
+		}
 		var entity = sender.level().getEntity(entityId);
 		if (HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT.equals(eventId)) return null;
 		if (SanguineMonolithDialogueTrees.EVENT_CORNERSTONE.equals(eventId)

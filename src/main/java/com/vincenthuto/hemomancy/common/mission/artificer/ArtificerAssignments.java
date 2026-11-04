@@ -488,20 +488,6 @@ public final class ArtificerAssignments {
 		return root.getCompound(Player.PERSISTED_NBT_TAG);
 	}
 
-	/**
-	 * The artificer_claim_keys migration: these keys were once kept at the persistent-data root, which a death clone drops.
-	 * Each old root key is moved under PlayerPersisted (a value already there wins) and removed from the root.
-	 */
-	public static void migrateLegacyRootKeys(ServerPlayer player) {
-		CompoundTag root = player.getPersistentData();
-		for (String key : DURABLE_KEYS) {
-			Tag legacy = root.get(key);
-			if (legacy == null) continue;
-			CompoundTag durable = writableDurable(player);
-			if (!durable.contains(key)) durable.put(key, legacy.copy());
-			root.remove(key);
-		}
-	}
 
 	public static boolean has(ServerPlayer player, ResourceLocation advancement) {
 		return HarbingerAdvancementGranter.hasAdvancement(player, advancement);

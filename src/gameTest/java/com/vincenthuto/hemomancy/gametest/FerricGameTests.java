@@ -42,7 +42,7 @@ public final class FerricGameTests {
     }
     @GameTest(templateNamespace="hemomancy",template="ductilis_arena",batch="ferric")
     public static void rampartBlocksBodiesAndFastProjectilesOnlyAcrossItsThinFace(GameTestHelper h) {
-        var owner=player(h);var wall=EntityInit.iron_wall.get().create(h.getLevel());
+        var owner=player(h);var wall=EntityInit.ferric_rampart.get().create(h.getLevel());
         wall.setPos(h.absoluteVec(new Vec3(10,2,8)));wall.configure(owner,Kind.WALL,Direction.NORTH,120);h.getLevel().addFreshEntity(wall);
         var mob=EntityType.HUSK.create(h.getLevel());mob.setNoAi(true);mob.setPos(wall.position().add(0,0,-2));h.getLevel().addFreshEntity(mob);
         mob.move(MoverType.SELF,new Vec3(0,0,4));
@@ -110,12 +110,12 @@ public final class FerricGameTests {
 
     @GameTest(templateNamespace="hemomancy",template="ductilis_arena",batch="ferric",timeoutTicks=40)
     public static void savedConstructRetainsOwnerOrientationAndAbsoluteExpiry(GameTestHelper h) {
-        var owner=player(h);var wall=EntityInit.iron_wall.get().create(h.getLevel());
+        var owner=player(h);var wall=EntityInit.ferric_rampart.get().create(h.getLevel());
         wall.setPos(h.absoluteVec(new Vec3(10,2,8)));wall.configure(owner,Kind.WALL,Direction.EAST,12);wall.energize(h.getLevel().getGameTime()+50);
         var tag=new CompoundTag();wall.addAdditionalSaveData(tag);long until=wall.expiresAt();
         wall.discard();
         h.runAfterDelay(15,()-> {
-            var restored=EntityInit.iron_wall.get().create(h.getLevel());restored.setPos(h.absoluteVec(new Vec3(10,2,8)));restored.readAdditionalSaveData(tag);
+            var restored=EntityInit.ferric_rampart.get().create(h.getLevel());restored.setPos(h.absoluteVec(new Vec3(10,2,8)));restored.readAdditionalSaveData(tag);
             h.assertTrue(restored.isPlayerConstruct()&&restored.constructFacing()==Direction.EAST&&restored.getCreator()==owner,"Saved construct lost its mode, facing or owner");
             h.assertTrue(restored.expiresAt()==until&&restored.energizedUntil()<=until,"Reload extended a construct or its electricity");
             restored.tick();h.assertTrue(restored.isRemoved(),"Reload resurrected expired wall");owner.discard();h.succeed();

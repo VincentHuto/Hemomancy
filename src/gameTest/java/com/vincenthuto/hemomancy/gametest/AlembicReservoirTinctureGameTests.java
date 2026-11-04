@@ -101,7 +101,8 @@ public final class AlembicReservoirTinctureGameTests {
                     "hemomancy:" + enzymes[i] + "_enzyme"))));
             tick(helper, machine, jug ? 300 : 200);
             helper.assertTrue(machine.getItem(2).is(BuiltInRegistries.ITEM.get(ResourceLocation.parse(
-                    "hemomancy:tincture_" + memories[i] + (jug ? "_jug" : ""))))
+                    "hemomancy:tincture_" + memories[i])))
+                    && com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(machine.getItem(2)) == jug
                     && machine.getBloodVolume() == (jug ? 0 : 2500)
                     && machine.getItem(0).isEmpty() && machine.getItem(1).isEmpty() && machine.getItem(3).isEmpty(),
                     "Tincture " + memories[i] + " must charge its reservoir cost and consume empty packaging");
@@ -180,7 +181,8 @@ public final class AlembicReservoirTinctureGameTests {
         helper.assertTrue(machine.getItem(2).isEmpty() && machine.getBloodVolume() == 5000,
                 "Jug tincture must wait for its complete processing time");
         tick(helper, machine, 1);
-        helper.assertTrue(machine.getItem(2).is(ItemInit.tincture_sanguine_fists_jug.get())
+        helper.assertTrue(machine.getItem(2).is(ItemInit.tincture_sanguine_fists.get())
+                && com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(machine.getItem(2))
                 && machine.getItem(1).isEmpty() && machine.getBloodVolume() == 0,
                 "Full tank must permit a paid jug tincture without generating blood byproduct");
         helper.succeed();

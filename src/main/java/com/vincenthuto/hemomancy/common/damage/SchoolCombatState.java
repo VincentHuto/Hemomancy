@@ -82,7 +82,18 @@ public final class SchoolCombatState implements INBTSerializable<CompoundTag> {
         dirty = true;
     }
 
+    /** No states, no ledgers: nothing worth saving or sending. */
+    public boolean isEmpty() { return entries.isEmpty() && applications.isEmpty() && payoffs.isEmpty(); }
+
+    /** The tag a sync packet carries; an empty state sends an empty compound rather than nothing. */
+    public CompoundTag syncTag(HolderLookup.Provider registries) {
+        CompoundTag tag = serializeNBT(registries);
+        return tag == null ? new CompoundTag() : tag;
+    }
+
+    /** Null when empty, so a mob that never entered school combat writes no attachment (RT-3). */
     @Override public CompoundTag serializeNBT(HolderLookup.Provider registries) {
+        if (isEmpty()) return null;
         CompoundTag tag = new CompoundTag();
         tag.putLong("observedAt", observedAt);
         for (var state : entries.entrySet()) {
@@ -130,7 +141,8 @@ public final class SchoolCombatState implements INBTSerializable<CompoundTag> {
         }
         loadLedger(tag.getList("applications", Tag.TAG_COMPOUND), applications);
         loadLedger(tag.getList("payoffs", Tag.TAG_COMPOUND), payoffs);
-        dirty = true;
+        // Only a state with something in it needs the first tick to resend it (RT-3).
+        dirty = !entries.isEmpty();
     }
 
     private static void loadLedger(ListTag list, Map<UUID, Long> ledger) {

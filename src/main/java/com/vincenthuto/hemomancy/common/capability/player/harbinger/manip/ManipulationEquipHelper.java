@@ -18,9 +18,6 @@ public final class ManipulationEquipHelper {
 			return false;
 		}
 		boolean changed = normalizeEquippedNames(equippedNames);
-		if (ManipulationRetirementRules.isRetiredManipulation(manipName)) {
-			return changed;
-		}
 		if (isFixedMechanicalManip(manipName)) {
 			return changed;
 		}
@@ -52,8 +49,7 @@ public final class ManipulationEquipHelper {
 		List<String> original = new ArrayList<>(equippedNames);
 		LinkedHashSet<String> normalNames = new LinkedHashSet<>();
 		for (String name : equippedNames) {
-			if (name != null && !name.isEmpty() && !isMemorizationCapExempt(name)
-					&& !ManipulationRetirementRules.isRetiredManipulation(name)) {
+			if (name != null && !name.isEmpty() && !isMemorizationCapExempt(name)) {
 				normalNames.add(name);
 			}
 		}
@@ -71,8 +67,7 @@ public final class ManipulationEquipHelper {
 		}
 		int count = 0;
 		for (String name : equippedNames) {
-			if (name != null && !name.isEmpty() && !isMemorizationCapExempt(name)
-					&& !ManipulationRetirementRules.isRetiredManipulation(name)) {
+			if (name != null && !name.isEmpty() && !isMemorizationCapExempt(name)) {
 				count++;
 			}
 		}

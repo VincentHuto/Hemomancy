@@ -48,7 +48,7 @@ public final class OwnerSnapshotGameTests {
         };
         try {
             var degree = (InitiatoryDegree) HemoCapabilityAccess.getInitiatoryDegree(player);
-            degree.recordPomeConsumed(UUID.randomUUID(), 0L);
+            degree.recordPomeConsumed(UUID.randomUUID());
             degree.incrementTotalPomesConsumed();
             var saved = degree.serializeNBT(player.registryAccess());
             degree.resetPomeCommunion();

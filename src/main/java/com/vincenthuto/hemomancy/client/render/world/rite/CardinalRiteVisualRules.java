@@ -13,8 +13,6 @@ public final class CardinalRiteVisualRules {
 	// ── Daemon ──
 	/** Canonical daemon height at sprite scale 1, matching the entity's four-block form. */
 	public static final double DAEMON_HEIGHT = 4.0D;
-	/** Half-width unit of the canonical form: the shoulders reach this far either side. */
-	public static final double DAEMON_HALF_WIDTH = 0.44D;
 	/** Absorbed offerings shown inside the daemon; later ones replace the oldest. */
 	public static final int MAX_NODULES = 12;
 	/** Ticks an absorbed offering's item takes to sink into its nodule. */
@@ -108,17 +106,8 @@ public final class CardinalRiteVisualRules {
 		return 0.34 + 0.34 * hash(index * 7 + 3);
 	}
 
-	public static double noduleAngle(int index) {
-		return index * 2.399963 + 0.7;
-	}
-
 	public static double noduleRadius(int index) {
 		return contour(noduleHeight(index)) * (0.32 + 0.22 * hash(index * 13 + 5));
-	}
-
-	/** How far an absorbed item has sunk toward its nodule, 0 at the skin to 1 dissolved. */
-	public static double noduleSink(float ageSinceArrival) {
-		return HemoEasing.smoothstep((double) (ageSinceArrival / NODULE_SINK_TICKS));
 	}
 
 	// ── Offering draw ──

@@ -30,7 +30,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -118,9 +117,6 @@ public class SeraphaeEntity extends SaintTrialEntity {
 	private static final float ESCALATION_THRESHOLD = 25.0F;
 
 	// ── animation states ──────────────────────────────────────────────
-	public final AnimationState idleAnimationState = new AnimationState();
-	public final AnimationState fracturingAnimationState = new AnimationState();
-	public final AnimationState condensingAnimationState = new AnimationState();
 
 	// ── server-side fields (not synched beyond DATA_*) ────────────────
 	private int stateTimer = STABLE_DURATION;
@@ -587,18 +583,7 @@ public class SeraphaeEntity extends SaintTrialEntity {
 	public void tick() {
 		super.tick();
 		if (this.level().isClientSide) {
-			this.idleAnimationState.startIfStopped(this.tickCount);
 			SeraphaeState state = getSeraphaeState();
-			if (state == SeraphaeState.FRACTURING) {
-				this.fracturingAnimationState.startIfStopped(this.tickCount);
-			} else {
-				this.fracturingAnimationState.stop();
-			}
-			if (state == SeraphaeState.CONDENSING) {
-				this.condensingAnimationState.startIfStopped(this.tickCount);
-			} else {
-				this.condensingAnimationState.stop();
-			}
 		}
 	}
 

@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.Initi
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphling;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.VisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystem;
@@ -24,8 +23,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IH
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.IEquippedMorphling;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryState;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarItem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
@@ -63,8 +61,8 @@ public static com.vincenthuto.hemomancy.common.capability.player.harbinger.stati
     return player.getData(HemoAttachmentTypes.STATION_UPGRADES);
 }
 
-public static MuscleMemoryState muscleMemory(Player player) {
-    return player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+public static ThelemicMemoryState thelemicMemory(Player player) {
+    return player.getData(HemoAttachmentTypes.THELEMIC_MEMORY);
 }
 
 public static com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataVersion dataVersion(Player player) {
@@ -105,8 +103,12 @@ public static com.vincenthuto.hemomancy.common.capability.player.shared.trade.Np
     return player.getData(HemoAttachmentTypes.NPC_TRADE_LEDGER);
 }
 
-
 private HemoCapabilityAccess() {}
+
+/** Whether the entity has ever carried school-combat state; a read through {@link #getSchoolCombat} would create it. */
+public static boolean hasSchoolCombat(Entity entity) {
+    return entity.hasData(HemoAttachmentTypes.SCHOOL_COMBAT);
+}
 
 public static com.vincenthuto.hemomancy.common.damage.SchoolCombatState getSchoolCombat(Entity entity) {
     return entity.getData(HemoAttachmentTypes.SCHOOL_COMBAT);
@@ -147,6 +149,11 @@ public static Possession getPossession(Player player) {
 }
 
 /** Whether the player has ever held a possession attachment (reading it would create one). */
+/** Whether the blood volume attachment exists yet; reading it would create it. */
+public static boolean hasBloodVolume(Player player) {
+	return player.hasData(HemoAttachmentTypes.BLOOD_VOLUME);
+}
+
 public static boolean hasPossession(Player player) {
     return player.hasData(HemoAttachmentTypes.POSSESSION);
 }
@@ -320,13 +327,7 @@ public static Optional<IWhiteHumorVolume> getWhiteHumorVolume(Entity entity) {
 
 // ── Visceral Organs ───────────────────────────────────────────────────────
 
-public static VisceralOrgans getVisceralOrgans(Player player) {
-    return player.getData(HemoAttachmentTypes.VISCERAL_ORGANS);
-}
 
-public static Optional<IVisceralOrgans> getVisceralOrgans(Entity entity) {
-    return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.VISCERAL_ORGANS));
-}
 
 // ── Scars ─────────────────────────────────────────────────────────────────
 
@@ -344,10 +345,6 @@ public static ScarsContainer getScarState(Player player) {
     ScarsContainer scars = player.getData(HemoAttachmentTypes.SCARS);
     scars.bindHolder(player);
     return scars;
-}
-
-public static Optional<IScarItem> getScarItem(ItemStack stack) {
-    return Optional.ofNullable(stack.getCapability(HemoCapabilityKeys.ITEM_SCAR));
 }
 
 public static LastDeathMemory getLastDeathMemory(Player player) {

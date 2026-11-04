@@ -15,16 +15,8 @@ public final class SchoolStateRules {
         return now - lastBuild < 10 ? current : Math.clamp(current + added, 0, 3);
     }
 
-    public static double rimeSlow(int levels) {
-        return 0.15 * Math.clamp(levels, 0, 3);
-    }
-
     public static float necrosisDebt(float stored, float healthDamage, boolean direct) {
         return Math.clamp(stored + (direct ? Math.max(0, healthDamage) * 0.25f : 0), 0, 6);
-    }
-
-    public static float healingMultiplier(boolean necrosis, boolean hunger) {
-        return hunger ? 0.25f : necrosis ? 0.75f : 1;
     }
 
     public static float combustionDamage(long remainingTicks) {

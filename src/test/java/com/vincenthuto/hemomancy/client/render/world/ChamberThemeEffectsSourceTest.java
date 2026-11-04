@@ -24,7 +24,6 @@ public final class ChamberThemeEffectsSourceTest {
 		String renderContext = Files.readString(RENDER_CONTEXT).replace("\r\n", "\n");
 		String helpers = Files.readString(HELPERS).replace("\r\n", "\n");
 		String registry = Files.readString(REGISTRY).replace("\r\n", "\n");
-		String blankEffects = Files.readString(PACKAGE.resolve("BlankChamberThemeEffects.java")).replace("\r\n", "\n");
 		String qliphothEffects = Files.readString(QLIPHOTH_EFFECTS).replace("\r\n", "\n");
 		String silentArchonEffects = Files.readString(SILENT_ARCHON_EFFECTS).replace("\r\n", "\n");
 		String lowtideEffects = Files.readString(LOWTIDE_EFFECTS).replace("\r\n", "\n");
@@ -33,7 +32,6 @@ public final class ChamberThemeEffectsSourceTest {
 		assertFileExists("theme effects interface exists", "ChamberThemeEffects.java");
 		assertFileExists("render context exists", "ChamberThemeRenderContext.java");
 		assertFileExists("abstract shared effects base exists", "AbstractChamberThemeEffects.java");
-		assertFileExists("blank theme effects exists", "BlankChamberThemeEffects.java");
 		assertFileExists("default theme effects exists", "WillDefaultChamberEffects.java");
 		assertFileExists("archon revelation theme effects exists", "ArchonRevelationChamberEffects.java");
 		assertFileExists("qliphoth communion theme effects exists", "QliphothCommunionChamberEffects.java");
@@ -94,8 +92,6 @@ public final class ChamberThemeEffectsSourceTest {
 				".skybox(0xFF000000, 0xFF000000)");
 		assertContains("apotheos keeps only the blank base pass enabled", registry,
 				".toggles(true, false, false, false)");
-		assertContains("blank effects render a solid box instead of textured skybox", blankEffects,
-				"ChamberOfWillRenderHelpers.renderSolidBox(");
 		assertContains("helpers provide untextured solid skybox rendering", helpers,
 				"static void renderSolidBox(");
 

@@ -71,7 +71,7 @@ public final class HumanitySpriteEntity extends Entity {
 	}
 
 	public static HumanitySpriteEntity spawn(ServerLevel level, Vec3 position, float scale) {
-		HumanitySpriteEntity entity = EntityInit.humanity_sprite.get().create(level);
+		HumanitySpriteEntity entity = EntityInit.daemon.get().create(level);
 		if (entity == null) return null;
 		entity.initialize(position, scale);
 		level.addFreshEntity(entity);

@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.client.screen.item.LedgerScreen;
 import com.vincenthuto.hemomancy.client.screen.item.VascularStatusScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SSCScreen;
-import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.menu.ScryingDiagnosticsMenuProvider;
@@ -17,7 +16,6 @@ import com.vincenthuto.hemomancy.common.menu.TendencyViewMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.FungalImplantMenuProvider;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.GuiGraphics;
@@ -88,13 +86,6 @@ public final class ScreenChromeReview {
             Scene.client("vascular_status", VascularStatusScreen.class, VascularStatusScreen::new),
             Scene.client("unstained_progress", UnstainedProgressScreen.class, UnstainedProgressScreen::new),
             Scene.client("ssc", SSCScreen.class, () -> new SSCScreen(BlockPos.ZERO, 640, 1000, List.of())),
-            new Scene("visceral_mirror", VisceralMirrorScreen.class, () -> {
-                int organs = EnumOrgan.values().length;
-                int[] levels = new int[organs];
-                boolean[] echo = new boolean[organs];
-                for (int i = 0; i < organs; i++) { levels[i] = i % 4; echo[i] = i % 3 == 0; }
-                VisceralMirrorScreen.open(BlockPos.ZERO, levels, echo, 3200, 5000, 3);
-            }, null, null),
             Scene.client("harbinger_progress", com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen.class,
                     com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen::new),
             Scene.client("heart_node", com.vincenthuto.hemomancy.client.screen.tile.functional.HeartNodeScreen.class,

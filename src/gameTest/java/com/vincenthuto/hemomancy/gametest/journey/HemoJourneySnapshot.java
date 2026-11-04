@@ -12,8 +12,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummons;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryState;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
@@ -99,7 +99,7 @@ public final class HemoJourneySnapshot {
 	private static final String SCAR_STATE = "scar_state";
 	private static final String UNSTAINED_PROGRESS = "unstained_progress";
 	private static final String KNOWN_STILL_ARTS = "known_still_arts";
-	private static final String MUSCLE_MEMORY = "muscle_memory";
+	private static final String THELEMIC_MEMORY = "thelemic_memory";
 	private static final String LIVING_STAFF_PROGRESS = "living_staff_progress";
 	private static final String VASCULAR_SYSTEM = "vascular_system";
 	private static final String RECIPE_BOOK = "recipe_book";
@@ -312,7 +312,7 @@ public final class HemoJourneySnapshot {
 			return HemoJourneyResult.fail(currentStage(data), "Known Still Arts snapshot failed: unsupported implementation.");
 		}
 		snapshot.put(KNOWN_STILL_ARTS, knownStillArts.serializeNBT(player.registryAccess()));
-		snapshot.put(MUSCLE_MEMORY, HemoCapabilityAccess.muscleMemory(player)
+		snapshot.put(THELEMIC_MEMORY, HemoCapabilityAccess.thelemicMemory(player)
 				.serializeNBT(player.registryAccess()));
 		snapshot.put(LIVING_STAFF_PROGRESS, HemoCapabilityAccess.getLivingStaffProgress(player)
 				.serializeNBT(player.registryAccess()));
@@ -384,7 +384,7 @@ public final class HemoJourneySnapshot {
 		var emptyScars = new ScarsContainer();
 		var emptyUnstained = new UnstainedProgress();
 		var emptyStillArts = new KnownStillArts();
-		var emptyMuscleMemory = new MuscleMemoryState();
+		var emptyThelemicMemory = new ThelemicMemoryState();
 		var emptyLivingStaffProgress = new LivingStaffProgress();
 		var emptyVascularSystem = new VascularSystem();
 		var emptyDegree = new InitiatoryDegree();
@@ -400,7 +400,7 @@ public final class HemoJourneySnapshot {
 				emptySummons.serializeNBT(player.registryAccess()),
 				emptyScars.serializeNBT(player.registryAccess()), emptyUnstained.serializeNBT(player.registryAccess()),
 				emptyStillArts.serializeNBT(player.registryAccess()),
-				emptyMuscleMemory.serializeNBT(player.registryAccess()),
+				emptyThelemicMemory.serializeNBT(player.registryAccess()),
 				emptyLivingStaffProgress.serializeNBT(player.registryAccess()),
 				emptyVascularSystem.serializeNBT(player.registryAccess()), emptyRecipeBook.toNbt(),
 				emptyBestiary.serializeNBT(player.registryAccess()), emptyBrewing.serializeNBT(player.registryAccess()), new CompoundTag(),
@@ -464,7 +464,7 @@ public final class HemoJourneySnapshot {
 				|| !snapshot.contains(SCAR_STATE, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(UNSTAINED_PROGRESS, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(KNOWN_STILL_ARTS, Tag.TAG_COMPOUND)
-				|| !snapshot.contains(MUSCLE_MEMORY, Tag.TAG_COMPOUND)
+				|| !snapshot.contains(THELEMIC_MEMORY, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(LIVING_STAFF_PROGRESS, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(VASCULAR_SYSTEM, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(RECIPE_BOOK, Tag.TAG_COMPOUND)
@@ -494,8 +494,8 @@ public final class HemoJourneySnapshot {
 		if (!validateUnstainedProgressSchema(player, unstainedTag)) return PreflightResult.fail("Unstained progress restore failed: malformed schema.");
 		CompoundTag stillArtsTag = snapshot.getCompound(KNOWN_STILL_ARTS);
 		if (!validateKnownStillArtsSchema(player, stillArtsTag)) return PreflightResult.fail("Known Still Arts restore failed: malformed schema.");
-		CompoundTag muscleMemoryTag = snapshot.getCompound(MUSCLE_MEMORY);
-		if (!validateMuscleMemorySchema(player, muscleMemoryTag)) return PreflightResult.fail("Muscle Memory restore failed: malformed schema.");
+		CompoundTag thelemicMemoryTag = snapshot.getCompound(THELEMIC_MEMORY);
+		if (!validateThelemicMemorySchema(player, thelemicMemoryTag)) return PreflightResult.fail("Muscle Memory restore failed: malformed schema.");
 		CompoundTag livingStaffTag = snapshot.getCompound(LIVING_STAFF_PROGRESS);
 		if (!validateLivingStaffProgressSchema(player, livingStaffTag)) return PreflightResult.fail("Living Staff progress restore failed: malformed schema.");
 		CompoundTag vascularTag = snapshot.getCompound(VASCULAR_SYSTEM);
@@ -541,7 +541,7 @@ public final class HemoJourneySnapshot {
 		return PreflightResult.ok(new ParsedState(snapshot.getBoolean(BLOOD_ACTIVE), current, max, degree,
 				snapshot.getCompound(DEGREE_STATE).copy(), snapshot.getCompound(BLOOD_TENDENCY).copy(),
 				inventory, advancements, skillTag.copy(), knowledgeTag.copy(), manipulationTag.copy(), summonsTag.copy(), scarTag.copy(),
-				unstainedTag.copy(), stillArtsTag.copy(), muscleMemoryTag.copy(), livingStaffTag.copy(), vascularTag.copy(), recipeBookTag.copy(), bestiaryTag.copy(),
+				unstainedTag.copy(), stillArtsTag.copy(), thelemicMemoryTag.copy(), livingStaffTag.copy(), vascularTag.copy(), recipeBookTag.copy(), bestiaryTag.copy(),
 				brewingTag.copy(), persistentDataTag.copy(), vasc, target,
 				stageById(snapshot.getString(CURRENT_STAGE))));
 	}
@@ -553,7 +553,7 @@ public final class HemoJourneySnapshot {
 		if (!(HemoCapabilityAccess.getScarState(player) instanceof ScarsContainer scars)) throw new IllegalStateException("unsupported scar state implementation");
 		if (!(HemoCapabilityAccess.getUnstainedProgress(player) instanceof UnstainedProgress unstained)) throw new IllegalStateException("unsupported Unstained progress implementation");
 		if (!(HemoCapabilityAccess.getKnownStillArts(player) instanceof KnownStillArts stillArts)) throw new IllegalStateException("unsupported Known Still Arts implementation");
-		MuscleMemoryState muscleMemory = HemoCapabilityAccess.muscleMemory(player);
+		ThelemicMemoryState thelemicMemory = HemoCapabilityAccess.thelemicMemory(player);
 		List<ItemStack> inventory = new ArrayList<>();
 		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) inventory.add(player.getInventory().getItem(slot).copy());
 		Map<ResourceLocation, Boolean> advancements = new LinkedHashMap<>();
@@ -572,7 +572,7 @@ public final class HemoJourneySnapshot {
 				summons.serializeNBT(player.registryAccess()),
 				scars.serializeNBT(player.registryAccess()), unstained.serializeNBT(player.registryAccess()),
 				stillArts.serializeNBT(player.registryAccess()),
-				muscleMemory.serializeNBT(player.registryAccess()),
+				thelemicMemory.serializeNBT(player.registryAccess()),
 				HemoCapabilityAccess.getLivingStaffProgress(player).serializeNBT(player.registryAccess()),
 				HemoCapabilityAccess.getVascularSystem(player).serializeNBT(player.registryAccess()),
 				player.getRecipeBook().toNbt(),
@@ -618,8 +618,8 @@ public final class HemoJourneySnapshot {
 		scars.deserializeNBT(player.registryAccess(), target.scarTag().copy());
 		unstained.deserializeNBT(player.registryAccess(), target.unstainedTag().copy());
 		stillArts.deserializeNBT(player.registryAccess(), target.stillArtsTag().copy());
-		HemoCapabilityAccess.muscleMemory(player).deserializeNBT(
-				player.registryAccess(), target.muscleMemoryTag().copy());
+		HemoCapabilityAccess.thelemicMemory(player).deserializeNBT(
+				player.registryAccess(), target.thelemicMemoryTag().copy());
 		HemoCapabilityAccess.getLivingStaffProgress(player).deserializeNBT(
 				player.registryAccess(), target.livingStaffProgressTag().copy());
 		HemoCapabilityAccess.getVascularSystem(player).deserializeNBT(
@@ -647,7 +647,7 @@ public final class HemoJourneySnapshot {
 		PacketHandler.sendToPlayer(player, new PacketSyncScarsState(player, scars));
 		UnstainedProgressEvents.syncProgress(player, unstained);
 		KnownStillArtEvents.sync(player, stillArts);
-		MuscleMemoryEvents.sync(player);
+		ThelemicMemoryEvents.sync(player);
 		LivingStaffBondHelper.syncProgress(player);
 		VascularSystemEvents.syncVascular(player, HemoCapabilityAccess.getVascularSystem(player));
 		InitiatoryDegreeEvents.syncDegree(player, HemoCapabilityAccess.getInitiatoryDegree(player));
@@ -697,8 +697,8 @@ public final class HemoJourneySnapshot {
 				|| !unstained.serializeNBT(player.registryAccess()).equals(target.unstainedTag())) return ApplyResult.fail("Unstained progress postcondition mismatch");
 		if (!(HemoCapabilityAccess.getKnownStillArts(player) instanceof KnownStillArts stillArts)
 				|| !stillArts.serializeNBT(player.registryAccess()).equals(target.stillArtsTag())) return ApplyResult.fail("Known Still Arts postcondition mismatch");
-		if (!HemoCapabilityAccess.muscleMemory(player).serializeNBT(player.registryAccess())
-				.equals(target.muscleMemoryTag())) return ApplyResult.fail("Muscle Memory postcondition mismatch");
+		if (!HemoCapabilityAccess.thelemicMemory(player).serializeNBT(player.registryAccess())
+				.equals(target.thelemicMemoryTag())) return ApplyResult.fail("Muscle Memory postcondition mismatch");
 		if (!HemoCapabilityAccess.getLivingStaffProgress(player).serializeNBT(player.registryAccess())
 				.equals(target.livingStaffProgressTag())) return ApplyResult.fail("Living Staff progress postcondition mismatch");
 		if (!HemoCapabilityAccess.getVascularSystem(player).serializeNBT(player.registryAccess())
@@ -848,9 +848,9 @@ public final class HemoJourneySnapshot {
 		}
 	}
 
-	private static boolean validateMuscleMemorySchema(ServerPlayer player, CompoundTag tag) {
+	private static boolean validateThelemicMemorySchema(ServerPlayer player, CompoundTag tag) {
 		try {
-			MuscleMemoryState temporary = new MuscleMemoryState();
+			ThelemicMemoryState temporary = new ThelemicMemoryState();
 			temporary.deserializeNBT(player.registryAccess(), tag.copy());
 			return temporary.serializeNBT(player.registryAccess()).equals(tag);
 		} catch (RuntimeException exception) {
@@ -1006,7 +1006,7 @@ public final class HemoJourneySnapshot {
 			List<ItemStack> inventory, Map<ResourceLocation, Boolean> advancements, CompoundTag skillTag,
 			CompoundTag knowledgeTag, ListTag manipulationTag, CompoundTag summonsTag, CompoundTag scarTag, CompoundTag unstainedTag,
 			CompoundTag stillArtsTag,
-			CompoundTag muscleMemoryTag, CompoundTag livingStaffProgressTag, CompoundTag vascularSystemTag,
+			CompoundTag thelemicMemoryTag, CompoundTag livingStaffProgressTag, CompoundTag vascularSystemTag,
 			CompoundTag recipeBookTag, CompoundTag bestiaryTag, CompoundTag brewingTag,
 			CompoundTag persistentDataTag, ItemStack vasc,
 			Target target, HemoJourneyStage stage) {

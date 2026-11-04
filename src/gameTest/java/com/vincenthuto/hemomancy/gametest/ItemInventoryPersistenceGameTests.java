@@ -3,11 +3,16 @@ package com.vincenthuto.hemomancy.gametest;
 import com.vincenthuto.hemomancy.common.item.itemhandler.*;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.menu.LivingSyringeMenu;
+import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
@@ -29,7 +34,7 @@ public final class ItemInventoryPersistenceGameTests {
 
     @GameTest(template = "empty")
     public static void countOnlyReplacementPersists(GameTestHelper helper) {
-        for (int family = 0; family < 3; family++) {
+        for (int family = 0; family < 2; family++) {
             var backing = new ItemStack(Items.STICK);
             var inventory = inventory(family, backing);
             inventory.setStackInSlot(0, new ItemStack(Items.DIAMOND, 2));
@@ -44,7 +49,7 @@ public final class ItemInventoryPersistenceGameTests {
 
     @GameTest(template = "empty")
     public static void simulatedAndEmptyTransfersDoNotWrite(GameTestHelper helper) {
-        for (int family = 0; family < 3; family++) {
+        for (int family = 0; family < 2; family++) {
             var backing = new ItemStack(Items.STICK);
             var inventory = inventory(family, backing);
             inventory.insertItem(0, new ItemStack(Items.DIAMOND), true);
@@ -66,7 +71,7 @@ public final class ItemInventoryPersistenceGameTests {
 
     @GameTest(template = "empty")
     public static void legacyInventoryAndRegistryComponentsRoundTrip(GameTestHelper helper) {
-        for (int family = 0; family < 3; family++) {
+        for (int family = 0; family < 2; family++) {
             var contents = new ItemStack(Items.DIAMOND_SWORD);
             contents.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                     .getHolderOrThrow(Enchantments.UNBREAKING), 2);
@@ -98,7 +103,7 @@ public final class ItemInventoryPersistenceGameTests {
 
     @GameTest(template = "empty")
     public static void explicitReloadClearsRemovedInventory(GameTestHelper helper) {
-        for (int family = 0; family < 3; family++) {
+        for (int family = 0; family < 2; family++) {
             var backing = new ItemStack(Items.STICK);
             var inventory = inventory(family, backing);
             inventory.setStackInSlot(0, new ItemStack(Items.DIAMOND));
@@ -116,7 +121,7 @@ public final class ItemInventoryPersistenceGameTests {
 
     @GameTest(template = "empty")
     public static void inPlaceEditsAndLoadOncePreservePendingChanges(GameTestHelper helper) {
-        for (int family = 0; family < 3; family++) {
+        for (int family = 0; family < 2; family++) {
             var backing = new ItemStack(Items.STICK);
             var inventory = inventory(family, backing);
             var handler = inventory;
@@ -140,7 +145,7 @@ public final class ItemInventoryPersistenceGameTests {
 
     @GameTest(template = "empty")
     public static void nestedInventoryRejectionAndJarIdentityStayUnchanged(GameTestHelper helper) {
-        for (int family = 0; family < 3; family++) {
+        for (int family = 0; family < 2; family++) {
             var backing = new ItemStack(Items.STICK);
             var inventory = inventory(family, backing);
             var nested = new ItemStack(Items.DIAMOND);
@@ -172,11 +177,64 @@ public final class ItemInventoryPersistenceGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty")
+    public static void jarMenuRefusesMovingTheOpenJar(GameTestHelper helper) {
+        var player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var openJar = new ItemStack(ItemInit.morphling_jar.get());
+        var otherJar = new ItemStack(ItemInit.morphling_jar.get());
+        player.getInventory().setItem(0, openJar);
+        player.getInventory().setItem(1, otherJar);
+        var menu = new MorphlingJarMenu(3, player.getInventory());
+        menu.handler.setStackInSlot(0, new ItemStack(Items.EMERALD));
+        assertOpenItemStaysPut(helper, menu, player, openJar, otherJar);
+        player.getInventory().setItem(0, otherJar);
+        helper.assertTrue(!menu.stillValid(player), "Jar menu stayed open on a different jar");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void syringeMenuRefusesMovingTheOpenSyringe(GameTestHelper helper) {
+        var player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var openSyringe = new ItemStack(ItemInit.living_syringe.get());
+        var otherSyringe = new ItemStack(ItemInit.living_syringe.get());
+        player.getInventory().setItem(0, openSyringe);
+        player.getInventory().setItem(1, otherSyringe);
+        var menu = new LivingSyringeMenu(4, player.getInventory());
+        menu.handler.setStackInSlot(0, new ItemStack(Items.EMERALD));
+        assertOpenItemStaysPut(helper, menu, player, openSyringe, otherSyringe);
+        player.getInventory().setItem(0, otherSyringe);
+        helper.assertTrue(!menu.stillValid(player), "Syringe menu stayed open on a different syringe");
+        helper.succeed();
+    }
+
+    /** A hotbar swap in either direction and a throw must leave the open item exactly where it was. */
+    private static void assertOpenItemStaysPut(GameTestHelper helper, AbstractContainerMenu menu, Player player,
+            ItemStack open, ItemStack other) {
+        int openSlot = menuSlotOf(menu, open);
+        int otherSlot = menuSlotOf(menu, other);
+        menu.clicked(otherSlot, 0, ClickType.SWAP, player);
+        helper.assertTrue(player.getInventory().getItem(0) == open, "Swap onto the open item moved it");
+        menu.clicked(openSlot, 1, ClickType.SWAP, player);
+        helper.assertTrue(player.getInventory().getItem(0) == open, "Swap from the open item moved it");
+        menu.clicked(openSlot, 0, ClickType.THROW, player);
+        helper.assertTrue(player.getInventory().getItem(0) == open && !open.isEmpty(), "Throw dropped the open item");
+        helper.assertTrue(helper.getLevel().getEntitiesOfClass(ItemEntity.class, helper.getBounds().inflate(16)).isEmpty(),
+                "Throw spawned a copy of the open item");
+        menu.clicked(openSlot, 0, ClickType.PICKUP, player);
+        helper.assertTrue(player.getInventory().getItem(0) == open && menu.getCarried().isEmpty(), "Pickup lifted the open item");
+    }
+
+    private static int menuSlotOf(AbstractContainerMenu menu, ItemStack stack) {
+        for (int index = 0; index < menu.slots.size(); index++) {
+            if (menu.slots.get(index).getItem() == stack) return index;
+        }
+        throw new IllegalStateException("Stack is not in the menu");
+    }
+
     private static StackBackedItemHandler inventory(int family, ItemStack backing) {
         StackBackedItemHandler inventory = switch (family) {
                         case 0 -> new LivingSyringeItemHandler(backing, 2);
             case 1 -> new MorphlingJarItemHandler(backing, 2);
-            case 2 -> new ScarBinderItemHandler(backing, 2);
             default -> throw new IllegalArgumentException("Unknown family " + family);
         };
         inventory.load();

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public class FungalElytraLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
 	private final ElytraModel<T> modelElytra;
 
-	public static final ResourceLocation fungalElytraTex = Hemomancy.rloc("textures/models/armor/fungal_elytra.png");
+	public static final ResourceLocation fungalElytraTex = Hemomancy.rloc("textures/models/armor/noctifly_agaric.png");
 
 	public FungalElytraLayer(LivingEntityRenderer<T, M> owner) {
 		super(owner);

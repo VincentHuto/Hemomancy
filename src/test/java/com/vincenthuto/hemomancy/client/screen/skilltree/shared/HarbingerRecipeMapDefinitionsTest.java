@@ -16,7 +16,7 @@ final class HarbingerRecipeMapDefinitionsTest {
 	void everyBuiltInHarbingerEntryHasAnAuthoredFamily() {
 		assertEquals(56, HarbingerRecipeMapDefinitions.ritePaths().size());
 		// 9 floorless Blood Structures and 20 Working crafts.
-		assertEquals(29, HarbingerRecipeMapDefinitions.craftingPaths().size());
+		assertEquals(27, HarbingerRecipeMapDefinitions.craftingPaths().size());
 		assertEquals(4, HarbingerRecipeMapDefinitions.puppetryPaths().size());
 		assertEquals("Order", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/initiate_rite"));
 		assertEquals("Qliphoth", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/bloom_of_qliphoth"));
@@ -40,7 +40,7 @@ final class HarbingerRecipeMapDefinitionsTest {
 		assertEquals("Fane", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/mnemonic_restoration"));
 		assertEquals("Bloodline", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/bloodline_founding"));
 		assertEquals("Vessel", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/exsanguination"));
-		for (String station : List.of("enzymatic_scriptorium", "resonant_forge", "scarlet_vanity", "warp_chair",
+		for (String station : List.of("enzymatic_scriptorium", "resonant_forge", "scarlet_vanity", "somnolent_seat",
 				"fungal_implantation_pylon")) {
 			assertEquals("Stations", HarbingerRecipeMapDefinitions.craftingFamily("blood_structure/" + station), station);
 		}

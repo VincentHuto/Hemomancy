@@ -13,9 +13,9 @@ class VampireSquidResourcesTest {
     @Test void squidSharesExistingSpinesAndSupportsCaptureAndBreathing() throws Exception {
         var loot = json("data/hemomancy/loot_table/entities/vampire_squid.json");
         var entry = loot.getAsJsonArray("pools").get(0).getAsJsonObject().getAsJsonArray("entries").get(0).getAsJsonObject();
-        assertEquals("hemomancy:calcified_blood_spine", entry.get("name").getAsString());
+        assertEquals("hemomancy:barbed_splinter", entry.get("name").getAsString());
         var lang = json("assets/hemomancy/lang/en_us.json");
-        assertEquals("Barbed Splinter", lang.get("item.hemomancy.calcified_blood_spine").getAsString());
+        assertEquals("Barbed Splinter", lang.get("item.hemomancy.barbed_splinter").getAsString());
         assertEquals("Vampire Squid", lang.get("entity.hemomancy.vampire_squid").getAsString());
         assertTrue(lang.has("bestiary.hemomancy.specimen.vampire_squid.description"));
         for (var tag : List.of("data/hemomancy/tags/entity_type/specimen_jar_capturable.json",

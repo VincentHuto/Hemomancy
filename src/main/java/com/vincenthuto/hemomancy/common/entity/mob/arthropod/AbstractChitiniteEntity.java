@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
+import net.minecraft.util.Mth;
 import com.vincenthuto.hutoslib.math.MathUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -50,6 +51,16 @@ public abstract class AbstractChitiniteEntity extends PathfinderMob {
 	public boolean isRolledUp() {
 		return this.entityData.get(ROLLED_UP);
 	}
+
+	/** Client-only: how far into the roll the body is drawn, eased over a few ticks either way. */
+	private float rollAmount;
+	private float rollAmountO;
+
+	/** 0 walking, 1 rolled into a ball, interpolated for the frame. */
+	public float rollAmount(float partialTick) {
+		return Mth.lerp(partialTick, rollAmountO, rollAmount);
+	}
+
 
 	private void setRolledUp(boolean rolledUp) {
 		this.entityData.set(ROLLED_UP, rolledUp);
@@ -122,6 +133,10 @@ public abstract class AbstractChitiniteEntity extends PathfinderMob {
 	@Override
 	public void tick() {
 		super.tick();
+		if (level().isClientSide) {
+			rollAmountO = rollAmount;
+			rollAmount = Mth.approach(rollAmount, isRolledUp() ? 1.0F : 0.0F, 0.15F);
+		}
 		LivingEntity target = getTarget();
 		if (target == null)
 			return;
@@ -181,4 +196,9 @@ public abstract class AbstractChitiniteEntity extends PathfinderMob {
 		}
 	}
 
+	/** Herd life stays where it was found, like a vanilla animal; it is not a monster that fades at range. */
+	@Override
+	public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+		return false;
+	}
 }

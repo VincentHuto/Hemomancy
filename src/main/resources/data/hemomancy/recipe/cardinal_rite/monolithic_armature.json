@@ -18,7 +18,7 @@
     {"ingredient": {"item": "minecraft:netherite_scrap"}, "count": 1},
     {"ingredient": {"item": "hemomancy:monolith_fragment"}, "count": 1},
     {"ingredient": {"item": "hemomancy:monolith_imbued_cloth"}, "count": 1},
-    {"ingredient": {"item": "hemomancy:calcified_blood_spine"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:barbed_splinter"}, "count": 1},
     {"ingredient": {"item": "hemomancy:sanguine_quintessence"}, "count": 1}
   ],
   "ceremony": {

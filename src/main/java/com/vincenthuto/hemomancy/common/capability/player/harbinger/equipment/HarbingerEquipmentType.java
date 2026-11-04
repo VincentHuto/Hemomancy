@@ -9,10 +9,6 @@ public enum HarbingerEquipmentType {
 		this.validSlots = validSlots;
 	}
 
-	public int[] getValidSlots() {
-		return validSlots;
-	}
-
 	public boolean hasSlot(int slot) {
 		for (int s : validSlots) {
 			if (s == slot)

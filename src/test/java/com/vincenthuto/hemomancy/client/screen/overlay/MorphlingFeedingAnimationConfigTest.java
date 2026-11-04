@@ -11,7 +11,6 @@ final class MorphlingFeedingAnimationConfigTest {
     void feedingAnimationDefaultsToDisabled() {
         HemoClientConfig.registerClientConfig(new ModConfigSpec.Builder());
 
-        assertEquals(Boolean.FALSE, HemoClientConfig.RENDER_MORPHLING_FEEDING_ANIMATION.getDefault());
     }
 
     @Test

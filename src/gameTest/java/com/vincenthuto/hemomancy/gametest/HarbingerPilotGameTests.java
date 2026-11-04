@@ -201,7 +201,7 @@ public final class HarbingerPilotGameTests {
 					"Claiming the heart must preserve its linked Mortal Display and record the claimant");
 			helper.assertTrue(HemoCapabilityAccess.getEquipment(player).getStackInSlot(5)
 					.is(ItemInit.charm_of_vascularium.get())
-					&& player.getInventory().countItem(ItemInit.covenant_waybill.get()) == 1,
+					&& player.getInventory().countItem(ItemInit.harbinger_lodestone.get()) == 1,
 					"The claimed heart must equip the Charm and give the Waybill");
 			helper.succeed();
 		} finally {

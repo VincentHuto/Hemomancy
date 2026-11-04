@@ -51,8 +51,6 @@ public final class HarbingerArtificerNpcSourceTest {
 		assertContains("entity builds immutable progress snapshot", entity, "ArtificerProgressSnapshot.from(serverPlayer)");
 		assertContains("entity exposes inventory inquiry items", entity, "DialogueItemInquiryNodes.withInventoryItemInquiries");
 		assertContains("entity uses Artificer inquiry speaker id", entity, "\"artificer\"");
-		assertNotContains("entity does not expose unsupported inventory items through a fallback", entity,
-				"hemomancy.artificer.item_inquiry.unknown");
 		assertNotContains("entity must not subclass or delegate to Alchemist", entity, "HarbingerAlchemist");
 
 		assertContains("dialogue has unawakened blood gate", dialogue, "!progress.activeBlood() || progress.degree() <= 0");
@@ -101,7 +99,6 @@ public final class HarbingerArtificerNpcSourceTest {
 		assertContains("lang has Redwright identity line", lang, "hemomancy.artificer.identity.line1");
 		assertContains("lang has armature tutorial line", lang, "hemomancy.artificer.armature.line1");
 		assertContains("lang has living graft line", lang, "hemomancy.artificer.grafts.line1");
-		assertContains("lang has unknown inquiry fallback", lang, "hemomancy.artificer.item_inquiry.unknown");
 		assertContains("reference docs mention Redwright role", docs, "Hematic Artificer / Redwright");
 		assertContains("lore docs mention Artificer role split", lore, "Artificer / Redwright");
 	}

@@ -319,7 +319,7 @@ public final class SummonsTabView {
 											int left, int top, int right, int bottom) {
 		int centerX = (left + right) / 2;
 		int centerY = (top + bottom) / 2;
-		ScreenDrawUtils.renderScaledItem(gfx, new ItemStack(ItemInit.puppeteering_thread.get()), centerX, centerY - 8, 20);
+		ScreenDrawUtils.renderScaledItem(gfx, new ItemStack(ItemInit.enthralling_filament.get()), centerX, centerY - 8, 20);
 		gfx.drawCenteredString(ctx.font(), Component.translatable("screen.hemomancy.summons_tab_view.preview_unavailable"), centerX, centerY + 18, 0xFF777777);
 	}
 
@@ -415,7 +415,7 @@ public final class SummonsTabView {
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> ItemInit.gorebound_yoke.get();
 			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> ItemInit.scarlet_gorget.get();
 			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> ItemInit.mnemonist_cradle.get();
-			default -> ItemInit.puppeteering_thread.get();
+			default -> ItemInit.enthralling_filament.get();
 		});
 	}
 

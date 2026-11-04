@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "wooden_button",
+  "ingredients": [
+    {
+      "item": "hemomancy:blood_wood_planks"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "hemomancy:blood_wood_button"
+  }
+}

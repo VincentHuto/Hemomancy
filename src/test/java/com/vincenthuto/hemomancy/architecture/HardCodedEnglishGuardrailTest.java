@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * as its string, a concatenated piece, a ternary branch or a {@code String.format} pattern; a string passed into another
  * call (such as {@code tag.getString("Name")}) is not shown text. Text with arguments uses
  * {@code Component.translatable(key, args)}, or {@code HemoText.translatable} when an argument is not a component, number,
- * boolean or string. The dormant compat packages, which the build excludes, are not checked.
+ * boolean or string.
  */
 class HardCodedEnglishGuardrailTest {
 	private static final Pattern LITERAL = Pattern.compile("(?<![\\w.])(?:net\\.minecraft\\.network\\.chat\\.)?Component\\.literal\\(");
@@ -38,9 +38,12 @@ class HardCodedEnglishGuardrailTest {
 	 */
 	private static final Pattern KEY = Pattern.compile(
 			"\"((?!com\\.)[a-z_]+(?:\\.[a-z0-9_]+)*?\\.hemomancy\\.[a-z0-9_.]*[a-z0-9_])\"(?!\\s*\\+)");
-	/** Orphaned content with no registry entry, pending the M-3 dead-code decision; its keys were never written. */
-	private static final List<String> UNREGISTERED = List.of("common/item/shared/FieldNotesItem.java");
-	private static final List<String> DORMANT = List.of("compat/mna/", "compat/curios/");
+	/** A key handed straight to a translatable call, whatever its family, including the {@code hemomancy.} families. */
+	private static final Pattern TRANSLATE_CALL = Pattern.compile(
+			"(?:Component|HemoText)\\.translatable(?:WithFallback)?\\(\\s*\"(hemomancy\\.[a-z0-9_]+(?:\\.[a-z0-9_]+)+)\"\\s*[,)]");
+	/** Orphaned content with no registry entry whose keys were never written; empty since the 2026-11 cull. */
+	private static final List<String> UNREGISTERED = List.of();
+	private static final List<String> DORMANT = List.<String>of();
 
 	@Test
 	void noLiteralShowsEnglish() throws Exception {
@@ -66,9 +69,14 @@ class HardCodedEnglishGuardrailTest {
 		List<String> missing = new ArrayList<>();
 		for (Path file : mainSources()) {
 			if (UNREGISTERED.stream().anyMatch(orphan -> RepoPaths.display(file).endsWith(orphan))) continue;
-			Matcher key = KEY.matcher(SourceAssertions.read(file));
+			String text = SourceAssertions.read(file);
+			Matcher key = KEY.matcher(text);
 			while (key.find()) {
 				if (!lang.has(key.group(1))) missing.add(RepoPaths.display(file) + ": " + key.group(1));
+			}
+			Matcher call = TRANSLATE_CALL.matcher(text);
+			while (call.find()) {
+				if (!lang.has(call.group(1))) missing.add(RepoPaths.display(file) + ": " + call.group(1));
 			}
 		}
 		assertEquals(List.of(), missing);

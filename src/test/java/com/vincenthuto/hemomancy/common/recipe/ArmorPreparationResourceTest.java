@@ -101,9 +101,9 @@ public final class ArmorPreparationResourceTest {
 		assertRecipeUses("aculeate_vitriol", "hemomancy:toxicognath");
 		assertRecipeUses("aculeate_vitriol", "hemomancy:telson");
 		assertRecipeDoesNotUse("aculeate_vitriol", "hemomancy:fargone_proboscis");
-		assertRecipeUses("aculeate_vitriol", "hemomancy:calcified_blood_spine");
+		assertRecipeUses("aculeate_vitriol", "hemomancy:barbed_splinter");
 		assertRecipeUses("chromatic_sublimate", "hemomancy:serpent_scale");
-		assertRecipeUses("chromatic_sublimate", "hemomancy:puppeteering_thread");
+		assertRecipeUses("chromatic_sublimate", "hemomancy:enthralling_filament");
 		assertRecipeUses("chromatic_sublimate", "hemomancy:cuttlefish_chromatophores");
 	}
 

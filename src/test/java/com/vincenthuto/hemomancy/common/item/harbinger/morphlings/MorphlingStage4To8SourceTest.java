@@ -22,8 +22,6 @@ public final class MorphlingStage4To8SourceTest {
 		String morphling = read("com/vincenthuto/hemomancy/common/item/harbinger/morphlings/MorphlingItem.java");
 		assertContains("hunger config field", config, "MORPHLING_HUNGER_ENABLED");
 		assertContains("hunger default true", config, "define(\"hungerEnabled\", true)");
-		assertContains("husbandry quota config field", config, "MORPHLING_HUSBANDRY_STAGE_QUOTA");
-		assertContains("husbandry default zero", config, "defineInRange(\"husbandryStageQuota\", 0");
 		assertContains("last fed stack data", morphling, "LAST_FED_GAME_TIME_KEY");
 		assertContains("experience stack data", morphling, "EXPERIENCE_PROGRESS_KEY");
 		assertContains("hunger rule helper", morphling, "MorphlingHungerRules");

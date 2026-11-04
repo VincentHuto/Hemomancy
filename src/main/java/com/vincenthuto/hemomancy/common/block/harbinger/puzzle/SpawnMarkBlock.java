@@ -21,7 +21,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * it answers, cut into it as notches; while that wave is due the Chapel focus sets {@link #DUE} and blood seeps up
  * through the cracks. {@link #STYLE} is the venous seal or Putriciel's ash heap (the seal sunk in grey-black ash
  * with charred bone bits; due, its cracks seep crimson and it throws embers and soot). Walked over, never stood on.
- * Unbreakable. Models from tools/model_export/spawn_mark.py.
+ * Unbreakable. Models from tools/model_export/downfall_seal.py.
  */
 public class SpawnMarkBlock extends Block {
 	public static final IntegerProperty WAVE = IntegerProperty.create("wave", 0, 2);

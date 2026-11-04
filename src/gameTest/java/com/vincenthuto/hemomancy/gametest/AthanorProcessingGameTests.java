@@ -99,8 +99,9 @@ public final class AthanorProcessingGameTests {
             helper.assertTrue(machine.getItem(2).isEmpty() && machine.getBloodVolume() == cost + 100,
                     "Tinctures must spend nothing before their shortened duration completes");
             tick(helper, machine, 1);
-            helper.assertTrue(machine.getItem(2).is(jug ? ItemInit.tincture_sanguine_fists_jug.get()
-                    : ItemInit.tincture_sanguine_fists.get()) && machine.getBloodVolume() == 100
+            helper.assertTrue(machine.getItem(2).is(ItemInit.tincture_sanguine_fists.get())
+                    && com.vincenthuto.hemomancy.common.item.harbinger.ThelemicMemoryTinctureItem.isJug(machine.getItem(2)) == jug
+                    && machine.getBloodVolume() == 100
                     && machine.getItem(0).isEmpty() && machine.getItem(1).isEmpty() && machine.getItem(3).isEmpty(),
                     "Faster tinctures must retain their output, blood cost, and vessel consumption");
         }

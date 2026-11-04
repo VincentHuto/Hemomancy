@@ -5,8 +5,8 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtDiscoveryDialog
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryActivationService;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryActivationService;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
@@ -1012,11 +1012,11 @@ public final class PlaythroughAdeptGameTests {
 		vascular.getVascularSystem().put(EnumVeinSections.ARMS, 30.0F); // ARRANGE: the arms strained before D5
 		VascularSystemEvents.syncVascular(sp, vascular);
 		PlaythroughStates.illuminatusD5(p); // ARRANGE: promoted with the arms still Varicose
-		var memory = HemoCapabilityAccess.muscleMemory(sp);
-		memory.learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 1_200); // ARRANGE: a Thelemic memory to strain with
-		memory.activate(MuscleMemory.SANGUINE_FISTS);
+		var memory = HemoCapabilityAccess.thelemicMemory(sp);
+		memory.learnAndAddReserve(ThelemicMemory.SANGUINE_FISTS, 1_200); // ARRANGE: a Thelemic memory to strain with
+		memory.activate(ThelemicMemory.SANGUINE_FISTS);
 		PlaythroughStates.blood(p, 1500); // ARRANGE
-		boolean cast = MuscleMemoryActivationService.tryTrigger(sp, MuscleMemory.SANGUINE_FISTS, 20);
+		boolean cast = ThelemicMemoryActivationService.tryTrigger(sp, ThelemicMemory.SANGUINE_FISTS, 20);
 		boolean counted = p.has(adv(VeinMasonAssignments.D5_VARICOSE));
 		DialogueView view = p.talkTo(respite.anchorite());
 		PlaythroughLog.note(helper, "pre-strained arms: cast=" + cast + ", degradation config="
@@ -1485,9 +1485,9 @@ public final class PlaythroughAdeptGameTests {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, yard(helper));
 		PlaythroughStates.illuminatusD5(p); // ARRANGE
 		ServerPlayer sp = p.player();
-		var memory = HemoCapabilityAccess.muscleMemory(sp);
-		memory.learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 1_200); // ARRANGE: a Thelemic memory to strain with
-		memory.activate(MuscleMemory.SANGUINE_FISTS);
+		var memory = HemoCapabilityAccess.thelemicMemory(sp);
+		memory.learnAndAddReserve(ThelemicMemory.SANGUINE_FISTS, 1_200); // ARRANGE: a Thelemic memory to strain with
+		memory.activate(ThelemicMemory.SANGUINE_FISTS);
 		var vascular = HemoCapabilityAccess.getVascularSystem(sp);
 		vascular.getVascularSystem().put(EnumVeinSections.ARMS, 30.4F); // ARRANGE: one cast from Varicose
 		VascularSystemEvents.syncVascular(sp, vascular);
@@ -1497,7 +1497,7 @@ public final class PlaythroughAdeptGameTests {
 			HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.set(false); // ARRANGE: a server that turned it off
 			for (int i = 0; i < 6; i++) {
 				PlaythroughStates.blood(p, 1500); // ARRANGE
-				if (MuscleMemoryActivationService.tryTrigger(sp, MuscleMemory.SANGUINE_FISTS, 20 + i)) casts++;
+				if (ThelemicMemoryActivationService.tryTrigger(sp, ThelemicMemory.SANGUINE_FISTS, 20 + i)) casts++;
 			}
 		} finally {
 			HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.set(before);

@@ -265,20 +265,8 @@ public class SoundInit {
 			"entity.enthralled_doll.death");
 
 	// Cruor Fiend (Nether blood fiend)
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CRUOR_FIEND_AMBIENT = registerSoundEvent(
-			"entity.cruor_fiend.ambient");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CRUOR_FIEND_HURT = registerSoundEvent(
-			"entity.cruor_fiend.hurt");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_CRUOR_FIEND_DEATH = registerSoundEvent(
-			"entity.cruor_fiend.death");
 
 	// Void Drinker (End dimension blood siphoner)
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VOID_DRINKER_AMBIENT = registerSoundEvent(
-			"entity.void_drinker.ambient");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VOID_DRINKER_HURT = registerSoundEvent(
-			"entity.void_drinker.hurt");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VOID_DRINKER_DEATH = registerSoundEvent(
-			"entity.void_drinker.death");
 
 	// Desiccant (desert scorpion blood-drainer)
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_DESICCANT_AMBIENT = registerSoundEvent(
@@ -289,20 +277,8 @@ public class SoundInit {
 			"entity.desiccant.death");
 
 	// Synapse Hound (neural pack predator)
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SYNAPSE_HOUND_AMBIENT = registerSoundEvent(
-			"entity.synapse_hound.ambient");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SYNAPSE_HOUND_HURT = registerSoundEvent(
-			"entity.synapse_hound.hurt");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SYNAPSE_HOUND_DEATH = registerSoundEvent(
-			"entity.synapse_hound.death");
 
 	// Frozen Clot (animated frozen blood mass)
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_FROZEN_CLOT_AMBIENT = registerSoundEvent(
-			"entity.frozen_clot.ambient");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_FROZEN_CLOT_HURT = registerSoundEvent(
-			"entity.frozen_clot.hurt");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_FROZEN_CLOT_DEATH = registerSoundEvent(
-			"entity.frozen_clot.death");
 
 	// Tooth Pecks (fungus-mimic spider-tooth creature)
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_TOOTH_PECKS_AMBIENT = registerSoundEvent(
@@ -313,12 +289,6 @@ public class SoundInit {
 			"entity.tooth_pecks.death");
 
 	// Abyssal Siphon (deep dark blood horror)
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABYSSAL_SIPHON_AMBIENT = registerSoundEvent(
-			"entity.abyssal_siphon.ambient");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABYSSAL_SIPHON_HURT = registerSoundEvent(
-			"entity.abyssal_siphon.hurt");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ABYSSAL_SIPHON_DEATH = registerSoundEvent(
-			"entity.abyssal_siphon.death");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MORTARBOUND_AMBIENT = registerSoundEvent("entity.mortarbound.ambient");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MORTARBOUND_CRAWL = registerSoundEvent("entity.mortarbound.crawl");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MORTARBOUND_ATTACK = registerSoundEvent("entity.mortarbound.attack");

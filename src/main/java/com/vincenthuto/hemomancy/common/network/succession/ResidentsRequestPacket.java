@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.succession;
 
+import com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter;
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
@@ -25,7 +26,9 @@ public record ResidentsRequestPacket(UUID identity, boolean dismiss) implements 
             buf -> new ResidentsRequestPacket(buf.readUUID(), buf.readBoolean()));
     @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     public static void handle(ResidentsRequestPacket msg, IPayloadContext context) {
-        context.enqueueWork(() -> { if (context.player() instanceof ServerPlayer player) process(player, msg.identity, msg.dismiss); });
+        context.enqueueWork(() -> {
+            if (context.player() instanceof ServerPlayer player && ServerboundRateLimiter.tryAcquire(player, "request_residents", 10)) process(player, msg.identity, msg.dismiss);
+        });
     }
     public static boolean process(ServerPlayer player, UUID identity, boolean dismiss) {
         var line = SuccessionResidents.line(player); if (line == null) return false;

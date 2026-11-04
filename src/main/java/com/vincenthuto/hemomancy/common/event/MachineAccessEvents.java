@@ -236,7 +236,6 @@ public final class MachineAccessEvents {
 					BlockInit.sanguine_monolith.get(),
 					BlockInit.sanguine_vigil.get(),
 					BlockInit.covenant_throne.get(),
-					BlockInit.visceral_mirror.get(),
 					BlockInit.mnemonic_reliquary.get(),
 					BlockInit.semi_sentient_construct.get());
 		}

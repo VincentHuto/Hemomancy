@@ -44,11 +44,6 @@ public class ArmatureRestraintEntity extends Entity {
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 	}
 
-	@Nullable
-	public BlockPos getArmaturePos() {
-		return armaturePos;
-	}
-
 	public boolean isForArmature(BlockPos pos) {
 		return armaturePos != null && armaturePos.equals(pos);
 	}

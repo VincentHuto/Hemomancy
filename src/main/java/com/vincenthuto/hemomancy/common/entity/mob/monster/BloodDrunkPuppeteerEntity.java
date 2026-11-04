@@ -150,12 +150,6 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 				&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
 	}
 
-	public List<EnthralledDollEntity> getPuppets() {
-		return level().getEntitiesOfClass(EnthralledDollEntity.class,
-				getBoundingBox().inflate(BloodDrunkPuppeteerTuning.DOLL_OWNER_SEARCH_RANGE),
-				doll -> this.getUUID().equals(doll.getOwnerUUID()));
-	}
-
 	@Override
 	public void tick() {
 		super.tick();

@@ -60,9 +60,4 @@ public final class PuppeteerSummonDefinitions {
 		return Optional.empty();
 	}
 
-	public static List<PuppeteerSummonDefinition> unlockedByDegree(int degree) {
-		return DEFINITIONS.stream()
-				.filter(definition -> definition.requiredDegree() <= degree)
-				.toList();
-	}
 }

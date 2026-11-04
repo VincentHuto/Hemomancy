@@ -2,7 +2,9 @@ package com.vincenthuto.hemomancy.common.network.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.OfferedDialogues;
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
+import com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -34,7 +36,10 @@ public record DialogueTopicOpenedPacket(ResourceLocation topicId, int entityId) 
 	public static void handle(DialogueTopicOpenedPacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> {
 			if (!(context.player() instanceof ServerPlayer player) || !isValidTopicId(packet.topicId)) return;
+			if (!ServerboundGuards.activePlayer(player) || !ServerboundRateLimiter.tryAcquire(player, "dialogue_topic", 2)) return;
 			if (packet.entityId != 0 && ServerboundGuards.nearEntity(player, packet.entityId, 8.0D) == null) return;
+			// Only a topic the server actually offered is recorded (RT-21): the read set is saved and copied on death.
+			if (!OfferedDialogues.offersTopic(player, packet.entityId, packet.topicId)) return;
 			HemoCapabilityAccess.dialogueKnowledge(player).markRead(packet.topicId);
 		});
 	}

@@ -39,10 +39,6 @@ public class BloodStructurePageTemplate extends PageTemplate {
 		return structureloc;
 	}
 
-	public void setStructureloc(String structureloc) {
-		this.structureloc = structureloc;
-	}
-
 	public ResourceLocation getStructureKey() {
 		return HLLocHelper.getBySplit(structureloc);
 	}
@@ -55,7 +51,6 @@ public class BloodStructurePageTemplate extends PageTemplate {
 	public PSerializer<? extends BookDataTemplate> getSerializer() {
 		return SERIALIZER;
 	}
-
 
 	@Override
 	public void getPageScreen(int pageNum, BookCodeModel book, ChapterTemplate chapter) {

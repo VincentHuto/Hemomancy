@@ -22,11 +22,4 @@ public final class ItemInquiryRegistry {
         return entry == null ? Optional.empty() : entry.resolve(context);
     }
 
-    public Optional<List<String>> resolve(String npcId, ResourceLocation itemId, int degree, float purity) {
-        return resolve(npcId, itemId, ItemInquiryContext.legacy(degree, purity));
-    }
-
-    public Map<String, Map<ResourceLocation, ItemInquiryEntry>> allEntries() {
-        return Collections.unmodifiableMap(data);
-    }
 }

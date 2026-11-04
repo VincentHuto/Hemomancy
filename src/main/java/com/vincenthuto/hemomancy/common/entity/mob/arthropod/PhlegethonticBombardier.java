@@ -54,7 +54,6 @@ public class PhlegethonticBombardier extends PathfinderMob implements NeutralMob
             net.minecraft.network.syncher.SynchedEntityData.defineId(PhlegethonticBombardier.class,
                     net.minecraft.network.syncher.EntityDataSerializers.FLOAT);
 
-    public final AnimationState presentationAnimationState = new AnimationState();
     private int remainingPersistentAngerTime;
     @Nullable private UUID persistentAngerTarget;
     @Nullable private BlockPos territoryAnchor;
@@ -99,7 +98,6 @@ public class PhlegethonticBombardier extends PathfinderMob implements NeutralMob
     @Override public void tick() {
         super.tick();
         if (level().isClientSide) {
-            presentationAnimationState.startIfStopped(tickCount);
             return;
         }
         if (level() instanceof ServerLevel server) updatePersistentAnger(server, true);
@@ -255,11 +253,9 @@ public class PhlegethonticBombardier extends PathfinderMob implements NeutralMob
     public void setBombardierState(BombardierState state) {
         entityData.set(STATE, state.ordinal());
         entityData.set(STATE_TICK, 0);
-        presentationAnimationState.stop();
     }
 
     public int getStateTick() { return entityData.get(STATE_TICK); }
-    public int getChemicalCharge() { return chemicalCharge; }
     private void incrementStateTick() { entityData.set(STATE_TICK, getStateTick() + 1); }
     public Optional<BlockPos> getTerritoryAnchor() { return Optional.ofNullable(territoryAnchor); }
     public void setTerritoryAnchor(@Nullable BlockPos anchor) { territoryAnchor = anchor == null ? null : anchor.immutable(); }

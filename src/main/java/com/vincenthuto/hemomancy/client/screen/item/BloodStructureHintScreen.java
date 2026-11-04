@@ -45,7 +45,6 @@ public class BloodStructureHintScreen extends Screen {
 	private static final int LABEL_COLOR = 0xFF888888;
 	private static final int VALUE_COLOR = 0xFFAAAAAA;
 	private static final int COST_COLOR = 0xFFAA4444;
-	private static final int ACCENT_COLOR = 0xFF88CCBB;
 
 	// ── Layout ──
 	private static final int GUI_WIDTH = 340;

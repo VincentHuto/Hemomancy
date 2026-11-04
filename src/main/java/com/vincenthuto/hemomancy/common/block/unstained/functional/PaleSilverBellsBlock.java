@@ -57,7 +57,6 @@ public class PaleSilverBellsBlock extends Block implements SimpleWaterloggedBloc
 			Block.box(7.0, 13.0, 3.0, 9.0, 15.0, 16.0));
 	private static final VoxelShape CEILING_SHAPE = Shapes.or(BELL_SHAPE,
 			Block.box(7.0, 13.0, 7.0, 9.0, 16.0, 9.0));
-	private static final float SILVER_BELLS_PURITY_BOOST = 30.0f;
 
 	public PaleSilverBellsBlock(Properties properties) {
 		super(properties);

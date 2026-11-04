@@ -52,10 +52,6 @@ public final class ChamberVisitService {
 		}
 	}
 
-	public static boolean isDream(ServerPlayer player) {
-		return isActive(player) && mode(player) == ChamberVisitMode.DREAM;
-	}
-
 	public static boolean isObservational(ServerPlayer player) {
 		return isActive(player) && !ChamberVisitRules.canMoveItems(mode(player));
 	}
@@ -88,7 +84,7 @@ public final class ChamberVisitService {
 		if (!isChairBound(player)) {
 			access(player).setChairBound(true);
 			HarbingerAdvancementGranter.grantIfNotDone(player, HarbingerAdvancementGranter.ADV_WARP_CHAIR_BOUND);
-			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.bound")
+			player.displayClientMessage(Component.translatable("message.hemomancy.somnolent_seat.bound")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		}
 	}
@@ -99,22 +95,6 @@ public final class ChamberVisitService {
 		HarbingerAdvancementGranter.grantIfNotDone(player, HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED);
 	}
 
-	/**
-	 * A {@code PlayerDataMigrations} entry: moves the earned-access root keys into the attachment and removes them,
-	 * then restores access a save lost but whose advancement it holds. Present root keys win.
-	 */
-	public static void migrateLegacyAccess(ServerPlayer player) {
-		var data = player.getPersistentData();
-		ChamberAccess access = access(player);
-		if (data.contains(LEGACY_CHAIR_BOUND)) access.setChairBound(data.getBoolean(LEGACY_CHAIR_BOUND));
-		if (data.contains(LEGACY_ATTUNED)) access.setAttuned(data.getBoolean(LEGACY_ATTUNED));
-		if (data.contains(LEGACY_DREAM_SEEN)) access.setDreamSeen(data.getBoolean(LEGACY_DREAM_SEEN));
-		if (data.contains(LEGACY_DREAM_ATTEMPTS)) access.setDreamAttempts(data.getInt(LEGACY_DREAM_ATTEMPTS));
-		if (data.contains(LEGACY_GUIDED_COMPLETE)) access.setGuidedComplete(data.getBoolean(LEGACY_GUIDED_COMPLETE));
-		for (String key : new String[] { LEGACY_CHAIR_BOUND, LEGACY_ATTUNED, LEGACY_DREAM_SEEN, LEGACY_DREAM_ATTEMPTS,
-				LEGACY_GUIDED_COMPLETE }) data.remove(key);
-		restoreEarnedAccess(player);
-	}
 
 	private static void restoreEarnedAccess(ServerPlayer player) {
 		if (!isAttuned(player) && HarbingerAdvancementGranter.hasAdvancement(player,
@@ -128,7 +108,7 @@ public final class ChamberVisitService {
 
 	public static boolean beginChairVisit(ServerPlayer player) {
 		if (!ProgressionGates.hasDegree(player, 3)) {
-			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.degree"), true);
+			player.displayClientMessage(Component.translatable("message.hemomancy.somnolent_seat.degree"), true);
 			return false;
 		}
 		if (!canStartVisit(player)) {
@@ -205,11 +185,11 @@ public final class ChamberVisitService {
 
 	/** Why {@link #canStartVisit} refused a chair visit, as a message key. */
 	private static String chairRefusal(ServerPlayer player) {
-		if (isActive(player)) return "message.hemomancy.warp_chair.visit_active";
+		if (isActive(player)) return "message.hemomancy.somnolent_seat.visit_active";
 		if (FungalGardenTravelHelper.isProjectionActive(player)
 				|| com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.isPossessing(player))
-			return "message.hemomancy.warp_chair.elsewhere";
-		return "message.hemomancy.warp_chair.unavailable";
+			return "message.hemomancy.somnolent_seat.elsewhere";
+		return "message.hemomancy.somnolent_seat.unavailable";
 	}
 
 	private static boolean startVisit(ServerPlayer player, ChamberVisitMode visitMode) {

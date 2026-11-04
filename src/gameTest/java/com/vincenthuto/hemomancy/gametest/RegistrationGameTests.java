@@ -167,7 +167,7 @@ public final class RegistrationGameTests {
                     "Creative tab event must populate both registered tabs");
             helper.assertTrue(java.util.stream.Stream.concat(main.getDisplayItems().stream(), wip.getDisplayItems().stream())
                     .noneMatch(ItemStack::isEmpty), "Creative tabs must not contain empty technical block placeholders");
-            for (String path : java.util.List.of("attached_gourd_stem", "filler_block", "warp_chair_filler",
+            for (String path : java.util.List.of("attached_gourd_stem", "filler_block", "somnolent_seat_filler",
                     "abocipher_emitter", "qliphoth_bloom", "escharian_overgrowth", "escharian_overgrowth_rim")) {
                 var id = com.vincenthuto.hemomancy.Hemomancy.rloc(path);
                 helper.assertTrue(BuiltInRegistries.BLOCK.containsKey(id), "Technical block is missing: " + id);
@@ -202,9 +202,6 @@ public final class RegistrationGameTests {
                 java.util.Map.entry(ItemInit.memory_hematic_impressment, ManipulationInit.hematic_impressment),
                 java.util.Map.entry(ItemInit.memory_hematic_flare, ManipulationInit.hematic_flare),
                 java.util.Map.entry(ItemInit.memory_gloam_laceration, ManipulationInit.gloam_laceration),
-                java.util.Map.entry(ItemInit.memory_conjure_living_staff, ManipulationInit.conjure_staff),
-                java.util.Map.entry(ItemInit.memory_living_torch, ManipulationInit.conjure_torch),
-                java.util.Map.entry(ItemInit.memory_living_flail, ManipulationInit.conjure_flail),
                 java.util.Map.entry(ItemInit.memory_synaptic_jolt, ManipulationInit.synaptic_jolt),
                 java.util.Map.entry(ItemInit.memory_conductive_mark, ManipulationInit.conductive_mark),
                 java.util.Map.entry(ItemInit.memory_insatiable_hunger, ManipulationInit.insatiable_hunger),
@@ -241,16 +238,17 @@ public final class RegistrationGameTests {
             }
         }
         var expectedCustom = new java.util.TreeSet<>(java.util.Set.of("mortal_display", "suspended_blood_crystal",
-                "suspended_cleansed_blood_crystal", "suspended_vivianite", "visceral_mirror", "fungal_implantation_pylon",
+                "suspended_cleansed_blood_crystal", "suspended_vivianite", "fungal_implantation_pylon",
                 "phlebotomists_field_case", "earthen_vein", "vial_centrifuge", "hematic_armature", "mycelial_crucible",
                 "specimen_jar", "sanguine_monolith", "hematic_stake", "mycelial_synapse", "puppeteers_spindle", "mason_effigy",
                 "covenant_throne", "sunburst_bloom", "house_marker", "saint_sarcophagus"));
         var expectedManual = new java.util.TreeSet<>(java.util.Set.of("gourd_stem", "active_befouling_ash_trail",
                 "active_smouldering_ash_trail", "placed_blood_stained_stone", "lethean_poppy_wreath", "sanguine_conduit"));
         var expectedItemless = new java.util.TreeSet<>(java.util.Set.of("attached_gourd_stem", "filler_block",
-                "warp_chair_filler", "abocipher_emitter", "qliphoth_bloom", "escharian_overgrowth",
+                "somnolent_seat_filler", "abocipher_emitter", "qliphoth_bloom", "escharian_overgrowth",
                 "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "recollection_cyst",
-                "witness_devotee", "warden_bloom"));
+                "witness_devotee", "warden_bloom", "blood_wood_wall_sign", "blood_wood_wall_hanging_sign",
+                "heartwood_wall_sign", "heartwood_wall_hanging_sign"));
         helper.assertTrue(custom.equals(expectedCustom) && manual.equals(expectedManual) && itemless.equals(expectedItemless),
                 "Block item exceptions changed without an explicit decision: custom=" + custom + " manual=" + manual
                         + " itemless=" + itemless);

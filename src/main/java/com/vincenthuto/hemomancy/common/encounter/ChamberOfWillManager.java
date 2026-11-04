@@ -84,7 +84,6 @@ public class ChamberOfWillManager extends SavedData {
     public static final int FLOOR_Y = 2;
     public static final int BASE_ROOM_RADIUS = 3;
     public static final int MAX_ROOM_RADIUS = 10;
-    public static final int ROOM_HEIGHT = 5;
     public static final int MAX_ROOM_TIER = 3;
 
     private static final String DATA_NAME = "chamber_of_will_data";
@@ -117,10 +116,6 @@ public class ChamberOfWillManager extends SavedData {
         } else {
             ChamberVisitService.beginAdminVisit(player);
         }
-    }
-
-    public static void enterRefuge(ServerPlayer player) {
-        teleport(player);
     }
 
     public void enterChamber(ServerPlayer player) {
@@ -211,10 +206,6 @@ public class ChamberOfWillManager extends SavedData {
 
     public static int radiusForTier(int tier) {
         return ChamberProgressionRules.radiusForTier(tier);
-    }
-
-    public static List<ResourceLocation> orderedSkyThemes() {
-        return ORDERED_SKY_THEMES;
     }
 
     public static List<ResourceLocation> commandSkyThemes() {

@@ -14,8 +14,8 @@ class VampireBatColonyResourceTest {
 		var root = JsonParser.parseString(Files.readString(Path.of(
 				"src/main/resources/data/hemomancy/neoforge/biome_modifier/add_vampire_bat.json"))).getAsJsonObject();
 		var spawn = root.getAsJsonArray("spawners").get(0).getAsJsonObject();
-		assertEquals(8, spawn.get("minCount").getAsInt());
-		assertEquals(20, spawn.get("maxCount").getAsInt());
+		assertEquals(4, spawn.get("minCount").getAsInt());
+		assertEquals(8, spawn.get("maxCount").getAsInt());
 	}
 
 	@Test

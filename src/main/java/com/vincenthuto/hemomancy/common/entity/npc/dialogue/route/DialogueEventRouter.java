@@ -49,6 +49,7 @@ public final class DialogueEventRouter {
 			RecruitmentDialogueEvents::handle,
 			SanguineMonolithDialogueEvents::handle,
 			FungalWhisperDialogueEvents::handle,
+			OurLadyDialogueEvents::handle,
 			ScoutDialogueEvents::handle);
 
 	private DialogueEventRouter() {

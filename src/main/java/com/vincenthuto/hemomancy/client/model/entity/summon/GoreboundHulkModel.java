@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.summon;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -18,6 +19,8 @@ public class GoreboundHulkModel extends EntityModel<GoreboundHulkEntity> {
     private final ModelPart root, chest, head, jaw;
     private final ModelPart[] arms = new ModelPart[2], forearms = new ModelPart[2], hands = new ModelPart[2];
     private final ModelPart[] thighs = new ModelPart[2], shins = new ModelPart[2], feet = new ModelPart[2];
+    /** The strike windup replayed from its synced counter, so a late packet never stalls or skips the pose. */
+    private final BossReplayClock strikeClock = new BossReplayClock();
 
     public GoreboundHulkModel(ModelPart bakedRoot) {
         root = bakedRoot.getChild("root");
@@ -85,9 +88,9 @@ public class GoreboundHulkModel extends EntityModel<GoreboundHulkEntity> {
     public void setupAnim(GoreboundHulkEntity entity, float limbSwing, float limbSwingAmount,
             float age, float yaw, float pitch) {
         float partialTick = Mth.clamp(age - entity.tickCount, 0, 1);
-        float windup = entity.getStrikeWindup();
-        setupPose(limbSwing, limbSwingAmount, age, yaw, pitch,
-                windup > 0 ? windup + partialTick : 0, attackTime);
+        int windup = entity.getStrikeWindup();
+        float replayed = windup > 0 ? strikeClock.sample(1, windup, entity.tickCount, partialTick, 1) : 0.0F;
+        setupPose(limbSwing, limbSwingAmount, age, yaw, pitch, replayed, attackTime);
     }
 
     /** Shared runtime and authoring pose; windup is the existing ten-tick strike counter. */

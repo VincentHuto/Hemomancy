@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.client.registry;
 
+import com.vincenthuto.hemomancy.client.render.entity.projectile.GoreWoundHarpoonRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.projectile.RecallBarbRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.PhlegethonticBombardierRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ExcoriatedRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.PossessionEchoRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.HunterFungusRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.AntibodyRenderer;
@@ -37,7 +41,6 @@ import com.vincenthuto.hemomancy.client.render.entity.projectile.*;
 import com.vincenthuto.hemomancy.client.render.entity.summon.*;
 import com.vincenthuto.hemomancy.client.render.item.*;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.*;
-import com.vincenthuto.hemomancy.client.render.tile.harbinger.decoration.NonEuclideanHallwayRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.*;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.PhlebotomistsCabinetRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.PhlebotomistsFieldCaseRenderer;
@@ -78,16 +81,13 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.morphling_field.get(), NoopRenderer::new);
         event.registerEntityRenderer(EntityInit.hydra_rising_head.get(),
                 com.vincenthuto.hemomancy.client.render.entity.npc.court.HydraRisingHeadRenderer::new);
-        event.registerEntityRenderer(EntityInit.tracking_blood_orb.get(), BloodOrbTrackingRenderer::new);
-        event.registerEntityRenderer(EntityInit.tracking_snake.get(), TrackingSerpentRenderer::new);
-        event.registerEntityRenderer(EntityInit.tracking_pests.get(), TrackingPestsRenderer::new);
         event.registerEntityRenderer(EntityInit.blood_bolt.get(), BloodBoltRenderer::new);
         event.registerEntityRenderer(EntityInit.living_sickle_hook.get(), LivingSickleHookRenderer::new);
         event.registerEntityRenderer(EntityInit.living_flail_head.get(), LivingFlailHeadProjectileRenderer::new);
         event.registerEntityRenderer(EntityInit.vesper_scute_projectile.get(), VesperScuteProjectileRenderer::new);
         event.registerEntityRenderer(EntityInit.veinwing_feather.get(), VeinwingFeatherRenderer::new);
         event.registerEntityRenderer(EntityInit.circus_knife.get(), CircusKnifeProjectileRenderer::new);
-        event.registerEntityRenderer(EntityInit.circus_carousel.get(), CircusCarouselRenderer::new);
+        event.registerEntityRenderer(EntityInit.impaled_procession.get(), CircusCarouselRenderer::new);
         event.registerEntityRenderer(EntityInit.circus_ringmaster.get(), CircusRingmasterRenderer::new);
         event.registerEntityRenderer(EntityInit.peacock_spider.get(), PeacockSpiderRenderer::new);
         event.registerEntityRenderer(EntityInit.vampire_bat.get(), VampireBatRenderer::new);
@@ -98,8 +98,11 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.qliphoth_seed_item.get(), QliphothSeedItemEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
         event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
-        event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
-        event.registerEntityRenderer(EntityInit.wretched_will.get(), WretchedWillRenderer::new);
+        event.registerEntityRenderer(EntityInit.ferric_rampart.get(), IronWallRenderer::new);
+        event.registerEntityRenderer(EntityInit.excoriated.get(), ExcoriatedRenderer::new);
+        event.registerEntityRenderer(EntityInit.phlegethontic_bombardier.get(), PhlegethonticBombardierRenderer::new);
+        event.registerEntityRenderer(EntityInit.recall_barb.get(), RecallBarbRenderer::new);
+        event.registerEntityRenderer(EntityInit.gore_wound_harpoon.get(), GoreWoundHarpoonRenderer::new);
         event.registerEntityRenderer(EntityInit.will.get(), WillRenderer::new);
         event.registerEntityRenderer(EntityInit.will_anchor.get(), WillAnchorRenderer::new);
         event.registerEntityRenderer(EntityInit.arbor_of_will.get(), ArborOfWillRenderer::new);
@@ -108,7 +111,7 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.unsettled_ichor.get(), UnsettledIchorRenderer::new);
         event.registerEntityRenderer(EntityInit.awakened_ichorian_sigil.get(),
                 AwakenedIchorianSigilRenderer::new);
-        event.registerEntityRenderer(EntityInit.humanity_sprite.get(), HumanitySpriteRenderer::new);
+        event.registerEntityRenderer(EntityInit.daemon.get(), HumanitySpriteRenderer::new);
         event.registerEntityRenderer(EntityInit.bog_revenant.get(), BogRevenantRenderer::new);
         event.registerEntityRenderer(EntityInit.fargone.get(), FargoneRenderer::new);
         event.registerEntityRenderer(EntityInit.thirster.get(), ThirsterRenderer::new);
@@ -167,7 +170,6 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(EntityInit.hemolytic_vial_projectile.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(EntityInit.constrictor_cord_projectile.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(EntityInit.blood_chum_projectile.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(EntityInit.sanguis_lancea.get(), SanguisLanceaRenderer::new);
         event.registerEntityRenderer(EntityInit.unstained_zealot.get(), UnstainedZealotRenderer::new);
         event.registerEntityRenderer(EntityInit.unstained_guardian.get(), UnstainedGuardianRenderer::new);
@@ -235,14 +237,13 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.mycophant_lance.get(), MycophantLanceRenderer::new);
         event.registerEntityRenderer(EntityInit.seraphae.get(), SeraphaeRenderer::new);
         event.registerEntityRenderer(EntityInit.seraphae_fragment.get(), SeraphaeFragmentRenderer::new);
-        event.registerEntityRenderer(EntityInit.frayed_thread.get(), com.vincenthuto.hemomancy.client.render.entity.weave.FrayedThreadRenderer::new);
+        event.registerEntityRenderer(EntityInit.intruding_memory.get(), com.vincenthuto.hemomancy.client.render.entity.weave.FrayedThreadRenderer::new);
         event.registerEntityRenderer(EntityInit.thread_bolt.get(), com.vincenthuto.hemomancy.client.render.entity.weave.ThreadBoltRenderer::new);
         event.registerEntityRenderer(EntityInit.thread_hazard.get(), com.vincenthuto.hemomancy.client.render.entity.weave.ThreadHazardRenderer::new);
         event.registerEntityRenderer(EntityInit.containment_anchor.get(), ContainmentAnchorRenderer::new);
         event.registerEntityRenderer(EntityInit.hematic_construct.get(), HematicConstructRenderer::new);
         event.registerEntityRenderer(EntityInit.spectral_companion.get(), PaleIntercessionRenderer::new);
         event.registerEntityRenderer(EntityInit.phantasmal_echo.get(), PhantasmalEchoRenderer::new);
-        event.registerEntityRenderer(EntityInit.dark_arrow.get(), DarkArrowRenderer::new);
         event.registerEntityRenderer(EntityInit.desiccant.get(), DesiccantRenderer::new);
         event.registerEntityRenderer(EntityInit.crimson_doe.get(), CrimsonDoeRenderer::new);
         event.registerEntityRenderer(EntityInit.verdigris_moth.get(), VerdigrisMothRenderer::new);
@@ -312,8 +313,6 @@ public final class EntityRendererRegistrar {
         event.registerBlockEntityRenderer(BlockEntityInit.phlebotomists_field_case.get(), PhlebotomistsFieldCaseRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.dictation_table.get(), DictationTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.harbinger_escritoire.get(), DictationTableRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntityInit.visceral_mirror.get(), VisceralMirrorRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntityInit.non_euclidean_hallway.get(), NonEuclideanHallwayRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.qliphoth_bloom.get(),
                 QliphothBloomBlockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.saint_sarcophagus.get(),
@@ -335,7 +334,7 @@ public final class EntityRendererRegistrar {
                 SanguineConduitBlockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.covenant_throne.get(),
                 CovenantThroneRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntityInit.warp_chair.get(),
+        event.registerBlockEntityRenderer(BlockEntityInit.somnolent_seat.get(),
                 WarpChairRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.hematic_armature.get(),
                 HematicArmatureRenderer::new);

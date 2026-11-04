@@ -143,20 +143,6 @@ public class VeinMinerHelper {
 		return Arrays.stream(Direction.values()).allMatch(e -> player.mayUseItemAt(pos, e, ItemStack.EMPTY));
 	}
 
-	public static InteractionResultHolder<ItemStack> actionResultFromType(InteractionResult type, ItemStack stack) {
-		switch (type) {
-		case SUCCESS:
-			return InteractionResultHolder.success(stack);
-		case CONSUME:
-			return InteractionResultHolder.consume(stack);
-		case FAIL:
-			return InteractionResultHolder.fail(stack);
-		case PASS:
-		default:
-			return InteractionResultHolder.pass(stack);
-		}
-	}
-
 	public static boolean isOre(Block b) {
 		return b.defaultBlockState().is(BlockTags.STONE_ORE_REPLACEABLES)
 				|| b.defaultBlockState().is(BlockTags.DEEPSLATE_ORE_REPLACEABLES);

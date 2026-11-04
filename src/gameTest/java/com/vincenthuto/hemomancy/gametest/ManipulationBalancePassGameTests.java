@@ -98,7 +98,7 @@ public final class ManipulationBalancePassGameTests {
             stale.setCost(999);
             var known = HemoCapabilityAccess.getKnownManipulations(p);
             known.getKnownManips().put(stale, new ManipLevel(1, 0));
-            com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules.sanitizeKnownManipulations(known);
+            com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep.sanitizeKnownManipulations(known);
             h.assertTrue(stale.getTend() == EnumBloodTendency.FERRIC && stale.getSecondaryTend() == EnumBloodTendency.ANIMUS,
                     "Saved copy kept its old school");
             near(h, ManipulationInit.blood_needle.get().getCost(), stale.getCost(), "Saved copy kept its old price");

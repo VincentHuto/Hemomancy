@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:white_humor_purification",
+  "input": {
+    "item": "hemomancy:suspended_blood_crystal"
+  },
+  "result": {
+    "id": "hemomancy:suspended_cleansed_blood_crystal",
+    "count": 1
+  },
+  "transform_time": 600
+}

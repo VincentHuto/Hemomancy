@@ -24,10 +24,6 @@ public final class PuppeteerSummonRules {
 		return Math.max(0, currentShaped - Math.max(0, recalledMatching)) + Math.max(0, replacements);
 	}
 
-	public static boolean canUnlockAtDegree(PuppeteerSummonDefinition definition, int degree) {
-		return definition != null && degree >= definition.requiredDegree();
-	}
-
 	public static int activeSummonCap(int puppetSkeinLevel) {
 		return 1 + Math.max(0, puppetSkeinLevel);
 	}

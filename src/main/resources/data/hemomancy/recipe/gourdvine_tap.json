@@ -9,7 +9,7 @@
     "F": { "item": "hemomancy:foul_paste" },
     "G": { "item": "hemomancy:gourd_slice" },
     "I": { "item": "hemomancy:infested_wood" },
-    "C": { "item": "minecraft:copper_ingot" }
+    "C": { "item": "hemomancy:hematic_iron_scrap" }
   },
   "result": {
     "id": "hemomancy:gourdvine_tap"

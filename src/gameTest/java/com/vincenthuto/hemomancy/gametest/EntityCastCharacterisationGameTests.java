@@ -48,9 +48,8 @@ public final class EntityCastCharacterisationGameTests {
 			"sanguine_ignition", "scalding_updraft", "vitric_combustion", "deadly_gaze", "hemolymphal_pulse",
 			"activation_potential", "synaptic_jolt", "conductive_mark", "hematic_flare", "hematic_beacon",
 			"prismatic_reproof", "unclosing_eye", "hemorrhage", "exsanguinate", "insatiable_hunger", "grave_debt",
-			"bloom_of_rot", "cryogenic_pulse", "glacial_grasp", "glacial_bastion", "glacial_rampart", "pyretic_forge",
+			"bloom_of_rot", "cryogenic_pulse", "glacial_grasp", "glacial_rampart", "pyretic_forge",
 			"iron_retort", "sanguine_magnetism", "void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse",
-			"blood_eclipse_mantle",
 			// No entity cast: it must report that it did nothing.
 			"blood_rush");
 
@@ -80,7 +79,7 @@ public final class EntityCastCharacterisationGameTests {
 			if (manipulation.getEntityCast().isPresent()) attached.add(manipulation.getName());
 			if (EntityManipulationEffects.isSupported(manipulation)) supported.add(manipulation.getName());
 		}
-		helper.assertTrue(attached.equals(new TreeSet<>(CASTS.subList(0, 34))), "entity casts attached to " + attached);
+		helper.assertTrue(attached.equals(new TreeSet<>(CASTS.subList(0, 32))), "entity casts attached to " + attached);
 		helper.assertTrue(supported.equals(new TreeSet<>(WILL_CASTS)), "Wills may cast " + supported);
 		com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperManipulationCoverage.TABLE.forEach((id, entry) -> {
 			if (entry.coverage() == com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperManipulationCoverage.Coverage.CASTABLE) {

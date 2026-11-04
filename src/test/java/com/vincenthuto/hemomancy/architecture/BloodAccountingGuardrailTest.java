@@ -25,7 +25,7 @@ class BloodAccountingGuardrailTest {
 	private static final String COMMON = "src/main/java/com/vincenthuto/hemomancy/common/";
 	/** Not compiled: build.gradle excludes these source sets. */
 	private static final String[] UNCOMPILED = {
-			"src/main/java/com/vincenthuto/hemomancy/compat/mna/", "src/main/java/com/vincenthuto/hemomancy/compat/curios/" };
+			 };
 
 	/** A call on a lower-case receiver or a call result; {@code SomeRules.drain(...)} is not a volume. */
 	private static final Pattern DRAIN = Pattern.compile("(?:\\b[a-z]\\w*|\\))\\.drain\\(");
@@ -45,7 +45,7 @@ class BloodAccountingGuardrailTest {
 			entry(COMMON + "capability/player/harbinger/bloodvolume/routing/BloodRoutingHelper.java",
 					new Allowed(1, "drawFromVolume draws from the owner's equipped gourd; the owner pays through BloodAccounting")),
 			entry(COMMON + "capability/player/harbinger/bloodvolume/routing/BloodRoutingRules.java",
-					new Allowed(1, "Routing source abstraction; LinkedPlayerSource has no callers, so no player pays here")),
+					new Allowed(1, "Routing source abstraction behind a test-only transfer; no player pays here")),
 			entry(COMMON + "capability/player/unstained/white_humor/WhiteHumorVolume.java",
 					new Allowed(1, "White humor, not blood")),
 			entry(COMMON + "entity/summon/BloodThrallEntity.java", new Allowed(1, "Drains the source reservoir it hauls from")),
@@ -104,8 +104,11 @@ class BloodAccountingGuardrailTest {
 				"call BloodVolumeEvents.syncVolume, which also refreshes the blood diagnostics");
 		String events = SourceAssertions.readMainJava(
 				"common/capability/player/harbinger/bloodvolume/BloodVolumeEvents.java");
-		SourceAssertions.assertContains("the packet is built inside syncVolume",
-				SourceAssertions.methodBody(events, "public static void syncVolume("), "new BloodVolumeServerPacket(volume)");
+		// syncVolume only raises the dirty flag; the end-of-tick flush and the lifecycle resend build the packet once.
+		SourceAssertions.assertContains("syncVolume defers to the flush",
+				SourceAssertions.methodBody(events, "public static void syncVolume("), "volume.markSyncDirty()");
+		SourceAssertions.assertContains("the packet is built inside sendVolume",
+				SourceAssertions.methodBody(events, "private static void sendVolume("), "new BloodVolumeServerPacket(volume)");
 	}
 
 	@Test

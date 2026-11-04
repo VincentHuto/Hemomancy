@@ -39,7 +39,7 @@ public final class ManipulationChargeInput {
         }
         var known = HemoCapabilityAccess.getKnownManipulations(mc.player);
                     var memory = known.getSelectedMemoryRef();
-                    boolean thelemic = memory.kind() == MemoryEntryKind.MUSCLE_MEMORY;
+                    boolean thelemic = memory.kind() == MemoryEntryKind.THELEMIC_MEMORY;
                     var selected = thelemic ? null : ManipulationInit.getByName(memory.id());
                     if (selected == null && !thelemic) {
                         stopCastingChargePresentation();

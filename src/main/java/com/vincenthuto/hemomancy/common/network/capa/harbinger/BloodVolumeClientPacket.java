@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -28,10 +29,10 @@ public class BloodVolumeClientPacket implements CustomPacketPayload {
 	public static void handle(final BloodVolumeClientPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
-			if (player instanceof ServerPlayer sender) {
+			if (player instanceof ServerPlayer sender && ServerboundRateLimiter.tryAcquire(sender, "request_volume", 10)) {
 				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(sender)
 						;
-				BloodVolumeEvents.syncVolume(sender, volume);
+				BloodVolumeEvents.sendVolume(sender, volume);
 				PacketHandler.sendToPlayer(sender, new PacketSyncPomeProgress(computePomeProgress(sender)));
 			}
 		});

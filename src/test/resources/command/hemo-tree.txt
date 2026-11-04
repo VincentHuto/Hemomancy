@@ -87,15 +87,6 @@ hemo permission2
       <player:entity(single=true, playersOnly=true)> executes permission0
     rematch executes permission0
       <player:entity(single=true, playersOnly=true)> executes permission0
-  organs permission0
-    get executes permission0
-      <player:entity(single=true, playersOnly=true)> executes permission0
-    reset executes permission0
-      <player:entity(single=true, playersOnly=true)> executes permission0
-    set permission0
-      <organ:string(SINGLE_WORD)> suggests permission0
-        <level:integer(0, 3)> executes permission0
-          <player:entity(single=true, playersOnly=true)> executes permission0
   qliphoth permission0
     archon permission0
       clear executes permission0

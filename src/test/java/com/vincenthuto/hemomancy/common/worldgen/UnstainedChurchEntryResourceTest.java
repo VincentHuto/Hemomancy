@@ -36,7 +36,7 @@ final class UnstainedChurchEntryResourceTest {
 				"data/hemomancy/books/liberimmaculatus/sacred_tools/pages/hemolytic_solution.json"));
 
 		for (String instruction : new String[] { "Unstained Podium", "Lethean Baptism",
-				"Blood Crafting key", "does not make you a Church member", "five service vows" }) {
+				"Activate Blood Construct key", "does not make you a Church member", "five service vows" }) {
 			assertTrue(firstSteps.contains(instruction), "missing entry instruction: " + instruction);
 		}
 		assertFalse(solution.contains("Drinking it applies the Hemolysis effect"));

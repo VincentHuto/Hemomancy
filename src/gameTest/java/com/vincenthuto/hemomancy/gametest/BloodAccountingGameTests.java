@@ -47,7 +47,9 @@ public final class BloodAccountingGameTests {
 		return HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
 	}
 
+	/** A payment marks the volume dirty; the end-of-tick flush is what sends it, so flush before looking. */
 	private static void assertSynced(GameTestHelper helper, CapturedPlayer captured, String what) {
+		com.vincenthuto.hemomancy.common.capability.PlayerStateSync.flushDirty(captured.player);
 		helper.assertTrue(!captured.sent(BloodVolumeServerPacket.class).isEmpty()
 				&& !captured.sent(PacketSyncBloodFlowDiagnostics.class).isEmpty(), what + " did not end in syncVolume");
 		captured.payloads.clear();

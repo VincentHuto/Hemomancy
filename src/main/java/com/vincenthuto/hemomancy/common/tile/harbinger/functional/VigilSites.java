@@ -5,14 +5,34 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import java.util.*;
 
-/** Loaded controllers only; no ticking chunks or searching the world to find a site. */
+/**
+ * Loaded controllers only; no ticking chunks or searching the world to find a site. Split by side like
+ * {@code WardAnchors}: a client keeps one level, and both maps are cleared with the session (RT-12).
+ */
 public final class VigilSites {
     public static final String FIXTURE_MARKER="hemomancy:antecedent_fixture";
-    private static final Map<Level,Set<VigilArchiveBlockEntity>> LOADED=new WeakHashMap<>();
+    private static final Map<Level,Set<VigilArchiveBlockEntity>> SERVER=new WeakHashMap<>();
+    private static final Map<Level,Set<VigilArchiveBlockEntity>> CLIENT=new WeakHashMap<>();
     private VigilSites() {}
-    public static synchronized void add(VigilArchiveBlockEntity site) { LOADED.computeIfAbsent(site.getLevel(),ignored->Collections.newSetFromMap(new IdentityHashMap<>())).add(site); }
-    public static synchronized void remove(VigilArchiveBlockEntity site) { var set=LOADED.get(site.getLevel());if(set!=null)set.remove(site); }
-    public static synchronized List<VigilArchiveBlockEntity> loaded(Level level) { return List.copyOf(LOADED.getOrDefault(level,Set.of())); }
+    private static Map<Level,Set<VigilArchiveBlockEntity>> side(Level level) { return level.isClientSide?CLIENT:SERVER; }
+    public static synchronized void add(VigilArchiveBlockEntity site) {
+        Level level=site.getLevel();
+        if(level==null)return;
+        // The level a client left on a dimension change never unloads its chunks, so drop it here.
+        if(level.isClientSide) CLIENT.keySet().removeIf(held->held!=level);
+        side(level).computeIfAbsent(level,ignored->Collections.newSetFromMap(new IdentityHashMap<>())).add(site);
+    }
+    public static synchronized void remove(VigilArchiveBlockEntity site) {
+        Level level=site.getLevel();
+        if(level==null)return;
+        var set=side(level).get(level);
+        if(set!=null){set.remove(site);if(set.isEmpty())side(level).remove(level);}
+    }
+    public static synchronized List<VigilArchiveBlockEntity> loaded(Level level) { return List.copyOf(side(level).getOrDefault(level,Set.of())); }
+    /** On logout: the client's levels are gone. */
+    public static synchronized void clearClient() { CLIENT.clear(); }
+    /** When a server starts or stops. */
+    public static synchronized void clearServer() { SERVER.clear(); }
     public static VigilArchiveBlockEntity fixture(Level level,BlockPos pos) {
         if(!authored(level,pos))return null;
         for(var site:loaded(level)) if(!site.isRemoved() && site.isFixture(pos)) return site;

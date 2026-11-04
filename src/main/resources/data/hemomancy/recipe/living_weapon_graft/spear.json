@@ -3,7 +3,7 @@
   "ingredients": [
     { "item": "hemomancy:hematic_memory" },
     { "item": "hemomancy:sanguine_formation" },
-    { "item": "hemomancy:calcified_blood_spine" },
+    { "item": "hemomancy:barbed_splinter" },
     { "item": "hemomancy:incandescent_enzyme" }
   ],
   "result": {

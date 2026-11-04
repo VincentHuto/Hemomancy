@@ -37,11 +37,6 @@ public final class VesperPhaseTransitionRules {
 		return HemoEasing.smoothstepUnclamped(dismountProgress(transitionTick));
 	}
 
-	public static float jumpArc(float transitionTick) {
-		float progress = dismountProgress(transitionTick);
-		return 4.0F * progress * (1.0F - progress);
-	}
-
 	public static float cocoonFormationProgress(float transitionTick) {
 		return HemoEasing.clamp01((transitionTick - COCOON_START_TICK) / COCOON_FORMATION_TICKS);
 	}

@@ -35,7 +35,7 @@ public final class VesperTransitionCocoonGeometry {
 			List<Joint> complete = new ArrayList<>(SEGMENTS_PER_STRAND + 1);
 			for (int segment = 0; segment <= SEGMENTS_PER_STRAND; segment++) {
 				double progress = segment / (double) SEGMENTS_PER_STRAND;
-				double animatedWeight = Mth.smoothstep(progress);
+				double animatedWeight = HemoEasing.smoothstep(progress);
 				double writhePhase = time * (0.052D + strandIndex * 0.0008D) + strandIndex * 1.31D;
 				double angularWrithe = Math.sin(writhePhase + progress * 8.2D)
 						* 0.105D * animatedWeight;

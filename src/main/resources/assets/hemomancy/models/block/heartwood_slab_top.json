@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "hemomancy:block/heartwood_planks",
+    "side": "hemomancy:block/heartwood_planks",
+    "top": "hemomancy:block/heartwood_planks"
+  }
+}

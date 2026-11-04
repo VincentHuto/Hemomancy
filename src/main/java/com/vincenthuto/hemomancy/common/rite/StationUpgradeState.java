@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 
 /**
  * A station-upgrade rite's own state inside an {@link ActiveCardinalRite}, saved as its {@code StationUpgrade}
- * compound (read from the older {@code AlembicUpgrade} key too): the circuit being fed and the blood in it, plus the
+ * compound: the circuit being fed and the blood in it, plus the
  * subject snapshot and offering escrow kept in {@link #tag()} by {@code StationUpgradeRites} and
  * {@code RiteOfferingEscrow}.
  */
@@ -43,7 +43,6 @@ public final class StationUpgradeState {
 	}
 
 	void read(CompoundTag rite) {
-		tag = (rite.contains("StationUpgrade") ? rite.getCompound("StationUpgrade")
-				: rite.getCompound("AlembicUpgrade")).copy();
+		tag = rite.getCompound("StationUpgrade").copy();
 	}
 }

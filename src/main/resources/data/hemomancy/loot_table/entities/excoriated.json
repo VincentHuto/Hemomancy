@@ -56,7 +56,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:calcified_blood_spine",
+          "name": "hemomancy:barbed_splinter",
           "functions": [
             {
               "function": "minecraft:set_count",

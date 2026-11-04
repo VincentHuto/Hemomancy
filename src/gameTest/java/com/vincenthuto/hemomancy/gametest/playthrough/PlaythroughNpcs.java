@@ -159,7 +159,7 @@ public final class PlaythroughNpcs {
 	/** The Crimson Troupe's speakers and pieces, by the entity type each is. */
 	public enum CircusRole {
 		RINGMASTER(EntityInit.circus_ringmaster::get),
-		CAROUSEL(EntityInit.circus_carousel::get),
+		CAROUSEL(EntityInit.impaled_procession::get),
 		FIRE_EATER(EntityInit.circus_fire_eater::get),
 		STILT_WALKER(EntityInit.circus_stilt_walker::get),
 		ACROBAT(EntityInit.circus_acrobat::get),

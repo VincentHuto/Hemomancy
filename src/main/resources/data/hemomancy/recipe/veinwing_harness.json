@@ -5,7 +5,7 @@
   "key": {
     "P": { "item": "hemomancy:venous_pinion" },
     "Q": { "item": "hemomancy:sanguine_quintessence" },
-    "T": { "item": "hemomancy:puppeteering_thread" }
+    "T": { "item": "hemomancy:enthralling_filament" }
   },
   "result": { "id": "hemomancy:veinwing_harness", "count": 1 }
 }

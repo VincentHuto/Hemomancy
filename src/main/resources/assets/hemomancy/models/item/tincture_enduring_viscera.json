@@ -1,1 +1,14 @@
-{"parent":"minecraft:item/generated","textures":{"layer0":"hemomancy:item/tincture_enduring_viscera"}}
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/tincture_enduring_viscera"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "hemomancy:jug": 1
+      },
+      "model": "hemomancy:item/tincture_enduring_viscera_jug"
+    }
+  ]
+}

@@ -266,17 +266,6 @@ public abstract class MorphlingModelAttachment {
         }
 
         /**
-         * Hide the parent humanoid section only once this maturity level is
-         * reached. This lets lower stages show protrusions over the vanilla
-         * anatomy, while Primal can become true replacement anatomy.
-         */
-        public SimpleBodyAttachment hideAttachedPartAt(int maturity) {
-            this.hideAttachedPart = true;
-            this.hideAttachedPartAtMaturity = Mth.clamp(maturity, 0, 5);
-            return this;
-        }
-
-        /**
          * Let this attachment share the glow layer's maturity/pulse opacity.
          * Use this only for spectral or intentionally translucent geometry.
          */

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,6 +20,8 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 				.add(Attributes.ATTACK_KNOCKBACK).add(Attributes.MOVEMENT_SPEED, 0f)
 				.add(Attributes.KNOCKBACK_RESISTANCE, 1000);
 	}
+	public static final int DEFAULT_LIFETIME_TICKS = 120;
+	private static final ParticleColor DISSOLUTION = new ParticleColor(64, 6, 10);
 	public float deathTicks = 1;
 	private final BloodConstructSoundGate soundGate = new BloodConstructSoundGate();
 
@@ -111,38 +113,19 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 	@Override
 	public void tick() {
 		super.tick();
-		if (!usesLegacyConstructLifecycle()) return;
+		int lifetime = constructLifetimeTicks();
+		if (lifetime <= 0) return;
 		this.setYBodyRot(0);
-		// Particle MobEffects
-		float f = (this.random.nextFloat() - 0.5F) * 2.0F;
-		float f1 = -1;
-		float f2 = (this.random.nextFloat() - 0.5F) * 2.0F;
-		float f3 = (this.random.nextFloat() - 0.5F) * 1.5F;
-		if (usesLegacyConstructParticles() && this.tickCount < 2) {
-			this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1, this.getZ() + f2,
-					0.0D, 0.0D, 0.0D);
-		}
-		if (usesLegacyConstructParticles() && this.tickCount > 2 && this.tickCount < 120) {
-			for (int i = 0; i < 2; i++) {
-				this.level().addParticle(DustParticleOptions.REDSTONE, this.getX() + f * 0.5, this.getY(),
-						this.getZ() + f2 * 0.5, 0.0D, 0.0D, 0.0D);
-				this.level().addParticle(ParticleTypes.ASH, this.getX() + f, this.getY() + (0.0D + i) + f3,
-						this.getZ() + f2, 0.0D, 0.0D, 0.0D);
-			}
-		}
-		if (this.tickCount == 120) {
-			if(usesLegacyConstructParticles())this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1, this.getZ() + f2,
-					0.0D, 0.0D, 0.0D);
+		if (this.tickCount == lifetime) {
 			this.setHealth(0);
-
 			playConstructExpirationSound();
-
 		}
 	}
 
-	protected boolean usesLegacyConstructLifecycle() { return true; }
-
-    protected boolean usesLegacyConstructParticles() { return true; }
+	/** Ticks before the construct expires on its own; zero or less keeps it until something else removes it. */
+	protected int constructLifetimeTicks() {
+		return DEFAULT_LIFETIME_TICKS;
+	}
 
 	@Override
 	protected void tickDeath() {
@@ -154,7 +137,7 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 		if (this.deathTicks <= 0.1) {
 			if (level().isClientSide) {
 				playConstructDissolutionSound();
-				this.level().addParticle(ParticleTypes.SQUID_INK, this.getX() + g, this.getY() + 2.0D + g1,
+				this.level().addParticle(HemoParticleData.darkGlow(DISSOLUTION), this.getX() + g, this.getY() + 2.0D + g1,
 						this.getZ() + g2, 0.0D, 0.0D, 0.0D);
 			}
 		}

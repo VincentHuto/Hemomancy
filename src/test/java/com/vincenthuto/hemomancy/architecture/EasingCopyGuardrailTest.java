@@ -36,6 +36,9 @@ class EasingCopyGuardrailTest {
 	private static final Pattern ONE_ARGUMENT_CLAMP = Pattern.compile(
 			"\\b(?:float|double)\\s+(clamp|ease)\\s*\\(\\s*(?:final\\s+)?(?:float|double)\\s+\\w+\\s*\\)");
 
+	/** Vanilla's quintic smoothstep is not the mod's cubic one; a call to it is a copy by another route. */
+	private static final Pattern VANILLA_SMOOTHSTEP = Pattern.compile("\\bMth\\.(smoothstep)\\s*\\(");
+
 	@Test
 	void easingIsDeclaredOnlyInHemoEasing() throws Exception {
 		List<String> found = new ArrayList<>();
@@ -47,6 +50,7 @@ class EasingCopyGuardrailTest {
 				String text = SourceAssertions.read(file);
 				collect(text, EASING_DECLARATION, shown, found);
 				collect(text, ONE_ARGUMENT_CLAMP, shown, found);
+				collect(text, VANILLA_SMOOTHSTEP, shown, found);
 			}
 		}
 		assertEquals(new TreeSet<>(ALLOWED.keySet()), new TreeSet<>(found),

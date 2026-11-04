@@ -1,0 +1,92 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "hemomancy:block/heartwood_log",
+    "side": "hemomancy:block/heartwood_log",
+    "end": "hemomancy:block/heartwood_log",
+    "glow_side": "hemomancy:block/heartwood_log_glow"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#end",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#end",
+          "cullface": "up"
+        },
+        "north": {
+          "texture": "#side",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#side",
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#side",
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#side",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      },
+      "faces": {
+        "down": {
+          "texture": "#glow_side",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#glow_side",
+          "cullface": "up"
+        },
+        "north": {
+          "texture": "#glow_side",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#glow_side",
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#glow_side",
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#glow_side",
+          "cullface": "east"
+        }
+      }
+    }
+  ]
+}

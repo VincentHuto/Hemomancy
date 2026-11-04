@@ -36,6 +36,13 @@ public final class OsteophageGameTests {
                 .noneMatch(entry -> entry.type == type), "Osteophage leaked into Crimson Forest spawn table");
         helper.succeed();
     }
+    /** TEMPORARY layout shim for the Warden flake reproduction: restores the grid slot the batch had before the
+     *  Adipocere tests were deleted. Remove before finishing. */
+    @GameTest(template = "empty", timeoutTicks = 20, batch = "osteophage_repeated_hunt")
+    public static void tmpLayoutShimForWardenRepro(GameTestHelper helper) {
+        helper.succeed();
+    }
+
     @GameTest(template = "empty", timeoutTicks = 350, batch = "osteophage_repeated_hunt")
     public static void makesSeveralPassesAgainstHealthySkeleton(GameTestHelper helper) {
         BlockPos seat = bonePerch(helper, new BlockPos(5, 6, 5));

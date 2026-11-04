@@ -1,0 +1,6 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:oak_planks",
+  "blood_cost": 40,
+  "result": "hemomancy:blood_wood_planks"
+}

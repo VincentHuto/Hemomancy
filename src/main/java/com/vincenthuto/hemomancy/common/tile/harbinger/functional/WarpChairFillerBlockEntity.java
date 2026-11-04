@@ -7,6 +7,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public final class WarpChairFillerBlockEntity extends FillerBlockEntity {
 	public WarpChairFillerBlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityInit.warp_chair_filler.get(), pos, state);
+		super(BlockEntityInit.somnolent_seat_filler.get(), pos, state);
 	}
 }

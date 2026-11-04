@@ -120,8 +120,8 @@ public final class CircusSchoolQuests {
         // Slot insertion preserves exact overflow even for creative players with a full inventory.
         for (int slot = 0; slot < player.getInventory().items.size() && pending > 0; slot++) {
             ItemStack held = player.getInventory().items.get(slot);
-            if (held.isEmpty()) { player.getInventory().items.set(slot, new ItemStack(ItemInit.puppeteering_thread.get(), pending)); pending = 0; }
-            else if (held.is(ItemInit.puppeteering_thread.get())) {
+            if (held.isEmpty()) { player.getInventory().items.set(slot, new ItemStack(ItemInit.enthralling_filament.get(), pending)); pending = 0; }
+            else if (held.is(ItemInit.enthralling_filament.get())) {
                 int inserted = Math.min(pending, Math.max(0, held.getMaxStackSize() - held.getCount()));
                 held.grow(inserted); pending -= inserted;
             }

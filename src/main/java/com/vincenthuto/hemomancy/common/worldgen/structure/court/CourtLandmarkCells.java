@@ -22,7 +22,6 @@ public final class CourtLandmarkCells {
 			Hemomancy.rloc("troupe_abandoned_stages"),
 			Hemomancy.rloc("harbinger_voyager_wreck"),
 			Hemomancy.rloc("harbinger_voyager_vessel"),
-			Hemomancy.rloc("mausoleum"),
 			Hemomancy.rloc("saint_mausoleums"),
 			ResourceLocation.withDefaultNamespace("ocean_monuments"));
 	/**

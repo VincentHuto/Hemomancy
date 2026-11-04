@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class VelorumModelTest {
-    @Test void aMartyrsBowAndDeathRemainVisibleDuringTheSharedCast() {
+    @Test void aGuardsBowAndDeathRemainVisibleDuringTheSharedCast() {
         var root=VelorumModel.createBodyLayer().bakeRoot();var model=new VelorumModel<>(root);
         var chest=root.getChild("root").getChild("hips").getChild("chest");
         var phase=new com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumVisualRules.Phase(100,15,160,19,80,17,30);

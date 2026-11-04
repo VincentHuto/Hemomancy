@@ -17,7 +17,7 @@ class SharedMemoryInputSourceTest {
 
         assertTrue(input.contains("known.getSelectedMemoryRef()"),
                 "Use input must follow the selected Noetic or Thelemic memory");
-        assertTrue(input.contains("MemoryEntryKind.MUSCLE_MEMORY"));
+        assertTrue(input.contains("MemoryEntryKind.THELEMIC_MEMORY"));
         assertTrue(input.contains("EnumManipulationType.PASSIVE"),
                 "Thelemic activation is a press toggle, not the previous Noetic's charge/channel");
         assertTrue(input.contains("memory.storageKey()"),

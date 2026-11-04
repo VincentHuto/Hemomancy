@@ -29,7 +29,6 @@ public final class SpecimenJarData {
 	private static final String TAG_ID = "id";
 	private static final String TAG_POS = "Pos";
 	private static final String TAG_MOTION = "Motion";
-	private static final String TAG_ROTATION = "Rotation";
 	private static final String TAG_UUID = "UUID";
 	private static final String TAG_UUID_LEAST = "UUIDLeast";
 	private static final String TAG_UUID_MOST = "UUIDMost";

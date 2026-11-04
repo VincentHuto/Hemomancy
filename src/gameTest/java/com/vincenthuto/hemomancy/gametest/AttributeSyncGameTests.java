@@ -93,7 +93,7 @@ public final class AttributeSyncGameTests {
 
 			// The effect brings its own flight modifier, which syncs once when it is applied and once when it ends.
 			player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
-			player.addEffect(new MobEffectInstance(EffectInit.fungal_elytra, 200));
+			player.addEffect(new MobEffectInstance(EffectInit.noctifly_agaric, 200));
 			clearDirty(player);
 			tick(player);
 			helper.assertTrue(player.getAttribute(flight).hasModifier(elytra), "Fungal Elytra must keep flight");
@@ -101,7 +101,7 @@ public final class AttributeSyncGameTests {
 			for (int tick = 0; tick < 5; tick++) tick(player);
 			helper.assertFalse(isDirty(player, flight), "Fungal Elytra must not resync the flight attribute every tick");
 
-			player.removeEffect(EffectInit.fungal_elytra);
+			player.removeEffect(EffectInit.noctifly_agaric);
 			clearDirty(player);
 			tick(player);
 			helper.assertFalse(player.getAttribute(flight).hasModifier(elytra), "Flight must end with its source");

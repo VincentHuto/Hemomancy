@@ -150,7 +150,7 @@ class RegistrationStyleGuardrailTest {
 
 	private static boolean isDormantCompat(Path file) {
 		String path = file.toString().replace('\\', '/');
-		return path.contains("/compat/mna/") || path.contains("/compat/curios/");
+		return false;
 	}
 
 	private static List<Path> javaFiles(Path... roots) throws Exception {

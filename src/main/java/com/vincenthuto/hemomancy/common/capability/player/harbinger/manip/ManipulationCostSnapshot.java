@@ -29,14 +29,6 @@ public record ManipulationCostSnapshot(double baseCost, List<ManipulationCostCon
 		return Optional.empty();
 	}
 
-	public double discountPercent() {
-		return Math.max(0.0D, 1.0D - discountMultiplier);
-	}
-
-	public double surchargePercent() {
-		return Math.max(0.0D, surchargeMultiplier - 1.0D);
-	}
-
 	private static double finiteOrZero(double value) {
 		return Double.isFinite(value) ? value : 0.0D;
 	}

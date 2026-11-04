@@ -21,7 +21,7 @@ final class FaneSubcommand {
 
 	static LiteralArgumentBuilder<CommandSourceStack> build() {
 		return Commands.literal("fane")
-				.then(Commands.literal("preview")
+				.then(Commands.literal("preview").requires(DevCommands::available)
 						.then(Commands.literal("member")
 								.executes(ctx -> setFanePreview(ctx.getSource(), FaneBoundaryRelation.MEMBER)))
 						.then(Commands.literal("mundane")

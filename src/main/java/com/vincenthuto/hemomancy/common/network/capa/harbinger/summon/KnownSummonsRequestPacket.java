@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.summon;
 
+import com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
@@ -28,7 +29,7 @@ public class KnownSummonsRequestPacket implements CustomPacketPayload {
 	public static void handle(final KnownSummonsRequestPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player packetPlayer = ctx.player();
-			if (!(packetPlayer instanceof ServerPlayer player)) {
+			if (!(packetPlayer instanceof ServerPlayer player) || !ServerboundRateLimiter.tryAcquire(player, "request_summons", 10)) {
 				return;
 			}
 			KnownSummonEvents.sync(player, HemoCapabilityAccess.getKnownSummons(player));

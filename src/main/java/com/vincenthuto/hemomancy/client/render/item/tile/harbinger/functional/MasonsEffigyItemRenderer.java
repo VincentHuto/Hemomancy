@@ -24,9 +24,6 @@ public class MasonsEffigyItemRenderer extends BlockEntityWithoutLevelRenderer {
 
     public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_masons_effigy.png");
 
-    private static final float GUI_PITCH = 180.0F;
-    private static final float GUI_YAW = 0.0F;
-
     private MasonsEffigyModel model;
 
     public MasonsEffigyItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {

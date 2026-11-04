@@ -52,7 +52,7 @@ public final class CircusRingmasterGameTests {
 
 	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 120)
 	public static void carouselSpawnsThreeBoundPuppeteerCaptives(GameTestHelper helper) {
-		CircusCarouselEntity carousel = EntityInit.circus_carousel.get().create(helper.getLevel());
+		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
 		helper.assertTrue(carousel != null, "Carousel fixture must create");
 		carousel.setPos(helper.absolutePos(new BlockPos(4, 2, 4)).getCenter());
 		helper.getLevel().addFreshEntity(carousel);
@@ -147,7 +147,7 @@ public final class CircusRingmasterGameTests {
 	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
 	public static void inactiveRingmasterPositionDoesNotDependOnAudienceAcclimation(GameTestHelper helper) {
 		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
-		CircusCarouselEntity carousel = EntityInit.circus_carousel.get().create(helper.getLevel());
+		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
 		helper.assertTrue(ringmaster != null && carousel != null, "Circus fixtures must create");
 		BlockPos perch = helper.absolutePos(new BlockPos(4, 5, 4));
 		ringmaster.setPos(perch.getX() + 0.5D, perch.getY(), perch.getZ() + 0.5D);
@@ -225,7 +225,7 @@ public final class CircusRingmasterGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		ServerPlayer player = connectedPlayer(helper, "circus-pact-order", origin);
 		CircusPlayerProgress.addAcclimation(player, 500);
-		CircusCarouselEntity carousel = EntityInit.circus_carousel.get().create(helper.getLevel());
+		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
 		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
 		helper.assertTrue(carousel != null && ringmaster != null, "Circus fixtures must create");
 		carousel.setPos(origin.getCenter());
@@ -337,7 +337,7 @@ public final class CircusRingmasterGameTests {
 		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
 		helper.assertTrue(data.begin(helper.getLevel(), origin, disconnectedOwner,
 				CircusRouteRules.Route.SUCCESSION), "Pavilion attempt must begin");
-		CircusCarouselEntity carousel = EntityInit.circus_carousel.get().create(helper.getLevel());
+		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
 		helper.assertTrue(carousel != null, "Carousel fixture must create");
 		carousel.setPos(origin.getCenter());
 		helper.getLevel().addFreshEntity(carousel);

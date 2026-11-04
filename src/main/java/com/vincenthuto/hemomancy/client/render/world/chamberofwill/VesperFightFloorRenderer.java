@@ -131,11 +131,6 @@ public final class VesperFightFloorRenderer {
 		RenderSystem.disableBlend();
 	}
 
-	/** Called by the later storm-lightning renderer to illuminate the floor seams. */
-	public static void flashFromDistantLightning(float strength) {
-		lightningPulse = Math.max(lightningPulse, Mth.clamp(strength, 0.0F, 1.0F));
-	}
-
 	public static void clear() {
 		if (opaqueBuffer != null) {
 			opaqueBuffer.close();

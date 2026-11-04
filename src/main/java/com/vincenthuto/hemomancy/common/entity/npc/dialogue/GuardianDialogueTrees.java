@@ -43,24 +43,4 @@ public final class GuardianDialogueTrees {
 				.build();
 	}
 
-	/**
-	 * Dispatches to the appropriate inquiry tree based on the held item using the
-	 * data-driven registry. Items not registered there get the flat unknown response.
-	 */
-	public static DialogueTree forItem(ItemStack item, int entityId) {
-		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.getItem());
-		return ItemInquiryRegistry.INSTANCE
-				.resolve("guardian", itemId, 0, 0f)
-				.map(lines -> basicItemInquiry(entityId, lines.toArray(String[]::new)))
-				.orElseGet(() -> basicItemInquiry(entityId, "hemomancy.guardian.item_inquiry.unknown"));
-	}
-
-	private static DialogueTree basicItemInquiry(int entityId, String... lines) {
-		return DialogueTree.builder(SPEAKER, GUARDIAN_ICON, entityId)
-				.theme(DialogueTheme.UNSTAINED)
-				.addNode(new DialogueNode("root", List.of(lines), List.of(
-						new DialogueOption("hemomancy.dialogue.guardian.option.leave", null, null)
-				)))
-				.build();
-	}
 }

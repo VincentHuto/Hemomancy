@@ -389,6 +389,7 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_fane", "fane_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_castles", "castles_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
@@ -397,6 +398,11 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.initiate.fane_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_the_saints", "saints_lore", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("castles_lore", List.of(
+						"hemomancy.vicar.initiate.castles_lore"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("saints_lore", List.of(
@@ -641,56 +647,6 @@ public final class HarbingerVicarDialogueTrees {
 				"hemomancy.vicar.archon.pome_empowered.line2"), root.options()));
 		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
 				tree.entityId(), tree.theme(), tree.presentation());
-	}
-
-	/**
-	 * Item inquiry — responds to items held by the player. The registry
-	 * ({@code data/.../dialogue_inquiry/vicar/}) is consulted first; items
-	 * not present there fall back to {@link #vicarUnknownInquiry}.
-	 * <p>
-	 * {@link HematicMemoryItem} instances share a single response regardless of
-	 * which manipulation they encode, so they are resolved here in code rather
-	 * than requiring one JSON file per memory item.
-	 *
-	 * @param item     The ItemStack the player is holding.
-	 * @param degree   The player's current initiatory degree.
-	 * @param entityId The entity id of the vicar.
-	 */
-	public static DialogueTree itemInquiry(ItemStack item, int degree, int entityId) {
-		// HematicMemoryItem: class-based check — all memory items share one response
-		if (item.getItem() instanceof HematicMemoryItem) {
-			return memoryInquiry(entityId);
-		}
-		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item.getItem());
-		return ItemInquiryRegistry.INSTANCE
-				.resolve("vicar", itemId, degree, 0f)
-				.map(lines -> basicItemInquiry(entityId, lines.toArray(String[]::new)))
-				.orElseGet(() -> vicarUnknownInquiry(entityId));
-	}
-
-	private static DialogueTree memoryInquiry(int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.vicar.item_inquiry.hematic_memory.line1",
-				"hemomancy.vicar.item_inquiry.hematic_memory.line2");
-	}
-
-	private static DialogueTree vicarUnknownInquiry(int entityId) {
-		return basicItemInquiry(entityId,
-				"hemomancy.vicar.item_inquiry.unknown");
-	}
-
-	private static DialogueTree basicItemInquiry(int entityId, String... lines) {
-		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
-				.addNode(new DialogueNode("root", List.of(lines), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
-				.addNode(new DialogueNode("item_hint", List.of(
-						"hemomancy.vicar.item_hint"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
-				.build();
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -27,7 +28,7 @@ import java.util.*;
  */
 public final class DialogueHubFactory {
 	private static final String NAMESPACE = "hemomancy";
-	private static final String MET_HERMIT = "hemomancy_met_harbinger_hermit";
+	private static final String MET_VICAR = "hemomancy_met_harbinger_vicar";
 	/** The glyph a lore card carries in the Conversation box. */
 	public static final ResourceLocation LORE_ICON = Hemomancy.rloc("dialogue/icons/lore");
 	public static final ResourceLocation TRADE_ICON = Hemomancy.rloc("dialogue/icons/trade");
@@ -48,8 +49,9 @@ public final class DialogueHubFactory {
 
 	public static DialogueTree decorate(DialogueTree tree, String npcId, ServerPlayer player) {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+		// The Vicar answers the question himself, so his own card stays while the player is new; a vow to the Church ends it.
 		if (!"hermit".equals(npcId) && degree == 0 && !NpcTradeSides.is(npcId, NpcTradeSides.Side.CIRCUS)
-				&& !hasMetHermit(player)) {
+				&& !ProgressionGates.isUnstained(player) && ("vicar".equals(npcId) || !hasMetVicar(player))) {
 			// The pavilion takes D0 visitors on its own terms; the Circus is not the Vicar's errand.
 			tree = addNewcomerGuidance(tree, npcId);
 		}
@@ -66,19 +68,18 @@ public final class DialogueHubFactory {
 	}
 
 	/**
-	 * Records that the player has spoken with a Hermit, so outpost NPCs stop offering newcomer guidance. Set when the
-	 * player talks to him, not when his tree is built for a sigil, and kept under PlayerPersisted so a death does not
-	 * bring the guidance back.
+	 * Records that the player has spoken with a Vicar, so other NPCs stop sending them to one. Set when the player talks
+	 * to him, and kept under PlayerPersisted so a death does not bring the guidance back.
 	 */
-	public static void markMetHermit(ServerPlayer player) {
+	public static void markMetVicar(ServerPlayer player) {
 		CompoundTag root = player.getPersistentData();
 		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
-		durable.putBoolean(MET_HERMIT, true);
+		durable.putBoolean(MET_VICAR, true);
 		root.put(Player.PERSISTED_NBT_TAG, durable);
 	}
 
-	private static boolean hasMetHermit(ServerPlayer player) {
-		return player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(MET_HERMIT);
+	private static boolean hasMetVicar(ServerPlayer player) {
+		return player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(MET_VICAR);
 	}
 
 	/**

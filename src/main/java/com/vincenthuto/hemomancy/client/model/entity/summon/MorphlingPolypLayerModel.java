@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.summon;
 
+import net.minecraft.util.Mth;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -138,8 +139,21 @@ public class MorphlingPolypLayerModel extends EntityModel<MorphlingPolypEntity> 
 			int packedColor) {
 	}
 
+	/** The appendages ride the same wobble as the polyp body (MorphlingPolypModel), so they stay attached. */
 	@Override
 	public void setupAnim(MorphlingPolypEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
 			float netHeadYaw, float headPitch) {
+		float stride = Math.min(1.0F, limbSwingAmount * 2.0F);
+		float breath = Mth.sin(ageInTicks * 0.13F);
+		float hop = Mth.abs(Mth.sin(limbSwing * 0.8F)) * stride;
+		float surge = attackTime > 0.0F ? Mth.sin(attackTime * Mth.PI) : 0.0F;
+		for (ModelPart part : parts.values()) {
+			part.resetPose();
+			part.yScale = 1.0F + 0.06F * breath - 0.15F * hop - 0.22F * surge;
+			part.xScale = 1.0F - 0.04F * breath + 0.1F * hop + 0.14F * surge;
+			part.zScale = 1.0F - 0.04F * breath + 0.1F * hop + 0.18F * surge;
+			part.xRot = -0.08F * stride * Mth.sin(limbSwing * 0.8F) - 0.15F * surge;
+			part.yRot = netHeadYaw * Mth.DEG_TO_RAD * 0.25F;
+		}
 	}
 }

@@ -8,8 +8,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentEntityEventHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarStateSyncEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -89,7 +89,7 @@ public final class MultiplayerVerification {
 
 	/** What the render layers read for {@code player}: fungal scar, morphling, muscle memory, equipment, visibility. */
 	public static String digest(Player player) {
-		var muscle = HemoCapabilityAccess.muscleMemory(player);
+		var muscle = HemoCapabilityAccess.thelemicMemory(player);
 		var equipment = HemoCapabilityAccess.getEquipment(player);
 		StringBuilder out = new StringBuilder();
 		out.append("fungal=").append(id(HemoCapabilityAccess.getScarState(player).getFungalScar()));
@@ -117,8 +117,8 @@ public final class MultiplayerVerification {
 		equipment.setStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX, new ItemStack(ItemInit.blood_gourd_red.get()));
 		HemoCapabilityAccess.getScarState(player).setFungalScar(new ItemStack(ItemInit.noctifly_agaric.get()));
 		HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(new ItemStack(ItemInit.morphling_marrowplume.get()));
-		var muscle = HemoCapabilityAccess.muscleMemory(player);
-		for (MuscleMemory memory : List.of(MuscleMemory.SANGUINE_FISTS, MuscleMemory.COURSING_LEGS)) {
+		var muscle = HemoCapabilityAccess.thelemicMemory(player);
+		for (ThelemicMemory memory : List.of(ThelemicMemory.SANGUINE_FISTS, ThelemicMemory.COURSING_LEGS)) {
 			muscle.learnAndAddReserve(memory, 1_000_000);
 			muscle.activate(memory);
 		}
@@ -131,8 +131,8 @@ public final class MultiplayerVerification {
 		for (int slot : LAYER_SLOTS) if (slot != IScars.FUNGAL_SLOT) equipment.setStackInSlot(slot, ItemStack.EMPTY);
 		HemoCapabilityAccess.getScarState(player).setFungalScar(ItemStack.EMPTY);
 		HemoCapabilityAccess.getEquippedMorphling(player).clearMorphling();
-		var muscle = HemoCapabilityAccess.muscleMemory(player);
-		for (MuscleMemory memory : MuscleMemory.values()) muscle.deactivate(memory);
+		var muscle = HemoCapabilityAccess.thelemicMemory(player);
+		for (ThelemicMemory memory : ThelemicMemory.values()) muscle.deactivate(memory);
 		syncLooks(player);
 		return state(source, player);
 	}
@@ -147,7 +147,7 @@ public final class MultiplayerVerification {
 	private static void syncLooks(ServerPlayer player) {
 		ScarStateSyncEvents.syncToClient(player);
 		EquippedMorphlingEvents.syncToClient(player);
-		MuscleMemoryEvents.sync(player);
+		ThelemicMemoryEvents.sync(player);
 		HarbingerEquipmentEntityEventHandler.syncLayerVisibilityToClient(player);
 	}
 

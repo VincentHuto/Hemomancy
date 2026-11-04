@@ -160,12 +160,12 @@ public final class SaintPowerGameTests {
             h.assertTrue(boss.getStillnessPressure()==80,"Stillness did not accumulate on an unmoving player");
             boss.invulnerableTime=0;
             h.assertTrue(boss.hurt(boss.damageSources().playerAttack(actors.player),1),"Opening strike was rejected");
-            h.assertTrue(boss.getStillnessBreakTicks()==60 && !boss.isMartyrdom(),"A strike did not interrupt stillness");
+            h.assertTrue(boss.getStillnessBreakTicks()==60 && !boss.isStillGuard(),"A strike did not interrupt stillness");
             for(int i=0;i<16;i++)boss.aiStep();
             h.assertTrue(boss.getStillnessPressure()==0,"Interrupted field did not release accumulated pressure");
             int opening=boss.getStillnessBreakTicks();boss.invulnerableTime=0;
             boss.hurt(boss.damageSources().playerAttack(actors.player),1);
-            h.assertTrue(boss.getStillnessBreakTicks()==opening && !boss.isMartyrdom(),
+            h.assertTrue(boss.getStillnessBreakTicks()==opening && !boss.isStillGuard(),
                     "Repeated hits refreshed the opening or granted resistance during it");
             h.succeed();
         }

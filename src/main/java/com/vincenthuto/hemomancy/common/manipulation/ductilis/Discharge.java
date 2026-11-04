@@ -81,7 +81,4 @@ public final class Discharge {
         return victims.size() < limit && victims.add(victim);
     }
 
-    public boolean hasHit(UUID victim, long now) {
-        return tick == now && victims.contains(victim);
-    }
 }

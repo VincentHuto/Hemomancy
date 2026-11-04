@@ -192,14 +192,14 @@ public final class MnemonicWhaleGameTests {
         natural.moveTo(pos.getCenter()); level.addFreshEntity(natural);
         Mob released = null;
         try {
-            natural.checkDespawn();
+            FixtureMobDespawnGuard.exercisingDespawn(natural::checkDespawn);
             helper.assertTrue(natural.isRemoved(), "Control animal must be subject to ordinary distance despawning");
             var captured = SpecimenJarData.captureEntity(EntityInit.prism_cuttle.get().create(level));
             helper.assertTrue(captured.getBoolean("PersistenceRequired"), "Capturing a cuttle must preserve it beyond natural despawn distance");
             // Older filled jars predate the capture flag; releasing one should protect it too.
             captured.putBoolean("PersistenceRequired", false);
             released = (Mob)SpecimenJarData.releaseSpecimen(level, pos, captured).orElseThrow();
-            released.checkDespawn();
+            FixtureMobDespawnGuard.exercisingDespawn(released::checkDespawn);
             helper.assertTrue(released.isAlive() && released.isPersistenceRequired(), "Legacy jar release lost its captured animal to despawning");
             helper.succeed();
         } finally {

@@ -24,9 +24,9 @@ public final class ConsolidatedLootGameTests {
         var sources = Map.ofEntries(
                 Map.entry("chiton", "chitinous_husk"), Map.entry("phlegethontic_bombardier", "chitinous_husk"),
                 Map.entry("bloody_belly_comb_jelly", "cuttlefish_chromatophores"), Map.entry("luminal_cicada", "cuttlefish_chromatophores"),
-                Map.entry("excoriated", "calcified_blood_spine"), Map.entry("venous_strider", "calcified_blood_spine"),
-                Map.entry("vampire_bat", "calcified_blood_spine"), Map.entry("peacock_spider", "puppeteering_thread"),
-                Map.entry("hemojelly", "puppeteering_thread"), Map.entry("siphonophore", "ganglion_cluster"),
+                Map.entry("excoriated", "barbed_splinter"), Map.entry("venous_strider", "barbed_splinter"),
+                Map.entry("vampire_bat", "barbed_splinter"), Map.entry("peacock_spider", "enthralling_filament"),
+                Map.entry("hemojelly", "enthralling_filament"), Map.entry("siphonophore", "ganglion_cluster"),
                 Map.entry("choir_keeper", "venous_pinion"));
         for (var pair : sources.entrySet()) {
             var mob = (Mob) BuiltInRegistries.ENTITY_TYPE.get(Hemomancy.rloc(pair.getKey())).create(h.getLevel());
@@ -64,8 +64,8 @@ public final class ConsolidatedLootGameTests {
             actor.hurt(actor.damageSources().playerAttack(player), 1000);
         }
         var drops = h.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(4));
-        h.assertTrue(drops.stream().noneMatch(drop -> drop.getItem().is(ItemInit.puppeteering_thread.get())
-                || drop.getItem().is(ItemInit.chitinous_husk.get()) || drop.getItem().is(ItemInit.calcified_blood_spine.get())), "Controlled circus actors dropped wild materials");
+        h.assertTrue(drops.stream().noneMatch(drop -> drop.getItem().is(ItemInit.enthralling_filament.get())
+                || drop.getItem().is(ItemInit.chitinous_husk.get()) || drop.getItem().is(ItemInit.barbed_splinter.get())), "Controlled circus actors dropped wild materials");
         drops.forEach(ItemEntity::discard); spider.discard(); bat.discard(); h.succeed();
     }
 

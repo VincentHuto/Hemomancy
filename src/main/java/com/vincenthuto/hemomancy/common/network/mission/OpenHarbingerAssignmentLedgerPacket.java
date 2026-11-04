@@ -31,7 +31,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		FirstSeparationLedgerProgress firstSeparation,
 		boolean bodyAnswersBriefed,
 		boolean bodyAnswersComplete,
-		int muscleMemoryCount,
+		int thelemicMemoryCount,
 		int redTaxonomyCount,
 		boolean redTaxonomyComplete,
 		int enzymeMasteryCount,
@@ -104,7 +104,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		writeFirstSeparation(buf, msg.firstSeparation);
 		buf.writeBoolean(msg.bodyAnswersBriefed);
 		buf.writeBoolean(msg.bodyAnswersComplete);
-		buf.writeVarInt(msg.muscleMemoryCount);
+		buf.writeVarInt(msg.thelemicMemoryCount);
 		buf.writeVarInt(msg.redTaxonomyCount);
 		buf.writeBoolean(msg.redTaxonomyComplete);
 		buf.writeVarInt(msg.enzymeMasteryCount);

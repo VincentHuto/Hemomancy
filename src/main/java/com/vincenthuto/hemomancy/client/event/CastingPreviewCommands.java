@@ -45,7 +45,7 @@ public final class CastingPreviewCommands {
     private CastingPreviewCommands() {}
 
     @SubscribeEvent public static void register(RegisterClientCommandsEvent event) {
-        event.getDispatcher().register(Commands.literal("hemocastpreview")
+        event.getDispatcher().register(Commands.literal("hemocastpreview").requires(com.vincenthuto.hemomancy.common.command.DevCommands::available)
             .then(Commands.literal("stop").executes(c -> { CastingAnimationClientState.preview(null); return 1; }))
             .then(Commands.literal("still")
                 .then(Commands.argument("stage",StringArgumentType.word()).suggests(names(EnumClarityStage.values()))

@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.common.worldgen.structure.BogBodyOssuaryNicheSt
 import com.vincenthuto.hemomancy.common.worldgen.structure.BrokenChurchStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.circus.CircusPavilionStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.court.CourtStructure;
-import com.vincenthuto.hemomancy.common.worldgen.structure.CrimsonLodgeAnnexStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.DynastyCastleStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerOutpostStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.voyager.HarbingerVoyagerWreckStructure;
@@ -83,9 +82,6 @@ public class StructureInit {
 
 	public static final DeferredHolder<StructureType<?>, StructureType<BogBodyOssuaryNicheStructure>> bog_body_ossuary_niche = STRUCTURES
 			.register("bog_body_ossuary_niche", () -> explicitStructureTypeTyping(BogBodyOssuaryNicheStructure.CODEC));
-
-	public static final DeferredHolder<StructureType<?>, StructureType<CrimsonLodgeAnnexStructure>> crimson_lodge_annex = STRUCTURES
-			.register("crimson_lodge_annex", () -> explicitStructureTypeTyping(CrimsonLodgeAnnexStructure.CODEC));
 
 	public static final DeferredHolder<StructureType<?>, StructureType<DynastyCastleStructure>> dynasty_castle = STRUCTURES
 			.register("dynasty_castle", () -> explicitStructureTypeTyping(DynastyCastleStructure.CODEC));

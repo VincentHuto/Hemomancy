@@ -3,7 +3,7 @@
   "ingredients": [
     { "item": "hemomancy:toxicognath" },
     { "item": "hemomancy:telson" },
-    { "item": "hemomancy:calcified_blood_spine" }
+    { "item": "hemomancy:barbed_splinter" }
   ],
   "result": {
     "id": "hemomancy:aculeate_vitriol"

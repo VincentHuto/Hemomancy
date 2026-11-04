@@ -332,25 +332,6 @@ public class EquippedMorphlingEvents {
 		}
 	}
 
-	/**
-	 * Places a temporary cobweb block at the given position. The web will
-	 * auto-remove after {@link #TEMP_WEB_DURATION} ticks.
-	 *
-	 * @param level the server level
-	 * @param pos   the position to place the web
-	 */
-	public static void placeTemporaryWeb(Level level, BlockPos pos) {
-		if (level.isClientSide) return;
-		// Only place if the space is air or replaceable
-		if (!level.getBlockState(pos).isAir() && !level.getBlockState(pos).canBeReplaced()) return;
-
-		level.setBlock(pos, Blocks.COBWEB.defaultBlockState(), 3);
-		long expiryTick = level.getGameTime() + TEMP_WEB_DURATION;
-		String key = level.dimension().location().toString() + "@"
-				+ pos.getX() + "," + pos.getY() + "," + pos.getZ();
-		TEMPORARY_WEBS.put(key, expiryTick);
-	}
-
 	public static void clearSessionState() {
 		TEMPORARY_WEBS.clear();
 		WORN.clear();

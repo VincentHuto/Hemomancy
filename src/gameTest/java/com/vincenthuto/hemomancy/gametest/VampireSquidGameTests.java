@@ -155,9 +155,9 @@ public final class VampireSquidGameTests {
         }
         h.runAfterDelay(3, () -> {
             var drops = h.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(5));
-            int count = drops.stream().filter(e -> e.getItem().is(ItemInit.calcified_blood_spine.get())).mapToInt(e -> e.getItem().getCount()).sum();
+            int count = drops.stream().filter(e -> e.getItem().is(ItemInit.barbed_splinter.get())).mapToInt(e -> e.getItem().getCount()).sum();
             h.assertTrue(count >= 8 && count <= 16, "Eight kills should drop 8–16 shared splinters, got " + count);
-            h.assertTrue(drops.stream().allMatch(e -> e.getItem().is(ItemInit.calcified_blood_spine.get())), "Squid introduced an extra unique drop");
+            h.assertTrue(drops.stream().allMatch(e -> e.getItem().is(ItemInit.barbed_splinter.get())), "Squid introduced an extra unique drop");
             drops.forEach(Entity::discard); h.succeed();
         });
     }

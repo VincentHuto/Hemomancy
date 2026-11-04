@@ -45,14 +45,6 @@ class PossessionRulesTest {
 	}
 
 	@Test
-	void theRiteRefusesTheBrokenTheBusyAndTheUnsevered() {
-		assertTrue(PossessionRules.mayBegin(true, false, false));
-		assertFalse(PossessionRules.mayBegin(false, false, false));
-		assertFalse(PossessionRules.mayBegin(true, true, false), "Mind Broken is the rite's cooldown");
-		assertFalse(PossessionRules.mayBegin(true, false, true));
-	}
-
-	@Test
 	void concentrationRegeneratesOnlyWithAmbergris() {
 		assertEquals(0f, PossessionRules.regenPer100(false));
 		assertEquals(1f, PossessionRules.regenPer100(true));

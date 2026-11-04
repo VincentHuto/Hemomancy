@@ -28,7 +28,6 @@ final class DeadlyGazeGeometry {
     /** Umbra shader shapes: ink ribbon, liquid pool, violet-cored cut; anything else is smoke. */
     private static final int INK_LINE = RIBBON, INK_POOL = POOL, INK_CUT = SLASH, SMOKE = WISP;
     static final int GRIP_TICKS = 14, SEIZE_END = 3, HOLD_END = 12, SLAM_TICKS = 16;
-    private static final Vec3 UP = new Vec3(0, 1, 0);
 
     private DeadlyGazeGeometry() {}
 

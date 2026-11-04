@@ -74,10 +74,8 @@ public class QliphothBloomSavedData extends SavedData {
 				int chunkRadius = entry.getInt("ChunkRadius");
 				long createdTick = entry.getLong("CreatedTick");
 				UUID bloomId = entry.hasUUID("BloomId") ? entry.getUUID("BloomId") : UUID.randomUUID();
-				boolean migratesLegacyProgress = !entry.hasUUID("BloomId") || entry.getBoolean("MigratesLegacyProgress");
 				data.blooms.add(new BloomEntry(ownerUUID, center, dimension, chunkRadius, createdTick,
-						bloomId, migratesLegacyProgress));
-				if (!entry.hasUUID("BloomId")) data.setDirty();
+						bloomId));
 			}
 		}
 		if (tag.contains("pomesDropped", Tag.TAG_LIST)) {
@@ -130,12 +128,7 @@ public class QliphothBloomSavedData extends SavedData {
 	}
 
 	private UUID bloomIdFromTag(CompoundTag entry) {
-		if (entry.hasUUID("BloomId")) return entry.getUUID("BloomId");
-		long center = entry.getLong("Center");
-		setDirty();
-		return blooms.stream().filter(bloom -> bloom.migratesLegacyProgress()
-				&& bloom.center().asLong() == center)
-				.map(BloomEntry::bloomId).findFirst().orElse(null);
+		return entry.hasUUID("BloomId") ? entry.getUUID("BloomId") : null;
 	}
 
 	@Override
@@ -150,7 +143,6 @@ public class QliphothBloomSavedData extends SavedData {
 			bloomTag.putInt("ChunkRadius", entry.chunkRadius());
 			bloomTag.putLong("CreatedTick", entry.createdTick());
 			bloomTag.putUUID("BloomId", entry.bloomId());
-			if (entry.migratesLegacyProgress()) bloomTag.putBoolean("MigratesLegacyProgress", true);
 			list.add(bloomTag);
 		}
 		tag.put("blooms", list);
@@ -398,14 +390,9 @@ public class QliphothBloomSavedData extends SavedData {
 	 * A persistent Qliphoth Bloom entry.
 	 */
 	public record BloomEntry(UUID ownerUUID, BlockPos center, String dimension,
-			int chunkRadius, long createdTick, UUID bloomId, boolean migratesLegacyProgress) {
+			int chunkRadius, long createdTick, UUID bloomId) {
 		public BloomEntry(UUID ownerUUID, BlockPos center, String dimension, int chunkRadius, long createdTick) {
-			this(ownerUUID, center, dimension, chunkRadius, createdTick, UUID.randomUUID(), false);
-		}
-
-		public BloomEntry(UUID ownerUUID, BlockPos center, String dimension, int chunkRadius,
-				long createdTick, UUID bloomId) {
-			this(ownerUUID, center, dimension, chunkRadius, createdTick, bloomId, false);
+			this(ownerUUID, center, dimension, chunkRadius, createdTick, UUID.randomUUID());
 		}
 	}
 }

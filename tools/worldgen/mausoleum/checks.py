@@ -145,7 +145,7 @@ def cube(entry):
 
 
 SET_PIECES = {'hemomancy:reliquary_sconce', 'hemomancy:sealed_niche', 'hemomancy:opened_niche', 'hemomancy:rot_pyre',
-              'hemomancy:offering_stand', 'hemomancy:spawn_mark', 'hemomancy:blood_basin',
+              'hemomancy:offering_stand', 'hemomancy:downfall_seal', 'hemomancy:blood_basin',
               'hemomancy:containment_anchor_block', 'hemomancy:saint_sarcophagus', 'hemomancy:ring_door',
               'hemomancy:chapel_focus', 'hemomancy:ward_anchor', 'hemomancy:sanguine_glass',
               'hemomancy:blood_gutter', 'hemomancy:venous_basin', 'hemomancy:bone_outgrowth',

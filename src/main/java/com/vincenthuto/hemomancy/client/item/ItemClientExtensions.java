@@ -17,7 +17,6 @@ import com.vincenthuto.hemomancy.client.model.armor.VestmentOfTheFinalMoltArmorM
 import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
 import com.vincenthuto.hemomancy.client.player.UnstainedWeaponPlayerPose;
 import com.vincenthuto.hemomancy.client.render.item.BloodGourdItemRenderer;
-import com.vincenthuto.hemomancy.client.render.item.HeartyCompassItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.HemolymphopodaHeadpieceItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.LanternTickHelmetItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.MarrowCrownItemRenderer;
@@ -55,7 +54,6 @@ import com.vincenthuto.hemomancy.client.render.item.tile.harbinger.functional.Ma
 import com.vincenthuto.hemomancy.client.render.item.tile.harbinger.functional.MortalDisplayItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.tile.harbinger.functional.SanguineMonolithItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.tile.harbinger.functional.SpecimenJarItemRenderer;
-import com.vincenthuto.hemomancy.client.render.item.tile.harbinger.functional.VisceralMirrorItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.tile.harbinger.rite.SuspendedBloodCrystalItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.tile.harbinger.rite.SuspendedVivianiteItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.tile.unstained.SuspendedCleansedBloodCrystalItemRenderer;
@@ -74,7 +72,6 @@ import com.vincenthuto.hemomancy.common.item.harbinger.armor.AbstractSpecialBloo
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.SilentArchonArmorItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.memory.HeartyCompassItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarBlockItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
@@ -136,7 +133,6 @@ public final class ItemClientExtensions {
 			Map.entry(BloodLustArmorItem.class, ItemClientExtensions::bloodLustArmorItem),
 			Map.entry(MarrowCrownArmorItem.class, ItemClientExtensions::marrowCrownArmorItem),
 			Map.entry(SilentArchonArmorItem.class, ItemClientExtensions::silentArchonArmorItem),
-			Map.entry(HeartyCompassItem.class, ItemClientExtensions::heartyCompassItem),
 			Map.entry(MemoryOfVesperItem.class, ItemClientExtensions::memoryOfVesperItem),
 			Map.entry(MonolithFragmentItem.class, ItemClientExtensions::monolithFragmentItem),
 			Map.entry(MonolithicCornerstoneItem.class, ItemClientExtensions::monolithicCornerstoneItem),
@@ -185,7 +181,6 @@ public final class ItemClientExtensions {
 			Map.entry("mason_effigy", ItemClientExtensions::masonsEffigyBlockItem),
 			Map.entry("mortal_display", ItemClientExtensions::mortalDisplayBlockItem),
 			Map.entry("sanguine_monolith", ItemClientExtensions::sanguineMonolithBlockItem),
-			Map.entry("visceral_mirror", ItemClientExtensions::visceralMirrorBlockItem),
 			Map.entry("suspended_blood_crystal", ItemClientExtensions::suspendedBloodCrystalBlockItem),
 			Map.entry("suspended_vivianite", ItemClientExtensions::suspendedVivianiteBlockItem),
 			Map.entry("suspended_cleansed_blood_crystal", ItemClientExtensions::suspendedCleansedBloodCrystalBlockItem));
@@ -296,9 +291,6 @@ public final class ItemClientExtensions {
 		};
 	}
 
-	static IClientItemExtensions heartyCompassItem(Item item) {
-	    return RenderPropHeartyCompass.INSTANCE;
-	}
 
 	static IClientItemExtensions memoryOfVesperItem(Item item) {
 		return new IClientItemExtensions() {
@@ -500,16 +492,6 @@ public final class ItemClientExtensions {
 		};
 	}
 
-	static IClientItemExtensions visceralMirrorBlockItem(Item item) {
-		return new IClientItemExtensions() {
-			private final BlockEntityWithoutLevelRenderer renderer = new VisceralMirrorItemRenderer(null, null);
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return renderer;
-			}
-		};
-	}
 
 	static IClientItemExtensions suspendedBloodCrystalBlockItem(Item item) {
 		return new IClientItemExtensions() {
@@ -923,16 +905,6 @@ public final class ItemClientExtensions {
 				return renderer;
 			}
 		};
-	}
-
-	static final class RenderPropHeartyCompass implements IClientItemExtensions {
-	    static final RenderPropHeartyCompass INSTANCE = new RenderPropHeartyCompass();
-
-	    @Override
-	    public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-	        return new HeartyCompassItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-	                Minecraft.getInstance().getEntityModels());
-	    }
 	}
 
 	static final class RenderPropLivingAxe implements IClientItemExtensions {

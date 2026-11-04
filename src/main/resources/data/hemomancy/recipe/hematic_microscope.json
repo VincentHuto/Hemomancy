@@ -3,7 +3,7 @@
   "category": "equipment",
   "pattern": [" C ", "IGC", " L "],
   "key": {
-    "C": {"item": "minecraft:copper_ingot"},
+    "C": {"item": "hemomancy:hematic_iron_scrap"},
     "I": {"item": "minecraft:iron_ingot"},
     "G": {"item": "minecraft:glass_pane"},
     "L": {"item": "minecraft:leather"}

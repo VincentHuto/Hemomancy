@@ -34,11 +34,6 @@ public class FungalSkyBoxRenderer {
 		return amplitude * Math.sin(frequency * f);
 	}
 
-	public static double oscillatingValueWithHeartbeat(float f) {
-		double baseValue = 180 - Math.abs(f - 180);
-		return baseValue + heartbeatEffect(f, 0, 0);
-	}
-
 	public static boolean renderSky(ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
 			Matrix4f projectionMatrix, Runnable setupFog) {
 		PoseStack stack = new PoseStack();

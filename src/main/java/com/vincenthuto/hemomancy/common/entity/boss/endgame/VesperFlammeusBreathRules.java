@@ -20,7 +20,4 @@ public final class VesperFlammeusBreathRules {
 		return PALETTE;
 	}
 
-	public static double bloodCostPerTick() {
-		return 0.0D;
-	}
 }

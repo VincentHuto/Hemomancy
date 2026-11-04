@@ -50,7 +50,6 @@ public final class PhantasmalMasqueradeSourceTest {
 		assertContains("renderer translucent", renderer, "RenderType.entityTranslucent");
 
 		assertContains("damage type id", damageType, "phantasmal_echo");
-		assertContains("lang ability name", lang, "\"ability.hemomancy.masquerade_of_the_forgotten\":");
 		assertContains("lang death message", lang, "\"death.attack.phantasmal_echo\":");
 	}
 

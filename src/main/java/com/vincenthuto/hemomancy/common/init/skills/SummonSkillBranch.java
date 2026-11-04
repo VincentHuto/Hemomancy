@@ -17,7 +17,7 @@ public final class SummonSkillBranch {
 			SkillPointInit.skill_puppet_skein = SkillPointInit.registerSkill(branch,
 					new SkillPoint(18, "skill_puppet_skein", 350, 3, EnumSkillStates.LOCKED, SkillPointInit.base_skill)
 							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(650, 480).setBranch("summons").setBranchColor(0xFF2370DB)
-							.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.enthralling_filament.get())));
 			SkillPointInit.skill_living_sinew = SkillPointInit.registerSkill(branch,
 					new SkillPoint(19, "skill_living_sinew", 450, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_puppet_skein)
 							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(700, 432).setBranch("summons").setBranchColor(0xFF2370DB)
@@ -25,7 +25,7 @@ public final class SummonSkillBranch {
 			SkillPointInit.skill_far_tether = SkillPointInit.registerSkill(branch,
 					new SkillPoint(20, "skill_far_tether", 400, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_puppet_skein)
 							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(750, 512).setBranch("summons").setBranchColor(0xFF2370DB)
-							.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.enthralling_filament.get())));
 			SkillPointInit.skill_thread_economy = SkillPointInit.registerSkill(branch,
 					new SkillPoint(26, "skill_thread_economy", 500, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_far_tether)
 							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(584, 528).setBranch("summons").setBranchColor(0xFF2370DB).addParents(SkillPointInit.deep_base_skill)
@@ -37,7 +37,7 @@ public final class SummonSkillBranch {
 			SkillPointInit.skill_sanguine_spinning = SkillPointInit.registerSkill(branch,
 					new SkillPoint(72, "skill_sanguine_spinning", 500, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_far_tether)
 							.setSkillPointCost(3).setRequiredDegree(5).setTreePosition(548, 552).setBranch("summons").setBranchColor(0xFF2370DB).setToggleable(true).addParents(SkillPointInit.deep_base_skill)
-							.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.enthralling_filament.get())));
 			SkillPointInit.skill_bound_command = SkillPointInit.registerSkill(branch,
 					new SkillPoint(27, "skill_bound_command", 600, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_thread_economy)
 							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(634, 560).setBranch("summons").setBranchColor(0xFF2370DB).addParents(SkillPointInit.deep_base_skill)
@@ -53,7 +53,7 @@ public final class SummonSkillBranch {
 			SkillPointInit.skill_high_strung = SkillPointInit.registerSkill(branch,
 					new SkillPoint(71, "skill_high_strung", 700, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_bound_command)
 							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(680, 624).setBranch("summons").setBranchColor(0xFF2370DB).setToggleable(true).addParents(SkillPointInit.deep_base_skill)
-							.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
+							.setIconItem(() -> new ItemStack(ItemInit.enthralling_filament.get())));
 		// </skill-editor>
 	}
 }

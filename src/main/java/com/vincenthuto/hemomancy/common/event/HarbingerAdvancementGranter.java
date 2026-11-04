@@ -55,7 +55,7 @@ public final class HarbingerAdvancementGranter {
 	public static final ResourceLocation ADV_CHAMBER_RETURNED =
 			Hemomancy.rloc("hemomancy/chamber_returned");
 	public static final ResourceLocation ADV_WARP_CHAIR_BOUND =
-			Hemomancy.rloc("hemomancy/warp_chair_bound");
+			Hemomancy.rloc("hemomancy/somnolent_seat_bound");
 	public static final ResourceLocation ADV_CHAMBER_RITE_ATTUNED =
 			Hemomancy.rloc("hemomancy/chamber_rite_attuned");
 	public static final ResourceLocation ADV_COVENANT_THRONE_BOUND =
@@ -315,11 +315,6 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_ENZYME_MASTERY_COMPLETE);
 	}
 
-	public static boolean hasRecordedEnzyme(ServerPlayer player, ItemStack enzyme) {
-		ResourceLocation record = enzymeRecord(enzyme);
-		return record != null && hasAdvancement(player, record);
-	}
-
 	public static boolean isKnownEnzyme(ItemStack enzyme) {
 		return enzymeRecord(enzyme) != null;
 	}
@@ -340,18 +335,6 @@ public final class HarbingerAdvancementGranter {
 		};
 	}
 
-	public static boolean isVesselFilled(ServerPlayer player) {
-		return hasAdvancement(player, ADV_VESSEL_FILLED);
-	}
-
-	public static boolean isLiberSanguinumCrafted(ServerPlayer player) {
-		return hasAdvancement(player, ADV_LIBER_SANGUINIUM);
-	}
-
-	public static boolean isHematicIronBlockCrafted(ServerPlayer player) {
-		return hasAdvancement(player, ADV_IRON_IN_THE_BLOOD);
-	}
-
 	public static boolean isFirstSeparationStarted(ServerPlayer player) {
 		return hasAdvancement(player, ADV_FIRST_SEPARATION_STARTED);
 	}
@@ -366,10 +349,6 @@ public final class HarbingerAdvancementGranter {
 
 	public static boolean isMnemonistFirstWeaveComplete(ServerPlayer player) {
 		return hasAdvancement(player, ADV_MNEMONIST_FIRST_WEAVE_COMPLETE);
-	}
-
-	public static boolean isMnemonistWovenVesselFinished(ServerPlayer player) {
-		return hasAdvancement(player, ADV_MNEMONIST_WOVEN_VESSEL_FINISHED);
 	}
 
 	public static boolean isVicarMasonsRespiteDirective(ServerPlayer player) {
@@ -396,10 +375,6 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
 	}
 
-	public static boolean isVeinMasonContinuationReady(ServerPlayer player) {
-		return hasAdvancement(player, ADV_VEIN_MASON_CONTINUATION_READY);
-	}
-
 	public static boolean isVeinMasonRewardClaimed(ServerPlayer player) {
 		return hasAdvancement(player, ADV_VEIN_MASON_REWARD_CLAIMED);
 	}
@@ -412,28 +387,12 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_ARTIFICER_FIRST_HEMATIC_UPGRADE);
 	}
 
-	public static boolean isArtificerWornVowLessonReady(ServerPlayer player) {
-		return hasAdvancement(player, ADV_ARTIFICER_WORN_VOW_LESSON_READY);
-	}
-
-	public static boolean isArtificerWornVowFittingReady(ServerPlayer player) {
-		return hasAdvancement(player, ADV_ARTIFICER_WORN_VOW_FITTING_READY);
-	}
-
 	public static boolean isArtificerHematicIronFitting(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ARTIFICER_HEMATIC_IRON_FITTING);
 	}
 
 	public static boolean isArtificerFirstForkUpgrade(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ARTIFICER_FIRST_FORK_UPGRADE);
-	}
-
-	public static boolean isArtificerThreeAnswersLessonReady(ServerPlayer player) {
-		return hasAdvancement(player, ADV_ARTIFICER_THREE_ANSWERS_LESSON_READY);
-	}
-
-	public static boolean isArtificerThreeAnswersFittingReady(ServerPlayer player) {
-		return hasAdvancement(player, ADV_ARTIFICER_THREE_ANSWERS_FITTING_READY);
 	}
 
 	public static boolean isArtificerBarbedFitting(ServerPlayer player) {
@@ -462,14 +421,6 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_ARTIFICER_FIRST_BLOOD_LUST_UPGRADE);
 	}
 
-	public static boolean isArtificerCrimsonVestmentLessonReady(ServerPlayer player) {
-		return hasAdvancement(player, ADV_ARTIFICER_CRIMSON_VESTMENT_LESSON_READY);
-	}
-
-	public static boolean isArtificerCrimsonVestmentFittingReady(ServerPlayer player) {
-		return hasAdvancement(player, ADV_ARTIFICER_CRIMSON_VESTMENT_FITTING_READY);
-	}
-
 	public static boolean isArtificerBloodLustFitting(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ARTIFICER_BLOOD_LUST_FITTING);
 	}
@@ -482,10 +433,6 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_ARTIFICER_FIRST_D7_UPGRADE);
 	}
 
-	public static boolean isArtificerWeightOfTheFrameFittingReady(ServerPlayer player) {
-		return hasAdvancement(player, ADV_ARTIFICER_WEIGHT_OF_THE_FRAME_FITTING_READY);
-	}
-
 	public static boolean isArtificerD7Fitting(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ARTIFICER_D7_FITTING);
 	}
@@ -494,15 +441,32 @@ public final class HarbingerAdvancementGranter {
 		return hasAdvancement(player, ADV_ARTIFICER_FIRST_LIVING_GRAFT);
 	}
 
-	public static boolean isArtificerAssumedLimbLessonReady(ServerPlayer player) {
-		return hasAdvancement(player, ADV_ARTIFICER_ASSUMED_LIMB_LESSON_READY);
-	}
-
-	public static boolean isArtificerAssumedLimbFittingReady(ServerPlayer player) {
-		return hasAdvancement(player, ADV_ARTIFICER_ASSUMED_LIMB_FITTING_READY);
-	}
-
 	public static boolean isArtificerLivingArsenalFitting(ServerPlayer player) {
 		return hasAdvancement(player, ADV_ARTIFICER_LIVING_ARSENAL_FITTING);
+	}
+
+	public static boolean hasRecordedEnzyme(ServerPlayer player, ItemStack enzyme) {
+		ResourceLocation record = enzymeRecord(enzyme);
+		return record != null && hasAdvancement(player, record);
+	}
+
+	public static boolean isHematicIronBlockCrafted(ServerPlayer player) {
+		return hasAdvancement(player, ADV_IRON_IN_THE_BLOOD);
+	}
+
+	public static boolean isLiberSanguinumCrafted(ServerPlayer player) {
+		return hasAdvancement(player, ADV_LIBER_SANGUINIUM);
+	}
+
+	public static boolean isMnemonistWovenVesselFinished(ServerPlayer player) {
+		return hasAdvancement(player, ADV_MNEMONIST_WOVEN_VESSEL_FINISHED);
+	}
+
+	public static boolean isVeinMasonContinuationReady(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VEIN_MASON_CONTINUATION_READY);
+	}
+
+	public static boolean isVesselFilled(ServerPlayer player) {
+		return hasAdvancement(player, ADV_VESSEL_FILLED);
 	}
 }

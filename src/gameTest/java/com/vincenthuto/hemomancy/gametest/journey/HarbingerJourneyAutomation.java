@@ -10,8 +10,8 @@ import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionDe
 import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionRegistry;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryActivationService;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryActivationService;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
@@ -176,7 +176,7 @@ public final class HarbingerJourneyAutomation {
 			case FIRST_EFFIGY_PATTERN -> createEffigyPattern(player, origin);
 			case VEIN_MASON_REWARD -> mason(player, origin,
 					HarbingerCicatrixAnchoriteDialogueTrees.EVENT_CONTINUATION_REWARD);
-			case VEIN_MASON_D5_STRAIN -> MuscleMemoryActivationService.tryTrigger(player, MuscleMemory.SANGUINE_FISTS, 20);
+			case VEIN_MASON_D5_STRAIN -> ThelemicMemoryActivationService.tryTrigger(player, ThelemicMemory.SANGUINE_FISTS, 20);
 			case VEIN_MASON_D5_DIAGNOSIS -> mason(player, origin,
 					HarbingerCicatrixAnchoriteDialogueTrees.EVENT_DIAGNOSIS);
 			case VEIN_MASON_D5_TREATMENT -> player.getMainHandItem().getItem()
@@ -589,8 +589,7 @@ public final class HarbingerJourneyAutomation {
 		}
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		var hit = new BlockHitResult(Vec3.atCenterOf(bloom.center()), Direction.UP, bloom.center(), false);
-		int consumed = degree.getPomesConsumedFromBloom(bloom.bloomId(), bloom.center().asLong(),
-				bloom.migratesLegacyProgress());
+		int consumed = degree.getPomesConsumedFromBloom(bloom.bloomId());
 		for (int husk = consumed; husk < 9; husk++) {
 			if (!blooms.hasPendingPome(bloom)) {
 				if (blooms.getPomesDropped(bloom) != husk) {
@@ -619,8 +618,7 @@ public final class HarbingerJourneyAutomation {
 			}
 			ItemStack pome = player.getInventory().getItem(slot);
 			pome.getItem().finishUsingItem(pome, player.serverLevel(), player);
-			if (degree.getPomesConsumedFromBloom(bloom.bloomId(), bloom.center().asLong(),
-					bloom.migratesLegacyProgress()) != husk + 1 || blooms.hasPendingPome(bloom)) {
+			if (degree.getPomesConsumedFromBloom(bloom.bloomId()) != husk + 1 || blooms.hasPendingPome(bloom)) {
 				throw new IllegalStateException("Journey Bloom did not accept the consumed husk");
 			}
 		}

@@ -209,7 +209,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 		} else {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.unstained.clarity_progress",
-							unstained.getClarity()),
+							Math.round(unstained.getClarity())),
 					false);
 		}
 		syncUnstainedProgress(worldIn, player, unstained);

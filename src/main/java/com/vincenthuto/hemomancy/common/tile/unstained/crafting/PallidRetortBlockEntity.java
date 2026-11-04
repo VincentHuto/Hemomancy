@@ -345,12 +345,6 @@ public class PallidRetortBlockEntity extends HemoContainerBlockEntity
 
     // ---- Humor helpers ----
 
-    public IWhiteHumorVolume getWhiteHumorCapability() {
-        IWhiteHumorVolume vol = resolveVolume();
-        if (vol == null) throw new IllegalStateException("White Humor capability not available yet");
-        return vol;
-    }
-
     public double getWhiteHumorVolume() {
         IWhiteHumorVolume vol = resolveVolume();
         return vol != null ? vol.getWhiteHumorVolume() : 0;

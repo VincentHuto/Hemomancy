@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
 public final class WillBendRules {
 	public static final int MIN_BEND_DEGREE = 7;
-	public static final int REDIRECT_BLOOD_COST = 400;
 	public static final int COMMANDEER_THREAD_COST = 56;
 	public static final int BACKFIRE_HIVE_ATTENTION = 2;
 	private static final int SILENT_ARCHON_BONUS_CAP = 1;

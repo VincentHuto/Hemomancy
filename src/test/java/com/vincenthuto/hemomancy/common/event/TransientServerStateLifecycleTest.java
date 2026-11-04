@@ -19,15 +19,14 @@ class TransientServerStateLifecycleTest {
 			"SporiticThuribleResonanceState.clearSessionState()",
 			"BloodwoodGrowthHandler.clearSessionState()",
 			"EquippedMorphlingEvents.clearSessionState()",
-			"ChummedWatersAreaManager.clearSessionState()",
 			"BlackVeilCovenantManager.clearSessionState()",
 			"TemporaryIceManager.clearSessionState()",
 			"BloodStructureFeedManager.clear()",
 			"HematicSalvageEvents.clearSessionState()",
 			"RootedStateHelper.clearSessionState()",
 			"ConserveStateHelper.clearSessionState()",
-			"MuscleMemoryEvents.clearSessionState()",
-			"MuscleMemoryWorldEvents.clearSessionState()",
+			"ThelemicMemoryEvents.clearSessionState()",
+			"ThelemicMemoryWorldEvents.clearSessionState()",
 			"SynapticLoadoutLockout.clearSessionState()",
 			"ManipulationChargeClock.clearSessionState()");
 

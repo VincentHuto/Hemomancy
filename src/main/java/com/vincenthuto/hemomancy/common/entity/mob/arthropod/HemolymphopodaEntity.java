@@ -18,7 +18,6 @@ import net.minecraft.world.level.LevelAccessor;
 
 public class HemolymphopodaEntity extends PathfinderMob {
 
-	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HemolymphopodaEntity(EntityType<? extends HemolymphopodaEntity> type, Level worldIn) {
 		super(type, worldIn);
@@ -47,7 +46,15 @@ public class HemolymphopodaEntity extends PathfinderMob {
 			return com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitat.suitable(world, pos,
 					com.vincenthuto.hemomancy.common.worldgen.terrain.pelagic.PelagicHabitatRules.Species.HEMOLYMPHOPODA);
 		return world.getBlockState(below).isSolidRender(world, below)
-				&& pos.getY() <= world.getSeaLevel() + 16;
+				&& pos.getY() <= world.getSeaLevel() + 16 && nearWater(world, pos);
+	}
+
+	/** Tide-pool fauna: off the shore it still needs standing water within two blocks, not a dry gorge or cave. */
+	private static boolean nearWater(LevelAccessor world, BlockPos pos) {
+		for (BlockPos probe : BlockPos.betweenClosed(pos.offset(-2, -1, -2), pos.offset(2, 1, 2))) {
+			if (world.getFluidState(probe).is(net.minecraft.tags.FluidTags.WATER)) return true;
+		}
+		return false;
 	}
 
 
@@ -73,9 +80,6 @@ public class HemolymphopodaEntity extends PathfinderMob {
 
 	@Override
 	public void tick() {
-		if (this.level().isClientSide()) {
-			this.idleAnimationState.startIfStopped(this.tickCount);
-		}
 		super.tick();
 	}
 

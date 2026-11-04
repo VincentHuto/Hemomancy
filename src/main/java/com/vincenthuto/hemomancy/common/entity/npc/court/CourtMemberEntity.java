@@ -431,8 +431,7 @@ public class CourtMemberEntity extends PathfinderMob implements ProgressionDialo
 			if (!CourtLife.isShunned(player)) speakTo(player);
 			DialogueTree tree = progressionDialogue(serverPlayer);
 			if (!CourtLife.isShunned(player)) {
-				tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, progressionDialogueId(),
-						HemoCapabilityAccess.getPlayerDegreeNumber(player), 0f);
+				tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, progressionDialogueId());
 			}
 			tree = DialogueHubFactory.decorate(tree, progressionDialogueId(), serverPlayer);
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));

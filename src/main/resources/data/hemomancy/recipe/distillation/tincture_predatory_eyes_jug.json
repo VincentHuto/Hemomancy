@@ -7,8 +7,16 @@
     "item": "hemomancy:incandescent_enzyme"
   },
   "consume_catalyst": true,
-  "result": "hemomancy:tincture_predatory_eyes_jug",
-  "count": 1,
+  "result": {
+    "id": "hemomancy:tincture_predatory_eyes",
+    "count": 1,
+    "components": {
+      "hemomancy:tincture_doses": {
+        "remaining": 6,
+        "maximum": 6
+      }
+    }
+  },
   "experience": 1.0,
   "cookingtime": 300,
   "id": "hemomancy:distillation/tincture_predatory_eyes_jug",

@@ -23,7 +23,6 @@ class LivingWeaponMemoryGrantSourceTest {
 		assertContains("helper preserves guarded open-slot auto equip", helper, "known.equipManip");
 
 		assertShowsEnglish("memory item directs learning through brazier absorption", memoryItem, "lit Iron Brazier");
-		assertContains("memory item keeps retired memory guard", memoryItem, "isRetiredMemoryItem()");
 
 		assertContains("living weapon unlock helper exists", unlocks, "final class LivingWeaponMemoryUnlocks");
 		assertContains("unlock helper delegates blade", unlocks, "ManipulationInit.conjure_blade");

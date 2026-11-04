@@ -18,7 +18,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SanguineDominionEvents;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
-import com.vincenthuto.hemomancy.config.HemoMnAConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.ModList;
@@ -59,15 +58,6 @@ public final class ManipulationCostLedger {
 			if (dynamicUse > 0.0D) {
 				addIfNotNeutral(contributions, "dynamic_use", "message.hemomancy.manipulation_cost_ledger.dynamic_use", Category.SKILL,
 						1.0D / dynamicUse);
-			}
-		}
-
-		if (ModList.get().isLoaded("mna") && player.hasEffect(EffectInit.arcane_resonance)) {
-			try {
-				double reduction = HemoMnAConfig.ARCANE_RESONANCE_BLOOD_REDUCTION.get();
-				addIfNotNeutral(contributions, "arcane_resonance", "message.hemomancy.manipulation_cost_ledger.arcane_resonance", Category.EFFECT,
-						1.0D - reduction);
-			} catch (Exception ignored) {
 			}
 		}
 

@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class ManipulationVanillaParticleSourceTest {
     private static final Path ROOT = Path.of("src/main/java/com/vincenthuto/hemomancy/common/manipulation");
     // Vanilla's ParticleTypes, not a mod class whose name merely ends in it.
-    private static final Pattern VANILLA = Pattern.compile("(?<![A-Za-z0-9_])ParticleTypes\\.");
+    private static final Pattern VANILLA = Pattern.compile(
+            "(?<![A-Za-z0-9_])(?:ParticleTypes\\.|DustParticleOptions|DustColorTransitionOptions|BlockParticleOption|ItemParticleOption)");
 
     @Test
     void manipulationsUseTheHemomancyVisualSuiteInsteadOfVanillaParticles() throws IOException {

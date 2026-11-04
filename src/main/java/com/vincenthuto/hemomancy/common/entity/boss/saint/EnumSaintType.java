@@ -44,11 +44,4 @@ public enum EnumSaintType {
 		return tendency == primaryTendency || tendency == secondaryTendency;
 	}
 
-	/**
-	 * Returns true if the given tendency is opposed to this saint's tendencies.
-	 * Opposition means neither the primary nor secondary tendency matches.
-	 */
-	public boolean isOpposed(EnumBloodTendency tendency) {
-		return !isAligned(tendency);
-	}
 }

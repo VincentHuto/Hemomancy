@@ -60,7 +60,7 @@ public class PuppeteersSpindleMenu extends HemoContainerMenu {
 		this.addSlot(new Slot(spindle, THREAD_SLOT, 22, 70) {
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return stack.is(ItemInit.puppeteering_thread.get());
+				return stack.is(ItemInit.enthralling_filament.get());
 			}
 		});
 
@@ -124,18 +124,6 @@ public class PuppeteersSpindleMenu extends HemoContainerMenu {
 				: "";
 	}
 
-	public int getScaledThreadBufferWidth(int width) {
-		return getThreadBuffer() * width / PuppeteersSpindleBlockEntity.THREAD_BUFFER_CAPACITY;
-	}
-
-	public int getScaledCrossbarThreadWidth(int width) {
-		ItemStack crossbar = getCrossbarStack();
-		int capacity = crossbar.getItem() instanceof MarionetteCrossbarItem
-				? MarionetteCrossbarItem.getThreadCapacity(crossbar)
-				: PuppeteerSummonRules.THREAD_CAPACITY;
-		return getCrossbarThread() * width / Math.max(1, capacity);
-	}
-
 	public int getCrossbarCapacity() {
 		ItemStack crossbar = getCrossbarStack();
 		return crossbar.getItem() instanceof MarionetteCrossbarItem
@@ -168,7 +156,7 @@ public class PuppeteersSpindleMenu extends HemoContainerMenu {
 				if (!this.moveItemStackTo(slotStack, CROSSBAR_SLOT, CROSSBAR_SLOT + 1, false)) {
 					return ItemStack.EMPTY;
 				}
-			} else if (slotStack.is(ItemInit.puppeteering_thread.get())) {
+			} else if (slotStack.is(ItemInit.enthralling_filament.get())) {
 				if (!this.moveItemStackTo(slotStack, THREAD_SLOT, THREAD_SLOT + 1, false)) {
 					return ItemStack.EMPTY;
 				}

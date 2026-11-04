@@ -397,16 +397,8 @@ public class ScarDefinition {
 		return assignedTendency;
 	}
 
-	public void setAssignedTendency(EnumBloodTendency assignedTendency) {
-		this.assignedTendency = assignedTendency;
-	}
-
 	public float getDeepenAmount() {
 		return deepenAmount;
-	}
-
-	public void setDeepenAmount(float deepenAmount) {
-		this.deepenAmount = deepenAmount;
 	}
 
 	public int getTier() {
@@ -419,14 +411,6 @@ public class ScarDefinition {
 
 	public int getIronHeartCapacityBonus() {
 		return ironHeartCapacityBonus;
-	}
-
-	public List<ScarModifier> getPassiveModifiers() {
-		return passiveModifiers;
-	}
-
-	public List<ScarEffectEntry> getPassiveEffects() {
-		return passiveEffects;
 	}
 
 	protected double scarEffectDurationMultiplier(Player player) {

@@ -27,8 +27,7 @@ public final class ManipulationWheelOrder {
 
 		List<Entry> ordered = new ArrayList<>();
 		for (String name : equippedNames) {
-			if (ManipulationEquipHelper.isFixedMechanicalManip(name)
-					|| ManipulationRetirementRules.isRetiredManipulation(name)) continue;
+			if (ManipulationEquipHelper.isFixedMechanicalManip(name)) continue;
 			Entry entry = knownByName.get(name);
 			if (entry != null) ordered.add(entry);
 		}

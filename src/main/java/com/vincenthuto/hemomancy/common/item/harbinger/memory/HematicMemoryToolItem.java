@@ -28,11 +28,6 @@ public class HematicMemoryToolItem extends Item {
         return HemoCapabilityAccess.getBloodVolume(player).isActive();
     }
 
-    protected boolean canUseHematicToolSilently(Player player) {
-        return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= requiredDegree
-                && HemoCapabilityAccess.getBloodVolume(player).isActive();
-    }
-
     protected boolean drainBlood(Player player, int cost) {
         var volume = HemoCapabilityAccess.getBloodVolume(player);
         if (!volume.isActive() || volume.getBloodVolume() < cost) {

@@ -42,10 +42,6 @@ public class SanguineDominionSavedData extends RiteZoneSavedData {
 		return loadInto(new SanguineDominionSavedData(), tag);
 	}
 
-	public void addDominion(DominionEntry entry) {
-		addZone(entry.toZone());
-	}
-
 	/**
 	 * Establishes the owner's single personal domain, returning the former
 	 * location when the rite relocated one.

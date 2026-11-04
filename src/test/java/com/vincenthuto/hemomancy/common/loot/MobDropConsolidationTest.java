@@ -15,9 +15,9 @@ class MobDropConsolidationTest {
         var sources = Map.ofEntries(
                 Map.entry("chiton", "chitinous_husk"), Map.entry("phlegethontic_bombardier", "chitinous_husk"),
                 Map.entry("bloody_belly_comb_jelly", "cuttlefish_chromatophores"), Map.entry("luminal_cicada", "cuttlefish_chromatophores"),
-                Map.entry("excoriated", "calcified_blood_spine"), Map.entry("venous_strider", "calcified_blood_spine"),
-                Map.entry("vampire_bat", "calcified_blood_spine"), Map.entry("peacock_spider", "puppeteering_thread"),
-                Map.entry("hemojelly", "puppeteering_thread"), Map.entry("siphonophore", "ganglion_cluster"),
+                Map.entry("excoriated", "barbed_splinter"), Map.entry("venous_strider", "barbed_splinter"),
+                Map.entry("vampire_bat", "barbed_splinter"), Map.entry("peacock_spider", "enthralling_filament"),
+                Map.entry("hemojelly", "enthralling_filament"), Map.entry("siphonophore", "ganglion_cluster"),
                 Map.entry("choir_keeper", "venous_pinion"));
         for (var source : sources.entrySet()) {
             var pools = json("data/hemomancy/loot_table/entities/" + source.getKey() + ".json").getAsJsonArray("pools");
@@ -28,7 +28,7 @@ class MobDropConsolidationTest {
     @Test void displayRenamesDoNotReplaceRegistryIds() throws Exception {
         var lang = json("assets/hemomancy/lang/en_us.json");
         assertEquals("Chromatophores", lang.get("item.hemomancy.cuttlefish_chromatophores").getAsString());
-        assertEquals("Enthralling Filament", lang.get("item.hemomancy.puppeteering_thread").getAsString());
+        assertEquals("Enthralling Filament", lang.get("item.hemomancy.enthralling_filament").getAsString());
     }
 
     @Test void foodsHaveBothCookingRoutesAndBurningLoot() throws Exception {

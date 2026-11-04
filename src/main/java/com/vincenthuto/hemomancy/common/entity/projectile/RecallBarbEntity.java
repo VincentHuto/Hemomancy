@@ -122,6 +122,5 @@ public class RecallBarbEntity extends AbstractArrow {
         }
         victim.hurt(damageSources().generic(),1);
     }
-    @Override public void addAdditionalSaveData(CompoundTag tag) {super.addAdditionalSaveData(tag);tag.putBoolean("RecallBarbTransient",true);}
     @Override public void readAdditionalSaveData(CompoundTag tag) {super.readAdditionalSaveData(tag);reloaded=true;}
 }

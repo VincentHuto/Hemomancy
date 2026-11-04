@@ -1,0 +1,6 @@
+{
+  "type": "hemomancy:blood_infusion",
+  "input": "minecraft:glass_pane",
+  "blood_cost": 25,
+  "result": "hemomancy:sanguine_pane"
+}

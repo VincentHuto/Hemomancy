@@ -23,8 +23,6 @@ class EchoCastCoverageTest {
 	}
 
 	private static final Path ECHO = Path.of("src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/echo");
-	private static final Path RETIREMENT = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/manip/ManipulationRetirementRules.java");
 
 	/** Every echo source, comments stripped so prose never counts as a registration or a server send. */
 	private static String echoSources() throws IOException {
@@ -40,15 +38,6 @@ class EchoCastCoverageTest {
 		return new TreeSet<>(Files.readAllLines(Path.of("src/test/resources/echo_cast_pending.txt")).stream()
 				.map(String::strip).filter(s -> !s.isEmpty()).toList());
 	}
-
-	@Test
-	void onlyRetiredManipulationsKeepTheGestureFallback() throws IOException {
-		Set<String> retired = names(Files.readString(RETIREMENT), "\"([a-z0-9_]+)\"");
-		Set<String> unexpected = pending();
-		unexpected.removeAll(retired);
-		assertTrue(unexpected.isEmpty(), "Castable memories still without a real echo cast: " + unexpected);
-	}
-
 	@Test
 	void echoCastsNeverReachTheServerOrPlayerState() throws IOException {
 		String sources = echoSources();

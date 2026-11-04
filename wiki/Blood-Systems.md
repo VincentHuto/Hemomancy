@@ -703,7 +703,7 @@ Teach your Drudges specific manipulations:
 ## Integration with Other Systems
 
 ### With Mana and Artifice
-Mana and Artifice compatibility is dormant in the NeoForge 1.21.1 branch. The design target includes blood/mana conversion, Blood Tithe, resonance combo effects, and Harbinger faction support, but those features are not active until a compatible MnA dependency exists and the excluded compat source is re-enabled.
+Mana and Artifice compatibility was removed from the NeoForge 1.21.1 branch.
 
 See: **[[Mod Compatibility]]**
 

@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import com.vincenthuto.hutoslib.math.MathUtils;
 import com.vincenthuto.hemomancy.common.entity.WallClimbPose;
 import net.minecraft.world.entity.*;
@@ -24,9 +28,24 @@ import java.util.List;
  */
 public abstract class AbstractChthonianEntity extends Spider {
 
+	/** A worker: an armoured iron-mandibled termite. */
 	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 14.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.add(Attributes.ATTACK_DAMAGE, 3.0D).add(Attributes.ARMOR, 3.0D).add(Attributes.FOLLOW_RANGE, 20.0D);
+	}
+
+	/** Someone who carries wood is prey to a termite: planks, logs or a wooden tool in either hand. */
+	public static boolean carriesWood(LivingEntity entity) {
+		for (ItemStack held : List.of(entity.getMainHandItem(), entity.getOffhandItem())) {
+			if (held.is(ItemTags.PLANKS) || held.is(ItemTags.LOGS)
+					|| held.getItem() instanceof TieredItem tiered && tiered.getTier() == Tiers.WOOD) return true;
+		}
+		return false;
+	}
+
+	/** Whether this Chthonian hunts players unprovoked; workers only go for carried wood. */
+	protected boolean huntsAnyPlayer() {
+		return false;
 	}
 
 	public int puffCooldown = 0;
@@ -100,10 +119,13 @@ public abstract class AbstractChthonianEntity extends Spider {
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(1, new ChewWoodGoal(this, 1.2d, 16));
+		this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.1D, true));
 		this.goalSelector.addGoal(5, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(this, 0.8D));
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-
+		this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
+				player -> huntsAnyPlayer() || carriesWood(player)));
 	}
 
 	@Override

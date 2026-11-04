@@ -61,13 +61,6 @@ public final class WillBloodUtilityInteractions {
 		return cost;
 	}
 
-	private static Optional<WillEntity> findNearestFalteringWill(LivingEntity user, double range) {
-		return user.level().getEntitiesOfClass(WillEntity.class, user.getBoundingBox().inflate(range),
-						WillEntity::canBloodUtilityBend)
-				.stream()
-				.min(Comparator.comparingDouble(user::distanceToSqr));
-	}
-
 	private static Optional<WillEntity> findNearestAbsorbableWill(ServerPlayer player, double range) {
 		List<WillEntity> candidates = player.level().getEntitiesOfClass(WillEntity.class,
 				player.getBoundingBox().inflate(range), will -> will.canBloodAbsorb(player));

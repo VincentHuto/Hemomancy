@@ -58,10 +58,6 @@ public class CovenantThroneBlockEntity extends HemoBlockEntity implements IBlood
         setChanged();
     }
 
-    public UUID getSeatedPlayer() {
-        return seatedPlayer;
-    }
-
     public boolean hasSeatedPlayer() {
         return seatedPlayer != null;
     }

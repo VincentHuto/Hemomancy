@@ -2,5 +2,13 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "hemomancy:item/tincture_sanguine_fists"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "hemomancy:jug": 1
+      },
+      "model": "hemomancy:item/tincture_sanguine_fists_jug"
+    }
+  ]
 }

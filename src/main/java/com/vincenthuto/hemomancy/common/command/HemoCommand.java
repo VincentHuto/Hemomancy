@@ -27,7 +27,6 @@ public final class HemoCommand {
 				.then(QliphothSubcommand.build())
 				.then(SkillsSubcommand.build())
 				.then(UnstainedSubcommand.build())
-				.then(OrgansSubcommand.build())
 				.then(TendencySubcommand.build())
 				.then(BloodMoonSubcommand.build())
 				.then(FaneSubcommand.build())

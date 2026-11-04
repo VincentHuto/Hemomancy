@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.manips.ManipulationIconResolver;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -59,15 +59,15 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private final Map<String, ItemStack> manipItemCache = new HashMap<>();
 	private final Map<EnumBloodTendency, List<BloodManipulation>> tendencyGroups = new LinkedHashMap<>();
 	private List<BloodManipulation> equippedManips = new ArrayList<>();
-	private List<MuscleMemory> knownMuscleMemories = new ArrayList<>();
-	private List<MuscleMemory> preparedMuscleMemories = new ArrayList<>();
-	private List<MuscleMemory> equippedMuscleMemories = new ArrayList<>();
+	private List<ThelemicMemory> knownThelemicMemories = new ArrayList<>();
+	private List<ThelemicMemory> preparedThelemicMemories = new ArrayList<>();
+	private List<ThelemicMemory> equippedThelemicMemories = new ArrayList<>();
 	private Set<String> equippedNames = new HashSet<>();
 	private final Set<String> availableManipNames = new HashSet<>();
 	private int maxSlots;
 
 	private BloodManipulation draggingManip;
-	private MuscleMemory draggingMuscleMemory;
+	private ThelemicMemory draggingThelemicMemory;
 	private ManipIcon heldFamilyIcon;
 	private long familyHoldStarted;
 	private double familyHoldX;
@@ -77,7 +77,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	private final List<ManipIcon> knownIcons = new ArrayList<>();
 	private final List<ManipIcon> equippedIcons = new ArrayList<>();
-	private final List<PreparedMuscleIcon> preparedMuscleIcons = new ArrayList<>();
+	private final List<PreparedThelemicIcon> preparedThelemicIcons = new ArrayList<>();
 	private int refreshTicker;
 
 	public MnemonicReliquaryScreen(MnemonicReliquaryMenu menu, Inventory inventory, Component title) {
@@ -127,7 +127,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		for (Item item : BuiltInRegistries.ITEM) {
 			if (item instanceof BloodMemoryItem memItem) {
 				BloodManipulation manip = memItem.getManip();
-				if (manip != null && !ManipulationRetirementRules.isRetiredManipulation(manip)) {
+				if (manip != null) {
 					manipItemCache.put(manip.getName(), new ItemStack(item));
 				}
 			}
@@ -140,9 +140,9 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 		maxSlots = ManipSlotHelper.getMaxSlots(player);
 		equippedManips.clear();
-		knownMuscleMemories.clear();
-		preparedMuscleMemories.clear();
-		equippedMuscleMemories.clear();
+		knownThelemicMemories.clear();
+		preparedThelemicMemories.clear();
+		equippedThelemicMemories.clear();
 		equippedNames.clear();
 		availableManipNames.clear();
 		tendencyGroups.clear();
@@ -161,8 +161,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		Set<String> listedFamilies = new HashSet<>();
 		for (BloodManipulation manip : known.getKnownManips().keySet()) {
 			if (!known.isManipulationAvailable(manip)) continue;
-			if (ManipulationEquipHelper.isFixedMechanicalManip(manip.getName())
-					|| ManipulationRetirementRules.isRetiredManipulation(manip)) {
+			if (ManipulationEquipHelper.isFixedMechanicalManip(manip.getName())) {
 				continue;
 			}
 			String displayId = ManipulationFamilyRegistry.baselineId(manip.getName());
@@ -179,15 +178,15 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		ManipulationWheelOrder.resolve(known.getManipList(), equipped).stream()
 				.map(ManipulationWheelOrder.Entry::manipulation)
 				.forEach(equippedManips::add);
-		var muscleState = HemoCapabilityAccess.muscleMemory(player);
-		knownMuscleMemories.addAll(muscleState.knownMemories());
-		knownMuscleMemories.sort(Comparator.comparingInt(Enum::ordinal));
-		for (MuscleMemory memory : knownMuscleMemories) {
-			if (muscleState.reserveTicks(memory) > 0) {
-				preparedMuscleMemories.add(memory);
+		var thelemicState = HemoCapabilityAccess.thelemicMemory(player);
+		knownThelemicMemories.addAll(thelemicState.knownMemories());
+		knownThelemicMemories.sort(Comparator.comparingInt(Enum::ordinal));
+		for (ThelemicMemory memory : knownThelemicMemories) {
+			if (thelemicState.reserveTicks(memory) > 0) {
+				preparedThelemicMemories.add(memory);
 			}
-			if (equippedNames.contains(MemorySlotRef.muscleMemory(memory).storageKey())) {
-				equippedMuscleMemories.add(memory);
+			if (equippedNames.contains(MemorySlotRef.thelemicMemory(memory).storageKey())) {
+				equippedThelemicMemories.add(memory);
 			}
 		}
 
@@ -199,7 +198,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private void buildLayout() {
 		knownIcons.clear();
 		equippedIcons.clear();
-		preparedMuscleIcons.clear();
+		preparedThelemicIcons.clear();
 
 		int cx = guiLeft + currentGuiWidth / 2;
 		int cy = guiTop + currentGuiHeight / 2;
@@ -216,7 +215,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			int groupCy = cy + (int) (groupRadius * Math.sin(angle));
 
 			List<BloodManipulation> manips = tendencyGroups.getOrDefault(tend, Collections.emptyList());
-			List<MuscleMemory> prepared = preparedMuscleMemories.stream()
+			List<ThelemicMemory> prepared = preparedThelemicMemories.stream()
 					.filter(memory -> memory.primaryTendency() == tend).toList();
 			int count = manips.size() + prepared.size();
 			int cols = Math.max(1, Math.min(count, 3));
@@ -234,7 +233,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 				if (i < manips.size()) {
 					knownIcons.add(new ManipIcon(manips.get(i), ix, iy, tend));
 				} else {
-					preparedMuscleIcons.add(new PreparedMuscleIcon(prepared.get(i - manips.size()), ix, iy));
+					preparedThelemicIcons.add(new PreparedThelemicIcon(prepared.get(i - manips.size()), ix, iy));
 				}
 			}
 		}
@@ -306,8 +305,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			renderManipulationIcon(graphics, draggingManip,
 					mouseX - currentIconSize / 2, mouseY - currentIconSize / 2);
 		}
-		if (draggingMuscleMemory != null) {
-			renderScaledItem(graphics, tinctureStackFor(draggingMuscleMemory),
+		if (draggingThelemicMemory != null) {
+			renderScaledItem(graphics, tinctureStackFor(draggingThelemicMemory),
 					mouseX - currentIconSize / 2, mouseY - currentIconSize / 2);
 		}
 		drawTooltips(graphics, mouseX, mouseY);
@@ -408,9 +407,9 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	}
 
 	private void drawPreparedTinctures(GuiGraphics graphics) {
-		for (PreparedMuscleIcon icon : preparedMuscleIcons) {
+		for (PreparedThelemicIcon icon : preparedThelemicIcons) {
 			renderScaledItem(graphics, tinctureStackFor(icon.memory), icon.x, icon.y);
-			if (equippedNames.contains(MemorySlotRef.muscleMemory(icon.memory).storageKey())) {
+			if (equippedNames.contains(MemorySlotRef.thelemicMemory(icon.memory).storageKey())) {
 				RenderSystem.enableBlend();
 				RenderSystem.defaultBlendFunc();
 				graphics.fill(icon.x, icon.y, icon.x + currentIconSize, icon.y + currentIconSize, 0x4000CC00);
@@ -424,7 +423,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			int[] position = sectionPosition(section);
 			int x = position[0];
 			int y = position[1];
-			MuscleMemory assigned = equippedMuscleMemories.stream()
+			ThelemicMemory assigned = equippedThelemicMemories.stream()
 					.filter(memory -> memory.section() == section).findFirst().orElse(null);
 			graphics.fill(x - 1, y - 1, x + currentIconSize + 1, y + currentIconSize + 1,
 					assigned == null ? 0xAA26060A : 0xAA006600);
@@ -434,7 +433,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		}
 	}
 
-	private ItemStack tinctureStackFor(MuscleMemory memory) {
+	private ItemStack tinctureStackFor(ThelemicMemory memory) {
 		return new ItemStack(BuiltInRegistries.ITEM.get(Hemomancy.rloc("tincture_" + memory.id())));
 	}
 
@@ -505,7 +504,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			int color = 0xFF000000 | (r << 16) | (g << 8) | b;
 
 			List<BloodManipulation> manips = tendencyGroups.getOrDefault(tend, Collections.emptyList());
-			int count = manips.size() + (int) preparedMuscleMemories.stream()
+			int count = manips.size() + (int) preparedThelemicMemories.stream()
 					.filter(memory -> memory.primaryTendency() == tend).count();
 			int cols = Math.max(1, Math.min(count, 3));
 			int rows = (count + cols - 1) / cols;
@@ -522,16 +521,16 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	}
 
 	private void drawTooltips(GuiGraphics graphics, int mouseX, int mouseY) {
-		if (draggingManip != null || draggingMuscleMemory != null) return;
+		if (draggingManip != null || draggingThelemicMemory != null) return;
 		if (familyFanOpen) {
 			BloodManipulation hovered = getHoveredFamilyFanManip(mouseX, mouseY);
 			if (hovered != null) drawManipTooltip(graphics, mouseX, mouseY, hovered);
 			return;
 		}
-		PreparedMuscleIcon prepared = getHoveredPreparedMuscle(mouseX, mouseY);
+		PreparedThelemicIcon prepared = getHoveredPreparedThelemic(mouseX, mouseY);
 		if (prepared != null) {
-			MuscleMemory memory = prepared.memory;
-			long seconds = (HemoCapabilityAccess.muscleMemory(Minecraft.getInstance().player)
+			ThelemicMemory memory = prepared.memory;
+			long seconds = (HemoCapabilityAccess.thelemicMemory(Minecraft.getInstance().player)
 					.reserveTicks(memory) + 19L) / 20L;
 			List<Component> tooltip = List.of(
 					Component.translatable("item.hemomancy.tincture_" + memory.id()).withStyle(s -> s.withBold(true)),
@@ -544,7 +543,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 		EnumVeinSections hoveredSection = getHoveredSection(mouseX, mouseY);
 		if (hoveredSection != null) {
-			MuscleMemory hoveredMemory = equippedMuscleMemories.stream()
+			ThelemicMemory hoveredMemory = equippedThelemicMemories.stream()
 					.filter(memory -> memory.section() == hoveredSection).findFirst().orElse(null);
 			List<Component> tooltip = new ArrayList<>();
 			tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.vascular_section",
@@ -635,8 +634,8 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		graphics.pose().popPose();
 	}
 
-	private PreparedMuscleIcon getHoveredPreparedMuscle(int mouseX, int mouseY) {
-		for (PreparedMuscleIcon icon : preparedMuscleIcons) {
+	private PreparedThelemicIcon getHoveredPreparedThelemic(int mouseX, int mouseY) {
+		for (PreparedThelemicIcon icon : preparedThelemicIcons) {
 			if (mouseX >= icon.x && mouseX < icon.x + currentIconSize
 					&& mouseY >= icon.y && mouseY < icon.y + currentIconSize) return icon;
 		}
@@ -644,22 +643,22 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	}
 
 	private void cycleVascularSection(EnumVeinSections section) {
-		MuscleMemory current = equippedMuscleMemories.stream()
+		ThelemicMemory current = equippedThelemicMemories.stream()
 				.filter(memory -> memory.section() == section).findFirst().orElse(null);
-		MuscleMemory next = MemoryEquipRules.nextPreparedInSection(preparedMuscleMemories, current, section);
+		ThelemicMemory next = MemoryEquipRules.nextPreparedInSection(preparedThelemicMemories, current, section);
 		if (current == null && next == null) return;
 		if (current == null && ManipulationEquipHelper.countNormalEquippedNames(new ArrayList<>(equippedNames)) >= maxSlots) return;
 		if (current != null) {
-			String currentKey = MemorySlotRef.muscleMemory(current).storageKey();
+			String currentKey = MemorySlotRef.thelemicMemory(current).storageKey();
 			PacketHandler.sendToServer(new EquipManipulationPacket(currentKey, false));
 			equippedNames.remove(currentKey);
-			equippedMuscleMemories.remove(current);
+			equippedThelemicMemories.remove(current);
 		}
 		if (next != null) {
-			String nextKey = MemorySlotRef.muscleMemory(next).storageKey();
+			String nextKey = MemorySlotRef.thelemicMemory(next).storageKey();
 			PacketHandler.sendToServer(new EquipManipulationPacket(nextKey, true));
 			equippedNames.add(nextKey);
-			equippedMuscleMemories.add(next);
+			equippedThelemicMemories.add(next);
 		}
 		buildLayout();
 	}
@@ -786,11 +785,11 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 				return true;
 			}
 		}
-		for (PreparedMuscleIcon icon : preparedMuscleIcons) {
+		for (PreparedThelemicIcon icon : preparedThelemicIcons) {
 			if (mx >= icon.x && mx < icon.x + currentIconSize
 					&& my >= icon.y && my < icon.y + currentIconSize) {
-				if (!equippedNames.contains(MemorySlotRef.muscleMemory(icon.memory).storageKey())) {
-					draggingMuscleMemory = icon.memory;
+				if (!equippedNames.contains(MemorySlotRef.thelemicMemory(icon.memory).storageKey())) {
+					draggingThelemicMemory = icon.memory;
 				}
 				return true;
 			}
@@ -813,24 +812,24 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 				heldFamilyIcon = null;
 			}
 		}
-		if (draggingMuscleMemory != null) {
-			MuscleMemory replaced = equippedMuscleMemories.stream()
-					.filter(memory -> memory.section() == draggingMuscleMemory.section())
+		if (draggingThelemicMemory != null) {
+			ThelemicMemory replaced = equippedThelemicMemories.stream()
+					.filter(memory -> memory.section() == draggingThelemicMemory.section())
 					.findFirst().orElse(null);
 			if (isInsideBrain((int) mouseX, (int) mouseY)
 					&& (replaced != null
 							|| ManipulationEquipHelper.countNormalEquippedNames(new ArrayList<>(equippedNames)) < maxSlots)) {
-				String key = MemorySlotRef.muscleMemory(draggingMuscleMemory).storageKey();
+				String key = MemorySlotRef.thelemicMemory(draggingThelemicMemory).storageKey();
 				PacketHandler.sendToServer(new EquipManipulationPacket(key, true));
 				if (replaced != null) {
-					equippedNames.remove(MemorySlotRef.muscleMemory(replaced).storageKey());
-					equippedMuscleMemories.remove(replaced);
+					equippedNames.remove(MemorySlotRef.thelemicMemory(replaced).storageKey());
+					equippedThelemicMemories.remove(replaced);
 				}
 				equippedNames.add(key);
-				equippedMuscleMemories.add(draggingMuscleMemory);
+				equippedThelemicMemories.add(draggingThelemicMemory);
 				buildLayout();
 			}
-			draggingMuscleMemory = null;
+			draggingThelemicMemory = null;
 			return true;
 		}
 		if (draggingManip != null) {
@@ -867,7 +866,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private record ManipIcon(BloodManipulation manip, int x, int y, EnumBloodTendency tendency) {
 	}
 
-	private record PreparedMuscleIcon(MuscleMemory memory, int x, int y) {
+	private record PreparedThelemicIcon(ThelemicMemory memory, int x, int y) {
 	}
 
 }

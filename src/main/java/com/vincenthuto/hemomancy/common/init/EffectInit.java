@@ -64,7 +64,7 @@ public class EffectInit {
 
     private static final Set<UUID> MNEMONIC_WHISPERS_REDRINKS = ConcurrentHashMap.newKeySet();
 
-    public static final DeferredHolder<MobEffect, MobEffect> fungal_elytra = EFFECTS.register("fungal_elytra",
+    public static final DeferredHolder<MobEffect, MobEffect> noctifly_agaric = EFFECTS.register("noctifly_agaric",
             () -> new ElytraEffect()
                     .addAttributeModifier(AttributeInit.getFlightAttribute(), Hemomancy.rloc("elytra_fall_flying"),
                             1.0D, AttributeModifier.Operation.ADD_VALUE));
@@ -130,83 +130,7 @@ public class EffectInit {
             () -> new Potion("potion_of_sanguine_siphon",
                     new MobEffectInstance(sanguine_siphon, 1200, 0)));
 
-    public static final DeferredHolder<MobEffect, MobEffect> chitinous_bulwark = EFFECTS.register("chitinous_bulwark",
-            () -> new ChitinousBulwarkEffect(MobEffectCategory.BENEFICIAL, 0x556B2F)
-                    .addAttributeModifier(Attributes.ARMOR_TOUGHNESS, Hemomancy.rloc("chitinous_bulwark_armor_toughness"),
-                            4.0D, AttributeModifier.Operation.ADD_VALUE));
-    public static final DeferredHolder<Potion, Potion> potion_of_chitinous_bulwark = POTION_TYPES.register(
-            "potion_of_chitinous_bulwark",
-            () -> new Potion("potion_of_chitinous_bulwark",
-                    new MobEffectInstance(chitinous_bulwark, 1200, 0)));
-
-    public static final DeferredHolder<MobEffect, MobEffect> serpentine_guile = EFFECTS.register("serpentine_guile",
-            () -> new SerpentineGuileEffect(MobEffectCategory.BENEFICIAL, 0x2E8B57)
-                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, Hemomancy.rloc("serpentine_guile_movement_speed"),
-                            0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
-                    .addAttributeModifier(Attributes.ATTACK_SPEED, Hemomancy.rloc("serpentine_guile_attack_speed"),
-                            0.1F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-    public static final DeferredHolder<Potion, Potion> potion_of_serpentine_guile = POTION_TYPES.register(
-            "potion_of_serpentine_guile",
-            () -> new Potion("potion_of_serpentine_guile",
-                    new MobEffectInstance(serpentine_guile, 1200, 0)));
-
-    public static final DeferredHolder<MobEffect, MobEffect> verminous_aura = EFFECTS.register("verminous_aura",
-            () -> new VerminousAuraEffect(MobEffectCategory.BENEFICIAL, 0x4A3728));
-    public static final DeferredHolder<Potion, Potion> potion_of_verminous_aura = POTION_TYPES.register(
-            "potion_of_verminous_aura",
-            () -> new Potion("potion_of_verminous_aura",
-                    new MobEffectInstance(verminous_aura, 1200, 0)));
-
     // New Morphling Effects
-    public static final DeferredHolder<MobEffect, MobEffect> luminous_dissipation = EFFECTS.register("luminous_dissipation",
-            () -> new LuminousDissipationEffect(MobEffectCategory.BENEFICIAL, 0xFFFFAA)
-                    .addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, Hemomancy.rloc("luminous_dissipation_knockback_resistance"),
-                            0.1D, AttributeModifier.Operation.ADD_VALUE));
-    public static final DeferredHolder<Potion, Potion> potion_of_luminous_dissipation = POTION_TYPES.register(
-            "potion_of_luminous_dissipation",
-            () -> new Potion("potion_of_luminous_dissipation",
-                    new MobEffectInstance(luminous_dissipation, 1200, 0)));
-
-    public static final DeferredHolder<MobEffect, MobEffect> hemorrhagic_venom = EFFECTS.register("hemorrhagic_venom",
-            () -> new HemorrhagicVenomEffect(MobEffectCategory.BENEFICIAL, 0x660033));
-    public static final DeferredHolder<Potion, Potion> potion_of_hemorrhagic_venom = POTION_TYPES.register(
-            "potion_of_hemorrhagic_venom",
-            () -> new Potion("potion_of_hemorrhagic_venom",
-                    new MobEffectInstance(hemorrhagic_venom, 1200, 0)));
-
-    public static final DeferredHolder<MobEffect, MobEffect> venomous_resilience = EFFECTS.register("venomous_resilience",
-            () -> new VenomousResilienceEffect(MobEffectCategory.BENEFICIAL, 0x336B87)
-                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, Hemomancy.rloc("venomous_resilience_movement_speed"),
-                            0.05F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-    public static final DeferredHolder<Potion, Potion> potion_of_venomous_resilience = POTION_TYPES.register(
-            "potion_of_venomous_resilience",
-            () -> new Potion("potion_of_venomous_resilience",
-                    new MobEffectInstance(venomous_resilience, 1200, 0)));
-
-    public static final DeferredHolder<MobEffect, MobEffect> echoic_perception = EFFECTS.register("echoic_perception",
-            () -> new EchoicPerceptionEffect(MobEffectCategory.BENEFICIAL, 0x2A0A3C));
-    public static final DeferredHolder<Potion, Potion> potion_of_echoic_perception = POTION_TYPES.register(
-            "potion_of_echoic_perception",
-            () -> new Potion("potion_of_echoic_perception",
-                    new MobEffectInstance(echoic_perception, 1200, 0)));
-
-    public static final DeferredHolder<MobEffect, MobEffect> spined_barricade = EFFECTS.register("spined_barricade",
-            () -> new SpinedBarricadeEffect(MobEffectCategory.BENEFICIAL, 0x1A8A9F)
-                    .addAttributeModifier(Attributes.ARMOR, Hemomancy.rloc("spined_barricade_armor"),
-                            2.0D, AttributeModifier.Operation.ADD_VALUE));
-    public static final DeferredHolder<Potion, Potion> potion_of_spined_barricade = POTION_TYPES.register(
-            "potion_of_spined_barricade",
-            () -> new Potion("potion_of_spined_barricade",
-                    new MobEffectInstance(spined_barricade, 1200, 0)));
-
-    public static final DeferredHolder<MobEffect, MobEffect> burrowers_instinct = EFFECTS.register("burrowers_instinct",
-            () -> new BurrowersInstinctEffect(MobEffectCategory.BENEFICIAL, 0x8B6914)
-                    .addAttributeModifier(Attributes.BLOCK_BREAK_SPEED, Hemomancy.rloc("burrowers_instinct_block_break_speed"),
-                            0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-    public static final DeferredHolder<Potion, Potion> potion_of_burrowers_instinct = POTION_TYPES.register(
-            "potion_of_burrowers_instinct",
-            () -> new Potion("potion_of_burrowers_instinct",
-                    new MobEffectInstance(burrowers_instinct, 1200, 0)));
 
     // Morphling strain passives, one per MorphlingStrains row (morphling_<id>); the table holds the holders.
     public static final List<DeferredHolder<MobEffect, MobEffect>> MORPHLING_PASSIVES = MorphlingStrains.ALL.stream()
@@ -227,11 +151,7 @@ public class EffectInit {
             () -> new VerdigrisAuraEffect(MobEffectCategory.BENEFICIAL, 0x4A8B6F));
 
     // MnA Cross-Mod Combo Effects
-    public static final DeferredHolder<MobEffect, MobEffect> arcane_resonance = EFFECTS.register("arcane_resonance",
-            () -> new ArcaneResonanceEffect(MobEffectCategory.BENEFICIAL, 0x8B0020));
 
-    public static final DeferredHolder<MobEffect, MobEffect> sanguine_clarity = EFFECTS.register("sanguine_clarity",
-            () -> new SanguineClarityEffect(MobEffectCategory.BENEFICIAL, 0x4020A0));
 
     public static final DeferredHolder<MobEffect, MobEffect> sporitic_resonance = EFFECTS.register("sporitic_resonance",
             () -> new SporiticResonanceEffect(MobEffectCategory.BENEFICIAL, 0x8F3A54));
@@ -243,8 +163,6 @@ public class EffectInit {
                             -0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     // Saintly Enzyme System Marked by Canon (persistent debuff from failed extraction)
-    public static final DeferredHolder<MobEffect, MobEffect> marked_by_canon = EFFECTS.register("marked_by_canon",
-            () -> new MarkedByCanonEffect(MobEffectCategory.HARMFUL, 0x8B0000));
 
     // Hollow Vessel Hemophagy (healing reduction from Empty Pulse)
     public static final DeferredHolder<MobEffect, MobEffect> hemophagy = EFFECTS.register("hemophagy",
@@ -296,9 +214,6 @@ public class EffectInit {
 
     public static final DeferredHolder<MobEffect, MobEffect> morphic_strain = EFFECTS.register("morphic_strain",
             () -> new MorphicStrainEffect(MobEffectCategory.HARMFUL, 0x5A2A65));
-
-    public static final DeferredHolder<MobEffect, MobEffect> chummed_waters = EFFECTS.register("chummed_waters",
-            () -> new ChummedWatersEffect(MobEffectCategory.BENEFICIAL, 0x7A1E2A));
 
     public static final DeferredHolder<MobEffect, MobEffect> constricted = EFFECTS.register("constricted",
             () -> new ConstrictedEffect(MobEffectCategory.HARMFUL, 0x6D4731));

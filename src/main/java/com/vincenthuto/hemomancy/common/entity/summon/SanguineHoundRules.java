@@ -16,7 +16,4 @@ public final class SanguineHoundRules {
 		return 3 + Math.floorMod(randomValue, 3);
 	}
 
-	public static int dissolutionBloodRefund(int investedBlood) {
-		return 0;
-	}
 }

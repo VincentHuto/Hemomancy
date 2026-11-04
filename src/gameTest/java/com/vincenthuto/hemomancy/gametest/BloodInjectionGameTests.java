@@ -343,10 +343,10 @@ public final class BloodInjectionGameTests {
         h.assertTrue(display.isClaimedBy(player.getUUID()), "Valid attachment failed");
         h.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.attached(player), "Charm not attached");
         h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0, "Display granted Degree 1");
-        h.assertTrue(player.getInventory().countItem(ItemInit.covenant_waybill.get()) == 1, "Waybill missing");
+        h.assertTrue(player.getInventory().countItem(ItemInit.harbinger_lodestone.get()) == 1, "Waybill missing");
         h.assertTrue(player.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 0, "Display granted conduit");
         state.useWithoutItem(h.getLevel(), player, hit);
-        h.assertTrue(player.getInventory().countItem(ItemInit.covenant_waybill.get()) == 1, "Repeated click duplicated waybill");
+        h.assertTrue(player.getInventory().countItem(ItemInit.harbinger_lodestone.get()) == 1, "Repeated click duplicated waybill");
         player.discard(); h.succeed();
     }
 

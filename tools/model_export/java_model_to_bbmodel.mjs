@@ -17,7 +17,7 @@ const MODELS = [
   {
     name: "HollowVesselModel",
     source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/HollowVesselModel.java",
-    texture: "textures/entity/hollow_vessel/hollow_vessel.png",
+    texture: "textures/entity/hemorath/hemorath.png",
   },
   {
     name: "SeraphaeModel",

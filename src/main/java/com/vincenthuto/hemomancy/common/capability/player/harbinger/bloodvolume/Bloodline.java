@@ -242,10 +242,6 @@ public class Bloodline {
 		return npcMemberUUIDs;
 	}
 
-	public List<ResourceLocation> getNpcMemberTypes() {
-		return npcMemberTypes;
-	}
-
 	public List<String> getNpcMemberOutposts() {
 		return npcMemberOutposts;
 	}
@@ -276,14 +272,6 @@ public class Bloodline {
 		npcRiteReserves.put(npcUUID, remaining);
 		if (remaining == 0) npcBloodspentUntil.put(npcUUID, gameTime + 24000L);
 		return drawn;
-	}
-
-	/**
-	 * Total member count including both real players and recruited NPC
-	 * Harbingers. Used to calculate the shared blood pool capacity.
-	 */
-	public int getTotalMemberCount() {
-		return playerUUIDS.size() + npcMemberUUIDs.size();
 	}
 
 	/** Recalculates max blood volume based on player and NPC member counts. */
@@ -320,10 +308,6 @@ public class Bloodline {
 
 	public float getBloodVolume() {
 		return bloodVolume;
-	}
-
-	public Player getLeader(Level level) {
-		return level.getPlayerByUUID(leaderUUID);
 	}
 
 	public UUID getLeaderUUID() {
@@ -396,16 +380,8 @@ public class Bloodline {
 		return tag;
 	}
 
-	public void setBloodlineUUID(UUID bloodlineUUID) {
-		this.bloodlineUUID = bloodlineUUID;
-	}
-
 	public void setBloodVolume(float bloodVolume) {
 		this.bloodVolume = bloodVolume;
-	}
-
-	public void setLeaderUUID(UUID leaderUUID) {
-		this.leaderUUID = leaderUUID;
 	}
 
 	public void setMaxBloodVolume(float maxBloodVolume) {
@@ -414,10 +390,6 @@ public class Bloodline {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public void setPlayerUUIDS(List<UUID> playerUUIDS) {
-		this.playerUUIDS = playerUUIDS;
 	}
 
 }

@@ -130,8 +130,6 @@ public final class SkillPointBranchSourceTest {
 				"fillCenterCircle(gfx, centerX, centerY, coreRadius");
 		assertContains("skills tab stops deep portal fill after deep mode latches", skillsTab,
 				"if (!diveState.isDeepActive() && deepFade > 0.01f) deepTraceCache.renderPortalPulse");
-		assertContains("skills tab stacks degree labels away from the center tree", skillsTab, "DEGREE_LABEL_TOP_Y");
-		assertContains("skills tab keeps degree labels in a left-side column", skillsTab, "DEGREE_LABEL_X");
 		assertContains("skills tab reads saved degree label positions", skillsTab, "SkillPointInit.getDegreeLabelPosition(degree)");
 		assertContains("skills tab keeps degree-locked branch outlines colored during fades", skillsTab, "Math.round(0xCC * alpha)");
 		assertNotContains("trace cache no longer uses square center pulse boxes", traceCache, "fillCenterBox");

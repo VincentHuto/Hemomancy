@@ -128,7 +128,7 @@ public final class VesperOrdealManager {
 		} else if (attempt.contains(ACTIVE_BLOOM_ID_KEY)) {
 			return false;
 		} else {
-			bloom = uniqueLegacyBloom(blooms, center, player.getUUID());
+			return false;
 		}
 		return bloom != null && bloom.center().equals(center)
 				&& bloom.ownerUUID().equals(player.getUUID())
@@ -157,8 +157,7 @@ public final class VesperOrdealManager {
 		QliphothBloomSavedData blooms = QliphothBloomSavedData.get(level.getServer().overworld());
 		BlockPos bloomPos = BlockPos.of(bloomOrigin);
 		QliphothBloomSavedData.BloomEntry bloom = vesper.getBloomId() == null
-				? uniqueLegacyBloom(blooms, bloomPos, owner.getUUID())
-				: blooms.getBloomById(vesper.getBloomId());
+				? null : blooms.getBloomById(vesper.getBloomId());
 		if (bloom == null || !bloom.center().equals(bloomPos)
 				|| !bloom.ownerUUID().equals(owner.getUUID())
 				|| !blooms.getState(bloom).isPortalOpen()) return;
@@ -196,14 +195,6 @@ public final class VesperOrdealManager {
 				&& data.getUUID(ACTIVE_BLOOM_ID_KEY).equals(bloomId));
 	}
 
-	private static QliphothBloomSavedData.BloomEntry uniqueLegacyBloom(QliphothBloomSavedData blooms,
-			BlockPos center, UUID owner) {
-		var matches = blooms.getBlooms().stream()
-				.filter(entry -> entry.migratesLegacyProgress()
-						&& entry.center().equals(center) && entry.ownerUUID().equals(owner))
-				.limit(2).toList();
-		return matches.size() == 1 ? matches.getFirst() : null;
-	}
 
 	/** Returns strict ordeal bounds for owned bosses or persisted local bounds for command summons. */
 	public static Optional<FlightArena> flightArena(VesperTheCrownedRefusalEntity vesper) {

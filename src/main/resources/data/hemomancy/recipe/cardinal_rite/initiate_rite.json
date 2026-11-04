@@ -4,8 +4,8 @@
   "riteType": "lesser",
   "purpose": "self",
   "required_degree": 2,
-  "riteName": "Rite of the Incarnadine Fane",
-  "riteDescription": "The third rite of the Hematic Order, granting formal entry into the Incarnadine Fane.",
+  "riteName": "Rite of the First Threshold",
+  "riteDescription": "A Neophyte's first threshold working: a floor and a brazier proved at the Cardinal Focus. It opens the Order's beliefs in the Liber and leaves a sanguine blob to study; the Degrees come from the Alchemist's lessons, not from here.",
   "rankup": false,
   "floor": "hemomancy:threshold_lesser",
   "required_structure": {

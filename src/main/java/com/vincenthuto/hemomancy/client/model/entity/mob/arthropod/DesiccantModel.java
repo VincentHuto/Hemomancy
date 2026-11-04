@@ -13,7 +13,6 @@ import net.minecraft.util.Mth;
 
 public class DesiccantModel extends EntityModel<DesiccantEntity> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("desiccant"), "main");
-	private static final int TELSON_STING_COLOR = 0xFFFF3030;
 
 	private final ModelPart whole;
 	private final ModelPart body;
@@ -111,7 +110,6 @@ public class DesiccantModel extends EntityModel<DesiccantEntity> {
 
 		return LayerDefinition.create(meshdefinition, 32, 32);
 	}
-
 
 	@Override
 	public void setupAnim(DesiccantEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {

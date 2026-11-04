@@ -23,7 +23,6 @@ import java.util.EnumSet;
 /** Surface bell with a submerged, short-lived feeding net. */
 public class HemojellyEntity extends WaterAnimal {
     private static final EntityDataAccessor<Integer> CAPTURE_TICKS = SynchedEntityData.defineId(HemojellyEntity.class, EntityDataSerializers.INT);
-    public final AnimationState idleAnimationState = new AnimationState();
     private LivingEntity prey;
     private int feedingCooldown;
 
@@ -79,7 +78,7 @@ public class HemojellyEntity extends WaterAnimal {
     @Override public void tick() {
         super.tick();
         setNoGravity(isInWater());
-        if (level().isClientSide()) { idleAnimationState.startIfStopped(tickCount); return; }
+        if (level().isClientSide()) { return; }
         if (feedingCooldown > 0) feedingCooldown--;
         if (!isAlive() || !isInWater() || isNoAi()) { releasePrey(); return; }
         if (prey != null) {

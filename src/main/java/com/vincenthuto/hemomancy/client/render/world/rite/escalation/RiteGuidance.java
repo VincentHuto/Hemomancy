@@ -74,7 +74,7 @@ public final class RiteGuidance {
 	}
 
 	static boolean listensTo(ActiveRiteData.RiteEntry entry, UUID player) {
-		return player != null && player.equals(entry.getOwner()) && !entry.isUnstained() && !entry.isLegacy();
+		return player != null && player.equals(entry.getOwner()) && !entry.isUnstained() && !entry.isCountdown();
 	}
 
 	/** The guide line for a phase, or null when the phase speaks for itself. */

@@ -10,7 +10,7 @@ import java.util.WeakHashMap;
 public final class VelorumAnimState {
     private static final Map<VelorumEntity,VelorumAnimState> STATES=new WeakHashMap<>();
     private final BossReplayClock[] clocks={new BossReplayClock(),new BossReplayClock(),new BossReplayClock(),new BossReplayClock()};
-    private VelorumVisualRules.Phase phase=VelorumVisualRules.legacy(0,false,0);
+    private VelorumVisualRules.Phase phase=VelorumVisualRules.phase(0,false,0);
     private final BossReplayClock breakClock = new BossReplayClock();
     private float pressure, release;
     private Vec3 core=new Vec3(0,1.5,0),claw=new Vec3(1,1.8,0);
@@ -25,7 +25,7 @@ public final class VelorumAnimState {
         float f=clocks[0].sample(fr>0?1:0,fr>0?fr:boss.getFrostUntil(),tick,partial,-1);
         float v=clocks[1].sample(vr>0?1:0,vr>0?vr:boss.getVeilUntil(),tick,partial,-1);
         float d=clocks[2].sample(dr>0?1:0,dr>0?dr:boss.getDrainUntil(),tick,partial,-1);
-        float m=clocks[3].sample(0,boss.getMartyrdomTicks(),tick,partial,-1);
+        float m=clocks[3].sample(0,boss.getStillGuardTicks(),tick,partial,-1);
         phase=new VelorumVisualRules.Phase(fr>0?boss.getFrostUntil():f,fr>0?f:0,
                 vr>0?boss.getVeilUntil():v,vr>0?v:0,dr>0?boss.getDrainUntil():d,dr>0?d:0,m);
     }

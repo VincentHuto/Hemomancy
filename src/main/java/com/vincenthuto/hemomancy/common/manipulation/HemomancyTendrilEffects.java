@@ -21,10 +21,6 @@ public final class HemomancyTendrilEffects {
 	private static final int VOID_GLOW = 0xB87518A8;
 	private static final int BLOOD_CORE = 0xF80B0102;
 	private static final int BLOOD_GLOW = 0xC8B80B18;
-	private static final int ICE_CORE = 0xE8F4FBFF;
-	private static final int ICE_GLOW = 0xA870CFFF;
-	private static final int BONE_CORE = 0xE8EFE5C8;
-	private static final int BONE_GLOW = 0xA8B5F4FF;
 	private static final int QLIPHOTH_SEED_ROOT_CORE = 0xF0050003;
 	private static final int QLIPHOTH_SEED_ROOT_GLOW = 0xB8D10B1A;
 	private static final int SILENT_SEVERANCE_TENDRILS = 14;
@@ -73,30 +69,6 @@ public final class HemomancyTendrilEffects {
 				.withBranching(3, 2, 0.28F, 0.85F)
 				.withWrithe(0.12F, 0.07F, 0.7F, 0.1F)
 				.withBlendColors(false)
-				.withFixedSeed(true, seed);
-	}
-
-	public static TendrilEffectConfig iceConfig(double range, long seed) {
-		return TendrilEffectConfig.defaults()
-				.withColors(ICE_CORE, ICE_GLOW)
-				.withRange(range(range))
-				.withLifecycle(5, 8, 11)
-				.withShape(14, 1, 0.055F, 0.05F)
-				.withBranching(2, 1, 0.2F, 0.65F)
-				.withWrithe(0.05F, 0.035F, 0.25F, 0.02F)
-				.withBlendColors(true)
-				.withFixedSeed(true, seed);
-	}
-
-	public static TendrilEffectConfig boneConfig(double range, long seed) {
-		return TendrilEffectConfig.defaults()
-				.withColors(BONE_CORE, BONE_GLOW)
-				.withRange(range(range))
-				.withLifecycle(5, 12, 12)
-				.withShape(16, 2, 0.08F, 0.05F)
-				.withBranching(3, 1, 0.26F, 0.7F)
-				.withWrithe(0.07F, 0.045F, 0.35F, 0.04F)
-				.withBlendColors(true)
 				.withFixedSeed(true, seed);
 	}
 

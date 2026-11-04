@@ -129,7 +129,7 @@ public final class HarbingerOutpostAssemblyGameTests {
 				helper.assertTrue(state.canSurvive(level, pos), "An outpost banner lacks support at " + pos);
 			}
 			if (state.is(Blocks.LADDER)) ladderPositions.add(pos.immutable());
-			if (state.is(BlockInit.warp_chair.get())) { vicar++; seatPos = pos.immutable(); }
+			if (state.is(BlockInit.somnolent_seat.get())) { vicar++; seatPos = pos.immutable(); }
 			if (state.is(BlockInit.harbinger_escritoire.get())) escritoires++;
 			if (state.is(BlockInit.resonant_forge.get())) { artificer++; forgePos = pos.immutable(); }
 			if (state.is(BlockInit.vial_centrifuge.get())) { alchemist++; alchemistPos = pos.immutable(); }
@@ -307,7 +307,7 @@ public final class HarbingerOutpostAssemblyGameTests {
 
 	private static boolean linkedFiller(net.minecraft.world.level.Level level, BlockPos fillerPos,
 			BlockPos controller, boolean seat) {
-		return level.getBlockState(fillerPos).is(seat ? BlockInit.warp_chair_filler.get() : BlockInit.filler_block.get())
+		return level.getBlockState(fillerPos).is(seat ? BlockInit.somnolent_seat_filler.get() : BlockInit.filler_block.get())
 				&& level.getBlockEntity(fillerPos) instanceof FillerBlockEntity filler
 				&& controller.equals(filler.getMainBlockPos());
 	}

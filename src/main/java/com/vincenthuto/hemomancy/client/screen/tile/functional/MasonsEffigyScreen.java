@@ -307,20 +307,6 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 		gfx.fill(x + w - 2, y, x + w, y + h, LINE_BRIGHT);
 	}
 
-	private void drawVein(GuiGraphics gfx, int x1, int y1, int x2, int y2, int color) {
-		int steps = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
-		if (steps == 0) {
-			gfx.fill(x1, y1, x1 + 1, y1 + 1, color);
-			return;
-		}
-		for (int step = 0; step <= steps; step++) {
-			float t = (float) step / steps;
-			int x = Mth.floor(Mth.lerp(t, x1, x2));
-			int y = Mth.floor(Mth.lerp(t, y1, y2));
-			gfx.fill(x, y, x + 1, y + 1, color);
-		}
-	}
-
 	private static String displayName(ResourceLocation id) {
 		String text = id.getPath().replace("scar_", "").replace('_', ' ');
 		String[] parts = text.split(" ");

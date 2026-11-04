@@ -7,8 +7,6 @@ import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 public class HemoServerConfig {
 
 	public static ModConfigSpec.IntValue SUCCESSORS_PER_BLOODLINE;
-	public static ModConfigSpec.IntValue CAST_OUTPOURING_REAL_EFFECT_MIN_RANK;
-	public static ModConfigSpec.DoubleValue ADIPOCERE_CRUST_DENSITY;
     public static ModConfigSpec.IntValue SUCCESSORS_GLOBAL;
 
 	// ===== Blood Volume =====
@@ -72,7 +70,6 @@ public class HemoServerConfig {
 	public static ModConfigSpec.BooleanValue MORPHLING_HUNGER_ENABLED;
 	public static ModConfigSpec.IntValue MORPHLING_FED_DURATION_TICKS;
 	public static ModConfigSpec.DoubleValue MORPHLING_STARVING_DRAIN_RATE;
-	public static ModConfigSpec.IntValue MORPHLING_HUSBANDRY_STAGE_QUOTA;
 	public static ModConfigSpec.DoubleValue MORPHLING_FLEDGLING_BOND_BLOOD;
 	public static ModConfigSpec.DoubleValue MORPHLING_DEVELOPING_BOND_BLOOD;
 	public static ModConfigSpec.DoubleValue MORPHLING_MATURE_BOND_BLOOD;
@@ -345,10 +342,6 @@ public class HemoServerConfig {
 				.comment("Extra blood drained per hunger tick by a Starving morphling when hunger is enabled.")
 				.defineInRange("starvingDrainRate", 2.0, 0.0, 100.0);
 
-		MORPHLING_HUSBANDRY_STAGE_QUOTA = builder
-				.comment("Legacy husbandry progress quota. Retained for compatibility; blood bonding now gates maturity.")
-				.defineInRange("husbandryStageQuota", 0, 0, 100000);
-
 		MORPHLING_FLEDGLING_BOND_BLOOD = builder
 				.comment("Blood a Fledgling morphling must absorb through equipped upkeep before its next incubation.")
 				.defineInRange("fledglingBondBlood", 50.0, 0.0, 100000.0);
@@ -568,17 +561,10 @@ public class HemoServerConfig {
 
 		// ───── Cast Outpouring ─────
 		builder.comment("Cast Outpouring Settings").push("cast_outpouring");
-		CAST_OUTPOURING_REAL_EFFECT_MIN_RANK = builder
-				.comment("Lowest manipulation rank (0 Humilis .. 4 Perfectus) whose cast outpouring may change the world. -1 keeps outpourings purely visual.")
-				.defineInRange("realEffectMinRank", -1, -1, 4);
 		builder.pop();
 
 		// ───── Adipocere Crusts ─────
 		builder.comment("Adipocere Crust Settings").push("adipocere_crust");
-		ADIPOCERE_CRUST_DENSITY = builder
-				.comment("Scales how often corpse wax crusts the walls of monster rooms, strongholds and ancient cities, "
-						+ "applied the first time each chunk loads. 0 turns it off; a site never takes more than its cap.")
-				.defineInRange("density", 1.0, 0.0, 10.0);
 		builder.pop();
 	}
 

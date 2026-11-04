@@ -33,7 +33,7 @@ public final class CardinalRiteThreatRules {
 
 	/** A sacrifice bleeds from consecration until the daemon is sealed (and through legacy countdowns). */
 	public static boolean acceptsSacrifice(CardinalRitePhase phase) {
-		return phase == CardinalRitePhase.LEGACY || phase == CardinalRitePhase.CONSECRATION
+		return phase == CardinalRitePhase.COUNTDOWN || phase == CardinalRitePhase.CONSECRATION
 				|| phase == CardinalRitePhase.INSCRIPTION;
 	}
 

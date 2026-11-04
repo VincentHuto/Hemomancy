@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
 import net.minecraft.nbt.CompoundTag;
 import org.junit.jupiter.api.Test;
 
@@ -19,30 +19,30 @@ class MemorySlotRefTest {
     }
 
     @Test
-    void muscleMemoryReferencesUseAnUnambiguousStorageKey() {
-        MemorySlotRef ref = MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS);
-        assertEquals(MemoryEntryKind.MUSCLE_MEMORY, ref.kind());
+    void thelemicMemoryReferencesUseAnUnambiguousStorageKey() {
+        MemorySlotRef ref = MemorySlotRef.thelemicMemory(ThelemicMemory.SANGUINE_FISTS);
+        assertEquals(MemoryEntryKind.THELEMIC_MEMORY, ref.kind());
         assertEquals(HematicMemoryExpression.THELEMIC, ref.expression());
-        assertEquals("muscle_memory:sanguine_fists", ref.storageKey());
+        assertEquals("thelemic_memory:sanguine_fists", ref.storageKey());
         assertEquals(ref, MemorySlotRef.fromStorageKey(ref.storageKey()));
     }
 
     @Test
     void expressionIsRuntimeMetadataAndDoesNotAlterLegacyStorage() {
         MemorySlotRef noetic = MemorySlotRef.manipulation("blood_lance");
-        MemorySlotRef thelemic = MemorySlotRef.muscleMemory(MuscleMemory.HUSHED_GAIT);
+        MemorySlotRef thelemic = MemorySlotRef.thelemicMemory(ThelemicMemory.HUSHED_GAIT);
 
         assertEquals(HematicMemoryExpression.NOETIC, noetic.expression());
         assertEquals(HematicMemoryExpression.THELEMIC, thelemic.expression());
         assertEquals("blood_lance", noetic.storageKey());
-        assertEquals("muscle_memory:hushed_gait", thelemic.storageKey());
+        assertEquals("thelemic_memory:hushed_gait", thelemic.storageKey());
         assertEquals("manipulation", noetic.toTag().getString("Kind"));
-        assertEquals("muscle_memory", thelemic.toTag().getString("Kind"));
+        assertEquals("thelemic_memory", thelemic.toTag().getString("Kind"));
     }
 
     @Test
     void nbtRoundTripPreservesKindAndIdentifier() {
-        MemorySlotRef expected = MemorySlotRef.muscleMemory(MuscleMemory.PREDATORY_EYES);
+        MemorySlotRef expected = MemorySlotRef.thelemicMemory(ThelemicMemory.PREDATORY_EYES);
         CompoundTag tag = expected.toTag();
         assertEquals(expected, MemorySlotRef.fromTag(tag).orElseThrow());
         assertTrue(MemorySlotRef.fromTag(new CompoundTag()).isEmpty());
@@ -51,16 +51,16 @@ class MemorySlotRefTest {
     @Test
     void mixedLoadoutRetainsOrderAndFallsBackToFirstValidSelection() {
         ManipulationLoadout loadout = ManipulationLoadout.of("Field",
-                "missing", List.of("blood_lance", "muscle_memory:sanguine_fists", "blood_lance"), 0);
+                "missing", List.of("blood_lance", "thelemic_memory:sanguine_fists", "blood_lance"), 0);
 
-        assertEquals(List.of("blood_lance", "muscle_memory:sanguine_fists"), loadout.manipNames());
+        assertEquals(List.of("blood_lance", "thelemic_memory:sanguine_fists"), loadout.manipNames());
         assertEquals("blood_lance", loadout.selectedManipName());
     }
 
     @Test
     void knownMemorySelectionAndMixedSlotsRoundTrip() {
         KnownManipulations original = new KnownManipulations();
-        MemorySlotRef selected = MemorySlotRef.muscleMemory(MuscleMemory.HUSHED_GAIT);
+        MemorySlotRef selected = MemorySlotRef.thelemicMemory(ThelemicMemory.HUSHED_GAIT);
         original.setEquippedMemoryRefs(List.of(selected, MemorySlotRef.manipulation("blood_lance")));
         original.setSelectedMemoryRef(selected);
 

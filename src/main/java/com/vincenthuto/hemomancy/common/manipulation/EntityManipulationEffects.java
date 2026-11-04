@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis;
 
@@ -15,8 +15,7 @@ public final class EntityManipulationEffects {
 
 	/** Whether a Will may choose this manipulation: it has an entity cast and is not retired. */
 	public static boolean isSupported(BloodManipulation manipulation) {
-		return manipulation != null && manipulation.getEntityCast().isPresent()
-				&& !ManipulationRetirementRules.isRetiredManipulation(manipulation);
+		return manipulation != null && manipulation.getEntityCast().isPresent();
 	}
 
 	public static boolean cast(BloodManipulation manipulation, ManipulationCastContext context) {

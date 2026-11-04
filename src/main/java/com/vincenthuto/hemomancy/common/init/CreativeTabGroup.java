@@ -23,25 +23,26 @@ public enum CreativeTabGroup {
 	GUIDES(List.of(
 			"liber_sanguinum", "harbinger_assignment_ledger", "scout_field_notes",
 			"mnemonic_blueprint", "mnemonic_folio", "engram_stamp", "stained_church_map", "masons_respite_map",
-			"covenant_waybill", "heart_pattern", "veins_pattern")),
+			"harbinger_lodestone", "heart_pattern", "veins_pattern")),
 	BLOOD_TOOLS(List.of(
 			"blood_absorption", "blood_projection", "living_syringe", "bloody_vial", "cleansing_hemolymph", "vial_rack",
 			"bloody_flask", "bloody_jug", "blood_gourd_white", "blood_gourd_red", "blood_gourd_black","curved_horn",
-			"hematic_microscope", "scrying_dish", "hearty_compass", "sanguine_conduit", "charm_of_vascularium",
+			"hematic_microscope", "scrying_dish", "hematic_suture_needle", "vascular_poultice", "vitality_chalice", "vascular_status_gauge",
+			"sanguine_conduit", "charm_of_vascularium", "unsigned_ancestral_ledger",
 			"terrestrial_speculum", "sporitic_thurible", "mind_spike", "listening_scar", "ahaematic_colloid", "wax_cylinder",
-			"ambergris_cylinder")),
+			"ambergris_cylinder", "memory_thread")),
 	STATIONS(List.of(
 			"gourd", "vial_centrifuge", "centrifugal_governor_kit", "fractionating_rotor_kit",
 			"phlebotomists_field_case", "phlebotomists_cabinet", "ghastly_alembic", "hematic_condenser_kit",
 			"sanguine_athanor_kit", "somatic_loom", "ganglionic_harness", "cortical_crown", "mnemonic_reliquary",
 			"clairaudiograph", "antecedent_vessel", "scar_station", "mason_effigy", "iron_brazier", "vacant_effigy",
-			"sanguine_condenser", "clotting_lattice", "druse_heart", "scarlet_vanity", "morphling_incubator",
+			"sanguine_condenser", "clotting_lattice", "druse_heart", "scarlet_vanity", "morphling_incubator", "morphling_cradle", "sanguine_vigil",
 			"specimen_jar", "enzymatic_scriptorium", "rubricators_quill", "palimpsest_burin", "resonant_forge",
 			"precision_governor_kit", "master_cam_kit", "hematic_armature", "vicars_consecration_kit",
 			"monolithic_cornerstone", "consecrated_bloodwell", "cardinal_focus", "covenant_throne",
 			"sanguine_monolith", "scrying_podium", "mycelial_crucible", "mycelial_lantern", "fungal_podium",
 			"fungal_implantation_pylon", "dendritic_distributor", "mortal_display", "earthen_vein", "hematic_stake",
-			"warp_chair", "harbinger_escritoire", "dictation_table", "humoral_barometer", "mnemonic_candle",
+			"somnolent_seat", "harbinger_escritoire", "dictation_table", "humoral_barometer", "mnemonic_candle",
 			"hematic_suture_node", "blood_echo_inscription", "rite_fragment_inscription")),
 	MEMORIES(List.of(
 			"hematic_memory", "faded_memory", "bound_mnemonic_remnant", "crude_memory_blood_shot",
@@ -63,10 +64,7 @@ public enum CreativeTabGroup {
 			"fervent_enzyme", "frigid_enzyme", "incandescent_enzyme", "umbral_enzyme", "recycled_enzyme",
 			"cured_clay_jug", "tincture_sanguine_fists", "tincture_laboring_arms", "tincture_coursing_legs",
 			"tincture_hushed_gait", "tincture_predatory_eyes", "tincture_second_pulse", "tincture_enduring_viscera",
-			"tincture_carrion_metabolism", "tincture_sanguine_fists_jug", "tincture_laboring_arms_jug",
-			"tincture_coursing_legs_jug", "tincture_hushed_gait_jug", "tincture_predatory_eyes_jug",
-			"tincture_second_pulse_jug", "tincture_enduring_viscera_jug", "tincture_carrion_metabolism_jug",
-			"sanguine_salve", "morphic_tonic", "foul_paste", "ferric_binder", "crimson_lacquer", "sclerotic_oleum",
+			"tincture_carrion_metabolism", "sanguine_salve", "morphic_tonic", "foul_paste", "ferric_binder", "crimson_lacquer", "sclerotic_oleum",
 			"aculeate_vitriol", "chromatic_sublimate")),
 	/** The jar and polyp, then the house strains in {@link MorphlingStrains} order. */
 	MORPHLINGS(Stream.concat(Stream.of("morphling_jar", "morphling_polyp"),
@@ -94,9 +92,9 @@ public enum CreativeTabGroup {
 	DROPS(List.of(
 			"swollen_leech", "dried_leech", "serpent_scale", "chitinous_husk", "fervent_husk", "toxicognath",
 			"fargone_proboscis", "telson",  "venous_pinion", "spore_sac", "queens_physogastrism",
-			"calcified_blood_spine", "ganglion_cluster", "naeglerophaeon_ganglion")),
+			"barbed_splinter", "ganglion_cluster", "naeglerophaeon_ganglion")),
 	MATERIALS(List.of(
-			"sanguine_formation", "blood_crystal_shard", "sanguine_quintessence", "hematic_iron_scrap",
+			"sanguine_formation", "sanguine_blob", "blood_crystal_shard", "sanguine_quintessence", "hematic_iron_scrap",
 			"hematic_iron_powder", "vivianite_cluster", "adipocere", "blood_rock", "blood_stained_stone", "bleeding_bulb",
 			"dried_gourd", "constrictor_cord", "scale_grip")),
 	FOOD(List.of(
@@ -110,7 +108,8 @@ public enum CreativeTabGroup {
 			"hematic_iron_block", "chiseled_hematic_iron_block", "hematic_iron_pillar", "hematic_iron_plating",
 			"hematic_iron_plating_stairs", "hematic_iron_plating_slab", "hematic_iron_plating_wall",
 			"hematic_iron_bars", "hematic_iron_door", "hematic_iron_trapdoor", "hematic_iron_chain",
-			"hematic_lantern", "blood_wood_log", "blood_wood_planks", "blood_wood_leaves", "infested_wood",
+			"hematic_lantern", "sanguine_omen", "blood_wood_log", "blood_wood_planks", "blood_wood_bark", "stripped_blood_wood_log", "stripped_blood_wood_bark", "blood_wood_slab", "blood_wood_stairs", "blood_wood_fence", "blood_wood_fence_gate", "blood_wood_door", "blood_wood_trapdoor", "blood_wood_button", "blood_wood_pressure_plate", "blood_wood_sign", "blood_wood_hanging_sign", "blood_wood_leaves",
+			"heartwood_log", "heartwood_planks", "heartwood_bark", "stripped_heartwood_log", "stripped_heartwood_bark", "heartwood_slab", "heartwood_stairs", "heartwood_fence", "heartwood_fence_gate", "heartwood_door", "heartwood_trapdoor", "heartwood_button", "heartwood_pressure_plate", "heartwood_sign", "heartwood_hanging_sign", "heartwood_core", "ravenous_heartwood", "infested_wood",
 			"sanguine_glass", "sanguine_pane", "vivianite_glass", "vivianite_pane", "chitinite_block",
 			"sclerite_block", "organic_prism", "frozen_cruor")),
 	NATURAL(List.of(
@@ -120,7 +119,7 @@ public enum CreativeTabGroup {
 	/** Spawn eggs; they always close the section, in this order. */
 	CREATURES(List.of(
 			"spawn_egg_leech", "spawn_egg_chitinite", "spawn_egg_fervent_chitinite", "spawn_egg_hemolymphopoda",
-			"spawn_egg_hematic_burrower", "spawn_egg_crimson_doe", "spawn_egg_venous_strider",
+			"spawn_egg_hematic_burrower", "spawn_egg_crimson_doe", "spawn_egg_venous_strider", "spawn_egg_peacock_spider",
 			"spawn_egg_scarlet_serpent", "spawn_egg_desiccant", "spawn_egg_venom_rib_centipede",
 			"spawn_egg_luminal_cicada", "spawn_egg_lantern_tick", "spawn_egg_tooth_pecks",
 			"spawn_egg_morphling_polyp", "spawn_egg_bog_revenant", "spawn_egg_thirster", "spawn_egg_fargone",

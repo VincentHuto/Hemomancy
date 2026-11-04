@@ -122,7 +122,7 @@ client:
 - **Authority.** The server attachment is authoritative. The client only holds a copy
   for display.
 - **Access.** Use `HemoCapabilityAccess`; 1,158 call sites already do. About 42 call
-  sites bypass it with a direct `getData`. Most of those read `MUSCLE_MEMORY` or
+  sites bypass it with a direct `getData`. Most of those read `THELEMIC_MEMORY` or
   `DIALOGUE_KNOWLEDGE`, which do not have helpers yet.
 - **Blood opt-in.** `IBloodVolume.isActive()` is the only opt-in flag for blood magic.
   Every player has an `IBloodVolume`.

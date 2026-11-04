@@ -69,7 +69,6 @@ public final class WorkingCraftRites {
 			WorkingCraftSubjectMatcher.SubjectMatch subject) {
 		if (subject == null || !RiteOfferingEscrow.itineraryPresent(level, rite.getOfferingItinerary())) return false;
 		CompoundTag state = rite.craft().tag();
-		state.putString("Side", subject.side().getSerializedName());
 		ListTag cells = new ListTag();
 		for (int i = 0; i < subject.positions().size(); i++) {
 			CompoundTag cell = new CompoundTag();

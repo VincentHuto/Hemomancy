@@ -111,7 +111,6 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 	// ---- Fields ----
 
 	public NonNullList<ItemStack> items = NonNullList.withSize(NUM_SLOTS, ItemStack.EMPTY);
-	private int legacyStage;
 	private final java.util.List<ItemStack> hiddenCatalystRecovery = new java.util.ArrayList<>();
 	private boolean riteLocked;
 	private boolean footprintChecked;
@@ -171,7 +170,7 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 	}
 
 	public AlembicTier tier() {
-		return AlembicTier.fromSaved(Math.max(StationTierProperty.stage(getBlockState()), legacyStage));
+		return AlembicTier.fromSaved(StationTierProperty.stage(getBlockState()));
 	}
 
 	@Override
@@ -181,17 +180,13 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 		if (vol != null) vol.setMaxBloodVolume(tier().bloodCapacity());
 	}
 
-	public void applyLegacyStage() {
-		StationTierProperty.applyLegacyStage(this, legacyStage);
-		legacyStage = 0;
-	}
 
 	/** Raises the tier directly (fixtures and admin tooling); rites use completeUpgrade. Never lowers it. */
 	public void setTier(AlembicTier tier) {
 		if (tier == null || getLevel() == null) return;
 		var state = getBlockState().setValue(StationTierProperty.STAGE, tier.ordinal());
 		if (!GhastlyAlembicBlock.hasSpace(getLevel(), getBlockPos(), state)) return;
-		StationTierProperty.applyLegacyStage(this, tier.ordinal());
+		StationTierProperty.raiseStage(this, tier.ordinal());
 		((GhastlyAlembicBlock) getBlockState().getBlock())
 				.placeFillers(getLevel(), getBlockPos(), getBlockState());
 	}
@@ -316,7 +311,6 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, GhastlyAlembicBlockEntity te) {
-		te.applyLegacyStage();
 		if (!te.footprintChecked) {
 			GhastlyAlembicBlock.pruneFillers(level, pos, te.getBlockState());
 			if (GhastlyAlembicBlock.hasSpace(level, pos, te.getBlockState())) {
@@ -382,7 +376,7 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 		// Update LIT blockstate
 		if (wasHeated != te.heated) {
 			dirty = true;
-			// Read the live state: applyLegacyStage may have raised the tier earlier this tick.
+			// Read the live state.
 			state = level.getBlockState(pos).setValue(AbstractFurnaceBlock.LIT, te.heated);
 			level.setBlock(pos, state, 3);
 		}
@@ -814,8 +808,6 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 		ContainerHelper.loadAllItems(tag, savedItems, registries);
 		for (int i = 0; i < SLOT_CATALYST_2; i++) items.set(i, savedItems.get(i));
 		items.set(SLOT_CATALYST_2, savedItems.get(tag.getBoolean("ReservoirTinctures") ? SLOT_CATALYST_2 : 6));
-		// Pre-consolidation saves kept the tier here; applyLegacyStage moves it into the blockstate.
-		this.legacyStage = tag.contains("AlembicTier") ? AlembicTier.fromSaved(tag.getInt("AlembicTier")).ordinal() : 0;
 		this.riteLocked = tag.getBoolean("RiteLocked");
 		this.machineIdentity = tag.hasUUID("MachineIdentity") ? tag.getUUID("MachineIdentity") : java.util.UUID.randomUUID();
 		this.lastUpgradeRite = tag.hasUUID("LastUpgradeRite") ? tag.getUUID("LastUpgradeRite") : null;
@@ -863,7 +855,6 @@ public class GhastlyAlembicBlockEntity extends HemoContainerBlockEntity
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.saveAdditional(tag, registries);
 		tag.putBoolean("Heated", this.heated);
-		if (legacyStage > 0) tag.putInt("AlembicTier", legacyStage);
 		tag.putBoolean("RiteLocked", riteLocked);
 		tag.putUUID("MachineIdentity", machineIdentity);
 		if (lastUpgradeRite != null) tag.putUUID("LastUpgradeRite", lastUpgradeRite);

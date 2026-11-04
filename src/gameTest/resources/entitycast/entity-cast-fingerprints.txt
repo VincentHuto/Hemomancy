@@ -22,7 +22,6 @@ grave_debt cast=true supported=true caster={health=20.0 effects=[] data=[] moved
 bloom_of_rot cast=true supported=true caster={health=20.0 effects=[] data=[] moved=0.0 pushed=false} target={health=10.0 effects=[necrosis@0] data=[] moved=0.0 pushed=false} spawned=[] blocks=[]
 cryogenic_pulse cast=true supported=true caster={health=20.0 effects=[] data=[] moved=0.0 pushed=false} target={health=7.0 effects=[rime@0] data=[] moved=0.0 pushed=false} spawned=[] blocks=[]
 glacial_grasp cast=true supported=true caster={health=20.0 effects=[] data=[] moved=0.0 pushed=false} target={health=10.0 effects=[rime@0] data=[] moved=0.0 pushed=false} spawned=[] blocks=[]
-glacial_bastion cast=true supported=false caster={health=20.0 effects=[] data=[] moved=0.0 pushed=false} target={health=10.0 effects=[] data=[] moved=0.0 pushed=false} spawned=[] blocks=[hemomancy:frozen_cruor]
 glacial_rampart cast=true supported=true caster={health=20.0 effects=[] data=[] moved=0.0 pushed=false} target={health=10.0 effects=[] data=[] moved=0.0 pushed=false} spawned=[] blocks=[hemomancy:frozen_cruor]
 pyretic_forge cast=true supported=true caster={health=20.0 effects=[resistance@0] data=[] moved=0.0 pushed=false} target={health=6.0 effects=[searing@0] data=[] moved=0.0 pushed=false} spawned=[] blocks=[]
 iron_retort cast=true supported=true caster={health=20.0 effects=[iron_retort@0] data=[hemomancy:iron_retort_hit] moved=0.0 pushed=false} target={health=10.0 effects=[] data=[] moved=0.0 pushed=false} spawned=[] blocks=[]
@@ -31,5 +30,4 @@ void_shroud cast=true supported=true caster={health=20.0 effects=[night_vision@0
 gloam_laceration cast=true supported=true caster={health=20.0 effects=[] data=[] moved=0.0 pushed=false} target={health=6.5 effects=[blood_loss@0, obscured@0] data=[] moved=0.0 pushed=false} spawned=[] blocks=[]
 umbral_step cast=true supported=true caster={health=20.0 effects=[] data=[] moved=2.8 pushed=false} target={health=10.0 effects=[] data=[] moved=0.0 pushed=false} spawned=[] blocks=[]
 blood_eclipse cast=true supported=true caster={health=20.0 effects=[] data=[] moved=0.0 pushed=false} target={health=7.0 effects=[obscured@0] data=[] moved=0.0 pushed=false} spawned=[] blocks=[]
-blood_eclipse_mantle cast=true supported=false caster={health=20.0 effects=[fire_resistance@0, resistance@1, weakness@0] data=[] moved=0.0 pushed=false} target={health=10.0 effects=[] data=[] moved=0.0 pushed=false} spawned=[] blocks=[]
 blood_rush cast=false supported=false caster={health=20.0 effects=[] data=[] moved=0.0 pushed=false} target={health=10.0 effects=[] data=[] moved=0.0 pushed=false} spawned=[] blocks=[]

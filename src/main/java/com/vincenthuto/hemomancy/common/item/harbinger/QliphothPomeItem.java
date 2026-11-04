@@ -218,13 +218,12 @@ public class QliphothPomeItem extends Item {
 		CompoundTag itemTag = getCustomData(stack);
 		UUID bloomId = entity instanceof ServerPlayer player
 				? bloomIdForPome(level, itemTag, player) : null;
-		boolean migrateLegacyProgress = shouldMigrateLegacyProgress(level, bloomId);
 		if (entity instanceof ServerPlayer player && countsForCommunion(itemTag, player)
 				&& !itemTag.getBoolean(TAINTED_KEY)) {
 			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 			int expected = bloomId == null
 					? degree.getPomesConsumedFromBloom(itemTag.getLong(BLOOM_ORIGIN_KEY))
-					: degree.getPomesConsumedFromBloom(bloomId, itemTag.getLong(BLOOM_ORIGIN_KEY), migrateLegacyProgress);
+					: degree.getPomesConsumedFromBloom(bloomId);
 			if (!itemTag.contains(BLOOM_ORIGIN_KEY) || !itemTag.contains(HUSK_INDEX_KEY)
 					|| itemTag.getInt(HUSK_INDEX_KEY) != expected || expected >= HUSK_IDS.length) {
 				player.displayClientMessage(Component.translatable("message.hemomancy.qliphoth_pome_item.this_husk_is_already_consumed_or"), true);
@@ -241,7 +240,7 @@ public class QliphothPomeItem extends Item {
 				applyTaintedEffects(player);
 				playPomeSound(player, false);
 			} else {
-				applyNormalEffects(player, level, itemTag, bloomId, migrateLegacyProgress);
+				applyNormalEffects(player, level, itemTag, bloomId);
 			}
 		}
 
@@ -266,20 +265,9 @@ public class QliphothPomeItem extends Item {
 
 	private static UUID bloomIdForPome(Level level, CompoundTag tag, ServerPlayer player) {
 		if (tag.hasUUID(BLOOM_ID_KEY)) return tag.getUUID(BLOOM_ID_KEY);
-		if (!(level instanceof ServerLevel serverLevel) || !tag.contains(BLOOM_ORIGIN_KEY)) return null;
-		long origin = tag.getLong(BLOOM_ORIGIN_KEY);
-		var matches = QliphothBloomSavedData.get(serverLevel.getServer().overworld()).getBlooms().stream()
-				.filter(bloom -> bloom.migratesLegacyProgress()
-						&& bloom.center().asLong() == origin && bloom.ownerUUID().equals(player.getUUID()))
-				.limit(2).toList();
-		return matches.size() == 1 ? matches.getFirst().bloomId() : null;
+		return null;
 	}
 
-	private static boolean shouldMigrateLegacyProgress(Level level, UUID bloomId) {
-		if (bloomId == null || !(level instanceof ServerLevel serverLevel)) return false;
-		var bloom = QliphothBloomSavedData.get(serverLevel.getServer().overworld()).getBloomById(bloomId);
-		return bloom != null && bloom.migratesLegacyProgress();
-	}
 
 	@Override
 	public boolean canFitInsideContainerItems() {
@@ -313,7 +301,7 @@ public class QliphothPomeItem extends Item {
 	}
 
 	private static void applyNormalEffects(Player player, Level level, CompoundTag itemTag,
-			UUID bloomId, boolean migrateLegacyProgress) {
+			UUID bloomId) {
 		// ── Blood burst ──
 		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume.isActive()) {
@@ -360,8 +348,7 @@ public class QliphothPomeItem extends Item {
 
 		// ── Per-bloom communion tracking (Apotheos gate) ──
 		long bloomOrigin = itemTag.getLong(BLOOM_ORIGIN_KEY);
-		boolean completedCommunion = trackCommunionProgress((ServerPlayer) player, bloomId, bloomOrigin,
-				migrateLegacyProgress);
+		boolean completedCommunion = trackCommunionProgress((ServerPlayer) player, bloomId, bloomOrigin);
 		clearPendingPome(level, bloomId, bloomOrigin, huskIdx);
 		playPomeSound(player, completedCommunion);
 		syncPomeProgress((ServerPlayer) player);
@@ -395,11 +382,10 @@ public class QliphothPomeItem extends Item {
 	 * When the count reaches nine, fires the Qliphoth Communion whisper and
 	 * sets the permanent communion flag on the InitiatoryDegree capability.
 	 */
-	private static boolean trackCommunionProgress(ServerPlayer player, UUID bloomId, long bloomOrigin,
-			boolean migrateLegacyProgress) {
+	private static boolean trackCommunionProgress(ServerPlayer player, UUID bloomId, long bloomOrigin) {
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		int count = bloomId == null ? degree.recordPomeConsumed(bloomOrigin)
-				: degree.recordPomeConsumed(bloomId, bloomOrigin, migrateLegacyProgress);
+				: degree.recordPomeConsumed(bloomId);
 		if (degree.isQliphothCommunionDone()) return false;
 		if (count >= 9) {
 			degree.setQliphothCommunionDone(true);

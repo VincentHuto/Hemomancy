@@ -40,14 +40,6 @@ public final class HorizontalFacingRotationHelper {
 		};
 	}
 
-	public static BlockPos[] rotateSouthOffsetsReversed(BlockPos[] offsets, Direction facing) {
-		BlockPos[] rotated = new BlockPos[offsets.length];
-		for (int i = 0; i < offsets.length; i++) {
-			rotated[i] = rotateSouthOffsetReversed(offsets[i], facing);
-		}
-		return rotated;
-	}
-
 	/**
 	 * Rotates an offset defined in NORTH-facing local space into world space for the given horizontal facing.
 	 */
@@ -68,5 +60,4 @@ public final class HorizontalFacingRotationHelper {
 		return rotated;
 	}
 }
-
 

@@ -50,8 +50,6 @@ public class Hemomancy {
     public Hemomancy(IEventBus modEventBus) {
         EffectSourceInference.registerPackageOwner("com.vincenthuto.hemomancy.", MOD_ID);
         HemoConfig.register();
-        VillagerInit.POINTS_OF_INTEREST.register(modEventBus);
-        VillagerInit.PROFESSIONS.register(modEventBus);
         ManipulationInit.MANIPS.register(modEventBus);
         ScarInit.SCARS.register(modEventBus);
         StillArtInit.STILL_ARTS.register(modEventBus);
@@ -88,7 +86,6 @@ public class Hemomancy {
         EntityInit.ENTITY_TYPES.register(modEventBus);
         StructureInit.STRUCTURES.register(modEventBus);
         StructureInit.STRUCTURE_PIECES.register(modEventBus);
-        VillagerInit.STRUCTURE_PROCESSORS.register(modEventBus);
         LootModifierInit.LOOT_MODIFIERS.register(modEventBus);
         HemoAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
         HemoCapabilityRegistrar.register(modEventBus);
