@@ -126,7 +126,14 @@ public class HemoServerConfig {
 	public static ModConfigSpec.IntValue DRUDGE_REQUIRED_DEGREE;
 	public static ModConfigSpec.IntValue DRUDGE_WORK_RADIUS;
 
+	/** How many blocks a Lidless Door crossing is. */
+	public static ModConfigSpec.IntValue LIDLESS_PASSAGE_LENGTH;
+
 	public static void registerServerConfig(Builder builder) {
+        builder.push("lidless_door");
+        LIDLESS_PASSAGE_LENGTH = builder.comment("How many blocks a player walks through the void behind a Lidless Door before stepping out its far side.")
+                .defineInRange("passage_length", 16, 4, 64);
+        builder.pop();
         builder.push("succession");
         SUCCESSORS_PER_BLOODLINE = builder.comment("Maximum living successors per bloodline; zero uses workplace capacity only.").defineInRange("per_bloodline_cap", 0, 0, 10000);
         SUCCESSORS_GLOBAL = builder.comment("Maximum living successors across the server; zero disables this safeguard.").defineInRange("global_cap", 0, 0, 100000);

@@ -26,6 +26,7 @@ class ServerboundGuardsCoverageTest {
 			Map.entry("AntecedentEffectPacket", "The client half only records the sender's own epilogue, gated on completed research and degree."),
 			Map.entry("ArborFruitInteractPacket", "Reach and line of sight follow ArborOfWillInteractionRules, which differ from block reach."),
 			Map.entry("AxonalInputPacket", "AxonalTransductionManager checks the session token and clamps the direction."),
+			Map.entry("LidlessPassageInputPacket", "LidlessPassageService checks the session token and clamps the direction; the handler paces it through ServerboundRateLimiter."),
 			Map.entry("BloodVolumeClientPacket", "Requests a resync of the sender's own data."),
 			Map.entry("CPacketFlight", "The server re-checks every flight condition itself."),
 			Map.entry("CastingChargePacket", "ManipulationChargeClock and CastingAnimationManager.charge bound the reported charge."),

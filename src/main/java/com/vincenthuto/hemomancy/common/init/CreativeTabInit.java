@@ -70,7 +70,8 @@ public final class CreativeTabInit {
 			ItemInit.blood_thrall_effigy,
 			ItemInit.blood_bolt,
 			BlockInit.semi_sentient_construct,
-			BlockInit.gourdvine_tap);
+			BlockInit.gourdvine_tap,
+			BlockInit.lidless_door);
 
 	// Ids, so the block check works while items are still being registered.
 	private static final Set<ResourceLocation> WIP_ITEMS = wipIds(Registries.ITEM.location());

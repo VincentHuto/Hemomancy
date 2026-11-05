@@ -12,12 +12,13 @@ public final class ChamberExpansionRules {
 		return Math.max(builtRadius, requestedRadius);
 	}
 
+	/** The floor cells a room of {@code expandedRadius} has that a room of {@code previousRadius} does not. */
 	public static Set<Offset> floorBand(int previousRadius, int expandedRadius) {
 		Set<Offset> offsets = new LinkedHashSet<>();
 		if (expandedRadius <= previousRadius) return offsets;
 		for (int x = -expandedRadius; x <= expandedRadius; x++) {
-			for (int z = -expandedRadius; z <= expandedRadius; z++) {
-				if (Math.max(Math.abs(x), Math.abs(z)) > previousRadius) {
+			for (int z = -expandedRadius; z <= ChamberRoomShape.reach(expandedRadius); z++) {
+				if (ChamberRoomShape.contains(x, z, expandedRadius) && !ChamberRoomShape.contains(x, z, previousRadius)) {
 					offsets.add(new Offset(x, z));
 				}
 			}
@@ -25,8 +26,9 @@ public final class ChamberExpansionRules {
 		return offsets;
 	}
 
+	/** The four light markers, set into the circle on its diagonals. */
 	public static Set<Offset> markerOffsets(int radius) {
-		int inset = Math.max(1, radius - 1);
+		int inset = Math.max(1, Math.round(radius * 0.66F));
 		return Set.of(new Offset(inset, inset), new Offset(-inset, inset),
 				new Offset(inset, -inset), new Offset(-inset, -inset));
 	}

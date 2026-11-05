@@ -244,7 +244,7 @@ public final class RegistrationGameTests {
                 "covenant_throne", "sunburst_bloom", "house_marker", "saint_sarcophagus"));
         var expectedManual = new java.util.TreeSet<>(java.util.Set.of("gourd_stem", "active_befouling_ash_trail",
                 "active_smouldering_ash_trail", "placed_blood_stained_stone", "lethean_poppy_wreath", "sanguine_conduit"));
-        var expectedItemless = new java.util.TreeSet<>(java.util.Set.of("attached_gourd_stem", "filler_block",
+        var expectedItemless = new java.util.TreeSet<>(java.util.Set.of("attached_gourd_stem", "chamber_gate", "filler_block",
                 "somnolent_seat_filler", "abocipher_emitter", "qliphoth_bloom", "escharian_overgrowth",
                 "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "recollection_cyst",
                 "witness_devotee", "warden_bloom", "blood_wood_wall_sign", "blood_wood_wall_hanging_sign",

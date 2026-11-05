@@ -74,16 +74,17 @@ public final class ChamberOfWillEvents {
         BlockPos cell = manager.cellPos(manager.idFor(player.getUUID()));
         int radius = manager.radiusFor(player.getUUID());
 
+        // A crossing pins its body on the gate's plane and answers for it.
+        if (com.vincenthuto.hemomancy.common.block.shared.LidlessPassageService.isCrossing(player)) return;
+
         double px = player.getX();
         double pz = player.getZ();
         double py = player.getY();
 
-        boolean changed = false;
-        double nx = px, nz = pz;
-
-        nx = ChamberBoundaryRules.clampCoordinate(px, cell.getX(), radius);
-        nz = ChamberBoundaryRules.clampCoordinate(pz, cell.getZ(), radius);
-        changed = nx != px || nz != pz;
+        var clamped = ChamberBoundaryRules.clamp(px, pz, cell.getX(), cell.getZ(), radius);
+        double nx = clamped.dx();
+        double nz = clamped.dz();
+        boolean changed = nx != px || nz != pz;
 
         if (ChamberBoundaryRules.belowRescuePlane(py, cell.getY())) {
             ChamberOfWillManager.rescuePlayerToCell(serverPlayer, (ServerLevel) player.level(), cell, radius);

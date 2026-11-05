@@ -48,6 +48,7 @@ class PlayerAnimationGuardrailTest {
 			Map.entry("client/event/FungalProjectionClientEvents.java", "NORMAL"),
 			Map.entry("client/event/PossessionClientEvents.java", "NORMAL"),
 			Map.entry("client/event/AxonalTransductionClient.java", "NORMAL"),
+			Map.entry("client/event/LidlessPassageClientEvents.java", "NORMAL"),
 			Map.entry("client/render/layer/player/EquippedMorphlingHandRenderer.java", "LOW"),
 			Map.entry("client/event/CastingAnimationClientEvents.java", "LOWEST"),
 			Map.entry("client/render/item/harbinger/HeldWeaponPose.java", "LOWEST"));

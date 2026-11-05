@@ -1,0 +1,27 @@
+{
+  "vertex": "hemomancy:screen/screen_generic",
+  "fragment": "hemomancy:screen/lidless_passage_view",
+  "attributes": ["Position", "Color", "UV0"],
+  "samplers": [{"name": "Sampler0"}, {"name": "Sampler1"}, {"name": "Sampler2"}],
+  "uniforms": [
+    {"name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]},
+    {"name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]},
+    {"name": "ColorModulator", "type": "float", "count": 4, "values": [1, 1, 1, 1]},
+    {"name": "HemoTime", "type": "float", "count": 1, "values": [0]},
+    {"name": "Progress", "type": "float", "count": 1, "values": [0]},
+    {"name": "Length", "type": "float", "count": 1, "values": [16]},
+    {"name": "DoorSeed", "type": "float", "count": 1, "values": [0]},
+    {"name": "CamRight", "type": "float", "count": 3, "values": [1, 0, 0]},
+    {"name": "CamUp", "type": "float", "count": 3, "values": [0, 1, 0]},
+    {"name": "CamForward", "type": "float", "count": 3, "values": [0, 0, 1]},
+    {"name": "FovTan", "type": "float", "count": 1, "values": [0.7]},
+    {"name": "Aspect", "type": "float", "count": 1, "values": [1.777]},
+    {"name": "EyeHeight", "type": "float", "count": 1, "values": [1.62]},
+    {"name": "Mode", "type": "float", "count": 1, "values": [0]},
+    {"name": "ChamberTurn", "type": "float", "count": 1, "values": [0.0]},
+    {"name": "Theme", "type": "float", "count": 1, "values": [0.0]},
+    {"name": "Hole", "type": "float", "count": 2, "values": [0, 0]},
+    {"name": "Live", "type": "float", "count": 1, "values": [0]},
+    {"name": "EyeShape", "type": "float", "count": 1, "values": [0]}
+  ]
+}

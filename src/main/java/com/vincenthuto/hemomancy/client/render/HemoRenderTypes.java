@@ -21,6 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -780,6 +781,145 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	/** The tendrils on a standing Monolith, reaching {@code zone} blocks up its faces in the given colour. */
+	/**
+	 * {@code morphTime} and {@code morphStrength} are the clock (seconds) and strength the stone's own surface shader
+	 * breathes with, so the veins ride its surface.
+	 */
+	public static RenderType monolithVeins(float gameTime, float stoneSeed, float zone, float red, float green, float blue,
+			float morphTime, float morphStrength) {
+		return MONOLITH_VEIN_TYPES.get(stoneSeed, new MonolithVeinUniforms(gameTime, zone, red, green, blue, morphTime, morphStrength));
+	}
+
+	private record MonolithVeinUniforms(float gameTime, float zone, float red, float green, float blue, float morphTime,
+			float morphStrength) {
+	}
+
+	private static final SeededRenderTypes<Float, MonolithVeinUniforms, RenderType> MONOLITH_VEIN_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createMonolithVeins);
+
+	/**
+	 * The standing stone's eyes and back symbol, colour-only quads that breathe with its surface like the veins.
+	 * {@code origin}, {@code right} and {@code up} are the slab face they lie on, camera-relative: the emblem takes that
+	 * face's interpolated displacement as its own.
+	 */
+	public static RenderType monolithEmblem(float key, float stoneSeed, float morphTime, float morphStrength, Vector3f origin,
+			Vector3f right, Vector3f up, float diagonal) {
+		return MONOLITH_EMBLEM_TYPES.get(key, new MonolithEmblemUniforms(stoneSeed, morphTime, morphStrength, origin.x, origin.y,
+				origin.z, right.x, right.y, right.z, up.x, up.y, up.z, diagonal));
+	}
+
+	/**
+	 * {@code key} tells one face's type from another's; {@code stoneSeed} is the stone's own seed, which the morph's
+	 * phase comes from, so the key must never stand in for it. {@code diagonal} is which corner pair the face's quad
+	 * splits on: 0 for origin to far corner, 1 for the other two.
+	 */
+	private record MonolithEmblemUniforms(float stoneSeed, float morphTime, float morphStrength, float ox, float oy, float oz,
+			float rx, float ry, float rz, float ux, float uy, float uz, float diagonal) {
+	}
+
+	private static final SeededRenderTypes<Float, MonolithEmblemUniforms, RenderType> MONOLITH_EMBLEM_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createMonolithEmblem);
+
+	private static RenderType createMonolithEmblem(Float key, Supplier<MonolithEmblemUniforms> values) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"monolith_emblem_uniforms",
+				() -> {
+					MonolithEmblemUniforms u = values.get();
+					ShaderInstance shader = ShaderInit.MONOLITH_EMBLEM.getInstance().get();
+					setUniform(shader, "StoneSeed", u.stoneSeed());
+					setUniform(shader, "MorphTime", u.morphTime());
+					setUniform(shader, "MorphStrength", u.morphStrength());
+					setUniform(shader, "FaceOrigin", u.ox(), u.oy(), u.oz());
+					setUniform(shader, "FaceRight", u.rx(), u.ry(), u.rz());
+					setUniform(shader, "FaceUp", u.ux(), u.uy(), u.uz());
+					setUniform(shader, "FaceDiagonal", u.diagonal());
+				},
+				() -> {
+				});
+		return RenderType.create("monolith_emblem",
+				DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MONOLITH_EMBLEM.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setOutputState(RenderType.PARTICLES_TARGET)
+						.setCullState(RenderType.NO_CULL)
+						.createCompositeState(false));
+	}
+
+	private static RenderType createMonolithVeins(Float key, Supplier<MonolithVeinUniforms> values) {
+		float stoneSeed = key;
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"monolith_veins_uniforms",
+				() -> {
+					MonolithVeinUniforms u = values.get();
+					ShaderInstance shader = ShaderInit.MONOLITH_VEINS.getInstance().get();
+					setUniform(shader, "HemoTime", u.gameTime());
+					setUniform(shader, "StoneSeed", stoneSeed);
+					setUniform(shader, "Zone", u.zone());
+					setUniform(shader, "Tint", u.red(), u.green(), u.blue());
+					setUniform(shader, "MorphTime", u.morphTime());
+					setUniform(shader, "MorphStrength", u.morphStrength());
+				},
+				() -> {
+				});
+		return RenderType.create("monolith_veins",
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MONOLITH_VEINS.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/** The Monolith's cracks at {@code progress}, on its faces and raw break; vertex colour carries the layout. */
+	/** {@code fill} is how far up the halves the light in the cracks has climbed, 0 dark to 1 full. */
+	public static RenderType monolithFissure(float gameTime, float progress, float stoneSeed, boolean overgrown, float fill) {
+		return MONOLITH_FISSURE_TYPES.get(stoneSeed, new MonolithFissureUniforms(gameTime, progress, overgrown ? 1.0F : 0.0F, fill));
+	}
+
+	private record MonolithFissureUniforms(float gameTime, float progress, float overgrown, float fill) {
+	}
+
+	private static final SeededRenderTypes<Float, MonolithFissureUniforms, RenderType> MONOLITH_FISSURE_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createMonolithFissure);
+
+	private static RenderType createMonolithFissure(Float key, Supplier<MonolithFissureUniforms> values) {
+		float stoneSeed = key;
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"monolith_fissure_uniforms",
+				() -> {
+					MonolithFissureUniforms u = values.get();
+					ShaderInstance shader = ShaderInit.MONOLITH_FISSURE.getInstance().get();
+					setUniform(shader, "HemoTime", u.gameTime());
+					setUniform(shader, "Progress", u.progress());
+					setUniform(shader, "StoneSeed", stoneSeed);
+					setUniform(shader, "Overgrown", u.overgrown());
+					setUniform(shader, "Fill", u.fill());
+				},
+				() -> {
+				});
+		return RenderType.create("monolith_fissure",
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 1024, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.MONOLITH_FISSURE.getShard())
+						.setTexturingState(uniforms)
+						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	/**
 	 * The ring door opening: {@code mode} 0 for a Silentium's blood turning to monolith, 1 for an Apotheos's hyphae and
 	 * cracks, at {@code progress} of the charge. {@code origin} (the hit point) and {@code anchor} (the door's pixel
@@ -830,6 +970,132 @@ public final class HemoRenderTypes {
 						.setWriteMaskState(RenderType.COLOR_WRITE)
 						.setCullState(RenderType.NO_CULL)
 						.setLightmapState(RenderType.LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/**
+	 * The void in a Lidless Door's panel. The passage basis (right, up, forward toward the exit) is given in world
+	 * space, matching the camera-relative world positions block entities draw with, so the fragment shader can turn
+	 * the camera's ray through the panel into a passage-space ray. The seed
+	 * keeps each door's void its own; a door's back face asks with the seed plus a half.
+	 */
+	public static RenderType lidlessDoorPanel(float gameTime, float doorSeed, Vec3 right, Vec3 up, Vec3 forward,
+			float diamond) {
+		return LIDLESS_DOOR_PANEL_TYPES.get(doorSeed, new LidlessDoorPanelUniforms(gameTime,
+				(float) right.x, (float) right.y, (float) right.z, (float) up.x, (float) up.y, (float) up.z,
+				(float) forward.x, (float) forward.y, (float) forward.z, diamond, 0));
+	}
+
+	private record LidlessDoorPanelUniforms(float gameTime, float rightX, float rightY, float rightZ, float upX,
+			float upY, float upZ, float forwardX, float forwardY, float forwardZ, float diamond, int liveTexture) {
+	}
+
+	private static final SeededRenderTypes<Float, LidlessDoorPanelUniforms, RenderType> LIDLESS_DOOR_PANEL_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createLidlessDoorPanel);
+
+	/**
+	 * The portal between a broken Monolith's halves: the panel material with its writhing diamond cut out, drawn
+	 * translucent so what the shader discards shows the world.
+	 */
+	public static RenderType lidlessPortal(float gameTime, float doorSeed, Vec3 right, Vec3 up, Vec3 forward, float turned,
+			int liveTexture) {
+		return LIDLESS_PORTAL_TYPES.get(doorSeed, new LidlessDoorPanelUniforms(gameTime,
+				(float) right.x, (float) right.y, (float) right.z, (float) up.x, (float) up.y, (float) up.z,
+				(float) forward.x, (float) forward.y, (float) forward.z, 1.0F + turned, liveTexture));
+	}
+
+	private static final SeededRenderTypes<Float, LidlessDoorPanelUniforms, RenderType> LIDLESS_PORTAL_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createLidlessPortal);
+
+	/** The same panel drawn hard: its body only, writing depth, so what is behind the void stays behind it. */
+	public static RenderType lidlessPortalSolid(float gameTime, float doorSeed, Vec3 right, Vec3 up, Vec3 forward, float turned,
+			int liveTexture) {
+		return LIDLESS_PORTAL_SOLID_TYPES.get(doorSeed, new LidlessDoorPanelUniforms(gameTime,
+				(float) right.x, (float) right.y, (float) right.z, (float) up.x, (float) up.y, (float) up.z,
+				(float) forward.x, (float) forward.y, (float) forward.z, 1.0F + turned, liveTexture));
+	}
+
+	private static final SeededRenderTypes<Float, LidlessDoorPanelUniforms, RenderType> LIDLESS_PORTAL_SOLID_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createLidlessPortalSolid);
+
+	private static RenderType createLidlessPortal(Float key, Supplier<LidlessDoorPanelUniforms> values) {
+		// The soft pass: the rim's fringe blended over whatever is there, writing no depth.
+		return RenderType.create("lidless_portal",
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.LIDLESS_DOOR_PANEL.getShard())
+						.setTexturingState(lidlessPanelUniforms(key, values, false))
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	private static RenderType createLidlessPortalSolid(Float key, Supplier<LidlessDoorPanelUniforms> values) {
+		// The hard pass: block entities draw before the translucent chunk pass, so the body writes depth and water
+		// behind the void stays behind it. The shader keeps only its opaque pixels in this pass.
+		return RenderType.create("lidless_portal_solid",
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.LIDLESS_DOOR_PANEL.getShard())
+						.setTexturingState(lidlessPanelUniforms(key, values, true))
+						.setTransparencyState(RenderType.NO_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/** The texture in shader slot 0 before a live eye bound its view there, put back after the batch. */
+	private static int textureBeforeLiveEye;
+
+	private static RenderStateShard.TexturingStateShard lidlessPanelUniforms(Float key, Supplier<LidlessDoorPanelUniforms> values) {
+		return lidlessPanelUniforms(key, values, false);
+	}
+
+	private static RenderStateShard.TexturingStateShard lidlessPanelUniforms(Float key, Supplier<LidlessDoorPanelUniforms> values,
+			boolean hard) {
+		float doorSeed = key;
+		return new RenderStateShard.TexturingStateShard(
+				"lidless_door_panel_uniforms",
+				() -> {
+					LidlessDoorPanelUniforms u = values.get();
+					textureBeforeLiveEye = RenderSystem.getShaderTexture(0);
+					ShaderInstance shader = ShaderInit.LIDLESS_DOOR_PANEL.getInstance().get();
+					setUniform(shader, "HemoTime", u.gameTime());
+					setUniform(shader, "DoorSeed", doorSeed);
+					setUniform(shader, "PassageRight", u.rightX(), u.rightY(), u.rightZ());
+					setUniform(shader, "PassageUp", u.upX(), u.upY(), u.upZ());
+					setUniform(shader, "PassageForward", u.forwardX(), u.forwardY(), u.forwardZ());
+					setUniform(shader, "Diamond", u.diamond());
+					// A live eye samples the Chamber drawn into this texture by screen position.
+					setUniform(shader, "Live", u.liveTexture() != 0 ? 1.0F : 0.0F);
+					setUniform(shader, "Hard", hard ? 1.0F : 0.0F);
+					var main = net.minecraft.client.Minecraft.getInstance().getMainRenderTarget();
+					setUniform(shader, "ScreenSize", (float) main.width, (float) main.height);
+					if (u.liveTexture() != 0) RenderSystem.setShaderTexture(0, u.liveTexture());
+				},
+				() -> {
+					// Whatever draws next with a texture shader and no texture of its own would sample the view.
+					RenderSystem.setShaderTexture(0, textureBeforeLiveEye);
+				});
+	}
+
+	private static RenderType createLidlessDoorPanel(Float key, Supplier<LidlessDoorPanelUniforms> values) {
+		RenderStateShard.TexturingStateShard uniforms = lidlessPanelUniforms(key, values);
+		return RenderType.create("lidless_door_panel",
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, false,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.LIDLESS_DOOR_PANEL.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.NO_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
 						.createCompositeState(false));
 	}
 

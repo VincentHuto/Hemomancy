@@ -140,6 +140,50 @@ public final class ChamberVisitService {
 		return false;
 	}
 
+	/**
+	 * Through the husk: no timer and the whole inventory, as an attuned visit is, arriving at the corridor's far end.
+	 * It binds the seat so a way back exists, but it is not the rite: it grants no attunement.
+	 */
+	public static boolean beginGatewayVisit(ServerPlayer player, net.minecraft.world.phys.Vec3 returnTo, float returnYaw) {
+		if (!canEnterByGateway(player)) return false;
+		bindChair(player);
+		return startVisit(player, ChamberVisitMode.ATTUNED,
+				manager -> manager.enterAtGate(player, returnTo, returnYaw));
+	}
+
+	/** Whether a visit could start for this player now. */
+	public static boolean canEnterByGateway(ServerPlayer player) {
+		return canStartVisit(player);
+	}
+
+	/** Whether part of this player is already somewhere else: a visit running, a projection or a possession. */
+	public static boolean isAway(ServerPlayer player) {
+		return isActive(player) || FungalGardenTravelHelper.isProjectionActive(player) || HemoCapabilityAccess.isPossessing(player);
+	}
+
+	/**
+	 * Out through the corridor gate. The visit ends beside the owner's husk; a husk that has gone clears the link, and
+	 * the visit ends wherever it would have otherwise.
+	 */
+	public static void walkOutThroughGate(ServerPlayer player) {
+		ChamberOfWillManager manager = ChamberOfWillManager.get(player.getServer());
+		ChamberOfWillManager.GatewayLink link = manager.gateway(player.getUUID());
+		if (link != null) {
+			var level = player.getServer().getLevel(net.minecraft.resources.ResourceKey.create(
+					net.minecraft.core.registries.Registries.DIMENSION, link.dimension()));
+			if (level != null) level.getChunkAt(link.husk());
+			if (level != null && level.getBlockEntity(link.husk()) instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineMonolithBlockEntity stone
+					&& stone.isBroken() && player.getUUID().equals(stone.owner())) {
+				net.minecraft.world.phys.Vec3 stand = stone.standingBeside(player, stone.front());
+				manager.setReturnPoint(player.getUUID(), link.dimension(), stand, stone.front().toYRot());
+				stone.openBriefly();
+			} else {
+				manager.clearGateway(player.getUUID(), link.dimension(), link.husk());
+			}
+		}
+		returnFromVisit(player);
+	}
+
 	public static boolean beginAdminVisit(ServerPlayer player) {
 		return startVisit(player, ChamberVisitMode.ADMIN);
 	}
@@ -193,6 +237,11 @@ public final class ChamberVisitService {
 	}
 
 	private static boolean startVisit(ServerPlayer player, ChamberVisitMode visitMode) {
+		return startVisit(player, visitMode, manager -> manager.enterChamber(player));
+	}
+
+	private static boolean startVisit(ServerPlayer player, ChamberVisitMode visitMode,
+			java.util.function.Consumer<ChamberOfWillManager> enter) {
 		if (!canStartVisit(player)) return false;
 		if (!ChamberVisitRules.canMoveItems(visitMode) && player.containerMenu != player.inventoryMenu)
 			player.closeContainer();
@@ -217,7 +266,7 @@ public final class ChamberVisitService {
 		if (visitMode == ChamberVisitMode.GUIDED
 				&& HemoCapabilityAccess.getEquipment(player) instanceof HarbingerEquipmentContainer equipment)
 			data.put(GUIDED_EQUIPMENT, equipment.serializeNBT(player.registryAccess()));
-		ChamberOfWillManager.get(player.getServer()).enterChamber(player);
+		enter.accept(ChamberOfWillManager.get(player.getServer()));
 		if (!player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) {
 			recoverOutsideChamber(player);
 			return false;

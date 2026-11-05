@@ -15,6 +15,8 @@ class MonolithFragmentResourceTest {
 		String itemInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/ItemInit.java"));
 		String monolithBlock = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/SanguineMonolithBlock.java"));
+		String monolithEntity = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/tile/harbinger/functional/SanguineMonolithBlockEntity.java"));
 		String fragmentItem = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/MonolithFragmentItem.java")) + read(Path.of("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
@@ -26,12 +28,14 @@ class MonolithFragmentResourceTest {
 				"monolith_fragment = BASEITEMS.register(\"monolith_fragment\"");
 		assertContains("monolith fragments use their custom item class", itemInit,
 				"new MonolithFragmentItem(new Item.Properties().rarity(Rarity.RARE).fireResistant())");
-		assertContains("shattering creates a monolith fragment stack", monolithBlock,
+		assertContains("the fall creates a monolith fragment stack", monolithEntity,
 				"new ItemStack(ItemInit.monolith_fragment.get(),");
-		assertContains("shattering uses the bounded fragment count rule", monolithBlock,
+		assertContains("the fall uses the bounded fragment count rule", monolithEntity,
 				"MonolithFragmentDropRules.rollFragmentCount(level.random)");
-		assertContains("fragment drop happens alongside qliphoth seed", monolithBlock,
-				"popResource(level, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));");
+		assertContains("the press starts the break instead of dropping the seed", monolithBlock,
+				"monolith.beginBreak(player);");
+		assertContains("the seed is taken at the end of the walk", monolithEntity,
+				"public void takeSeed(ServerPlayer player)");
 		assertContains("fragment item is stackable through default item properties", fragmentItem,
 				"extends Item {");
 		assertContains("fragment item supplies custom renderer", fragmentItem,

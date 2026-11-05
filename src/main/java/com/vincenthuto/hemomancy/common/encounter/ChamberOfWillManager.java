@@ -95,6 +95,12 @@ public class ChamberOfWillManager extends SavedData {
     private final Set<UUID> unrestrictedSkyThemeOverrides = new HashSet<>();
     private final Map<UUID, Integer> chamberRadiusOverrides = new HashMap<>();
     private final Map<UUID, Integer> builtRadii = new HashMap<>();
+    /** The husk each owner's corridor gate leads back to. */
+    private final Map<UUID, GatewayLink> gateways = new HashMap<>();
+    /** The overworld around each owner's husk, for the walk back; taken with the room. */
+    private final Map<UUID, HuskOutsideSnapshot> outside = new HashMap<>();
+    /** Rooms already laid out as a keyhole; one from before the keyhole is converted once. */
+    private final java.util.Set<UUID> keyholeRooms = new java.util.HashSet<>();
 
     public ChamberOfWillManager() {
     }
@@ -139,6 +145,71 @@ public class ChamberOfWillManager extends SavedData {
                 player.getYRot(), player.getXRot(), DimensionTransition.DO_NOTHING));
         syncTo(player);
         setDirty();
+    }
+
+    /**
+     * The gateway's way in: the player arrives at the corridor's far end, facing the arbor, and will come back to
+     * {@code returnTo} beside the husk however they leave.
+     */
+    public void enterAtGate(ServerPlayer player, Vec3 returnTo, float returnYaw) {
+        ServerLevel chamberLevel = player.getServer().getLevel(CHAMBER_OF_WILL);
+        if (chamberLevel == null) return;
+        setReturnPoint(player.getUUID(), player.level().dimension().location(), returnTo, returnYaw);
+        refreshProgressionState(player);
+        BlockPos cell = cellPos(idFor(player.getUUID()));
+        ensureRoom(chamberLevel, player.getUUID());
+        int reach = ChamberRoomShape.reach(builtRadii.getOrDefault(player.getUUID(), BASE_ROOM_RADIUS));
+        Vec3 dest = new Vec3(cell.getX() + 0.5D, cell.getY() + 1.0D, cell.getZ() + reach - 2.0D + 0.5D);
+        player.stopRiding();
+        player.changeDimension(new DimensionTransition(chamberLevel, dest, Vec3.ZERO,
+                180.0F, 0.0F, DimensionTransition.DO_NOTHING));
+        syncTo(player);
+        setDirty();
+    }
+
+    public void setReturnPoint(UUID owner, ResourceLocation dimension, Vec3 at, float yaw) {
+        returnPoints.put(owner, new ReturnPoint(dimension, at.x, at.y, at.z, yaw));
+        setDirty();
+    }
+
+    public void linkGateway(UUID owner, ResourceLocation dimension, BlockPos husk) {
+        gateways.put(owner, new GatewayLink(dimension, husk.immutable()));
+        setDirty();
+    }
+
+    /** Forgets this husk as the owner's gateway; a link to another husk stands. */
+    public void clearGateway(UUID owner, ResourceLocation dimension, BlockPos husk) {
+        GatewayLink link = gateways.get(owner);
+        if (link != null && link.dimension().equals(dimension) && link.husk().equals(husk)) {
+            gateways.remove(owner);
+            setDirty();
+        }
+    }
+
+    public boolean hasGateway(UUID owner) {
+        return gateways.containsKey(owner);
+    }
+
+    /** Keeps the overworld around the owner's husk and hands it to their gate, if its room is loaded. */
+    public void storeOutside(UUID owner, HuskOutsideSnapshot snapshot, MinecraftServer server) {
+        outside.put(owner, snapshot);
+        setDirty();
+        ServerLevel chamber = server.getLevel(CHAMBER_OF_WILL);
+        if (chamber == null) return;
+        BlockPos gate = cellPos(idFor(owner)).offset(0, 1, ChamberRoomShape.reach(builtRadiusFor(owner)));
+        if (chamber.hasChunkAt(gate) && chamber.getBlockEntity(gate) instanceof com.vincenthuto.hemomancy.common.tile.shared.ChamberGateBlockEntity gateEntity) {
+            com.vincenthuto.hemomancy.common.util.BlockEntitySync.markAndSync(gateEntity);
+        }
+    }
+
+    @javax.annotation.Nullable
+    public HuskOutsideSnapshot outside(UUID owner) {
+        return outside.get(owner);
+    }
+
+    @javax.annotation.Nullable
+    public GatewayLink gateway(UUID owner) {
+        return gateways.get(owner);
     }
 
 	public void rememberReturnPoint(ServerPlayer player) {
@@ -200,8 +271,11 @@ public class ChamberOfWillManager extends SavedData {
         return state == null ? THEME_WILL_DEFAULT : state.skyTheme();
     }
 
+    /** The radius a player is bound by: an operator's override, else the floor that has actually been built for them. */
     public int radiusFor(UUID owner) {
-        return chamberRadiusOverrides.getOrDefault(owner, radiusForTier(getChamberState(owner).tier()));
+        Integer override = chamberRadiusOverrides.get(owner);
+        if (override != null) return override;
+        return builtRadii.getOrDefault(owner, radiusForTier(getChamberState(owner).tier()));
     }
 
     public static int radiusForTier(int tier) {
@@ -348,6 +422,15 @@ public class ChamberOfWillManager extends SavedData {
         return new ChamberProgressionRules.State(state.tier(), state.skyTheme().getPath());
     }
 
+    /** The radius of the floor actually built for this owner. */
+    public int builtRadiusFor(UUID owner) {
+        return builtRadii.getOrDefault(owner, BASE_ROOM_RADIUS);
+    }
+
+    public static int pomeCountFor(ServerPlayer player) {
+        return qliphothPomeCount(player);
+    }
+
     private static int qliphothPomeCount(ServerPlayer player) {
         return HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone() ? 9 : HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed();
     }
@@ -374,12 +457,21 @@ public class ChamberOfWillManager extends SavedData {
                 ? Math.max(BASE_ROOM_RADIUS, builtRadii.getOrDefault(owner, BASE_ROOM_RADIUS))
                 : chamberRadiusOverrides.getOrDefault(owner,
                         ChamberVisitRules.radiusForDegree(HemoCapabilityAccess.getPlayerDegreeNumber(onlineOwner)));
+        return buildRoom(level, owner, onlineOwner, requestedRadius);
+    }
+
+    /** Builds out the owner's room to {@code requestedRadius}: outward only, and never over anything already there. */
+    public RoomGrowth buildRoom(ServerLevel level, UUID owner, @javax.annotation.Nullable ServerPlayer onlineOwner, int requestedRadius) {
+        BlockPos center = cellPos(idFor(owner));
         int previousRadius = builtRadii.getOrDefault(owner, -1);
+        if (previousRadius >= 0 && keyholeRooms.add(owner)) convertToKeyhole(level, center, previousRadius);
+        else keyholeRooms.add(owner);
         int radius = ChamberExpansionRules.nextBuiltRadius(previousRadius, requestedRadius);
 
         ensureArborOfWill(level, owner);
         if (radius <= previousRadius) {
             ensurePairedWarpChair(level, owner, center, onlineOwner);
+            ensureGate(level, owner, center, previousRadius, radius);
             return RoomGrowth.NONE;
         }
 
@@ -419,8 +511,50 @@ public class ChamberOfWillManager extends SavedData {
         }
         builtRadii.put(owner, radius);
         ensurePairedWarpChair(level, owner, center, onlineOwner);
+        ensureGate(level, owner, center, previousRadius, radius);
         setDirty();
         return new RoomGrowth(previousRadius, radius);
+    }
+
+    /** A room built as a square before the keyhole: its corners go if still bare floor, and the keyhole's floor goes in. */
+    private void convertToKeyhole(ServerLevel level, BlockPos center, int radius) {
+        BlockState floor = BlockInit.blood_wood_planks.get().defaultBlockState();
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                if (ChamberRoomShape.contains(x, z, radius)) continue;
+                BlockPos pos = center.offset(x, 0, z);
+                BlockState state = level.getBlockState(pos);
+                if (state.is(BlockInit.blood_wood_planks.get()) || state.is(BlockInit.sporite_crystal.get())) {
+                    level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                }
+            }
+        }
+        for (ChamberExpansionRules.Offset offset : ChamberExpansionRules.floorBand(-1, radius)) {
+            BlockPos pos = center.offset(offset.x(), 0, offset.z());
+            if (level.getBlockState(pos).isAir()) level.setBlockAndUpdate(pos, floor);
+        }
+        // Its old lights sat at the square's corners; the keyhole's go on the circle.
+        BlockState light = BlockInit.sporite_crystal.get().defaultBlockState();
+        for (ChamberExpansionRules.Offset offset : ChamberExpansionRules.markerOffsets(radius)) {
+            setLightIfReplaceable(level, center.offset(offset.x(), 0, offset.z()), light);
+        }
+        setDirty();
+    }
+
+    /** Keeps the gate on the corridor's last row, moving it when the room has grown. */
+    private static void ensureGate(ServerLevel level, UUID owner, BlockPos center, int previousRadius, int radius) {
+        if (previousRadius >= BASE_ROOM_RADIUS && previousRadius != radius) {
+            BlockPos old = center.offset(0, 1, ChamberRoomShape.reach(previousRadius));
+            if (level.getBlockState(old).is(BlockInit.chamber_gate.get())) level.removeBlock(old, false);
+        }
+        BlockPos gatePos = center.offset(0, 1, ChamberRoomShape.reach(radius));
+        if (!level.getBlockState(gatePos).is(BlockInit.chamber_gate.get())) {
+            level.destroyBlock(gatePos, true);
+            level.setBlockAndUpdate(gatePos, BlockInit.chamber_gate.get().defaultBlockState());
+        }
+        if (level.getBlockEntity(gatePos) instanceof com.vincenthuto.hemomancy.common.tile.shared.ChamberGateBlockEntity gate) {
+            gate.configure(owner, radius);
+        }
     }
 
     private static void ensurePairedWarpChair(ServerLevel level, UUID owner, BlockPos center,
@@ -513,11 +647,10 @@ public class ChamberOfWillManager extends SavedData {
                 continue;
             }
             BlockPos cell = manager.cellPos(manager.idFor(player.getUUID()));
-            int bound = manager.radiusFor(player.getUUID()) + 1;
-            boolean outOfBounds = player.getX() < cell.getX() - bound || player.getX() > cell.getX() + bound
-                    || player.getZ() < cell.getZ() - bound || player.getZ() > cell.getZ() + bound
+            boolean outOfBounds = !ChamberRoomShape.near(player.getX() - (cell.getX() + 0.5D),
+                    player.getZ() - (cell.getZ() + 0.5D), manager.radiusFor(player.getUUID()), 1.5D)
                     || player.getY() < cell.getY() - 8;
-            if (outOfBounds) {
+            if (outOfBounds && !com.vincenthuto.hemomancy.common.block.shared.LidlessPassageService.isCrossing(player)) {
                 rescuePlayerToCell(player, serverLevel, cell, manager.radiusFor(player.getUUID()));
             }
         }
@@ -576,14 +709,18 @@ public class ChamberOfWillManager extends SavedData {
 
     private static void playExpansionEffects(ServerLevel level, BlockPos center, RoomGrowth growth) {
         int radius = growth.currentRadius();
-        for (int step = -radius; step <= radius; step += 2) {
-            double x = center.getX() + step + 0.5D;
-            double z = center.getZ() + radius + 0.5D;
-            level.sendParticles(HemoParticleData.bloodCell(new ParticleColor(131, 0, 0)),
-                    x, center.getY() + 0.25D, z, 1, 0.08D, 0.06D, 0.08D, 0.01D);
-            level.sendParticles(HemoParticleData.serpent(new ParticleColor(70, 0, 12)),
-                    center.getX() + radius + 0.5D, center.getY() + 0.2D, center.getZ() + step + 0.5D,
-                    1, 0.05D, 0.03D, 0.05D, 0.005D);
+        List<ChamberRoomShape.Point> edge = ChamberRoomShape.outline(radius, Math.max(16, radius * 4));
+        for (int i = 0; i < edge.size(); i++) {
+            ChamberRoomShape.Point point = edge.get(i);
+            double x = center.getX() + 0.5D + point.dx();
+            double z = center.getZ() + 0.5D + point.dz();
+            if (i % 2 == 0) {
+                level.sendParticles(HemoParticleData.bloodCell(new ParticleColor(131, 0, 0)),
+                        x, center.getY() + 0.25D, z, 1, 0.08D, 0.06D, 0.08D, 0.01D);
+            } else {
+                level.sendParticles(HemoParticleData.serpent(new ParticleColor(70, 0, 12)),
+                        x, center.getY() + 0.2D, z, 1, 0.05D, 0.03D, 0.05D, 0.005D);
+            }
         }
         level.playSound(null, center, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 0.65F, 0.7F);
         level.playSound(null, center, SoundEvents.TUFF_PLACE, SoundSource.BLOCKS, 0.45F, 0.8F);
@@ -678,6 +815,33 @@ public class ChamberOfWillManager extends SavedData {
         }
         tag.put("unrestrictedSkyThemeOverrides", unrestrictedOverrideList);
 
+        ListTag gatewayList = new ListTag();
+        gateways.forEach((uuid, link) -> {
+            CompoundTag entry = new CompoundTag();
+            entry.putUUID("uuid", uuid);
+            entry.putString("dimension", link.dimension().toString());
+            entry.putLong("pos", link.husk().asLong());
+            gatewayList.add(entry);
+        });
+        tag.put("gateways", gatewayList);
+
+        ListTag outsideList = new ListTag();
+        outside.forEach((uuid, snapshot) -> {
+            CompoundTag entry = new CompoundTag();
+            entry.putUUID("uuid", uuid);
+            snapshot.write(entry);
+            outsideList.add(entry);
+        });
+        tag.put("outside", outsideList);
+
+        ListTag keyholeList = new ListTag();
+        for (UUID uuid : keyholeRooms) {
+            CompoundTag entry = new CompoundTag();
+            entry.putUUID("uuid", uuid);
+            keyholeList.add(entry);
+        }
+        tag.put("keyholeRooms", keyholeList);
+
         ListTag radiusOverrideList = new ListTag();
         chamberRadiusOverrides.forEach((uuid, radius) -> {
             CompoundTag entry = new CompoundTag();
@@ -745,6 +909,22 @@ public class ChamberOfWillManager extends SavedData {
                     Math.max(BASE_ROOM_RADIUS, Math.min(MAX_ROOM_RADIUS, entry.getInt("radius"))));
         }
 
+        for (Tag t : tag.getList("gateways", Tag.TAG_COMPOUND)) {
+            CompoundTag entry = (CompoundTag) t;
+            manager.gateways.put(entry.getUUID("uuid"), new GatewayLink(
+                    ResourceLocation.parse(entry.getString("dimension")), BlockPos.of(entry.getLong("pos"))));
+        }
+
+        for (Tag t : tag.getList("outside", Tag.TAG_COMPOUND)) {
+            CompoundTag entry = (CompoundTag) t;
+            HuskOutsideSnapshot snapshot = HuskOutsideSnapshot.read(entry);
+            if (snapshot != null) manager.outside.put(entry.getUUID("uuid"), snapshot);
+        }
+
+        for (Tag t : tag.getList("keyholeRooms", Tag.TAG_COMPOUND)) {
+            manager.keyholeRooms.add(((CompoundTag) t).getUUID("uuid"));
+        }
+
         for (Tag t : tag.getList("builtRadii", Tag.TAG_COMPOUND)) {
             CompoundTag entry = (CompoundTag) t;
             manager.builtRadii.put(entry.getUUID("uuid"),
@@ -777,6 +957,10 @@ public class ChamberOfWillManager extends SavedData {
         public boolean expandedFromExistingRoom() {
             return previousRadius >= BASE_ROOM_RADIUS && currentRadius > previousRadius;
         }
+    }
+
+    /** The husk an owner's corridor gate leads back to. */
+    public record GatewayLink(ResourceLocation dimension, BlockPos husk) {
     }
 
     private record ReturnPoint(ResourceLocation dimension, double x, double y, double z, float yRot) {

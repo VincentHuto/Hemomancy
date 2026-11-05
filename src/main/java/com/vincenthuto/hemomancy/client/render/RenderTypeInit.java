@@ -75,6 +75,18 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	/** Solid shards of the fallen Monolith: flat-colour triangles that write depth so the facets occlude one another. */
+	public static final RenderType MONOLITH_RUBBLE = create("MonolithRubble",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES, 256, false, false,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_DEPTH_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	public static final RenderType CLAW_SLASH_GLOW = create("ClawSlashGlow",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 512, false, true,
 			RenderType.CompositeState.builder()

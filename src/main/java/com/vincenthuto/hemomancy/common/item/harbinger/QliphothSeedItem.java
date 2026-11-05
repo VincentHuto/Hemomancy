@@ -40,6 +40,11 @@ public class QliphothSeedItem extends Item {
         super.appendHoverText(stack, context, tooltip, flag);
         tooltip.add(Component.translatable("item.hemomancy.qliphoth_seed.tooltip.use")
                 .withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+        SeedBinding binding = stack.get(com.vincenthuto.hemomancy.common.init.DataComponentInit.SEED_BINDING.get());
+        if (binding != null) {
+            tooltip.add(Component.translatable("item.hemomancy.qliphoth_seed.tooltip.bound", binding.name())
+                    .withStyle(ChatFormatting.GRAY));
+        }
     }
 
 }

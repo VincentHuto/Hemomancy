@@ -51,6 +51,13 @@ public final class ArborOfWillEntity extends Entity {
         entityData.set(CHAMBER_RADIUS, Math.max(3, chamberRadius));
     }
 
+    /** A client-side stand-in drawn through a husk's eye: the room's arbor as the snapshot describes it. */
+    public void configureStandIn(int visualDegree, int pomes, int chamberRadius) {
+        entityData.set(DEGREE, visualDegree);
+        entityData.set(POMES, Math.max(0, Math.min(9, pomes)));
+        entityData.set(CHAMBER_RADIUS, Math.max(3, chamberRadius));
+    }
+
     public Optional<UUID> ownerId() { return Optional.ofNullable(OWNER.get(this)); }
     public boolean isOwnedBy(Player player) { return ownerId().filter(player.getUUID()::equals).isPresent(); }
     public int degree() { return entityData.get(DEGREE); }

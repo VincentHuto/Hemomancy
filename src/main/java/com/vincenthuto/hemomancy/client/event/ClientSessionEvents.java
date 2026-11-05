@@ -31,6 +31,7 @@ public final class ClientSessionEvents {
         CircusPerceptionOverlay.clear();
         QliphothBloomClientData.clear();
         NpcProgressionMarkerClientState.clear();
+        com.vincenthuto.hemomancy.client.data.LidlessPassageClientState.clear();
     }
 
     @SubscribeEvent
@@ -41,6 +42,8 @@ public final class ClientSessionEvents {
         PossessionClientEvents.clear();
         com.vincenthuto.hemomancy.client.data.PossessionSceneClientState.clear();
         NaeglerophaeonCaptureOverlay.clear();
+        com.vincenthuto.hemomancy.client.data.LidlessPassageClientState.clear();
+        com.vincenthuto.hemomancy.client.screen.overlay.LidlessPassageView.clear();
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
         com.vincenthuto.hemomancy.client.render.world.MorphlingStrainTrails.clear();
@@ -109,6 +112,9 @@ public final class ClientSessionEvents {
     @SubscribeEvent
     public static void onClientLevelUnload(net.neoforged.neoforge.event.level.LevelEvent.Unload event) {
         if (!(event.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel)) return;
+        com.vincenthuto.hemomancy.client.data.LidlessPassageClientState.clear();
+        com.vincenthuto.hemomancy.client.screen.overlay.LidlessPassageView.clear();
+        com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberProxyView.clear();
         com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathAnimState.clear();
         com.vincenthuto.hemomancy.client.model.entity.boss.putriciel.PutricielAnimState.clear();
         com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumAnimState.clear();

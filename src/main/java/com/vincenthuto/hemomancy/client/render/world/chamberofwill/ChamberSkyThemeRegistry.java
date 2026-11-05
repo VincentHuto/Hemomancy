@@ -118,10 +118,28 @@ public final class ChamberSkyThemeRegistry {
 		return THEMES.getOrDefault(id, DEFAULT);
 	}
 
+	@javax.annotation.Nullable
+	private static ResourceLocation drawing;
+
 	public static ChamberSkyTheme activeTheme() {
+		if (drawing != null) return byId(drawing);
 		return byId(MycophantFightClientData.isActive() ? ChamberOfWillManager.THEME_MYCOPHANT_NURSERY
 				: VesperFightClientData.isActive() ? ChamberOfWillManager.THEME_VESPER_FIGHT
 				: ChamberOfWillClientData.skyTheme());
+	}
+
+	/**
+	 * Runs {@code draw} with {@code theme} as the active theme: the effects read the active theme and its textures
+	 * directly, so a room drawn for someone else (a husk's live eye) is drawn under that room's theme, not the viewer's.
+	 */
+	public static void withTheme(ResourceLocation theme, Runnable draw) {
+		ResourceLocation before = drawing;
+		drawing = theme;
+		try {
+			draw.run();
+		} finally {
+			drawing = before;
+		}
 	}
 
 	public static ChamberThemeEffects effectsById(ResourceLocation id) {

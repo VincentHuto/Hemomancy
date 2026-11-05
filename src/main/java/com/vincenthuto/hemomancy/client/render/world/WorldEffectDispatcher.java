@@ -42,6 +42,8 @@ public final class WorldEffectDispatcher {
     public static void renderLevelLastEvent(RenderLevelStageEvent event) {
         // Effects that pick their own stages, first and in this order.
         AxonalTravelView.renderWorld(event);
+        com.vincenthuto.hemomancy.client.screen.overlay.LidlessPassageView.captureProjection(event);
+        com.vincenthuto.hemomancy.client.screen.overlay.LidlessPassageView.renderFocus(event);
         EarthenVeinTravelClientEvents.renderWorld(event);
         MycophantIntroClientEvents.renderGlimpse(event);
         CrossbarHolderTracker.onStage(event);
@@ -51,6 +53,8 @@ public final class WorldEffectDispatcher {
         ManipulationVisualRenderer.render(event);
 
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
+            // Before any block entity: the husk's eye samples what this draws.
+            com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberProxyView.render(event);
             renderBloodMoonSky(event);
         }
 

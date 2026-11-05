@@ -38,12 +38,12 @@ class QliphothSeedItemRendererSourceTest {
 				itemRenderer, "class QliphothSeedItemRenderer extends BlockEntityWithoutLevelRenderer");
 		assertContains("seed item renderer should expose a reusable body renderer for dropped entities",
 				itemRenderer, "renderSeedBody");
-		assertContains("seed body should be horizontally elongated",
+		assertContains("seed body should be an upright almond, long from tip to tip",
+				itemRenderer, "LENGTH_SCALE = 1.7f");
+		assertContains("seed body should close to a point at its tips",
+				itemRenderer, "TIP_SHARPNESS");
+		assertDoesNotContain("seed body should no longer lie on its side",
 				itemRenderer, "HORIZONTAL_SCALE");
-		assertContains("seed body elongation should be subtle, not a stretched capsule",
-				itemRenderer, "HORIZONTAL_SCALE = 1.38f");
-		assertDoesNotContain("seed body should no longer use the overly dramatic horizontal stretch",
-				itemRenderer, "HORIZONTAL_SCALE = 1.72f");
 		assertContains("seed body should keep a smaller seed scale than the pome",
 				itemRenderer, "SEED_RADIUS");
 		assertContains("seed body should use pome-style Qliphoth core rendering",
@@ -78,22 +78,18 @@ class QliphothSeedItemRendererSourceTest {
 				tendrilEffects, "ROOT_PULSE_SPIN");
 		assertContains("dropped seed renderer should use asymmetric golden-angle root spacing",
 				tendrilEffects, "ROOT_GOLDEN_ANGLE");
-		assertContains("dropped seed renderer should emit enough roots to read as radial",
-				tendrilEffects, "ROOTS_PER_PULSE = 12");
+		assertContains("each tentacle should writhe in its own plane, not fall back on one world axis",
+				tendrilEffects, "root.outward()");
 		assertContains("dropped seed renderer should keep each HutosLib root narrow enough to avoid giant fan planes",
-				tendrilEffects, "withShape(16, 1, 0.024F, 0.045F)");
-		assertContains("dropped seed renderer should keep branch bursts modest around the seed",
-				tendrilEffects, "withBranching(1, 1, 0.12F, 0.45F)");
-		assertContains("dropped seed roots should spread outward more than downward to avoid HutosLib vertical basis bias",
-				tendrilEffects, "return 0.46D + 0.18D");
-		assertContains("dropped seed roots should use a shallow drop instead of a vertical curtain",
-				tendrilEffects, "return 0.08D + 0.08D");
-		assertContains("dropped seed roots should not use sag because sag bends near-vertical HutosLib roots to one world side",
-				tendrilEffects, "withWrithe(0.04F, 0.09F, 0.08F, 0.0F)");
-		assertDoesNotContain("seed roots should not keep the downward-heavy reach that collapsed into a one-direction fan",
-				tendrilEffects, "return 0.24D + 0.10D");
-		assertDoesNotContain("seed roots should not keep the deep drop that triggered the vertical basis fallback",
-				tendrilEffects, "return 0.32D + 0.12D");
+				tendrilEffects, "withShape(24, 1, 0.024F * scale, 0.045F)");
+		assertContains("seed tentacles should not branch, which kinks them near the tips",
+				tendrilEffects, "withBranching(0, 0, 0.12F, 0.45F)");
+		assertContains("seed tentacles should hang steeply, to suit the upright almond",
+				tendrilEffects, "return 0.36D + 0.28D");
+		assertContains("seed tentacles should reach out far less than they hang",
+				tendrilEffects, "return 0.09D + 0.13D");
+		assertContains("seed tentacles should writhe visibly",
+				tendrilEffects, "withWrithe(0.1F * scale, 0.2F");
 		assertContains("dropped seed renderer should include pulse in root endpoint angles",
 				tendrilEffects, "animatedAngle(gameTime, index, pulse)");
 		assertDoesNotContain("seed renderer should not use a tiny fixed root angle table",

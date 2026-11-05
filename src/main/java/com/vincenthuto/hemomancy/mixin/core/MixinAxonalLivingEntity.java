@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager;
+import com.vincenthuto.hemomancy.common.util.HeldTraveller;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinAxonalLivingEntity {
     @Inject(method={"isPickable", "isPushable", "canBeSeenAsEnemy"}, at=@At("HEAD"), cancellable=true, remap=false)
     private void hemomancy$signalHasNoPhysicalBody(CallbackInfoReturnable<Boolean> cir) {
-        if ((Object)this instanceof Player player && AxonalTransductionManager.isTraveling(player))
+        if ((Object)this instanceof Player player && HeldTraveller.isHeld(player))
             cir.setReturnValue(false);
     }
 }

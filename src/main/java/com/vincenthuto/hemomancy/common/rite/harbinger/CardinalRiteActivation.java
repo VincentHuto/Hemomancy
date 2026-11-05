@@ -262,6 +262,15 @@ public final class CardinalRiteActivation {
 					player.displayClientMessage((recipe.hasMedium() ? Component.translatable("message.hemomancy.cardinal_rite_activation.seat_the_rite_s_required_medium") : Component.translatable("message.hemomancy.cardinal_rite_activation.remove_the_unexpected_medium_from_the")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
+				// A bound Qliphoth Seed answers only to the Archon who took it.
+				if (sLevel.getBlockEntity(centerPos) instanceof CardinalFocusBlockEntity seatedFocus) {
+					Component notTheirs = com.vincenthuto.hemomancy.common.item.harbinger.SeedBinding.refusal(
+							seatedFocus.getMediumForMatching(), serverPlayer);
+					if (notTheirs != null) {
+						player.displayClientMessage(notTheirs.copy().withStyle(ChatFormatting.DARK_RED), true);
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+					}
+				}
 				if (recipe.isPuppeteerTrial()) {
 					ItemStack seated = sLevel.getBlockEntity(centerPos) instanceof CardinalFocusBlockEntity focus
 							? focus.getMediumForMatching() : ItemStack.EMPTY;

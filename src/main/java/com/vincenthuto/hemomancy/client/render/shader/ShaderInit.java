@@ -51,6 +51,22 @@ public class ShaderInit {
 	public static ShaderHolder RING_DOOR_OPENING = new ShaderHolder(Hemomancy.rloc("world/ring_door_opening"),
 			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "DoorSeed", "Mode", "Origin", "Anchor", "DoorRight", "Well");
 
+	/** The tendrils climbing a standing Sanguine Monolith from the ground. */
+	/** The standing Monolith's eyes and back symbol: colour-only geometry breathed with the stone's surface. */
+	public static ShaderHolder MONOLITH_EMBLEM = new ShaderHolder(Hemomancy.rloc("world/monolith_emblem"),
+			DefaultVertexFormat.POSITION_COLOR, "StoneSeed", "MorphTime", "MorphStrength", "FaceOrigin", "FaceRight", "FaceUp", "FaceDiagonal");
+
+	public static ShaderHolder MONOLITH_VEINS = new ShaderHolder(Hemomancy.rloc("world/monolith_veins"),
+			DefaultVertexFormat.BLOCK, "HemoTime", "StoneSeed", "Zone", "Tint", "MorphTime", "MorphStrength");
+
+	/** The Sanguine Monolith's cracks and its raw break, drawn on the stone's own faces. */
+	public static ShaderHolder MONOLITH_FISSURE = new ShaderHolder(Hemomancy.rloc("world/monolith_fissure"),
+			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "StoneSeed", "Overgrown", "Fill");
+
+	/** The void in a Lidless Door's panel, read along the camera's ray through the panel. */
+	public static ShaderHolder LIDLESS_DOOR_PANEL = new ShaderHolder(Hemomancy.rloc("world/lidless_door_panel"),
+			DefaultVertexFormat.BLOCK, "HemoTime", "DoorSeed", "PassageRight", "PassageUp", "PassageForward", "Diamond", "Live", "ScreenSize", "Hard");
+
 	/** The consecrated ward over a Saint's mausoleum: runes on the stone, the threshold sheet, strikes. */
 	public static ShaderHolder MAUSOLEUM_WARD = new ShaderHolder(Hemomancy.rloc("world/mausoleum_ward"),
 			DefaultVertexFormat.BLOCK, "HemoTime", "WardColor", "WardRadius", "PlayerOffset", "FocusOffset",
@@ -132,6 +148,10 @@ public class ShaderInit {
 
     public static ShaderHolder AXONAL_TRAVEL_VIEW = new ShaderHolder(Hemomancy.rloc("screen/axonal_travel_view"),
             DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+    /** The Lidless Door crossing: the void over the screen with the two doorway windows cut out of it. */
+    public static ShaderHolder LIDLESS_PASSAGE_VIEW = new ShaderHolder(Hemomancy.rloc("screen/lidless_passage_view"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "Progress", "Length", "DoorSeed", "CamRight",
+            "CamUp", "CamForward", "FovTan", "Aspect", "EyeHeight", "Mode", "Hole", "ChamberTurn", "Theme", "ColorModulator", "Live", "EyeShape");
     public static ShaderHolder MANIPULATION_ANIMUS = thermal("animus");
     public static ShaderHolder MANIPULATION_ANIMUS_MODEL = new ShaderHolder(Hemomancy.rloc("world/manipulation_animus_model"),
             DefaultVertexFormat.NEW_ENTITY, "HemoTime", "ColorModulator");
@@ -224,6 +244,7 @@ public class ShaderInit {
 				});
         registerShader(event, SANGUINE_OMEN_WORLD.createInstance(provider));
         registerShader(event, AXONAL_TRAVEL_VIEW.createInstance(provider));
+        registerShader(event, LIDLESS_PASSAGE_VIEW.createInstance(provider));
         registerShader(event, SANGUINE_OMEN_SCREEN_OVERLAY.createInstance(provider));
         registerShader(event, MONOLITH_FRAGMENT.createInstance(provider));
         registerShader(event, MONOLITH_FRAGMENT_ENTITY.createInstance(provider));
@@ -234,6 +255,10 @@ public class ShaderInit {
         registerShader(event, BLOOD_STRUCTURE_WARP_ENTITY.createInstance(provider));
         registerShader(event, BLOOD_INFUSION_VEINS.createInstance(provider));
         registerShader(event, RING_DOOR_OPENING.createInstance(provider));
+        registerShader(event, MONOLITH_VEINS.createInstance(provider));
+        registerShader(event, MONOLITH_EMBLEM.createInstance(provider));
+        registerShader(event, MONOLITH_FISSURE.createInstance(provider));
+        registerShader(event, LIDLESS_DOOR_PANEL.createInstance(provider));
         registerShader(event, MAUSOLEUM_WARD.createInstance(provider));
         registerShader(event, MAUSOLEUM_WARD_BODY.createInstance(provider));
         registerShader(event, HEART_NODE_SPREAD.createInstance(provider));

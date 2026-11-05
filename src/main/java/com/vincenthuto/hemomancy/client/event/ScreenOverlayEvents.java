@@ -54,6 +54,7 @@ public final class ScreenOverlayEvents {
     private static void renderSanguineOmenWorldGrade(GuiGraphics graphics) {
         Minecraft minecraft = Minecraft.getInstance();
         float partialTicks = AnimationTime.partialTickWhileFrozen();
+        if(LidlessPassageView.renderGrade(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks)) return;
         if(com.vincenthuto.hemomancy.client.screen.overlay.AxonalTravelView.renderGrade(graphics,
                 graphics.guiWidth(),graphics.guiHeight(),partialTicks)) return;
         if(NaeglerophaeonCaptureOverlay.renderWorldGrade(graphics,

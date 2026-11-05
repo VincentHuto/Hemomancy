@@ -187,6 +187,57 @@ public final class CardinalRiteFogRenderer {
 		buffer.endBatch(renderType);
 	}
 
+	/**
+	 * A still fog bank around a point that is not a rite: the rite material, no partings. {@code localCenter} is the
+	 * bank's centre in the pose's own space (a block-entity pose is block-relative), {@code cameraLocal} the camera
+	 * in that same space, for drawing the puffs back to front.
+	 */
+	public static void drawStill(PoseStack poseStack, MultiBufferSource.BufferSource buffer, Vec3 localCenter,
+			float radius, float time, float opacity, Vec3 cameraLocal, float seed) {
+		if (!enabled() || ShaderInit.CARDINAL_RITE_FOG.getInstance().get() == null) return;
+		// The puffs are cut for a rite perimeter; the whole bank is scaled down so a small radius stays low and close.
+		float scale = Math.min(1.0F, radius / 9.0F);
+		radius = radius / scale;
+		cameraLocal = cameraLocal.scale(1.0D / scale);
+		localCenter = localCenter.scale(1.0D / scale);
+		Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+		CAMERA_RIGHT.set(camera.getLeftVector()).negate();
+		CAMERA_UP.set(camera.getUpVector());
+		List<CardinalRiteFogGeometry.FogPuff> puffs = CardinalRiteFogGeometry.puffs(seed, radius);
+		int count = puffs.size();
+		ensureCapacity(count);
+		float verticalOffset = fogVerticalOffset();
+		float cameraX = (float) (cameraLocal.x - localCenter.x);
+		float cameraY = (float) (cameraLocal.y - localCenter.y);
+		float cameraZ = (float) (cameraLocal.z - localCenter.z);
+		for (int index = 0; index < count; index++) {
+			CardinalRiteFogGeometry.FogPuff puff = puffs.get(index);
+			CardinalRiteFogGeometry.positionInto(puff, radius, time, POSITION);
+			puffX[index] = POSITION[0];
+			puffY[index] = POSITION[1] + verticalOffset;
+			puffZ[index] = POSITION[2];
+			puffAlpha[index] = opacity * puff.opacity() * CardinalRiteFogGeometry.opacityMultiplier(puff, time);
+			float cdx = puffX[index] - cameraX;
+			float cdy = puffY[index] - cameraY;
+			float cdz = puffZ[index] - cameraZ;
+			drawOrder[index] = ((long) Float.floatToIntBits(cdx * cdx + cdy * cdy + cdz * cdz) << 32) | index;
+		}
+		Arrays.sort(drawOrder, 0, count);
+		RenderType renderType = HemoRenderTypes.cardinalRiteFog(time, seed);
+		VertexConsumer consumer = buffer.getBuffer(renderType);
+		poseStack.pushPose();
+		poseStack.scale(scale, scale, scale);
+		poseStack.translate(localCenter.x, localCenter.y, localCenter.z);
+		Matrix4f matrix = poseStack.last().pose();
+		for (int order = count - 1; order >= 0; order--) {
+			int index = (int) (drawOrder[order] & 0xFFFFFFFFL);
+			emitPuff(consumer, matrix, puffs.get(index), puffX[index], puffY[index], puffZ[index],
+					time, puffAlpha[index]);
+		}
+		poseStack.popPose();
+		buffer.endBatch(renderType);
+	}
+
 	/** Spawn points of waves that began recently at this rite, as local offsets with their parting strength. */
 	private static int gatherPartings(BlockPos center, double centerX, double centerZ, float time) {
 		int count = 0;

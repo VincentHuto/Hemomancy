@@ -38,6 +38,10 @@ class AnimationTimeGuardrailTest {
 
 	/** Client code on wall-clock time, pending decision A-4. */
 	private static final Set<String> WALL_CLOCK_USERS = Set.of(
+			// The veil over a dimension change has no level clock: the old level is gone and the new one not yet synced.
+			"client/data/ChamberVeil.java",
+			"client/screen/ChamberTransitionScreen.java",
+			"client/screen/overlay/LidlessPassageView.java",
 			"client/render/armor/SilentArchonArmorRenderHelper.java",
 			"client/render/item/MemoryOfVesperItemRenderer.java",
 			"client/render/item/MonolithFragmentItemRenderer.java",

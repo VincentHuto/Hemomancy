@@ -25,6 +25,11 @@ public class DataComponentInit {
 	public static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister
 			.createDataComponents(Registries.DATA_COMPONENT_TYPE, Hemomancy.MOD_ID);
 
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<com.vincenthuto.hemomancy.common.item.harbinger.SeedBinding>> SEED_BINDING = COMPONENTS
+			.registerComponentType("seed_binding", builder -> builder
+					.persistent(com.vincenthuto.hemomancy.common.item.harbinger.SeedBinding.CODEC)
+					.networkSynchronized(com.vincenthuto.hemomancy.common.item.harbinger.SeedBinding.STREAM_CODEC));
+
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<AdvancedBrewData>> ADVANCED_BREW = COMPONENTS
 			.registerComponentType("advanced_brew", builder -> builder
 					.persistent(AdvancedBrewData.CODEC)

@@ -251,11 +251,15 @@ test under `src/test/java/.../architecture/` is listed here.
 | Client isolation | `WillEntityClientIsolationTest` | 1 | `WillEntity` names no client class |
 | Client isolation | `CommonClientIsolationTest` | 8, 13 | Nothing under `common/` names a client class; dispatched payloads have one client handler |
 | Client isolation | `ClientSessionCacheTest` | 8 | Entity-id client caches cleared on logout |
+| Client isolation | `LidlessClientWiringTest` | Lidless Door | The crossing reaches the client through the existing handler, session clears, overlay grade and world-effect dispatcher |
 | Rendering | `ScreenChromeGuardrailTest` | 10 | No private screen chrome copies |
 | Rendering | `RenderTypeCachingGuardrailTest` | 10 | Render types built once |
 | Rendering | `HudAndWorldDrawingGuardrailTest` | 10 | HUD layers and the one world-effect dispatcher, in their order |
 | Rendering | `MaterialQuadGuardrailTest` | 10 | Material vertices through `MaterialQuads` |
 | Rendering | `ShaderNoiseIncludeGuardrailTest` | 10 | Shared shader noise in includes |
+| Rendering | `LidlessShaderContractTest` | Lidless Door | The Lidless void is one self-contained include that both its shaders import and declare their uniforms for |
+| Rendering | `ChamberTransitionScreenTest` | Chamber gateway | The Chamber of Will's dimension change is veiled by our own transition screen both ways, never the dirt screen, and the crossing's colours survive the level swap for it |
+| Rendering | `MonolithShaderContractTest` | Chamber gateway | The Monolith's fissure shader lights its cracks by a Fill uniform the husk's glow drives (dark when shut, filling from the base as blood goes in, lit while the eye is open), and its vein overlay has its own vertex stage carrying the surface shader's morph so the tendrils ride the stone instead of hovering |
 | Rendering | `ParticleDataGuardrailTest` | 10 | Particle data classes and types |
 | Rendering | `VanillaParticleRatchetTest` | cleanup A-33 | Vanilla particle references per file only go down; fallbacks listed with reasons |
 | Animation | `EasingCopyGuardrailTest` | 6 | No private easing copies |
@@ -269,6 +273,7 @@ test under `src/test/java/.../architecture/` is listed here.
 | Mechanics | `CombatTargetingGuardrailTest` | 9 | Monster gathers ask `canHarm`; one harm predicate |
 | Mechanics | `PlayerBlockEditGuardrailTest` | cleanup A-6 | Player casts and payloads edit blocks only through `PlayerBlockEdits`; non-player editors listed |
 | Mechanics | `HealAndFlightGuardrailTest` | 9 | One heal stage; flight only through `FlightArbiter` |
+| Mechanics | `HeldTravellerGuardrailTest` | Lidless Door | Every hold site asks `HeldTraveller.isHeld`; landings through `StandingSpaces`; Axonal refuses a door-crossing player |
 | Mechanics | `RiteKindGuardrailTest` | 11 | Rite kinds as `RiteKind` hooks; rites built only by `CardinalRiteActivation` |
 | Mechanics | `DialogueRoutingGuardrailTest` | 11 | One `DialogueEvent` subscriber and its route table |
 | Mechanics | `NpcTradeGuardrailTest` | NPC trade 7 | Trades are data run by `NpcTradeService` from its payload, never a `DialogueEvent`; no card sells a memory, kit or `trade/never_sold` item or gives what another of its speaker's cards wants; price kinds stay on their side; the Unstained refusal is checked at the board and in the transaction; only the trade classes write `NpcTradeLedger` |

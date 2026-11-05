@@ -101,6 +101,16 @@ public class BlockEntityInit {
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.ChapelFocusBlockEntity::new,
 							BlockInit.chapel_focus.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.shared.ChamberGateBlockEntity>> chamber_gate = TILES
+			.register("chamber_gate", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.shared.ChamberGateBlockEntity::new,
+							BlockInit.chamber_gate.get()).build(null));
+
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.shared.LidlessDoorBlockEntity>> lidless_door = TILES
+			.register("lidless_door", () -> BlockEntityType.Builder
+					.of(com.vincenthuto.hemomancy.common.tile.shared.LidlessDoorBlockEntity::new,
+							BlockInit.lidless_door.get()).build(null));
+
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity>> ring_door = TILES
 			.register("ring_door", () -> BlockEntityType.Builder
 					.of(com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.RingDoorBlockEntity::new,

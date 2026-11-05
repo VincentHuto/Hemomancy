@@ -56,6 +56,8 @@ import com.vincenthuto.hemomancy.common.network.ConductionPathPacket;
 import com.vincenthuto.hemomancy.common.network.PacketBloodVialInjection;
 import com.vincenthuto.hemomancy.common.network.PacketHematicMicroscopeViewing;
 import com.vincenthuto.hemomancy.common.network.axonal.AxonalStatePacket;
+import com.vincenthuto.hemomancy.common.network.lidless.LidlessPassageStatePacket;
+import com.vincenthuto.hemomancy.client.data.LidlessPassageClientState;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.CardinalRiteEventPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodCraftRing;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodStructureFeed;
@@ -100,6 +102,7 @@ public final class ClientboundEffectHandlers {
 	public static void register(FMLClientSetupEvent event) {
 		ClientPayloadHandlers.register(AntecedentEffectPacket.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(AxonalStatePacket.TYPE, ClientboundEffectHandlers::handle);
+		ClientPayloadHandlers.register(LidlessPassageStatePacket.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(BloodFlowPacket.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(CardinalRiteEventPacket.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(CardinalRiteImpactPacket.TYPE, ClientboundEffectHandlers::handle);
@@ -139,6 +142,10 @@ public final class ClientboundEffectHandlers {
 
 	static void handle(AxonalStatePacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> AxonalTransductionClient.update(packet));
+	}
+
+	static void handle(LidlessPassageStatePacket packet, IPayloadContext context) {
+		context.enqueueWork(() -> LidlessPassageClientState.update(packet));
 	}
 
 	static void handle(BloodFlowPacket packet,IPayloadContext context){context.enqueueWork(()->BloodFlowEffects.accept(packet));}

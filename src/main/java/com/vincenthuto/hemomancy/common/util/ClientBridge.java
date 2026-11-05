@@ -61,6 +61,15 @@ public interface ClientBridge {
 		return false;
 	}
 
+	/** A puff of the Tenebris school's umbral fog at a point, for a client-side effect in common code. */
+	default void umbralMist(net.minecraft.world.phys.Vec3 at, net.minecraft.world.phys.Vec3 velocity, float size, int lifetime) {
+	}
+
+	/** Whether a client-side player is mid-crossing through a Lidless Door, from the last state sync. */
+	default boolean isCrossingLidlessDoor(Player player) {
+		return false;
+	}
+
 	/** The key translated in the client's language, or the key itself when it has no translation. */
 	default String translate(String key) {
 		return key;

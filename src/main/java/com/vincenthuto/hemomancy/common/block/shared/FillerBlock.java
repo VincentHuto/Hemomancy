@@ -96,6 +96,8 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos,
             CollisionContext context) {
+        VoxelShape monolith = monolithCollision(level, pos, context);
+        if (monolith != null) return monolith;
         VoxelShape alembic = alembicShape(level, pos);
         if (alembic != null) return alembic;
         VoxelShape armature = armatureShape(level, pos, true);
@@ -104,6 +106,26 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
         if (sarcophagus != null) return sarcophagus;
         VoxelShape traced = tracedShape(level, pos);
         return traced != null ? traced : Shapes.block();
+    }
+
+    /** The upper cell of a broken Monolith asks the stone whether this entity may pass. */
+    @Nullable
+    private static VoxelShape monolithCollision(BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (!(level.getBlockEntity(pos) instanceof FillerBlockEntity filler)) return null;
+        BlockPos main = filler.getMainBlockPos();
+        if (main == null) return null;
+        BlockState controller = level.getBlockState(main);
+        return controller.getBlock() instanceof com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineMonolithBlock monolith
+                ? monolith.partCollision(controller, level, main, context) : null;
+    }
+
+    /** A body in the upper cell of a broken Monolith is offered its crossing like one in the base. */
+    @Override
+    protected void entityInside(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.Entity entity) {
+        if (level.getBlockEntity(pos) instanceof FillerBlockEntity filler && filler.getMainBlockPos() != null
+                && level.getBlockState(filler.getMainBlockPos()).getBlock() instanceof com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineMonolithBlock monolith) {
+            monolith.offerCrossing(level.getBlockState(filler.getMainBlockPos()), level, filler.getMainBlockPos(), entity);
+        }
     }
 
     @Nullable

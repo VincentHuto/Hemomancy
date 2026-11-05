@@ -55,6 +55,16 @@ public final class ClientBridgeImpl implements ClientBridge {
 	}
 
 	@Override
+	public void umbralMist(net.minecraft.world.phys.Vec3 at, net.minecraft.world.phys.Vec3 velocity, float size, int lifetime) {
+		com.vincenthuto.hemomancy.client.render.world.LuxUmbraEffects.mist(at, velocity, true, size, lifetime);
+	}
+
+	@Override
+	public boolean isCrossingLidlessDoor(Player player) {
+		return com.vincenthuto.hemomancy.client.data.LidlessPassageClientState.isCrossing(player);
+	}
+
+	@Override
 	public String translate(String key) {
 		return I18n.get(key);
 	}

@@ -848,3 +848,4 @@ hemomancy:blood_thrall_effigy
 hemomancy:blood_bolt
 hemomancy:semi_sentient_construct
 hemomancy:gourdvine_tap
+hemomancy:lidless_door

@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineMonolithBlock;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -33,38 +35,52 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	public static final ResourceLocation TEXTURE = Hemomancy.rloc("textures/entity/model_sanguine_monolith.png");
 
 	private final SanguineMonolithModel model;
+	private final com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithHalvesModel halves;
+	/** The break between the halves: rows up the stone, columns through its depth, and where the boxes stop short of centre. */
+	private static final int BREAK_ROWS = 16;
+	private static final int BREAK_COLUMNS = 2;
+	private static final float BREAK_BASE = 2.5f / 16f;
+	private static final float BREAK_REACH = 0.135f;
+	private static final float SLAB_DEPTH = 0.25f;
+	/** Baked rubble per stone position: x, y, z and grey for each vertex. Seeded by the position, so it never shuffles. */
+	private static final java.util.Map<Long, float[]> RUBBLE_MESHES = new java.util.HashMap<>();
+	/** The heap is a block across: its mound, baked at {@link #MOUND_REACH}, is scaled down to this radius. */
+	private static final float RUBBLE_MAX_RADIUS = 1;
+	/** How far the baked mound reaches from the fulcrum before scaling; pebbles are kept within it. */
+	private static final float MOUND_REACH = 1.9f;
+	private static final float FOG_RADIUS =0.75f;
 
 	// ── Vein animation parameters ──
-	private static final int VEIN_COUNT = 12;
 	private static final float VEIN_ZONE_HEIGHT = 0.667f; // bottom third of 2-block height
 	private static final int TIER_FIVE = 5;
 	private static final int TIER_SEVEN = 7;
 	private static final int TIER_RANGE = TIER_SEVEN - TIER_FIVE;
-	private static final float FRONT_OVERLAY_Z = 0.272f;
-	private static final float BACK_OVERLAY_Z = -0.272f;
-	private static final float SIDE_OVERLAY_X = 0.522f;
+	/** The vein quads sit a hair off the slab (16 by 8 wide) and move with its surface, so they never hover or sink. */
+	private static final float VEIN_OVERLAY_X = 0.506f;
+	private static final float VEIN_OVERLAY_Z = 0.256f;
+	/** The eyes and the back symbol sit the same hair off the slab's front and back and breathe with it. */
+	private static final float EMBLEM_FRONT_Z = 0.258f;
+	private static final float EMBLEM_BACK_Z = -0.258f;
+	/**
+	 * Which diagonal each slab face's quad splits on, from the cube's vertex order ({@code ModelPart.Cube}: the north
+	 * face runs (x2,y1) (x1,y1) (x1,y2) (x2,y2), the south face (x1,y1) (x2,y1) (x2,y2) (x1,y2); a quad's two triangles
+	 * share its first and third corners; the stone is drawn turned over, so the north face is its front). 0 is the
+	 * bottom-left to top-right split, 1 the other.
+	 */
+	private static final float FRONT_FACE_DIAGONAL = 0f;
+	private static final float BACK_FACE_DIAGONAL = 1f;
+	/** The surface shader's breathing, as the standing stone is drawn with it (item/monolith_fragment.vsh). */
+	private static final float SURFACE_BURDEN = 0.45f;
+	private static final float SURFACE_ATTUNED = 0.88f;
+	private static final float SURFACE_MORPH_STRENGTH = 0.014f;
 
 	/** How far below the base the monolith starts when first placed. */
 	private static final float RISE_Y_OFFSET = 2.5f;
 
-	// Pre-computed vein tendril parameters (seed-based for consistency)
-	private final float[][] veinParams;
-
 	public SanguineMonolithRenderer(BlockEntityRendererProvider.Context context) {
 		this.model = new SanguineMonolithModel(context.bakeLayer(SanguineMonolithModel.LAYER_LOCATION));
-
-		java.util.Random rand = new java.util.Random(42L);
-		veinParams = new float[VEIN_COUNT][8];
-		for (int i = 0; i < VEIN_COUNT; i++) {
-			veinParams[i][0] = rand.nextFloat();          // start X position (0–1 across face)
-			veinParams[i][1] = rand.nextFloat() * 0.33f;  // start Y position (bottom third only)
-			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2); // base angle
-			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.5f; // speed
-			veinParams[i][4] = 0.02f + rand.nextFloat() * 0.04f; // amplitude (world-space)
-			veinParams[i][5] = 3f + rand.nextFloat() * 5f;  // frequency
-			veinParams[i][6] = 15 + rand.nextInt(25);        // length (steps)
-			veinParams[i][7] = 0.3f + rand.nextFloat() * 0.7f; // brightness
-		}
+		this.halves = new com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithHalvesModel(
+				context.bakeLayer(com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithHalvesModel.LAYER_LOCATION));
 	}
 
 	@Override
@@ -75,6 +91,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	@Override
 	public void render(SanguineMonolithBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
+		if (te.isBreaking() || te.isBroken()) {
+			renderBroken(te, partialTicks, ms, bufferIn, combinedLightIn);
+			return;
+		}
 
 		Direction facing = te.getBlockState().getValue(FACING);
 		float yRot = switch (facing) {
@@ -98,7 +118,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 		float shaderSeed = Math.floorMod(te.getBlockPos().asLong(), 10007L) / 10007.0f;
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(
-				HemoRenderTypes.monolithEntitySurface(timeSeconds(te, partialTicks), shaderSeed, 0.45f, 0.88f, 7.5f));
+				HemoRenderTypes.monolithEntitySurface(timeSeconds(te, partialTicks), shaderSeed, SURFACE_BURDEN, SURFACE_ATTUNED, 7.5f));
 		model.renderToBuffer(ms, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, 0xFF0D0505);
 		ms.popPose();
 
@@ -112,9 +132,11 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		ms.translate(0.5D, yOffset, 0.5D);
 		ms.mulPose(Vector3.YP.rotationDegrees(-yRot).toMoj());
 
-		renderVeinOverlay(ms, bufferIn, time, tendrilVisual);
-		renderEyeOverlay(ms, bufferIn, time);
-		renderBackSymbol(ms, bufferIn, time);
+		renderVeinOverlay(ms, bufferIn, time, shaderSeed, tendrilVisual, timeSeconds(te, partialTicks));
+		// Each emblem is told the slab face it lies on (camera-relative), so it moves as that face moves.
+		float seconds = timeSeconds(te, partialTicks);
+		renderEyeOverlay(ms, emblemConsumer(ms, bufferIn, shaderSeed, seconds, 0.25f, FRONT_FACE_DIAGONAL), time);
+		renderBackSymbol(ms, emblemConsumer(ms, bufferIn, shaderSeed, seconds, -0.25f, BACK_FACE_DIAGONAL), time);
 		ms.popPose();
 	}
 
@@ -127,160 +149,52 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 	// ── Vein overlay ─────────────────────────────────────────────────────────────
 
-	private void renderVeinOverlay(PoseStack ms, MultiBufferSource bufferIn, float time, TendrilVisualState state) {
-		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
-
-		// Render veins on front face.
-		renderFaceVeins(ms, vc, time, 0.0f, 0.0f, FRONT_OVERLAY_Z, 1.0f, false, state);
-
-		// Render veins on back face
-		renderFaceVeins(ms, vc, time, 0.0f, 0.0f, BACK_OVERLAY_Z, 1.0f, true, state);
-
-		// Render veins on left side (X = -0.501)
-		renderSideVeins(ms, vc, time, -SIDE_OVERLAY_X, 0.0f, 0.0f, false, state);
-
-		// Render veins on right side (X = 0.501)
-		renderSideVeins(ms, vc, time, SIDE_OVERLAY_X, 0.0f, 0.0f, true, state);
+	/** The emblem type for the slab face at depth {@code z} of the pass-2 pose: its corners carried to camera space. */
+	private static VertexConsumer emblemConsumer(PoseStack ms, MultiBufferSource bufferIn, float seed, float seconds, float z,
+			float diagonal) {
+		Matrix4f mat = ms.last().pose();
+		org.joml.Vector3f origin = mat.transformPosition(new org.joml.Vector3f(-0.5f, 0f, z));
+		org.joml.Vector3f right = mat.transformPosition(new org.joml.Vector3f(0.5f, 0f, z)).sub(origin);
+		org.joml.Vector3f up = mat.transformPosition(new org.joml.Vector3f(-0.5f, 2f, z)).sub(origin);
+		// Keyed by face so each keeps its own uniforms; the morph's seed is the stone's for both.
+		return bufferIn.getBuffer(HemoRenderTypes.monolithEmblem(seed + (z < 0f ? 0.5f : 0.0f), seed, seconds, surfaceMorphStrength(), origin, right, up, diagonal));
 	}
 
-	private void renderFaceVeins(PoseStack ms, VertexConsumer vc, float time,
-			float faceX, float faceY, float faceZ, float faceWidth, boolean flipNormal, TendrilVisualState state) {
-
-		Matrix4f mat = ms.last().pose();
-
-		for (int i = 0; i < VEIN_COUNT; i++) {
-			float[] p = veinParams[i];
-			float startX = (p[0] - 0.5f) * faceWidth;
-			float startY = p[1] * VEIN_ZONE_HEIGHT;
-			float baseAngle = p[2];
-			float speed = p[3];
-			float amplitude = p[4];
-			float frequency = p[5];
-			int length = Math.max(5, Mth.floor(p[6] * state.lengthScale));
-			float brightness = p[7];
-
-			float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.02f + i);
-			float cosA = Mth.cos(angleDrift);
-			float sinA = Mth.sin(angleDrift);
-			float timeOffset = time * speed * 0.1f;
-
-			int baseRed = (int) (100 + 80 * brightness);
-			int baseGreen = (int) (5 + 15 * brightness);
-			int baseBlue = (int) (5 + 10 * brightness);
-			int targetRed = (int) Mth.lerp(state.colorMix, baseRed, state.targetR);
-			int targetGreen = (int) Mth.lerp(state.colorMix, baseGreen, state.targetG);
-			int targetBlue = (int) Mth.lerp(state.colorMix, baseBlue, state.targetB);
-
-			for (int step = 0; step < length; step++) {
-				float t = step * 0.015f * state.lengthScale;
-				float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
-				float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * step + timeOffset * 1.4f + i);
-				float displacement = squiggle + microSquiggle;
-
-				float px = faceX + startX + t * cosA - displacement * sinA;
-				float py = faceY + startY + t * sinA + displacement * cosA;
-
-				// Stay within bottom third
-				if (py > state.zoneHeight || py < 0) continue;
-				// Stay within face width
-				if (Math.abs(px) > faceWidth * 0.5f) continue;
-
-				float tipFade = 1f;
-				if (step < 5) tipFade = step / 5f;
-				else if (step > length - 5) tipFade = (length - step) / 5f;
-
-				float pulse = 0.6f + 0.4f * Mth.sin(time * 0.08f + i * 0.5f + step * 0.05f);
-				int alpha = (int) (Mth.clamp(tipFade * pulse * 200, 20, 220));
-				int r = (int) Mth.clamp(targetRed * pulse, 0, 255);
-				float gScale = state.whitePhase ? 1.0f : 0.4f;
-				float bScale = state.whitePhase ? 1.0f : 0.3f;
-				int g = (int) Mth.clamp(targetGreen * pulse * gScale, 0, 255);
-				int b = (int) Mth.clamp(targetBlue * pulse * bScale, 0, 255);
-
-				float size = 0.015f;
-				float z = faceZ;
-
-				// Render a small quad for each vein step
-				vc.addVertex(mat, px - size, py - size, z).setColor(r, g, b, alpha);
-				vc.addVertex(mat, px - size, py + size, z).setColor(r, g, b, alpha);
-				vc.addVertex(mat, px + size, py + size, z).setColor(r, g, b, alpha);
-				vc.addVertex(mat, px + size, py - size, z).setColor(r, g, b, alpha);
-			}
-		}
-
-		// Add a subtle pulsing glow wash across the bottom third
-		float glowPulse = 0.5f + 0.5f * Mth.sin(time * 0.04f);
-		int glowAlpha = (int) (20 * glowPulse);
-		float hw = faceWidth * 0.5f;
-		float z = faceZ + (flipNormal ? -0.001f : 0.001f);
-
-		vc.addVertex(mat, -hw, 0f, z).setColor(80, 5, 5, glowAlpha);
-		vc.addVertex(mat, -hw, state.zoneHeight * 0.8f, z).setColor(40, 2, 2, 0);
-		vc.addVertex(mat,  hw, state.zoneHeight * 0.8f, z).setColor(40, 2, 2, 0);
-		vc.addVertex(mat,  hw, 0f, z).setColor(80, 5, 5, glowAlpha);
+	/** How far the surface shader pushes a vertex in and out, with the burden and attunement the stone is drawn with. */
+	private static float surfaceMorphStrength() {
+		return SURFACE_MORPH_STRENGTH * (1.0f + SURFACE_BURDEN * 0.45f + SURFACE_ATTUNED * 0.25f);
 	}
 
-	private void renderSideVeins(PoseStack ms, VertexConsumer vc, float time,
-			float sideX, float sideY, float sideZ, boolean rightSide, TendrilVisualState state) {
+	/**
+	 * The tendrils, one shader quad on each face; u runs around the perimeter so they carry over the corners. The
+	 * quads breathe with the stone's surface ({@code morphTime} is the surface shader's clock, in seconds).
+	 */
+	private void renderVeinOverlay(PoseStack ms, MultiBufferSource bufferIn, float time, float seed, TendrilVisualState state,
+			float morphTime) {
+		float red = Mth.lerp(state.colorMix, 0.72f, state.targetR / 255f);
+		float green = Mth.lerp(state.colorMix, 0.028f, state.targetG / 255f);
+		float blue = Mth.lerp(state.colorMix, 0.02f, state.targetB / 255f);
+		VertexConsumer vc = bufferIn.getBuffer(HemoRenderTypes.monolithVeins(time, seed, state.zoneHeight, red, green, blue,
+				morphTime, surfaceMorphStrength()));
+		PoseStack.Pose pose = ms.last();
+		float x = VEIN_OVERLAY_X;
+		float z = VEIN_OVERLAY_Z;
+		float top = 2f;
+		veinFace(vc, pose, -x, z, x, z, 0f, 1f, top);
+		veinFace(vc, pose, x, z, x, -z, 1f, 1.5f, top);
+		veinFace(vc, pose, x, -z, -x, -z, 1.5f, 2.5f, top);
+		veinFace(vc, pose, -x, -z, -x, z, 2.5f, 3f, top);
+	}
 
-		Matrix4f mat = ms.last().pose();
-		float halfDepth = 0.25f; // 0.5 blocks / 2
+	private static void veinFace(VertexConsumer vc, PoseStack.Pose pose, float x0, float z0, float x1, float z1, float u0, float u1, float top) {
+		veinVertex(vc, pose, x0, 0f, z0, u0, 0f);
+		veinVertex(vc, pose, x1, 0f, z1, u1, 0f);
+		veinVertex(vc, pose, x1, top, z1, u1, top);
+		veinVertex(vc, pose, x0, top, z0, u0, top);
+	}
 
-		for (int i = 0; i < VEIN_COUNT / 2; i++) {
-			float[] p = veinParams[i + VEIN_COUNT / 2];
-			float startZ = (p[0] - 0.5f) * halfDepth * 2;
-			float startY = p[1] * VEIN_ZONE_HEIGHT;
-			float baseAngle = p[2];
-			float speed = p[3];
-			float amplitude = p[4] * 0.5f; // narrower on sides
-			float frequency = p[5];
-			int length = Math.max(4, Mth.floor((p[6] * 0.7f) * state.lengthScale));
-			float brightness = p[7];
-
-			float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.02f + i + 7);
-			float cosA = Mth.cos(angleDrift);
-			float sinA = Mth.sin(angleDrift);
-			float timeOffset = time * speed * 0.1f;
-
-			int baseRed = (int) (90 + 70 * brightness);
-			int baseGreen = (int) (5 + 12 * brightness);
-			int baseBlue = (int) (5 + 8 * brightness);
-			int targetRed = (int) Mth.lerp(state.colorMix, baseRed, state.targetR);
-			int targetGreen = (int) Mth.lerp(state.colorMix, baseGreen, state.targetG);
-			int targetBlue = (int) Mth.lerp(state.colorMix, baseBlue, state.targetB);
-
-			for (int step = 0; step < length; step++) {
-				float t = step * 0.015f * state.lengthScale;
-				float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
-				float displacement = squiggle;
-
-				float pz = sideZ + startZ + t * cosA - displacement * sinA;
-				float py = sideY + startY + t * sinA + displacement * cosA;
-
-				if (py > state.zoneHeight || py < 0) continue;
-				if (Math.abs(pz) > halfDepth) continue;
-
-				float tipFade = 1f;
-				if (step < 4) tipFade = step / 4f;
-				else if (step > length - 4) tipFade = (length - step) / 4f;
-
-				float pulse = 0.6f + 0.4f * Mth.sin(time * 0.08f + i * 0.7f + step * 0.06f);
-				int alpha = (int) (Mth.clamp(tipFade * pulse * 180, 15, 200));
-				int r = (int) Mth.clamp(targetRed * pulse, 0, 255);
-				float gScale = state.whitePhase ? 1.0f : 0.4f;
-				float bScale = state.whitePhase ? 1.0f : 0.3f;
-				int g = (int) Mth.clamp(targetGreen * pulse * gScale, 0, 255);
-				int b = (int) Mth.clamp(targetBlue * pulse * bScale, 0, 255);
-
-				float size = 0.012f;
-				float x = sideX;
-
-				vc.addVertex(mat, x, py - size, pz - size).setColor(r, g, b, alpha);
-				vc.addVertex(mat, x, py + size, pz - size).setColor(r, g, b, alpha);
-				vc.addVertex(mat, x, py + size, pz + size).setColor(r, g, b, alpha);
-				vc.addVertex(mat, x, py - size, pz + size).setColor(r, g, b, alpha);
-			}
-		}
+	private static void veinVertex(VertexConsumer vc, PoseStack.Pose pose, float x, float y, float z, float u, float v) {
+		vc.addVertex(pose.pose(), x, y, z).setColor(1f, 1f, 1f, 1f).setUv(u, v).setLight(0xF000F0).setNormal(pose, 0f, 0f, 1f);
 	}
 
 	private TendrilVisualState computeTendrilVisualState(SanguineMonolithBlockEntity te) {
@@ -318,10 +232,8 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	 *
 	 * cz is POSITIVE — the front face is +Z in Pass-2's rotated local space.
 	 */
-	private void renderEyeOverlay(PoseStack ms, MultiBufferSource bufferIn, float time) {
-		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
-
-		float cz = FRONT_OVERLAY_Z;
+	private void renderEyeOverlay(PoseStack ms, VertexConsumer vc, float time) {
+		float cz = EMBLEM_FRONT_Z;
 		float tiltDeg = -22f; // outward tilt for flanking eyes
 
 		// Each eye pulses at a slightly different phase so they feel independent
@@ -417,57 +329,69 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	// ── Back-face symbol ─────────────────────────────────────────────────────────
 
 	/**
-	 * Renders an 8-pointed star (two overlapping squares with their diagonals) on
-	 * the back face of the monolith. Dark red traces the N/E/S/W diamond + cross;
-	 * orange traces the NE/SE/SW/NW axis-aligned square + X diagonals.
-	 * Both layers pulse and fade independently.
+	 * The seal on the back of the stone: the {8/3} octagram, one line through eight points, in a thin outer ring, a
+	 * node at each point lit one after another as a pulse goes round, a lacquer ring inside, and at the centre the
+	 * stone's third eye shut to a slit. Dark red with a bright core; the lacquer orange kept to the inner ring and the
+	 * slit.
 	 */
-	/**
-	 * Renders a regular {8/3} octagram on the back face: 8 vertices equally spaced
-	 * on a circle, each connected to the vertex 3 steps away (skip-2). Even-indexed
-	 * chords are dark red, odd-indexed chords are orange — matching the two
-	 * interlocking tetragram halves of the reference image. Both colour groups pulse
-	 * independently.
-	 */
-	private void renderBackSymbol(PoseStack ms, MultiBufferSource bufferIn, float time) {
-		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
+	private void renderBackSymbol(PoseStack ms, VertexConsumer vc, float time) {
 		Matrix4f mat = ms.last().pose();
+		float cz = EMBLEM_BACK_Z; // back face (+z = front, -z = back in Pass-2 space)
+		float cy = 1.25f;         // vertical centre of the 2-block face
+		float outer = 0.44f;
+		float star = 0.37f;
+		float inner = 0.14f;
+		float lw = 0.008f;        // core half-width
+		float gw = 0.019f;        // glow half-width
+		float czo = cz - 0.001f;  // cores slightly in front of the glow layer
+		float czi = cz - 0.002f;  // the eye in front of both
 
-		float cz = BACK_OVERLAY_Z; // back face (+z = front, -z = back in Pass-2 space)
-		float cy = 1.25f;    // vertical centre of the 2-block face
-		float R  = 0.400f;
+		int dr = 150, dg = 14, db = 18;    // hematic dark red
+		int br = 236, bg = 62, bb = 34;    // arterial bright
+		int lr = 228, lg = 115, lb = 20;   // lacquer orange
 
-		// 8 octagon vertices, starting from N and going clockwise
-		float[] vx = new float[8];
-		float[] vy = new float[8];
-		for (int i = 0; i < 8; i++) {
-			double a = Math.PI / 2.0 + Math.PI / 8.0 - i * Math.PI / 4.0; // +22.5° offset → two vertices at bottom
-			vx[i] = (float)(R * Math.cos(a));
-			vy[i] = cy + (float)(R * Math.sin(a));
+		// The pulse goes round the eight points over about ten seconds; each point and each chord brightens as it passes.
+		float round = time * 0.03f;
+		final int points = 8;
+
+		// Outer ring, faint.
+		drawEllipseRing(mat, vc, 0f, cy, cz, outer - 0.004f, outer - 0.004f, outer + 0.004f, outer + 0.004f, dr, dg, db, 120, 64);
+
+		// Eight points, a pair at the bottom; the star's chords run from each point to the third along, one line through
+		// all eight.
+		float[] px = new float[points];
+		float[] py = new float[points];
+		for (int i = 0; i < points; i++) {
+			double a = Math.PI / 2.0 + Math.PI / 8.0 - i * Math.PI / 4.0;
+			px[i] = (float) (star * Math.cos(a));
+			py[i] = cy + (float) (star * Math.sin(a));
+		}
+		for (int e = 0; e < points; e++) {
+			int from = e;
+			int to = (e + 3) % points;
+			float lit = 0.55f + 0.45f * Mth.sin(round - e * (Mth.TWO_PI / points));
+			int core = (int) (120 + 110 * lit);
+			int glow = (int) (30 + 45 * lit);
+			drawLine(mat, vc, px[from], py[from], px[to], py[to], cz, gw, dr, dg, db, glow);
+			drawLine(mat, vc, px[from], py[from], px[to], py[to], czo, lw, (int) Mth.lerp(lit, dr, br), (int) Mth.lerp(lit, dg, bg), (int) Mth.lerp(lit, db, bb), core);
 		}
 
-		int drR = 175, drG = 22, drB = 22;   // dark red  (even chords)
-		int orR = 228, orG = 115, orB = 20;  // orange    (odd chords)
-
-		float pulDR = 0.50f + 0.50f * Mth.sin(time * 0.022f);
-		float pulOR = 0.50f + 0.50f * Mth.sin(time * 0.022f + 1.5f);
-
-		float lw = 0.009f;  // core half-width
-		float gw = 0.020f;  // glow half-width
-		float czo = cz - 0.001f; // core lines slightly in front of glow layer
-
-		// Draw all 8 {8/3} chords: vertex k → vertex (k+3) mod 8
-		for (int k = 0; k < 8; k++) {
-			int j = (k + 3) % 8;
-			boolean even = (k % 2 == 0);
-			int r  = even ? drR : orR;
-			int g  = even ? drG : orG;
-			int b  = even ? drB : orB;
-			int a  = (int)(210 * (even ? pulDR : pulOR));
-			int ag = (int)( 60 * (even ? pulDR : pulOR));
-			drawLine(mat, vc, vx[k], vy[k], vx[j], vy[j], cz,  gw, r, g, b, ag);
-			drawLine(mat, vc, vx[k], vy[k], vx[j], vy[j], czo, lw, r, g, b, a);
+		// A node at each point, lit as the pulse reaches it.
+		for (int i = 0; i < points; i++) {
+			float lit = Mth.clamp(0.5f + 0.5f * Mth.sin(round - i * (Mth.TWO_PI / points)), 0f, 1f);
+			float radius = 0.018f + 0.010f * lit;
+			drawFilledEllipse(mat, vc, px[i], py[i], cz, radius * 1.9f, radius * 1.9f, dr, dg, db, (int) (40 + 60 * lit), 16);
+			drawFilledEllipse(mat, vc, px[i], py[i], czo, radius, radius, (int) Mth.lerp(lit, dr, br), (int) Mth.lerp(lit, dg, bg), (int) Mth.lerp(lit, db, bb), (int) (150 + 100 * lit), 16);
 		}
+
+		// The lacquer ring inside, breathing slowly.
+		float breath = 0.5f + 0.5f * Mth.sin(time * 0.045f + 0.8f);
+		drawEllipseRing(mat, vc, 0f, cy, czo, inner - 0.005f, inner - 0.005f, inner + 0.005f, inner + 0.005f, lr, lg, lb, (int) (110 + 90 * breath), 48);
+
+		// The third eye, shut: an almond of dark flesh with the slit a thread of lacquer light.
+		drawFilledEllipse(mat, vc, 0f, cy, czo, 0.082f, 0.046f, 40, 4, 6, 230, 32);
+		drawEllipseRing(mat, vc, 0f, cy, czi, 0.078f, 0.042f, 0.086f, 0.050f, dr, dg, db, 200, 32);
+		drawFilledEllipse(mat, vc, 0f, cy, czi, 0.007f + 0.003f * breath, 0.040f, lr, lg, lb, (int) (190 + 60 * breath), 12);
 	}
 
 	/** Draws a thin rectangle (ribbon) between two points, for crisp line rendering. */
@@ -567,5 +491,435 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			vc.addVertex(mat, x2 - nx, y2 - ny, cz).setColor(r, g, b, alpha);
 			vc.addVertex(mat, x2 + nx, y2 + ny, cz).setColor(r, g, b, alpha);
 		}
+	}
+
+	// ── The break: cracks, the fallen halves, rubble, fog, lightning and the portal ─────────────────────────────
+
+	private void renderBroken(SanguineMonolithBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource bufferIn,
+			int light) {
+		Direction facing = te.getBlockState().getValue(FACING);
+		float yRot = switch (facing) {
+			case NORTH -> 180f;
+			case EAST -> 270f;
+			case SOUTH -> 0f;
+			case WEST -> 90f;
+			default -> 0f;
+		};
+		float time = te.getLevel() != null ? AnimationTime.gameTime(te.getLevel(), partialTicks) : te.getTickCount() + partialTicks;
+		float shaderSeed = Math.floorMod(te.getBlockPos().asLong(), 10007L) / 10007.0f;
+		float crack = te.crackProgress(partialTicks);
+		float fallStart = (float) SanguineMonolithBlock.CRACK_TICKS / SanguineMonolithBlock.BREAK_TICKS;
+		float fall = te.isBroken() ? 1f : Mth.clamp((te.breakProgress(partialTicks) - fallStart) / (1f - fallStart), 0f, 1f);
+
+		VertexConsumer surface = bufferIn.getBuffer(
+				HemoRenderTypes.monolithEntitySurface(timeSeconds(te, partialTicks), shaderSeed, 0.45f, 0.88f, 7.5f));
+		ms.pushPose();
+		ms.translate(0.5D, 1.5D, 0.5D);
+		ms.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180f));
+		ms.mulPose(com.mojang.math.Axis.YP.rotationDegrees(yRot));
+		if (fall <= 0f) {
+			model.renderToBuffer(ms, surface, light, OverlayTexture.NO_OVERLAY, 0xFF0D0505);
+		} else {
+			// Thrown open by the blast.
+			halves.setFall(blastAngle(fall));
+			halves.renderToBuffer(ms, surface, light, OverlayTexture.NO_OVERLAY, 0xFF0D0505);
+		}
+		ms.popPose();
+
+		ms.pushPose();
+		ms.translate(0.5D, 0.0D, 0.5D);
+		ms.mulPose(com.mojang.math.Axis.YP.rotationDegrees(-yRot));
+		float[][] breakGrid = breakProfile(te.getBlockPos());
+		float lean = fall > 0f ? blastAngle(fall) : 0f;
+		if (fall > 0f) {
+			renderRubble(ms, bufferIn, te.getBlockPos(), fall);
+			renderBreakSolid(ms, bufferIn, breakGrid, lean);
+		}
+		// The cracks' light: full through the break, then the husk's own, dark when shut and filling as it is fed.
+		float fill = te.isBroken() ? te.glow(partialTicks) : 1f;
+		if (crack > 0f) renderFissures(ms, bufferIn, breakGrid, time, fall > 0f ? 1f : crack, shaderSeed, lean, fall > 0f, te, fill);
+		if (te.isBroken()) renderPortal(ms, bufferIn, te, time, partialTicks, facing);
+		ms.popPose();
+		if (te.isBroken()) {
+			renderFog(ms, bufferIn, te, time, partialTicks);
+			strikeLightning(te, partialTicks);
+		}
+	}
+
+	/** The swing of a half as the blast throws it: all the speed at once, past its rest, then settling back. */
+	private static float blastAngle(float fall) {
+		float t = fall - 1f;
+		float thrown = 1f + 2.7f * t * t * t + 1.7f * t * t;
+		return (float) Math.toRadians(45f * thrown);
+	}
+
+	/**
+	 * The jagged break, shared by both halves so they part along one line: the x of the break at each row and column.
+	 * The last entry of the result holds the height of each row.
+	 */
+	private static float[][] breakProfile(net.minecraft.core.BlockPos pos) {
+		java.util.Random random = new java.util.Random(pos.asLong() ^ 0x5EEDL);
+		float[][] grid = new float[BREAK_ROWS + 2][BREAK_COLUMNS];
+		float[] heights = new float[BREAK_ROWS + 1];
+		float x = (random.nextFloat() - 0.5f) * 0.08f;
+		float direction = random.nextBoolean() ? 1f : -1f;
+		for (int row = 0; row <= BREAK_ROWS; row++) {
+			float jitter = row == 0 || row == BREAK_ROWS ? 0f : (random.nextFloat() - 0.5f) * 0.05f;
+			heights[row] = 2f * row / BREAK_ROWS + jitter;
+			// A long lean one way, then a sharp snap back: stone, not a sine wave.
+			if (random.nextFloat() < 0.45f) direction = -direction;
+			x = Mth.clamp(x + direction * (0.02f + random.nextFloat() * 0.09f), -BREAK_REACH + 0.03f, BREAK_REACH - 0.03f);
+			for (int column = 0; column < BREAK_COLUMNS; column++) {
+				grid[row][column] = Mth.clamp(x + (random.nextFloat() - 0.5f) * 0.06f, -BREAK_REACH, BREAK_REACH);
+			}
+		}
+		grid[BREAK_ROWS + 1] = heights;
+		return grid;
+	}
+
+	private static float breakDepth(int column) {
+		return -SLAB_DEPTH + 2f * SLAB_DEPTH * column / (BREAK_COLUMNS - 1);
+	}
+
+	private static void hinge(PoseStack ms, int side, float lean) {
+		ms.translate(side * 0.5D, 0.0D, 0.0D);
+		ms.mulPose(com.mojang.math.Axis.ZP.rotation(-side * lean));
+	}
+
+	/** The solid of the break on each half once it has parted: the jagged surface, its side walls and its top. */
+	private static void renderBreakSolid(PoseStack ms, MultiBufferSource bufferIn, float[][] grid, float lean) {
+		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.MONOLITH_RUBBLE);
+		float[] heights = grid[BREAK_ROWS + 1];
+		for (int side = -1; side <= 1; side += 2) {
+			ms.pushPose();
+			hinge(ms, side, lean);
+			Matrix4f mat = ms.last().pose();
+			float origin = side * 0.5f;
+			float base = side * BREAK_BASE - origin;
+			for (int row = 0; row < BREAK_ROWS; row++) {
+				float y0 = heights[row];
+				float y1 = heights[row + 1];
+				for (int column = 0; column < BREAK_COLUMNS - 1; column++) {
+					float z0 = breakDepth(column);
+					float z1 = breakDepth(column + 1);
+					float[] a = { grid[row][column] - origin, y0, z0 };
+					float[] b = { grid[row][column + 1] - origin, y0, z1 };
+					float[] c = { grid[row + 1][column + 1] - origin, y1, z1 };
+					float[] d = { grid[row + 1][column] - origin, y1, z0 };
+					blackTriangle(vc, mat, a, b, c);
+					blackTriangle(vc, mat, a, c, d);
+				}
+				for (int end = 0; end < 2; end++) {
+					int column = end == 0 ? 0 : BREAK_COLUMNS - 1;
+					float z = breakDepth(column);
+					float[] a = { base, y0, z };
+					float[] b = { grid[row][column] - origin, y0, z };
+					float[] c = { grid[row + 1][column] - origin, y1, z };
+					float[] d = { base, y1, z };
+					blackTriangle(vc, mat, a, b, c);
+					blackTriangle(vc, mat, a, c, d);
+				}
+			}
+			for (int column = 0; column < BREAK_COLUMNS - 1; column++) {
+				float z0 = breakDepth(column);
+				float z1 = breakDepth(column + 1);
+				float[] a = { base, 2f, z0 };
+				float[] b = { grid[BREAK_ROWS][column] - origin, 2f, z0 };
+				float[] c = { grid[BREAK_ROWS][column + 1] - origin, 2f, z1 };
+				float[] d = { base, 2f, z1 };
+				blackTriangle(vc, mat, a, b, c);
+				blackTriangle(vc, mat, a, c, d);
+			}
+			ms.popPose();
+		}
+	}
+
+	private static void blackTriangle(VertexConsumer vc, Matrix4f mat, float[] a, float[] b, float[] c) {
+		for (float[] p : new float[][] { a, b, c }) {
+			vc.addVertex(mat, p[0], p[1], p[2]).setColor(0.012f, 0.004f, 0.005f, 1f);
+		}
+	}
+
+	/**
+	 * The fissure shader over the stone: on the front and back of each half, from its far edge to the jagged break
+	 * (vertex red runs 0 to 1 across, so the fault follows the break), and over the raw break once the halves have parted.
+	 */
+	private static void renderFissures(PoseStack ms, MultiBufferSource bufferIn, float[][] grid, float time, float progress,
+			float seed, float lean, boolean parted, SanguineMonolithBlockEntity te, float fill) {
+		boolean overgrown = te.overgrown();
+		VertexConsumer vc = bufferIn.getBuffer(HemoRenderTypes.monolithFissure(time, progress, seed, overgrown, fill));
+		float[] heights = grid[BREAK_ROWS + 1];
+		// Clear of the surface shader, whose vertex morph moves the stone up to 0.02 in and out over time.
+		float skin = 0.024f;
+		for (int side = -1; side <= 1; side += 2) {
+			ms.pushPose();
+			hinge(ms, side, lean);
+			PoseStack.Pose pose = ms.last();
+			float origin = side * 0.5f;
+			for (int end = 0; end < 2; end++) {
+				int column = end == 0 ? 0 : BREAK_COLUMNS - 1;
+				float z = breakDepth(column) + (end == 0 ? -skin : skin);
+				for (int row = 0; row < BREAK_ROWS; row++) {
+					float y0 = heights[row];
+					float y1 = heights[row + 1];
+					float x0 = grid[row][column];
+					float x1 = grid[row + 1][column];
+					fissureVertex(vc, pose, 0f, y0, z, 0f, 1f, 0f, origin, y0);
+					fissureVertex(vc, pose, x0 - origin, y0, z, 1f, 1f, 0f, x0, y0);
+					fissureVertex(vc, pose, x1 - origin, y1, z, 1f, 1f, 0f, x1, y1);
+					fissureVertex(vc, pose, 0f, y1, z, 0f, 1f, 0f, origin, y1);
+				}
+			}
+			if (overgrown) {
+				// The infestation has the whole stone, not only its faces: its outer side and its top as well.
+				float out = -side * -skin;
+				float base = side * BREAK_BASE - origin;
+				float u = side * 0.3f;
+				fissureVertex(vc, pose, out, 0f, -SLAB_DEPTH, 0f, 1f, 0.5f, u - SLAB_DEPTH, 0f);
+				fissureVertex(vc, pose, out, 0f, SLAB_DEPTH, 0f, 1f, 0.5f, u + SLAB_DEPTH, 0f);
+				fissureVertex(vc, pose, out, 2f, SLAB_DEPTH, 0f, 1f, 0.5f, u + SLAB_DEPTH, 2f);
+				fissureVertex(vc, pose, out, 2f, -SLAB_DEPTH, 0f, 1f, 0.5f, u - SLAB_DEPTH, 2f);
+				fissureVertex(vc, pose, out, 2f + skin, -SLAB_DEPTH, 0f, 1f, 0.5f, u - SLAB_DEPTH, 1.6f);
+				fissureVertex(vc, pose, base, 2f + skin, -SLAB_DEPTH, 0f, 1f, 0.5f, u - SLAB_DEPTH, 1.9f);
+				fissureVertex(vc, pose, base, 2f + skin, SLAB_DEPTH, 0f, 1f, 0.5f, u + SLAB_DEPTH, 1.9f);
+				fissureVertex(vc, pose, out, 2f + skin, SLAB_DEPTH, 0f, 1f, 0.5f, u + SLAB_DEPTH, 1.6f);
+			}
+			if (parted) {
+				for (int row = 0; row < BREAK_ROWS; row++) {
+					float y0 = heights[row];
+					float y1 = heights[row + 1];
+					for (int column = 0; column < BREAK_COLUMNS - 1; column++) {
+						float z0 = breakDepth(column);
+						float z1 = breakDepth(column + 1);
+						// The facet catches the light by how hard the break leans at this cell.
+						float slope = Math.abs(grid[row + 1][column] - grid[row][column]) / Math.max(0.01f, y1 - y0);
+						float shade = 0.45f + 0.55f * Mth.clamp(slope, 0f, 1f);
+						// Offset per side so the raw faces of the halves are not the same field.
+						float u = side + 3f;
+						fissureVertex(vc, pose, grid[row][column] - origin, y0, z0, 1f, shade, 1f, u + z0, y0);
+						fissureVertex(vc, pose, grid[row][column + 1] - origin, y0, z1, 1f, shade, 1f, u + z1, y0);
+						fissureVertex(vc, pose, grid[row + 1][column + 1] - origin, y1, z1, 1f, shade, 1f, u + z1, y1);
+						fissureVertex(vc, pose, grid[row + 1][column] - origin, y1, z0, 1f, shade, 1f, u + z0, y1);
+					}
+				}
+			}
+			ms.popPose();
+		}
+		float[] mound = RUBBLE_MESHES.get(te.getBlockPos().asLong());
+		if (overgrown && mound != null) {
+			// Over the dead stone too: each facet of the mound as a quad with its last corner doubled.
+			PoseStack.Pose pose = ms.last();
+			for (int i = 0; i + 11 < mound.length; i += 12) {
+				for (int corner = 0; corner < 4; corner++) {
+					int at = i + Math.min(corner, 2) * 4;
+					float x = mound[at];
+					float y = mound[at + 1];
+					float z = mound[at + 2];
+					float facet = Mth.clamp(0.3f + mound[at + 3] * 7f, 0f, 1f);
+					fissureVertex(vc, pose, x, y + 0.002f, z, 0f, facet, 0.5f, x * 0.35f, 0.7f + z * 0.35f + y * 0.35f);
+				}
+			}
+		}
+	}
+
+	private static void fissureVertex(VertexConsumer vc, PoseStack.Pose pose, float x, float y, float z, float near, float shade,
+			float layer, float u, float v) {
+		vc.addVertex(pose.pose(), x, y, z).setColor(near, shade, layer, 1f).setUv(u, v).setLight(0xF000F0).setNormal(pose, 0f, 0f, 1f);
+	}
+
+	/** The dead stone heaped around the fulcrum, a black mound thrown up by the blast. */
+	private static void renderRubble(PoseStack ms, MultiBufferSource bufferIn, net.minecraft.core.BlockPos pos, float fall) {
+		if (RUBBLE_MESHES.size() > 16) RUBBLE_MESHES.clear();
+		float[] mesh = RUBBLE_MESHES.computeIfAbsent(pos.asLong(), SanguineMonolithRenderer::bakeRubble);
+		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.MONOLITH_RUBBLE);
+		Matrix4f mat = ms.last().pose();
+		float grow = Math.min(1f, fall * 2.2f);
+		grow = 1f - (1f - grow) * (1f - grow);
+		for (int i = 0; i < mesh.length; i += 4) {
+			float grey = mesh[i + 3];
+			vc.addVertex(mat, mesh[i], mesh[i + 1] * grow, mesh[i + 2]).setColor(grey, grey, grey * 1.08f, 1f);
+		}
+	}
+
+	private static float moundHeight(float x, float z, float[] waves) {
+		float angle = (float) Math.atan2(z, x);
+		float edge = 1f + 0.18f * Mth.sin(angle * 3f + waves[0]) + 0.1f * Mth.sin(angle * 7f + waves[1]);
+		float nx = x / (1.5f * edge);
+		float nz = z / (1.2f * edge);
+		float u = nx * nx + nz * nz;
+		if (u >= 1f) return 0f;
+		float dome = (float) Math.pow(1f - u, 1.25f);
+		float lumps = 1f + 0.22f * Mth.sin(x * 5.3f + waves[2]) * Mth.sin(z * 6.1f + waves[3]) + 0.12f * Mth.sin(x * 11f + z * 9f + waves[4]);
+		return 0.62f * dome * lumps;
+	}
+
+	private static float[] bakeRubble(long seed) {
+		java.util.Random random = new java.util.Random(seed ^ 0x0B51D1A4L);
+		float[] waves = new float[5];
+		for (int i = 0; i < waves.length; i++) waves[i] = random.nextFloat() * Mth.TWO_PI;
+		java.util.ArrayList<float[]> out = new java.util.ArrayList<>(8000);
+
+		// The body of the mound: a lumpy dome, darkest where it meets the ground.
+		int rings = 9;
+		int segments = 34;
+		float[][][] grid = new float[rings + 1][segments][];
+		for (int ring = 0; ring <= rings; ring++) {
+			for (int segment = 0; segment < segments; segment++) {
+				float angle = segment * Mth.TWO_PI / segments;
+				float reach = ring / (float) rings * 1.9f;
+				float jitter = ring == 0 ? 0f : (random.nextFloat() - 0.5f) * 0.07f;
+				float x = Mth.cos(angle) * reach + jitter;
+				float z = Mth.sin(angle) * reach * 0.85f + jitter;
+				float y = moundHeight(x, z, waves);
+				if (y > 0f) y += (random.nextFloat() - 0.5f) * 0.05f;
+				grid[ring][segment] = new float[] { x, y > 0f ? y : -0.01f, z };
+			}
+		}
+		float[] middle = { 0f, 0f, 0f };
+		for (int ring = 0; ring < rings; ring++) {
+			for (int segment = 0; segment < segments; segment++) {
+				int next = (segment + 1) % segments;
+				float[] a = grid[ring][segment];
+				float[] b = grid[ring][next];
+				float[] c = grid[ring + 1][next];
+				float[] d = grid[ring + 1][segment];
+				if (a[1] <= 0f && b[1] <= 0f && c[1] <= 0f && d[1] <= 0f) continue;
+				rubbleFacet(out, a, b, c, new float[] { a[0], -1f, a[2] }, 0.10f, 0f);
+				rubbleFacet(out, a, c, d, new float[] { a[0], -1f, a[2] }, 0.10f, 0f);
+			}
+		}
+
+		// Boulders bedded in it, bigger toward the fulcrum.
+		for (int rock = 0; rock < 110; rock++) {
+			float angle = random.nextFloat() * Mth.TWO_PI;
+			float reach = (float) Math.sqrt(random.nextFloat()) * 1.5f;
+			float x = Mth.cos(angle) * reach;
+			float z = Mth.sin(angle) * reach * 0.85f;
+			float size = (0.07f + random.nextFloat() * random.nextFloat() * 0.2f) * (1.25f - 0.5f * reach / 1.5f);
+			float y = moundHeight(x, z, waves) * (0.8f + random.nextFloat() * 0.25f);
+			rubbleRock(out, random, x, Math.max(y, size * 0.35f), z, size, ICOSA_FACES);
+		}
+		// Pebbles thrown clear of it across the ground.
+		for (int pebble = 0; pebble < 44; pebble++) {
+			float angle = random.nextFloat() * Mth.TWO_PI;
+			float reach = Math.min(MOUND_REACH, 1.15f + random.nextFloat() * random.nextFloat() * 1.3f);
+			float size = 0.025f + random.nextFloat() * 0.05f;
+			rubbleRock(out, random, Mth.cos(angle) * reach, size * 0.4f, Mth.sin(angle) * reach * 0.85f, size, OCTA_FACES);
+		}
+		float[] mesh = new float[out.size() * 4];
+		for (int i = 0; i < out.size(); i++) System.arraycopy(out.get(i), 0, mesh, i * 4, 4);
+		// The whole heap scaled about the fulcrum to a block across (owner's call).
+		float scale = RUBBLE_MAX_RADIUS / MOUND_REACH;
+		for (int i = 0; i < mesh.length; i += 4) {
+			mesh[i] *= scale;
+			mesh[i + 1] *= scale;
+			mesh[i + 2] *= scale;
+		}
+		return mesh;
+	}
+
+	private static void rubbleRock(java.util.List<float[]> out, java.util.Random random, float x, float y, float z, float size, int[][] faces) {
+		float[][] shape = faces == ICOSA_FACES ? ICOSA_POINTS : OCTA_POINTS;
+		float[][] points = new float[shape.length][];
+		// Squashed, stretched and turned at random, each corner pulled in or out: no two alike.
+		float sx = size * (0.7f + random.nextFloat() * 0.7f);
+		float sy = size * (0.55f + random.nextFloat() * 0.6f);
+		float sz = size * (0.7f + random.nextFloat() * 0.7f);
+		float yaw = random.nextFloat() * Mth.TWO_PI;
+		float roll = (random.nextFloat() - 0.5f) * 1.6f;
+		float cy = Mth.cos(yaw), sinY = Mth.sin(yaw), cr = Mth.cos(roll), sr = Mth.sin(roll);
+		for (int i = 0; i < shape.length; i++) {
+			float pull = 0.72f + random.nextFloat() * 0.5f;
+			float px = shape[i][0] * sx * pull;
+			float py = shape[i][1] * sy * pull;
+			float pz = shape[i][2] * sz * pull;
+			float rx = px * cr - py * sr;
+			float ry = px * sr + py * cr;
+			points[i] = new float[] { x + rx * cy + pz * sinY, y + ry, z - rx * sinY + pz * cy };
+		}
+		float[] centre = { x, y, z };
+		for (int[] face : faces) {
+			float glint = random.nextFloat() < 0.12f ? 0.05f : 0f;
+			rubbleFacet(out, points[face[0]], points[face[1]], points[face[2]], centre, 0.21f, glint);
+		}
+	}
+
+	/** One flat-shaded facet of dead stone: black, catching only a little grey on the faces turned to the light. */
+	private static void rubbleFacet(java.util.List<float[]> out, float[] a, float[] b, float[] c, float[] inside, float gloss, float glint) {
+		float ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2];
+		float vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+		float nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+		float length = Mth.sqrt(nx * nx + ny * ny + nz * nz);
+		if (length < 1e-7f) return;
+		nx /= length; ny /= length; nz /= length;
+		float outX = (a[0] + b[0] + c[0]) / 3f - inside[0];
+		float outY = (a[1] + b[1] + c[1]) / 3f - inside[1];
+		float outZ = (a[2] + b[2] + c[2]) / 3f - inside[2];
+		if (nx * outX + ny * outY + nz * outZ < 0f) { nx = -nx; ny = -ny; nz = -nz; }
+		float lit = Math.max(0f, nx * 0.36f + ny * 0.78f + nz * 0.51f);
+		float grey = 0.004f + gloss * lit * lit * lit + glint * lit;
+		// Pooled dark low down, where the heap shadows itself.
+		for (float[] p : new float[][] { a, b, c }) {
+			float shadow = 0.55f + 0.45f * Mth.clamp(p[1] / 0.45f, 0f, 1f);
+			out.add(new float[] { p[0], p[1], p[2], grey * shadow });
+		}
+	}
+
+	private static final float GOLDEN = 1.618034f;
+	private static final float[][] ICOSA_POINTS = icosaPoints();
+	private static final int[][] ICOSA_FACES = {
+			{ 0, 11, 5 }, { 0, 5, 1 }, { 0, 1, 7 }, { 0, 7, 10 }, { 0, 10, 11 }, { 1, 5, 9 }, { 5, 11, 4 }, { 11, 10, 2 }, { 10, 7, 6 }, { 7, 1, 8 },
+			{ 3, 9, 4 }, { 3, 4, 2 }, { 3, 2, 6 }, { 3, 6, 8 }, { 3, 8, 9 }, { 4, 9, 5 }, { 2, 4, 11 }, { 6, 2, 10 }, { 8, 6, 7 }, { 9, 8, 1 } };
+	private static final float[][] OCTA_POINTS = { { 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 0, 1 }, { 0, 0, -1 } };
+	private static final int[][] OCTA_FACES = {
+			{ 0, 2, 4 }, { 4, 2, 1 }, { 1, 2, 5 }, { 5, 2, 0 }, { 0, 4, 3 }, { 4, 1, 3 }, { 1, 5, 3 }, { 5, 0, 3 } };
+
+	private static float[][] icosaPoints() {
+		float t = GOLDEN;
+		float n = Mth.sqrt(1f + t * t);
+		float a = 1f / n, b = t / n;
+		return new float[][] { { -a, b, 0 }, { a, b, 0 }, { -a, -b, 0 }, { a, -b, 0 }, { 0, -a, b }, { 0, a, b }, { 0, -a, -b }, { 0, a, -b },
+				{ b, 0, -a }, { b, 0, a }, { -b, 0, -a }, { -b, 0, a } };
+	}
+
+	/** The third eye of void hanging between the halves, in the Lidless panel material. */
+	private static void renderPortal(PoseStack ms, MultiBufferSource bufferIn, SanguineMonolithBlockEntity te, float time,
+			float partialTicks, Direction facing) {
+		var local = com.vincenthuto.hemomancy.client.data.LidlessPassageClientState.local();
+		if (local != null && local.door().equals(te.getBlockPos())) return;
+		float seed = com.vincenthuto.hemomancy.client.render.tile.shared.LidlessDoorRenderer.seed(te.getBlockPos());
+		float opening = te.opening(partialTicks);
+		int live = 0;
+		// A gateway's open eye shows the Chamber: ask for the view, and show the one drawn for this husk.
+		if (te.proxy() != null && !te.seedInside() && opening > 0.02F) {
+			com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberProxyView.request(te, facing);
+			live = com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberProxyView.textureFor(te.getBlockPos());
+		}
+		com.vincenthuto.hemomancy.client.render.tile.shared.LidlessPortalPanel.draw(ms, bufferIn, time, seed, facing,
+				opening, true, te.theme(), te.seedInside() ? 0.0F : 1.0F, live);
+	}
+
+	/** The rite fog, low and still, pouring out around the broken base; thinner once the Seed is gone. */
+	private static void renderFog(PoseStack ms, MultiBufferSource bufferIn, SanguineMonolithBlockEntity te, float time, float partialTicks) {
+		if (!(bufferIn instanceof MultiBufferSource.BufferSource buffer)) return;
+		net.minecraft.world.phys.Vec3 camera = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+		net.minecraft.world.phys.Vec3 cameraLocal = camera.subtract(net.minecraft.world.phys.Vec3.atLowerCornerOf(te.getBlockPos()));
+		float opacity = 1.3f + 0.4f * te.glow(partialTicks);
+		float seed = Math.floorMod(te.getBlockPos().asLong(), 977L) / 977.0f;
+		com.vincenthuto.hemomancy.client.render.world.CardinalRiteFogRenderer.drawStill(ms, buffer,
+				new net.minecraft.world.phys.Vec3(0.5D, 0.15D, 0.5D), FOG_RADIUS, time, opacity, cameraLocal, seed);
+	}
+
+	/** Purple lightning from the fulcrum every few seconds while the Seed waits, rarely after. */
+	private static void strikeLightning(SanguineMonolithBlockEntity te, float partialTicks) {
+		if (te.getLevel() == null) return;
+		long now = te.getLevel().getGameTime();
+		if (te.clientNextStrike >= 0 && now < te.clientNextStrike) return;
+		java.util.Random random = new java.util.Random(now ^ te.getBlockPos().asLong());
+		te.clientNextStrike = now + (te.seedInside() ? 60 + random.nextInt(60) : 200 + random.nextInt(100));
+		net.minecraft.world.phys.Vec3 fulcrum = net.minecraft.world.phys.Vec3.atCenterOf(te.getBlockPos()).add(0.0D, -0.35D, 0.0D);
+		net.minecraft.world.phys.Vec3 end = fulcrum.add((random.nextDouble() - 0.5D) * 3.0D, 1.2D + random.nextDouble() * 1.8D,
+				(random.nextDouble() - 0.5D) * 3.0D);
+		com.vincenthuto.hemomancy.client.render.world.CardinalRiteFogLightning.strike(fulcrum, end, now, partialTicks);
 	}
 }

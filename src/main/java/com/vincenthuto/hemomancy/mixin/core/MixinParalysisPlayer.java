@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinParalysisPlayer {
     @Inject(method="touch",at=@At("HEAD"),cancellable=true,remap=false)
     private void hemomancy$signalCannotCollect(Entity entity, CallbackInfo ci) {
-        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.isTraveling((Player)(Object)this))
+        if (com.vincenthuto.hemomancy.common.util.HeldTraveller.isHeld((Player)(Object)this))
             ci.cancel();
     }
     @Inject(method="attack",at=@At("HEAD"),cancellable=true,remap=false)

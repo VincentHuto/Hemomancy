@@ -8,6 +8,8 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsData;
 import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.MonolithFragmentDropRules;
+import com.vincenthuto.hemomancy.common.block.shared.LidlessPassageService;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineMonolithBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
@@ -667,36 +669,53 @@ public final class PlaythroughArchonGameTests {
 		boolean whisperExpected = FungalWhisperDialogueTrees.shouldOfferMemoWhisper(p.player(), MemoDefinitions.FUNGAL_WHISPER_TRUTH);
 		boolean discoveredBefore = RiteDiscoveryRules.isDiscovered(p.player(), Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth"));
 		Outcome shatter = p.chooseAtBlock(stone, SanguineMonolithDialogueTrees.EVENT_SHATTER);
-		int fragments = shatter.droppedNear(stone.above(), ItemInit.monolith_fragment.get());
-		PlaythroughLog.note(helper, "the shatter: " + shatter.describe() + " fragments=" + fragments
+		int atPress = shatter.droppedNear(stone.above(), ItemInit.monolith_fragment.get());
+		PlaythroughLog.note(helper, "the press: " + shatter.describe() + " fragmentsAtPress=" + atPress
 				+ " whisperExpected=" + whisperExpected + " queued=" + shatter.whispersQueued().size());
-		helper.assertTrue(shatter.rewardDelivered(), "the second choice shatters the stone; " + shatter);
-		helper.assertTrue(!monolithAt(p, stone) && !helper.getLevel().getBlockState(stone.above()).is(BlockInit.filler_block.get()),
-				"the Monolith and its filler are gone");
-		helper.assertTrue(fragments >= MonolithFragmentDropRules.MIN_FRAGMENTS && fragments <= MonolithFragmentDropRules.MAX_FRAGMENTS,
-				"5-8 Monolith Fragments pop out (" + fragments + ")");
-		if (whisperExpected) shatter.whisperQueued(POST_SHATTER);
+		helper.assertTrue(shatter.rewardDelivered(), "the second choice starts the break; " + shatter);
+		SanguineMonolithBlockEntity breaking = (SanguineMonolithBlockEntity) helper.getLevel().getBlockEntity(stone);
+		helper.assertTrue(breaking != null && breaking.isBreaking() && atPress == 0 && seedsNear(helper, stone) == 0,
+				"the stone cracks instead of exploding; nothing drops at the press");
 
 		Outcome late = second.chooseAtBlock(stone, SanguineMonolithDialogueTrees.EVENT_SHATTER);
 		helper.assertTrue(!late.rewardDelivered() && late.droppedNear(stone.above(), ItemInit.monolith_fragment.get()) == 0,
-				"a second player's open conversation does not shatter the gone stone again; " + late);
-		PlaythroughLog.note(helper, "D-28 (late): the second player's press further after the shatter: said " + late.chat());
+				"a second player's open conversation does not break the breaking stone again; " + late);
+		PlaythroughLog.note(helper, "D-28 (late): the second player's press further during the break: said " + late.chat());
 
-		// The Seed's own item entity replaces the plain drop on the server's next task run, so it is counted a few
-		// ticks later rather than in the shatter's outcome.
-		PlaythroughClock.start(helper).idle(SEED_ENTITY_TICKS).then(() -> {
-			int seeds = seedsNear(helper, stone.above());
-			PlaythroughLog.note(helper, "the shatter's Seed after " + SEED_ENTITY_TICKS + " ticks: " + seeds);
-			helper.assertTrue(seeds == 1, "one Qliphoth Seed pops out (" + seeds + ")");
-			Outcome seed = p.pickUpNear(stone.above(), ItemInit.qliphoth_seed.get());
-			seed.gave(ItemInit.qliphoth_seed.get(), 1);
-			p.pickUpNear(stone.above(), ItemInit.monolith_fragment.get());
-			boolean discovered = RiteDiscoveryRules.isDiscovered(p.player(), Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth"));
-			PlaythroughLog.note(helper, "Seed picked up: QLIPHOTH entry " + LiberKnowledgeHelper.hasEntry(p.player(), LiberEntryDefinitions.QLIPHOTH)
-					+ ", Bloom rite discovered before=" + discoveredBefore + " after=" + discovered);
-			helper.assertTrue(LiberKnowledgeHelper.hasEntry(p.player(), LiberEntryDefinitions.QLIPHOTH) && discovered,
-					"with the Seed in hand the Qliphoth entry is known and the Bloom rite discoverable");
-		}).run();
+		for (int i = 0; i <= SanguineMonolithBlock.BREAK_TICKS; i++) breaking.tick();
+		int fragments = itemsNear(helper, stone, ItemInit.monolith_fragment.get());
+		helper.assertTrue(helper.getLevel().getBlockState(stone).getValue(SanguineMonolithBlock.BROKEN)
+				&& helper.getLevel().getBlockState(stone.above()).is(BlockInit.filler_block.get()),
+				"the halves have fallen and the husk stands");
+		helper.assertTrue(fragments >= MonolithFragmentDropRules.MIN_FRAGMENTS && fragments <= MonolithFragmentDropRules.MAX_FRAGMENTS,
+				"5-8 Monolith Fragments spill into the rubble (" + fragments + ")");
+		helper.assertTrue(seedsNear(helper, stone) == 0 && breaking.seedInside(), "the Seed waits in the void");
+
+		// The walk: the owner steps into the gap and is pulled through to the Seed.
+		p.player().setPos(Vec3.atBottomCenterOf(stone).add(0.0D, 0.0D, 0.6D));
+		LidlessPassageService.offer(p.player(), breaking.portal());
+		LidlessPassageService.tick(p.player());
+		helper.assertTrue(LidlessPassageService.isCrossing(p.player()), "the owner is held in the gap");
+		for (int i = 0; i < 80; i++) {
+			LidlessPassageService.input(p.player(), LidlessPassageService.token(p.player()), 1, false, false);
+			LidlessPassageService.tick(p.player());
+		}
+		boolean discovered = RiteDiscoveryRules.isDiscovered(p.player(), Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth"));
+		PlaythroughLog.note(helper, "the walk: crossing=" + LidlessPassageService.isCrossing(p.player()) + " seedInHand="
+				+ p.player().getInventory().countItem(ItemInit.qliphoth_seed.get()) + " QLIPHOTH entry "
+				+ LiberKnowledgeHelper.hasEntry(p.player(), LiberEntryDefinitions.QLIPHOTH)
+				+ ", Bloom rite discovered before=" + discoveredBefore + " after=" + discovered);
+		helper.assertTrue(!LidlessPassageService.isCrossing(p.player())
+				&& p.player().getInventory().countItem(ItemInit.qliphoth_seed.get()) == 1 && !breaking.seedInside(),
+				"the walk ends with the Seed in hand and the portal closed");
+		helper.assertTrue(LiberKnowledgeHelper.hasEntry(p.player(), LiberEntryDefinitions.QLIPHOTH) && discovered,
+				"with the Seed in hand the Qliphoth entry is known and the Bloom rite discoverable");
+		helper.succeed();
+	}
+
+	private static int itemsNear(GameTestHelper helper, BlockPos pos, net.minecraft.world.item.Item item) {
+		return helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new net.minecraft.world.phys.AABB(pos).inflate(3.0D))
+				.stream().filter(e -> e.getItem().is(item)).mapToInt(e -> e.getItem().getCount()).sum();
 	}
 
 	/** The open conversation expires after 1200 ticks: pressing further then breaks nothing (silent, D-28 family). */
@@ -776,7 +795,9 @@ public final class PlaythroughArchonGameTests {
 		p.moveTo(stone.south(2));
 		DialogueView view = p.talkToBlock(stone);
 		Outcome shatter = p.chooseAtBlock(stone, SanguineMonolithDialogueTrees.EVENT_SHATTER);
-		int rolled = shatter.droppedNear(stone.above(), ItemInit.monolith_fragment.get());
+		SanguineMonolithBlockEntity breaking = (SanguineMonolithBlockEntity) helper.getLevel().getBlockEntity(stone);
+		for (int i = 0; i <= SanguineMonolithBlock.BREAK_TICKS; i++) breaking.tick();
+		int rolled = itemsNear(helper, stone, ItemInit.monolith_fragment.get());
 
 		int perCloth = fragmentsIn(helper, "monolith_imbued_cloth");
 		int craftedCornerstone = fragmentsIn(helper, "monolithic_cornerstone") + clothIn(helper, "monolithic_cornerstone") * perCloth;
@@ -791,7 +812,7 @@ public final class PlaythroughArchonGameTests {
 		boolean warned = warning.toLowerCase(Locale.ROOT).contains("cornerstone") && warning.toLowerCase(Locale.ROOT).contains("fragment");
 		PlaythroughLog.note(helper, "D7-3: rolled " + rolled + " fragments (min " + MonolithFragmentDropRules.MIN_FRAGMENTS
 				+ "); a crafted cornerstone takes " + craftedCornerstone + " and the frame rite " + riteFragments + " (total "
-				+ needed + "); the Monolith can no longer give its cornerstone (block gone=" + !monolithAt(p, stone)
+				+ needed + "); the Monolith can no longer give its cornerstone (broken=" + breaking.isBroken()
 				+ "); warning text: " + warning + "; tree " + view.describe());
 		helper.assertTrue(warned || MonolithFragmentDropRules.MIN_FRAGMENTS >= needed,
 				"D7-3 expected: a shatter before the cornerstone either warns or always leaves enough fragments ("

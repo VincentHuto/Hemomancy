@@ -197,6 +197,7 @@ minecraft:block hemomancy:calcified_erythrocoral
 minecraft:block hemomancy:calcified_hyphae
 minecraft:block hemomancy:cap_bridge
 minecraft:block hemomancy:cardinal_focus
+minecraft:block hemomancy:chamber_gate
 minecraft:block hemomancy:chapel_focus
 minecraft:block hemomancy:charred_bookshelf
 minecraft:block hemomancy:charred_log
@@ -320,6 +321,7 @@ minecraft:block hemomancy:kindled_tissue
 minecraft:block hemomancy:laughing_mask
 minecraft:block hemomancy:lethean_poppy
 minecraft:block hemomancy:lethean_poppy_wreath
+minecraft:block hemomancy:lidless_door
 minecraft:block hemomancy:litany_stone
 minecraft:block hemomancy:marimo_heart
 minecraft:block hemomancy:marimo_moss
@@ -460,6 +462,7 @@ minecraft:block_entity_type hemomancy:altar_of_cleansing
 minecraft:block_entity_type hemomancy:antecedent_vessel
 minecraft:block_entity_type hemomancy:blood_basin
 minecraft:block_entity_type hemomancy:cardinal_focus
+minecraft:block_entity_type hemomancy:chamber_gate
 minecraft:block_entity_type hemomancy:chapel_focus
 minecraft:block_entity_type hemomancy:clairaudiograph
 minecraft:block_entity_type hemomancy:consecrated_bloodwell
@@ -482,6 +485,7 @@ minecraft:block_entity_type hemomancy:hematic_armature
 minecraft:block_entity_type hemomancy:hematic_stake
 minecraft:block_entity_type hemomancy:hematic_suture_node
 minecraft:block_entity_type hemomancy:iron_brazier
+minecraft:block_entity_type hemomancy:lidless_door
 minecraft:block_entity_type hemomancy:marimo_heart
 minecraft:block_entity_type hemomancy:mason_effigy
 minecraft:block_entity_type hemomancy:mnemonic_reliquary
@@ -553,6 +557,7 @@ minecraft:data_component_type hemomancy:living_weapon_graft_data
 minecraft:data_component_type hemomancy:mnemonic_blueprint_target
 minecraft:data_component_type hemomancy:resonant_pattern
 minecraft:data_component_type hemomancy:scriptorium_provenance
+minecraft:data_component_type hemomancy:seed_binding
 minecraft:data_component_type hemomancy:structure_scanner_tooltip
 minecraft:data_component_type hemomancy:tincture_doses
 minecraft:dimension_type hemomancy:chamber_of_will_type
@@ -1056,6 +1061,7 @@ minecraft:item hemomancy:lethean_poppy
 minecraft:item hemomancy:lethean_poppy_wreath
 minecraft:item hemomancy:liber_immaculatus
 minecraft:item hemomancy:liber_sanguinum
+minecraft:item hemomancy:lidless_door
 minecraft:item hemomancy:listening_scar
 minecraft:item hemomancy:litany_stone
 minecraft:item hemomancy:living_axe

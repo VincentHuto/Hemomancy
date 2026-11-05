@@ -227,6 +227,11 @@ public class BlockInit {
 
 	public static final DeferredHolder<Block, Block> engram_block = SPECIALBLOCKS.register("engram_block", EngramBlock::new);
 
+	/** The far end of a Chamber of Will's corridor: placed by the manager, no item, no breaking. */
+	public static final DeferredHolder<Block, Block> chamber_gate = SPECIALBLOCKS.register("chamber_gate",
+			() -> new com.vincenthuto.hemomancy.common.block.shared.ChamberGateBlock(BlockBehaviour.Properties.of()
+					.strength(-1.0F, 3600000.0F).noOcclusion().noLootTable().noCollission().lightLevel(state -> 6)));
+
 	public static final DeferredHolder<Block, Block> filler_block = SPECIALBLOCKS.register("filler_block",
 			() -> new FillerBlock(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()));
 
@@ -595,6 +600,11 @@ public class BlockInit {
 
 	public static final DeferredHolder<Block, Block> hematic_iron_door = BASEBLOCKS.register("hematic_iron_door",
 			() -> new WaterloggedDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_DOOR)));
+
+	/** A door-sized frame around a void; stepping in is a sixteen-block crossing that ends one block away. Creative only. */
+	public static final DeferredHolder<Block, Block> lidless_door = BASEBLOCKS.register("lidless_door",
+			() -> new com.vincenthuto.hemomancy.common.block.shared.LidlessDoorBlock(
+					BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_DOOR).lightLevel(state -> 7).noOcclusion()));
 
 	public static final DeferredHolder<Block, Block> hematic_iron_trapdoor = BASEBLOCKS.register("hematic_iron_trapdoor",
 			() -> new TrapDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_TRAPDOOR)));
@@ -1331,7 +1341,7 @@ public class BlockInit {
 			"placed_blood_stained_stone", "blood_stained_stone",
 			"lethean_poppy_wreath", "lethean_poppy_wreath",
 			"sanguine_conduit", "sanguine_conduit");
-	private static final Set<String> ITEMLESS_BLOCKS = Set.of("attached_gourd_stem", "filler_block",
+	private static final Set<String> ITEMLESS_BLOCKS = Set.of("attached_gourd_stem", "chamber_gate", "filler_block",
 			"somnolent_seat_filler", "abocipher_emitter", "qliphoth_bloom",
 			"escharian_overgrowth", "escharian_overgrowth_rim", "brood_tumor", "dormant_ganglion", "cap_bridge", "fruiting_body_cache", "ward_anchor", "ring_door", "recollection_cyst",
 			"witness_devotee", "warden_bloom");

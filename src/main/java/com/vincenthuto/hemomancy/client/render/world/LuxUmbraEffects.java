@@ -46,7 +46,7 @@ public final class LuxUmbraEffects {
         }
     }
 
-    static void mist(Vec3 at, Vec3 velocity, boolean umbra, float size, int life) { mist(at, velocity, umbra, size, life, -1); }
+    public static void mist(Vec3 at, Vec3 velocity, boolean umbra, float size, int life) { mist(at, velocity, umbra, size, life, -1); }
 
     /** As {@link #mist(Vec3, Vec3, boolean, float, int)}, thinning over the body of entity {@code clearOf} (-1 for none). */
     static void mist(Vec3 at, Vec3 velocity, boolean umbra, float size, int life, int clearOf) {

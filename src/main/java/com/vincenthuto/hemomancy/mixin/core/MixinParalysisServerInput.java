@@ -16,7 +16,7 @@ public abstract class MixinParalysisServerInput {
     private void hemomancy$signalDrop(net.minecraft.network.protocol.game.ServerboundPlayerActionPacket packet,
             org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
         if (player.serverLevel().getServer().isSameThread()
-                && com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.isTraveling(player)
+                && com.vincenthuto.hemomancy.common.util.HeldTraveller.isHeld(player)
                 && (packet.getAction()==net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.DROP_ITEM
                     || packet.getAction()==net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS))
             ci.cancel();
@@ -25,7 +25,7 @@ public abstract class MixinParalysisServerInput {
     private void hemomancy$signalInventory(net.minecraft.network.protocol.game.ServerboundContainerClickPacket packet,
             org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
         if (player.serverLevel().getServer().isSameThread()
-                && com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.isTraveling(player)) {
+                && com.vincenthuto.hemomancy.common.util.HeldTraveller.isHeld(player)) {
             player.containerMenu.sendAllDataToRemote();
             ci.cancel();
         }
@@ -40,7 +40,7 @@ public abstract class MixinParalysisServerInput {
     @ModifyVariable(method="handleMovePlayer",at=@At("HEAD"),argsOnly=true,remap=false)
     private ServerboundMovePlayerPacket hemomancy$paralysisMovement(ServerboundMovePlayerPacket packet) {
         if (player.serverLevel().getServer().isSameThread()
-                && com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.isTraveling(player))
+                && com.vincenthuto.hemomancy.common.util.HeldTraveller.isHeld(player))
             return new ServerboundMovePlayerPacket.Rot(packet.getYRot(player.getYRot()),packet.getXRot(player.getXRot()),false);
         if (!player.serverLevel().getServer().isSameThread()
                 || !Paralysis.blocksMovement(player) || !packet.hasPosition()) return packet;

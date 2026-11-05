@@ -21,6 +21,7 @@ public final class ClientReloadListenerRegistrar {
         event.registerReloadListener((ResourceManagerReloadListener) resourceManager -> {
             com.vincenthuto.hemomancy.client.player.HematicMicroscopeClientState.clear();
             ArborOfWillRenderer.clearCaches();
+            com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberProxyView.invalidateBake();
             QliphothBloomRenderer.clearCaches();
             FaneBoundaryRenderer.clearCaches();
             if (BloodVolumeOverlay.instance != null) BloodVolumeOverlay.instance.clearCaches();

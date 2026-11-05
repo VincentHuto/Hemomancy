@@ -318,6 +318,10 @@ public final class EntityRendererRegistrar {
         event.registerBlockEntityRenderer(BlockEntityInit.saint_sarcophagus.get(),
                 SaintSarcophagusRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.ring_door.get(), RingDoorRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.chamber_gate.get(),
+                com.vincenthuto.hemomancy.client.render.tile.shared.ChamberGateRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityInit.lidless_door.get(),
+                com.vincenthuto.hemomancy.client.render.tile.shared.LidlessDoorRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.offering_stand.get(),
                 com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle.OfferingStandRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityInit.pulse_pylon.get(),

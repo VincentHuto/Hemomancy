@@ -36,6 +36,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.network.chat.Component;
+import com.vincenthuto.hemomancy.common.block.shared.LidlessPassageService;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
@@ -61,6 +65,11 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	/** The halves have fallen open: the gap admits the owner while the Seed waits, and a break drops nothing. */
+	public static final BooleanProperty BROKEN = BooleanProperty.create("broken");
+	/** The break: cracks spread over the first eight seconds, the split and fall take the last four. */
+	public static final int BREAK_TICKS = 172;
+	public static final int CRACK_TICKS = 160;
 	/** The 16x32x8 slab, broadside to its facing; the filler above carries its upper half. */
 	private static final VoxelShape SHAPE_NS = Block.box(0, 0, 4, 16, 16, 12);
 	private static final VoxelShape SHAPE_EW = Block.box(4, 0, 0, 12, 16, 16);
@@ -77,7 +86,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	public SanguineMonolithBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH)
-				.setValue(WATERLOGGED, false));
+				.setValue(WATERLOGGED, false).setValue(BROKEN, false));
 	}
 
 	@Override
@@ -92,7 +101,47 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING, WATERLOGGED);
+		builder.add(FACING, WATERLOGGED, BROKEN);
+	}
+
+	@Override
+	protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		return partCollision(state, level, pos, context);
+	}
+
+	/**
+	 * The collision of the base or its filler: the slab, except that a broken stone has an empty gap for the Archon
+	 * it admits (the owner, while the Seed waits), so they can step into the void and nobody else can.
+	 */
+	public VoxelShape partCollision(BlockState controller, BlockGetter level, BlockPos controllerPos, CollisionContext context) {
+		if (controller.getValue(BROKEN) && context instanceof EntityCollisionContext entityContext
+				&& entityContext.getEntity() instanceof Player player
+				&& level.getBlockEntity(controllerPos) instanceof SanguineMonolithBlockEntity stone
+				&& stone.admits(player) && LidlessPassageService.mayCross(player)) {
+			return Shapes.empty();
+		}
+		return slab(controller);
+	}
+
+	@Override
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+		offerCrossing(state, level, pos, entity);
+	}
+
+	/** A body in either cell of a broken stone: the owner is offered the crossing. The filler calls this too. */
+	public void offerCrossing(BlockState controller, Level level, BlockPos controllerPos, Entity entity) {
+		if (level.isClientSide || !controller.getValue(BROKEN) || !(entity instanceof ServerPlayer player)) return;
+		if (level.getBlockEntity(controllerPos) instanceof SanguineMonolithBlockEntity stone && stone.admits(player)) {
+			LidlessPassageService.offer(player, stone.portal());
+		}
+	}
+
+	@Override
+	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+		if (state.getValue(BROKEN) && level.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity stone) {
+			stone.spillSeed(level);
+		}
+		return super.playerWillDestroy(level, pos, state, player);
 	}
 
 	@Override
@@ -163,6 +212,11 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (!state.is(newState.getBlock())) {
 			if (!level.isClientSide) {
+				// Whatever removes the husk (a pick on either half, a blast, a command) the Seed is never lost with it.
+				if (state.getValue(BROKEN) && level.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity stone) {
+					stone.spillSeed(level);
+					stone.forgetGateway();
+				}
 				removeFillers(level, pos);
 			}
 		}
@@ -212,6 +266,11 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		if (!(player instanceof ServerPlayer serverPlayer)) {
 			return InteractionResult.SUCCESS;
 		}
+		if (worldIn.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity stone && (stone.isBreaking() || stone.isBroken())) {
+			boolean itsOwner = stone.isBroken() && !stone.seedInside() && serverPlayer.getUUID().equals(stone.owner());
+			serverPlayer.displayClientMessage(Component.translatable(itsOwner ? "hemomancy.monolith.gate.hint" : "hemomancy.monolith.dormant"), true);
+			return InteractionResult.CONSUME;
+		}
 
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		int degreeNumber = degree.getDegreeNumber();
@@ -233,19 +292,18 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		SanguineMonolithBlockEntity monolith = MonolithDialogueContext.takeBlock(player,
 				SanguineMonolithDialogueTrees.EVENT_SHATTER);
 		if (monolith == null) return false;
-		Level level = player.level();
-		BlockPos pos = monolith.getBlockPos();
-		BlockState state = level.getBlockState(pos);
-		monolith.incrementArchonInteractions();
-		explodeIntoBlackShards(level, pos);
-		popResource(level, pos.above(), new ItemStack(ItemInit.monolith_fragment.get(),
-				MonolithFragmentDropRules.rollFragmentCount(level.random)));
-		popResource(level, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));
-		level.setBlockAndUpdate(pos, WaterloggedBlockSupport.survivorOrWater(state));
-		if (FungalWhisperDialogueTrees.shouldOfferMemoWhisper(player, MemoDefinitions.FUNGAL_WHISPER_TRUTH)) {
-			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.postMonolithShatter()));
+		if (monolith.isBreaking() || monolith.isBroken()) {
+			player.displayClientMessage(Component.translatable("hemomancy.monolith.already_breaking"), true);
+			return false;
 		}
+		monolith.incrementArchonInteractions();
+		monolith.beginBreak(player);
 		return true;
+	}
+
+	/** The sound and black shards of the split, for the block entity when the halves fall. */
+	public static void shatterBurst(ServerLevel level, BlockPos pos) {
+		explodeIntoBlackShards(level, pos);
 	}
 
 	@Override
@@ -257,6 +315,13 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
+		// A cracked or broken stone lets a held item go on to its own use, so Blood Projection can be started on the
+		// husk itself; only an empty hand reaches the hint. A cell hand is a cast, not a thing to ask the stone about,
+		// so it goes on to its own use on a whole stone too, where any other item opens the stone's item inquiry.
+		if (!stack.isEmpty() && (stack.getItem() instanceof com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand
+				|| worldIn.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity stone && (stone.isBreaking() || stone.isBroken()))) {
+			return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+		}
 		handleInteraction(state, worldIn, pos, player, stack);
 		return ItemInteractionResult.SUCCESS;
 	}

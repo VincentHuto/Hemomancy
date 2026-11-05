@@ -14,12 +14,15 @@ import org.joml.Matrix4f;
 
 public class QliphothSeedItemRenderer extends BlockEntityWithoutLevelRenderer {
 	private static final int LAT = 24;
-	private static final int LON = 7;
+	private static final int LON = 24;
 	private static final float SEED_RADIUS = 0.072f;
 	private static final float GLOW_RADIUS = SEED_RADIUS * 1.18f;
-	private static final float HORIZONTAL_SCALE = 1.38f;
-	private static final float VERTICAL_SCALE = 0.92f;
-	private static final float DEPTH_SCALE = 0.96f;
+	/** An upright almond: long from tip to tip, a little flattened front to back. */
+	private static final float LENGTH_SCALE = 1.7f;
+	private static final float WIDTH_SCALE = 0.98f;
+	private static final float DEPTH_SCALE = 0.84f;
+	/** Above 1 the sides close to a point at the tips instead of rounding over. */
+	private static final double TIP_SHARPNESS = 1.4D;
 
 	public QliphothSeedItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
@@ -135,14 +138,13 @@ public class QliphothSeedItemRenderer extends BlockEntityWithoutLevelRenderer {
 	}
 
 	private static Point point(double theta, double phi, float radius) {
-		float sinT = (float) Math.sin(theta);
 		float cosT = (float) Math.cos(theta);
 		float cosP = (float) Math.cos(phi);
 		float sinP = (float) Math.sin(phi);
-		float endPinch = 1.0f - (float) Math.pow(Math.abs(cosT), 2.6D) * 0.11f;
-		float x = cosT * radius * HORIZONTAL_SCALE;
-		float y = sinT * cosP * radius * VERTICAL_SCALE * endPinch;
-		float z = sinT * sinP * radius * DEPTH_SCALE * endPinch;
+		float girth = (float) Math.pow(Math.max(0.0D, Math.sin(theta)), TIP_SHARPNESS);
+		float x = girth * cosP * radius * WIDTH_SCALE;
+		float y = cosT * radius * LENGTH_SCALE;
+		float z = girth * sinP * radius * DEPTH_SCALE;
 		return new Point(x, y, z);
 	}
 
@@ -151,7 +153,7 @@ public class QliphothSeedItemRenderer extends BlockEntityWithoutLevelRenderer {
 		float cosT = (float) Math.cos(theta);
 		float cosP = (float) Math.cos(phi);
 		float sinP = (float) Math.sin(phi);
-		return new Point(cosT, sinT * cosP, sinT * sinP);
+		return new Point(sinT * cosP, cosT, sinT * sinP);
 	}
 
 	private static void quad(VertexConsumer vc, Matrix4f mat, Point p0, Point p1, Point p2, Point p3,

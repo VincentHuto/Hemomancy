@@ -67,7 +67,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "34";
+    public static final String PROTOCOL_VERSION = "37";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -260,6 +260,12 @@ public class PacketHandler {
                 com.vincenthuto.hemomancy.common.network.axonal.AxonalInputPacket::handle);
         net.playToClient(com.vincenthuto.hemomancy.common.network.axonal.AxonalStatePacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.axonal.AxonalStatePacket.STREAM_CODEC,
+                ClientPayloadHandlers::dispatch);
+        net.playToServer(com.vincenthuto.hemomancy.common.network.lidless.LidlessPassageInputPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.lidless.LidlessPassageInputPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.lidless.LidlessPassageInputPacket::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.lidless.LidlessPassageStatePacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.lidless.LidlessPassageStatePacket.STREAM_CODEC,
                 ClientPayloadHandlers::dispatch);
         net.playToServer(ToggleSilentSlippingC2SPacket.TYPE, ToggleSilentSlippingC2SPacket.STREAM_CODEC,
                 ToggleSilentSlippingC2SPacket::handle);

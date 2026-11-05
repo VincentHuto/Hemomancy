@@ -127,6 +127,7 @@ public final class TransientServerStateEvents {
 		CastingAnimationManager.clearSessionState();
 		AvatarManifestationManager.clearSessionState();
 		AxonalTransductionManager.clearSessionState();
+		com.vincenthuto.hemomancy.common.block.shared.LidlessPassageService.clearSessionState();
 		ConductionManager.clearSessionState();
 		Discharge.clearSessionState();
 		DuctilisLightningEffects.clearSessionState();
@@ -172,6 +173,7 @@ public final class TransientServerStateEvents {
 			CastingAnimationManager.logout(serverPlayer);
 			AvatarManifestationManager.logout(serverPlayer);
 			AxonalTransductionManager.logout(serverPlayer);
+			com.vincenthuto.hemomancy.common.block.shared.LidlessPassageService.logout(serverPlayer);
 			EarthenVeinTravelManager.logout(serverPlayer);
 			CircusPracticalController.logout(serverPlayer);
 			TerrestrialSpeculumPlantingManager.logout(serverPlayer);

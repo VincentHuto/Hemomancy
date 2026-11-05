@@ -18,7 +18,10 @@ public class MixinEntity {
 		if ((Object) this instanceof Player player) {
 			SilentArchonArmorAbilityHandler.applySilentSlippingNoClip(player);
 			com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.applyMovement(player);
-			if (com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.isTraveling(player)) ci.cancel();
+			if (com.vincenthuto.hemomancy.common.util.HeldTraveller.isHeld(player)) {
+				com.vincenthuto.hemomancy.common.util.HeldTraveller.hold(player);
+				ci.cancel();
+			}
 		}
 	}
 }

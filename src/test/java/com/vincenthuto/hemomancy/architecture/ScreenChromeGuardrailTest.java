@@ -56,9 +56,7 @@ class ScreenChromeGuardrailTest {
 			"src/main/java/com/vincenthuto/hemomancy/client/screen/tile/crafting/MycelialCrucibleScreen.java",
 			"Amber fungal hyphae, like the spore implant and lantern backgrounds",
 			"src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SSCScreen.java",
-			"A bare field of slow amber tendrils with no rings or speckles",
-			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/SanguineMonolithRenderer.java",
-			"World-space veins on the monolith, not screen chrome");
+			"A bare field of slow amber tendrils with no rings or speckles");
 	/** Helpers whose names match the old chrome copies but whose bodies are their own art. */
 	private static final Set<String> OWN_HELPERS = Set.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/screen/item/PuppeteersSpindleScreen.java#renderVeinBackground",

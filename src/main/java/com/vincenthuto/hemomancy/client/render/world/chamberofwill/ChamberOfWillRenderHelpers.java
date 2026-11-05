@@ -1157,9 +1157,8 @@ final class ChamberOfWillRenderHelpers {
         Matrix4f matrix4f1 = new Matrix4f().rotation(quaternionf).translate((float) -cameraPos.x, (float) -cameraPos.y, (float) -cameraPos.z);
         poseStack.mulPose(matrix4f1);
         // Each player's cell is centred at (0, FLOOR_Y, CHAMBER_SPACING * id); snap the aura to the current cell along Z.
-        int traversal = (int) (cameraPos.z / ChamberOfWillManager.CHAMBER_SPACING) * ChamberOfWillManager.CHAMBER_SPACING;
-        float chamberWidth = ChamberOfWillClientData.radius() * 2.0f + 1.0f;
-        float halfWidth = chamberWidth / 2.0f;
+        int traversal = Math.round((float) (cameraPos.z / ChamberOfWillManager.CHAMBER_SPACING)) * ChamberOfWillManager.CHAMBER_SPACING;
+        int radius = ChamberOfWillClientData.radius();
         float HARDCODE_X = 0.5f;
         float HARDCODE_Y = 1.25f;
         float HARDCODE_Z = traversal + 0.5f;
@@ -1174,21 +1173,26 @@ final class ChamberOfWillRenderHelpers {
         RenderSystem.setShaderTexture(0, ChamberSkyThemeRegistry.activeTheme().noiseTexture());
         float uvScrollMin = ((ticks + partialTick) / 21 / 12) % 4;
         float uvScrollMax = uvScrollMin + 5f / 20 / 12;
-        float uvTile = Mth.floor(chamberWidth / 4f); // times for x axis to tile
-        for (int i = 0; i < 4; i++) {
-            poseStack.pushPose();
-            poseStack.mulPose(Axis.YP.rotationDegrees(i * 90));
-
-            Matrix4f matrix4f = poseStack.last().pose();
-            BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-            int baseColor = 0xFFff1188;
-            bufferbuilder.addVertex(matrix4f, -halfWidth, HARDCODE_Y - 1, halfWidth).setUv(0, uvScrollMax).setColor(baseColor);
-            bufferbuilder.addVertex(matrix4f, -halfWidth, HARDCODE_Y + 2, halfWidth).setUv(0, uvScrollMin).setColor(0xFF000000);
-            bufferbuilder.addVertex(matrix4f, halfWidth, HARDCODE_Y + 2, halfWidth).setUv(uvTile, uvScrollMin).setColor(0xFF000000);
-            bufferbuilder.addVertex(matrix4f, halfWidth, HARDCODE_Y - 1, halfWidth).setUv(uvTile, uvScrollMax).setColor(baseColor);
-            BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
-            poseStack.popPose();
+        int baseColor = 0xFFff1188;
+        // One wall along the keyhole's edge: up a corridor side, around the circle, back down the other side.
+        Matrix4f matrix4f = poseStack.last().pose();
+        BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        java.util.List<com.vincenthuto.hemomancy.common.encounter.ChamberRoomShape.Point> edge =
+                com.vincenthuto.hemomancy.common.encounter.ChamberRoomShape.outline(radius, Math.max(16, radius * 6));
+        float along = 0f;
+        for (int i = 0; i + 1 < edge.size(); i++) {
+            var from = edge.get(i);
+            var to = edge.get(i + 1);
+            float length = (float) Math.hypot(to.dx() - from.dx(), to.dz() - from.dz());
+            float u0 = along / 4f;
+            float u1 = (along + length) / 4f;
+            bufferbuilder.addVertex(matrix4f, (float) from.dx(), HARDCODE_Y - 1, (float) from.dz()).setUv(u0, uvScrollMax).setColor(baseColor);
+            bufferbuilder.addVertex(matrix4f, (float) from.dx(), HARDCODE_Y + 2, (float) from.dz()).setUv(u0, uvScrollMin).setColor(0xFF000000);
+            bufferbuilder.addVertex(matrix4f, (float) to.dx(), HARDCODE_Y + 2, (float) to.dz()).setUv(u1, uvScrollMin).setColor(0xFF000000);
+            bufferbuilder.addVertex(matrix4f, (float) to.dx(), HARDCODE_Y - 1, (float) to.dz()).setUv(u1, uvScrollMax).setColor(baseColor);
+            along += length;
         }
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
     }
 
     private record DepthLayer(int index, float t, float depthScale, float spanScale, float sizeScale, float alphaScale,

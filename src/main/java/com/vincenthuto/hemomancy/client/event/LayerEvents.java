@@ -101,6 +101,8 @@ public class LayerEvents {
 		event.registerLayerDefinition(PuppeteersSpindleModel.LAYER_LOCATION, PuppeteersSpindleModel::createBodyLayer);
 		event.registerLayerDefinition(MasonsEffigyModel.LAYER_LOCATION, MasonsEffigyModel::createBodyLayer);
 		event.registerLayerDefinition(SanguineMonolithModel.LAYER_LOCATION, SanguineMonolithModel::createBodyLayer);
+		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithHalvesModel.LAYER_LOCATION,
+				com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithHalvesModel::createBodyLayer);
 		event.registerLayerDefinition(CovenantThroneModel.LAYER_LOCATION, CovenantThroneModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedShieldModel.barbed_shield, BarbedShieldModel::createLayers);
 		event.registerLayerDefinition(ChitiniteShieldModel.chitinite_shield, ChitiniteShieldModel::createBodyLayer);

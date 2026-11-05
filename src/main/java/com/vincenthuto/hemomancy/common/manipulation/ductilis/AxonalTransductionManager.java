@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.network.axonal.AxonalStatePacket;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hemomancy.common.util.StandingSpaces;
+import com.vincenthuto.hemomancy.common.block.shared.LidlessPassageService;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
 import com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner;
@@ -81,7 +83,8 @@ public final class AxonalTransductionManager {
     }
     public static boolean canEnter(ServerPlayer player) {
         BlockPos node = touchingNode(player);
-        return !isTraveling(player) && eligible(player) && !player.isShiftKeyDown() && node != null
+        return !isTraveling(player) && !LidlessPassageService.isCrossing(player) && eligible(player)
+                && !player.isShiftKeyDown() && node != null
                 && !EXIT_CONTACTS.containsKey(player.getUUID())
                 && player.containerMenu == player.inventoryMenu && player.inventoryMenu.getCarried().isEmpty()
                 && !AxonalTravelPath.neighbors(network(player.serverLevel()), node).isEmpty()
@@ -177,23 +180,7 @@ public final class AxonalTransductionManager {
         }
     }
     public static Vec3 safeLanding(ServerPlayer player, ServerLevel level, BlockPos node) {
-        // Prefer the familiar standing space above a node; then its immediate surrounding cells.
-        Vec3 above = Vec3.atBottomCenterOf(node.above());
-        if (safe(player, level, above)) return above;
-        for (BlockPos pos : BlockPos.betweenClosed(node.offset(-2, -1, -2), node.offset(2, 2, 2))) {
-            Vec3 candidate = Vec3.atBottomCenterOf(pos);
-            if (level.hasChunkAt(pos.below()) && !level.getBlockState(pos.below()).getCollisionShape(level, pos.below()).isEmpty()
-                    && safe(player, level, candidate)) return candidate;
-        }
-        return null;
-    }
-    private static boolean safe(ServerPlayer player, ServerLevel level, Vec3 feet) {
-        AABB box = new AABB(feet.x - 0.3, feet.y, feet.z - 0.3, feet.x + 0.3, feet.y + 1.8, feet.z + 0.3);
-        for (BlockPos pos : BlockPos.betweenClosed(BlockPos.containing(box.minX, box.minY, box.minZ),
-                BlockPos.containing(box.maxX, box.maxY, box.maxZ))) {
-            if (!level.hasChunkAt(pos) || !level.getFluidState(pos).isEmpty()) return false;
-        }
-        return level.getWorldBorder().isWithinBounds(box) && level.noCollision(player, box);
+        return StandingSpaces.near(player, level, node);
     }
     public static void end(ServerPlayer player, boolean recover) {
         Session session = SESSIONS.remove(player.getUUID());
@@ -208,7 +195,7 @@ public final class AxonalTransductionManager {
                 Vec3 home = new Vec3(recovery.getDouble("x"), recovery.getDouble("y"), recovery.getDouble("z"));
                 // Recovery may load the saved entry chunk, never the fiber network ahead.
                 homeLevel.getChunkAt(BlockPos.containing(home));
-                landing = safe(player, homeLevel, home) ? home : safeLanding(player, homeLevel, BlockPos.containing(home).below());
+                landing = StandingSpaces.safe(player, homeLevel, home) ? home : safeLanding(player, homeLevel, BlockPos.containing(home).below());
             }
             if (landing != null) {
                 player.teleportTo(homeLevel, landing.x, landing.y, landing.z,
@@ -224,7 +211,7 @@ public final class AxonalTransductionManager {
                     // Air above the terrain also handles obstructed or submerged world spawns.
                     for (int y = surface.getY(); y <= spawnLevel.getMaxBuildHeight(); y++) {
                         Vec3 candidate = Vec3.atBottomCenterOf(new BlockPos(spawn.getX(), y, spawn.getZ()));
-                        if (safe(player, spawnLevel, candidate)) { fallback = candidate; break; }
+                        if (StandingSpaces.safe(player, spawnLevel, candidate)) { fallback = candidate; break; }
                     }
                 }
                 if (fallback != null) player.teleportTo(spawnLevel, fallback.x, fallback.y, fallback.z,

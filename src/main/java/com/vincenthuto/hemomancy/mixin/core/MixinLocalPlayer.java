@@ -23,7 +23,7 @@ public class MixinLocalPlayer {
       @Inject(method = "drop", at = @At("HEAD"), cancellable = true, remap = false)
       private void hemomancy$signalDrop(boolean fullStack,
               org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Boolean> cir) {
-          if (com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.isTraveling((LocalPlayer)(Object)this))
+          if (com.vincenthuto.hemomancy.common.util.HeldTraveller.isHeld((LocalPlayer)(Object)this))
               cir.setReturnValue(false);
       }
 	  @Unique
