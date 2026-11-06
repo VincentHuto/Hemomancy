@@ -3,11 +3,15 @@ package com.vincenthuto.hemomancy.client.screen.dialogue;
 import java.util.ArrayList;
 import java.util.List;
 
-public record DialogueHubLayout(List<DialogueLayout.Rect> cards, DialogueLayout.Rect leave) {
+public record DialogueHubLayout(List<DialogueLayout.Rect> cards, DialogueLayout.Rect leave, DialogueLayout.Rect important) {
 	private static final int PAD = 6;
 	private static final int GAP = 6;
 	private static final int CARD_HEIGHT = 76;
 	private static final int LEAVE_WIDTH = 84;
+	private static final int IMPORTANT_WIDTH = 150;
+	private static final int IMPORTANT_HEIGHT = 24;
+	/** Clear space around the Important tab, so its glow is not cut off. */
+	static final int IMPORTANT_MARGIN = DialogueActionGlow.HALO + 2;
 
 	public DialogueHubLayout {
 		cards = List.copyOf(cards);
@@ -32,6 +36,11 @@ public record DialogueHubLayout(List<DialogueLayout.Rect> cards, DialogueLayout.
 		int leaveWidth = Math.min(LEAVE_WIDTH, footer.width());
 		DialogueLayout.Rect leave = new DialogueLayout.Rect(
 				footer.x() + (footer.width() - leaveWidth) / 2, footer.y(), leaveWidth, footer.height());
-		return new DialogueHubLayout(cards, leave);
+		// The Important tab: just above Leave, at the foot of the content; on a short window, under the last card, where the hub scrolls to it.
+		int importantWidth = Math.min(IMPORTANT_WIDTH, content.width() - IMPORTANT_MARGIN * 2);
+		DialogueLayout.Rect important = new DialogueLayout.Rect(content.x() + (content.width() - importantWidth) / 2,
+				Math.max(cards.getLast().bottom() + IMPORTANT_MARGIN, content.bottom() - IMPORTANT_HEIGHT - IMPORTANT_MARGIN),
+				importantWidth, IMPORTANT_HEIGHT);
+		return new DialogueHubLayout(cards, leave, important);
 	}
 }

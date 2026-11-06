@@ -536,13 +536,13 @@ public final class PlaythroughSanctifiedGameTests {
 							"the crafted Monolith never answers 'craft one yourself'");
 					p.give(new ItemStack(Items.BONE)); // ARRANGE: something in hand to ask about
 					p.wield(Items.BONE);
-					Optional<DialogueView> inquiry = p.useOnForDialogue(spot);
-					helper.assertTrue(inquiry.isPresent(), "a held item opens the Monolith's item inquiry");
-					PlaythroughLog.note(helper, "monolithWorkingAndD6Tree", "held bone: " + inquiry.get().describe()
-							+ " lines " + inquiry.get().lineKeys() + " (D5-6 family: the inquiry hides the tree)");
-					inquiry.get().assertLangKeys(helper, "the Monolith's item inquiry");
-					helper.assertFalse(inquiry.get().lineKeys().contains(MONOLITH_D6_CHAMBER),
-							"a held item gets the inquiry only, not the D6 guidance: " + inquiry.get().lineKeys());
+					Optional<DialogueView> held = p.useOnForDialogue(spot);
+					helper.assertTrue(held.isPresent(), "a held item opens the Monolith's hub");
+					PlaythroughLog.note(helper, "monolithWorkingAndD6Tree", "held bone: " + held.get().describe()
+							+ " lines " + held.get().lineKeys());
+					held.get().assertLangKeys(helper, "the Monolith with an item in hand");
+					helper.assertTrue(held.get().lineKeys().contains(MONOLITH_D6_CHAMBER),
+							"a held item keeps the D6 guidance: " + held.get().lineKeys());
 				})
 				.run();
 	}

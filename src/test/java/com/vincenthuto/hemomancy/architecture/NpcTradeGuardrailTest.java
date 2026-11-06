@@ -111,7 +111,8 @@ class NpcTradeGuardrailTest {
 				"NpcTradeSides.refuses(speaker, player)");
 		String service = SourceAssertions.read(TRADE.resolve("NpcTradeService.java"));
 		SourceAssertions.assertContains("attempt runs the transaction with the real player",
-				SourceAssertions.methodBody(service, "public static void attempt("), "new PlayerTradeParty(player, entity)");
+				SourceAssertions.methodBody(service, "public static void attempt(ServerPlayer player, NpcTradeSpeaker speaker"),
+				"new PlayerTradeParty(player, speaker)");
 		SourceAssertions.assertContains("the transaction refuses first",
 				SourceAssertions.methodBody(service, "public static Result run("), "if (party.refusedBySide(speaker))");
 		SourceAssertions.assertContains("the real party asks the side table",

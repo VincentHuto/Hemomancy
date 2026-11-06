@@ -16,6 +16,18 @@ class DialogueNavigationStateTest {
 		assertFalse(DialogueNavigationState.focused("greeting").back());
 	}
 	@Test
+	void theImportantTabReturnsToItselfThenToTheHub() {
+		DialogueNavigationState state = DialogueNavigationState.hub();
+		state.openImportant();
+		state.openNode("press_again");
+		assertTrue(state.back());
+		assertEquals(DialogueNavigationState.View.IMPORTANT, state.view());
+		assertTrue(state.back());
+		assertEquals(DialogueNavigationState.View.HUB, state.view());
+		assertFalse(state.back());
+	}
+
+	@Test
 	void hubCategoryNodeBackStackIsDeterministic() {
 		DialogueNavigationState state = DialogueNavigationState.hub();
 

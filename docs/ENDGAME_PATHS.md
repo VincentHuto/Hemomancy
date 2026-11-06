@@ -60,6 +60,7 @@ Hallowed ground, the ring door, Chapels and the Saint fights are the mausoleum s
 | 2026-10-29 | Possession tendrils are thin, branching and numerous; the rite requires the caster's Blood Binding on the surrogate; a binding cast on a formed `qliphoth_grand` floor lasts until the floor stops forming or a rite on that Focus ends | `docs/archive/tracks/possession/00-README.md`; `SurrogateTetherRules` |
 | 2026-10-31 | Nobody, not even the Vicar, truly knows what follows Archon; Silentium and Apotheosis are legends, NPC lines hearsay | `docs/LORE_REFERENCE.md` line 277 |
 | 2026-10-31 | There is no D7 Silent Archon. All Silent Archon power (vestments, set bonus, claimed-Will bonus, death refusal) is D8 Silentium only; `SILENT_PENDING` is only the "chose silence" state; a D8 Silentium gets nothing from the hivemind (`HarbingerPathPermissions.hearsTheHive`) | `docs/LORE_REFERENCE.md` lines 386, 426 |
+| 2026-11-05 | D-76 [D7-5] answered: the D7 Monolith's counsel names pressing further and the Qliphoth Seed | [the spec](superpowers/specs/2026-11-05-monolith-dialogue-hub-design.md) |
 
 ## Calls made without the user
 
@@ -84,7 +85,7 @@ The overnight run (2026-10-28) ruled on every number in its specs. Where the 202
 
 ## Open questions
 
-- Late playthrough decisions (2026-11-02), each a failing `required = false` probe with its evidence in [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md#open-questions) and the roll-up in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) §1.6 (PT- plus the number): D-64 [D6-1], D-65 [D6-2], D-70 [D6-8], D-72 [D7-1], D-73 [D7-2], D-74 [D7-3], D-75 [D7-4], D-76 [D7-5], D-77 [D7-6], D-78 [D7-8], D-79 [D7-9], D-80 [D8-1], D-82 [D8-3], D-89 [CHAIN-2], D-90 [CHAIN-3].
+- Late playthrough decisions (2026-11-02), each a failing `required = false` probe with its evidence in [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md#open-questions) and the roll-up in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) §1.6 (PT- plus the number): D-64 [D6-1], D-65 [D6-2], D-70 [D6-8], D-72 [D7-1], D-73 [D7-2], D-74 [D7-3], D-75 [D7-4], D-77 [D7-6], D-78 [D7-8], D-79 [D7-9], D-80 [D8-1], D-82 [D8-3], D-89 [CHAIN-2], D-90 [CHAIN-3].
 
 From the user's own lists (`docs/archive/plans/endgame/*_V2.md`, "Open questions"):
 

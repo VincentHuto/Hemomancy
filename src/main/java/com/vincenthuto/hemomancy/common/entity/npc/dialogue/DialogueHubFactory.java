@@ -176,7 +176,7 @@ public final class DialogueHubFactory {
 		boolean anyLocked = false;
 
 		for (DialogueOption option : root.options()) {
-			if (isLeave(option) || isInquiry(option)) continue;
+			if (isLeave(option) || isInquiry(option) || option.presentation().isSpecialAction()) continue;
 			DialogueCategory category = isQuest(option) ? DialogueCategory.QUESTS : DialogueCategory.CONVERSATION;
 			boolean lore = category == DialogueCategory.CONVERSATION && option.presentation().lore();
 

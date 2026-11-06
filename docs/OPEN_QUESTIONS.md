@@ -144,7 +144,6 @@ logged inside a passing test); the topic doc has the evidence and the probe test
 | PT-37 [D5-3] | A kicked member's old ledger does nothing and says nothing. | As built; the probe stays failing. | [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md) |
 | PT-38 [D5-4] | The warning-only first Unbinding still burns its Nether Star; Disband is free. | As built; the probe stays failing. | [CARDINAL_RITES.md](CARDINAL_RITES.md) |
 | PT-39 [D5-5] | No NPC says where Sanguine Quintessence comes from. | As built; the probe stays failing. | [NPC_DIALOGUE_AND_TRADE.md](NPC_DIALOGUE_AND_TRADE.md) |
-| PT-40 [D5-6] | The D5 Monolith gives no guidance; a held item hides its tree. | As built; the probe stays failing. | [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md) |
 | PT-41 [D5-7] | The Basin commission reads only the main hand; commissions give no reward. | As built; the probe stays failing. | [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md) |
 | PT-42 [D5-8] | A deposit into a full pool earns no proof and says nothing. | As built; the probe stays failing. | [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md) |
 | PT-43 [D5-10] | The Monolith blueprint is offered only at exactly D5 (the forged-event guard copies that gate). | As built; the probe stays failing. | [NPC_DIALOGUE_AND_TRADE.md](NPC_DIALOGUE_AND_TRADE.md) |
@@ -180,7 +179,6 @@ logged inside a passing test); the topic doc has the evidence and the probe test
 | PT-73 [D7-2] | Any D7 can shatter another player's Monolith. | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
 | PT-74 [D7-3] | A low shatter roll before the cornerstone leaves the Weight of the Frame short. | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
 | PT-75 [D7-4] | Logging out mid-projection grants the revelation. | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
-| PT-76 [D7-5] | No D7 NPC names the shatter, Seed or Bloom. | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
 | PT-77 [D7-6] | The atlas shows D7/D8 materials at D5. | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
 | PT-78 [D7-8] | Nothing names the Fungal Spine after Communion. | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
 | PT-79 [D7-9] | Nothing names the Severance to a D7 Silence. | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.dialogue;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
@@ -75,11 +76,7 @@ public final class DialogueScreen extends Screen {
 		this.navigation = tree.presentation().mode() == DialogueScreenMode.TOPIC_HUB
 				? DialogueNavigationState.hub()
 				: DialogueNavigationState.focused(tree.startNodeId());
-		DialogueTopic attentionTopic = DialogueAttentionResolver.topic(tree.presentation());
-		if (attentionTopic != null && tree.getNode(attentionTopic.targetNodeId()) != null) {
-			navigation.openCategory(attentionTopic.category());
-			openTopic(attentionTopic);
-		}
+		// A hub always opens on its boxes; anything pressing waits behind the Important tab (DialogueImportance).
 	}
 
 	public static void openWhisper(DialogueTree tree, java.util.UUID id) {
@@ -196,6 +193,7 @@ public final class DialogueScreen extends Screen {
 		try {
 			measured = switch (navigation.view()) {
 				case HUB -> renderHub(gfx, mouseX, mouseY, content.y() - scrollOffset);
+				case IMPORTANT -> renderImportant(gfx, mouseX, mouseY, content.y() - scrollOffset);
 				case CATEGORY -> renderCategory(gfx, mouseX, mouseY, content.y() - scrollOffset);
 				case NODE -> renderNode(gfx, mouseX, mouseY, content.y() - scrollOffset);
 			};
@@ -241,7 +239,50 @@ public final class DialogueScreen extends Screen {
 			clickTargets.add(ClickTarget.category(x, y, cardWidth, cardHeight, category, enabled));
 		}
 		DialogueLayout.Rect last = hub.cards().getLast();
-		return Math.max(content.height(), last.bottom() - content.y() + CONTENT_PAD);
+		int measured = last.bottom() - content.y() + CONTENT_PAD;
+		int important = DialogueImportance.count(tree);
+		if (important > 0) {
+			DialogueLayout.Rect tab = hub.important();
+			int y = tab.y() - scrollOffset;
+			boolean hot = navigation.focusIndex() == clickTargets.size()
+					|| contains(tab.x(), y, tab.width(), tab.height(), mouseX, mouseY);
+			renderGlowingButton(gfx, tab.x(), y, tab.width(), tab.height(), hot,
+					Component.translatable("hemomancy.dialogue.ui.important", important));
+			clickTargets.add(ClickTarget.important(tab.x(), y, tab.width(), tab.height()));
+			measured = tab.bottom() - content.y() + DialogueHubLayout.IMPORTANT_MARGIN;
+		}
+		return Math.max(content.height(), measured);
+	}
+
+	/** The Important tab: the greeting's special actions, glowing, then the cards that need the player now. */
+	private int renderImportant(GuiGraphics gfx, int mouseX, int mouseY, int startY) {
+		var content = layout.content();
+		int glow = DialogueActionGlow.HALO;
+		int y = startY + CONTENT_PAD + glow;
+		for (int index : DialogueImportance.specialActions(tree)) {
+			int x = content.x() + CONTENT_PAD + glow;
+			int width = content.width() - (CONTENT_PAD + glow) * 2;
+			boolean hot = navigation.focusIndex() == clickTargets.size() || contains(x, y, width, 24, mouseX, mouseY);
+			renderGlowingButton(gfx, x, y, width, 24, hot,
+					Component.translatable(tree.getStartNode().options().get(index).text()));
+			clickTargets.add(ClickTarget.action(x, y, width, 24, index));
+			y += 24 + glow * 2;
+		}
+		int x = content.x() + CONTENT_PAD;
+		int width = content.width() - CONTENT_PAD * 2;
+		for (DialogueTopic topic : DialogueImportance.topics(tree.presentation())) {
+			int height = topic.category() == DialogueCategory.QUESTS ? 54 : 44;
+			renderTopicCard(gfx, mouseX, mouseY, content, topic, x, y, width, height,
+					navigation.focusIndex() == clickTargets.size());
+			y += height + 6;
+		}
+		return Math.max(content.height(), y - startY + CONTENT_PAD);
+	}
+
+	private void renderGlowingButton(GuiGraphics gfx, int x, int y, int width, int height, boolean hot, Component label) {
+		float time = minecraft == null || minecraft.level == null ? 0.0F : AnimationTime.gameTime(minecraft.level);
+		DialogueActionGlow.draw(gfx, x, y, width, height, time, hot);
+		gfx.drawCenteredString(font, label, x + width / 2, y + (height - font.lineHeight) / 2 + 1, 0xFFFFF0DC);
 	}
 
 	private int renderCategory(GuiGraphics gfx, int mouseX, int mouseY, int startY) {
@@ -258,41 +299,45 @@ public final class DialogueScreen extends Screen {
 		int y = startY + CONTENT_PAD;
 		int width = content.width() - CONTENT_PAD * 2;
 		for (int i = 0; i < topics.size(); i++) {
-			DialogueTopic topic = topics.get(i);
 			int height = navigation.category() == DialogueCategory.QUESTS ? 54 : 44;
-			boolean enabled = topic.state().enabled();
-			int x = content.x() + CONTENT_PAD;
-			DialogueLayout.Rect card = new DialogueLayout.Rect(x, y, width, height);
-			boolean showUnread = topic.unread() && !locallyReadTopics.contains(topic.id());
-			DialogueTopicCardLayout cardLayout = DialogueTopicCardLayout.calculate(card, showUnread);
-			renderCard(gfx, x, y, width, height, mouseX, mouseY,
-					enabled, navigation.focusIndex() == i);
-			if (topic.displayItemId() != null) {
-				ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(topic.displayItemId()));
-				gfx.renderItem(stack, x + 8, y + 9);
-			} else {
-				gfx.blitSprite(topic.icon() != null ? topic.icon() : DialogueThemeStyle.categoryIcon(topic.category()),
-						x + 8, y + 9, 16, 16);
-				if (topic.lore() && content.contains(mouseX, mouseY) && contains(x + 8, y + 9, 16, 16, mouseX, mouseY)) {
-					hoveredLoreMarker = true;
-				}
-			}
-			int color = enabled ? style.optionColor() : style.disabledColor();
-			Component title = topic.displayItemId() != null
-					? new ItemStack(BuiltInRegistries.ITEM.get(topic.displayItemId())).getHoverName()
-					: Component.translatable(topic.titleKey());
-			var titleLines = font.split(title, cardLayout.title().width());
-			if (!titleLines.isEmpty()) {
-				gfx.drawString(font, titleLines.getFirst(), cardLayout.title().x(), cardLayout.title().y(), color, true);
-			}
-			drawWrapped(gfx, Component.translatable(topic.summaryKey()), cardLayout.summary().x(),
-					cardLayout.summary().y(), cardLayout.summary().width(), 2,
-					enabled ? style.textColor() : style.disabledColor());
-			renderTopicStatus(gfx, topic, x, y, width, height);
-			clickTargets.add(ClickTarget.topic(x, y, width, height, topic, enabled));
+			renderTopicCard(gfx, mouseX, mouseY, content, topics.get(i), content.x() + CONTENT_PAD, y, width, height,
+					navigation.focusIndex() == i);
 			y += height + 6;
 		}
 		return Math.max(content.height(), y - startY + CONTENT_PAD);
+	}
+
+	private void renderTopicCard(GuiGraphics gfx, int mouseX, int mouseY, DialogueLayout.Rect content, DialogueTopic topic,
+			int x, int y, int width, int height, boolean focused) {
+		boolean enabled = topic.state().enabled();
+		DialogueLayout.Rect card = new DialogueLayout.Rect(x, y, width, height);
+		boolean showUnread = topic.unread() && !locallyReadTopics.contains(topic.id());
+		DialogueTopicCardLayout cardLayout = DialogueTopicCardLayout.calculate(card, showUnread);
+		renderCard(gfx, x, y, width, height, mouseX, mouseY,
+				enabled, focused);
+		if (topic.displayItemId() != null) {
+			ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(topic.displayItemId()));
+			gfx.renderItem(stack, x + 8, y + 9);
+		} else {
+			gfx.blitSprite(topic.icon() != null ? topic.icon() : DialogueThemeStyle.categoryIcon(topic.category()),
+					x + 8, y + 9, 16, 16);
+			if (topic.lore() && content.contains(mouseX, mouseY) && contains(x + 8, y + 9, 16, 16, mouseX, mouseY)) {
+				hoveredLoreMarker = true;
+			}
+		}
+		int color = enabled ? style.optionColor() : style.disabledColor();
+		Component title = topic.displayItemId() != null
+				? new ItemStack(BuiltInRegistries.ITEM.get(topic.displayItemId())).getHoverName()
+				: Component.translatable(topic.titleKey());
+		var titleLines = font.split(title, cardLayout.title().width());
+		if (!titleLines.isEmpty()) {
+			gfx.drawString(font, titleLines.getFirst(), cardLayout.title().x(), cardLayout.title().y(), color, true);
+		}
+		drawWrapped(gfx, Component.translatable(topic.summaryKey()), cardLayout.summary().x(),
+				cardLayout.summary().y(), cardLayout.summary().width(), 2,
+				enabled ? style.textColor() : style.disabledColor());
+		renderTopicStatus(gfx, topic, x, y, width, height);
+		clickTargets.add(ClickTarget.topic(x, y, width, height, topic, enabled));
 	}
 
 	private int renderInquiryGrid(GuiGraphics gfx, int mouseX, int mouseY, int startY,
@@ -366,6 +411,10 @@ public final class DialogueScreen extends Screen {
 	private void renderResponse(GuiGraphics gfx, int x, int y, int width, int height, int mouseX, int mouseY,
 			boolean enabled, boolean focused, DialogueOption option) {
 		boolean hovered = enabled && contains(x, y, width, height, mouseX, mouseY);
+		if (enabled && option.presentation().isSpecialAction()) {
+			renderGlowingButton(gfx, x, y, width, height, hovered || focused, Component.translatable(option.text()));
+			return;
+		}
 		ResourceLocation sprite = !enabled ? style.buttonDisabledSprite()
 				: (hovered || focused ? style.buttonSelectedSprite() : style.buttonSprite());
 		gfx.blitSprite(sprite, x, y, width, height);
@@ -545,6 +594,8 @@ public final class DialogueScreen extends Screen {
 			case CATEGORY -> enterCategory(target.category);
 			case TOPIC -> openTopic(target.topic);
 			case OPTION -> selectOption(target.optionIndex);
+			case ACTION -> followOption(tree.getStartNode().options().get(target.optionIndex));
+			case IMPORTANT -> navigation.openImportant();
 			case BACK -> {
 				navigation.back();
 				currentNode = tree.getStartNode();
@@ -730,7 +781,7 @@ public final class DialogueScreen extends Screen {
 		return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 	}
 
-	private enum TargetKind { GREETING, CATEGORY, TOPIC, OPTION, BACK, CLOSE, TRADE }
+	private enum TargetKind { GREETING, CATEGORY, IMPORTANT, TOPIC, OPTION, ACTION, BACK, CLOSE, TRADE }
 
 	private record ClickTarget(int x, int y, int width, int height, TargetKind kind,
 			DialogueCategory category, DialogueTopic topic, int optionIndex, boolean enabled, Runnable action) {
@@ -751,6 +802,13 @@ public final class DialogueScreen extends Screen {
 		static ClickTarget option(int x, int y, int width, int height, int index, boolean enabled) {
 			return new ClickTarget(x, y, width, height, TargetKind.OPTION, null, null, index, enabled);
 		}
+		static ClickTarget important(int x, int y, int width, int height) {
+			return new ClickTarget(x, y, width, height, TargetKind.IMPORTANT, null, null, -1, true);
+		}
+		/** A special action in the Important tab; {@code index} is its place among the greeting's options. */
+		static ClickTarget action(int x, int y, int width, int height, int index) {
+			return new ClickTarget(x, y, width, height, TargetKind.ACTION, null, null, index, true);
+		}
 		static ClickTarget back(int x, int y, int width, int height) {
 			return new ClickTarget(x, y, width, height, TargetKind.BACK, null, null, -1, true);
 		}
@@ -762,7 +820,7 @@ public final class DialogueScreen extends Screen {
 		}
 		boolean contentTarget() {
 			return kind == TargetKind.CATEGORY || kind == TargetKind.TOPIC || kind == TargetKind.OPTION
-					|| kind == TargetKind.TRADE;
+					|| kind == TargetKind.ACTION || kind == TargetKind.IMPORTANT || kind == TargetKind.TRADE;
 		}
 		DialogueLayout.Rect rect() {
 			return new DialogueLayout.Rect(x, y, width, height);

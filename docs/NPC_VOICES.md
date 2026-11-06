@@ -184,7 +184,7 @@ a few times per Degree. ("Do you understand what you are throwing away?" is the 
 - "X, not Y" closers ("Blood is sent where it is needed, not kept where it is guarded.").
 - Mechanics checklists in the Vicar's mouth. Several lines copy ledger text word for word. Keep the step, say it once,
   and point to the ledger for the rest.
-- Sharing the item prompt and "unknown item" reply with the Monolith.
+- Sharing the item prompt with the Monolith.
 
 **Pinned.** `dialogue.ending.vicar.undecided` must not contain spine, vesper, refusal, apotheosis, return, choice or
 "either road". `vicar.archon.line2` must not contain "decide". `vicar.blood_crafting.projection`,
@@ -377,12 +377,13 @@ significant."
 - Restore the committed closers: "Every degree. Every name." and "You are no longer assembling tools. You are assembling
   conditions."
 
-**Avoid.** Saying the infection plainly before the seventh Degree. Sharing the Vicar's item prompt or "unknown" reply.
+**Avoid.** Saying the infection plainly before the seventh Degree. Sharing the Vicar's item prompt.
 Directions to places as tutorial text ("Seek the Sainted Mausoleums...") where an image would carry it.
 
 **Example.**
-- Now (`monolith.item_inquiry.unknown`): "I have nothing useful to say about that object."
-- In voice: "Nothing of that touches the threshold."
+- The item prompt (`monolith.item_hint`): "Bring it close. The stone weighs what you carry, and says little."
+
+**Trade keys.** `hemomancy.trade.monolith.<card>.title` / `.line` for `measure`, `weight`, `deep`; `hemomancy.trade.monolith.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.monolith.<slug>` (`.teaser`, `.lineN`) for `the_reading`, `where_it_goes`. Rapport lines show at every Degree, so they use no self pronoun. Counsel is `hemomancy.monolith.counsel.<step>`; lore answers are `hemomancy.monolith.lore.<slug>.lineN`.
 
 ---
 

@@ -1,0 +1,19 @@
+{
+  "title": "hemomancy.trade.monolith.weight.title",
+  "line": "hemomancy.trade.monolith.weight.line",
+  "order": 20,
+  "want": {
+    "kind": "blood",
+    "amount": 750
+  },
+  "give": [
+    {
+      "item": "hemomancy:vascular_poultice",
+      "count": 1
+    }
+  ],
+  "stock": {
+    "uses": 2,
+    "restock_days": 3
+  }
+}

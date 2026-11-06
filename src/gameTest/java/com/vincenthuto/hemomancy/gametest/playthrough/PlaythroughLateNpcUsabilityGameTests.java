@@ -616,7 +616,7 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 				new Findings(), null);
 	}
 
-	/** The Sanguine Monolith, spoken to as a block, empty-handed and with a held item (the inquiry). */
+	/** The Sanguine Monolith, spoken to as a block, empty-handed and with a held item (the same hub). */
 	@GameTest(template = EMPTY, timeoutTicks = 1200, batch = SWEEP_BATCH)
 	public static void langKeysSweep_monolith(GameTestHelper helper) {
 		String scenario = "langKeysSweep_monolith";
@@ -1335,7 +1335,7 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 	 * At each late checkpoint some speaker a player can reach (the outpost wing or the Monolith) names the real next
 	 * step: in a line, an option or a card it serves. At the revelation choice the choice itself must be in front of
 	 * the player after a relog (the whisper re-sent or queued). States with no pointer whose gap is already a pending
-	 * question are logged against it (D7-5 the shatter, D7-8 the Fungal Spine, D7-9 the Severance, D8-3 the Apotheos
+	 * question are logged against it (D7-8 the Fungal Spine, D7-9 the Severance, D8-3 the Apotheos
 	 * rite; D5-5 the Quintessence source is logged at the Fane step); any other is a finding. The ledger's Blood Beneath card is logged beside it.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 600, batch = BATCH)
@@ -1356,10 +1356,8 @@ public final class PlaythroughLateNpcUsabilityGameTests {
 						words("chamber of will|covenant throne|vigil"), null),
 				new Pointer("D6 Living Covenant done: the Rite of the Hematic Order",
 						new LateState(Stage.D6_LIVING, LineRole.LEADER), words("rite of the hematic order"), null),
-				// DECISION D7-5: no D7 NPC names the shatter, the Seed or the Bloom. Options: a Vicar or Monolith
-				// line / discovery and the Liber.
 				new Pointer("D7: the Monolith's shatter, the Seed and the Bloom", new LateState(Stage.D7, LineRole.LEADER),
-						words("press further|shatter|qliphoth seed|bloom of the qliphoth|qliphoth bloom"), "D7-5"),
+						words("press further|shatter|qliphoth seed|bloom of the qliphoth|qliphoth bloom"), null),
 				// DECISION D7-8: after Communion no reachable speaker names the Fungal Spine (and the Spine has no item
 				// inquiry), so nothing says to project with it. Options: a Vicar or Monolith line / a Spine item inquiry /
 				// leave it to the delivery line and the Liber.

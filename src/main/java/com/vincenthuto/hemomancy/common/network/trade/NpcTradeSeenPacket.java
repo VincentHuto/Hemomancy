@@ -30,8 +30,7 @@ public record NpcTradeSeenPacket(int entityId) implements CustomPacketPayload {
 	public static void handle(NpcTradeSeenPacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> {
 			if (!(context.player() instanceof ServerPlayer player) || !ServerboundGuards.activePlayer(player)) return;
-			NpcTradeSpeaker speaker = ServerboundGuards.nearLivingEntity(player, packet.entityId,
-					NpcTradeRequestPacket.REACH, NpcTradeSpeaker.class);
+			NpcTradeSpeaker speaker = NpcTradeSpeaker.near(player, packet.entityId, NpcTradeRequestPacket.REACH);
 			if (speaker == null || !speaker.tradesWith(player)) return;
 			NpcTradeCards.markRotationSeen(player, speaker.tradeSpeakerId());
 		});

@@ -57,6 +57,15 @@ public record DialogueOptionPresentation(ResourceLocation icon, String detailKey
 		return attention(attention).withPrompt(promptKey);
 	}
 
+	/** An option drawn as a special action ({@link DialogueOptionStyle#SPECIAL_ACTION}). */
+	public static DialogueOptionPresentation specialAction() {
+		return new DialogueOptionPresentation(null, null, true, DialogueOptionStyle.SPECIAL_ACTION, DialogueAttention.NONE, null);
+	}
+
+	public boolean isSpecialAction() {
+		return style == DialogueOptionStyle.SPECIAL_ACTION;
+	}
+
 	/** A plain quest option. */
 	public static DialogueOptionPresentation questWork() {
 		return normal().withQuest();

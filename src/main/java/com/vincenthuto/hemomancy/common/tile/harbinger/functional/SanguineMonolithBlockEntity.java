@@ -50,7 +50,8 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class SanguineMonolithBlockEntity extends HemoBlockEntity
-		implements IMultiBlockEntity, com.vincenthuto.hemomancy.common.tile.ProjectedBloodSink {
+		implements IMultiBlockEntity, com.vincenthuto.hemomancy.common.tile.ProjectedBloodSink,
+		com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSpeaker {
 
 	/** Duration of the placement rise animation in ticks (~1.5 s). */
 	public static final int RISE_DURATION_TICKS = 30;
@@ -161,6 +162,18 @@ public class SanguineMonolithBlockEntity extends HemoBlockEntity
 		seedTaken = false;
 		theme = LidlessTheme.of(player);
 		BlockEntitySync.markAndSync(this);
+	}
+
+	@Override
+	public String tradeSpeakerId() {
+		return com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDialogueTrees.SPEAKER_ID;
+	}
+
+	/** A stone that has begun to break deals with no one, and a whole one speaks to no one below its Degree. */
+	@Override
+	public boolean tradesWith(ServerPlayer player) {
+		return !isBreaking() && !isBroken() && com.vincenthuto.hemomancy.common.util.ProgressionGates.hasDegree(player,
+				com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineMonolithBlock.MIN_DEGREE);
 	}
 
 	public boolean isBreaking() {

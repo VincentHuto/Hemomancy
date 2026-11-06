@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerArtificerDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MonolithDialogueContext;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerArtificerEntity;
@@ -144,7 +145,6 @@ public final class PlaythroughArchonGameTests {
 	private static final String MONOLITH_UNWORTHY = "hemomancy.monolith.unworthy";
 	private static final String MONOLITH_KINSHIP = "hemomancy.monolith.what_are_you.archon";
 	private static final String MONOLITH_PRESS_AGAIN = "hemomancy.monolith.archon.press_again";
-	private static final String MONOLITH_ITEM_UNKNOWN = "hemomancy.monolith.item_inquiry.unknown";
 	private static final String CORNERSTONE = "hemomancy.dialogue.event.monolith_cornerstone";
 	private static final String MACHINE_LOCKED = "hemomancy.machine_access.locked";
 
@@ -569,15 +569,13 @@ public final class PlaythroughArchonGameTests {
 
 		p.give(new ItemStack(Items.STICK)); // ARRANGE: something in hand
 		p.wield(Items.STICK);
-		var inquiry = p.useOnForDialogue(stone);
-		helper.assertTrue(inquiry.isPresent(), "an item in hand still opens the Monolith; " + p.last());
-		inquiry.get().assertLangKeys(helper, "the Monolith's item inquiry");
-		PlaythroughLog.note(helper, "the Monolith with a stick in hand: " + inquiry.get().describe());
-		helper.assertTrue(!inquiry.get().offers(SanguineMonolithDialogueTrees.EVENT_SHATTER)
-						&& !inquiry.get().offers(SanguineMonolithDialogueTrees.EVENT_CORNERSTONE),
-				"an item in hand gives only the inquiry: " + inquiry.get());
-		helper.assertTrue(inquiry.get().lineKeys().contains(MONOLITH_ITEM_UNKNOWN), "an unknown item has the unknown line: "
-				+ inquiry.get().lineKeys());
+		var held = p.useOnForDialogue(stone);
+		helper.assertTrue(held.isPresent(), "an item in hand still opens the Monolith; " + p.last());
+		held.get().assertLangKeys(helper, "the Monolith with an item in hand");
+		PlaythroughLog.note(helper, "the Monolith with a stick in hand: " + held.get().describe());
+		helper.assertTrue(held.get().offers(SanguineMonolithDialogueTrees.EVENT_SHATTER)
+						&& held.get().offers(SanguineMonolithDialogueTrees.EVENT_CORNERSTONE),
+				"an item in hand opens the same hub: " + held.get());
 		helper.succeed();
 	}
 
@@ -718,7 +716,29 @@ public final class PlaythroughArchonGameTests {
 				.stream().filter(e -> e.getItem().is(item)).mapToInt(e -> e.getItem().getCount()).sum();
 	}
 
-	/** The open conversation expires after 1200 ticks: pressing further then breaks nothing (silent, D-28 family). */
+	/** A second Archon with the hub open when the first presses further takes no Cornerstone from the breaking stone. */
+	@GameTest(template = EMPTY, timeoutTicks = 200, batch = BATCH)
+	public static void aBreakingStoneGivesNoCornerstone(GameTestHelper helper) {
+		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
+		PlaythroughStates.archonD7(p); // ARRANGE
+		BlockPos stone = PlaythroughSites.monolith(p, PlaythroughSites.stand(helper, 16, 12)); // ARRANGE
+		PlaythroughPlayer second = PlaythroughPlayer.create(helper, stone.east(2));
+		PlaythroughStates.archonD7(second); // ARRANGE
+		armatureWorkDone(second); // ARRANGE: eligible for the Cornerstone
+		MachineAccessEvents.awardMachineCrafted(second.player(), BlockInit.sanguine_monolith.get()); // ARRANGE
+		second.moveTo(stone.east(2));
+		second.talkToBlock(stone);
+		p.moveTo(stone.south(2));
+		p.talkToBlock(stone);
+		helper.assertTrue(p.chooseAtBlock(stone, SanguineMonolithDialogueTrees.EVENT_SHATTER).rewardDelivered(), "the first press starts the break");
+		Outcome late = second.chooseAtBlock(stone, SanguineMonolithDialogueTrees.EVENT_CORNERSTONE);
+		helper.assertTrue(!late.rewardDelivered() && second.count(ItemInit.monolithic_cornerstone.get()) == 0
+				&& !HemoCapabilityAccess.stationUpgrades(second.player()).hasClaimed(UpgradeStation.ARMATURE, 2),
+				"nothing separates from a breaking stone; " + late);
+		helper.succeed();
+	}
+
+	/** The open conversation expires: pressing further after that breaks nothing (silent, D-28 family). */
 	@GameTest(template = EMPTY, timeoutTicks = 200, batch = CLOCK)
 	public static void pressFurtherAfterTheTalkExpires(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
@@ -726,9 +746,9 @@ public final class PlaythroughArchonGameTests {
 		BlockPos stone = PlaythroughSites.monolith(p, PlaythroughSites.stand(helper, 16, 12)); // ARRANGE
 		p.moveTo(stone.south(2));
 		p.talkToBlock(stone);
-		PlaythroughTime.skipGameTime(helper, 1201); // ARRANGE: the player wanders off for a minute
+		PlaythroughTime.skipGameTime(helper, MonolithDialogueContext.CONVERSATION_TICKS + 1); // ARRANGE: the player wanders off
 		Outcome expired = p.chooseAtBlock(stone, SanguineMonolithDialogueTrees.EVENT_SHATTER);
-		PlaythroughLog.note(helper, "D-28 (late): press further after 1201 ticks: " + expired.describe());
+		PlaythroughLog.note(helper, "D-28 (late): press further after the conversation expired: " + expired.describe());
 		helper.assertTrue(monolithAt(p, stone) && !expired.rewardDelivered(), "an expired conversation breaks nothing; " + expired);
 		helper.succeed();
 	}
@@ -1556,11 +1576,8 @@ public final class PlaythroughArchonGameTests {
 	 * Artificer and of the Monolith's root and kinship nodes (its press_again warning excepted), read in English. A
 	 * player would expect one of them to name the shatter, the Seed or the Bloom.
 	 */
-	// DECISION D7-5: no D7 NPC names the Monolith shatter, the Qliphoth Seed or the Bloom; the only hint is the
-	// Monolith's "press further" option and the Vicar's "I do not know what the Monolith has shown you". Options: a
-	// Vicar or Monolith line naming the shatter / leave it to discovery and the Liber.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void noPointerToTheShatter(GameTestHelper helper) {
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
+	public static void theStoneNamesTheShatter(GameTestHelper helper) {
 		PlaythroughPlayer p = PlaythroughPlayer.create(helper, PlaythroughSites.stand(helper, 4, 4));
 		PlaythroughStates.archonD7(p); // ARRANGE
 		Map<String, DialogueView> views = new LinkedHashMap<>();
@@ -1588,9 +1605,10 @@ public final class PlaythroughArchonGameTests {
 				}
 			}
 		}
-		PlaythroughLog.note(helper, "D7-5: D7 lines naming the shatter, Seed or Bloom: " + pointers + "; Vicar degree_hint="
+		PlaythroughLog.note(helper, "D7 lines naming the shatter, Seed or Bloom: " + pointers + "; Vicar degree_hint="
 				+ views.get(vicar.getType().getDescriptionId()).hasNode("degree_hint"));
-		helper.assertTrue(!pointers.isEmpty(), "D7-5 expected: some D7 speaker points at the shatter, the Seed or the Bloom");
+		helper.assertTrue(pointers.stream().anyMatch(pointer -> pointer.startsWith("monolith/counsel")),
+				"the D7 stone's counsel names pressing further and the Seed: " + pointers);
 		helper.succeed();
 	}
 

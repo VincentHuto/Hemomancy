@@ -91,23 +91,13 @@ public final class HarbingerVicarDialogueTrees {
 	}
 
 	/**
-	 * The D5 and D6 degree hint. At D5 the written covenant comes first (a leader's Fane or a member's Bloodwell
-	 * deposit), then membership of any registered line: a member is sent to the Fane, never to found a line of their own.
+	 * The D5 and D6 degree hint, from {@link CovenantProgress#steps}.
 	 */
 	public static DialogueTree withCovenantGuidance(DialogueTree tree, int degree, boolean inBloodline,
 			boolean faneComplete, boolean chamberReturned, boolean throneBound, boolean vigilComplete) {
 		if (degree != 5 && degree != 6) return tree;
-		List<String> lines = new ArrayList<>();
-		if (degree == 5) {
-			lines.add(faneComplete ? "hemomancy.vicar.covenant.perform_bloodline_rite"
-					: !inBloodline ? "hemomancy.vicar.covenant.found_bloodline"
-					: "hemomancy.vicar.covenant.found_fane");
-		} else {
-			if (!chamberReturned) lines.add("hemomancy.vicar.covenant.chamber_return");
-			if (!throneBound) lines.add("hemomancy.vicar.covenant.bind_throne");
-			if (!vigilComplete) lines.add("hemomancy.vicar.covenant.complete_vigil");
-			if (lines.isEmpty()) lines.add("hemomancy.vicar.covenant.perform_hematic_order_rite");
-		}
+		List<String> lines = new CovenantProgress(inBloodline, faneComplete, chamberReturned, throneBound, vigilComplete)
+				.steps(degree).stream().map(step -> "hemomancy.vicar.covenant." + step).toList();
 		var nodes = new java.util.LinkedHashMap<>(tree.nodes());
 		DialogueNode hint = nodes.get("degree_hint");
 		nodes.put(hint.id(), new DialogueNode(hint.id(), lines, hint.options()));

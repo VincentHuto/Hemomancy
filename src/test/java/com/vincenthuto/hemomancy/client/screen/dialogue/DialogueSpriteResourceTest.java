@@ -16,8 +16,7 @@ class DialogueSpriteResourceTest {
 
 	@Test
 	void themesProvideNineSliceFramesCardsAndButtons() throws IOException {
-		for (String theme : new String[] { "blood", "blood_material", "unstained", "unstained_material",
-				"fungal", "fungal_material", "still", "still_material" }) {
+		for (String theme : new String[] { "blood", "unstained", "fungal", "still" }) {
 			assertSprite(theme + "/frame.png", 128, 128, true);
 			assertSprite(theme + "/portrait_frame.png", 128, 128, true);
 			for (String state : new String[] { "card", "card_selected", "card_disabled" })
@@ -34,7 +33,7 @@ class DialogueSpriteResourceTest {
 				"grade_fine", "carried_full", "carried_some", "blood_drop", "trade_arrow" })
 			assertSprite("icons/" + icon + ".png", 32, 32, false);
 		for (String crest : new String[] { "default", "alchemist", "artificer", "cicatrix_anchorite", "hermit",
-				"mnemonist", "vicar", "votary_wayfarer", "voyager", "acolyte", "guardian", "zealot" })
+				"mnemonist", "monolith", "vicar", "votary_wayfarer", "voyager", "acolyte", "guardian", "zealot" })
 			assertSprite("crests/" + crest + ".png", 32, 32, false);
 	}
 
@@ -45,21 +44,24 @@ class DialogueSpriteResourceTest {
 			assertSprite("categories/" + category + "_selected.png", 64, 64, true);
 			assertSolidCenter("categories/" + category + ".png", 8);
 			assertSolidCenter("categories/" + category + "_selected.png", 8);
-			assertSprite("categories_material/" + category + ".png", 64, 64, true);
-			assertSprite("categories_material/" + category + "_selected.png", 64, 64, true);
-			assertSolidCenter("categories_material/" + category + ".png", 8);
-			assertSolidCenter("categories_material/" + category + "_selected.png", 8);
 		}
 	}
 
 	@Test
 	void nineSliceStretchCentersContainNoDecorativeLines() throws IOException {
-		for (String theme : new String[] { "blood", "blood_material", "unstained", "unstained_material",
-				"fungal", "fungal_material", "still", "still_material" }) {
+		for (String theme : new String[] { "blood", "unstained", "fungal", "still" }) {
 			for (String state : new String[] { "card", "card_selected", "card_disabled" })
 				assertSolidCenter(theme + "/" + state + ".png", 8);
 			for (String state : new String[] { "button", "button_selected", "button_disabled" })
 				assertSolidCenter(theme + "/" + state + ".png", 6);
+		}
+	}
+
+	@Test
+	void theTexturedSetsAreGone() {
+		for (String gone : new String[] { "blood_material", "unstained_material", "fungal_material", "still_material",
+				"categories_material" }) {
+			assertTrue(!Files.exists(ROOT.resolve(gone)), gone + " is retired; the flat sets are the only ones");
 		}
 	}
 

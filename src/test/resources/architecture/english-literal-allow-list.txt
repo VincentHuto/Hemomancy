@@ -33,7 +33,6 @@
 1	src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/EarthenVeinBlockEntity.java	internal name of a temporary vein, never a destination
 3	src/main/java/com/vincenthuto/hemomancy/common/worldgen/feature/EscharianOvergrowthFeature.java	worldgen phase names, logged only
 1	src/main/java/com/vincenthuto/hemomancy/common/worldgen/structure/MausoleumStructure.java	template-name pattern, never shown
-1	src/main/java/com/vincenthuto/hemomancy/config/HemoClientConfig.java	config file comments
 5	src/main/java/com/vincenthuto/hemomancy/config/HemoServerConfig.java	config file comments
 1	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinCommandedCreeper.java	mixin target descriptors
 2	src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinCommandedPotion.java	mixin target descriptors

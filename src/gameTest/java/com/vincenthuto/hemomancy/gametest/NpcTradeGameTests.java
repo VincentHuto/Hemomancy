@@ -12,6 +12,9 @@ import com.vincenthuto.hemomancy.common.entity.npc.court.CourtHospitality;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtMemberEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.CourtMemberDialogue;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MonolithDialogueContext;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueScreenMode;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTopic;
@@ -30,12 +33,17 @@ import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeService;
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeService.Outcome;
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSides;
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSources;
+import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSpeaker;
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeWant;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.CourtHouse;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.trade.NpcTradeRequestPacket;
 import com.vincenthuto.hemomancy.common.network.trade.NpcTradeResultPacket;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineMonolithBlockEntity;
 import com.vincenthuto.hemomancy.common.worldgen.structure.court.CourtResidentSpawner;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
@@ -76,7 +84,7 @@ import java.util.function.Supplier;
 public final class NpcTradeGameTests {
 	private static final String EMPTY = "empty";
 	/** Every shipped card (docs/archive/tracks/npc_trade/05 and 06 Status). */
-	private static final int SHIPPED_CARDS = 58;
+	private static final int SHIPPED_CARDS = 61;
 	private static final BlockPos NPC = new BlockPos(2, 2, 2);
 	private static final BlockPos STAND = new BlockPos(4, 2, 2);
 
@@ -155,7 +163,7 @@ public final class NpcTradeGameTests {
 			NpcTradeOffer offer, int... slots) {
 		NpcTradeRequestLimiter.logout(captured.player);
 		int before = captured.sent(NpcTradeResultPacket.class).size();
-		NpcTradeService.attempt(captured.player, speaker, offer.id(), slots);
+		NpcTradeService.attempt(captured.player, (NpcTradeSpeaker) speaker, speaker.getId(), offer.id(), slots);
 		List<NpcTradeResultPacket> replies = captured.sent(NpcTradeResultPacket.class);
 		h.assertTrue(replies.size() == before + 1, offer.id() + ": the service answers every request it takes");
 		return replies.getLast();
@@ -502,7 +510,7 @@ public final class NpcTradeGameTests {
 			NpcTradeResultPacket honest = request(captured, new NpcTradeRequestPacket(alchemist.getId(), offer.id(),
 					new int[]{0}));
 			h.assertTrue(honest != null && honest.outcome() != Outcome.REFUSED, "the same request, in order, trades");
-			NpcTradeService.attempt(player, alchemist, offer.id(), new int[]{0});
+			NpcTradeService.attempt(player, (NpcTradeSpeaker) alchemist, alchemist.getId(), offer.id(), new int[]{0});
 			h.assertTrue(captured.sent(NpcTradeResultPacket.class).getLast() == honest,
 					"a second request inside the rate limit is dropped without a reply");
 		}
@@ -654,6 +662,200 @@ public final class NpcTradeGameTests {
 			h.assertFalse(NpcTradeCards.build(player, "alchemist").card(daily.getFirst().offerId()).orElseThrow().fresh(),
 					"seen today, it is no longer fresh");
 			h.assertTrue(NpcTradeCards.markRotationSeen(player, "alchemist") == 0, "a second open marks nothing");
+		}
+		h.succeed();
+	}
+
+	// --- The Sanguine Monolith, a block speaker -----------------------------------------------------------------
+
+	private static BlockPos stone(GameTestHelper h) {
+		h.setBlock(NPC, BlockInit.sanguine_monolith.get());
+		return h.absolutePos(NPC);
+	}
+
+	/** Right-clicking the stone, as far as the trade cares: the conversation it opens and the hub it sends. */
+	private static DialogueTree talkToStone(CapturedPlayer captured, BlockPos at, int degree) {
+		DialogueTree hub = SanguineMonolithDialogueTrees.hub(captured.player, degree);
+		MonolithDialogueContext.open(captured.player, at, hub);
+		return hub;
+	}
+
+	private static NpcTradeRequestPacket toStone(NpcTradeOffer offer) {
+		return new NpcTradeRequestPacket(SanguineMonolithDialogueTrees.BLOCK_ENTITY_ID, offer.id(), new int[0]);
+	}
+
+	private static double blood(ServerPlayer player) {
+		return HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
+	}
+
+	/** The stone opens the Vicar's boxes: counsel under Quest Work, its questions, a carried item, its blood cards. */
+	@GameTest(template = EMPTY, timeoutTicks = 40)
+	public static void theStoneOpensTheFourBoxes(GameTestHelper h) {
+		BlockPos at = stone(h);
+		try (CapturedPlayer captured = player(h, 5, true)) {
+			captured.player.getInventory().setItem(0, new ItemStack(ItemInit.monolith_fragment.get()));
+			DialogueTree hub = talkToStone(captured, at, 5);
+			h.assertTrue(hub.presentation().mode() == DialogueScreenMode.TOPIC_HUB, "the stone opens a hub");
+			h.assertTrue(hub.entityId() == SanguineMonolithDialogueTrees.BLOCK_ENTITY_ID, "the hub stays a block speaker's");
+			h.assertTrue(hub.presentation().topics(DialogueCategory.QUESTS).stream()
+					.anyMatch(topic -> topic.titleKey().endsWith("counsel")), "counsel is Quest Work");
+			h.assertTrue(hub.presentation().topics(DialogueCategory.INQUIRIES).size() == 1, "the carried fragment is an inquiry card");
+			List<NpcTradeCard> cards = hub.presentation().trade().cards();
+			h.assertTrue(cards.size() == 3, "two open cards and one locked, found " + cards.size());
+			h.assertTrue(cards.stream().allMatch(card -> NpcTradeRegistry.byId(card.offerId()).orElseThrow().want() instanceof NpcTradeWant.Blood),
+					"every card at the stone is a blood price");
+		}
+		h.succeed();
+	}
+
+	/** A D5 player pays 500 mL through the payload, the reply goes to the block speaker, and the stock runs out. */
+	@GameTest(template = EMPTY, timeoutTicks = 40)
+	public static void theStoneTradesForBlood(GameTestHelper h) {
+		BlockPos at = stone(h);
+		NpcTradeOffer offer = offer(h, "monolith", "measure");
+		try (CapturedPlayer captured = player(h, 5, true)) {
+			ServerPlayer player = captured.player;
+			talkToStone(captured, at, 5);
+			double before = blood(player);
+			NpcTradeResultPacket reply = request(captured, toStone(offer));
+			h.assertTrue(reply != null && reply.outcome() == Outcome.DONE, "the stone trades: " + reply);
+			h.assertTrue(reply.entityId() == SanguineMonolithDialogueTrees.BLOCK_ENTITY_ID, "the reply is addressed to the open stone");
+			h.assertTrue(count(player, ItemInit.sanguine_salve.get()) == 2, "two salves come away");
+			h.assertTrue(before - blood(player) == 500.0D, "exactly 500 mL went in, took " + (before - blood(player)));
+			h.assertTrue(HemoCapabilityAccess.npcTrades(player).rapport("monolith") == 1, "rapport is the stone's own");
+			h.assertTrue(BloodFlowLedger.collect(player, HemoCapabilityAccess.getBloodVolume(player))
+					.contribution(NpcTradeWant.Blood.TITHE).isPresent(), "paid through the tithe source");
+
+			double after = blood(player);
+			NpcTradeResultPacket sold = request(captured, toStone(offer));
+			h.assertTrue(sold != null && sold.reasonKey().equals(NpcTradeService.REFUSED_SOLD_OUT), "one use a day: " + sold);
+			h.assertTrue(blood(player) == after && count(player, ItemInit.sanguine_salve.get()) == 2, "a sold-out card takes nothing");
+		}
+		h.succeed();
+	}
+
+	/** The deep measure is drawn locked at the fifth Degree and trades at the sixth. */
+	@GameTest(template = EMPTY, timeoutTicks = 40)
+	public static void theDeepMeasureOpensAtTheSixthDegree(GameTestHelper h) {
+		BlockPos at = stone(h);
+		NpcTradeOffer deep = offer(h, "monolith", "deep");
+		try (CapturedPlayer d5 = player(h, 5, true); CapturedPlayer d6 = player(h, 6, true)) {
+			talkToStone(d5, at, 5);
+			NpcTradeResultPacket locked = request(d5, toStone(deep));
+			h.assertTrue(locked != null && locked.reasonKey().equals(NpcTradeRequirements.LOCKED_DEGREE), "locked at D5: " + locked);
+			talkToStone(d6, at, 6);
+			NpcTradeResultPacket open = request(d6, toStone(deep));
+			h.assertTrue(open != null && open.outcome() == Outcome.DONE, "open at D6: " + open);
+			h.assertTrue(count(d6.player, ItemInit.vascular_poultice.get()) == 2, "two poultices come away");
+		}
+		h.succeed();
+	}
+
+	/** Naming the block speaker with no open conversation, or below its Degree, is dropped with nothing taken. */
+	@GameTest(template = EMPTY, timeoutTicks = 40)
+	public static void theStoneDropsAForgedTrade(GameTestHelper h) {
+		BlockPos at = stone(h);
+		NpcTradeOffer offer = offer(h, "monolith", "measure");
+		try (CapturedPlayer stranger = player(h, 5, true); CapturedPlayer low = player(h, 4, true)) {
+			double before = blood(stranger.player);
+			h.assertTrue(request(stranger, toStone(offer)) == null, "no open conversation, no reply");
+			h.assertTrue(blood(stranger.player) == before, "nothing was taken");
+			MonolithDialogueContext.open(low.player, at, SanguineMonolithDialogueTrees.unworthy());
+			h.assertTrue(request(low, toStone(offer)) == null, "the stone does not deal below the fifth Degree");
+		}
+		h.succeed();
+	}
+
+	/** A player with the box open when someone else starts the break can't trade on it. */
+	@GameTest(template = EMPTY, timeoutTicks = 40)
+	public static void aBreakingStoneTakesNoTrade(GameTestHelper h) {
+		BlockPos at = stone(h);
+		NpcTradeOffer offer = offer(h, "monolith", "measure");
+		try (CapturedPlayer trader = player(h, 5, true); CapturedPlayer archon = player(h, 7, true)) {
+			talkToStone(trader, at, 5);
+			SanguineMonolithBlockEntity block = (SanguineMonolithBlockEntity) h.getLevel().getBlockEntity(at);
+			block.beginBreak(archon.player);
+			double before = blood(trader.player);
+			h.assertTrue(request(trader, toStone(offer)) == null, "a breaking stone deals with no one");
+			h.assertTrue(blood(trader.player) == before && count(trader.player, ItemInit.sanguine_salve.get()) == 0, "nothing changed hands");
+		}
+		h.succeed();
+	}
+
+	/** Walking out of reach ends the conversation, and coming back does not reopen it without a new right click. */
+	@GameTest(template = EMPTY, timeoutTicks = 40)
+	public static void theStoneTradesOnlyInReach(GameTestHelper h) {
+		BlockPos at = stone(h);
+		NpcTradeOffer offer = offer(h, "monolith", "measure");
+		try (CapturedPlayer captured = player(h, 5, true)) {
+			ServerPlayer player = captured.player;
+			talkToStone(captured, at, 5);
+			double before = blood(player);
+			player.moveTo(at.getX() + 30.5D, at.getY(), at.getZ() + 0.5D);
+			h.assertTrue(request(captured, toStone(offer)) == null, "out of reach is dropped");
+			player.moveTo(at.getX() + 2.5D, at.getY(), at.getZ() + 0.5D);
+			h.assertTrue(request(captured, toStone(offer)) == null, "the conversation ended when the player left");
+			h.assertTrue(blood(player) == before, "nothing was taken");
+			talkToStone(captured, at, 5);
+			h.assertTrue(request(captured, toStone(offer)) != null, "a new right click opens it again");
+		}
+		h.succeed();
+	}
+
+	/** A pack with no room refuses before any blood goes in; blood under the reserve refuses before any goods come out. */
+	@GameTest(template = EMPTY, timeoutTicks = 40)
+	public static void aFullPackOrShortBloodTakesNothing(GameTestHelper h) {
+		BlockPos at = stone(h);
+		NpcTradeOffer offer = offer(h, "monolith", "measure");
+		try (CapturedPlayer full = player(h, 5, true); CapturedPlayer dry = player(h, 5, true)) {
+			for (int slot = 0; slot < full.player.getInventory().items.size(); slot++) {
+				full.player.getInventory().setItem(slot, new ItemStack(Items.DIAMOND_SWORD));
+			}
+			talkToStone(full, at, 5);
+			double before = blood(full.player);
+			NpcTradeResultPacket noRoom = request(full, toStone(offer));
+			h.assertTrue(noRoom != null && noRoom.reasonKey().equals(NpcTradeService.REFUSED_NO_ROOM), "no room: " + noRoom);
+			h.assertTrue(blood(full.player) == before, "a full pack keeps its blood");
+
+			HemoCapabilityAccess.getBloodVolume(dry.player).setBloodVolume(100.0D);
+			talkToStone(dry, at, 5);
+			NpcTradeResultPacket noBlood = request(dry, toStone(offer));
+			h.assertTrue(noBlood != null && noBlood.reasonKey().equals(NpcTradeService.REFUSED_BLOOD), "too little blood: " + noBlood);
+			h.assertTrue(count(dry.player, ItemInit.sanguine_salve.get()) == 0 && blood(dry.player) == 100.0D, "nothing changed hands");
+		}
+		h.succeed();
+	}
+
+	/** Each trade keeps the conversation open; left alone for the whole window, it ends. */
+	@GameTest(template = EMPTY, timeoutTicks = 40, batch = "stone_clock")
+	public static void aTradeKeepsTheConversationOpen(GameTestHelper h) {
+		BlockPos at = stone(h);
+		var time = h.getLevel().getServer().getWorldData().overworldData();
+		long start = time.getGameTime();
+		try (CapturedPlayer captured = player(h, 6, true)) {
+			talkToStone(captured, at, 6);
+			time.setGameTime(start + MonolithDialogueContext.CONVERSATION_TICKS - 1);
+			h.assertTrue(request(captured, toStone(offer(h, "monolith", "measure"))) != null, "inside the window the stone answers");
+			time.setGameTime(start + 2L * MonolithDialogueContext.CONVERSATION_TICKS - 2);
+			h.assertTrue(request(captured, toStone(offer(h, "monolith", "weight"))) != null, "the first trade restarted the window");
+			time.setGameTime(start + 3L * MonolithDialogueContext.CONVERSATION_TICKS);
+			h.assertTrue(request(captured, toStone(offer(h, "monolith", "deep"))) == null, "left alone, the conversation ended");
+		} finally {
+			time.setGameTime(start);
+		}
+		h.succeed();
+	}
+
+	/** Opening another speaker's dialogue ends the stone's conversation, so a trade naming the stone is dropped. */
+	@GameTest(template = EMPTY, timeoutTicks = 40)
+	public static void anotherSpeakerEndsTheStonesConversation(GameTestHelper h) {
+		BlockPos at = stone(h);
+		NpcTradeOffer offer = offer(h, "monolith", "measure");
+		Entity vicar = spawn(h, EntityInit.harbinger_vicar.get());
+		try (CapturedPlayer captured = player(h, 5, true)) {
+			talkToStone(captured, at, 5);
+			PacketHandler.sendToPlayer(captured.player, new OpenDialoguePacket(HarbingerVicarDialogueTrees.purifying(vicar.getId())));
+			h.assertTrue(request(captured, toStone(offer)) == null, "the stone is no longer the one being spoken to");
 		}
 		h.succeed();
 	}

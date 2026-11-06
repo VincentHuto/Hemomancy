@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +14,9 @@ import java.util.stream.Collectors;
 
 /** Transient server authority for the currently opened block conversation. */
 public final class MonolithDialogueContext {
+    /** How long a conversation stays open: a hub is read and traded in, not answered at once. */
+    public static final int CONVERSATION_TICKS = 6000;
+
     private record Context(ResourceKey<Level> dimension, BlockPos pos,
             WeakReference<SanguineMonolithBlockEntity> block, Set<String> events, long expires) {}
     private static final Map<ServerPlayer, Context> OPEN = new WeakHashMap<>();
@@ -24,7 +28,7 @@ public final class MonolithDialogueContext {
         Set<String> events = tree.nodes().values().stream().flatMap(node -> node.options().stream())
                 .map(DialogueOption::eventId).filter(java.util.Objects::nonNull).collect(Collectors.toSet());
         OPEN.put(player, new Context(player.level().dimension(), pos.immutable(),
-                new WeakReference<>(block), Set.copyOf(events), player.level().getGameTime() + 1200));
+                new WeakReference<>(block), Set.copyOf(events), player.level().getGameTime() + CONVERSATION_TICKS));
     }
 
     public static void clear(ServerPlayer player) { OPEN.remove(player); }
@@ -38,7 +42,17 @@ public final class MonolithDialogueContext {
 
     public static boolean permits(ServerPlayer player, String eventId) {
         Context context = OPEN.get(player);
-        if (context == null || !context.events().contains(eventId)) return false;
+        return context != null && context.events().contains(eventId) && speakingTo(player) != null;
+    }
+
+    /**
+     * The stone this player's open conversation is on, while it still stands in reach. A stale conversation ends here;
+     * a live one stays open another {@link #CONVERSATION_TICKS}.
+     */
+    @Nullable
+    public static SanguineMonolithBlockEntity speakingTo(ServerPlayer player) {
+        Context context = OPEN.get(player);
+        if (context == null) return null;
         if (!context.dimension().equals(player.level().dimension())
                 || player.level().getGameTime() > context.expires()
                 || player.distanceToSqr(context.pos().getCenter()) > 64
@@ -46,8 +60,10 @@ public final class MonolithDialogueContext {
                 || context.block().get() == null
                 || player.level().getBlockEntity(context.pos()) != context.block().get()) {
             clear(player);
-            return false;
+            return null;
         }
-        return true;
+        OPEN.put(player, new Context(context.dimension(), context.pos(), context.block(), context.events(),
+                player.level().getGameTime() + CONVERSATION_TICKS));
+        return context.block().get();
     }
 }

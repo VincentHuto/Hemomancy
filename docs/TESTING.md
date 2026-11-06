@@ -105,10 +105,10 @@ the Brined Court and the Crimson Troupe, through the same entry points a client 
 payloads, item use, placement, menu clicks, held projection and absorption, planted rites, real damage, respawn and
 relog), with edge cases (full packs, Creative, two players, wrong order, forged events, a unique NPC lost, a member
 expelled) and one-player full runs (`PlaythroughFullRunGameTests.harbingerD0ToD5`, `PlaythroughLateRunGameTests`). Its
-315 required tests must pass; of its 111 optional tests, the decision probes and `NOT RUN` probes (100 in the last run)
+318 required tests must pass; of its 109 optional tests, the decision probes and `NOT RUN` probes (98 in the last run)
 fail until the user rules or a client proves them. Per-band coverage, the harness API, how to add a scenario, what the
 GameTest server cannot run (proof owed) and the open decisions (D-1 to D-90) are in
-[PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md). GameTest's summary line ("All 426 required tests passed") counts every
+[PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md). GameTest's summary line ("All 427 required tests passed") counts every
 test, optional ones included.
 
 2026-11-02: all 315 required passed (`build/playthrough-final-run5.log`, BUILD SUCCESSFUL);

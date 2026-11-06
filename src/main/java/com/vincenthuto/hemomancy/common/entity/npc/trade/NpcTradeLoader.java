@@ -115,6 +115,7 @@ public final class NpcTradeLoader extends JsonResourceReloadListener<NpcTradeOff
 		int order = GsonHelper.getAsInt(root, "order", 0);
 		NpcTradeRequirements requirements = requirements(GsonHelper.getAsJsonObject(root, "requires", new JsonObject()), side);
 		NpcTradeWant want = want(GsonHelper.getAsJsonObject(root, "want"), side, speaker, environment);
+		if (NpcTradeSides.bloodOnly(speaker) && !(want instanceof NpcTradeWant.Blood)) throw new JsonSyntaxException("Speaker '" + speaker + "' takes only blood");
 		if (want instanceof NpcTradeWant.Blood) requirements = requirements.withBloodActive();
 
 		List<NpcTradeGive> give = gives(root, "give", environment);

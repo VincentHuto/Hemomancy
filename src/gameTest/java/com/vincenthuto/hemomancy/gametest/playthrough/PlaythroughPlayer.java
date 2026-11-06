@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueRewardClaims;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTopic;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeRequestLimiter;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
@@ -342,6 +343,18 @@ public final class PlaythroughPlayer {
 		Outcome.Probe probe = Outcome.begin(this, npc, "trade " + offerId);
 		int before = captured.sent(NpcTradeResultPacket.class).size();
 		NpcTradeRequestPacket.handle(new NpcTradeRequestPacket(npc.getId(), offerId, slots), PayloadContexts.of(player()));
+		probe.finish();
+		List<NpcTradeResultPacket> replies = captured.sent(NpcTradeResultPacket.class);
+		return replies.size() > before ? replies.getLast() : null;
+	}
+
+	/** A trade request to the block speaker whose conversation is open (the Monolith, entity id -1); null when dropped. */
+	public NpcTradeResultPacket tradeAtBlock(ResourceLocation offerId, int... slots) {
+		NpcTradeRequestLimiter.logout(player());
+		Outcome.Probe probe = Outcome.begin(this, null, "trade " + offerId + " at a block");
+		int before = captured.sent(NpcTradeResultPacket.class).size();
+		NpcTradeRequestPacket.handle(new NpcTradeRequestPacket(SanguineMonolithDialogueTrees.BLOCK_ENTITY_ID, offerId, slots),
+				PayloadContexts.of(player()));
 		probe.finish();
 		List<NpcTradeResultPacket> replies = captured.sent(NpcTradeResultPacket.class);
 		return replies.size() > before ? replies.getLast() : null;
@@ -877,7 +890,7 @@ public final class PlaythroughPlayer {
 		return useOnForDialogue(pos);
 	}
 
-	/** Right-clicks {@code pos} holding what is in hand now (an item inquiry at the Monolith) and reads the dialogue. */
+	/** Right-clicks {@code pos} holding what is in hand now and reads the dialogue. */
 	public Optional<DialogueView> useOnForDialogue(BlockPos pos) {
 		int before = captured.sent(OpenDialoguePacket.class).size();
 		useOn(pos);

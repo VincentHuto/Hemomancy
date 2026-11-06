@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.client.screen.dialogue;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTheme;
-import com.vincenthuto.hemomancy.config.HemoClientConfig;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -12,16 +11,13 @@ public record DialogueThemeStyle(ResourceLocation frameSprite, ResourceLocation 
 		ResourceLocation buttonSprite, ResourceLocation buttonSelectedSprite, ResourceLocation buttonDisabledSprite,
 		int speakerColor, int textColor, int optionColor, int disabledColor, int separatorColor,
 		int progressBackColor, int progressColor, int scrollTrackColor, int scrollThumbColor) {
+	/** One flat, vanilla-style sprite set per theme (tools/oneoff/dialogue_flat_sprites.py). */
 	public static DialogueThemeStyle forTheme(DialogueTheme theme) {
-		return forTheme(theme, HemoClientConfig.useTexturedDialogueStyle());
-	}
-
-	static DialogueThemeStyle forTheme(DialogueTheme theme, boolean useTexturedStyle) {
 		String name = switch (theme) {
-			case BLOOD -> useTexturedStyle ? "blood_material" : "blood";
-			case UNSTAINED -> useTexturedStyle ? "unstained_material" : "unstained";
-			case FUNGAL -> useTexturedStyle ? "fungal_material" : "fungal";
-			case STILL, STILL_MATERIAL -> useTexturedStyle ? "still_material" : "still";
+			case BLOOD -> "blood";
+			case UNSTAINED -> "unstained";
+			case FUNGAL -> "fungal";
+			case STILL, STILL_MATERIAL -> "still";
 		};
 		return switch (theme) {
 			case UNSTAINED -> create(name, 0xFFD9E3F4, 0xFFC4C8D4, 0xFFAABBE0, 0xFF687080,
@@ -67,13 +63,7 @@ public record DialogueThemeStyle(ResourceLocation frameSprite, ResourceLocation 
 	}
 
 	public static ResourceLocation categoryCard(DialogueCategory category, boolean selected) {
-		return categoryCard(category, selected, HemoClientConfig.useTexturedDialogueStyle());
-	}
-
-	public static ResourceLocation categoryCard(DialogueCategory category, boolean selected, boolean useTexturedStyle) {
-		String folder = useTexturedStyle ? "categories_material/" : "categories/";
-		return sprite("dialogue/" + folder + category.name().toLowerCase()
-				+ (selected ? "_selected" : ""));
+		return sprite("dialogue/categories/" + category.name().toLowerCase() + (selected ? "_selected" : ""));
 	}
 
 	public static ResourceLocation statusIcon(String state) {

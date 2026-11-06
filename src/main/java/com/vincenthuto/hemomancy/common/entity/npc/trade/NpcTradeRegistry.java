@@ -20,8 +20,8 @@ import java.util.stream.Stream;
 
 /**
  * The loaded want cards, server side. {@link NpcTradeLoader} installs what parsed; the cross-file rules run here:
- * two cards on one speaker may not want the same thing (an item, a tag, blood, a custom), and no card may give an
- * item tagged {@link NpcTradeGiveRules#NEVER_SOLD}. Tags aren't bound while data loads, so the rules run once on
+ * two cards on one speaker may not want the same thing (an item, a tag, blood, a custom; a blood-only speaker's cards
+ * may all want blood, {@link NpcTradeSides#bloodOnly}), and no card may give an item tagged {@link NpcTradeGiveRules#NEVER_SOLD}. Tags aren't bound while data loads, so the rules run once on
  * install with tags unexpanded and again from {@link NpcTradeTagEvents} once they are. Of two clashing cards the
  * lexically first id stays.
  */
@@ -140,7 +140,7 @@ public final class NpcTradeRegistry {
 	static Set<String> claims(NpcTradeOffer offer, Function<ResourceLocation, Set<ResourceLocation>> tagItems) {
 		Set<String> claims = new HashSet<>();
 		offer.want().itemParts().forEach(part -> claims.addAll(claims(part.match(), tagItems)));
-		offer.want().exclusiveClaim().ifPresent(claims::add);
+		if (!NpcTradeSides.bloodOnly(offer.speaker())) offer.want().exclusiveClaim().ifPresent(claims::add);
 		return claims;
 	}
 

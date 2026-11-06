@@ -63,6 +63,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Rite:** Illuminatus Rite / Rite of the Crimson Lodge
 - **Theme:** the Crimson Lodge and its concealed mycelial research
 - **Core progression:** Bloodline Founding, Morphling Incubator, Sanguine Monolith, and Founding Fane eligibility
+- **The Sanguine Monolith** opens like any NPC from here: counsel on your next step, answers about what you carry, and a Trade box that takes only blood
 - Bloodline Founding creates the covenant. The later Founding Fane rite gives that covenant a Flexible Envelope shaped by a Consecrated Bloodwell and connected Hematic Stakes.
 - Members of an existing bloodline can earn their personal D6 chapter proof at D5 by standing inside its Fane and using Blood Projection to deposit their own blood into its Bloodwell. Membership, observation, withdrawal, and a zero deposit do not count.
 - Using a blood tool at the shared Bloodwell starts that tool's transfer. Opening the ordinary pool monitor still requires personal Bloodwell mastery.

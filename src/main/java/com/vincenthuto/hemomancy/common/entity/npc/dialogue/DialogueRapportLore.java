@@ -54,6 +54,7 @@ public final class DialogueRapportLore {
 		add(lines, "cicatrix_anchorite", "the_respite", 1, "own_scars", 2);
 		add(lines, "voyager", "the_cog", 1, "the_whales", 2);
 		add(lines, "votary_wayfarer", "why_aboard", 1, "afraid", 2);
+		add(lines, "monolith", "the_reading", 1, "where_it_goes", 2);
 		// The Unstained
 		add(lines, "zealot", "why_church", 1, "the_one_lost", 2);
 		add(lines, "acolyte", "the_people", 1, "the_lady", 2);

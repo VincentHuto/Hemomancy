@@ -112,6 +112,8 @@ def reviewClients = [
                              props: ['hemomancy.possessionReview': 'true']],
     heartNodeReviewClient: [dir: 'build/heart-node-review', user: 'HeartNodeReview', size: review,
                             props: ['hemomancy.heartNodeReview': 'true']],
+    monolithHubReviewClient: [dir: 'build/monolith-hub-review', user: 'MonolithHub', size: review,
+                              props: ['hemomancy.monolithHubReview': 'true']],
     npcTradeReviewClient: [dir: 'build/npc-trade-review', user: 'NpcTradeReview', size: review,
                            props: ['hemomancy.npcTradeReview': 'true']],
     faneGroundReviewClient: [dir: 'build/fane-ground-review', user: 'FaneGroundReview', size: review,

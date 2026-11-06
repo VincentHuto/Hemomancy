@@ -1495,11 +1495,8 @@ public final class PlaythroughIlluminatusGameTests {
 	// The Monolith at D5
 	// =================================================================================================================
 
-	/** A D5 player at a Sanguine Monolith someone built, with an empty hand and then holding an item. */
-	// DECISION D5-6: the D5 Monolith tree carries no covenant guidance, and any held item hides its whole tree. Options:
-	// add guidance to the D5/D6 tree / keep inquiry plus tree / keep. The probe expects covenant guidance and the tree
-	// reachable with an item in hand.
-	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
+	/** A D5 player at a Sanguine Monolith someone built: covenant counsel, and the same hub with an item in hand. */
+	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
 	public static void monolithAtD5(GameTestHelper helper) {
 		PlaythroughPlayer p = d5(helper, 14, 6);
 		BlockPos stone = PlaythroughSites.monolith(p, PlaythroughSites.stand(helper, 14, 2)); // ARRANGE: a D6 craft (D-5)
@@ -1511,10 +1508,10 @@ public final class PlaythroughIlluminatusGameTests {
 		p.give(new ItemStack(Items.STICK)); // ARRANGE
 		p.wield(Items.STICK);
 		Optional<DialogueView> held = p.useOnForDialogue(stone);
-		boolean treeWithItem = held.isPresent() && held.get().hasNode("what_are_you");
-		PlaythroughLog.note(helper, "D5-6 empty-hand lines " + keys + "; with an item: "
+		boolean treeWithItem = held.isPresent() && held.get().hasNode("what_are_you_illuminatus");
+		PlaythroughLog.note(helper, "the D5 stone: empty-hand lines " + keys + "; with an item: "
 				+ held.map(DialogueView::describe).orElse("nothing"));
-		helper.assertTrue(guidance && treeWithItem, "D5-6 expected covenant guidance (" + guidance
+		helper.assertTrue(guidance && treeWithItem, "expected covenant guidance (" + guidance
 				+ ") and the tree with an item in hand (" + treeWithItem + ")");
 		helper.succeed();
 	}

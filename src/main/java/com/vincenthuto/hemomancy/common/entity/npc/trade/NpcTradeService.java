@@ -11,7 +11,6 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.trade.NpcTradeResultPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -116,11 +115,12 @@ public final class NpcTradeService {
 	private NpcTradeService() {}
 
 	/**
-	 * The server side of a trade request the payload has validated: the entity is a trade speaker within reach that
-	 * deals with this player, and {@code slots} are distinct main-inventory slots. Rate-limited per player.
+	 * The server side of a trade request the payload has validated: the speaker is within reach and deals with this
+	 * player, and {@code slots} are distinct main-inventory slots. Rate-limited per player. {@code replyId} is the id the
+	 * open dialogue goes by, which the screen matches the reply against.
 	 */
-	public static void attempt(ServerPlayer player, Entity entity, ResourceLocation offerId, int[] slots) {
-		if (!(entity instanceof NpcTradeSpeaker speaker)) return;
+	public static void attempt(ServerPlayer player, NpcTradeSpeaker speaker, int replyId, ResourceLocation offerId,
+			int[] slots) {
 		if (!NpcTradeRequestLimiter.tryAcquire(player.getUUID(), player.server.getTickCount())) return;
 		String speakerId = speaker.tradeSpeakerId();
 		NpcTradeLedger ledger = HemoCapabilityAccess.npcTrades(player);
@@ -128,16 +128,16 @@ public final class NpcTradeService {
 				.filter(found -> found.speaker().equals(speakerId));
 		long day = NpcTradeRules.day(player.level().getDayTime());
 		Result result;
-		if (offer.isEmpty() || !serves(player, entity)) {
+		if (offer.isEmpty() || !serves(player, speaker)) {
 			result = Result.refused(REFUSED_UNKNOWN, ledger.rapport(speakerId));
 		} else if (!NpcTradeRotation.offeredToday(offer.get(), NpcTradeRegistry.offers(speakerId),
 				player.serverLevel().getSeed(), day)) {
 			result = Result.refused(REFUSED_NOT_TODAY, ledger.rapport(speakerId));
 		} else {
-			result = run(offer.get(), new PlayerTradeParty(player, entity), ledger, day, slots);
+			result = run(offer.get(), new PlayerTradeParty(player, speaker), ledger, day, slots);
 		}
 		NpcTradeBoard board = NpcTradeCards.build(player, speakerId);
-		PacketHandler.sendToPlayer(player, new NpcTradeResultPacket(entity.getId(), offerId, result.outcome(),
+		PacketHandler.sendToPlayer(player, new NpcTradeResultPacket(replyId, offerId, result.outcome(),
 				result.reasonKey(), board));
 	}
 
@@ -145,9 +145,9 @@ public final class NpcTradeService {
 	 * A misbegotten Harbinger, or a successor who won't serve this player, keeps no trade either; nor does a Hermit
 	 * in his farewell, whose tree no longer opens.
 	 */
-	private static boolean serves(ServerPlayer player, Entity entity) {
-		if (entity instanceof HarbingerHermitEntity hermit) return !hermit.isFarewellDying();
-		return !(entity instanceof ProfessionalHarbingerEntity npc)
+	private static boolean serves(ServerPlayer player, NpcTradeSpeaker speaker) {
+		if (speaker instanceof HarbingerHermitEntity hermit) return !hermit.isFarewellDying();
+		return !(speaker instanceof ProfessionalHarbingerEntity npc)
 				|| !npc.isMisbegotten() && (!npc.isSuccessor() || SuccessionResidents.mayServe(player, npc));
 	}
 

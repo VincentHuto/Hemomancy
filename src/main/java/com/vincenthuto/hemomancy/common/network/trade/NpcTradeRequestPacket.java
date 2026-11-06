@@ -10,7 +10,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
@@ -41,10 +40,9 @@ public record NpcTradeRequestPacket(int entityId, ResourceLocation offerId, int[
 		context.enqueueWork(() -> {
 			if (!(context.player() instanceof ServerPlayer player) || !ServerboundGuards.activePlayer(player)) return;
 			if (!ServerboundGuards.distinctSlots(packet.slots, player.getInventory().items.size())) return;
-			NpcTradeSpeaker speaker = ServerboundGuards.nearLivingEntity(player, packet.entityId, REACH,
-					NpcTradeSpeaker.class);
+			NpcTradeSpeaker speaker = NpcTradeSpeaker.near(player, packet.entityId, REACH);
 			if (speaker == null || !speaker.tradesWith(player)) return;
-			NpcTradeService.attempt(player, (Entity) speaker, packet.offerId, packet.slots);
+			NpcTradeService.attempt(player, speaker, packet.entityId, packet.offerId, packet.slots);
 		});
 	}
 

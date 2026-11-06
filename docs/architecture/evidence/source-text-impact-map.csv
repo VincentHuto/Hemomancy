@@ -1957,6 +1957,7 @@ src/test/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/ItemInquiryRe
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PuppeteeringThreadInquiryOwnershipTest.java,main,src/main/resources,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PuppeteeringThreadInquiryOwnershipTest.java,main,src/main/resources/assets/hemomancy/lang/en_us.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PuppeteeringThreadInquiryOwnershipTest.java,main,src/main/resources/data/hemomancy/dialogue_inquiry/mnemonist/hemomancy/enthralling_filament.json,resource,base-dir
+src/test/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/SanguineMonolithDialogueTreesTest.java,junit,src/main/resources/assets/hemomancy/lang/en_us.json,resource,helper
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/VicarBloodCraftingAssignmentSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/screen/item/HarbingerAssignmentLedgerScreen.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/VicarBloodCraftingAssignmentSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodVolumeEvents.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/VicarBloodCraftingAssignmentSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java,java,exact

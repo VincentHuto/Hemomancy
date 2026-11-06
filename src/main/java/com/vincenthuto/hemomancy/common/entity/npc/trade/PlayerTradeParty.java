@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeAppraisals.Grad
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -23,9 +22,9 @@ import java.util.Optional;
  */
 final class PlayerTradeParty implements NpcTradeService.Party {
 	private final ServerPlayer player;
-	private final Entity speaker;
+	private final NpcTradeSpeaker speaker;
 
-	PlayerTradeParty(ServerPlayer player, Entity speaker) {
+	PlayerTradeParty(ServerPlayer player, NpcTradeSpeaker speaker) {
 		this.player = player;
 		this.speaker = speaker;
 	}

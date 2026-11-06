@@ -32,9 +32,9 @@ class DialogueLoreFlagTest {
 	 * when lines leave the golden on purpose (2026-10-31: the Anchorite's replace_pattern and accept_referral stopped
 	 * being lore, 66 to 64; then the Hermit's what_next and the Alchemist's tell_me_about_chisel_station became quests,
 	 * 64 to 62. The Artificer's teach_armature also left, but the sweep never reached it: its workshop tree needs an
-	 * assignment Step, and sampled enums are null).
+	 * assignment Step, and sampled enums are null). 2026-11-05: the Monolith's ten lore cards joined, 62 to 72.
 	 */
-	private static final int MIN_REACHED = 62;
+	private static final int MIN_REACHED = 72;
 
 	static {
 		TREES.put(HarbingerVicarDialogueTrees.class, "vicar");
@@ -48,6 +48,7 @@ class DialogueLoreFlagTest {
 		TREES.put(AcolyteDialogueTrees.class, "acolyte");
 		TREES.put(ZealotDialogueTrees.class, "zealot");
 		TREES.put(GuardianDialogueTrees.class, "guardian");
+		TREES.put(SanguineMonolithDialogueTrees.class, "monolith");
 	}
 
 	@Test

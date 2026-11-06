@@ -81,7 +81,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	};
 
 	/** Minimum initiatory degree required to commune with the monolith. */
-	private static final int MIN_DEGREE = 5;
+	public static final int MIN_DEGREE = 5;
 
 	public SanguineMonolithBlock(Properties properties) {
 		super(properties);
@@ -258,8 +258,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		};
 	}
 
-	private InteractionResult handleInteraction(BlockState state, Level worldIn, BlockPos pos, Player player,
-			ItemStack heldItem) {
+	private InteractionResult handleInteraction(Level worldIn, BlockPos pos, Player player) {
 		if (worldIn.isClientSide) {
 			return InteractionResult.SUCCESS;
 		}
@@ -277,9 +276,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 		DialogueTree tree = degreeNumber < MIN_DEGREE
 				? SanguineMonolithDialogueTrees.unworthy()
-				: (heldItem.isEmpty()
-				? SanguineMonolithDialogueTrees.forPlayer(serverPlayer, degreeNumber)
-				: SanguineMonolithDialogueTrees.itemInquiry(serverPlayer, heldItem));
+				: SanguineMonolithDialogueTrees.hub(serverPlayer, degreeNumber);
 
 		MonolithDialogueContext.open(serverPlayer, pos, tree);
 		PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
@@ -309,7 +306,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player,
 			BlockHitResult result) {
-		return handleInteraction(state, worldIn, pos, player, ItemStack.EMPTY);
+		return handleInteraction(worldIn, pos, player);
 	}
 
 	@Override
@@ -317,12 +314,12 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 			Player player, InteractionHand handIn, BlockHitResult result) {
 		// A cracked or broken stone lets a held item go on to its own use, so Blood Projection can be started on the
 		// husk itself; only an empty hand reaches the hint. A cell hand is a cast, not a thing to ask the stone about,
-		// so it goes on to its own use on a whole stone too, where any other item opens the stone's item inquiry.
+		// so it goes on to its own use on a whole stone too, where any other item opens the stone's hub.
 		if (!stack.isEmpty() && (stack.getItem() instanceof com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand
 				|| worldIn.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity stone && (stone.isBreaking() || stone.isBroken()))) {
 			return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 		}
-		handleInteraction(state, worldIn, pos, player, stack);
+		handleInteraction(worldIn, pos, player);
 		return ItemInteractionResult.SUCCESS;
 	}
 

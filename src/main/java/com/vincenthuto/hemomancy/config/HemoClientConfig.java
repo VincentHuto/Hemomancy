@@ -14,7 +14,6 @@ public class HemoClientConfig {
 	public static ModConfigSpec.DoubleValue MORPHLING_HUD_SCALE;
 	public static ModConfigSpec.BooleanValue USE_COOLDOWN_VIGNETTE;
 	public static ModConfigSpec.BooleanValue RENDER_CROWN_POMES_AS_ITEMS;
-	public static ModConfigSpec.BooleanValue USE_TEXTURED_DIALOGUE_STYLE;
 	public static ModConfigSpec.BooleanValue RENDER_BLOOD_GOURD_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_VASCULARIUM_CHARM_LAYER;
 	public static ModConfigSpec.BooleanValue RENDER_MORPHLING_JAR_LAYER;
@@ -93,15 +92,6 @@ public class HemoClientConfig {
 		.define("renderCrownPomesAsItems", false);
 
         CLIENT_BUILDER.pop();
-
-		CLIENT_BUILDER.comment("Client-side dialogue appearance settings").push("dialogue");
-
-		USE_TEXTURED_DIALOGUE_STYLE = CLIENT_BUILDER
-				.comment("Use the physical material texture sets for all NPC dialogue frames, cards, and buttons.",
-						"Disable to use the older abstract colored texture sets.")
-				.define("useTexturedDialogueStyle", true);
-
-		CLIENT_BUILDER.pop();
 
 		CLIENT_BUILDER.comment("Client-side toggles for Hemomancy player render layers").push("render_layers");
 
@@ -197,11 +187,6 @@ public class HemoClientConfig {
 
 	public static boolean bossSceneShake() {
 		return BOSS_SCENE_SHAKE == null || BOSS_SCENE_SHAKE.get();
-	}
-
-	public static boolean useTexturedDialogueStyle() {
-		return USE_TEXTURED_DIALOGUE_STYLE == null
-				|| USE_TEXTURED_DIALOGUE_STYLE.get();
 	}
 
 	public static FaneBoundaryStyle faneBoundaryStyle() {

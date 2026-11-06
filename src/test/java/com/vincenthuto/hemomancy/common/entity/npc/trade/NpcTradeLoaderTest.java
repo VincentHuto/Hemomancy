@@ -256,6 +256,17 @@ class NpcTradeLoaderTest {
 		return "{\"kind\": \"items\", \"ingredient\": {\"item\": \"hemomancy:recycled_enzyme\"}, \"count\": 4}";
 	}
 
+	@Test
+	void aBloodOnlySpeakerKeepsEveryBloodCardAndRefusesAnyOtherWant() {
+		NpcTradeOffer small = parse("monolith/small", card("{\"kind\": \"blood\", \"amount\": 100}"));
+		NpcTradeOffer large = parse("monolith/large", card("{\"kind\": \"blood\", \"amount\": 200}"));
+		NpcTradeRegistry.Validation validation = NpcTradeRegistry.validate(List.of(small, large), tag -> Set.of(), item -> false);
+		assertEquals(Set.of(small.id(), large.id()), validation.kept().keySet(), "the stone's cards may all want blood");
+		assertEquals(List.of(), validation.rejections());
+		assertRejected("monolith/items", card("{\"kind\": \"items\", \"ingredient\": {\"item\": \"minecraft:bone\"}}"),
+				"the stone takes only blood");
+	}
+
 	private static String card(String want) {
 		return "{\"title\": \"hemomancy.trade.test.title\", \"line\": \"hemomancy.trade.test.line\", \"want\": " + want
 				+ ", \"give\": [{\"item\": \"hemomancy:enzyme_primer\"}]}";

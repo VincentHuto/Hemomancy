@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Which side each dialogue speaker belongs to, keyed by the speaker id the hub and {@code dialogue_inquiry/} use. The
@@ -30,6 +31,9 @@ public final class NpcTradeSides {
 	 */
 	public static final TagKey<Item> STAINED = ItemTags.create(Hemomancy.rloc("trade/stained"));
 
+	/** Speakers who take nothing but blood: every card is a blood price, so the one-blood-card rule can't bind them. */
+	private static final Set<String> BLOOD_ONLY = Set.of("monolith");
+
 	private static final Map<String, Side> SIDES = build();
 
 	private NpcTradeSides() {}
@@ -37,7 +41,7 @@ public final class NpcTradeSides {
 	private static Map<String, Side> build() {
 		Map<String, Side> sides = new LinkedHashMap<>();
 		for (String id : new String[] { "vicar", "alchemist", "artificer", "mnemonist", "hermit",
-				"cicatrix_anchorite", "voyager", "votary_wayfarer" }) {
+				"cicatrix_anchorite", "voyager", "votary_wayfarer", "monolith" }) {
 			sides.put(id, Side.HARBINGER);
 		}
 		for (String id : new String[] { "acolyte", "zealot", "guardian", "scout" }) {
@@ -59,6 +63,11 @@ public final class NpcTradeSides {
 
 	public static boolean is(String speakerId, Side side) {
 		return side(speakerId).orElse(null) == side;
+	}
+
+	/** Whether every card of this speaker must be a blood price. */
+	public static boolean bloodOnly(String speakerId) {
+		return BLOOD_ONLY.contains(speakerId);
 	}
 
 	/**

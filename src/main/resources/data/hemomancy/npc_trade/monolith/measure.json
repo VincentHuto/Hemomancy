@@ -1,0 +1,19 @@
+{
+  "title": "hemomancy.trade.monolith.measure.title",
+  "line": "hemomancy.trade.monolith.measure.line",
+  "order": 10,
+  "want": {
+    "kind": "blood",
+    "amount": 500
+  },
+  "give": [
+    {
+      "item": "hemomancy:sanguine_salve",
+      "count": 2
+    }
+  ],
+  "stock": {
+    "uses": 1,
+    "restock_days": 1
+  }
+}

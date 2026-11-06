@@ -8,8 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterMilestone;
-import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -201,15 +199,9 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.entit
         tree = HarbingerVicarDialogueTrees.withContinuingConsecration(tree, degree,
                 com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.ArtificerDialogueEvents.hasClaimedConsecrationKit(serverPlayer));
         if (degree == 5 || degree == 6) {
-            var bloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer).getBloodLine();
-            boolean inBloodline = bloodline.isValid();
-            boolean faneComplete = HarbingerChapterProgression.completedChapters(serverPlayer)
-                    .contains(HarbingerChapterMilestone.COVENANT_WRITTEN_IN_PLACE);
-            tree = HarbingerVicarDialogueTrees.withCovenantGuidance(tree, degree, inBloodline,
-                    faneComplete,
-                    hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED),
-                    hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND),
-                    hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_COVENANT_VIGIL_COMPLETED));
+            var covenant = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CovenantProgress.of(serverPlayer);
+            tree = HarbingerVicarDialogueTrees.withCovenantGuidance(tree, degree, covenant.inBloodline(),
+                    covenant.faneComplete(), covenant.chamberReturned(), covenant.throneBound(), covenant.vigilComplete());
         }
         tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.StationUpgradeDialogue.append(tree, serverPlayer,
                 com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.CONDENSER, "hemomancy.dialogue.vicar.option.leave");
