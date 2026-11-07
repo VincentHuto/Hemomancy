@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.world;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.MycelialSynapseBlock;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.MoltingService;
 import com.vincenthuto.hemomancy.common.event.HeartNodeEnvelopeSync;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -70,7 +72,15 @@ public final class HeartNodeService {
 		boolean respawnHere = owner != null && level.dimension().equals(owner.getRespawnDimension())
 				&& entry.heart().above().equals(owner.getRespawnPosition());
 		return new PacketOpenHeartNodeScreen(entry.heart(), entry.owner(), ownerName(level, entry.owner()), synapses,
-				entry.settings(), entry.plantedAt(), respawnHere, waitingCaches(level, entry.owner()), readOnly);
+				entry.settings(), entry.plantedAt(), respawnHere, waitingCaches(level, entry.owner()), readOnly,
+				readOnly || owner == null ? PacketOpenHeartNodeScreen.Molt.NONE : molt(level, owner));
+	}
+
+	private static PacketOpenHeartNodeScreen.Molt molt(ServerLevel level, ServerPlayer owner) {
+		List<Float> base = new ArrayList<>();
+		for (float value : MoltingService.baseAlignment(owner)) base.add(value);
+		return new PacketOpenHeartNodeScreen.Molt(base, HemoCapabilityAccess.getSporeLoad(owner).load(),
+				Math.max(0L, MoltingService.softUntil(owner) - level.getGameTime()));
 	}
 
 	/**

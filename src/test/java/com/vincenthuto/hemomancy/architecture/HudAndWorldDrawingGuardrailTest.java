@@ -58,7 +58,7 @@ class HudAndWorldDrawingGuardrailTest {
 				"EarthenVeinTravelClientEvents.renderWorld(event)", "MycophantIntroClientEvents.renderGlimpse(event)",
 				"CrossbarHolderTracker.onStage(event)", "AvatarFirstPersonRenderer.render(event)",
 				"OutpouringRenderer.render(event)", "ManipulationVisualRenderer.render(event)",
-				"event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY");
+				"SaintTelegraphRenderer.render(event)", "event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY");
 		assertInOrder(body, order);
 		assertTrue(SourceAssertions.readMainJava(DISPATCHER).contains(
 				"@SubscribeEvent(priority = EventPriority.HIGH)\n    public static void renderScreenPasses(RenderLevelStageEvent event) {\n        OutpouringScreenPasses.render(event);"),
@@ -74,6 +74,8 @@ class HudAndWorldDrawingGuardrailTest {
 				"renderWhiteHumorScreenOverlay(graphics)"));
 		assertTrue(registrar.contains("event.registerBelowAll(Hemomancy.rloc(\"screen_effects\")"),
 				"full-screen effects draw under every HUD layer");
+		assertTrue(registrar.contains("event.registerAbove(VanillaGuiLayers.BOSS_OVERLAY, Hemomancy.rloc(\"saint_meter\"), "
+				+ "hud(SaintMeterLayer::render))"), "the Saint meter draws just above the boss bars, behind the HUD rules");
 		String markers = SourceAssertions.section(registrar, "Hemomancy.rloc(\"hud_markers\")", "})");
 		assertInOrder(markers, List.of("translate(0.0F, 0.0F, -graphics.pose().last().pose().m32())",
 				"EarthenVeinTravelClientEvents.renderTooltip(graphics)", "ManipulationVisualRenderer.hud(graphics)",

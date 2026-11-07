@@ -22,6 +22,8 @@ public final class BossBarFrameClientState {
 	public static final float REVEAL_TICKS = 20.0F;
 	/** A bar this long unseen has gone for good. */
 	public static final int FORGET_TICKS = 6000;
+	/** A bar painted this long ago (in ticks) still counts as painted this frame. */
+	public static final float PAINT_FRESH = 1.5F;
 
 	private static final Map<UUID, Entry> ENTRIES = new HashMap<>();
 	private static int clock;
@@ -37,6 +39,20 @@ public final class BossBarFrameClientState {
 	@Nullable
 	public static Entry entry(UUID bar) {
 		return ENTRIES.get(bar);
+	}
+
+	/**
+	 * The bar drawn by {@code frame} that the frame renderer painted this frame (within {@link #PAINT_FRESH} of
+	 * {@code now}), or null: the Saint meter layer reads its origin to draw under it.
+	 */
+	@Nullable
+	public static Entry painted(ResourceLocation frame, float now) {
+		Entry found = null;
+		for (Entry entry : ENTRIES.values()) {
+			if (!entry.frame.equals(frame) || entry.paintedAt < now - PAINT_FRESH) continue;
+			if (found == null || entry.paintedY < found.paintedY) found = entry;
+		}
+		return found;
 	}
 
 	public static int clock() {
@@ -65,6 +81,9 @@ public final class BossBarFrameClientState {
 		private float last;
 		private float holdUntil;
 		private float lastStep;
+		private int paintedX;
+		private int paintedY;
+		private float paintedAt = -1.0E9F;
 
 		Entry(ResourceLocation frame, float boundAt) {
 			this.frame = frame;
@@ -80,6 +99,21 @@ public final class BossBarFrameClientState {
 		public void seen(float now) {
 			if (now - lastSeen > 2.0F) revealStart = now;
 			lastSeen = now;
+		}
+
+		/** Records where the bar was painted at {@code now}: the Saint meter draws under it. */
+		public void painted(int x, int y, float now) {
+			paintedX = x;
+			paintedY = y;
+			paintedAt = now;
+		}
+
+		public int paintedX() {
+			return paintedX;
+		}
+
+		public int paintedY() {
+			return paintedY;
 		}
 
 		/** 0 as the bar appears, 1 once it has fully unfurled. */

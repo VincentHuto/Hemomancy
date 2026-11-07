@@ -3,9 +3,11 @@ package com.vincenthuto.hemomancy.common.effect;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionRules;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationStatusRules;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintHealing;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 
 /**
  * Every reduction to incoming healing, in the order {@code ManipulationStatusEvents.onLivingHeal} applies them at
@@ -21,18 +23,25 @@ public enum HealModifier {
 	/** Hemorath's Empty Pulse; Insatiable Hunger replaces it. */
 	HEMOPHAGY(0.25F, entity -> entity.hasEffect(EffectInit.hemophagy) && !entity.hasEffect(EffectInit.insatiable_hunger)),
 	/** A blood injection's Impaired Recovery. */
-	IMPAIRED_RECOVERY(BloodInjectionRules.HEALING_MULTIPLIER, entity -> entity.hasEffect(EffectInit.impaired_recovery));
+	IMPAIRED_RECOVERY(BloodInjectionRules.HEALING_MULTIPLIER, entity -> entity.hasEffect(EffectInit.impaired_recovery)),
+	/** A Saint's presence on its challengers (Putriciel's colonisation, Velorum's chill): the lowest live entry. */
+	SAINT_PRESENCE(SaintHealing::multiplier, entity -> SaintHealing.multiplier(entity) != 1.0F);
 
-	private final float multiplier;
+	private final ToDoubleFunction<LivingEntity> multiplier;
 	private final Predicate<LivingEntity> applies;
 
 	HealModifier(float multiplier, Predicate<LivingEntity> applies) {
+		this(entity -> multiplier, applies);
+	}
+
+	HealModifier(ToDoubleFunction<LivingEntity> multiplier, Predicate<LivingEntity> applies) {
 		this.multiplier = multiplier;
 		this.applies = applies;
 	}
 
-	public float multiplier() {
-		return multiplier;
+	/** The factor this entry scales a heal on {@code entity} by; the constant entries ignore the entity. */
+	public float multiplier(LivingEntity entity) {
+		return (float) multiplier.applyAsDouble(entity);
 	}
 
 	public boolean appliesTo(LivingEntity entity) {

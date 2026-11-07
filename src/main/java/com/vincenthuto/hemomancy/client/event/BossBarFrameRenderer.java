@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrame;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrameClientState;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFramePainter;
 import com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrames;
+import com.vincenthuto.hemomancy.client.screen.overlay.boss.SaintMeterLayer;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.neoforged.api.distmarker.Dist;
@@ -31,9 +32,11 @@ public final class BossBarFrameRenderer {
 		BossBarFrame frame = BossBarFrames.get(entry.frame());
 		if (frame == null) return;
 		event.setCanceled(true);
-		event.setIncrement(frame.increment());
+		// a bar carrying a Saint meter leaves the meter's rows under it, so the bars below make room
+		event.setIncrement(frame.increment() + SaintMeterLayer.room(entry.frame()));
 		float now = BossBarFrameClientState.clock() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
 		entry.seen(now);
+		entry.painted(event.getX(), event.getY(), now);
 		float progress = bar.getProgress();
 		BossBarFramePainter.paint(event.getGuiGraphics(), frame, bar, event.getX(), event.getY(), progress,
 				entry.chip(progress, now), entry.reveal(now), now);

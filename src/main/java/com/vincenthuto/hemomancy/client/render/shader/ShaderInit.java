@@ -166,6 +166,33 @@ public class ShaderInit {
     public static ShaderHolder MANIPULATION_GLASS = thermal("glass");
     public static ShaderHolder MANIPULATION_CRUOR = thermal("cruor");
     public static ShaderHolder MANIPULATION_RIME = thermal("rime");
+    /** Saint Hemorath's floor cracking along a move's footprint: strips and crazed patches, state in the vertex colour. */
+    public static ShaderHolder HEMORATH_FISSURE = new ShaderHolder(Hemomancy.rloc("world/hemorath_fissure"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+    /** Saint Hemorath's iron torn out of the floor: solid faceted oxblood iron, its heat, wet and rust in the colour. */
+    public static ShaderHolder HEMORATH_IRON = new ShaderHolder(Hemomancy.rloc("world/hemorath_iron"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+    /** Saint Velorum's floor arrested by the cold: seams, rime, black ice, trenches, folds of dark; state in the colour. */
+    public static ShaderHolder VELORUM_FROST = new ShaderHolder(Hemomancy.rloc("world/velorum_frost"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+    /** Saint Velorum's ice standing out of the floor: faceted black ice, rime crystals and shell panes; state in the colour. */
+    public static ShaderHolder VELORUM_ICE = new ShaderHolder(Hemomancy.rloc("world/velorum_ice"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+    /** Saint Putriciel's floor colonised by the rot and scorched by the fire: patches and trenches, state in the colour. */
+    public static ShaderHolder PUTRICIEL_GROUND = new ShaderHolder(Hemomancy.rloc("world/putriciel_ground"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+    /** Saint Putriciel's rot in the air: spore clouds, ooze, glints and spore curtains, state in the colour. */
+    public static ShaderHolder PUTRICIEL_SPORE = new ShaderHolder(Hemomancy.rloc("world/putriciel_spore"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+    /** Saint Putriciel's growths: solid bracket fungus, sacs, roots and clods, their char, wet and bloom in the colour. */
+    public static ShaderHolder PUTRICIEL_GROWTH = new ShaderHolder(Hemomancy.rloc("world/putriciel_growth"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+    /** Saint Seraphae's floor healing over along a move's footprint: furrows, overgrowth and vessels, state in the colour. */
+    public static ShaderHolder SERAPHAE_TISSUE = new ShaderHolder(Hemomancy.rloc("world/seraphae_tissue"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
+    /** Saint Seraphae's bone grown out of the floor and her hematic iron chains: solid, light in the colour. */
+    public static ShaderHolder SERAPHAE_BONE = new ShaderHolder(Hemomancy.rloc("world/seraphae_bone"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
     public static ShaderHolder MANIPULATION_SKIN = new ShaderHolder(Hemomancy.rloc("world/manipulation_skin"),
             DefaultVertexFormat.NEW_ENTITY, "ColorModulator");
 
@@ -295,6 +322,15 @@ public class ShaderInit {
         registerShader(event, MANIPULATION_CRUOR.createInstance(provider));
         registerShader(event, MANIPULATION_RIME.createInstance(provider));
         registerShader(event, MANIPULATION_SKIN.createInstance(provider));
+        registerShader(event, HEMORATH_FISSURE.createInstance(provider));
+        registerShader(event, HEMORATH_IRON.createInstance(provider));
+        registerShader(event, VELORUM_FROST.createInstance(provider));
+        registerShader(event, VELORUM_ICE.createInstance(provider));
+        registerShader(event, PUTRICIEL_GROUND.createInstance(provider));
+        registerShader(event, PUTRICIEL_SPORE.createInstance(provider));
+        registerShader(event, PUTRICIEL_GROWTH.createInstance(provider));
+        registerShader(event, SERAPHAE_TISSUE.createInstance(provider));
+        registerShader(event, SERAPHAE_BONE.createInstance(provider));
         registerShader(event, CAST_VEINS.createInstance(provider));
         registerShader(event, CAST_LUMEN.createInstance(provider));
         registerShader(event, CAST_UMBRA.createInstance(provider));

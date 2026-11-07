@@ -91,4 +91,11 @@ class SeraphaeAnchorRulesTest {
         assertEquals(4, SeraphaeAnchorRules.wakeable(TOMB, many).size());
         assertEquals(4, SeraphaeAnchorRules.placements(TOMB, HER, many).size());
     }
+    @Test void theAisleEndsAreHerReservesNearestFirst() {
+        assertEquals(List.of(TOMB.offset(-9, 1, -6), TOMB.offset(-9, 1, 6)), SeraphaeAnchorRules.reserves(TOMB, chamber()));
+        var far = new ArrayList<>(chamber());
+        far.add(TOMB.offset(-14, 1, 0));
+        assertEquals(SeraphaeAnchorRules.RESERVE_COUNT, SeraphaeAnchorRules.reserves(TOMB, far).size());
+        for (BlockPos reserve : SeraphaeAnchorRules.reserves(TOMB, far)) assertFalse(SeraphaeAnchorRules.inReach(TOMB, reserve));
+    }
 }

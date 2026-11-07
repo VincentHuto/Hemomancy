@@ -32,6 +32,11 @@ class PlayerBlockEditGuardrailTest {
 			"src/main/java/com/vincenthuto/hemomancy/common/network/PlaceStructurePacket.java",
 			"Creative, operator-only structure spawner");
 
+	/** Non-player editors outside the walked trees, each still editing blocks without the helper. */
+	private static final Map<String, String> NON_PLAYER_EDITORS = Map.of(
+			"common/entity/boss/saint/SaintArena.java",
+			"A Saint's fight changing its own chamber, every change recorded and restored; no player is the actor");
+
 	@Test
 	void playerBlockEditsAreGuarded() throws Exception {
 		TreeSet<String> unguarded = new TreeSet<>();
@@ -47,5 +52,14 @@ class PlayerBlockEditGuardrailTest {
 		}
 		assertEquals(new TreeSet<>(ALLOWED.keySet()), unguarded,
 				"route player block edits through PlayerBlockEdits, or list the file here with the reason it is not a player's");
+	}
+
+	@Test
+	void listedNonPlayerEditorsStillEditBlocksThemselves() {
+		for (String file : NON_PLAYER_EDITORS.keySet()) {
+			String text = SourceAssertions.readMainJava(file);
+			assertEquals(true, BLOCK_EDIT.matcher(text).find() && !GUARDED.matcher(text).find(),
+					file + " is listed as a non-player editor: it edits blocks and names no player guard");
+		}
 	}
 }

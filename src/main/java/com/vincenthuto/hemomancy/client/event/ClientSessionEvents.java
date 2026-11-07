@@ -67,6 +67,7 @@ public final class ClientSessionEvents {
         VesperFightClientData.clear();
         MycophantFightClientData.clear();
         com.vincenthuto.hemomancy.client.screen.overlay.boss.BossBarFrameClientState.clear();
+        com.vincenthuto.hemomancy.client.screen.overlay.boss.SaintMeterClientState.clear();
         com.vincenthuto.hemomancy.client.render.cinematic.BossSceneDirector.INSTANCE.clear();
         com.vincenthuto.hemomancy.client.data.MycophantIntroClientState.INSTANCE.start(
                 com.vincenthuto.hemomancy.client.data.MycophantIntroClientState.CLEAR, 0);

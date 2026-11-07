@@ -69,6 +69,11 @@ public final class FungalGardenTravelHelper {
 	}
 
 	public static InteractionResult handleTravelUse(ServerPlayer player, Item cooldownItem) {
+		return handleTravelUse(player, cooldownItem, false);
+	}
+
+	/** {@code bySpine}: the Fungal Spine makes one crossing in, the first; after it the Spine only brings its holder home. */
+	public static InteractionResult handleTravelUse(ServerPlayer player, Item cooldownItem, boolean bySpine) {
 		boolean inFungalGardens = player.level().dimension().equals(FUNGAL_GARDENS);
 
 		if (!inFungalGardens && player.isCreative()) {
@@ -107,7 +112,13 @@ public final class FungalGardenTravelHelper {
 
 			FungalProjectionRules.TravelKind travel = FungalProjectionRules.travelKind(
 					degreeState.hasWitnessedFungalRevelation(), degree, degreeState.hasFungalSpineGranted(),
-					degreeState.getArchonPath());
+					degreeState.getArchonPath(), bySpine);
+			if (travel == FungalProjectionRules.TravelKind.DORMANT) {
+				player.displayClientMessage(Component.translatable(degreeState.getArchonPath() == EnumArchonPath.APOTHEOS
+						? "message.hemomancy.fungal_garden_travel_helper.spine_dormant_visitation"
+						: "message.hemomancy.fungal_garden_travel_helper.spine_dormant").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), true);
+				return InteractionResult.SUCCESS;
+			}
 			if (travel == FungalProjectionRules.TravelKind.REFUSED) {
 				player.displayClientMessage(Component.translatable("message.hemomancy.fungal_garden_travel_helper.the_spine_will_not_carry_you").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), true);
 				return InteractionResult.SUCCESS;

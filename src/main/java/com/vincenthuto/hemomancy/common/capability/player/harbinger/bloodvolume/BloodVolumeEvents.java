@@ -7,7 +7,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IH
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
+import com.vincenthuto.hemomancy.common.effect.MindBrokenRules;
 import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
+import com.vincenthuto.hemomancy.common.effect.MorphicTonicRules;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -104,18 +106,19 @@ public class BloodVolumeEvents {
 			MaxBloodLedger.apply(serverPlayer, volume);
 		}
 
-		//  Passive blood regen 
+		//  Passive blood regen (Mind Broken slows it by 15%) 
+		double passiveRegenMultiplier = MindBrokenRules.passiveRegenMultiplier(player.hasEffect(EffectInit.mind_broken));
 		if (HemoServerConfig.BLOOD_REGEN_ENABLED.get()) {
 			int interval = HemoServerConfig.BLOOD_REGEN_INTERVAL.get();
 			if (player.tickCount % interval == 0) {
-				double regenRate = HemoServerConfig.BLOOD_REGEN_RATE.get();
+				double regenRate = HemoServerConfig.BLOOD_REGEN_RATE.get() * passiveRegenMultiplier;
 				BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "base_regen",
 						"message.hemomancy.blood_volume_events.base_regen", Category.BODY, regenRate, interval);
 			}
 		}
 
 		//  Skill: Sanguine Surge passive blood regen per tick 
-		double surgeRegen = SkillPointHelper.getSanguineSurgeRegen(player);
+		double surgeRegen = SkillPointHelper.getSanguineSurgeRegen(player) * passiveRegenMultiplier;
 		if (surgeRegen > 0) {
 			BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "sanguine_surge",
 					"message.hemomancy.blood_volume_events.sanguine_surge", Category.SKILL, surgeRegen, 1);
@@ -127,6 +130,12 @@ public class BloodVolumeEvents {
 		if (candleRegen > 0) {
 			BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "mnemonic_candle_aura",
 					"message.hemomancy.blood_volume_events.mnemonic_candle_aura", Category.EFFECT, candleRegen, 1);
+		}
+
+		double tonicRegen = MorphicTonicRules.bloodPerTick(player.hasEffect(EffectInit.morphic_mending));
+		if (tonicRegen > 0) {
+			BloodFlowLedger.applyDirectIncome((ServerPlayer) player, volume, "morphic_mending",
+					"message.hemomancy.blood_volume_events.morphic_mending", Category.EFFECT, tonicRegen, 1);
 		}
 
 		double lastWindRegen = SkillPointHelper.getLastWindRegenPerTick(player);

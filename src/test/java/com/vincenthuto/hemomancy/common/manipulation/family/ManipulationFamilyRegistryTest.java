@@ -122,9 +122,8 @@ class ManipulationFamilyRegistryTest {
 				JsonObject baseEnzymes = baseline.getAsJsonObject("enzymes");
 				JsonObject formEnzymes = recipe.getAsJsonObject("enzymes");
 				for (String enzyme : baseEnzymes.keySet()) {
-					// Sanguine Tempest's Ductilis secondary adds one Neurotic enzyme to the cloud recipe.
-					int secondary = form.id().equals("sanguine_tempest") && enzyme.equals("ductilis") ? 1 : 0;
-					int expected = baseEnzymes.get(enzyme).getAsInt() + secondary
+					// No extra secondary enzyme: the Tempest's Neurotic was removed by ruling D-19 (2026-11-06).
+					int expected = baseEnzymes.get(enzyme).getAsInt()
 							+ (enzyme.equals(primary.get(family.baselineId())) ? form.requiredLevel() : 0);
 					assertEquals(expected, formEnzymes.get(enzyme).getAsInt(), form.id() + " " + enzyme);
 				}

@@ -51,6 +51,8 @@ public final class WorldEffectDispatcher {
         OutpouringRenderer.render(event);
         MorphlingStrainWorldRenderer.render(event);
         ManipulationVisualRenderer.render(event);
+        // The Saint footprints draw straight after the manipulation visuals, in the same two stages.
+        SaintTelegraphRenderer.render(event);
 
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
             // Before any block entity: the husk's eye samples what this draws.

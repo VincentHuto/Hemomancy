@@ -422,6 +422,14 @@ public class EntityInit {
                     .clientTrackingRange(10)
                     .build(Hemomancy.rloc("velorum").toString()));
 
+    // Velorum's woken devotee: one of his frozen congregation, taken up off the floor in his trial
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumDevoteeEntity>> velorum_devotee = ENTITY_TYPES.register(
+            "velorum_devotee",
+            () -> EntityType.Builder.of(com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumDevoteeEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.95F)
+                    .clientTrackingRange(10)
+                    .build(Hemomancy.rloc("velorum_devotee").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<VesperTheCrownedRefusalEntity>> vesper_crowned_refusal = ENTITY_TYPES.register(
             "vesper_crowned_refusal",
             () -> EntityType.Builder.of(VesperTheCrownedRefusalEntity::new, MobCategory.MONSTER)
@@ -451,6 +459,13 @@ public class EntityInit {
             () -> EntityType.Builder.<MycophantHazardEntity>of(MycophantHazardEntity::new, MobCategory.MISC)
                     .sized(1.0F, 0.25F).clientTrackingRange(10).updateInterval(20)
                     .build(Hemomancy.rloc("mycophant_hazard").toString()));
+
+    /** The Saint kit's lingering ground hazard: a footprint and a pulse, drawn by the telegraph pass. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.boss.BossGroundHazardEntity>> boss_ground_hazard = ENTITY_TYPES.register(
+            "boss_ground_hazard",
+            () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.boss.BossGroundHazardEntity>of(com.vincenthuto.hemomancy.common.entity.boss.BossGroundHazardEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.25F).clientTrackingRange(10).updateInterval(20).noSummon()
+                    .build(Hemomancy.rloc("boss_ground_hazard").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<MycophantGlobEntity>> mycophant_glob = ENTITY_TYPES.register(
             "mycophant_glob",
@@ -1271,6 +1286,7 @@ public class EntityInit {
         event.put(EntityInit.latent_annetta_infection.get(), LatentAnnettaInfectionEntity.setAttributes().build());
         event.put(EntityInit.putriciel.get(), PutricielEntity.setAttributes().build());
         event.put(EntityInit.velorum.get(), VelorumEntity.setAttributes().build());
+        event.put(EntityInit.velorum_devotee.get(), com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumDevoteeEntity.setAttributes().build());
         event.put(EntityInit.vesper_crowned_refusal.get(), VesperTheCrownedRefusalEntity.setAttributes().build());
         event.put(EntityInit.vesper_evening_star.get(), VesperTheEveningStarEntity.setAttributes().build());
         event.put(EntityInit.mycophant.get(), MycophantEntity.setAttributes().build());

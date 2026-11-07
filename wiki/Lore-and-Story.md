@@ -322,7 +322,7 @@ A massive fungal tree structure summoned at high degree.
 
 Four ancient hemomancers whose blood outgrew their bodies. Their own people sealed them in tombs, and the Hematic Order inherited and keeps those tombs. Sainthood marks what the blood became, not virtue. All four have prototype encounters behind the post-release Saints boundary, and none of them can be killed: every fight returns the Saint to its sarcophagus. See [Saints and Encounters](Saints-and-Encounters.md) for how they are found.
 
-**Hemorath, the First Saint** (Animus + Ferric)
+**Hemorath, the Hollow Vessel** (Animus + Ferric)
 - One of the first and most powerful Hemomancers, older than the Order's structure and Erythravane's Fane, and never a true Harbinger. Erythravane was the first Vicar and Archon. He learned to harden the iron in his blood and to draw blood from other creatures, then fed until the absorption overloaded his body
 - His flesh failed, but his marrow never stopped producing blood. What remains is a desiccated, skeletal saint who pulls in the blood of anything living nearby and cannot keep it
 - A hunched skeletal saint with exposed ribs, a rusted spiked halo, face-obscuring cords, a chained iron staff, and trailing ivory/crimson vestments

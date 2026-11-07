@@ -19,7 +19,7 @@ class SaintLiberPagesTest {
 	}
 
 	private static final List<Saint> SAINTS = List.of(
-			new Saint("hemorath", "The First Saint", "Animus", "Ferric", "Crimson Tithe"),
+			new Saint("hemorath", "The Hollow Vessel", "Animus", "Ferric", "Crimson Tithe"),
 			new Saint("seraphae", "The Chain Saint", "Lux", "Ductilis", "Unclosing Eye"),
 			new Saint("putriciel", "The Befouled Saint", "Mortem", "Flammeus", "Bloom of Rot"),
 			new Saint("velorum", "Saint of the Endless Hour", "Congeatio", "Tenebris", "Endless Hour"));

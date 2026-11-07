@@ -1,63 +1,44 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae;
 
-import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
-/** Decorative timelines shared by the skeleton, glow and material geometry; never gates damage or containment. */
+/**
+ * Seraphae's shared visual numbers: the render scale (16 px per block at {@code kit.SCALE = 2}), the server cue kinds
+ * her geometry answers, their lives, the nerve wave the trunks sway on and the cues' fade. Decorative only: nothing here
+ * gates damage or containment.
+ */
 public final class SeraphaeVisualRules {
-    public static final BossMoveTimeline FRACTURE = new BossMoveTimeline(18, 62, 20);
-    public static final BossMoveTimeline CONDENSE = new BossMoveTimeline(18, 44, 18);
-    public static final int RESTORE_TICKS = 28;
-    public static final int HIT = 1, FRACTURE_BURST = 2, DISPERSE_BURST = 3, CAPTURE = 4, SEALED = 5, HAZARD = 6;
-    public static final int BURST_TICKS = 24, SEAL_TICKS = 44;
-    public static final int TRANSFUSION = 7, CONVULSION = 8;
-    public static final float MODEL_SCALE = 1.22F;
+	/** Render scale: 2 texels per model unit at this scale is 16 per block. */
+	public static final float MODEL_SCALE = 2.0F;
+	/** The generator's texels per model unit; {@code TEXELS * 16 / MODEL_SCALE} is the density per block. */
+	public static final int TEXELS = 2;
 
-    public record Pose(float spread, float fold, float recoil, float strain, float lift, float glow) {}
+	// cue kinds, carried as the cue's count
+	public static final int HIT = 1, FRACTURE_BURST = 2, CLOSE = 3, CAPTURE = 4, SEALED = 5, PAD = 6,
+			TRANSFUSION = 7, GROWTH_BURST = 8, KNOT = 9, SLIP = 10, FLARE = 11, WAKE = 12, RECOIL = 13;
+	public static final int BURST_TICKS = 24, SEAL_TICKS = 44, CLOSE_TICKS = 8, KNOT_TICKS = 18;
 
-    private SeraphaeVisualRules() {}
+	private SeraphaeVisualRules() {
+	}
 
-    public static float elapsed(SeraphaeState state, float remaining) {
-        return Math.max(0, Math.min(state.duration(), state.duration() - remaining));
-    }
+	/** A cue's life by kind. */
+	public static int life(int kind) {
+		return switch (kind) {
+			case SEALED -> SEAL_TICKS;
+			case CLOSE -> CLOSE_TICKS;
+			case KNOT, CAPTURE -> KNOT_TICKS;
+			default -> BURST_TICKS;
+		};
+	}
 
-    public static Pose pose(SeraphaeState state, float remaining, float age) {
-        float t = elapsed(state, remaining);
-        float breath = (float) Math.sin(age * .075F);
-        return switch (state) {
-            case STABLE -> {
-                float cycle = t % SeraphaeGrowthRules.CYCLE;
-                float gather = HemoEasing.smoothstep((cycle - 56) / SeraphaeGrowthRules.WARNING);
-                float release = t >= SeraphaeGrowthRules.CYCLE ? HemoEasing.pulse(cycle, 3, SeraphaeGrowthRules.RELEASE) : 0;
-                float power = Math.max(gather, release);
-                yield new Pose(power * .4F, (1 - HemoEasing.smoothstep(t / RESTORE_TICKS)) * (1 - power),
-                        release * .2F, power * .7F, power * .06F, .32F + breath * .07F + power * .5F);
-            }
-            case FRACTURING -> {
-                float spread = (float) HemoEasing.easeInOutCubic((t - FRACTURE.windup()) / 44.0);
-                float recoil = HemoEasing.pulse(t, 8, 28);
-                float strain = HemoEasing.smoothstep((t - 58) / 22);
-                yield new Pose(spread, recoil * .3F, recoil, strain, spread * .16F,
-                        .4F + spread * .45F + strain * .15F);
-            }
-            case DISPERSED -> new Pose(1, 0, 0, 0, .16F, .9F);
-            case CONDENSING -> {
-                float fold = HemoEasing.smoothstep(t / 42);
-                float settle = HemoEasing.smoothstep((t - CONDENSE.windup()) / CONDENSE.active());
-                yield new Pose(1 - fold, fold, 0, (1 - settle) * .5F, (1 - fold) * .16F,
-                        .95F - settle * .55F);
-            }
-        };
-    }
+	/** A seeded, delayed wave down a nerve trunk: the tips lag the root instead of moving as one rigid sheet. */
+	public static float nerveWave(float age, int segment, int side, float strain) {
+		return (float) Math.sin(age * (.09F + strain * .2F) - segment * .7F + side * .7F)
+				* (.04F + strain * .12F) * (1 + segment * .15F);
+	}
 
-    /** A seeded, delayed wave: feather tips lag the shoulder instead of moving as one rigid sheet. */
-    public static float featherWave(float age, int feather, int side, float strain) {
-        return (float) Math.sin(age * (.12F + strain * .23F) - feather * .58F + side * .7F)
-                * (.045F + strain * .14F) * (1 + feather * .07F);
-    }
-
-    public static float burstOpacity(float age, float life) {
-        if (age < 0 || age >= life) return 0;
-        return 1 - HemoEasing.smoothstep((age - 3) / (life - 3));
-    }
+	public static float burstOpacity(float age, float life) {
+		if (age < 0 || age >= life) return 0;
+		return 1 - HemoEasing.smoothstep((age - 3) / (life - 3));
+	}
 }

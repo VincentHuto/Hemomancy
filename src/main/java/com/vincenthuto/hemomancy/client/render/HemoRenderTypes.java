@@ -50,6 +50,18 @@ public final class HemoRenderTypes {
                     .setDepthTestState(RenderType.NO_DEPTH_TEST).setWriteMaskState(RenderType.COLOR_WRITE)
                     .setCullState(RenderType.NO_CULL).setLightmapState(RenderType.NO_LIGHTMAP).createCompositeState(false));
 
+	/**
+	 * The Saint telegraph pass's ground tint: flat translucent colour over the floor, depth-tested but never written, so
+	 * a footprint's fill reads as one even wash under its material edges.
+	 */
+	public static final RenderType SAINT_TELEGRAPH_TINT = RenderType.create("saint_telegraph_tint",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 2048, false, true,
+			RenderType.CompositeState.builder().setShaderState(RenderType.POSITION_COLOR_SHADER)
+					.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST).setWriteMaskState(RenderType.COLOR_WRITE)
+					.setCullState(RenderType.NO_CULL).setLightmapState(RenderType.NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	public static final RenderType QLIPHOTH_CORE = RenderType.create("qliphoth_core",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder()

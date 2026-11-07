@@ -60,6 +60,7 @@ From the user, 2026-10-20 to 2026-10-31 (`archive/tracks/brined_court/00-README.
 - **Followers:** every listed act wakes the Bloom Warden (breaking Garden growth, taking from the undercroft, harm at residents or in the undercroft, a second gift or others' food); amends are an offering held in hand, and offerings to the Giving Light are foods; the Champion title gives recognition only for now, elders challenging the player comes later; losing either fight is death with a later retry.
 - **Court life:** one free entry plus one free switch; the first lesson is faster growth when a strain is fed inside its own house's site; Hydra judges worthiness by which follower its head crowns; messengers and currents are set dressing only; no strain is needed to join, the house's strain is needed for its lesson; joining needs D5 plus guest standing; Court and Circus combine, but Puppet Interference (x1.25 upkeep) still applies and cancels Sunburst's Sun-Fed waiver; Unstained players may visit and are shunned by every house.
 - **Lore:** fungal symbiosis, not mermaids; strains are fungi convergent on animals, never the animal; anchoring is reversible, true petrification is not; no God or Satan framing for Marimo or Hydra; Dead Man's Rope is never "many-headed" (`LORE_REFERENCE.md` §6.3c).
+- **D-13 (2026-11-06):** keep the Wake nursery beside the natural schools; the Seat names and the eight house marks stay as built.
 - **Review fixes the user asked for (2026-10-30):** the jar, polyp and strains back in the Brined Court creative section; polyp ocean spawns throttled (one try in 40, sturdy seabed, 48-block spacing); the Wake nursery widened so it generates and searches only within 8 blocks of its `/locate` chunk; creative items for every set piece; portraits and crests for every role.
 
 ## Calls made without the user
@@ -98,9 +99,6 @@ Each track's "Calls made unattended" has the full list; these are the ones that 
 | Should the Lighthouse Garden require a true shoreline instead of raising its own tide rock? | `archive/tracks/brined_court/07-seats.md` |
 | Is the Purse's +35% a ceiling on the total with the Prismatic set (as built) or the strain's own share? | `02-strain-powers.md` |
 | Ink Cap's cap still shows above its Primal hood; Holdfast and Sunburst read small at Mature; Rope strands are faint in daylight. | `03-strain-visuals.md`, "Left for later" |
-| Final names for the two Seats (the spec's are working names). | `07-seats.md`, `00-README.md` |
-| Designs for the eight house marks (currently 7x7 glyphs simplified from the strain silhouettes). | `08-outposts-and-signs.md` |
-| Is the Wake nursery wanted at all alongside natural schools? | `08-outposts-and-signs.md`, `00-README.md` |
 | Should Morphling visuals on other players respect a client setting? | `03-strain-visuals.md` |
 | Does Sun-Fed's hunger-to-blood surplus count underwater near a daylit surface? | `02-strain-powers.md` |
 | Is the threshold chimney ever usable by the player, and what happens to someone who enters Hydra? | `07-seats.md`, spec "Still open" 11 |

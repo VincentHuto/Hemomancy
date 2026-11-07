@@ -229,11 +229,13 @@ public final class EntityRendererRegistrar {
         event.registerEntityRenderer(EntityInit.temporary_coagulum.get(), com.vincenthuto.hemomancy.client.render.entity.boss.phlegethosoma.CoagulumRenderer::new);
         event.registerEntityRenderer(EntityInit.putriciel.get(), PutricielRenderer::new);
         event.registerEntityRenderer(EntityInit.velorum.get(), VelorumRenderer::new);
+        event.registerEntityRenderer(EntityInit.velorum_devotee.get(), com.vincenthuto.hemomancy.client.render.entity.boss.velorum.VelorumDevoteeRenderer::new);
         event.registerEntityRenderer(EntityInit.vesper_crowned_refusal.get(), VesperTheCrownedRefusalRenderer::new);
         event.registerEntityRenderer(EntityInit.vesper_evening_star.get(), VesperTheEveningStarRenderer::new);
         event.registerEntityRenderer(EntityInit.mycophant.get(), MycophantRenderer::new);
         event.registerEntityRenderer(EntityInit.mycophant_hazard.get(), MycophantHazardRenderer::new);
         event.registerEntityRenderer(EntityInit.mycophant_glob.get(), MycophantGlobRenderer::new);
+        event.registerEntityRenderer(EntityInit.boss_ground_hazard.get(), NoopRenderer::new);
         event.registerEntityRenderer(EntityInit.mycophant_lance.get(), MycophantLanceRenderer::new);
         event.registerEntityRenderer(EntityInit.seraphae.get(), SeraphaeRenderer::new);
         event.registerEntityRenderer(EntityInit.seraphae_fragment.get(), SeraphaeFragmentRenderer::new);

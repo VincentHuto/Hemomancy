@@ -47,6 +47,13 @@ public class BloodTendency implements IBloodTendency, INBTSerializable<CompoundT
 	}
 
 	@Override
+	public float getBaseAlignment(EnumBloodTendency tendencyIn) {
+		if (tendency == null) return 0;
+		Float alignment = tendency.get(tendencyIn);
+		return alignment == null ? 0 : alignment;
+	}
+
+	@Override
 	public ParticleColor getAvgBloodColor() {
 		List<ParticleColor> colors = new ArrayList<>();
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {

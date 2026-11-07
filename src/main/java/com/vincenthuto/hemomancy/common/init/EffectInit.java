@@ -234,6 +234,10 @@ public class EffectInit {
                     .addAttributeModifier(Attributes.ATTACK_DAMAGE, Hemomancy.rloc("mind_broken_attack"), -2.0,
                             AttributeModifier.Operation.ADD_VALUE));
 
+    /** The Morphic Tonic's mending: health and blood regrow together. */
+    public static final DeferredHolder<MobEffect, MobEffect> morphic_mending = EFFECTS.register("morphic_mending",
+            () -> new com.vincenthuto.hemomancy.common.effect.MorphicMendingEffect(MobEffectCategory.BENEFICIAL, 0xC9708A));
+
     public static final DeferredHolder<MobEffect, MobEffect> mnemonic_screams = EFFECTS.register("mnemonic_screams",
             () -> new MnemonicScreamsEffect(MobEffectCategory.HARMFUL, 0x3F102B));
 

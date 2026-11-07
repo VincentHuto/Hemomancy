@@ -102,7 +102,9 @@ final class HeartNodeScreenScenes {
 				new PacketOpenHeartNodeScreen.Synapse(heart.offset(29, 2, 6), Direction.WEST.get3DDataValue(), true),
 				new PacketOpenHeartNodeScreen.Synapse(heart.offset(-6, 1, 30),
 						PacketOpenHeartNodeScreen.Synapse.UNKNOWN_FACING, false)),
-				HeartNodeSettings.DEFAULT, 0L, true, List.of(heart.offset(5, 0, 3), heart.offset(22, 1, 2)), readOnly);
+				HeartNodeSettings.DEFAULT, 0L, true, List.of(heart.offset(5, 0, 3), heart.offset(22, 1, 2)), readOnly,
+				readOnly ? PacketOpenHeartNodeScreen.Molt.NONE
+						: new PacketOpenHeartNodeScreen.Molt(List.of(42f, 3f, 18f, 0f, 9f, 0f, 6f, 2f), 100f, 0L));
 	}
 
 	private static String overlay(Minecraft mc) {

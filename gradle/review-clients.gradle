@@ -15,6 +15,7 @@ def velorumFightReview = gradleOr('velorumFightReview', 'false') == 'true'
 def putricielFightReview = gradleOr('putricielFightReview', 'false') == 'true'
 def hemorathFightReview = gradleOr('hemorathFightReview', 'false') == 'true'
 def seraphaeFightReview = gradleOr('seraphaeFightReview', 'false') == 'true'
+def saintKitReview = gradleOr('saintKitReview', 'false') == 'true'
 
 def reviewClients = [
     phlegethosomaReviewClient: [dir: 'build/phlegethosoma-client', user: 'FlukeReview', size: review, props: ['hemomancy.phlegethosomaReview': 'true']],
@@ -97,12 +98,31 @@ def reviewClients = [
                                     args: seraphaeFightReview ? ['--quickPlaySingleplayer', gradleOr('seraphaeReviewWorld', 'BossPresentationReview')] :
                                             velorumFightReview ? ['--quickPlaySingleplayer', gradleOr('velorumReviewWorld', 'BossPresentationReview')] :
                                             putricielFightReview ? ['--quickPlaySingleplayer', gradleOr('putricielReviewWorld', 'BossPresentationReview')] :
-                                            hemorathFightReview ? ['--quickPlaySingleplayer', gradleOr('hemorathReviewWorld', 'BossPresentationReview')] : [],
-                                    props: ['hemomancy.bossPresentationReview': (seraphaeFightReview || hemorathFightReview || putricielFightReview || velorumFightReview) ? 'false' : 'true',
+                                            hemorathFightReview ? ['--quickPlaySingleplayer', gradleOr('hemorathReviewWorld', 'BossPresentationReview')] :
+                                            saintKitReview ? ['--quickPlaySingleplayer', gradleOr('saintKitReviewWorld', 'BossPresentationReview')] : [],
+                                    props: ['hemomancy.bossPresentationReview': (seraphaeFightReview || hemorathFightReview || putricielFightReview || velorumFightReview || saintKitReview) ? 'false' : 'true',
+                                            // the Saint kit's client half (SaintKitClientReview): meter layer, telegraph pass, placeholders
+                                            'hemomancy.saintKitReview': saintKitReview.toString(),
                                             'hemomancy.seraphaeFightReview': seraphaeFightReview.toString(),
                                             'hemomancy.putricielFightReview': putricielFightReview.toString(),
                                             'hemomancy.velorumFightReview': velorumFightReview.toString(),
                                             'hemomancy.hemorathFightReview': hemorathFightReview.toString(),
+                                            // -PhemorathReviewOnly=raking_claw,iron_rake keeps the rise and the named scenes;
+                                            // -PhemorathReviewParticles=minimal|decreased|all (default all, as a player sees it)
+                                            'hemomancy.hemorathFightReview.only': gradleOr('hemorathReviewOnly', ''),
+                                            'hemomancy.hemorathFightReview.particles': gradleOr('hemorathReviewParticles', 'all'),
+                                            // -PseraphaeReviewOnly=nerve_lash,axon_lance keeps the rise and the named scenes;
+                                            // -PseraphaeReviewParticles=minimal|decreased|all (default all, as a player sees it)
+                                            'hemomancy.seraphaeFightReview.only': gradleOr('seraphaeReviewOnly', ''),
+                                            'hemomancy.seraphaeFightReview.particles': gradleOr('seraphaeReviewParticles', 'all'),
+                                            // -PputricielReviewOnly=censer_swing,root_snare keeps the rise and the named scenes;
+                                            // -PputricielReviewParticles=minimal|decreased|all (default all, as a player sees it)
+                                            'hemomancy.putricielFightReview.only': gradleOr('putricielReviewOnly', ''),
+                                            'hemomancy.putricielFightReview.particles': gradleOr('putricielReviewParticles', 'all'),
+                                            // -PvelorumReviewOnly=black_ice,lantern_sweep keeps the rise and the named scenes;
+                                            // -PvelorumReviewParticles=minimal|decreased|all (default all, as a player sees it)
+                                            'hemomancy.velorumFightReview.only': gradleOr('velorumReviewOnly', ''),
+                                            'hemomancy.velorumFightReview.particles': gradleOr('velorumReviewParticles', 'all'),
                                            'hemomancy.bossPresentationReview.only': gradleOr('bossPresentationReviewOnly', '')]],
     jeiReviewClient: [dir: 'build/jei-client-review', user: 'JeiReview', size: review,
                       props: ['hemomancy.jeiReview': 'true']],

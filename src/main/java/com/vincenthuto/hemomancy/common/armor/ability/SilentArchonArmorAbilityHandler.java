@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.effect.MindBrokenRules;
 import com.vincenthuto.hemomancy.common.entity.projectile.CombatWeaponCarrierProjectile;
 import com.vincenthuto.hemomancy.common.event.SilentArchonArmorRules;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -78,9 +79,7 @@ public final class SilentArchonArmorAbilityHandler {
 			return true;
 		}
 		if (!hasFullSilentArchonSet(player)) {
-			player.displayClientMessage(Component.translatable(ArmorSetHelper.hasFullSilentArchonSet(player)
-					? "message.hemomancy.silent_archon_armor_ability_handler.only_a_silentium"
-					: "message.hemomancy.silent_archon_armor_ability_handler.the_silent_archon_vestments_are_incomplete").withStyle(ChatFormatting.RED), true);
+			player.displayClientMessage(Component.translatable(refusalKey(player)).withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		long now = player.level().getGameTime();
@@ -327,11 +326,23 @@ public final class SilentArchonArmorAbilityHandler {
 		return source.isDirect() && source.getEntity() instanceof LivingEntity;
 	}
 
-	/** A full set worn by a Silentium: the only wearer the vestments answer (incorporeality, Slipping, Severance). */
+	/**
+	 * A full set worn by a Silentium whose mind is whole: the only wearer the vestments answer (incorporeality,
+	 * Slipping, Severance, the death refusal). Mind Broken silences them until it passes.
+	 */
 	public static boolean hasFullSilentArchonSet(Player player) {
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
-		return SilentArchonArmorRules.hasPower(ArmorSetHelper.hasFullSilentArchonSet(player),
-				degree.getDegreeNumber(), degree.getArchonPath());
+		return MindBrokenRules.vestmentsAnswer(SilentArchonArmorRules.hasPower(ArmorSetHelper.hasFullSilentArchonSet(player),
+				degree.getDegreeNumber(), degree.getArchonPath()), player.hasEffect(EffectInit.mind_broken));
+	}
+
+	private static String refusalKey(Player player) {
+		if (!ArmorSetHelper.hasFullSilentArchonSet(player)) {
+			return "message.hemomancy.silent_archon_armor_ability_handler.the_silent_archon_vestments_are_incomplete";
+		}
+		return player.hasEffect(EffectInit.mind_broken)
+				? "message.hemomancy.silent_archon_armor_ability_handler.mind_broken"
+				: "message.hemomancy.silent_archon_armor_ability_handler.only_a_silentium";
 	}
 
 	private static boolean isAllowedSilentArchonOffense(ServerPlayer attacker, DamageSource source) {

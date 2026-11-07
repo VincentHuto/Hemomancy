@@ -12,6 +12,9 @@ public interface IBloodTendency {
 
 	public float getAlignmentByTendency(EnumBloodTendency tendencyIn);
 
+	/** The grown alignment alone, without what carved scars lend for as long as they are worn. */
+	float getBaseAlignment(EnumBloodTendency tendencyIn);
+
 	ParticleColor getAvgBloodColor();
 
 	public EnumBloodTendency getOpposingTendency(EnumBloodTendency tendencyIn);

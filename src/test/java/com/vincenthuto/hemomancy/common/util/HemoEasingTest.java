@@ -107,4 +107,36 @@ final class HemoEasingTest {
 		assertEquals(0.0F, HemoEasing.pulse(10.0F, 2.0F, 10.0F));
 		assertEquals(1.0F, HemoEasing.pulse(0.0F, 0.0F, 4.0F), "no attack starts at full strength");
 	}
+
+	@Test
+	void rampAndWindowAreTheAnimationTracksSmoothsteps() {
+		assertEquals(0.0F, HemoEasing.ramp(1.0F, 2.0F, 6.0F));
+		assertEquals(0.15625F, HemoEasing.ramp(3.0F, 2.0F, 6.0F));
+		assertEquals(0.5F, HemoEasing.ramp(4.0F, 2.0F, 6.0F));
+		assertEquals(1.0F, HemoEasing.ramp(9.0F, 2.0F, 6.0F));
+		assertEquals(0.0F, HemoEasing.window(-1.0F, 0.0F, 4.0F, 8.0F, 12.0F));
+		assertEquals(0.5F, HemoEasing.window(2.0F, 0.0F, 4.0F, 8.0F, 12.0F));
+		assertEquals(1.0F, HemoEasing.window(6.0F, 0.0F, 4.0F, 8.0F, 12.0F));
+		assertEquals(0.5F, HemoEasing.window(10.0F, 0.0F, 4.0F, 8.0F, 12.0F));
+		assertEquals(0.0F, HemoEasing.window(13.0F, 0.0F, 4.0F, 8.0F, 12.0F));
+	}
+
+	/** Golden values of the Catmull-Rom Annetta's model carried before the lift, computed in float. */
+	@Test
+	void catmullRomMatchesAnnettasCurve() {
+		float[] keys = {0.0F, 0.0F, 10.0F, 1.0F, 20.0F, 0.5F, 30.0F, 1.0F};
+		float[][] golden = {{-1.0F, 0.0F}, {0.0F, 0.0F}, {2.5F, 0.21484375F}, {5.0F, 0.53125F}, {10.0F, 1.0F},
+				{12.5F, 0.95703125F}, {15.0F, 0.78125F}, {25.0F, 0.71875F}, {27.5F, 0.88671875F}, {30.0F, 1.0F},
+				{40.0F, 1.0F}};
+		for (float[] point : golden) {
+			assertEquals(point[1], HemoEasing.catmullRom(point[0], keys), 1.0E-6F, "t=" + point[0]);
+		}
+		float[] uneven = {0.0F, 0.25F, 4.0F, -0.5F, 12.0F, 0.75F};
+		float[][] unevenGolden = {{1.0F, 0.072265625F}, {2.0F, -0.19270833F}, {6.0F, -0.287109375F},
+				{8.0F, 0.08854167F}, {10.0F, 0.482421875F}};
+		for (float[] point : unevenGolden) {
+			assertEquals(point[1], HemoEasing.catmullRom(point[0], uneven), 1.0E-6F, "uneven t=" + point[0]);
+		}
+		assertEquals(0.75F, HemoEasing.catmullRom(3.0F, 1.0F, 0.75F), "one key holds its value");
+	}
 }

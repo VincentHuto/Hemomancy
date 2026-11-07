@@ -16,12 +16,15 @@ class BossBarFramePhaseSaintTest {
 	void hemorathEmptiedFromName() {
 		assertEquals(2, HemorathFrame.phaseOf(Component.translatable("message.hemomancy.hemorath.saint_hemorath_the_vessel_empties")));
 		assertEquals(1, HemorathFrame.phaseOf(Component.translatable("entity.hemomancy.hemorath")));
+		assertEquals(3, HemorathFrame.phaseOf(Component.translatable("message.hemomancy.hemorath.saint_hemorath_the_last_thirst")));
 	}
 
 	@Test
-	void velorumFrostsBelowAQuarter() {
-		assertEquals(1, VelorumFrame.phaseOf(0.3F));
-		assertEquals(2, VelorumFrame.phaseOf(0.25F));
+	void velorumFrostsInThreePhases() {
+		assertEquals(1, VelorumFrame.phaseOf(0.7F));
+		assertEquals(2, VelorumFrame.phaseOf(0.6F));
+		assertEquals(2, VelorumFrame.phaseOf(0.3F));
+		assertEquals(3, VelorumFrame.phaseOf(0.25F));
 	}
 
 	@Test

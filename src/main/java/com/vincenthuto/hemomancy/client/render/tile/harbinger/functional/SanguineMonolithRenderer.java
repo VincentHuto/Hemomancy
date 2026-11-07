@@ -88,6 +88,16 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		return true;
 	}
 
+	/**
+	 * The whole stone and what the break throws out: the halves swing past the block's sides and the rubble, fog and
+	 * portal spread around the base. Without this the cull box is the base block alone, and looking up past it drops
+	 * the stone.
+	 */
+	@Override
+	public net.minecraft.world.phys.AABB getRenderBoundingBox(SanguineMonolithBlockEntity te) {
+		return com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity.computeMultiBlockAABB(te).inflate(3.5, 1.0, 3.5);
+	}
+
 	@Override
 	public void render(SanguineMonolithBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {

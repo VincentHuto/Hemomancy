@@ -39,6 +39,13 @@ public final class BossSceneCatalog {
 				() -> new PhaseCardScene("naeglerophaeon_transition", 0xAA35FF));
 		BossSceneRegistry.register(BossPresentationIds.SCENE_VESPER_COCOON_CARD, () -> new PhaseCardScene("vesper_cocoon", 0xE00018));
 		BossSceneRegistry.register(BossPresentationIds.SCENE_HEMORATH_EMPTIES_CARD, () -> new PhaseCardScene("hemorath_empties", 0xB080E0));
+		BossSceneRegistry.register(BossPresentationIds.SCENE_SERAPHAE_CHAINS_TIGHTEN_CARD, () -> new PhaseCardScene("seraphae_chains_tighten", 0xFFE3A8));
+		BossSceneRegistry.register(BossPresentationIds.SCENE_SERAPHAE_LIGHT_ESCAPES_CARD, () -> new PhaseCardScene("seraphae_light_escapes", 0xFFF8EE));
+		BossSceneRegistry.register(BossPresentationIds.SCENE_SERAPHAE_CONTAINED, SeraphaeContainedScene::new);
+		BossSceneRegistry.register(BossPresentationIds.SCENE_VELORUM_CONGREGATION_CARD, () -> new PhaseCardScene("velorum_congregation", 0xB8DCF4));
+		BossSceneRegistry.register(BossPresentationIds.SCENE_VELORUM_HOUR_CARD, () -> new PhaseCardScene("velorum_endless_hour", 0x9ACCF0));
+		BossSceneRegistry.register(BossPresentationIds.SCENE_PUTRICIEL_PURIFIER_CARD, () -> new PhaseCardScene("putriciel_purifier_surfaces", 0xFFA8BE));
+		BossSceneRegistry.register(BossPresentationIds.SCENE_PUTRICIEL_ROT_RETURNS_CARD, () -> new PhaseCardScene("putriciel_rot_returns", 0xC8B45A));
 	}
 
 	/** Whether a scene is one of the Mycophant's taking: a CLEAR from the encounter ends those and nothing else. */

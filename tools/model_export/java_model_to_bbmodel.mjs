@@ -25,16 +25,6 @@ const MODELS = [
     texture: "textures/entity/boss/seraphae/seraphae.png",
   },
   {
-    name: "ContainmentAnchorModel",
-    source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/seraphae/ContainmentAnchorModel.java",
-    texture: "textures/entity/containment_anchor/containment_anchor.png",
-  },
-  {
-    name: "SeraphaeFragmentModel",
-    source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/seraphae/SeraphaeFragmentModel.java",
-    texture: "textures/entity/seraphae_fragment/seraphae_fragment.png",
-  },
-  {
     name: "AnnettaKnowlesModel",
     source: "src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/annetta/AnnettaKnowlesModel.java",
     texture: "textures/entity/boss/annetta/annetta_knowles.png",

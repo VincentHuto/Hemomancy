@@ -32,7 +32,7 @@ public final class ManipulationStatusEvents {
 		for (HealModifier modifier : HealModifier.values()) {
 			if (!modifier.appliesTo(event.getEntity())) continue;
 			float requested = event.getAmount();
-			event.setAmount(requested * modifier.multiplier());
+			event.setAmount(requested * modifier.multiplier(event.getEntity()));
 			if (modifier == HealModifier.INSATIABLE_HUNGER && requested > event.getAmount()
 					&& event.getEntity().level() instanceof net.minecraft.server.level.ServerLevel level)
 				ManipulationVisuals.burst(level, ManipulationVisuals.Form.HUNGER_COLLAPSE, event.getEntity().position(),

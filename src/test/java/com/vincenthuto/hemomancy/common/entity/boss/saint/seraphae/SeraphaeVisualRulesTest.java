@@ -1,36 +1,31 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SeraphaeVisualRulesTest {
-    @Test void anticipationPrecedesTheWingSpreadAndStrain() {
-        var recoil = SeraphaeVisualRules.pose(SeraphaeState.FRACTURING, 92, 8);
-        var opening = SeraphaeVisualRules.pose(SeraphaeState.FRACTURING, 60, 40);
-        var strain = SeraphaeVisualRules.pose(SeraphaeState.FRACTURING, 8, 92);
-        assertTrue(recoil.recoil() > .9F);
-        assertEquals(0, recoil.spread());
-        assertTrue(opening.spread() > recoil.spread());
-        assertTrue(strain.spread() > .95F && strain.strain() > .95F);
-        assertEquals(SeraphaeState.FRACTURING.duration(), SeraphaeVisualRules.FRACTURE.total());
-        assertEquals(SeraphaeState.CONDENSING.duration(), SeraphaeVisualRules.CONDENSE.total());
-    }
-
-    @Test void condensationEndsInTheStartingStablePose() {
-        var end = SeraphaeVisualRules.pose(SeraphaeState.CONDENSING, 0, 100);
-        var start = SeraphaeVisualRules.pose(SeraphaeState.STABLE, 200, 100);
-        assertEquals(end.fold(), start.fold());
-        assertEquals(end.spread(), start.spread());
-        assertEquals(end.lift(), start.lift());
-        assertEquals(0, SeraphaeVisualRules.pose(SeraphaeState.STABLE, 160, 140).fold());
-    }
-
-    @Test void everyTimelineChannelStaysFiniteAndWithinItsPhysicalRange() {
-        for (var state : SeraphaeState.values()) for (int remaining = -20; remaining < 240; remaining++) {
-            var pose = SeraphaeVisualRules.pose(state, remaining, remaining * 1.7F);
-            for (float value : new float[]{pose.spread(), pose.fold(), pose.recoil(), pose.strain(), pose.lift(), pose.glow()})
-                assertTrue(Float.isFinite(value) && value >= 0 && value <= 1, state + ": " + value);
+    @Test void nerveTipsLagTheRootAndStrainWidensTheWave() {
+        float root = SeraphaeVisualRules.nerveWave(30, 0, 1, 0);
+        float tip = SeraphaeVisualRules.nerveWave(30, 2, 1, 0);
+        assertNotEquals(root, tip, 1.0E-4F);
+        float calm = 0, strained = 0;
+        for (int age = 0; age < 200; age++) {
+            calm = Math.max(calm, Math.abs(SeraphaeVisualRules.nerveWave(age, 2, 1, 0)));
+            strained = Math.max(strained, Math.abs(SeraphaeVisualRules.nerveWave(age, 2, 1, 1)));
         }
+        assertTrue(strained > calm * 2);
+    }
+
+    @Test void renderScaleMakesSixteenTexelsPerBlock() {
+        assertEquals(2.0F, SeraphaeVisualRules.MODEL_SCALE);
+        assertEquals(16.0F, SeraphaeVisualRules.TEXELS * 16.0F / SeraphaeVisualRules.MODEL_SCALE, 1.0E-4F);
+    }
+
+    @Test void everyCueKindHasALife() {
+        for (int kind = 1; kind <= 13; kind++) assertTrue(SeraphaeVisualRules.life(kind) > 0, "kind " + kind);
+        assertEquals(SeraphaeVisualRules.CLOSE_TICKS, SeraphaeVisualRules.life(SeraphaeVisualRules.CLOSE));
+        assertEquals(SeraphaeVisualRules.SEAL_TICKS, SeraphaeVisualRules.life(SeraphaeVisualRules.SEALED));
     }
 
     @Test void burstsAreVisibleImmediatelyAndFrayToZeroBeforeExpiry() {

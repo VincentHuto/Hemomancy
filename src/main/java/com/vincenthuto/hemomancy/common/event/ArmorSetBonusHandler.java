@@ -307,6 +307,8 @@ public class ArmorSetBonusHandler {
 		long cooldownUntil = PlayerCooldowns.of(player).until(PlayerCooldowns.SILENT_ARCHON_REFUSAL);
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		if (degree == null) return false;
+		// A broken mind silences the vestments, the refusal with them.
+		if (player.hasEffect(EffectInit.mind_broken)) return false;
 		boolean canRefuse = SilentArchonArmorRules.canRefuseDeath(
 				ArmorSets.isFullSet(player, EnumModArmorTiers.SILENT_ARCHON.holder()),
 				degree.getDegreeNumber(),

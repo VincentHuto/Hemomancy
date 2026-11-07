@@ -14,16 +14,23 @@ class PutricielChamberLightingRulesTest {
     private static final BlockPos ROOM = new BlockPos(200, 40, -100);
     private static final BlockPos TOMB = ROOM.offset(30, 4, 13);
 
-    @Test void burningLightsThePyresAndDimsTheShelves() {
-        assertTrue(PutricielChamberLightingRules.on(Light.PYRE, Phase.BURNING));
-        assertFalse(PutricielChamberLightingRules.on(Light.SHELF, Phase.BURNING));
+    @Test void theCleansingIntervalLightsThePyresAndDimsTheShelves() {
+        assertTrue(PutricielChamberLightingRules.on(Light.PYRE, Phase.CLEANSING));
+        assertFalse(PutricielChamberLightingRules.on(Light.SHELF, Phase.CLEANSING));
+        assertEquals(Phase.CLEANSING, Phase.of(PutricielStage.IGNITING));
+        assertEquals(Phase.CLEANSING, Phase.of(PutricielStage.BURNING));
     }
 
-    @Test void theRotPhaseGuttersThePyresAndBloomsTheShelves() {
+    @Test void theRotGuttersThePyresAndBloomsTheShelves() {
         assertFalse(PutricielChamberLightingRules.on(Light.PYRE, Phase.ROT));
         assertTrue(PutricielChamberLightingRules.on(Light.SHELF, Phase.ROT));
-        assertEquals(Phase.ROT, Phase.of(true));
-        assertEquals(Phase.BURNING, Phase.of(false));
+        assertEquals(Phase.ROT, Phase.of(PutricielStage.ROT));
+        assertEquals(Phase.ROT, Phase.of(PutricielStage.EMBERING));
+    }
+
+    @Test void restIsTheChamberAsBuilt() {
+        assertTrue(PutricielChamberLightingRules.on(Light.PYRE, Phase.REST));
+        assertFalse(PutricielChamberLightingRules.on(Light.SHELF, Phase.REST));
     }
 
     @Test void theBoxIsExactlyTheGeneratedChamber() {

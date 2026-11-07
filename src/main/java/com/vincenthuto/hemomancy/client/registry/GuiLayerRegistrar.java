@@ -5,6 +5,7 @@ import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.Minecraft;
 import com.vincenthuto.hemomancy.client.screen.overlay.ConcentrationOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.SporeLoadOverlay;
+import com.vincenthuto.hemomancy.client.screen.overlay.boss.SaintMeterLayer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.event.*;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
@@ -38,6 +39,8 @@ public final class GuiLayerRegistrar {
     public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
         // Vanilla's action bar is one line and runs off the screen; this one wraps long messages.
         event.replaceLayer(VanillaGuiLayers.OVERLAY_MESSAGE, hud(ActionBarOverlay::render));
+        // The fought Saint's meter, under its bar: just above the boss bars so it reads their painted origins.
+        event.registerAbove(VanillaGuiLayers.BOSS_OVERLAY, Hemomancy.rloc("saint_meter"), hud(SaintMeterLayer::render));
         // An Apotheos's spore bar sits where the food bar is hidden for them (ApotheosHudEvents).
         event.registerAbove(VanillaGuiLayers.FOOD_LEVEL, Hemomancy.rloc("spore_load"), hud((graphics, deltaTracker) ->
                 SporeLoadOverlay.render(graphics, graphics.guiWidth(), graphics.guiHeight())));

@@ -27,6 +27,12 @@ class BossPresentationBindingTest {
 	private static final Pattern BINDING = Pattern.compile("new BossBarBinding\\(\\s*\"[^\"]+\"\\s*,\\s*([\\w.]+)");
 	private static final Pattern PLAY = Pattern.compile("BossScenes\\.play(?:To)?\\(");
 	private static final Pattern ID = Pattern.compile("BossPresentationIds\\.(\\w+)");
+	/**
+	 * Calls that play a scene a table names, each with the reason. The Saint kit plays its phase table's card, and a
+	 * Saint names each card there as a {@code BossPresentationIds.SCENE_*} id.
+	 */
+	private static final java.util.Map<String, String> TABLE_PLAYS = java.util.Map.of(
+			"SaintTrialEntity.java: this, phase.card()", "the Saint kit's phase card, named in each Saint's phase table");
 
 	@Test
 	void everyBindingNamesAFrame() throws IOException {
@@ -66,7 +72,9 @@ class BossPresentationBindingTest {
 					named = true;
 					if (!ids.group(1).startsWith("SCENE_")) wrong.add(RepoPaths.display(file) + ": " + ids.group(1));
 				}
-				if (!named) wrong.add(RepoPaths.display(file) + ": " + call);
+				if (!named && !TABLE_PLAYS.containsKey(file.getFileName() + ": " + call)) {
+					wrong.add(RepoPaths.display(file) + ": " + call);
+				}
 			}
 		}
 		assertEquals(Set.of(), wrong, "play a BossPresentationIds.SCENE_* id");

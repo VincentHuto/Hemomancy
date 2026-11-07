@@ -20,7 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * A-2: easing and interpolation come from {@code common/util/HemoEasing}. No other class declares its own scalar
  * {@code smoothstep}, {@code smooth}, {@code lerp} or {@code clamp01}, or a one-argument {@code clamp} or {@code ease},
  * unless it is listed here with the reason it differs. Stale entries fail. The animation templates under
- * {@code tools/model_export} are checked too, because their generators write them into models.
+ * {@code tools/model_export} are checked too, because their generators write them into models. A keyframe curve over
+ * {@code (float t, float... keys)} is {@code HemoEasing.catmullRom} (Annetta's Catmull-Rom, lifted for the Saint
+ * tracks); a differing one is listed with its reason.
  */
 class EasingCopyGuardrailTest {
 	private static final String HEMO_EASING = "src/main/java/com/vincenthuto/hemomancy/common/util/HemoEasing.java";
@@ -29,12 +31,21 @@ class EasingCopyGuardrailTest {
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/ManipulationUndulation.java#smooth",
 			"Edge smoothstep with a minimum span so equal edges cannot divide by zero; delegates to HemoEasing",
 			"src/main/java/com/vincenthuto/hemomancy/client/player/WaistPivotRules.java#clamp",
-			"Clamps a pitch to plus or minus LIMIT, not to [0,1]");
+			"Clamps a pitch to plus or minus LIMIT, not to [0,1]",
+			"src/main/java/com/vincenthuto/hemomancy/client/render/cinematic/BossSceneTracks.java#keys",
+			"Smoothstep segments through scene keys with no carried velocity; not the Catmull-Rom of HemoEasing",
+			"src/main/java/com/vincenthuto/hemomancy/client/data/MycophantIntroClientState.java#keys",
+			"Delegates to BossSceneTracks.keys");
 
 	private static final Pattern EASING_DECLARATION = Pattern.compile(
 			"\\b(?:float|double)\\s+(smoothstep|smoothStep|smooth|smootherstep|lerp|clamp01)\\s*\\(");
 	private static final Pattern ONE_ARGUMENT_CLAMP = Pattern.compile(
 			"\\b(?:float|double)\\s+(clamp|ease)\\s*\\(\\s*(?:final\\s+)?(?:float|double)\\s+\\w+\\s*\\)");
+
+	/** A keyframe curve over a time and varargs keys: the Catmull-Rom copy Annetta's model used to carry. */
+	private static final Pattern KEYFRAME_CURVE = Pattern.compile(
+			"\\b(?:float|double)\\s+(\\w+)\\s*\\(\\s*(?:final\\s+)?(?:float|double)\\s+\\w+\\s*,\\s*(?:final\\s+)?"
+					+ "(?:float|double)\\s*\\.\\.\\.\\s*\\w+\\s*\\)");
 
 	/** Vanilla's quintic smoothstep is not the mod's cubic one; a call to it is a copy by another route. */
 	private static final Pattern VANILLA_SMOOTHSTEP = Pattern.compile("\\bMth\\.(smoothstep)\\s*\\(");
@@ -51,6 +62,7 @@ class EasingCopyGuardrailTest {
 				collect(text, EASING_DECLARATION, shown, found);
 				collect(text, ONE_ARGUMENT_CLAMP, shown, found);
 				collect(text, VANILLA_SMOOTHSTEP, shown, found);
+				collect(text, KEYFRAME_CURVE, shown, found);
 			}
 		}
 		assertEquals(new TreeSet<>(ALLOWED.keySet()), new TreeSet<>(found),

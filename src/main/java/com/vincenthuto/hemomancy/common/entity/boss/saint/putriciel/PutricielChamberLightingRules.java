@@ -7,10 +7,10 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import javax.annotation.Nullable;
 
 /**
- * Which lights Putriciel's fight drives, and how each of his phases sets them. In his chamber the fight takes every
- * Rot Pyre and Spore Shelf inside the chamber's own box, measured from the tomb along the way its foot faces; with no
- * tomb, those within {@link #FALLBACK_RADIUS} of where the fight began. Burning, the pyres are lit and the shelves dim;
- * in the absolution window (rot) the pyres gutter out and the shelves bloom.
+ * Which lights Putriciel's fight drives, and how each phase of the fire cycle sets them (design section 9). In the rot
+ * the pyres are out and the shelves bloom; in the cleansing interval the pyres burn and the shelves dim; at rest (the
+ * chamber as built, restored by the arena) the pyres burn and the shelves are dim. The kit's {@code SaintArena} finds
+ * the lights and records every change; these rules keep the box maths for the old fallback circle and the switch table.
  */
 public final class PutricielChamberLightingRules {
 	/**
@@ -22,13 +22,21 @@ public final class PutricielChamberLightingRules {
 	public static final int FALLBACK_RADIUS = 16;
 	/** With no tomb: how far above or below the fight's start a light can be. */
 	public static final int FALLBACK_VERTICAL = 8;
+	/** At the rise's end the pyres go out one every 3 ticks, dais first; each Ignition relights one every 4. */
+	public static final int PUT_OUT_GAP = 3;
+	public static final int RELIGHT_GAP = 4;
 
-	/** His two phases: burning (rot novas) and rot (the absolution window). */
+	/** The fight's lighting phases. */
 	public enum Phase {
-		BURNING, ROT;
+		/** The rot: pyres out, shelves bloom. */
+		ROT,
+		/** The cleansing interval: pyres lit, shelves dim. */
+		CLEANSING,
+		/** The chamber as built: pyres lit, shelves dim. */
+		REST;
 
-		public static Phase of(boolean absolved) {
-			return absolved ? ROT : BURNING;
+		public static Phase of(PutricielStage stage) {
+			return stage.fire() ? CLEANSING : ROT;
 		}
 	}
 
@@ -42,7 +50,7 @@ public final class PutricielChamberLightingRules {
 
 	/** The value {@code light}'s switch ({@code lit} for a pyre, {@code bloom} for a shelf) takes in {@code phase}. */
 	public static boolean on(Light light, Phase phase) {
-		return light == Light.PYRE ? phase == Phase.BURNING : phase == Phase.ROT;
+		return light == Light.PYRE ? phase != Phase.ROT : phase == Phase.ROT;
 	}
 
 	/** The chamber's box round a tomb whose foot faces {@code facing} (horizontal). */

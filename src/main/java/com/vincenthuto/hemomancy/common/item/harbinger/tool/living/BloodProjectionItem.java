@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintChannelRouter;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
@@ -91,6 +92,11 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
                 && com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.tryProject(founder)) {
             return 0.0D;
         }
+		SaintChannelRouter.Result saint = SaintChannelRouter.tryProject(worldIn, player,
+				SanguineProjectionTargeting.PROJECTION_REACH, tileTransferRate, livingStaff);
+		if (saint.handled()) {
+			return saint.blood();
+		}
 
 		double willHandled = WillBloodUtilityInteractions.tryProjectBanishFalteringWill(worldIn, player,
 				tileTransferRate);

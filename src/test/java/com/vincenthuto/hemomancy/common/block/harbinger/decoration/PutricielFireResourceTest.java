@@ -70,6 +70,26 @@ class PutricielFireResourceTest {
 		assertTrue(bright > 0, model + " has full-bright embers or seep to check");
 	}
 
+	/** The purifier's own fire (revision R1): the ember and burning layers carry no green or yellow texel either. */
+	@ParameterizedTest
+	@ValueSource(strings = {"putriciel_embers.png", "putriciel_burning.png"})
+	void putricielsBodyFireIsNeverGreenOrYellow(String name) throws IOException {
+		BufferedImage atlas = ImageIO.read(RepoPaths.ASSETS.resolve("textures/entity/boss/putriciel/" + name).toFile());
+		int lit = 0;
+		for (int y = 0; y < atlas.getHeight(); y++) {
+			for (int x = 0; x < atlas.getWidth(); x++) {
+				int argb = atlas.getRGB(x, y);
+				if ((argb >>> 24) == 0) continue;
+				int r = argb >> 16 & 255, g = argb >> 8 & 255, b = argb & 255;
+				lit++;
+				boolean green = g > r;
+				boolean yellow = g > r * 0.7 && b < g * 0.8;
+				assertFalse(green || yellow, name + " has a green or yellow texel (" + r + ", " + g + ", " + b + ") at " + x + "," + y);
+			}
+		}
+		assertTrue(lit > 0, name + " lights the body's fire");
+	}
+
 	@Test
 	void everyNewVariantHasItsModels() {
 		Map<String, String> variants = Map.of(

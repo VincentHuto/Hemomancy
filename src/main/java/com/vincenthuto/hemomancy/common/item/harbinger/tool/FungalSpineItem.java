@@ -25,7 +25,7 @@ public class FungalSpineItem extends Item {
 		ItemStack stack = player.getItemInHand(hand);
 
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-			FungalGardenTravelHelper.handleTravelUse(serverPlayer, this);
+			FungalGardenTravelHelper.handleTravelUse(serverPlayer, this, true);
 		}
 
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());

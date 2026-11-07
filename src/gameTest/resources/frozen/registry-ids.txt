@@ -540,6 +540,11 @@ minecraft:damage_type hemomancy:mycophant_claim
 minecraft:damage_type hemomancy:mycophant_refusal
 minecraft:damage_type hemomancy:pale_intercession
 minecraft:damage_type hemomancy:phantasmal_echo
+minecraft:damage_type hemomancy:saint_hemorath
+minecraft:damage_type hemomancy:saint_putriciel
+minecraft:damage_type hemomancy:saint_putriciel_cleansing
+minecraft:damage_type hemomancy:saint_seraphae
+minecraft:damage_type hemomancy:saint_velorum
 minecraft:damage_type hemomancy:searing
 minecraft:damage_type hemomancy:stung
 minecraft:damage_type hemomancy:vesper_impale
@@ -582,6 +587,7 @@ minecraft:entity_type hemomancy:bloodlicker
 minecraft:entity_type hemomancy:bloody_belly_comb_jelly
 minecraft:entity_type hemomancy:bloom_warden
 minecraft:entity_type hemomancy:bog_revenant
+minecraft:entity_type hemomancy:boss_ground_hazard
 minecraft:entity_type hemomancy:brined_votary
 minecraft:entity_type hemomancy:chalybeate_snail
 minecraft:entity_type hemomancy:chitinite
@@ -730,6 +736,7 @@ minecraft:entity_type hemomancy:vampire_squid
 minecraft:entity_type hemomancy:veinwing_feather
 minecraft:entity_type hemomancy:veinwing_vulture
 minecraft:entity_type hemomancy:velorum
+minecraft:entity_type hemomancy:velorum_devotee
 minecraft:entity_type hemomancy:venom_rib_centipede
 minecraft:entity_type hemomancy:venous_strider
 minecraft:entity_type hemomancy:verdigris_moth
@@ -1625,6 +1632,7 @@ minecraft:mob_effect hemomancy:mnemonic_candle_aura
 minecraft:mob_effect hemomancy:mnemonic_screams
 minecraft:mob_effect hemomancy:mnemonic_whispers
 minecraft:mob_effect hemomancy:monolithic_dislocation
+minecraft:mob_effect hemomancy:morphic_mending
 minecraft:mob_effect hemomancy:morphic_strain
 minecraft:mob_effect hemomancy:morphling_dead_mans_rope
 minecraft:mob_effect hemomancy:morphling_holdfast

@@ -52,6 +52,10 @@ Give each element its own seeded flicker (`sin(time * 0.9 + i * 1.7 + seed)`) so
 
 Casting effects on the caster come from the caster's own blood: it leaves the manipulation's vascular section, veins light under the skin, and the blood turns into the school's material. Never draw detached constructs (wings, figures, rings of shapes) beside or behind a caster. Spells that put their own blood on the body (Riposte, Coronation, avatar, staff forms) are in `OutpouringRules.woundOnly`, so the outpouring steps down to veins and the exit wound.
 
+## Boss telegraphs
+
+Boss telegraphs, hazards and impacts meet the same bar (user, 2026-11-06): a footprint is layered, physical geometry in the boss's own materials, not a flat tint with hairline edges. The "subtle, no spaghetti" limit is for overlays on a body and on the screen, not for attacks. Each Saint draws its moves in its own telegraph pass over the kit's synced footprint, so the drawn edge stays the hit edge (`docs/BOSSES.md`, "A boss's own telegraph pass"). Judge it from the boss camera and from a player's eye, beside Riposte.
+
 ## Server and visual split
 
 Visual timing never gates gameplay. The server owns windows, damage and cooldowns, and the presentation timeline is decorative. Pair new geometry with a source-contract test that its renderer hook and draw order are in place, plus JVM tests for the pure rules.

@@ -20,8 +20,6 @@ import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheCrown
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheEveningStarModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.putriciel.PutricielModel;
-import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.ContainmentAnchorModel;
-import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.SeraphaeFragmentModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.SeraphaeModel;
 import com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.animal.*;
@@ -225,13 +223,12 @@ public class LayerEvents {
 		event.registerLayerDefinition(LatentAnnettaInfectionModel.LAYER_LOCATION, LatentAnnettaInfectionModel::createBodyLayer);
 		event.registerLayerDefinition(PutricielModel.LAYER_LOCATION, PutricielModel::createBodyLayer);
 		event.registerLayerDefinition(VelorumModel.LAYER_LOCATION, VelorumModel::createBodyLayer);
+		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumDevoteeModel.LAYER_LOCATION, com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumDevoteeModel::createBodyLayer);
 		event.registerLayerDefinition(VesperTheCrownedRefusalModel.LAYER_LOCATION, VesperTheCrownedRefusalModel::createBodyLayer);
 		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountModel.LAYER_LOCATION, com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountModel::createBodyLayer);
 		event.registerLayerDefinition(VesperTheEveningStarModel.LAYER_LOCATION, VesperTheEveningStarModel::createBodyLayer);
 		event.registerLayerDefinition(MycophantModel.LAYER_LOCATION, MycophantModel::createBodyLayer);
 		event.registerLayerDefinition(SeraphaeModel.LAYER_LOCATION, SeraphaeModel::createBodyLayer);
-		event.registerLayerDefinition(SeraphaeFragmentModel.LAYER_LOCATION, SeraphaeFragmentModel::createBodyLayer);
-		event.registerLayerDefinition(ContainmentAnchorModel.LAYER_LOCATION, ContainmentAnchorModel::createBodyLayer);
 		event.registerLayerDefinition(DesiccantModel.LAYER_LOCATION, DesiccantModel::createBodyLayer);
 		event.registerLayerDefinition(CrimsonDoeModel.LAYER_LOCATION, CrimsonDoeModel::createBodyLayer);
 		event.registerLayerDefinition(VerdigrisMothModel.LAYER_LOCATION, VerdigrisMothModel::createBodyLayer);

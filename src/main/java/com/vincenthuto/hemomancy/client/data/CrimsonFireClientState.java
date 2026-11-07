@@ -57,8 +57,9 @@ public final class CrimsonFireClientState {
 			if (entry.getValue() <= now) {
 				return true;
 			}
-			Entity entity = level.getEntity(entry.getKey());
-			return entity == null || !entity.isOnFire();
+			// not "or not on fire": the mark's packet can land a tick before the entity's synced on-fire flag, and
+			// dropping it then let the fire draw vanilla orange (isActive already asks for the flag)
+			return level.getEntity(entry.getKey()) == null;
 		});
 	}
 

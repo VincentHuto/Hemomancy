@@ -59,8 +59,11 @@ class BossFrameworkGuardrailTest {
 		assertTrue(SourceAssertions.methodBody(base, "protected void dropFromLootTable(").chars()
 				.filter(c -> !Character.isWhitespace(c)).count() == 2,
 				"vanilla death loot must not roll the Saint's table a second time");
-		assertTrue(SourceAssertions.methodBody(base, "public void die(DamageSource source)").contains("endTrial("),
-				"an HP death is an ending too");
+		String die = SourceAssertions.methodBody(base, "public void die(DamageSource source)");
+		assertTrue(die.contains("DamageTypes.GENERIC_KILL") && die.contains("setHealth(Math.max(1.0F, getHealth()))"),
+				"a Saint is never killed: only a /kill takes it");
+		assertTrue(SourceAssertions.methodBody(base, "private boolean tickEnding()").contains("endTrial("),
+				"the kit's ending runs the one trial ending");
 		for (String saint : TRIAL_SAINTS) {
 			String source = SourceAssertions.readMainJava(saint);
 			for (String drop : List.of("hallowed_residuum_", "dropCustomDeathLoot(", "void dropFromLootTable(")) {

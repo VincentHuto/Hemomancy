@@ -34,7 +34,7 @@ class LangCoverageTest {
 	void everyDamageTypeAndBiomeHasAName() throws Exception {
 		JsonObject lang = lang();
 		TreeSet<String> missing = new TreeSet<>();
-		for (String id : ids("damage_type")) {
+		for (String id : messageIds()) {
 			for (String suffix : List.of("", ".player")) {
 				if (!lang.has("death.attack." + id + suffix)) missing.add("death.attack." + id + suffix);
 			}
@@ -90,6 +90,18 @@ class LangCoverageTest {
 
 	private static JsonObject lang() {
 		return ResourceReader.asset("lang/en_us.json");
+	}
+
+	/** Each damage type's {@code message_id}: the death message key is {@code death.attack.<message_id>}. */
+	private static List<String> messageIds() throws Exception {
+		List<String> ids = new ArrayList<>();
+		try (Stream<Path> files = Files.list(RepoPaths.DATA.resolve("damage_type"))) {
+			for (Path file : files.filter(path -> path.toString().endsWith(".json")).toList()) {
+				JsonObject json = com.google.gson.JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+				ids.add(json.get("message_id").getAsString());
+			}
+		}
+		return ids;
 	}
 
 	private static List<String> ids(String dataFolder) throws Exception {

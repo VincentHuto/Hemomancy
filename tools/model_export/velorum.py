@@ -4,6 +4,12 @@ python tools/model_export/velorum.py --preview
 
 Writes the Java rig, portable Blockbench project, fitted base/glow atlases and
 review renders. Saved geometry and pivots use the shared quarter-unit grid.
+
+Revision 2026-11-06 (Frozen Cruor): every piece of his ice is Frozen Cruor, blood arrested where it stood: glassy
+oxblood with darker clots held inside, black-red where it is thick, thin and lit at its edges, pale hoarfrost crusted on
+its upper faces and its points. Blue lives only in the lantern crystals (frost light). The glow atlas carries the cruor
+at a faint dull red (about 0.15 of its own glow at the layer's rest strength) beside the crystals and the Bow's seam;
+velorum_cruor_glow.png carries the cruor alone at full CRUOR_GLOW, for the Eclipse (0.8), when it is the room's light.
 """
 import argparse
 import base64
@@ -16,7 +22,7 @@ import annetta_kit as kit
 from annetta_kit import Rig, ROOT, ASSETS, layout, paint_atlases, entity_java_source, quads, add, mix
 from hemorath import snap, euler, chain
 
-kit.SCALE = 2
+kit.SCALE = 1           # 16 px per block at render scale 1 (texel-density ruling)
 JAVA = ROOT / 'src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/velorum/VelorumModel.java'
 TEXTURES = ASSETS / 'textures/entity/boss/velorum'
 BBMODEL = ASSETS / 'models/entity/bbmodel/bosses/VelorumModel.bbmodel'
@@ -24,7 +30,8 @@ BBMODEL = ASSETS / 'models/entity/bbmodel/bosses/VelorumModel.bbmodel'
 
 def icicle(r, parent, x, y, z, length=3):
     r.cube(parent, (x - .25, y, z - .25, .5, length - .75, .5), 'ice')
-    r.cube(parent, (x - .25, y + length - .75, z - .25, .25, .75, .25), 'ice')
+    # the point carries the hoarfrost crust
+    r.cube(parent, (x - .25, y + length - .75, z - .25, .25, .75, .25), 'ice', point=True)
 
 
 def lantern(r, name, parent, pivot, small=False):
@@ -43,7 +50,9 @@ def lantern(r, name, parent, pivot, small=False):
     r.part(name + '_crystal', name, (0, -height / 2 if small else -2.75, 0), (0, 45, 15))
     crystal = name + '_crystal'
     r.cube(crystal, (-.5, -1, -.5, 1, 2, 1), 'crystal')
-    r.cube(crystal, (-.25, -1.5, -.25, .5, 3, .5), 'crystal')
+    # The light itself is its own part, so the Guttering Lantern shrinks the light and never the cage.
+    r.part(name + '_core', crystal)
+    r.cube(name + '_core', (-.25, -1.5, -.25, .5, 3, .5), 'crystal')
     for i, (x, z) in enumerate(((-half, -half), (half, -half), (-half, half), (half, half))):
         icicle(r, name, x, .5, z, 2 + i * .5)
     if not small:
@@ -59,7 +68,7 @@ def arm(r, side, sign):
     r.cube(name, (-.75, 1, -.75, 1.5, 6.5, 1.5), 'bone')
     r.cube(name, (-1.75, -.75, -2, 3.5, 1, 4), 'iron')
     for i in range(3):
-        r.cube(name, (-1.75, i * 1.25, -2, 3.5, .5, .75), 'silver')
+        r.cube(name, (-1.75, i * 1.25, -2, 3.5, .5, .75), 'rime_iron')
         icicle(r, name, -1.5 + i * 1.5, .5, -2, 1.5 + i * .5)
     r.cube(name, (-2, -.5, -1.75, 4, 2, 3.5), 'mantle')
     r.cube(name, (-2, -.75, -1.75, 4, .25, 3.5), 'veil')
@@ -103,9 +112,9 @@ def saint():
     r = Rig('velorum', 'VelorumModel', 'velorum')
     r.part('hips', pivot=(0, 10, 0))
     r.cube('hips', (-3, -1, -2.25, 6, 8, 4.5), 'shadow')
-    r.part('chest', 'hips', (0, -8, 0), (3, 0, 0))
+    r.part('chest', 'hips', (0, -8, 0), (1, 0, 0))     # more upright and rigid than before: dignity, not drift
     r.cube('chest', (-3.5, -6, -2.5, 7, 12, 5), 'shadow')
-    r.cube('chest', (-2.5, -6.5, -2.75, 5, 1, 5.5), 'silver')
+    r.cube('chest', (-2.5, -6.5, -2.75, 5, 1, 5.5), 'rime_iron')
     for side, sign in (('left', 1), ('right', -1)):
         r.part(side + '_stole', 'chest', (sign * 2.75, -6, -2.75), (0, 0, -sign * 8))
         r.cube(side + '_stole', (-.5, 0, -.25, 1, 16, .5), 'veil')
@@ -122,10 +131,15 @@ def saint():
             r.part(name, 'pectoral_chains', (x, y, -3), (0, 0, -x * 15))
             for box in ((-.5, -.25, -.25, .25, 1, .5), (.25, -.25, -.25, .25, 1, .5),
                         (-.25, -.25, -.25, .5, .25, .5), (-.25, .5, -.25, .5, .25, .5)):
-                r.cube(name, box, 'silver')
+                r.cube(name, box, 'rime_iron')
     chain(r, 'waist_chain', 'chest', (0, 4, -3), 7)
+    # The Bow's seam: three thin cracks across the breast, base-dark, lit in the glow atlas (shown only in the Bow).
+    r.part('breast_seam', 'chest', (0, -2.5, -2.5))
+    r.cube('breast_seam', (-1.75, -.25, -.25, 1.5, .25, .25), 'seam')
+    r.cube('breast_seam', (-.5, 0, -.25, 1.25, .25, .25), 'seam')
+    r.cube('breast_seam', (.5, .25, -.25, 1.25, .25, .25), 'seam')
     r.part('breast_reliquary', 'chest', (0, 3.5, -3.5), (0, 0, 45))
-    r.cube('breast_reliquary', (-.75, -.75, -.25, 1.5, 1.5, .5), 'silver')
+    r.cube('breast_reliquary', (-.75, -.75, -.25, 1.5, 1.5, .5), 'rime_iron')
     r.cube('breast_reliquary', (-.25, -.25, -.5, .5, .5, .25), 'crystal')
     chain(r, 'side_chain', 'chest', (-5, -5.5, 1), 10)
     lantern(r, 'side_lantern', 'side_chain', (0, 19, 0), True)
@@ -160,8 +174,10 @@ def saint():
     r.part('knotted_cord', 'hips', (0, -1, -2.75))
     r.cube('knotted_cord', (-3, -.25, -.25, 6, .5, .5), 'cord')
     r.cube('knotted_cord', (-.5, -.5, -.5, 1, 1, 1), 'cord')
+    # the tails are their own part under the knot, so they hang plumb and swing off his hips
+    r.part('knotted_cord_tails', 'knotted_cord', (0, .5, 0))
     for i in range(2):
-        r.cube('knotted_cord', (-.75 + i, .5, -.25, .5, 6 + i, .5), 'cord')
+        r.cube('knotted_cord_tails', (-.75 + i, 0, -.25, .5, 6 + i, .5), 'cord')
     r.part('halo', 'head', (0, -3.5, 3))
     for i in range(20):
         angle = math.radians(i * 18)
@@ -169,11 +185,13 @@ def saint():
         r.part(name, 'halo', (snap(math.sin(angle) * 7.25), snap(-math.cos(angle) * 7.25), 0), (0, 0, i * 18))
         r.cube(name, (-1.25, -.25, -.25, 2.5, .5, .5), 'iron')
         if i % 2 == 0:
-            r.cube(name, (-.25, -2.25, -.25, .5, 2.5, .5), 'silver')
+            r.cube(name, (-.25, -2.25, -.25, .5, 2.5, .5), 'rime_iron')
             r.cube(name, (-.75, -1.5, -.25, 1.5, .25, .5), 'iron')
     for i, x in enumerate((-7.25, -5, 5, 7.25)):
         chain(r, f'halo_chain_{i}', 'halo', (x, 0, 0), 2 + i % 2)
-        icicle(r, f'halo_chain_{i}', 0, 3 + (i % 2) * 1.5, 0, 2 + (i % 2))
+        # Each hanging icicle is its own part, so the Splinter Crown can tilt and drop it.
+        r.part(f'halo_icicle_{i}', f'halo_chain_{i}', (0, 3 + (i % 2) * 1.5, 0))
+        icicle(r, f'halo_icicle_{i}', 0, 0, 0, 2 + (i % 2))
 
     # A dark inner skirt and overlapping wider mantle strips form a flared, ragged train.
     for i in range(16):
@@ -210,13 +228,18 @@ def saint():
     bottom = snap(24 - (hand[:3, :3] @ pivot + hand[:3, 3])[1])
     r.part('staff', 'left_hand', pivot, euler(hand[:3, :3].T))
     r.cube('staff', (-.5, -15, -.5, 1, bottom + 15, 1), 'iron')
-    r.cube('staff', (-1, bottom - .75, -1, 2, .75, 2), 'silver')
+    r.cube('staff', (-1, bottom - .75, -1, 2, .75, 2), 'rime_iron')
     for y in (-13, -8, -3, 3, 9, bottom - 1.5):
-        r.cube('staff', (-.75, y, -.75, 1.5, .75, 1.5), 'silver')
+        r.cube('staff', (-.75, y, -.75, 1.5, .75, 1.5), 'rime_iron')
     lantern(r, 'staff_lantern', 'staff', (0, -13, 0))
     r.cube('staff', (-.25, -5, -.25, 4, .5, .5), 'iron')
     chain(r, 'pendant_chain', 'staff', (3.5, -5, 0), 9)
     lantern(r, 'pendant_lantern', 'pendant_chain', (0, 17.5, 0), True)
+    # the halo chains' links crusted with frozen cruor, as all his ice now is
+    for part in r.parts:
+        if part['name'].startswith('halo_chain_') and '_link_' in part['name']:
+            for cube in part['cubes']:
+                cube['material'] = 'cruor'
     # Retain animated nodes but strip the ornamental veil and pectoral metalwork.
     for part in r.parts:
         if part['name'].startswith(('veil_strip_', 'chest_link_')) or part['name'] == 'breast_reliquary':
@@ -231,26 +254,73 @@ def saint():
     return r
 
 
-def paint(cube, t, glow=False):
+# Frozen Cruor (design revision 2026-11-06, R.2)
+CRUOR_DEEP = (26, 5, 8)
+CRUOR = (58, 14, 20)
+CRUOR_LIT = (106, 28, 38)
+CLOT = (18, 3, 10)
+HOAR = (220, 232, 244)
+CRUOR_GLOW = ((90, 26, 34), (138, 36, 48))
+# the cruor's glow in the shared glow atlas: faint always (about 0.15 at the layer's rest strength)
+CRUOR_GLOW_SHARE = .2
+
+
+def cruor(cube, t):
+    """Frozen Cruor glass: oxblood, black-red at its thick heart, lit thin at its edges, clots held inside it, the
+    hoarfrost crust on its up faces, its top edge and its points. No blue."""
+    u, v = t['u'], t['v']
+    edge = t['side'] and (u == 0 or u == t['fw'] - 1)
+    centre = abs(t['fu'] - .5) < .26 and t['side']
+    rgb = mix(CRUOR, CRUOR_DEEP, .55) if centre else CRUOR
+    rgb = add(rgb, (t['n'] - .5) * 10)
+    if edge:
+        rgb = mix(rgb, CRUOR_LIT, .7)
+    # one to three clots a shard, inside the glass: small dark nodules away from the faces' rims
+    clot = ((int(t['gx'] * 4) * 73856093) ^ (int(t['gy'] * 4) * 19349663) ^ (int(t['gz'] * 4) * 83492791)) % 97
+    if t['side'] and not edge and clot < 6:
+        rgb = mix(rgb, CLOT, .85)
+    if t['face'] == 'up' or (t['side'] and v == 0) or cube.get('point'):
+        rgb = mix(rgb, HOAR, .72 if t['face'] == 'up' or cube.get('point') else .5)
+    elif t['side'] and t['n'] > .93:
+        rgb = mix(rgb, HOAR, .4)         # a feather of hoarfrost caught on the glass
+    return rgb
+
+
+def cruor_glow(cube, t):
+    """The cruor's own dull glow; the frost crust does not glow."""
+    if t['face'] == 'up' or cube.get('point'):
+        return None
+    return mix(*CRUOR_GLOW, t['n'])
+
+
+def paint(cube, t, glow=False, cruor_only=False):
     mat = cube['material']
     u, v = t['u'], t['v']
     noise = (t['n'] - .5) * 9
     lit = False
+    if mat in ('ice', 'cruor'):
+        g = cruor_glow(cube, t)
+        if cruor_only:
+            return (0, 0, 0, 0) if g is None else (*g, 255)
+        if glow:
+            return (0, 0, 0, 0) if g is None else (*(int(c * CRUOR_GLOW_SHARE) for c in g), 255)
+        return (*cruor(cube, t), 255)
+    if cruor_only:
+        return (0, 0, 0, 0)
     if mat == 'crystal':
         rgb = mix((75, 119, 214), (213, 242, 255), t['fu'])
         lit = True
-    elif mat == 'ice':
-        rgb = add((154, 181, 218), noise)
-        if u == 0 or t['face'] == 'up':
-            rgb = (220, 234, 249)
-        lit = t['n'] > .95
-    elif mat in ('iron', 'silver'):
+    elif mat in ('iron', 'rime_iron'):
+        # hematic iron: a dark blue-grey patina; no silver, brass, bronze or copper on a blood-side body
         patina = kit.smooth(t['gx'], t['gy'], t['gz'], scale=2, seed=9)
-        rgb = mix((36, 38, 51), (119, 127, 149), patina)
-        if mat == 'silver':
-            rgb = add(rgb, 46)
+        rgb = mix((36, 38, 51), (96, 102, 122), patina)
         if u == 0 or v == 0:
-            rgb = add(rgb, 25)
+            rgb = add(rgb, 18)
+        if mat == 'rime_iron' and (t['face'] == 'up' or v == 0):
+            rgb = (196, 214, 236)      # a one-texel pale frost edge on its upper faces
+    elif mat == 'seam':
+        rgb = (14, 18, 30)
+        lit = True
     elif mat == 'bone':
         rgb = add((180, 186, 201), noise)
         if u == 0:
@@ -276,18 +346,22 @@ def main():
     args = parser.parse_args()
     rig = saint()
     size = layout(rig, 256)
-    base, glow = paint_atlases(rig, size, [paint, lambda c, t: paint(c, t, True)])
+    base, glow, cruor_glow_atlas = paint_atlases(rig, size, [paint, lambda c, t: paint(c, t, True),
+                                                             lambda c, t: paint(c, t, cruor_only=True)])
     TEXTURES.mkdir(parents=True, exist_ok=True)
     base.save(TEXTURES / 'velorum.png')
     glow.save(TEXTURES / 'velorum_glow.png')
+    cruor_glow_atlas.save(TEXTURES / 'velorum_cruor_glow.png')
     source = entity_java_source(rig, size, 'VelorumEntity', 'velorum.py',
         package='com.vincenthuto.hemomancy.client.model.entity.boss.velorum',
         entity_package='com.vincenthuto.hemomancy.common.entity.boss.saint.velorum',
         extra_imports='import com.vincenthuto.hemomancy.client.render.AnimationTime;\n'
-                      'import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumVisualRules;\n'
-                      'import org.joml.Quaternionf;\nimport org.joml.Matrix3f;\n',
+                      'import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumMove;\n'
+                      'import com.vincenthuto.hemomancy.common.util.HemoEasing;\n'
+                      'import org.joml.Quaternionf;\nimport org.joml.Matrix3f;\n\n'
+                      'import static com.vincenthuto.hemomancy.common.util.HemoEasing.catmullRom;\n',
         extra_fields='',
-        extra_methods=(ROOT / 'tools/model_export/velorum_anim.java').read_text())
+        extra_methods=(ROOT / 'tools/model_export/velorum_anim.java').read_text(encoding='utf-8'))
     source = source.replace('public class VelorumModel extends HierarchicalModel<VelorumEntity>',
                             'public class VelorumModel<T extends VelorumEntity> extends HierarchicalModel<T>')
     source = source.replace('import net.minecraft.world.entity.HumanoidArm;\n', '')

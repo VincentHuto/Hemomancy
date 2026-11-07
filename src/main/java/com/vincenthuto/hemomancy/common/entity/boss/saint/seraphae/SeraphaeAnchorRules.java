@@ -74,6 +74,22 @@ public final class SeraphaeAnchorRules {
 		return placements;
 	}
 
+	/** The most reserve anchors the aisles lend her: the two aisle-end anchors behind the pillar ranks. */
+	public static final int RESERVE_COUNT = 2;
+
+	/**
+	 * Her reserves: whole, unsnapped block anchors in her chamber beyond the reach of the tomb (the aisle ends), nearest
+	 * the tomb first, at most {@link #RESERVE_COUNT}. They stay blocks until a challenger's held Projection wakes one.
+	 */
+	public static List<BlockPos> reserves(BlockPos centre, Collection<BlockPos> candidates) {
+		Comparator<BlockPos> order = Comparator.<BlockPos>comparingInt(pos -> {
+			int dx = pos.getX() - centre.getX(), dz = pos.getZ() - centre.getZ();
+			return dx * dx + dz * dz;
+		}).thenComparing(Comparator.naturalOrder());
+		return candidates.stream().filter(pos -> !inReach(centre, pos)).distinct().sorted(order).limit(RESERVE_COUNT)
+				.map(BlockPos::immutable).toList();
+	}
+
 	/** The old ring's {@code slot}th position: a quarter turn apart, {@link #RING_RADIUS} out, at her height. */
 	public static Vec3 ringSlot(Vec3 seraphae, int slot) {
 		double angle = slot * 2.0 * Math.PI / ANCHOR_COUNT;

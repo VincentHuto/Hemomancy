@@ -369,6 +369,7 @@ VARIANTS = dict(base=dict(hair='red', iris='gold', dirty=True), purged=dict(hair
 EXTRA_IMPORTS = """import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.AnnettaLooks;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaEncounterRules;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity.EncounterState;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import org.joml.Quaternionf;
 """
 

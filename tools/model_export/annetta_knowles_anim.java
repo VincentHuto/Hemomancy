@@ -15,41 +15,7 @@
 		return this.bladeTrail;
 	}
 
-	// ---------------------------------------------------------------- timing helpers
-
-	private static float ramp(float t, float from, float to) {
-		float x = Mth.clamp((t - from) / (to - from), 0.0F, 1.0F);
-		return x * x * (3.0F - 2.0F * x);
-	}
-
-	/** In, held, out: 0 before a, 1 from b to c, 0 after d. */
-	private static float window(float t, float a, float b, float c, float d) {
-		return ramp(t, a, b) * (1.0F - ramp(t, c, d));
-	}
-
-	/**
-	 * Catmull-Rom through keys {t0, v0, t1, v1, ...}, held flat before the first and after the last. Velocity carries
-	 * through each key, so a wind-up flows into its strike instead of stopping on every pose.
-	 */
-	private static float curve(float t, float... keys) {
-		int n = keys.length / 2;
-		if (t <= keys[0]) return keys[1];
-		if (t >= keys[(n - 1) * 2]) return keys[(n - 1) * 2 + 1];
-		int i = 0;
-		while (i < n - 2 && t > keys[(i + 1) * 2]) i++;
-		float t1 = keys[i * 2], t2 = keys[(i + 1) * 2];
-		float p1 = keys[i * 2 + 1], p2 = keys[(i + 1) * 2 + 1];
-		float p0 = i > 0 ? keys[(i - 1) * 2 + 1] : p1;
-		float t0 = i > 0 ? keys[(i - 1) * 2] : t1 - (t2 - t1);
-		float p3 = i + 2 < n ? keys[(i + 2) * 2 + 1] : p2;
-		float t3 = i + 2 < n ? keys[(i + 2) * 2] : t2 + (t2 - t1);
-		float s = (t - t1) / (t2 - t1);
-		// Tangents scaled to each segment's length so uneven key spacing does not overshoot wildly.
-		float m1 = (p2 - p0) / (t2 - t0) * (t2 - t1);
-		float m2 = (p3 - p1) / (t3 - t1) * (t2 - t1);
-		float s2 = s * s, s3 = s2 * s;
-		return (2 * s3 - 3 * s2 + 1) * p1 + (s3 - 2 * s2 + s) * m1 + (-2 * s3 + 3 * s2) * p2 + (s3 - s2) * m2;
-	}
+	// ---------------------------------------------------------------- timing helpers: HemoEasing.ramp, window, catmullRom
 
 	private static void rot(ModelPart part, float x, float y, float z) {
 		part.xRot = x;
@@ -173,7 +139,7 @@
 
 	/** The tick bites: she claws at her neck, head thrown back and wrenched aside, the dagger arm flung wide. */
 	private void scream(float t, float age) {
-		float w = window(t, 0.0F, 3.0F, 24.0F, 30.0F);
+		float w = HemoEasing.window(t, 0.0F, 3.0F, 24.0F, 30.0F);
 		float writhe = Mth.sin(age * 0.7F) * 0.5F + Mth.sin(age * 0.31F) * 0.5F;
 		toward(this.leftArm, w, -1.378F, 0.0F, -0.171F);
 		toward(this.leftForearm, w, -2.65F, 0.0F, 0.0F);
@@ -197,18 +163,18 @@
 	 * down point first. Server hits land on ticks 6, 14 and 22.
 	 */
 	private void daggerCombo(float t) {
-		float w = window(t, 0.0F, 2.0F, 25.0F, 28.0F);
+		float w = HemoEasing.window(t, 0.0F, 2.0F, 25.0F, 28.0F);
 		this.bladeTrail = t > 3.5F && t < 24.0F;
 		// Keys: stance -> wind 1 (3) -> through (7.5) -> wind 2 (11) -> through (15.5) -> raise (19.5) -> driven (22.5) -> hold (25).
-		float ax = curve(t, 0, -0.35F, 3, -2.1F, 5.5F, -1.5F, 7.5F, -0.9F, 11, -0.95F, 13.5F, -1.5F, 15.5F, -2.0F, 19.5F, -2.95F, 22.5F, -0.85F, 25, -0.8F);
-		float ay = curve(t, 0, -0.15F, 3, 0.95F, 5.5F, 0.0F, 7.5F, -0.85F, 11, -0.95F, 13.5F, 0.1F, 15.5F, 0.9F, 19.5F, 0.25F, 22.5F, -0.15F, 25, -0.1F);
-		float az = curve(t, 0, 0.18F, 3, 0.35F, 7.5F, -0.15F, 11, -0.2F, 15.5F, 0.45F, 19.5F, 0.1F, 22.5F, 0.0F, 25, 0.0F);
-		float fx = curve(t, 0, -1.15F, 3, -1.7F, 5.5F, -0.35F, 7.5F, -0.7F, 11, -1.6F, 13.5F, -0.3F, 15.5F, -0.6F, 19.5F, -1.5F, 22.5F, -0.2F, 25, -0.35F);
+		float ax = HemoEasing.catmullRom(t, 0, -0.35F, 3, -2.1F, 5.5F, -1.5F, 7.5F, -0.9F, 11, -0.95F, 13.5F, -1.5F, 15.5F, -2.0F, 19.5F, -2.95F, 22.5F, -0.85F, 25, -0.8F);
+		float ay = HemoEasing.catmullRom(t, 0, -0.15F, 3, 0.95F, 5.5F, 0.0F, 7.5F, -0.85F, 11, -0.95F, 13.5F, 0.1F, 15.5F, 0.9F, 19.5F, 0.25F, 22.5F, -0.15F, 25, -0.1F);
+		float az = HemoEasing.catmullRom(t, 0, 0.18F, 3, 0.35F, 7.5F, -0.15F, 11, -0.2F, 15.5F, 0.45F, 19.5F, 0.1F, 22.5F, 0.0F, 25, 0.0F);
+		float fx = HemoEasing.catmullRom(t, 0, -1.15F, 3, -1.7F, 5.5F, -0.35F, 7.5F, -0.7F, 11, -1.6F, 13.5F, -0.3F, 15.5F, -0.6F, 19.5F, -1.5F, 22.5F, -0.2F, 25, -0.35F);
 		toward(this.rightArm, w, ax, ay, az);
 		toward(this.rightForearm, w, fx, 0.0F, 0.0F);
-		float by = curve(t, 0, 0.1F, 3, 0.55F, 7.5F, -0.4F, 11, -0.35F, 15.5F, 0.45F, 19.5F, 0.2F, 22.5F, -0.15F, 25, -0.1F);
-		float bx = curve(t, 0, 0.12F, 3, 0.05F, 7.5F, 0.3F, 11, 0.15F, 15.5F, 0.25F, 19.5F, -0.08F, 22.5F, 0.5F, 25, 0.45F);
-		float hy = curve(t, 0, 0.3F, 3, 0.45F, 7.5F, 0.1F, 11, 0.15F, 15.5F, 0.4F, 19.5F, 0.3F, 22.5F, 0.15F, 25, 0.2F);
+		float by = HemoEasing.catmullRom(t, 0, 0.1F, 3, 0.55F, 7.5F, -0.4F, 11, -0.35F, 15.5F, 0.45F, 19.5F, 0.2F, 22.5F, -0.15F, 25, -0.1F);
+		float bx = HemoEasing.catmullRom(t, 0, 0.12F, 3, 0.05F, 7.5F, 0.3F, 11, 0.15F, 15.5F, 0.25F, 19.5F, -0.08F, 22.5F, 0.5F, 25, 0.45F);
+		float hy = HemoEasing.catmullRom(t, 0, 0.3F, 3, 0.45F, 7.5F, 0.1F, 11, 0.15F, 15.5F, 0.4F, 19.5F, 0.3F, 22.5F, 0.15F, 25, 0.2F);
 		this.body.xRot = Mth.lerp(w, this.body.xRot, bx);
 		this.body.yRot = Mth.lerp(w, this.body.yRot, by);
 		this.hips.yRot = Mth.lerp(w, this.hips.yRot, hy);
@@ -216,7 +182,7 @@
 		this.leftArm.yRot -= 0.35F * (by - 0.1F) * w;
 		this.leftArm.xRot += 0.15F * Math.abs(by - 0.1F) * w;
 		// The front foot drives into each strike; the overhead finisher drops her into a deep lunge.
-		float lunge = curve(t, 0, 0.0F, 3, 0.1F, 6.5F, 1.0F, 9, 0.6F, 11, 0.3F, 14.5F, 1.0F, 17, 0.6F, 19.5F, 0.35F, 22.5F, 1.4F, 25, 1.3F) * w;
+		float lunge = HemoEasing.catmullRom(t, 0, 0.0F, 3, 0.1F, 6.5F, 1.0F, 9, 0.6F, 11, 0.3F, 14.5F, 1.0F, 17, 0.6F, 19.5F, 0.35F, 22.5F, 1.4F, 25, 1.3F) * w;
 		this.leftLeg.xRot += -0.42F * lunge;
 		this.leftShin.xRot += 0.45F * lunge;
 		this.rightLeg.xRot += 0.3F * lunge;
@@ -225,7 +191,7 @@
 
 	/** Still arts: she pours across the floor low and leaning, arms trailing behind her like water drawn after. */
 	private void stillDash(float t, float length) {
-		float w = window(t, 0.0F, 2.5F, length - 4.0F, length);
+		float w = HemoEasing.window(t, 0.0F, 2.5F, length - 4.0F, length);
 		float glide = Mth.sin(Mth.clamp(t / length, 0.0F, 1.0F) * Mth.PI);
 		toward(this.body, w, 0.5F, 0.1F, 0.0F);
 		toward(this.leftArm, w, 0.897F, -0.284F, 0.293F);
@@ -243,18 +209,18 @@
 
 	/** A vial of hemolytic humor: drawn back behind her ear with her whole side turned, then whipped overhand. */
 	private void stillBolt(float t) {
-		float w = window(t, 0.0F, 2.0F, 14.0F, 18.0F);
-		float ax = curve(t, 0, -0.35F, 7, -2.75F, 9, -2.2F, 11, -0.9F, 14, -0.7F);
-		float ay = curve(t, 0, -0.15F, 7, 0.55F, 9, 0.2F, 11, -0.35F, 14, -0.3F);
-		float fx = curve(t, 0, -1.15F, 7, -1.55F, 9, -0.6F, 11, -0.1F, 14, -0.3F);
+		float w = HemoEasing.window(t, 0.0F, 2.0F, 14.0F, 18.0F);
+		float ax = HemoEasing.catmullRom(t, 0, -0.35F, 7, -2.75F, 9, -2.2F, 11, -0.9F, 14, -0.7F);
+		float ay = HemoEasing.catmullRom(t, 0, -0.15F, 7, 0.55F, 9, 0.2F, 11, -0.35F, 14, -0.3F);
+		float fx = HemoEasing.catmullRom(t, 0, -1.15F, 7, -1.55F, 9, -0.6F, 11, -0.1F, 14, -0.3F);
 		toward(this.rightArm, w, ax, ay, 0.15F);
 		toward(this.rightForearm, w, fx, 0.0F, 0.0F);
-		float by = curve(t, 0, 0.1F, 7, 0.6F, 9, 0.2F, 11, -0.45F, 14, -0.35F);
-		float bx = curve(t, 0, 0.12F, 7, -0.12F, 9, 0.1F, 11, 0.35F, 14, 0.3F);
+		float by = HemoEasing.catmullRom(t, 0, 0.1F, 7, 0.6F, 9, 0.2F, 11, -0.45F, 14, -0.35F);
+		float bx = HemoEasing.catmullRom(t, 0, 0.12F, 7, -0.12F, 9, 0.1F, 11, 0.35F, 14, 0.3F);
 		this.body.yRot = Mth.lerp(w, this.body.yRot, by);
 		this.body.xRot = Mth.lerp(w, this.body.xRot, bx);
-		this.hips.yRot = Mth.lerp(w, this.hips.yRot, curve(t, 0, 0.3F, 7, 0.5F, 11, 0.0F, 14, 0.05F));
-		float step = ramp(t, 8.0F, 11.0F) * w;
+		this.hips.yRot = Mth.lerp(w, this.hips.yRot, HemoEasing.catmullRom(t, 0, 0.3F, 7, 0.5F, 11, 0.0F, 14, 0.05F));
+		float step = HemoEasing.ramp(t, 8.0F, 11.0F) * w;
 		this.leftLeg.xRot -= 0.35F * step;
 		this.leftShin.xRot += 0.3F * step;
 		this.rightLeg.xRot += 0.2F * step;
@@ -262,7 +228,7 @@
 
 	/** Shield raised to her eyes and braced, the dagger cocked behind it waiting for an opening. */
 	private void shieldGuard(float t, float age) {
-		float w = window(t, 0.0F, 3.0F, 28.0F, 32.0F);
+		float w = HemoEasing.window(t, 0.0F, 3.0F, 28.0F, 32.0F);
 		float brace = Mth.sin(age * 0.21F) * 0.02F;
 		toward(this.leftArm, w, -1.098F, 0.832F, -0.199F);
 		toward(this.leftForearm, w, -2.392F + brace, 0.433F, 0.013F);
@@ -281,9 +247,9 @@
 	 * shoulder and a lunge (hit on tick 7) and holds it there a moment before falling back to her stance.
 	 */
 	private void shieldBash(float t) {
-		float w = window(t, 0.0F, 1.0F, 12.0F, 16.0F);
-		float gather = window(t, 1.0F, 4.0F, 5.0F, 7.0F);
-		float drive = window(t, 5.0F, 7.0F, 10.0F, 15.0F);
+		float w = HemoEasing.window(t, 0.0F, 1.0F, 12.0F, 16.0F);
+		float gather = HemoEasing.window(t, 1.0F, 4.0F, 5.0F, 7.0F);
+		float drive = HemoEasing.window(t, 5.0F, 7.0F, 10.0F, 15.0F);
 		// Start from the raised guard the blow struck.
 		toward(this.leftArm, w, -1.098F, 0.832F, -0.199F);
 		toward(this.leftForearm, w, -2.392F, 0.433F, 0.013F);
@@ -291,7 +257,7 @@
 		toward(this.leftForearm, gather, -2.708F, -0.002F, -0.732F);
 		toward(this.leftArm, drive, -1.24F, 0.248F, -1.034F);
 		toward(this.leftForearm, drive, -1.882F, 0.16F, 0.768F);
-		float recoil = window(t, 0.0F, 1.0F, 1.5F, 4.0F);
+		float recoil = HemoEasing.window(t, 0.0F, 1.0F, 1.5F, 4.0F);
 		this.body.xRot = Mth.lerp(w, this.body.xRot, 0.2F) - 0.25F * recoil + (0.05F - 0.2F) * gather + (0.35F - 0.2F) * drive;
 		this.body.yRot = Mth.lerp(w, this.body.yRot, 0.1F) + 0.25F * gather - 0.25F * drive;
 		this.hips.yRot += 0.05F * gather + 0.15F * drive;
@@ -307,9 +273,9 @@
 
 	/** She draws everything in, then throws her arms wide as the pale ring leaves her (fires on tick 8). */
 	private void silverAura(float t) {
-		float w = window(t, 0.0F, 2.0F, 15.0F, 20.0F);
-		float gather = window(t, 0.0F, 4.0F, 6.0F, 8.0F);
-		float spread = ramp(t, 7.0F, 9.5F) * (1.0F - ramp(t, 15.0F, 20.0F));
+		float w = HemoEasing.window(t, 0.0F, 2.0F, 15.0F, 20.0F);
+		float gather = HemoEasing.window(t, 0.0F, 4.0F, 6.0F, 8.0F);
+		float spread = HemoEasing.ramp(t, 7.0F, 9.5F) * (1.0F - HemoEasing.ramp(t, 15.0F, 20.0F));
 		toward(this.rightArm, gather, -1.2F, -0.7F, 0.0F);
 		toward(this.rightForearm, gather, -1.9F, 0.0F, 0.0F);
 		toward(this.leftArm, gather, -1.2F, 0.7F, 0.0F);
@@ -330,7 +296,7 @@
 	}
 
 	private void flinch(float t) {
-		float jolt = curve(t, 0, 0.0F, 1.5F, 1.0F, 4, 0.55F, 8, 0.0F);
+		float jolt = HemoEasing.catmullRom(t, 0, 0.0F, 1.5F, 1.0F, 4, 0.55F, 8, 0.0F);
 		this.body.xRot -= 0.35F * jolt;
 		this.body.zRot += 0.12F * jolt;
 		this.head.xRot -= 0.35F * jolt;
@@ -350,7 +316,7 @@
 	 */
 	private void breaking(float t, float age) {
 		float slow = Mth.sin(age * 0.18F);
-		float falter = ramp(t, 0.0F, 10.0F);
+		float falter = HemoEasing.ramp(t, 0.0F, 10.0F);
 		// Standing, knees softening.
 		this.body.xRot = 0.18F * falter;
 		this.body.zRot = 0.08F * slow * falter;
@@ -365,12 +331,12 @@
 		rot(this.rightArm, -0.2F, -0.1F, 0.1F);
 		rot(this.rightForearm, -0.7F, 0.0F, 0.0F);
 		// Her free hand finds the tick; her head turns from it.
-		float clutch = window(t, 12.0F, 20.0F, AnnettaEncounterRules.GRIP, AnnettaEncounterRules.GRIP + 6.0F);
+		float clutch = HemoEasing.window(t, 12.0F, 20.0F, AnnettaEncounterRules.GRIP, AnnettaEncounterRules.GRIP + 6.0F);
 		toward(this.leftArm, clutch, -1.378F, 0.0F, -0.171F);
 		toward(this.leftForearm, clutch, -2.65F, 0.0F, 0.0F);
 		this.head.zRot = -0.25F * clutch;
 		// Both hands on the hilt, held out at arm's length with the point turned back at her own neck. It trembles.
-		float raise = ramp(t, AnnettaEncounterRules.GRIP, AnnettaEncounterRules.STAB - 4.0F);
+		float raise = HemoEasing.ramp(t, AnnettaEncounterRules.GRIP, AnnettaEncounterRules.STAB - 4.0F);
 		float shake = Mth.sin(age * 1.1F) * 0.035F * raise;
 		toward(this.rightArm, raise, -1.665F + shake, -0.32F, -0.262F);
 		toward(this.rightForearm, raise, -0.05F, 1.475F, -0.335F);
@@ -381,7 +347,7 @@
 		this.head.xRot = Mth.lerp(raise, this.head.xRot, 0.25F);
 		// The stab: two ticks, both fists yanked in to the left of her chin and the point into the tick, her head
 		// wrenched away to bare it.
-		float drive = ramp(t, AnnettaEncounterRules.STAB - 1.0F, AnnettaEncounterRules.STAB + 1.0F);
+		float drive = HemoEasing.ramp(t, AnnettaEncounterRules.STAB - 1.0F, AnnettaEncounterRules.STAB + 1.0F);
 		float shudder = Mth.sin(age * 1.7F) * 0.025F * drive;
 		toward(this.rightArm, drive, -1.718F + shudder, -0.835F, -0.28F);
 		toward(this.rightForearm, drive, -0.41F, 0.667F, -0.882F);
@@ -396,7 +362,7 @@
 		this.rightShin.xRot += 0.2F * drive;
 		this.bladeTrail = t > AnnettaEncounterRules.STAB - 2.0F && t < AnnettaEncounterRules.STAB + 2.0F;
 		// The tick fills against the blade and the pressure goes up into her head: it bulges and throbs, faster.
-		float swell = ramp(t, AnnettaEncounterRules.STAB + 4.0F, AnnettaEncounterRules.BURST);
+		float swell = HemoEasing.ramp(t, AnnettaEncounterRules.STAB + 4.0F, AnnettaEncounterRules.BURST);
 		if (t < AnnettaEncounterRules.BURST) {
 			float throb = Mth.sin(age * (0.9F + 1.4F * swell)) * 0.035F * swell;
 			float bulge = 1.0F + 0.2F * swell * swell + throb;
@@ -407,9 +373,9 @@
 		}
 		if (t >= AnnettaEncounterRules.BURST) {
 			// The pop throws her arms open, then they fall slack; the body stands, swaying like a held breath.
-			float blown = window(t, AnnettaEncounterRules.BURST, AnnettaEncounterRules.BURST + 2.0F,
+			float blown = HemoEasing.window(t, AnnettaEncounterRules.BURST, AnnettaEncounterRules.BURST + 2.0F,
 					AnnettaEncounterRules.BURST + 4.0F, AnnettaEncounterRules.BURST + 14.0F);
-			float slack = ramp(t, AnnettaEncounterRules.BURST + 3.0F, AnnettaEncounterRules.BURST + 16.0F);
+			float slack = HemoEasing.ramp(t, AnnettaEncounterRules.BURST + 3.0F, AnnettaEncounterRules.BURST + 16.0F);
 			toward(this.rightArm, blown, -1.6F, -0.3F, 1.2F);
 			toward(this.leftArm, blown, -1.7F, 0.3F, -1.25F);
 			toward(this.rightForearm, blown, -0.4F, 0.0F, 0.0F);
@@ -424,12 +390,12 @@
 			this.rightShin.xRot += 0.3F * slack;
 			this.leftShin.xRot += 0.35F * slack;
 		}
-		float fall = ramp(t, AnnettaEncounterRules.FALL_START, AnnettaEncounterRules.FALL_END);
+		float fall = HemoEasing.ramp(t, AnnettaEncounterRules.FALL_START, AnnettaEncounterRules.FALL_END);
 		fall = fall * fall;
 		if (fall > 0.0F) {
 			// Knees first, then forward onto her stomach.
-			float buckle = ramp(t, AnnettaEncounterRules.FALL_START, AnnettaEncounterRules.FALL_START + 8.0F)
-					* (1.0F - ramp(t, AnnettaEncounterRules.FALL_END - 6.0F, AnnettaEncounterRules.FALL_END));
+			float buckle = HemoEasing.ramp(t, AnnettaEncounterRules.FALL_START, AnnettaEncounterRules.FALL_START + 8.0F)
+					* (1.0F - HemoEasing.ramp(t, AnnettaEncounterRules.FALL_END - 6.0F, AnnettaEncounterRules.FALL_END));
 			this.rightShin.xRot += 0.9F * buckle;
 			this.leftShin.xRot += 0.9F * buckle;
 			this.root.xRot = fall * 1.5F;
@@ -483,7 +449,7 @@
 
 	/** She drinks, convulses as the red drains out of her, is thrown to her knees as it tears free, and rises. */
 	private void purging(float t, float ageInTicks) {
-		float drink = ramp(t, 0.0F, 8.0F) * (1.0F - ramp(t, AnnettaEncounterRules.DRINK_END - 6.0F, AnnettaEncounterRules.DRINK_END));
+		float drink = HemoEasing.ramp(t, 0.0F, 8.0F) * (1.0F - HemoEasing.ramp(t, AnnettaEncounterRules.DRINK_END - 6.0F, AnnettaEncounterRules.DRINK_END));
 		this.rightForearm.xRot = -0.18F;
 		this.leftForearm.xRot = -0.18F;
 		// The vial comes up to her mouth on a bent arm.
@@ -491,8 +457,8 @@
 		this.rightArm.yRot = -0.4F * drink;
 		this.rightForearm.xRot = Mth.lerp(drink, this.rightForearm.xRot, -1.5F);
 		this.head.xRot = -0.35F * drink;
-		float convulse = ramp(t, AnnettaEncounterRules.DRINK_END, AnnettaEncounterRules.TEAR - 10.0F)
-				* (1.0F - ramp(t, AnnettaEncounterRules.TEAR, AnnettaEncounterRules.TEAR + 4.0F));
+		float convulse = HemoEasing.ramp(t, AnnettaEncounterRules.DRINK_END, AnnettaEncounterRules.TEAR - 10.0F)
+				* (1.0F - HemoEasing.ramp(t, AnnettaEncounterRules.TEAR, AnnettaEncounterRules.TEAR + 4.0F));
 		float shake = Mth.sin(ageInTicks * 1.4F) * Mth.sin(ageInTicks * 0.43F);
 		this.body.xRot += (0.35F + 0.06F * shake) * convulse;
 		this.body.zRot += 0.08F * shake * convulse;
@@ -510,16 +476,16 @@
 		this.leftShin.xRot += (0.4F - 0.08F * shake) * convulse;
 		this.head.xRot += 0.15F * convulse + 0.08F * shake * convulse;
 		// The tear: her back arches as it leaves her, arms flung out, then she drops to her knees.
-		float tear = ramp(t, AnnettaEncounterRules.TEAR - 2.0F, AnnettaEncounterRules.TEAR + 2.0F)
-				* (1.0F - ramp(t, AnnettaEncounterRules.TEAR + 4.0F, AnnettaEncounterRules.TEAR + 10.0F));
+		float tear = HemoEasing.ramp(t, AnnettaEncounterRules.TEAR - 2.0F, AnnettaEncounterRules.TEAR + 2.0F)
+				* (1.0F - HemoEasing.ramp(t, AnnettaEncounterRules.TEAR + 4.0F, AnnettaEncounterRules.TEAR + 10.0F));
 		this.body.xRot -= 0.7F * tear;
 		this.head.xRot -= 0.5F * tear;
 		this.rightArm.zRot += 0.9F * tear;
 		this.leftArm.zRot -= 0.9F * tear;
 		this.rightForearm.xRot = Mth.lerp(tear, this.rightForearm.xRot, -0.1F);
 		this.leftForearm.xRot = Mth.lerp(tear, this.leftForearm.xRot, -0.1F);
-		float kneel = ramp(t, AnnettaEncounterRules.TEAR + 4.0F, AnnettaEncounterRules.TEAR + 14.0F)
-				* (1.0F - ramp(t, AnnettaEncounterRules.KNEEL_END, AnnettaEncounterRules.PURGE_END));
+		float kneel = HemoEasing.ramp(t, AnnettaEncounterRules.TEAR + 4.0F, AnnettaEncounterRules.TEAR + 14.0F)
+				* (1.0F - HemoEasing.ramp(t, AnnettaEncounterRules.KNEEL_END, AnnettaEncounterRules.PURGE_END));
 		// Kneeling: thighs upright, shins flat on the floor behind her.
 		this.root.y += 6.0F * kneel;
 		this.rightLeg.xRot = Mth.lerp(kneel, this.rightLeg.xRot, -0.05F);
@@ -580,9 +546,9 @@
 		switch (action) {
 			case AnnettaKnowlesEntity.ACTION_HEAL -> {
 				// Both hands gather the still water at her breast, then open it out toward them.
-				float w = window(t, 0.0F, 3.0F, 18.0F, 24.0F);
-				float gather = window(t, 0.0F, 4.0F, 6.0F, 9.0F);
-				float give = ramp(t, 7.0F, 11.0F) * w;
+				float w = HemoEasing.window(t, 0.0F, 3.0F, 18.0F, 24.0F);
+				float gather = HemoEasing.window(t, 0.0F, 4.0F, 6.0F, 9.0F);
+				float give = HemoEasing.ramp(t, 7.0F, 11.0F) * w;
 				toward(this.leftArm, gather, -1.0F, 0.6F, 0.0F);
 				toward(this.leftForearm, gather, -1.6F, 0.0F, 0.0F);
 				toward(this.rightArm, gather, -0.9F, -0.5F, 0.0F);
@@ -597,35 +563,35 @@
 			}
 			case AnnettaKnowlesEntity.ACTION_ALLY_BOLT -> {
 				// Palm drawn back to her shoulder with her side turned, then thrust out flat (the lance leaves on 9).
-				float w = window(t, 0.0F, 2.0F, 12.0F, 18.0F);
-				float ax = curve(t, 0, -0.85F, 5, -1.35F, 7.5F, -1.6F, 9, -1.55F, 14, -1.45F);
-				float ay = curve(t, 0, 0.35F, 5, -0.35F, 7.5F, 0.0F, 9, 0.1F, 14, 0.1F);
-				float fx = curve(t, 0, -0.75F, 5, -1.9F, 7.5F, -0.1F, 9, -0.05F, 14, -0.15F);
+				float w = HemoEasing.window(t, 0.0F, 2.0F, 12.0F, 18.0F);
+				float ax = HemoEasing.catmullRom(t, 0, -0.85F, 5, -1.35F, 7.5F, -1.6F, 9, -1.55F, 14, -1.45F);
+				float ay = HemoEasing.catmullRom(t, 0, 0.35F, 5, -0.35F, 7.5F, 0.0F, 9, 0.1F, 14, 0.1F);
+				float fx = HemoEasing.catmullRom(t, 0, -0.75F, 5, -1.9F, 7.5F, -0.1F, 9, -0.05F, 14, -0.15F);
 				toward(this.leftArm, w, ax, ay, -0.1F);
 				toward(this.leftForearm, w, fx, 0.0F, 0.0F);
-				float by = curve(t, 0, 0.05F, 5, -0.45F, 7.5F, 0.35F, 9, 0.4F, 14, 0.3F);
+				float by = HemoEasing.catmullRom(t, 0, 0.05F, 5, -0.45F, 7.5F, 0.35F, 9, 0.4F, 14, 0.3F);
 				this.body.yRot = Mth.lerp(w, this.body.yRot, by);
-				this.body.xRot += 0.15F * ramp(t, 6.0F, 8.0F) * w;
-				this.rightArm.xRot += 0.4F * ramp(t, 6.0F, 8.0F) * w;
-				float step = ramp(t, 6.0F, 8.5F) * w;
+				this.body.xRot += 0.15F * HemoEasing.ramp(t, 6.0F, 8.0F) * w;
+				this.rightArm.xRot += 0.4F * HemoEasing.ramp(t, 6.0F, 8.0F) * w;
+				float step = HemoEasing.ramp(t, 6.0F, 8.5F) * w;
 				this.leftLeg.xRot -= 0.3F * step;
 				this.leftShin.xRot += 0.3F * step;
 				this.rightLeg.xRot += 0.15F * step;
 			}
 			case AnnettaKnowlesEntity.ACTION_ALLY_STRIKE -> {
 				// Two quick cuts stepped into (hits on 7 and 14), and away.
-				float w = window(t, 0.0F, 2.0F, 17.0F, 22.0F);
+				float w = HemoEasing.window(t, 0.0F, 2.0F, 17.0F, 22.0F);
 				this.bladeTrail = t > 3.5F && t < 16.5F;
-				float ax = curve(t, 0, -0.45F, 4, -2.0F, 6, -1.4F, 8, -0.9F, 11, -0.95F, 13, -1.5F, 15, -2.0F, 18, -0.6F);
-				float ay = curve(t, 0, -0.3F, 4, 0.95F, 6, 0.0F, 8, -0.85F, 11, -0.95F, 13, 0.1F, 15, 0.9F, 18, -0.2F);
-				float fx = curve(t, 0, -1.55F, 4, -1.7F, 6, -0.35F, 8, -0.7F, 11, -1.6F, 13, -0.3F, 15, -0.6F, 18, -1.3F);
+				float ax = HemoEasing.catmullRom(t, 0, -0.45F, 4, -2.0F, 6, -1.4F, 8, -0.9F, 11, -0.95F, 13, -1.5F, 15, -2.0F, 18, -0.6F);
+				float ay = HemoEasing.catmullRom(t, 0, -0.3F, 4, 0.95F, 6, 0.0F, 8, -0.85F, 11, -0.95F, 13, 0.1F, 15, 0.9F, 18, -0.2F);
+				float fx = HemoEasing.catmullRom(t, 0, -1.55F, 4, -1.7F, 6, -0.35F, 8, -0.7F, 11, -1.6F, 13, -0.3F, 15, -0.6F, 18, -1.3F);
 				toward(this.rightArm, w, ax, ay, 0.15F);
 				toward(this.rightForearm, w, fx, 0.0F, 0.0F);
-				float by = curve(t, 0, 0.05F, 4, 0.55F, 8, -0.5F, 11, -0.55F, 15, 0.4F, 18, 0.1F);
+				float by = HemoEasing.catmullRom(t, 0, 0.05F, 4, 0.55F, 8, -0.5F, 11, -0.55F, 15, 0.4F, 18, 0.1F);
 				this.body.yRot = Mth.lerp(w, this.body.yRot, by);
-				this.hips.yRot = Mth.lerp(w, this.hips.yRot, curve(t, 0, 0.2F, 4, 0.4F, 8, 0.0F, 11, 0.0F, 15, 0.35F, 18, 0.2F));
+				this.hips.yRot = Mth.lerp(w, this.hips.yRot, HemoEasing.catmullRom(t, 0, 0.2F, 4, 0.4F, 8, 0.0F, 11, 0.0F, 15, 0.35F, 18, 0.2F));
 				this.leftArm.yRot -= 0.3F * by * w;
-				float lunge = curve(t, 0, 0.0F, 4, 0.1F, 7, 1.0F, 9.5F, 0.5F, 11, 0.3F, 14, 1.0F, 17, 0.3F, 20, 0.0F) * w;
+				float lunge = HemoEasing.catmullRom(t, 0, 0.0F, 4, 0.1F, 7, 1.0F, 9.5F, 0.5F, 11, 0.3F, 14, 1.0F, 17, 0.3F, 20, 0.0F) * w;
 				this.leftLeg.xRot -= 0.4F * lunge;
 				this.leftShin.xRot += 0.4F * lunge;
 				this.rightLeg.xRot += 0.25F * lunge;

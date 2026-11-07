@@ -43,6 +43,7 @@ public final class HeartNodeScreen extends Screen {
 	/** The node's heartbeat on the map, matching the spread's pulse. */
 	private static final int HEARTBEAT_TICKS = HeartNodeRules.HEARTBEAT_TICKS;
 	private static final int HOVER_RADIUS = 4;
+	private static final int MOLT_WIDTH = 56;
 
 	private static final int[] TOGGLES = {HeartNodeSettings.SPREAD, HeartNodeSettings.EDGE, HeartNodeSettings.THREADS,
 			HeartNodeSettings.PULSE, HeartNodeSettings.MOTES, HeartNodeSettings.SHOW_STRANGERS,
@@ -120,6 +121,12 @@ public final class HeartNodeScreen extends Screen {
 					rebuildWidgets();
 				}).tooltip(Tooltip.create(Component.translatable("screen.hemomancy.heart_node.reset.tooltip")))
 				.bounds(cellX(8), cellY(8), CELL_WIDTH, CELL_HEIGHT).build());
+		if (!state.readOnly()) {
+			addRenderableWidget(Button.builder(Component.translatable("screen.hemomancy.heart_node.molt"),
+							button -> minecraft.setScreen(new MoltingScreen(this, state)))
+					.tooltip(Tooltip.create(Component.translatable("screen.hemomancy.heart_node.molt.tooltip")))
+					.bounds(left + WIDTH - 8 - MOLT_WIDTH, top + 5, MOLT_WIDTH, 14).build());
+		}
 		if (state.readOnly()) children().forEach(child -> {
 			if (child instanceof net.minecraft.client.gui.components.AbstractWidget widget) widget.active = false;
 		});

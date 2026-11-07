@@ -460,7 +460,8 @@ public final class PlaythroughEndgameGameTests {
 
 	/**
 	 * An Apotheos body: hunger pinned at 17, food refused everywhere, milk drunk outside the Gardens and refused in
-	 * the Overworld Gardens biome, where the Morphic Tonic still purges; spores gathered there and nowhere else; the
+	 * the Overworld Gardens biome, where the Morphic Tonic purges and mends health and blood (outside the Gardens it is
+	 * refused); spores gathered there and nowhere else; the
 	 * Burn Spores key refused at full health, healing once, cooling, then refused with too few spores.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 400, batch = BATCH)
@@ -489,6 +490,12 @@ public final class PlaythroughEndgameGameTests {
 					Outcome milkOutside = p.consume(Items.MILK_BUCKET);
 					helper.assertTrue(p.count(Items.BUCKET) == 1 && !p.player().hasEffect(MobEffects.POISON),
 							"outside the Gardens an Apotheos drinks milk; " + milkOutside);
+					p.give(new ItemStack(ItemInit.morphic_tonic.get())); // ARRANGE
+					Outcome tonicOutside = p.consume(ItemInit.morphic_tonic.get());
+					tonicOutside.said("message.hemomancy.morphic_tonic.outside_gardens");
+					helper.assertTrue(p.count(ItemInit.morphic_tonic.get()) == 1
+									&& !p.player().hasEffect(EffectInit.morphic_mending),
+							"outside the Gardens the Morphic Tonic is refused; " + tonicOutside);
 
 					p.moveTo(garden);
 					helper.assertTrue(FungalGardensPlaces.isInGardens(level, p.player().blockPosition()),
@@ -499,9 +506,8 @@ public final class PlaythroughEndgameGameTests {
 					milkInside.said(BODY_REFUSES);
 					helper.assertTrue(p.count(Items.MILK_BUCKET) == 1 && p.player().hasEffect(MobEffects.POISON),
 							"in the Gardens the milk is refused; " + milkInside);
-					p.give(new ItemStack(ItemInit.morphic_tonic.get())); // ARRANGE
 					Outcome tonic = p.consume(ItemInit.morphic_tonic.get());
-					helper.assertTrue(!p.player().hasEffect(MobEffects.POISON) && p.player().hasEffect(MobEffects.REGENERATION),
+					helper.assertTrue(!p.player().hasEffect(MobEffects.POISON) && p.player().hasEffect(EffectInit.morphic_mending),
 							"the Morphic Tonic purges and mends in the Gardens; " + tonic);
 
 					var load = HemoCapabilityAccess.getSporeLoad(p.player());

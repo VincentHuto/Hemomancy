@@ -65,6 +65,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
 /**
  * The one home for session-only server state: static per-player and per-world maps that never reach a save.
@@ -85,6 +86,22 @@ public final class TransientServerStateEvents {
 	@SubscribeEvent
 	public static void onServerStopped(ServerStoppedEvent event) {
 		clearTransientState();
+	}
+
+	/**
+	 * Before the chunks unload: every loaded kit Saint's chamber goes back to how it stood (the Saint arena's restore
+	 * contract), so a stopped server never saves a changed chamber.
+	 */
+	@SubscribeEvent
+	public static void onServerStopping(ServerStoppingEvent event) {
+		for (net.minecraft.server.level.ServerLevel level : event.getServer().getAllLevels()) {
+			// collect first: a restore discards the entities the arena owns, which would change the list being walked
+			java.util.List<com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity> saints = new java.util.ArrayList<>();
+			for (net.minecraft.world.entity.Entity entity : level.getAllEntities()) {
+				if (entity instanceof com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity saint) saints.add(saint);
+			}
+			saints.forEach(com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity::restoreArenaNow);
+		}
 	}
 
 	@SubscribeEvent
@@ -162,6 +179,11 @@ public final class TransientServerStateEvents {
 		HeartNodeEnvelopeSync.clearSessionState();
 		HeartNodeEvents.clearSessionState();
 		com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionSequences.clearSessionState();
+		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintHealing.clear();
+		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintLines.clearSessionState();
+		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintRoot.clearSessionState();
+		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintChannelRouter.clearSessionState();
+		com.vincenthuto.hemomancy.common.entity.boss.BossHold.clearSessionState();
 	}
 
 	/** Ends one player's session state. Teardowns that cancel, restore or move something run before plain removals. */
@@ -182,6 +204,7 @@ public final class TransientServerStateEvents {
 			HeartNodeEvents.logout(serverPlayer);
 			LanternTickLightManager.logout(serverPlayer);
 			com.vincenthuto.hemomancy.common.capability.player.harbinger.possession.PossessionSequences.logout(serverPlayer);
+			com.vincenthuto.hemomancy.common.entity.boss.saint.SaintChannelRouter.logout(serverPlayer);
 		}
 		ManipulationReactiveEvents.logout(player);
 		ConductionManager.logout(player);
@@ -212,5 +235,9 @@ public final class TransientServerStateEvents {
 		MorphlingSession.clear(player.getUUID());
 		KinbudSecondHead.clear(player.getUUID());
 		HoldfastMorphlingItem.logout(player.getUUID());
+		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintHealing.end(player);
+		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintLines.logout(player);
+		com.vincenthuto.hemomancy.common.entity.boss.saint.SaintRoot.end(player);
+		com.vincenthuto.hemomancy.common.entity.boss.BossHold.logout(player.getUUID());
 	}
 }

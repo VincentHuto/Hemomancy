@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBloodAbsorptionInteractions;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintChannelRouter;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
@@ -105,6 +106,11 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		double vesperHandled = VesperBloodAbsorptionInteractions.tryAbsorb(worldIn, player,
 				LivingStaffFocusRules.bareAbsorptionRange(), WillAbsorptionRules.bareProgressPerTick());
 		if (vesperHandled > 0.0D) {
+			updateChannelStrain(player, false);
+			return;
+		}
+		if (SaintChannelRouter.tryAbsorb(worldIn, player, LivingStaffFocusRules.bareAbsorptionRange(),
+				LivingStaffFocusRules.bareBlockAbsorptionPerTick(), false).handled()) {
 			updateChannelStrain(player, false);
 			return;
 		}
@@ -293,6 +299,8 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		if (entity instanceof VesperTheEveningStarEntity vesper) {
 			return vesper.canBeAbsorbedBy(user);
 		}
+		// a Saint's body and its companions answer only through the router, never the ordinary drain
+		if (SaintChannelRouter.refusesOrdinaryDrain(entity)) return false;
 		return entity instanceof LivingEntity target
 				&& target != user
 				&& target.isAlive()

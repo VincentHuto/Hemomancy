@@ -26,6 +26,8 @@ public class PlayerCooldowns implements INBTSerializable<CompoundTag> {
 	public static final String SCAR_PULSE = "scar_pulse";
 	public static final String SCRIPTORIUM_BACKLASH = "scriptorium_backlash";
 	public static final String SPORE_BURN = "spore_burn";
+	/** An Apotheos's new skin stays soft for a day after a molt. */
+	public static final String MOLTING = "molting";
 	/** Followed by the armour set ability id. */
 	public static final String ARMOR_SET_ABILITY_PREFIX = "armor_set_ability:";
 

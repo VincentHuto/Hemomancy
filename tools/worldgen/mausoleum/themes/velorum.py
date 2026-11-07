@@ -125,6 +125,9 @@ def chamber_sockets(room, c, sockets):
             else:
                 room.set(x, y, z, LANTERN)
             continue
+        if kind == 'aisle_end':
+            votive_stand(room, x, y, z)
+            continue
         if kind not in ('aisle_alcove', 'dais_flank'):
             continue
         if kind == 'dais_flank':
@@ -133,6 +136,21 @@ def chamber_sockets(room, c, sockets):
             pose = ALCOVE_POSES[(alcoves + alcoves // 4 * 2) % len(ALCOVE_POSES)]
             alcoves += 1
         devotee(room, x, y, z, facing, pose)
+
+
+def votive_stand(room, x, y, z):
+    """Each aisle's end recess holds a votive lantern stand (2026-11-05 Velorum overhaul, section 9): a rimed wall post
+    two high with a rime lantern on top and a short icicle under the recess's cap. They keep the aisles readable when the
+    Long Night darkens the rank pillars' lanterns, which is where the congregation kneels; the fight never dims them."""
+    if room.get(x, y, z) != AIR or room.get(x, y + 1, z) != AIR or room.get(x, y + 2, z) != AIR:
+        return
+    room.set(x, y, z, RIMED_WALL, kit.post())
+    room.set(x, y + 1, z, RIMED_WALL, kit.post())
+    room.set(x, y + 2, z, LANTERN)
+    for h in range(3, 7):
+        if room.get(x, y + h + 1, z) != AIR and room.get(x, y + h, z) == AIR and h >= 4:
+            room.set(x, y + h, z, ICICLE, {'length': 'short'})
+            break
 
 
 def nave_sockets(room, c, sockets):

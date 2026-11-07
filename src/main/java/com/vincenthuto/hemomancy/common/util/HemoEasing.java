@@ -116,4 +116,42 @@ public final class HemoEasing {
 		float decay = 1.0F - (age - attack) / Math.max(0.0001F, length - attack);
 		return decay * decay;
 	}
+
+	/**
+	 * A smoothstep ramp from 0 at {@code from} to 1 at {@code to}: {@link #smoothstep(float, float, float)} with the
+	 * time first, as the animation tracks read it.
+	 */
+	public static float ramp(float t, float from, float to) {
+		return smoothstep(from, to, t);
+	}
+
+	/** In, held, out: 0 before a, 1 from b to c, 0 after d. */
+	public static float window(float t, float a, float b, float c, float d) {
+		return ramp(t, a, b) * (1.0F - ramp(t, c, d));
+	}
+
+	/**
+	 * Catmull-Rom through keys {t0, v0, t1, v1, ...}, held flat before the first and after the last. Velocity carries
+	 * through each key, so a wind-up flows into its strike instead of stopping on every pose. Tangents are scaled to
+	 * each segment's length so uneven key spacing does not overshoot wildly. Lifted from Annetta's rebuild.
+	 */
+	public static float catmullRom(float t, float... keys) {
+		int n = keys.length / 2;
+		if (n == 0) return 0.0F;
+		if (t <= keys[0] || n == 1) return keys[1];
+		if (t >= keys[(n - 1) * 2]) return keys[(n - 1) * 2 + 1];
+		int i = 0;
+		while (i < n - 2 && t > keys[(i + 1) * 2]) i++;
+		float t1 = keys[i * 2], t2 = keys[(i + 1) * 2];
+		float p1 = keys[i * 2 + 1], p2 = keys[(i + 1) * 2 + 1];
+		float p0 = i > 0 ? keys[(i - 1) * 2 + 1] : p1;
+		float t0 = i > 0 ? keys[(i - 1) * 2] : t1 - (t2 - t1);
+		float p3 = i + 2 < n ? keys[(i + 2) * 2 + 1] : p2;
+		float t3 = i + 2 < n ? keys[(i + 2) * 2] : t2 + (t2 - t1);
+		float s = (t - t1) / (t2 - t1);
+		float m1 = (p2 - p0) / (t2 - t0) * (t2 - t1);
+		float m2 = (p3 - p1) / (t3 - t1) * (t2 - t1);
+		float s2 = s * s, s3 = s2 * s;
+		return (2 * s3 - 3 * s2 + 1) * p1 + (s3 - 2 * s2 + s) * m1 + (-2 * s3 + 3 * s2) * p2 + (s3 - s2) * m2;
+	}
 }

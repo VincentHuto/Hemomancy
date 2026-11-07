@@ -39,6 +39,19 @@ public final class FungalProjectionRulesTest {
 				FungalProjectionRules.travelKind(false, 6, true, EnumArchonPath.NONE));
 	}
 
+	@Test
+	void theSpineMakesOnlyTheFirstCrossing() {
+		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.FIRST_PROJECTION,
+				FungalProjectionRules.travelKind(false, 7, true, EnumArchonPath.NONE, true));
+		for (EnumArchonPath path : EnumArchonPath.values()) {
+			org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.DORMANT,
+					FungalProjectionRules.travelKind(true, 8, true, path, true), path.name());
+		}
+		org.junit.jupiter.api.Assertions.assertEquals(FungalProjectionRules.TravelKind.PHYSICAL,
+				FungalProjectionRules.travelKind(true, 8, true, EnumArchonPath.APOTHEOS, false),
+				"a Podium still carries the Apotheos");
+	}
+
 	public static void main(String[] args) {
 		assertEquals("first projection lasts two minutes", 2400, FungalProjectionRules.FIRST_VISIT_TICKS);
 		assertTrue("first visit starts a projection", FungalProjectionRules.shouldStartProjection(false, 7, true));

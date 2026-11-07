@@ -297,6 +297,8 @@ def dress_chamber(room, c):
     ring = loop(cx, zc, radius)
     for x, z in ring:
         gutter(room, x, 0, z, 0)
+    # The pit's centre is a dry sump, open on every side: where his staff plants reads as a drain from the door.
+    gutter(room, cx, 0, zc, 0, open_to=tuple(SIDES))
     west = min(x for x, z in ring if z == zc)
     east = max(x for x, z in ring if z == zc)
     for x in range(pieces.CHAMBER_PILLARS[0], west):

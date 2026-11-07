@@ -69,6 +69,9 @@ public final class OutpouringClientReview {
         // Standing in the corner of the two walls, so pooled blood is pushed against both.
         all.add(new Scene("corner-animus", EnumBloodTendency.ANIMUS, EnumManipulationRank.PERFECTUS, EnumVeinSections.LEGS, false, true, false, false, false, false, true));
         all.add(new Scene("minimal-ferric", EnumBloodTendency.FERRIC, EnumManipulationRank.PERFECTUS, EnumVeinSections.LEGS, false, false, false, false, false, true));
+        // Hematic Riposte's arm, the visual standard, armed on the reviewer itself (riposte-sweep, -strike, -dissolve)
+        all.add(new Scene("riposte", EnumBloodTendency.ANIMUS, EnumManipulationRank.SUMMA, EnumVeinSections.ARMS, false, false, false, false, false, false));
+        all.add(new Scene("riposte-night", EnumBloodTendency.ANIMUS, EnumManipulationRank.SUMMA, EnumVeinSections.ARMS, false, false, true, false, false, false));
         String only = System.getProperty("hemomancy.outpouringReview.only", "");
         return only.isEmpty() ? all : all.stream().filter(s -> java.util.Arrays.stream(only.split(",")).anyMatch(s.name::contains)).toList();
     }
@@ -116,6 +119,14 @@ public final class OutpouringClientReview {
         }
         var s = SCENES.get(scene);
         long now = mc.level.getGameTime();
+        if (s.name.startsWith("riposte")) {
+            if (local == 4) server.execute(() -> com.vincenthuto.hemomancy.common.manipulation.animus.HematicRiposteEvents
+                    .arm(server.getPlayerList().getPlayer(uuid), 1, 0));
+            if (local == 8) shot(mc, s, "sweep");
+            if (local == 10) shot(mc, s, "strike");
+            if (local == 14) shot(mc, s, "dissolve");
+            return;
+        }
         if (local == 2) send(mc, s, CastPhase.OPENING, now, 10);
         if (local == 8) send(mc, s, CastPhase.HOLD, now, 30);
         if (local == 10 && s.build) shot(mc, s, "build");

@@ -78,11 +78,15 @@ class SaintRiseTest {
 
 	@Test
 	void everySaintHoldsThroughItsRise() {
+		// the kit's tick runs the rise first and fights only once it ends; no Saint runs its own rise
+		String kitTick = SourceAssertions.methodBody(
+				SourceAssertions.readMainJava("common/entity/boss/saint/SaintTrialEntity.java"), "private void kitTick()");
+		assertTrue(kitTick.contains("boolean rising = tickRise();") && kitTick.contains("boolean fighting = !rising"),
+				"the kit skips the fight while the Saint rises");
 		for (String path : List.of("hemorath/HemorathEntity", "putriciel/PutricielEntity", "velorum/VelorumEntity",
 				"seraphae/SeraphaeEntity")) {
-			String aiStep = SourceAssertions.methodBody(
-					SourceAssertions.readMainJava("common/entity/boss/saint/" + path + ".java"), "public void aiStep()");
-			assertTrue(aiStep.contains("tickRise()"), path + " skips its attacks while it rises");
+			String saint = SourceAssertions.readMainJava("common/entity/boss/saint/" + path + ".java");
+			assertTrue(!saint.contains("tickRise("), path + " leaves its rise to the kit");
 		}
 		String hooks = SourceAssertions.readMainJava("common/entity/boss/saint/HarbingerSaintEncounterHooks.java");
 		int added = hooks.indexOf("level.addFreshEntity(boss)");

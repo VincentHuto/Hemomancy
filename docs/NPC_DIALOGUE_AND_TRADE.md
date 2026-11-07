@@ -96,6 +96,7 @@ Status (2026-11-01): built and reviewed in a client and in GameTests on 2026-10-
 - Our Lady's whispers grow more frequent and clearer as Clarity rises; the "late stages are quieter" reading is withdrawn.
 - Pallid Vessel is the D3 Vocation assignment with the Alchemist (`PallidVesselDialogue`).
 - The Unstained Scout goes through the dialogue hub (one card, `scout/paper`, and two rapport lines).
+- The Scout gets no trade cards of her own (D-15, 2026-11-06): the Unstained refuse Harbingers anyway.
 
 **Pronouns (applied 2026-10-24):** Vicar, Artificer and Hermit are he; Alchemist, Mnemonist and Vein-Mason are they; an Unstained speaker says "the Church", never "the Order".
 

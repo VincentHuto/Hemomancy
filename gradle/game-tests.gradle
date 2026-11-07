@@ -1,7 +1,6 @@
 // Every source namespace must choose alpha: true or alpha: false with a reason.
 // Existing focused suites stay opt-in; the consolidation suites join the combined gate.
 ext.gameTestSuites = [
-    'saint_power_validation': [alpha: false, run: 'saintPowerGameTestServer', directory: 'build/saint-power-gametest', reason: 'Focused WIP Saint power mechanics and interruption checks.'],
     'phlegethosoma_validation': [alpha: true, run: 'phlegethosomaGameTestServer', directory: 'build/phlegethosoma-gametest'],
     'earthen_vein_travel_validation': [alpha: true, run: 'earthenVeinTravelGameTestServer', directory: 'build/earthen-vein-travel-gametest'],
     'crimson_troupe_validation': [alpha: true, run: 'crimsonTroupeGameTestServer', directory: 'build/crimson-troupe-gametest'],
@@ -46,6 +45,11 @@ ext.gameTestSuites = [
     'lidless_passage_validation': [alpha: true, run: 'lidlessPassageGameTestServer', directory: 'build/lidless-passage-gametest'],
     'monolith_walk_validation': [alpha: true, run: 'monolithWalkGameTestServer', directory: 'build/monolith-walk-gametest'],
     'chamber_gateway_validation': [alpha: true, run: 'chamberGatewayGameTestServer', directory: 'build/chamber-gateway-gametest'],
+    'saint_kit_validation': [alpha: true, run: 'saintKitGameTestServer', directory: 'build/saint-kit-gametest'],
+    'hemorath_fight': [alpha: true, run: 'hemorathFightGameTestServer', directory: 'build/hemorath-fight-gametest'],
+    'seraphae_fight_validation': [alpha: true, run: 'seraphaeFightGameTestServer', directory: 'build/seraphae-fight-gametest'],
+    'putriciel_fight_validation': [alpha: true, run: 'putricielFightGameTestServer', directory: 'build/putriciel-fight-gametest'],
+    'velorum_fight_validation': [alpha: true, run: 'velorumFightGameTestServer', directory: 'build/velorum-fight-gametest'],
     'excoriated_spawn_validation': [alpha: false, run: 'excoriatedSpawnGameTestServer', directory: 'build/excoriated-spawn-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
     'clinical_validation': [alpha: false, run: 'clinicalGameTestServer', directory: 'build/clinical-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
     'choir_keeper_validation': [alpha: false, run: 'choirKeeperGameTestServer', directory: 'build/choir-keeper-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],

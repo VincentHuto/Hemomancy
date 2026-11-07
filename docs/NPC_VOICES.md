@@ -88,6 +88,8 @@ voice-sheet pass.
 | Court: Kindled elder | new → **3-6**, fragments | new → **0** | new → **0%** | nothing | "this body", never I |
 | Court: Head-tender | new → **14-19** | new → **0** | new → **4-8%** (formal tests) | petitioner, then by house | the Sanctum, we |
 | Court: Marimo's chorus | new → **14-19**, unhurried | new → **20-45** | new → **0-10%** (one gentle offer) | "you" | we, always, never I |
+| Saint: Seraphae | new (3.4) → **2-6** | new (120) → **80-140** | new (6%) → **5-10%**, only about the wound | "you", never a title | I, my hands |
+| Saint: Velorum | new (2.2) → **1-4** | new (0) → **0** | new (1 of 6) → **at most one line** | "you", or nothing | none; never I |
 
 Measured by `tools/i18n/voice_rewrite/pass2/voicestats.py` over each speaker's spoken lines (stage directions,
 narration events and colour codes left out; possessive "'s" is not a contraction).
@@ -114,6 +116,7 @@ the Braced elder on length, point of view and address. Within Last Marrow, Marro
 length, contractions and questions; the Marrow-tender and the Gardener (both feed visitors) on contractions, questions
 and address; the Rooted elder and the Lamp-colony (both long, both joined to something) on length, point of view and
 address; the Rooted elder and the Arbor on length, point of view and address.
+The two speaking Saints must never blur: Seraphae and Velorum differ on contractions, point of view and what they want (she asks to treat the wound, he orders stillness). Seraphae and the Acolyte (both warm toward "you") differ on length and contractions; Velorum and Our Lady (both short, no contractions, cold) on point of view and address, and he gives orders where she observes.
 
 ---
 
@@ -1136,6 +1139,71 @@ Marimo gives comes in order: food, belonging, and at the very end a place in the
 stay.
 
 **Example.** "When one of us goes still at last, the moss carries what they knew to all the rest of us."
+
+---
+
+## The Saints
+
+Two Saints speak in their fights; the other two do not. Hemorath has narration only (teaching lines in the third
+person, never his voice), and Putriciel is silent, with narration in pale cream. Saint lines are fight barks: each one
+is said at most once per 200 ticks (`SaintLines.voice`) to the challengers in the chamber, in italics, prefixed with the
+Saint's name. Teaching lines (`message.hemomancy.<saint>.teach.*`, `.hint.*`) are narration, not the Saint: plain
+second person, one instruction, no voice. Lore authority: `LORE_REFERENCE.md` §10.3 and §10.5.
+
+### Seraphae (the Chain Saint)
+
+**Who.** A healer whose gift could not stop: nobles and physicians chained her and bled her, and the Order inherited
+her tomb (Lore §10.3). Never a willing villain. Pronoun: she.
+
+**How she sees the player.** A patient. Every challenger is someone hurt who will not hold still, and she reaches for
+them out of the old instinct to heal. She does not know she is the danger; when she does notice, it is as something
+that keeps happening to her, not something she chooses.
+
+**Rhythm.** A nurse at a bedside: very short sentences, mostly imperatives and small reassurances, contractions
+everywhere ("It's", "Don't", "can't"). Questions only about the wound ("Where does it hurt?"). Fragments are fine
+("Still."). In the fight's later phases the lines turn from tending to losing control: the light leaving her, the
+chains on her hands.
+
+**Their words.** wound, hold still, let me see, closing, my hands, it keeps going, open.
+
+**Habits to keep.**
+- "Hold still. Let me see." (the rise)
+- "Where does it hurt?" / "Let me see the wound." / "Don't pull away." (the reach)
+- "My hands. They've bound my hands." (the Recoil)
+- "I could have helped you." (the ending)
+
+**Avoid.** Menace, threats or taunts; villain lines about power or the player's death. Lore or backstory explained in
+a bark. Gold, light or chain imagery in her mouth (the visuals carry it). Titles ("Harbinger", Degree names).
+
+**Keys.** `message.hemomancy.seraphae.voice.<line>` for `rise`, `reach_hurt`, `reach_wound`, `reach_pull`, `hold`,
+`held_burst`, `recoil`, `restraint`, `escaping`, `flood`, `ending_open`, `ending_help`; each starts "Seraphae: ".
+Spoken from `SeraphaeLines`.
+
+### Velorum (Saint of the Endless Hour)
+
+**Who.** A preserver who chose stillness as bodily perfection and imposes it, lucid and certain (Lore §10.5). Not a
+martyr, not a caretaker, not a nurse. Pronoun: he.
+
+**How he sees the player.** Unfinished: a body still moving, which he means to complete. The congregation are the
+finished ones. He does not argue and does not explain.
+
+**Rhythm.** Four lines in the whole fight, each one to four words a sentence, no contractions, orders rather than
+statements. At most one question, and it is contempt, not curiosity ("You would wake them?"). He never says "I".
+
+**Their words.** still, stay, there, finished, understand, wake.
+
+**Habits to keep.** These are the whole set; a new line needs the user's yes.
+- "Be still." (the rise)
+- "There. Now you understand." (the first preservation)
+- "You would wake them? They were finished." (a proper fight's phase 2)
+- "Stay." (the Endless Hour)
+
+**Avoid.** Time words beyond the Endless Hour itself (no clocks, seconds, "forever"); sorrow, mercy or grief; any
+martyr or caretaker framing; long speeches; threats of death. The ending's line "They go back to their places." is
+narration, not his.
+
+**Keys.** `message.hemomancy.velorum.line.<line>` for `rise`, `first_preservation`, `congregation`, `endless_hour`;
+each starts "Velorum: ". Spoken from `VelorumEntity` through `SaintLines.voice`.
 
 ---
 

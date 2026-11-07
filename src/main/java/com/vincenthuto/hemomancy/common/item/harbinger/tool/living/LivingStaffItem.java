@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBloodAbsorptionInteractions;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintChannelRouter;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
@@ -127,6 +128,11 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 						LivingStaffFocusRules.absorptionRange(focus),
 						WillAbsorptionRules.staffProgressPerTick(focus));
 				if (vesperHandled > 0.0D) {
+					BloodAbsorptionItem.updateChannelStrain(player, false);
+					return;
+				}
+				if (SaintChannelRouter.tryAbsorb(pLevel, player, LivingStaffFocusRules.absorptionRange(focus),
+						LivingStaffFocusRules.blockAbsorptionPerTick(focus), true).handled()) {
 					BloodAbsorptionItem.updateChannelStrain(player, false);
 					return;
 				}

@@ -4,6 +4,9 @@ Date: 2026-11-01. The one roll-up after the October passes (Saint mausoleums and
 split with possession, NPC trade and the dialogue clean-up). Everything those passes built is committed on `neo-1.21.1`
 (`185aa3502` to `ea7bd732d`); the gaps are review, decisions and proof, not landing code.
 
+Updated 2026-11-06 with your answers to D-1, D-3 to D-10, D-13, D-15 to D-17 and D-19: each is recorded in its topic
+doc's "Rulings that bind" and built uncommitted; D-26 to D-28 are follow-ups those answers raised.
+
 Each item names its topic doc, where the full context sits. When a question is answered, record the answer in that
 topic doc under "Rulings that bind" and delete the row here. Architecture decisions keep their ids from
 `architecture/CONSOLIDATION_PROGRESS.md` (its Decisions table has each one's exact change).
@@ -23,30 +26,21 @@ Sections:
 
 | # | Question | Default if unanswered | Topic doc |
 | --- | --- | --- | --- |
-| D-1 | **Saint gifts as learnable powers.** Each Saint's gift is a full rework of its Canon Memory. Nothing is designed; the recipes only gained the Recollection as a second catalyst. | Stays as today: Canon Memories unchanged, Recollection required. | [SAINT_MAUSOLEUMS.md](SAINT_MAUSOLEUMS.md) |
-| D-2 | **Per-Saint combat and visual overhauls** (you stressed each gets its own). Order? Hemorath (drain, leaking meter, iron spikes), Seraphae (nervous wings, white light), Putriciel (fire only in the cleansing interval, no red), Velorum (stillness meter, wakeable congregation). | Hemorath first: his Downfall hall and wells are already in the layout. | [SAINT_MAUSOLEUMS.md](SAINT_MAUSOLEUMS.md) |
-| D-3 | **Silentium D8 powers.** What Mind Broken diminishes and what a Silentium gains over a D7 Archon beyond the Silent Archon set, now that all Silent Archon power is D8-only. | As built: the vestment set, claimed-Will bonus and death refusal; nothing more. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
-| D-4 | **Morphic tonic.** Which beneficial effect, and which vessel. Built as a bloody jug in morphic nectar giving Regeneration I for 10 s, drinkable anywhere. | Keep the built version. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
-| D-5 | **Molting.** What an Apotheos can re-shape and at what cost. Not built. | Parked. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
-| D-6 | **Chimerization offering.** The offering item's name and recipe. | Parked. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
-| D-7 | **The Core and the heir thread.** Confirm the Core as the Mycophant's domain; `mycophant_heir` is written and never read. | Leave inert until the Core is designed. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md), [BOSSES.md](BOSSES.md) |
-| D-8 | **Visitation's cost.** It takes 2 spore sacs in the braziers and skips the Spine's 500-blood travel cost. Design call flagged by the overnight run. | Keep the sacs; the Spine cost is for the first crossing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
-| D-9 | **PvP possession.** A possessed Silentium cannot attack players (one cancelled event). Wanted, or should possession be a PvP form? | Keep the block. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
-| D-10 | **Rite spaces need members.** Only the Sanguine Omen is rite-bound. Which blocks, items and entities should be? | Nothing more until a rite-bound feature is designed. | [CARDINAL_RITES.md](CARDINAL_RITES.md) |
+| D-1 | **Review the Canon Memory rework draft.** You ruled on 2026-11-06 that the four Canon Memories need complete reworks; a draft design for all four (ranks, the trial record, the C-6 gate, each gift's mechanics and visuals) is in [the spec](superpowers/specs/2026-11-06-canon-memory-rework-design.md) with 17 numbered questions. | Nothing is built until you approve it. | [SAINT_MAUSOLEUMS.md](SAINT_MAUSOLEUMS.md) |
+| D-3 | **Silentium D8 powers.** What a Silentium gains over a D7 Archon beyond the Silent Archon set (what Mind Broken takes was ruled on 2026-11-06). | As built: the vestment set, claimed-Will bonus and death refusal; nothing more. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
+| D-6 | **Chimerization offering.** The offering item's name and recipe. Still to be decided (you, 2026-11-06). | Parked. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
 | D-11 | **Unstained rites.** The purpose grammar is Harbinger-only; the Unstained get their own ritual system later. When, and on what model? | Parked. | [CARDINAL_RITES.md](CARDINAL_RITES.md) |
 | D-12 | **Brined Court elder challenges and fuller Court trading.** The Champion title gives recognition only; elders challenging the player, and trades beyond customs, were deferred by you. | Parked. | [BRINED_COURT.md](BRINED_COURT.md) |
-| D-13 | **Wake nursery.** Keep it beside the natural Shared Wake schools, or drop it? Also final Seat names and the eight house marker designs. | Keep; names and markers stay as built. | [BRINED_COURT.md](BRINED_COURT.md) |
 | D-14 | **Circus deferred pool.** The underwater boundary doc lists deferred items (sea-cucumber forms, siphonophores, whale-fall culture). Most are now the Court's; confirm what, if anything, is still owed to the Circus suite. | Nothing. | [CIRCUS.md](CIRCUS.md) |
-| D-15 | **Unstained Scout and the hub.** Routed through the hub on 2026-10-31; does she get trade cards and lore lines of her own? | No cards; the Unstained refuse Harbingers anyway. | [NPC_DIALOGUE_AND_TRADE.md](NPC_DIALOGUE_AND_TRADE.md) |
-| D-16 | **Mycophant pronouns.** The rebuild spec chose she/her for player-facing text while the entity is a genderless brood-mother. Keep she/her in text, or move to they/them? | Keep she/her in text; genderless stays canon. | [BOSSES.md](BOSSES.md) |
-| D-17 | **Saint epithets.** `en_us.json` and the presentation spec disagree (Hemorath "The First Saint" vs "The Hollow Vessel", a name you retired). Which wording is canon per Saint? | Lang wins; drop "Hollow Vessel" everywhere. | [BOSSES.md](BOSSES.md), [SAINT_MAUSOLEUMS.md](SAINT_MAUSOLEUMS.md) |
 | D-18 | **Circus candidates still unbuilt:** midgame mini-bosses toward the Ringmaster and the snake creature (C-13), the Ringmaster's staff form gated on a hostile route never designed. Build, or strike? | Strike until the Circus gets its own pass. | [CIRCUS.md](CIRCUS.md) |
-| D-19 | **Manipulation balance §9 opens:** Animus as the larger default school, Thread Ripper Circus-only or general, Saint memories counting toward tier coverage, Sanguine Tempest's extra Neurotic enzyme. | As built. | [MANIPULATIONS_AND_CASTING.md](MANIPULATIONS_AND_CASTING.md) |
 | D-20 | **Casting v2 §16 "(user)" decisions** never answered: restraint level, quick-cast flick (dropped by the builder), Tier B scope, Still Art ground ring, animation library. | As built. | [MANIPULATIONS_AND_CASTING.md](MANIPULATIONS_AND_CASTING.md) |
 | D-21 | **Working-craft offerings.** 14 of the 20 Working crafts got first-pass offerings "that can be tuned freely"; no balance pass since. | As built until the play-proof pass says otherwise. | [CARDINAL_RITES.md](CARDINAL_RITES.md) |
 | D-22 | **Vent Sanctum threshold chimney:** usable by the player or not, and what happens to someone who enters Hydra. Plus whether other players' Morphling mutations should always be visible (no client setting today). | Not enterable; always visible. | [BRINED_COURT.md](BRINED_COURT.md) |
 | D-23 | **Monolith shattering** loses the free Cornerstone with no warning line. Add a line, or keep the loss silent? | Add a warning line. | [NPC_DIALOGUE_AND_TRADE.md](NPC_DIALOGUE_AND_TRADE.md) |
 | D-24 | **The Lidless Door beyond the Monolith walk.** The void crossing's first use is the Monolith walk (2026-11-04: the Seed is taken from the void between the fallen halves). The door block itself is still a creative-only curiosity with no side, cost, recipe or lore. | Stays creative-only on the WIP tab. | [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md#lidless-door-a-creative-only-curiosity-2026-11-03) |
+| D-26 | **Lux Summa gap.** With Saint memories out of tier coverage (D-19), Lux has no Summa entry: the Unclosing Eye was its only one. Add a Lux Summa manipulation, or re-rank one of Lux's four Mediocritas entries (Conjure Spear, Prismatic Reproof, Hematic Beacon, Lumen Suture)? | Leave the gap until the Canon Memory rework settles the Eye's rank. | [MANIPULATIONS_AND_CASTING.md](MANIPULATIONS_AND_CASTING.md) |
+| D-27 | **The Fungal Podium after the first crossing.** D-8 made the Spine dormant, but the Podium shares its travel code and still carries an Apotheos bodily. Should it go dormant too, leaving Visitation as the only way in? | The Podium keeps working. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
+| D-28 | **Molting and tonic numbers (builder's calls, 2026-11-06).** Whole points only (fractions go with the shed tenth); a negative tendency counts against the total; the one-day cooldown resets on death like every `PlayerCooldowns` entry; Morphic Mending gives 8 health and 500 mL over 10 s; Mind Broken's 15% regen cut covers base regen and Sanguine Surge, not Last Wind or the candle. | As built. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
 | D-25 | **The Chamber gateway's numbers and looks (2026-11-04, unreviewed builder calls).** 100 blood over two seconds to wake the eye; open for 10 seconds; corridor sizes; a rib every three blocks; ribs drawn rather than built, so builds pass through them; the sealed gate present from a player's first visit; the gateway binding the seat without granting rite attunement; the Silentium and Apotheos art. | As built; change the constants in `SanguineMonolithBlockEntity` and `ChamberRoomShape`. | [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) §5.9 |
 
 ### 1.2 Mausoleum calls (from `archive/tracks/mausoleums/12-next-pass.md` §3.8)
@@ -218,6 +212,8 @@ client and kept or changed it. The topic docs list the full set; these are the o
 | Possession rite | Blood cost 0 (the spec's 400 dropped because a test forbids a lump Harbinger blood cost) and filed in the Ancestral recipe-map family; possession borrows the Qliphoth grand floor as a special bond rite. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md), [CARDINAL_RITES.md](CARDINAL_RITES.md) |
 | Circus trade and visuals | The "finale's leavings" card dropped, the D4 bell carrot, act-themed performer cards; the Bellows, Juggler, Hulk, faculty and camp rebuilds were authored from previews only. | [CIRCUS.md](CIRCUS.md) |
 | Boss presentation | Every frame and opening shot and their lengths; title card on the lower third (the spec and `TitleCard` agree; an earlier note said upper); 50-tick phase cards, unskippable; bars hidden under the opening; skip by holding sneak 20 ticks. | [BOSSES.md](BOSSES.md) |
+| Saint combat kit | One kit for the four Saint fights (the generic half in `common/entity/boss/`, the Saint half in `saint/`); one band set (HUG under 3, NEAR under 6.5, MID under 12); wind-up floors 12 melee and 20 area; the 600-tick empty-chamber leash that resets a trial unrewarded; Saint health and Saint-owned meters x(1 + 0.5 (n - 1)) challengers; deeds as rules and moves on top of the stat floors; the kit's damage factor now reaching health (it was silently dead before verification, so tuning done before it changed every Saint). | [SAINT_MAUSOLEUMS.md](SAINT_MAUSOLEUMS.md) |
+| Saint fights | Every number, move, opening and deed in the four designs (each design's section 20). Hemorath: 600 health, the leak formula, the meter states, 18 moves, the pit sump, a block-light floor of 8 on his bone and a larger heart mass after verification. Seraphae: integrity from 30 with phases at 40 and 75, fourteen moves and the Radiance Flood, a block-light floor of 12 and stronger telegraphs than the others. Putriciel: the Kindling, two Offerings an interval, health floored at 30%, the packed-ash scorch, the pale-mould-over-olive palette chosen at verification, the Offering palm at the brow. Velorum: 640 health, the Still Guard and floors, the stillness numbers, the congregation's waking and pinning costs, the Endless Hour sparing the aisle-end stands and crown lamps (26 of 37 lanterns go dark), a "Velorum:" prefix on his four lines. Seraphae and Velorum voice sheets. The seven new ids added to the frozen registry snapshot. | [SAINT_MAUSOLEUMS.md](SAINT_MAUSOLEUMS.md) |
 | Boss fights | Vesper's wound sites and rates, the Sickle act at 33%, whether a grounded burrow is in the rotation; Mycophant band and weight numbers, the 8% fusion bonus, the Nursery ceiling raise; Annetta's pools and 1 HP guard. The brood clutch and amber failure beat are not built. | [BOSSES.md](BOSSES.md) |
 | Rite merge stages 2 to 4 | The Rites & Crafts tab layout, special floor styles 4 to 6, the Sanguine Omen as the only rite-bound member. | [CARDINAL_RITES.md](CARDINAL_RITES.md) |
 | Cast impacts, basics, infusion | Every design call: delivery x school geometry, the 5-tick impact throttle, the six body-anchored forms, the sore and melt overlays. | [MANIPULATIONS_AND_CASTING.md](MANIPULATIONS_AND_CASTING.md) |
@@ -233,9 +229,9 @@ Built and covered by JVM tests, GameTests and review-client stills, but never wa
 you. One played session per area, with a findings log, closes most of these.
 
 - **Mausoleums** (`archive/tracks/mausoleums/12-next-pass.md` §3.2): every trial completed solo per Saint; set pieces
-  mid-trial; the hallowed-ground burn layer; `SCENE_SAINT_RISE`; Seraphae's anchors waking; Putriciel's purge ring
-  and pyre/shelf switch; Velorum's frost pulse; all ambience; natural worldgen for all four Saints after the entrance
+  mid-trial; the hallowed-ground burn layer; `SCENE_SAINT_RISE`; all ambience (the Saint fights are their own row); natural worldgen for all four Saints after the entrance
   check widened to 14 blocks. Also §3.3 lighting and §3.4 art gaps.
+- **Saint fights** (built 2026-11-05, visual pass 2 on 2026-11-06, uncommitted): only Hemorath has been played (by you, which started visual pass 2: each Saint's own telegraph pass and shaders, rebuilt animation, the trench lanes carried from his rake to the other three, five native polish rounds each; contact sheets under `build/<saint>-pass2/`, honest gaps per Saint in the Saint doc's "Proof owed"). Each passes its GameTests and a fight review client that reached every move, phase, opening and the ending with the chamber restored block for block; feel, timing, the four-to-six-minute length, multiplayer and both D8 paths are unproven. Looks to judge from the stills in `build/boss-presentation-review/screenshots/`: Hemorath's Brimming body and light floor, the tide's swirl against the spaghetti ruling, the Wells Answer and Last Thirst streams; Seraphae's in-chamber look, light floor and telegraph strength, her fragments, Flood dome and Thread; Putriciel's palette, Offering pose, eschar seams and the sparse rot world geometry; Velorum's Lantern Sweep, the Endless Hour's darkness, the devotees' rime crust, and the shared RIME school's red crystals on his challengers; since the 2026-11-06 revision (Frozen Cruor and liquid dark: every piece of his ice is dark oxblood blood-ice under pale frost, six new moves, pools of liquid dark and the Eclipse) also the cruor at eye height, the Cruor Javelins and Gloam Cuts from the boss camera, and the Eclipse's red seam grid and umbral shapes (sheets in `build/velorum-cruor/`, gaps in the Velorum design's "Revision polish (2026-11-06)"); since Putriciel's 2026-11-06 revision (the burning purifier, rot sludge and colour) also the body fire's soot tips against the dark chamber, the flesh mottle at portrait distance, and the sludge's thickness at a player's eye (sheets in `build/putriciel-revision/`, gaps in the Putriciel design's "Revision polish (2026-11-06)"). Gaps listed in the Saint doc's "Proof owed".
 - **Endgame D8 journey**: an Apotheos run (Rite of Apotheosis, spore body, heart-node planting, synapses, spread
   shader, death cache) and a Silentium run (Memory of Vesper, possession rite with the brazier offerings, each of the
   nine forms, the wheel, the four cinematics, gaze and grab, Visitation). Nothing of this has been seen by you.
@@ -247,7 +243,7 @@ you. One played session per area, with a findings log, closes most of these.
   and capture scenes, the Saint rise.
 - **Casting**: cast impacts, the body-anchored basics and infusion veins in a played session, not the harness; neither balance pass has been playtested.
 - **Heart-node**: `heartNodeReviewClient` passed 18 checks on 2026-10-29, but the screen, spread, set-piece and possession scenes were added afterwards and need a GPU launch.
-- **Mausoleum code**: Putriciel's Java never had a final fresh reviewer pass; the raised descent vault is unchecked in the review client; the Succession test `legacyVialsAreRejectedBeforeConsumption` may still read a brazier at a stale offset.
+- **Mausoleum code**: the raised descent vault is unchecked in the review client; the Succession test `legacyVialsAreRejectedBeforeConsumption` may still read a brazier at a stale offset.
 - **Known test noise**: two Succession opt-in failures; the flaky False Omens deadline and stronger-prey tests; the
   combined `alphaCheck` flakes about one test in two runs. Give grid-sensitive tests their own batch.
 
@@ -261,16 +257,16 @@ Recommended order. Each step is one or two sessions and ends with a findings log
    mausoleums (§3.2 list, one Saint per session), the Apotheos D8 journey, the Silentium D8 journey, a Brined Court
    fresh-world walk, NPC trade boxes, boss openings. This is where the "decided without you" rows get kept or changed,
    so take section 2 with you. Fix in place only what blocks the walk; everything else goes on the log.
-2. **Answer the blocking design calls** (section 1.1, D-1 to D-15) and the mausoleum calls (1.2), ideally as one
-   written round like the Brined Court Q-rounds. D-1, D-2 and D-3 shape the next content pass; the rest can take their
-   defaults.
+2. **Answer the blocking design calls** (section 1.1; D-2 was answered on 2026-11-05, and D-1, D-3 to D-5, D-7 to D-10, D-13, D-15 to D-17 and D-19 on 2026-11-06, built the same day and uncommitted) and the mausoleum
+   calls (1.2), ideally as one written round like the Brined Court Q-rounds. D-1 and D-3 shape the next content pass;
+   the rest can take their defaults.
 3. **Clear the canon conflicts** (1.3) and the dialogue writers' questions (1.4) in one docs-and-lang session:
    LORE_REFERENCE, HEMOMANCY_REFERENCE §38, the wiki pins, the `silent_severance` rename, the whisper degree gate.
 4. **Green baseline:** `alphaCheck` plus the opt-in suites the October work touched (`court_worldgen_validation`,
-   `saint_power_validation`, `succession_validation`), fixing the flakes named in section 3 rather than rerunning past
-   them.
-5. **Then new content, in this order unless step 2 changes it:** the per-Saint overhauls (D-2) with the Saint gifts
-   (D-1); Vesper's congregation thaw and Hemorath's swelling (owed to the Saint awakening); rite-bound content (D-10);
+   the four Saint fight suites that replaced `saint_power_validation` on 2026-11-06, `succession_validation`),
+   fixing the flakes named in section 3 rather than rerunning past them.
+5. **Then new content, in this order unless step 2 changes it:** play the four Saint fights built on 2026-11-05 (D-2)
+   and tune them, then the Saint gifts (D-1, once the draft is reviewed);
    Court elder challenges (D-12); the Canon Memory and Recollection gate (C-6).
 6. **The 2026-11-02 cleanup audit** ([audits/2026-11-02-cleanup/README.md](audits/2026-11-02-cleanup/README.md)):
    its section A rows A-1 to A-8 (the menu duplication path, two exploitable payloads, four sourceless progression

@@ -6,6 +6,7 @@ import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintCompanion;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodConstructEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import net.minecraft.world.entity.player.Player;
@@ -21,6 +22,9 @@ public final class ManipulationCombatHelper {
 
 	public static boolean allied(Player player, LivingEntity target) {
 		if (target == player || player.isAlliedTo(target) || target.isAlliedTo(player)) return true;
+		// a devotee woken to fight beside the challengers is every player's ally
+		if (target instanceof SaintCompanion companion && companion.allegiance() == SaintCompanion.Allegiance.CHALLENGERS)
+			return true;
 		java.util.UUID owner = target instanceof OwnableEntity ownable ? ownable.getOwnerUUID()
 				: target instanceof BoundPuppeteerSummon bound ? bound.hemomancy$getOwnerUUID() : null;
 		if (player.getUUID().equals(owner)) return true;
@@ -88,11 +92,32 @@ public final class ManipulationCombatHelper {
 	 */
 	public static boolean canHarmFor(LivingEntity source, LivingEntity target) {
 		if (target instanceof BloodConstructEntity || target == source || !target.isAlive() || target.isSpectator()) return false;
+		Boolean saintSide = saintSide(source, target);
+		if (saintSide != null) return saintSide;
 		LivingEntity controller = controller(source);
 		if (controller instanceof Player player) return canHarm(player, target);
 		if (target instanceof Player player && player.isCreative()) return false;
 		if (source.isAlliedTo(target) || target.isAlliedTo(source)) return false;
 		return !(source instanceof net.minecraft.world.entity.Mob mob) || mob.getTarget() == target || mob.canAttack(target);
+	}
+
+	/**
+	 * A Saint's trial sides: a CHALLENGERS companion harms only its Saint; a SAINT companion never harms its Saint or
+	 * its Saint's other SAINT companions, nor does the Saint harm them. Null when neither side is a Saint's.
+	 */
+	private static Boolean saintSide(LivingEntity source, LivingEntity target) {
+		if (source instanceof SaintCompanion companion) {
+			if (companion.allegiance() == SaintCompanion.Allegiance.CHALLENGERS) {
+				return target.getUUID().equals(companion.saintId());
+			}
+			if (target.getUUID().equals(companion.saintId())) return false;
+			if (target instanceof SaintCompanion other && other.allegiance() == SaintCompanion.Allegiance.SAINT
+					&& other.saintId().equals(companion.saintId())) return false;
+			return null;
+		}
+		if (target instanceof SaintCompanion companion && companion.allegiance() == SaintCompanion.Allegiance.SAINT
+				&& companion.saintId().equals(source.getUUID())) return false;
+		return null;
 	}
 
 	private static LivingEntity controller(LivingEntity entity) {

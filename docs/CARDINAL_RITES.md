@@ -68,6 +68,7 @@ User rulings:
 - Daemon: a true 3D ray-marched volume, not stacked slices or a faked-depth card (daemon volume spec).
 - Ring gating: later rings open at phase boundaries, cost 25 percent more per ring, and the phase runs but cannot end until its ring is full (ring-gating spec).
 - World escalation: a server-held stage that only rises, visual and sound only, top panel off by default (world escalation spec).
+- Rite-bound content is not a priority (D-10, 2026-11-06): the Sanguine Omen stays the only rite-bound member, and nothing more is planned.
 
 ## Calls made without the user
 
@@ -87,7 +88,6 @@ Possession (`docs/archive/tracks/possession/01-rite-offerings.md`): Possession b
 ## Open questions
 
 - Late playthrough decisions (2026-11-02), each a failing `required = false` probe with its evidence in [PLAYTHROUGH_TESTS.md](PLAYTHROUGH_TESTS.md#open-questions) and the roll-up in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) §1.6 (PT- plus the number): D-38 [D5-4], D-44 [D5-11], D-66 [D6-3], D-67 [D6-5], D-68 [D6-6], D-88 [CHAIN-1].
-- Rite spaces have one member. The tags are the extension point for rite-born content, and the Sanguine Omen was a stand-in; what real content is rite-bound is undecided (stage 2 to 4 spec §4).
 - Per-floor ceremony mechanics (the audit's Endure/Hold/Share/Precision archetypes, sigil result modifiers beyond the Reservoir refund, the participatory procession) remain out of scope in every spec (`docs/archive/audits/CARDINAL_RITE_AUDIT.md` "Not done"; stage 1 and stage 2 to 4 "Out of scope").
 - F-11, pending: `PendingBloodCraftManager.tick()` runs once per loaded level per tick, so floorless crafts finish faster with more dimensions loaded; the proposed fix is once per server tick so crafts take their intended time (`docs/architecture/CONSOLIDATION_PROGRESS.md`, `ARCHITECTURE_AUDIT.md` F-11).
 - A blood-cost balance pass across rites and crafts has never been done (stage 1 spec "Out of scope").

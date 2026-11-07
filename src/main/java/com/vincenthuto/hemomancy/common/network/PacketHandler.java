@@ -67,7 +67,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "37";
+    public static final String PROTOCOL_VERSION = "39";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -168,8 +168,13 @@ public class PacketHandler {
         net.playToServer(com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeSettingsPacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeSettingsPacket.STREAM_CODEC,
                 com.vincenthuto.hemomancy.common.network.heartnode.HeartNodeSettingsPacket::handle);
+        net.playToServer(com.vincenthuto.hemomancy.common.network.heartnode.MoltRequestPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.heartnode.MoltRequestPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.heartnode.MoltRequestPacket::handle);
         net.playToClient(com.vincenthuto.hemomancy.common.network.boss.BossScenePacket.TYPE,
                 com.vincenthuto.hemomancy.common.network.boss.BossScenePacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.boss.SaintMeterPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.boss.SaintMeterPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketSyncMycophantFightScene.TYPE,
                 PacketSyncMycophantFightScene.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketMycophantIntro.TYPE,

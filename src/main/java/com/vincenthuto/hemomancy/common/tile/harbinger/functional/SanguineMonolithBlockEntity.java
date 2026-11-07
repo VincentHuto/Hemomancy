@@ -43,7 +43,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
@@ -114,10 +113,6 @@ public class SanguineMonolithBlockEntity extends HemoBlockEntity
 
 	public SanguineMonolithBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.sanguine_monolith.get(), pos, state);
-	}
-
-	public AABB getRenderBoundingBox() {
-		return IMultiBlockEntity.computeMultiBlockAABB(this).inflate(3.5, 1.0, 3.5);
 	}
 
 	public int getTickCount() {

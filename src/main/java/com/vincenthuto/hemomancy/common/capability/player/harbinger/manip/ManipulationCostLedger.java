@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
+import com.vincenthuto.hemomancy.common.effect.MindBrokenRules;
 import com.vincenthuto.hemomancy.common.effect.MnemonicPotionRules;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -98,6 +99,8 @@ public final class ManipulationCostLedger {
 				SporiticThuribleResonanceState.getCostMultiplier(player, manipulation.getTend()));
 		addIfNotNeutral(contributions, "mnemonic_screams", "message.hemomancy.manipulation_cost_ledger.mnemonic_screams", Category.EFFECT,
 				MnemonicPotionRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mnemonic_screams)));
+		addIfNotNeutral(contributions, "mind_broken", "message.hemomancy.manipulation_cost_ledger.mind_broken", Category.EFFECT,
+				MindBrokenRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mind_broken)));
 
 		boolean clotted = HemoCapabilityAccess.getVascularSystem(player).getBloodFlowBySection(manipulation.getSection()) == EnumBloodFlow.ClOTTED;
 		if (clotted) {
