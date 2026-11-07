@@ -142,7 +142,7 @@ def main():
             "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 1.5, 0], "scale": [0.25, 0.25, 0.25]},
             "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, -1.5, 0], "scale": [0.3, 0.3, 0.3]},
             "ground": {"translation": [0, 2, 0], "scale": [0.18, 0.18, 0.18]},
-            "gui": {"rotation": [30, -135, 0], "translation": [0, -3.5, 0], "scale": [0.42, 0.42, 0.42]},
+            "gui": {"rotation": [30, -135, 0], "translation": [0, -3, 0], "scale": [0.36, 0.36, 0.36]},
             "fixed": {"translation": [0, -4, 0], "scale": [0.4, 0.4, 0.4]},
         },
     })
