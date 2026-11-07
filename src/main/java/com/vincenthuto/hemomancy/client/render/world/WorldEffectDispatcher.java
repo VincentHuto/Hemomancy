@@ -57,6 +57,8 @@ public final class WorldEffectDispatcher {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
             // Before any block entity: the husk's eye samples what this draws.
             com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberProxyView.render(event);
+            // Likewise the Scarlet Vanity's glass samples the reflection drawn here.
+            VanityMirrorView.render(event);
             renderBloodMoonSky(event);
         }
 

@@ -138,6 +138,8 @@ def reviewClients = [
                            props: ['hemomancy.npcTradeReview': 'true']],
     faneGroundReviewClient: [dir: 'build/fane-ground-review', user: 'FaneGroundReview', size: review,
                              props: ['hemomancy.faneGroundReview': 'true']],
+    vanityMirrorReviewClient: [dir: 'build/vanity-mirror-review', user: 'VanityReview', size: review,
+                               props: ['hemomancy.vanityMirrorReview': 'true']],
     heartwoodTreeReviewClient: [dir: 'build/heartwood-tree-review', user: 'HeartwoodReview', size: review,
                                  props: ['hemomancy.heartwoodTreeReview': 'true']],
     riteFloorReviewClient: [dir: 'build/rite-floor-client-review', user: 'RiteFloorReview', size: review,

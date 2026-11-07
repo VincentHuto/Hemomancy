@@ -5,7 +5,6 @@
 	"ambientocclusion": false,
 	"render_type": "cutout",
 	"textures": {
-		"5": "hemomancy:block/hematic_iron_blade",
 		"particle": "hemomancy:block/hemorrhagic_crust",
 		"cabinet": "hemomancy:block/hemorrhagic_crust",
 		"dark": "hemomancy:block/blood_wood_planks",
@@ -159,72 +158,6 @@
 				"west": {"uv": [13.4, 4, 14.9, 16], "texture": "#trim"},
 				"up": {"uv": [14, 13.4, 15.5, 14.9], "texture": "#trim"},
 				"down": {"uv": [14, 1.1, 15.5, 2.6], "texture": "#trim"}
-			}
-		},
-		{
-			"name": "blood_bowl",
-			"from": [5.5, 13, 5.5],
-			"to": [10.5, 14.2, 6.1],
-			"faces": {
-				"north": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"east": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"south": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"west": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"down": {"uv": [0, 0, 16, 16], "texture": "#5"}
-			}
-		},
-		{
-			"name": "blood_bowl_front",
-			"from": [5.5, 13, 9.9],
-			"to": [10.5, 14.2, 10.5],
-			"faces": {
-				"north": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"east": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"south": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"west": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"down": {"uv": [0, 0, 16, 16], "texture": "#5"}
-			}
-		},
-		{
-			"name": "blood_bowl_left",
-			"from": [5.5, 13, 6.1],
-			"to": [6.1, 14.2, 9.9],
-			"faces": {
-				"north": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"east": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"south": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"west": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"down": {"uv": [0, 0, 16, 16], "texture": "#5"}
-			}
-		},
-		{
-			"name": "blood_bowl_left",
-			"from": [5.5, 13.1, 6.1],
-			"to": [10.1, 13.1, 9.9],
-			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0.1, 0]},
-			"faces": {
-				"north": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"east": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"south": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"west": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"down": {"uv": [0, 0, 16, 16], "texture": "#5"}
-			}
-		},
-		{
-			"name": "blood_bowl_right",
-			"from": [9.9, 13, 6.1],
-			"to": [10.5, 14.2, 9.9],
-			"faces": {
-				"north": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"east": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"south": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"west": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#5"},
-				"down": {"uv": [0, 0, 16, 16], "texture": "#5"}
 			}
 		},
 		{

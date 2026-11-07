@@ -3,14 +3,21 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.data.LidlessPassageClientState;
+import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithHalvesModel;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
-import com.vincenthuto.hemomancy.common.util.HemoEasing;
-import com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineMonolithBlock;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.tile.shared.LidlessDoorRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.shared.LidlessPortalPanel;
+import com.vincenthuto.hemomancy.client.render.world.CardinalRiteFogLightning;
+import com.vincenthuto.hemomancy.client.render.world.CardinalRiteFogRenderer;
+import com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberProxyView;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineMonolithBlock;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineMonolithBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,6 +29,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.AABB;
 import org.joml.Matrix4f;
 
 /**
@@ -79,8 +87,8 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 	public SanguineMonolithRenderer(BlockEntityRendererProvider.Context context) {
 		this.model = new SanguineMonolithModel(context.bakeLayer(SanguineMonolithModel.LAYER_LOCATION));
-		this.halves = new com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithHalvesModel(
-				context.bakeLayer(com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithHalvesModel.LAYER_LOCATION));
+		this.halves = new SanguineMonolithHalvesModel(
+				context.bakeLayer(SanguineMonolithHalvesModel.LAYER_LOCATION));
 	}
 
 	@Override
@@ -94,8 +102,8 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	 * the stone.
 	 */
 	@Override
-	public net.minecraft.world.phys.AABB getRenderBoundingBox(SanguineMonolithBlockEntity te) {
-		return com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity.computeMultiBlockAABB(te).inflate(3.5, 1.0, 3.5);
+	public AABB getRenderBoundingBox(SanguineMonolithBlockEntity te) {
+		return IMultiBlockEntity.computeMultiBlockAABB(te).inflate(3.5, 1.0, 3.5);
 	}
 
 	@Override
@@ -895,17 +903,17 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	/** The third eye of void hanging between the halves, in the Lidless panel material. */
 	private static void renderPortal(PoseStack ms, MultiBufferSource bufferIn, SanguineMonolithBlockEntity te, float time,
 			float partialTicks, Direction facing) {
-		var local = com.vincenthuto.hemomancy.client.data.LidlessPassageClientState.local();
+		var local = LidlessPassageClientState.local();
 		if (local != null && local.door().equals(te.getBlockPos())) return;
-		float seed = com.vincenthuto.hemomancy.client.render.tile.shared.LidlessDoorRenderer.seed(te.getBlockPos());
+		float seed = LidlessDoorRenderer.seed(te.getBlockPos());
 		float opening = te.opening(partialTicks);
 		int live = 0;
 		// A gateway's open eye shows the Chamber: ask for the view, and show the one drawn for this husk.
 		if (te.proxy() != null && !te.seedInside() && opening > 0.02F) {
-			com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberProxyView.request(te, facing);
-			live = com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberProxyView.textureFor(te.getBlockPos());
+		ChamberProxyView.request(te, facing);
+			live = ChamberProxyView.textureFor(te.getBlockPos());
 		}
-		com.vincenthuto.hemomancy.client.render.tile.shared.LidlessPortalPanel.draw(ms, bufferIn, time, seed, facing,
+		LidlessPortalPanel.draw(ms, bufferIn, time, seed, facing,
 				opening, true, te.theme(), te.seedInside() ? 0.0F : 1.0F, live);
 	}
 
@@ -916,7 +924,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		net.minecraft.world.phys.Vec3 cameraLocal = camera.subtract(net.minecraft.world.phys.Vec3.atLowerCornerOf(te.getBlockPos()));
 		float opacity = 1.3f + 0.4f * te.glow(partialTicks);
 		float seed = Math.floorMod(te.getBlockPos().asLong(), 977L) / 977.0f;
-		com.vincenthuto.hemomancy.client.render.world.CardinalRiteFogRenderer.drawStill(ms, buffer,
+	CardinalRiteFogRenderer.drawStill(ms, buffer,
 				new net.minecraft.world.phys.Vec3(0.5D, 0.15D, 0.5D), FOG_RADIUS, time, opacity, cameraLocal, seed);
 	}
 
@@ -930,6 +938,6 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		net.minecraft.world.phys.Vec3 fulcrum = net.minecraft.world.phys.Vec3.atCenterOf(te.getBlockPos()).add(0.0D, -0.35D, 0.0D);
 		net.minecraft.world.phys.Vec3 end = fulcrum.add((random.nextDouble() - 0.5D) * 3.0D, 1.2D + random.nextDouble() * 1.8D,
 				(random.nextDouble() - 0.5D) * 3.0D);
-		com.vincenthuto.hemomancy.client.render.world.CardinalRiteFogLightning.strike(fulcrum, end, now, partialTicks);
+		CardinalRiteFogLightning.strike(fulcrum, end, now, partialTicks);
 	}
 }

@@ -1111,6 +1111,50 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	/**
+	 * A Scarlet Vanity's glass: dark smoky glass, lit by the world, over the reflection {@code liveTexture} holds (drawn
+	 * by {@code VanityMirrorView} and sampled by screen position), or the smoke alone when it is 0. The quad's UVs are
+	 * its block-pixel position, which the shader cuts to the frame's arched top.
+	 */
+	public static RenderType vanityMirror(float gameTime, int liveTexture) {
+		return VANITY_MIRROR_TYPES.get(liveTexture, new VanityMirrorUniforms(gameTime));
+	}
+
+	private record VanityMirrorUniforms(float gameTime) {
+	}
+
+	private static final SeededRenderTypes<Integer, VanityMirrorUniforms, RenderType> VANITY_MIRROR_TYPES =
+			new SeededRenderTypes<>(SEEDED_TYPE_LIMIT, HemoRenderTypes::createVanityMirror);
+
+	private static int textureBeforeMirror;
+
+	private static RenderType createVanityMirror(Integer liveTexture, Supplier<VanityMirrorUniforms> values) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"vanity_mirror_uniforms",
+				() -> {
+					textureBeforeMirror = RenderSystem.getShaderTexture(0);
+					ShaderInstance shader = ShaderInit.VANITY_MIRROR.getInstance().get();
+					setUniform(shader, "HemoTime", values.get().gameTime());
+					setUniform(shader, "Live", liveTexture != 0 ? 1.0F : 0.0F);
+					var main = net.minecraft.client.Minecraft.getInstance().getMainRenderTarget();
+					setUniform(shader, "ScreenSize", (float) main.width, (float) main.height);
+					if (liveTexture != 0) RenderSystem.setShaderTexture(0, liveTexture);
+				},
+				() -> RenderSystem.setShaderTexture(0, textureBeforeMirror));
+		// Opaque and depth-writing: the glass hides what is behind it, and the shader cuts the arch by discarding.
+		return RenderType.create("vanity_mirror",
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, false,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.VANITY_MIRROR.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.NO_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	/** A strike for the ward shader: camera-relative origin, life from 0 to 1, flash strength, and a threshold flag. */
 	public record WardStrike(float x, float y, float z, float life, float power, boolean threshold) {
 		public static final WardStrike NONE = new WardStrike(0.0F, 0.0F, 0.0F, 1.0F, 0.0F, false);

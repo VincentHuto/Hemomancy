@@ -1251,7 +1251,6 @@ src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/ScarletVanityReso
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/ScarletVanityResourceTest.java,main,src/main/resources/assets/hemomancy/blockstates/scarlet_vanity.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/ScarletVanityResourceTest.java,main,src/main/resources/assets/hemomancy/lang/en_us.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/ScarletVanityResourceTest.java,main,src/main/resources/assets/hemomancy/models/block/scarlet_vanity.json,resource,base-dir
-src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/ScarletVanityResourceTest.java,main,src/main/resources/assets/hemomancy/models/item/scarlet_vanity.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/ScarletVanityResourceTest.java,main,src/main/resources/data/hemomancy/loot_table/blocks/scarlet_vanity.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/ScryingPodiumDiagnosticsResourceTest.java,main,docs/HEMOMANCY_REFERENCE.md,doc,exact
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/ScryingPodiumDiagnosticsResourceTest.java,main,src/main/java,other,exact-dir

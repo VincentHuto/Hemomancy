@@ -3,8 +3,10 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.tile.RadiantPortalRendertype;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
+import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
+import com.vincenthuto.hemomancy.client.render.world.VanityMirrorRules;
+import com.vincenthuto.hemomancy.client.render.world.VanityMirrorView;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
@@ -12,121 +14,72 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ScarletVanityB
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import org.joml.Matrix4f;
+import net.minecraft.world.phys.AABB;
 
 public class ScarletVanityRenderer implements BlockEntityRenderer<ScarletVanityBlockEntity> {
-	private static final ResourceLocation BLOOD_POOL_TEXTURE = Hemomancy.rloc("textures/block/sanguine_tran_pane.png");
-	private static final int FULL_BRIGHT = 15728880;
 	private static final int DISPLAY_ITEM_MAX_LIGHT = 11;
-	private static final float BLOOD_POOL_RED = 1.0F;
-	private static final float BLOOD_POOL_GREEN = 0.06F;
-	private static final float BLOOD_POOL_BLUE = 0.035F;
-	private static final float BLOOD_POOL_ALPHA = 0.92F;
-	private static final float POOL_WAVE_HEIGHT = 0.035f;
-	private static final float POOL_WAVE_INTENSITY = 30f;
-	private static final float POOL_STEP = 0.125f;
 
 	public ScarletVanityRenderer(BlockEntityRendererProvider.Context context) {
 	}
 
 	@Override
+	public AABB getRenderBoundingBox(ScarletVanityBlockEntity te) {
+		// The mirror stands in the block above.
+		return new AABB(te.getBlockPos()).expandTowards(0.0D, 1.0D, 0.0D);
+	}
+
+	@Override
 	public void render(ScarletVanityBlockEntity te, float partialTicks, PoseStack poseStack,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		renderBloodBowl(te, partialTicks, poseStack, bufferIn);
-		renderPlayerReflection(te, partialTicks, poseStack);
+		renderMirrorGlass(te, partialTicks, poseStack, bufferIn);
 		int itemLight = displayItemLight(te, combinedLightIn);
 		renderEquippedItems(te, poseStack, bufferIn, itemLight, combinedOverlayIn);
 	}
 
-	private void renderBloodBowl(ScarletVanityBlockEntity te, float partialTicks, PoseStack poseStack,
+	/**
+	 * The mirror's glass, one quad the shader cuts to the frame's arch: smoke, with the players in front of it drawn in
+	 * by {@link VanityMirrorView}.
+	 */
+	private static void renderMirrorGlass(ScarletVanityBlockEntity te, float partialTicks, PoseStack poseStack,
 			MultiBufferSource bufferIn) {
-		poseStack.pushPose();
-		poseStack.translate(0.5f, 0.89f, 0.5f);
-		poseStack.scale(0.14f, 0.14f, 0.14f);
-		poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
-
-		Matrix4f mat = poseStack.last().pose();
-		float gameTime = te.getLevel() == null ? 0.0F : te.getLevel().getGameTime();
-		float time = (gameTime + partialTicks) / 10.0F;
-		VertexConsumer vertex = bufferIn.getBuffer(RadiantPortalRendertype.textWithWaterShader(BLOOD_POOL_TEXTURE));
-
-		for (float x = -1; x < 1; x += POOL_STEP) {
-			float u = (x + 1) * 0.5f;
-			for (float y = -1; y < 1; y += POOL_STEP) {
-				float v = (y + 1) * 0.5f;
-				float distance = (float) Math.sqrt(x * x + y * y);
-
-				if (distance <= 1.05f) {
-					addWavyVertex(vertex, mat, x, y, time, u, v);
-					addWavyVertex(vertex, mat, x, y + POOL_STEP, time, u, v + POOL_STEP * 0.5f);
-					addWavyVertex(vertex, mat, x + POOL_STEP, y + POOL_STEP, time,
-							u + POOL_STEP * 0.5f, v + POOL_STEP * 0.5f);
-					addWavyVertex(vertex, mat, x + POOL_STEP, y, time, u + POOL_STEP * 0.5f, v);
-
-					addWavyVertex(vertex, mat, x + POOL_STEP, y, time, u + POOL_STEP * 0.5f, v);
-					addWavyVertex(vertex, mat, x + POOL_STEP, y + POOL_STEP, time,
-							u + POOL_STEP * 0.5f, v + POOL_STEP * 0.5f);
-					addWavyVertex(vertex, mat, x, y + POOL_STEP, time, u, v + POOL_STEP * 0.5f);
-					addWavyVertex(vertex, mat, x, y, time, u, v);
-				}
-			}
+		if (te.getLevel() == null) {
+			return;
 		}
+		Direction facing = te.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
+		VanityMirrorView.request(te.getBlockPos(), facing);
+		int live = VanityMirrorView.textureFor(te.getBlockPos());
+		int light = LevelRenderer.getLightColor(te.getLevel(), te.getBlockPos().above());
+		VertexConsumer glass = bufferIn.getBuffer(
+				HemoRenderTypes.vanityMirror(AnimationTime.gameTime(te.getLevel(), partialTicks), live));
 
+		poseStack.pushPose();
+		// The pose faces the vanity's front, north, along -z, as its model is authored.
+		poseStack.translate(0.5D, 0.0D, 0.5D);
+		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - facing.toYRot()));
+		poseStack.translate(-0.5D, 0.0D, -0.5D);
+		PoseStack.Pose pose = poseStack.last();
+		float x0 = VanityMirrorRules.GLASS_X0 / 16.0F;
+		float x1 = VanityMirrorRules.GLASS_X1 / 16.0F;
+		float y0 = VanityMirrorRules.GLASS_Y0 / 16.0F;
+		float y1 = VanityMirrorRules.GLASS_Y1 / 16.0F;
+		float z = VanityMirrorRules.GLASS_Z / 16.0F;
+		glassVertex(glass, pose, x0, y0, z, VanityMirrorRules.GLASS_X0, VanityMirrorRules.GLASS_Y0, light);
+		glassVertex(glass, pose, x0, y1, z, VanityMirrorRules.GLASS_X0, VanityMirrorRules.GLASS_Y1, light);
+		glassVertex(glass, pose, x1, y1, z, VanityMirrorRules.GLASS_X1, VanityMirrorRules.GLASS_Y1, light);
+		glassVertex(glass, pose, x1, y0, z, VanityMirrorRules.GLASS_X1, VanityMirrorRules.GLASS_Y0, light);
 		poseStack.popPose();
 	}
 
-	private void renderPlayerReflection(ScarletVanityBlockEntity te, float partialTicks, PoseStack poseStack) {
-		Player player = Minecraft.getInstance().player;
-		if (player == null) {
-			return;
-		}
-
-		Direction facing = te.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
-		float previousYRot = player.getYRot();
-		float previousYRotO = player.yRotO;
-		float previousBodyRot = player.yBodyRot;
-		float previousBodyRotO = player.yBodyRotO;
-		float previousHeadRot = player.yHeadRot;
-		float previousHeadRotO = player.yHeadRotO;
-		EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-		MultiBufferSource.BufferSource playerBuffers = Minecraft.getInstance().renderBuffers().bufferSource();
-
-		poseStack.pushPose();
-		try {
-			poseStack.translate(0.5D, 0.98D, 0.5D);
-			poseStack.mulPose(Axis.YP.rotationDegrees(playerReflectionYawForFacing(facing)));
-			poseStack.scale(0.1F, 0.1F, 0.1F);
-
-			player.setYRot(0.0F);
-			player.yRotO = 0.0F;
-			player.yBodyRot = 0.0F;
-			player.yBodyRotO = 0.0F;
-			player.yHeadRot = 0.0F;
-			player.yHeadRotO = 0.0F;
-			entityRenderDispatcher.setRenderShadow(false);
-			playerBuffers.getBuffer(RenderType.lines());
-			entityRenderDispatcher.render(player, 0.0D, 0.0D, 0.0D, 0.0F, partialTicks, poseStack, playerBuffers, FULL_BRIGHT);
-		} finally {
-			entityRenderDispatcher.setRenderShadow(true);
-			player.setYRot(previousYRot);
-			player.yRotO = previousYRotO;
-			player.yBodyRot = previousBodyRot;
-			player.yBodyRotO = previousBodyRotO;
-			player.yHeadRot = previousHeadRot;
-			player.yHeadRotO = previousHeadRotO;
-			poseStack.popPose();
-		}
+	private static void glassVertex(VertexConsumer glass, PoseStack.Pose pose, float x, float y, float z, float u, float v,
+			int light) {
+		glass.addVertex(pose.pose(), x, y, z).setColor(-1).setUv(u, v).setLight(light).setNormal(pose, 0.0F, 0.0F, -1.0F);
 	}
 
 	private void renderEquippedItems(ScarletVanityBlockEntity te, PoseStack poseStack, MultiBufferSource bufferIn,
@@ -187,24 +140,6 @@ public class ScarletVanityRenderer implements BlockEntityRenderer<ScarletVanityB
 		case NORTH, SOUTH -> -yaw;
 		default -> yaw;
 		};
-	}
-
-	private static float playerReflectionYawForFacing(Direction facing) {
-		return switch (facing) {
-		case NORTH -> 180.0F;
-		case SOUTH -> 0.0F;
-		case EAST -> 90.0F;
-		case WEST -> 270.0F;
-		default -> 0.0F;
-		};
-	}
-
-	private static void addWavyVertex(VertexConsumer vertex, Matrix4f mat, float x, float y, float time, float u,
-			float v) {
-		float distance = (float) Math.sqrt(x * x + y * y);
-		float wave = (float) Math.sin(distance * POOL_WAVE_INTENSITY + time) * POOL_WAVE_HEIGHT;
-		vertex.addVertex(mat, x, y, wave).setColor(BLOOD_POOL_RED, BLOOD_POOL_GREEN, BLOOD_POOL_BLUE, BLOOD_POOL_ALPHA).setUv(u, v)
-				.setOverlay(OverlayTexture.NO_OVERLAY).setLight(FULL_BRIGHT);
 	}
 
 	private static int displayItemLight(ScarletVanityBlockEntity te, int fallbackLight) {

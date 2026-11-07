@@ -116,6 +116,7 @@ public final class ClientSessionEvents {
         com.vincenthuto.hemomancy.client.data.LidlessPassageClientState.clear();
         com.vincenthuto.hemomancy.client.screen.overlay.LidlessPassageView.clear();
         com.vincenthuto.hemomancy.client.render.world.chamberofwill.ChamberProxyView.clear();
+        com.vincenthuto.hemomancy.client.render.world.VanityMirrorView.clear();
         com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathAnimState.clear();
         com.vincenthuto.hemomancy.client.model.entity.boss.putriciel.PutricielAnimState.clear();
         com.vincenthuto.hemomancy.client.model.entity.boss.velorum.VelorumAnimState.clear();

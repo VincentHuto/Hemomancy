@@ -67,6 +67,10 @@ public class ShaderInit {
 	public static ShaderHolder LIDLESS_DOOR_PANEL = new ShaderHolder(Hemomancy.rloc("world/lidless_door_panel"),
 			DefaultVertexFormat.BLOCK, "HemoTime", "DoorSeed", "PassageRight", "PassageUp", "PassageForward", "Diamond", "Live", "ScreenSize", "Hard");
 
+	/** A Scarlet Vanity's smoky glass over the players its reflection pass drew. */
+	public static ShaderHolder VANITY_MIRROR = new ShaderHolder(Hemomancy.rloc("world/vanity_mirror"),
+			DefaultVertexFormat.BLOCK, "HemoTime", "Live", "ScreenSize");
+
 	/** The consecrated ward over a Saint's mausoleum: runes on the stone, the threshold sheet, strikes. */
 	public static ShaderHolder MAUSOLEUM_WARD = new ShaderHolder(Hemomancy.rloc("world/mausoleum_ward"),
 			DefaultVertexFormat.BLOCK, "HemoTime", "WardColor", "WardRadius", "PlayerOffset", "FocusOffset",
@@ -286,6 +290,7 @@ public class ShaderInit {
         registerShader(event, MONOLITH_EMBLEM.createInstance(provider));
         registerShader(event, MONOLITH_FISSURE.createInstance(provider));
         registerShader(event, LIDLESS_DOOR_PANEL.createInstance(provider));
+        registerShader(event, VANITY_MIRROR.createInstance(provider));
         registerShader(event, MAUSOLEUM_WARD.createInstance(provider));
         registerShader(event, MAUSOLEUM_WARD_BODY.createInstance(provider));
         registerShader(event, HEART_NODE_SPREAD.createInstance(provider));
