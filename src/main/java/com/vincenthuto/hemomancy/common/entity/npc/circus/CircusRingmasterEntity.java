@@ -5,6 +5,8 @@ import net.minecraft.world.BossEvent;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossScenes;
 import com.vincenthuto.hemomancy.common.entity.boss.presentation.BossPresentationIds;
 import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
+import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
@@ -26,7 +28,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.Circu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusRouteRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -41,6 +42,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -51,8 +53,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.UUID;
 
 public final class CircusRingmasterEntity extends PathfinderMob
 		implements com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeSpeaker {
@@ -61,11 +65,21 @@ public final class CircusRingmasterEntity extends PathfinderMob
 	/** The finale phase, as {@link CircusPavilionStateRules.Phase#ordinal()}, so the model can pose for it. */
 	private static final EntityDataAccessor<Integer> PHASE = SynchedEntityData.defineId(
 			CircusRingmasterEntity.class, EntityDataSerializers.INT);
-	private static final byte THROW_EVENT = 63;
+	/** Not 63: the vanilla client casts any entity that sends 63 to Sniffer and drops the connection. */
+	private static final byte THROW_EVENT = 101;
+	private static final byte STRIKE_EVENT = 70;
+	/** Ticks between RAFTERS knives; each throw winds up {@link #KNIFE_THROW}'s 12 ticks before the knife leaves. */
+	public static final int KNIFE_INTERVAL = 35;
+	/** The knife throw: the arm draws back on the wind-up, the knife leaves on the commit tick, then the follow-through. */
+	public static final BossMoveTimeline KNIFE_THROW = new BossMoveTimeline(12, 1, 5);
+	/** His DESCENT staff blow: raised through a 12-tick wind-up, landing on the commit tick if the target is in reach. */
+	public static final BossMoveTimeline STAFF_STRIKE = new BossMoveTimeline(12, 1, 6);
 	/** Ticks of the finale opening before the bar shows; the opening scene runs this long. */
 	public static final int INTRO_TICKS = 60;
-	/** Started by the throw entity event; the model whips the free arm for its length. */
+	/** Started by the throw entity event at the wind-up's start; the model plays {@link #KNIFE_THROW} on it. */
 	public final AnimationState throwState = new AnimationState();
+	/** Started by the strike entity event; the model raises and brings down the staff through {@link #STAFF_STRIKE}. */
+	public final AnimationState strikeState = new AnimationState();
 	private final BossBarBinding bar = new BossBarBinding("entity.hemomancy.circus_ringmaster",
 			BossPresentationIds.FRAME_CIRCUS_RINGMASTER, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
 	public static final String EVENT_ACCEPT = "circus_accept_pact";
@@ -76,6 +90,10 @@ public final class CircusRingmasterEntity extends PathfinderMob
 	private BlockPos perch;
 	private BlockPos encounterOrigin;
 	private int phaseTicks;
+	/** Ticks into the DESCENT staff blow; -1 when none is running. */
+	private int strikeTick = -1;
+	/** Set once an unsettled site has been released, so death, discard and unload settle it exactly once. */
+	private boolean released;
 
 	public CircusRingmasterEntity(EntityType<? extends CircusRingmasterEntity> type, Level level) {
 		super(type, level);
@@ -109,6 +127,8 @@ public final class CircusRingmasterEntity extends PathfinderMob
 	public void handleEntityEvent(byte id) {
 		if (id == THROW_EVENT) {
 			throwState.start(tickCount);
+		} else if (id == STRIKE_EVENT) {
+			strikeState.start(tickCount);
 		} else {
 			super.handleEntityEvent(id);
 		}
@@ -121,13 +141,57 @@ public final class CircusRingmasterEntity extends PathfinderMob
 
 	@Override
 	public void remove(RemovalReason reason) {
+		if (reason.shouldDestroy()) releaseUnsettledSite(true);
 		bar.hideAll();
 		super.remove(reason);
 	}
 
+	/** Chunk unloads skip {@link #remove}; release the saved site only, as the troupe's chunks may be unloading too. */
+	@Override
+	public void onRemovedFromLevel() {
+		super.onRemovedFromLevel();
+		releaseUnsettledSite(false);
+	}
+
+	/**
+	 * B-4: a Ringmaster lost mid-finale (a death that skipped {@link #hurt}, a discard, an unload) would leave the site
+	 * owned with nobody to finish it. Release it once, as a walked-out finale is released, and tell the owner. An act
+	 * (PERFORMANCE) does not need him and is left to its controller. A completed finale has no owner, so this is a no-op.
+	 */
+	private void releaseUnsettledSite(boolean cleanUpEncounter) {
+		if (released || encounterOrigin == null || !(level() instanceof ServerLevel server)) return;
+		released = true;
+		CircusPavilionSavedData data = CircusPavilionSavedData.get(server);
+		if (!data.hasSite(server, encounterOrigin)) return;
+		CircusPavilionSavedData.Site site = data.site(server, encounterOrigin);
+		UUID owner = site.activeOwner();
+		CircusPavilionStateRules.Phase phase = site.phase();
+		if (owner == null || phase == CircusPavilionStateRules.Phase.PERFORMANCE
+				|| phase == CircusPavilionStateRules.Phase.IDLE || phase == CircusPavilionStateRules.Phase.COMPLETE) return;
+		data.reset(server, encounterOrigin, owner);
+		if (cleanUpEncounter) {
+			troupe().forEach(CircusPerformerEntity::resetFinale);
+			removeSwarm();
+		}
+		bar.hideAll();
+		if (server.getPlayerByUUID(owner) instanceof ServerPlayer player) {
+			player.displayClientMessage(Component.translatable("hemomancy.circus.finale.ringmaster_lost")
+					.withStyle(ChatFormatting.DARK_GRAY), false);
+		}
+	}
+
 	@Override
 	protected void registerGoals() {
-		goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.05D, false));
+		// The goal walks him in; the blow itself is a wound-up move ticked in DESCENT, not the goal's instant swing.
+		goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.05D, false) {
+			@Override
+			protected void checkAndPerformAttack(LivingEntity target) {
+				if (strikeTick < 0 && canPerformAttack(target)) {
+					resetAttackCooldown();
+					beginStaffStrike();
+				}
+			}
+		});
 	}
 
 	@Override
@@ -151,6 +215,7 @@ public final class CircusRingmasterEntity extends PathfinderMob
 			setNoGravity(true);
 			noPhysics = true;
 			phaseTicks = 0;
+			strikeTick = -1;
 			removeSwarm();
 			setPos(perch.getX() + 0.5D, perch.getY(), perch.getZ() + 0.5D);
 			return;
@@ -177,7 +242,7 @@ public final class CircusRingmasterEntity extends PathfinderMob
 			if (phaseTicks >= INTRO_TICKS) showBar(owner);
 			bar.setProgress(1.0F);
 			if (phaseTicks == 1 || phaseTicks % 100 == 0 && !hasSwarm(owner)) spawnSwarm(owner);
-			if (phaseTicks % 35 == 0) throwKnife(owner);
+			tickKnifeThrow(owner);
 		} else if (site.phase() == CircusPavilionStateRules.Phase.CAROUSEL) {
 			setTarget(null);
 			getNavigation().stop();
@@ -193,9 +258,14 @@ public final class CircusRingmasterEntity extends PathfinderMob
 				teleportTo(carousel.getX(), carousel.getY() + 1.0D, carousel.getZ() + 4.0D);
 			}
 			setTarget(owner);
+			tickStaffStrike(server, owner);
 		}
+		// B-4: performers killed in a Liberation run never come back, and the troupe is the pavilion's, not the player's.
+		// CAROUSEL counts only the finale performers still standing in the ring, so an emptied troupe reads as downed
+		// and Succession can always reach DESCENT; the owner is told the ring was empty.
+		boolean troupeDowned = troupe.stream().allMatch(CircusPerformerEntity::isDowned);
 		CircusPavilionStateRules.Phase next = CircusFinaleRules.nextPhase(site.route(), site.phase(), phaseTicks,
-				!troupe.isEmpty() && troupe.stream().allMatch(CircusPerformerEntity::isDowned), carousel.isDestroyed());
+				troupeDowned, carousel.isDestroyed());
 		if (next != site.phase()) {
 			data.setPhase(server, encounterOrigin, next);
 			phaseTicks = 0;
@@ -203,6 +273,8 @@ public final class CircusRingmasterEntity extends PathfinderMob
 			if (next == CircusPavilionStateRules.Phase.CAROUSEL) {
 				BossScenes.playTo(owner, this, BossPresentationIds.SCENE_CIRCUS_CAROUSEL_CARD, 0);
 			} else if (next == CircusPavilionStateRules.Phase.DESCENT) {
+				if (troupe.isEmpty()) owner.displayClientMessage(Component.translatable(
+						"hemomancy.circus.finale.empty_troupe").withStyle(ChatFormatting.DARK_GRAY), false);
 				BossScenes.playTo(owner, this, BossPresentationIds.SCENE_CIRCUS_DESCENT_CARD, 0);
 			} else if (next == CircusPavilionStateRules.Phase.COMPLETE) {
 				bar.hideAll();
@@ -221,8 +293,58 @@ public final class CircusRingmasterEntity extends PathfinderMob
 		return level().getEntitiesOfClass(CircusPerformerEntity.class, new AABB(encounterOrigin).inflate(20.0D), CircusPerformerEntity::participatesInFinale);
 	}
 
+	/**
+	 * RAFTERS knives keep their 35-tick beat, but each now winds up first: the throw animation starts and the thread
+	 * cue reaches for the owner {@link #KNIFE_THROW}'s wind-up before the knife leaves, so the arm is drawn back first.
+	 */
+	private void tickKnifeThrow(ServerPlayer owner) {
+		int untilThrow = Math.floorMod(-phaseTicks, KNIFE_INTERVAL);
+		int windup = KNIFE_THROW.windup();
+		if (phaseTicks + untilThrow < KNIFE_INTERVAL) return;
+		ServerLevel server = (ServerLevel) level();
+		if (untilThrow == windup) {
+			level().broadcastEntityEvent(this, THROW_EVENT);
+			BossTelegraphs.tendril(server, handPoint(), owner.position().add(0.0D, 1.0D, 0.0D),
+					CircusEffects.THREAD_CORE_ARGB, CircusEffects.THREAD_GLOW_ARGB, getId() * 17L + phaseTicks);
+		}
+		if (untilThrow > 0 && untilThrow <= windup) {
+			CircusEffects.gather(server, handPoint(), CircusEffects.BONE, 1.0F - untilThrow / (float) windup);
+			if (untilThrow % 3 == 0) {
+				BossTelegraphs.ring(server, owner.position(), 1.1D, CircusEffects.CRIMSON, 16);
+				BossTelegraphs.ring(server, owner.position(), 0.5D, CircusEffects.BONE, 10);
+			}
+		}
+		if (untilThrow == 0) throwKnife(owner);
+	}
+
+	private Vec3 handPoint() {
+		Vec3 side = getLookAngle().yRot((float) Math.toRadians(70.0D)).multiply(1.0D, 0.0D, 1.0D);
+		return new Vec3(getX(), getEyeY() - 0.2D, getZ()).add(side.scale(0.45D));
+	}
+
+	private void beginStaffStrike() {
+		strikeTick = 0;
+		level().broadcastEntityEvent(this, STRIKE_EVENT);
+	}
+
+	/** The DESCENT blow: a cone drawn in front of him through the wind-up, the hit on the commit tick if in reach. */
+	private void tickStaffStrike(ServerLevel server, ServerPlayer owner) {
+		if (strikeTick < 0) return;
+		if (STAFF_STRIKE.stageAt(strikeTick) == BossMoveTimeline.Stage.WINDUP) {
+			CircusEffects.gather(server, position().add(0.0D, 2.4D, 0.0D), CircusEffects.CRIMSON,
+					strikeTick / (float) STAFF_STRIKE.windup());
+			if (strikeTick % 3 == 0) BossTelegraphs.cone(server, position(), getLookAngle(), 2.6D, 100.0D,
+					CircusEffects.CRIMSON);
+		}
+		if (strikeTick == STAFF_STRIKE.commitTick()) {
+			swing(InteractionHand.MAIN_HAND);
+			if (isWithinMeleeAttackRange(owner) && doHurtTarget(owner))
+				CircusEffects.impact(server, owner.position().add(0.0D, 1.0D, 0.0D), 1.0D);
+		}
+		strikeTick = STAFF_STRIKE.stageAt(strikeTick + 1) == BossMoveTimeline.Stage.COMPLETE ? -1 : strikeTick + 1;
+	}
+
 	private void throwKnife(ServerPlayer owner) {
-		level().broadcastEntityEvent(this, THROW_EVENT);
 		CircusKnifeProjectileEntity knife = new CircusKnifeProjectileEntity(level(), this, 4.0F);
 		knife.setPos(getX(), getEyeY() - 0.2D, getZ());
 		knife.shoot(owner.getX() - getX(), owner.getEyeY() - getEyeY(), owner.getZ() - getZ(), 1.4F, 3.0F);
@@ -281,7 +403,6 @@ public final class CircusRingmasterEntity extends PathfinderMob
 		} else if (EVENT_FINALE.equals(eventId)) {
 			beginFinale(player, carousel);
 		}
-		CircusPlayerProgress.sync(player, true);
 	}
 
 	private void beginFinale(ServerPlayer player, CircusCarouselEntity carousel) {
@@ -322,12 +443,23 @@ public final class CircusRingmasterEntity extends PathfinderMob
 
 	@Override
 	public void die(DamageSource source) {
-		if (source.getEntity() instanceof ServerPlayer player && encounterOrigin != null
-				&& level() instanceof ServerLevel server) {
+		if (encounterOrigin != null && level() instanceof ServerLevel server
+				&& CircusPavilionSavedData.get(server).hasSite(server, encounterOrigin)) {
 			CircusPavilionSavedData.Site site = CircusPavilionSavedData.get(server).site(server, encounterOrigin);
-			if (site.route() == CircusRouteRules.Route.LIBERATION
-					&& CircusPavilionStateRules.canAct(site.activeOwner(), player.getUUID())) complete(player, site.route());
+			ServerPlayer owner = source.getEntity() instanceof ServerPlayer player
+					&& CircusPavilionStateRules.canAct(site.activeOwner(), player.getUUID()) ? player : null;
+			if (site.route() == CircusRouteRules.Route.LIBERATION && owner != null) {
+				complete(owner, site.route());
+			} else if (site.route() == CircusRouteRules.Route.SUCCESSION && site.activeOwner() != null
+					&& !source.is(DamageTypes.GENERIC_KILL)) {
+				// Succession is nonlethal. A death that skipped hurt() is refused, as a Saint refuses it; from the
+				// owner in DESCENT it is the yield hurt() would have given. Only /kill gets past, and releases the site.
+				setHealth(Math.max(1.0F, getHealth()));
+				if (owner != null && site.phase() == CircusPavilionStateRules.Phase.DESCENT) complete(owner, site.route());
+				return;
+			}
 		}
+		releaseUnsettledSite(true);
 		super.die(source);
 	}
 
@@ -344,13 +476,17 @@ public final class CircusRingmasterEntity extends PathfinderMob
 			grantLiberationMemory(player);
 			authorRuin(server);
 		}
-		ItemStack topper = new ItemStack(ItemInit.ringmaster_topper.get());
-		if (!player.getInventory().add(topper)) player.drop(topper, false);
+		CircusPlayerProgress.oweTopper(player);
 		troupe().forEach(performer -> { if (performer.isAlive()) performer.resetFinale(); });
 		removeSwarm();
 		bar.hideAll();
-		server.sendParticles(ParticleTypes.CRIMSON_SPORE, getX(), getY() + 1.0D, getZ(),
-				80, 1.5D, 1.5D, 1.5D, 0.08D);
+		// The finale's close: the threads let go of him all at once, then blood and bone burst out round him.
+		for (CircusPerformerEntity performer : troupe()) {
+			BossTelegraphs.tendril(server, position().add(0.0D, 1.6D, 0.0D), performer.position().add(0.0D, 1.4D, 0.0D),
+					CircusEffects.THREAD_CORE_ARGB, CircusEffects.THREAD_GLOW_ARGB, performer.getId() * 13L + tickCount);
+		}
+		CircusEffects.collapse(server, position());
+		BossTelegraphs.spores(server, position().add(0.0D, 1.0D, 0.0D), CircusEffects.CRIMSON, 40, 1.5D, 0.08D);
 		server.playSound(null, blockPosition(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 0.7F);
 		player.displayClientMessage(Component.translatable("hemomancy.circus.finale.complete." + route.serializedName())
 				.withStyle(ChatFormatting.DARK_RED), false);
@@ -360,8 +496,7 @@ public final class CircusRingmasterEntity extends PathfinderMob
 		var result = KnownManipulationGrantHelper.grantMemory(player, ManipulationInit.thread_ripper.get(),
 				ItemInit.memory_thread_ripper.get());
 		if (!result.success() && result.status() != KnownManipulationGrantHelper.MemoryGrantStatus.ALREADY_KNOWN) {
-			ItemStack memory = new ItemStack(ItemInit.memory_thread_ripper.get());
-			if (!player.getInventory().add(memory)) player.drop(memory, false);
+			CircusPlayerProgress.oweRipperMemory(player);
 			player.displayClientMessage(Component.translatable("message.hemomancy.circus_ringmaster_entity.thread_ripper_remains_in_its_memory").withStyle(ChatFormatting.DARK_RED), false);
 		}
 	}

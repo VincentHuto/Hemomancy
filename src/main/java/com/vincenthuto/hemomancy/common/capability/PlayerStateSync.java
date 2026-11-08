@@ -2,11 +2,13 @@ package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncCourtProgress;
+import com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusPerception;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPossession;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncSporeLoad;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.court.CourtDiscoveryProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentEntityEventHandler;
@@ -139,7 +141,16 @@ public final class PlayerStateSync {
 				ManipulationReactiveEvents::syncHearts),
 		/** Strain tooltips and the Bestiary read Court knowledge on the client (Brined Court decision M7). */
 		COURT_PROGRESS(HemoAttachmentTypes.COURT_PROGRESS, PacketSyncCourtProgress.class, ALWAYS,
-				CourtDiscoveryProgress::sync);
+				CourtDiscoveryProgress::sync),
+		/**
+		 * The Circus perception overlay: acclimation and whether the player stands in a pavilion. A lifecycle send
+		 * starts outside, as the old respawn and dimension resends did; the discovery tick and acclimation changes
+		 * raise the dirty flag.
+		 */
+		CIRCUS_PROGRESS(HemoAttachmentTypes.CIRCUS_PROGRESS, PacketSyncCircusPerception.class, ALWAYS,
+				CircusPlayerProgress::resyncPerception,
+				player -> HemoCapabilityAccess.circusProgress(player).isPerceptionDirty(),
+				CircusPlayerProgress::syncPerception);
 
 		private final DeferredHolder<AttachmentType<?>, ? extends AttachmentType<?>> attachment;
 		private final Class<? extends CustomPacketPayload> payload;

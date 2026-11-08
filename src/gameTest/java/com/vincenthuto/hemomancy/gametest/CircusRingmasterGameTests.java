@@ -40,7 +40,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.UUID;
 
-@GameTestHolder(Hemomancy.MOD_ID)
+/** The Ringmaster's site, act and save rules, in the Circus batch so {@code runCrimsonTroupeGameTestServer} runs them. */
+@GameTestHolder("crimson_troupe_validation")
 @PrefixGameTestTemplate(false)
 @SuppressWarnings("removal")
 public final class CircusRingmasterGameTests {
@@ -50,7 +51,7 @@ public final class CircusRingmasterGameTests {
 	private CircusRingmasterGameTests() {
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 120)
+	@GameTest(template = "empty", timeoutTicks = 120)
 	public static void carouselSpawnsThreeBoundPuppeteerCaptives(GameTestHelper helper) {
 		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
 		helper.assertTrue(carousel != null, "Carousel fixture must create");
@@ -104,7 +105,7 @@ public final class CircusRingmasterGameTests {
 		}).thenSucceed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(template = "empty", timeoutTicks = 40)
 	public static void carouselCaptiveHorseSlotSyncsToClients(GameTestHelper helper) {
 		BloodDrunkPuppeteerEntity serverCaptive = EntityInit.blood_drunk_puppeteer.get().create(helper.getLevel());
 		BloodDrunkPuppeteerEntity clientCopy = EntityInit.blood_drunk_puppeteer.get().create(helper.getLevel());
@@ -117,7 +118,7 @@ public final class CircusRingmasterGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(template = "empty", timeoutTicks = 40)
 	public static void perchedRingmasterCannotBeMovedOrHarmed(GameTestHelper helper) {
 		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
 		Zombie attacker = EntityType.ZOMBIE.create(helper.getLevel());
@@ -144,7 +145,7 @@ public final class CircusRingmasterGameTests {
 		});
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(template = "empty", timeoutTicks = 40)
 	public static void inactiveRingmasterPositionDoesNotDependOnAudienceAcclimation(GameTestHelper helper) {
 		CircusRingmasterEntity ringmaster = EntityInit.circus_ringmaster.get().create(helper.getLevel());
 		CircusCarouselEntity carousel = EntityInit.impaled_procession.get().create(helper.getLevel());
@@ -171,7 +172,7 @@ public final class CircusRingmasterGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(template = "empty", timeoutTicks = 40)
 	public static void failedControlledActReleasesSiteAndCanBeRetried(GameTestHelper helper) {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		ServerPlayer player = connectedPlayer(helper, "circus-retry", origin);
@@ -199,7 +200,7 @@ public final class CircusRingmasterGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(template = "empty", timeoutTicks = 40)
 	public static void neutralPlayerCanBeginAttentionAct(GameTestHelper helper) {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		ServerPlayer player = connectedPlayer(helper, "circus-neutral-act", origin);
@@ -220,7 +221,7 @@ public final class CircusRingmasterGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(template = "empty", timeoutTicks = 40)
 	public static void routeChoiceRequiresCompletedAttentionAct(GameTestHelper helper) {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		ServerPlayer player = connectedPlayer(helper, "circus-pact-order", origin);
@@ -249,7 +250,7 @@ public final class CircusRingmasterGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(template = "empty", timeoutTicks = 40)
 	public static void expiredControlledActCannotAwardProgress(GameTestHelper helper) {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		ServerPlayer staleOwner = connectedPlayer(helper, "circus-stale-owner", origin);
@@ -259,7 +260,7 @@ public final class CircusRingmasterGameTests {
 		CircusPlayerProgress.completeChallenge(staleOwner, 1, 0);
 		helper.assertTrue(CircusPerformanceController.beginNext(staleOwner, origin),
 				"The controlled act fixture must begin");
-		staleOwner.getPersistentData().putInt("hemomancy.circus_challenge_ticks", 199);
+		com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.circusProgress(staleOwner).setActTicks(199);
 		CircusPavilionSavedData data = CircusPavilionSavedData.get(helper.getLevel());
 		data.reset(helper.getLevel(), origin, staleOwner.getUUID());
 		helper.assertTrue(data.beginPerformance(helper.getLevel(), origin, successor.getUUID(),
@@ -268,7 +269,7 @@ public final class CircusRingmasterGameTests {
 		CircusPerformanceController.onPlayerTick(new PlayerTickEvent.Post(staleOwner));
 		helper.assertTrue(CircusPlayerProgress.challenges(staleOwner) == 0b00011,
 				"An expired act must not award challenge credit from stale player data");
-		helper.assertTrue(staleOwner.getPersistentData().getInt("hemomancy.circus_active_challenge") == 0,
+		helper.assertTrue(CircusPerformanceController.activeChallenge(staleOwner) < 0,
 				"An expired act must clear the stale player timer");
 		helper.assertTrue(successor.getUUID().equals(data.site(helper.getLevel(), origin).activeOwner()),
 				"Cleaning stale player data must not release the successor's attempt");
@@ -279,7 +280,7 @@ public final class CircusRingmasterGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(template = "empty", timeoutTicks = 40)
 	public static void controlledPerformerOwnershipSurvivesEntityReload(GameTestHelper helper) {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		ServerPlayer owner = connectedPlayer(helper, "circus-reload-owner", origin);
@@ -305,7 +306,7 @@ public final class CircusRingmasterGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(template = "empty", timeoutTicks = 40)
 	public static void pavilionOwnershipAndOutcomeSurviveSavedDataRoundTrip(GameTestHelper helper) {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		UUID owner = UUID.randomUUID();
@@ -330,7 +331,7 @@ public final class CircusRingmasterGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(template = "empty", timeoutTicks = 40)
 	public static void missingPavilionOwnerExpiresAfterGracePeriod(GameTestHelper helper) {
 		BlockPos origin = helper.absolutePos(new BlockPos(4, 2, 4));
 		UUID disconnectedOwner = UUID.randomUUID();

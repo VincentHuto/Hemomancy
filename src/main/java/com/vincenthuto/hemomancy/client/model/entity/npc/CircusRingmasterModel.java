@@ -139,8 +139,12 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 		return LayerDefinition.create(mesh, 128, 128);
 	}
 
-	/** Ticks the free arm takes to wind back and whip a knife out. */
-	private static final float THROW_TICKS = 12.0F;
+	/** The throw's whole beat: the wind-up the server waits before the knife leaves, then the follow-through. */
+	private static final float THROW_TICKS = CircusRingmasterEntity.KNIFE_THROW.total();
+	/** Where in the beat the knife leaves: the commit tick of the server's throw. */
+	private static final float THROW_RELEASE = CircusRingmasterEntity.KNIFE_THROW.commitTick() / THROW_TICKS;
+	private static final float STRIKE_TICKS = CircusRingmasterEntity.STAFF_STRIKE.total();
+	private static final float STRIKE_COMMIT = CircusRingmasterEntity.STAFF_STRIKE.commitTick();
 
 	/**
 	 * Perched in the rafters he crouches on the beam, staff planted, only the head and the throwing arm moving. On
@@ -170,6 +174,12 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 			float ticks = entity.throwState.getAccumulatedTime() / 50.0F;
 			if (ticks > THROW_TICKS) entity.throwState.stop();
 			else throwBeat(ticks / THROW_TICKS);
+		}
+		entity.strikeState.updateTime(ageInTicks, 1.0F);
+		if (entity.strikeState.isStarted()) {
+			float ticks = entity.strikeState.getAccumulatedTime() / 50.0F;
+			if (ticks > STRIKE_TICKS) entity.strikeState.stop();
+			else staffStrike(ticks);
 		}
 		float pulse = 1.0F + Mth.sin(ageInTicks * 0.11F) * (phase == CircusPavilionStateRules.Phase.CAROUSEL ? 0.09F : 0.04F);
 		staffTopper.xScale = staffTopper.yScale = staffTopper.zScale = pulse;
@@ -215,15 +225,35 @@ public final class CircusRingmasterModel extends HumanoidModel<CircusRingmasterE
 		rightArm.zRot += 0.1F;
 	}
 
-	/** The free arm draws back behind the shoulder, holds, then whips out and down as the knife leaves. */
+	/**
+	 * The free arm draws back behind the shoulder through the server's wind-up, holds, then whips out and down on the
+	 * commit tick, when the knife leaves; the follow-through settles it.
+	 */
 	private void throwBeat(float t) {
-		float wind = HemoEasing.smoothstep(0.0F, 0.3F, t) * (1.0F - HemoEasing.smoothstep(0.4F, 0.55F, t));
-		float whip = HemoEasing.smoothstep(0.4F, 0.55F, t) * (1.0F - HemoEasing.smoothstep(0.8F, 1.0F, t));
+		float whipStart = THROW_RELEASE - 0.06F;
+		float whipEnd = THROW_RELEASE + 0.05F;
+		float wind = HemoEasing.smoothstep(0.0F, THROW_RELEASE * 0.55F, t) * (1.0F - HemoEasing.smoothstep(whipStart, whipEnd, t));
+		float whip = HemoEasing.smoothstep(whipStart, whipEnd, t) * (1.0F - HemoEasing.smoothstep(0.85F, 1.0F, t));
 		leftArm.xRot = Mth.lerp(wind, leftArm.xRot, -2.9F);
 		leftArm.zRot = Mth.lerp(wind, leftArm.zRot, -0.4F);
 		leftArm.xRot = Mth.lerp(whip, leftArm.xRot, -0.9F);
 		leftArm.yRot = Mth.lerp(whip, leftArm.yRot, 0.45F);
 		body.yRot = Mth.lerp(whip, body.yRot, -0.25F);
 		head.yRot = Mth.lerp(whip, head.yRot, 0.2F);
+	}
+
+	/** The staff comes up over the head through the wind-up, the body rearing back, then cracks down on the commit tick. */
+	private void staffStrike(float ticks) {
+		float raise = HemoEasing.smoothstep(0.0F, STRIKE_COMMIT, ticks)
+				* (1.0F - HemoEasing.smoothstep(STRIKE_COMMIT - 0.5F, STRIKE_COMMIT + 1.0F, ticks));
+		float smash = HemoEasing.smoothstep(STRIKE_COMMIT - 0.5F, STRIKE_COMMIT + 1.0F, ticks)
+				* (1.0F - HemoEasing.smoothstep(STRIKE_COMMIT + 2.0F, STRIKE_TICKS, ticks));
+		rightArm.xRot = Mth.lerp(raise, rightArm.xRot, -3.0F);
+		rightArm.zRot = Mth.lerp(raise, rightArm.zRot, -0.15F);
+		body.xRot = Mth.lerp(raise, body.xRot, -0.2F);
+		head.xRot = Mth.lerp(raise, head.xRot, -0.25F);
+		rightArm.xRot = Mth.lerp(smash, rightArm.xRot, -0.75F);
+		body.xRot = Mth.lerp(smash, body.xRot, 0.25F);
+		leftArm.xRot = Mth.lerp(raise, leftArm.xRot, -0.9F);
 	}
 }

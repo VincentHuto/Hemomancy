@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstDrawsAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.PallidVesselAssignment;
@@ -59,7 +60,7 @@ public final class PendingDelivery {
 	private static final class Claims {
 		static final List<Claim> ALL = List.of(FirstDrawsAssignment.VIALS, FirstSeparationAssignment.TOOLS,
 				FirstSeparationAssignment.BRIEFING_VIALS, MycophantEncounterManager.TENDRIL, VesperOrdealManager.MEMORY,
-				QliphothBloomEvents.FUNGAL_SPINE, PallidVesselAssignment.REWARD);
+				QliphothBloomEvents.FUNGAL_SPINE, PallidVesselAssignment.REWARD, CircusPlayerProgress.FINALE_REWARDS);
 	}
 
 	private PendingDelivery() {

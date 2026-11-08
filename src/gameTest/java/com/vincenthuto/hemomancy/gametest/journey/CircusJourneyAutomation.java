@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselRules;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionStateRules;
+import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformanceController;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.PeacockSpiderEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
@@ -43,7 +44,7 @@ final class CircusJourneyAutomation {
 
 	private static void runAttentionAct(ServerPlayer player, BlockPos origin) {
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 4, false, false));
-		if (player.getPersistentData().getInt("hemomancy.circus_active_challenge") <= 0) {
+		if (CircusPerformanceController.activeChallenge(player) < 0) {
 			CircusJourneyFixtures.ringmaster(player, origin).handleChoice(player, CircusRingmasterEntity.EVENT_TRIAL);
 		}
 		var spiders = player.serverLevel().getEntitiesOfClass(PeacockSpiderEntity.class,
@@ -64,7 +65,7 @@ final class CircusJourneyAutomation {
 	private static void runActs(ServerPlayer player, BlockPos origin) {
 		if (CircusJourneyController.mode(player).equals("liberation")) return;
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 4, false, false));
-		if (player.getPersistentData().getInt("hemomancy.circus_active_challenge") <= 0) {
+		if (CircusPerformanceController.activeChallenge(player) < 0) {
 			CircusJourneyFixtures.ringmaster(player, origin).handleChoice(player, CircusRingmasterEntity.EVENT_TRIAL);
 		}
 		player.teleportTo(player.serverLevel(), origin.getX() + 0.5D, origin.getY() + 1.0D,

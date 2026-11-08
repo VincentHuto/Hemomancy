@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
-import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
@@ -76,7 +75,7 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 		LOADED.remove(this);
 	}
 
-	/** Only the Mnemonist shape replays; older saves stored the Ringmaster Pattern on this entity type. */
+	/** Only the Mnemonist shape replays; the Ringmaster Pattern has its own entity type. */
 	public boolean replaysMemories() {
 		return !PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(hemomancy$getSummonName());
 	}
@@ -85,10 +84,6 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 	public void tick() {
 		super.tick();
 		if (level().isClientSide) {
-			return;
-		}
-		if (!replaysMemories()) {
-			convertLegacyRingmaster((ServerLevel) level());
 			return;
 		}
 		if (hemomancy$isTrialSummon()) {
@@ -105,22 +100,6 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedB
 			}
 			tickMemoryReplay();
 		}
-	}
-
-	/** Moves a Ringmaster Pattern saved before it had its own entity type onto that type, keeping its binding. */
-	private void convertLegacyRingmaster(ServerLevel level) {
-		if (!isAlive()) {
-			return;
-		}
-		RingmasterPatternEntity pattern = EntityInit.ringmaster_pattern.get().create(level);
-		if (pattern == null) {
-			return;
-		}
-		CompoundTag tag = saveWithoutId(new CompoundTag());
-		tag.remove("UUID");
-		pattern.load(tag);
-		discard();
-		level.addFreshEntity(pattern);
 	}
 
 	public void rememberDamage(LivingEntity damaged, float damage) {

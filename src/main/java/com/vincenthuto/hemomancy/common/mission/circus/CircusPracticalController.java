@@ -5,8 +5,9 @@ import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerCommandMode;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusApprenticeshipProgress;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,7 +40,7 @@ public final class CircusPracticalController {
         var lesson = CircusCurriculum.forTeacher(teacher.facultyRoleId()).filter(found -> found.summon().equals(summon)).orElse(null);
         if (!player.isAlive() || player.isSpectator() || player.distanceToSqr(teacher) > 64 || lesson == null) return false;
         if (!teacher.canTeachNow()) { systemMessage(player, "busy"); return false; }
-        if (com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) < lesson.degree()) {
+        if (!ProgressionGates.hasDegree(player, lesson.degree())) {
             player.displayClientMessage(Component.translatable("message.hemomancy.circus.school.degree_required", lesson.degree()), false);
             return false;
         }
@@ -86,7 +87,7 @@ public final class CircusPracticalController {
                     || !session.crossbar.equals(bound.hemomancy$getCrossbarUUID())) continue;
             session.body = body.getUUID();
             if (body instanceof VeinwingVultureEntity && !body.onGround() && body.getY() > session.ring.getY() + .5) session.airborne = true;
-            if (session.summon.equals("gorebound_hulk")) {
+            if (session.summon.equals(PuppeteerSummonDefinitions.GOREBOUND_HULK)) {
                 boolean guard = MarionetteCrossbarItem.findEquippedCrossbar(player, session.crossbar)
                         .map(stack -> MarionetteCrossbarItem.getCommandMode(stack) == PuppeteerCommandMode.GUARD).orElse(false);
                 session.guardTicks = guard && session.ring.closerToCenterThan(body.position(), 10) ? session.guardTicks + 1 : 0;
@@ -121,7 +122,7 @@ public final class CircusPracticalController {
                 || !(level.getPlayerByUUID(owner) instanceof ServerPlayer player)) return;
         Session session = SESSIONS.get(owner);
         if (session == null || !session.targets.contains(event.getEntity().getUUID())) return;
-        boolean cur = body instanceof SanguineHoundEntity hound && hound.isBloodCur() && session.summon.equals("sanguine_hound") && body instanceof BoundPuppeteerSummon curBound && session.crossbar.equals(curBound.hemomancy$getCrossbarUUID());
+        boolean cur = body instanceof SanguineHoundEntity hound && hound.isBloodCur() && session.summon.equals(PuppeteerSummonDefinitions.SANGUINE_HOUND) && body instanceof BoundPuppeteerSummon curBound && session.crossbar.equals(curBound.hemomancy$getCrossbarUUID());
         if (!cur && (!(body instanceof BoundPuppeteerSummon bound) || !session.crossbar.equals(bound.hemomancy$getCrossbarUUID())
                 || !session.summon.equals(bound.hemomancy$getSummonName()))) return;
         session.body = body.getUUID(); session.hits++;
@@ -145,12 +146,12 @@ public final class CircusPracticalController {
         if (!(body.level() instanceof net.minecraft.server.level.ServerLevel level) || body.hemomancy$getOwnerUUID() == null
                 || !body.hemomancy$getOwnerUUID().equals(rememberedAttacker) || body.hemomancy$isTrialSummon()) return;
         Session session = SESSIONS.get(body.hemomancy$getOwnerUUID());
-        if (session != null && session.summon.equals("mnemonist_puppet") && session.crossbar.equals(body.hemomancy$getCrossbarUUID())
+        if (session != null && session.summon.equals(PuppeteerSummonDefinitions.MNEMONIST_PUPPET) && session.crossbar.equals(body.hemomancy$getCrossbarUUID())
                 && session.targets.contains(target.getUUID()) && level.getPlayerByUUID(body.hemomancy$getOwnerUUID()) instanceof ServerPlayer player) finish(player);
     }
     public static void recall(ServerPlayer player, UUID crossbar, String summon) {
         Session session = SESSIONS.get(player.getUUID());
-        if (session != null && summon.equals("veinwing_vulture") && session.summon.equals(summon)
+        if (session != null && summon.equals(PuppeteerSummonDefinitions.VEINWING_VULTURE) && session.summon.equals(summon)
                 && session.crossbar.equals(crossbar) && session.hits > 0 && session.airborne) finish(player);
     }
     private static void finish(ServerPlayer player) {
@@ -158,7 +159,7 @@ public final class CircusPracticalController {
         if (session == null || !player.isAlive() || player.isSpectator() || !session.ring.closerToCenterThan(player.position(), 20)) return;
         if (session.guest) CircusSchoolQuests.guestReward(player);
         else CircusApprenticeshipProgress.completePractical(player, session.summon);
-        cancel(player); CircusPlayerProgress.sync(player, true); message(player, "passed");
+        cancel(player); message(player, "passed");
     }
     /** Called by {@code TransientServerStateEvents} when the player logs out. */
     public static void logout(ServerPlayer player) { cancel(player); }

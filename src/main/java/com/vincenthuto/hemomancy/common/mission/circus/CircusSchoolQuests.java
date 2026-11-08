@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.mission.circus;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
@@ -16,7 +16,7 @@ public final class CircusSchoolQuests {
     public static String nextStep(ServerPlayer player, String role) {
         var lesson = CircusCurriculum.forTeacher(role).orElse(null);
         if (lesson == null) return "preparation";
-        if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < lesson.degree()) return "degree";
+        if (!ProgressionGates.hasDegree(player, lesson.degree())) return "degree";
         if (!CircusApprenticeshipProgress.instructionSatisfied(player, lesson.summon())) return "lesson";
         if (!CircusApprenticeshipProgress.knows(player, lesson.summon())) return "ordeal";
         return CircusApprenticeshipProgress.practicalComplete(player, lesson.summon()) ? "mastered" : "practical";
@@ -82,8 +82,8 @@ public final class CircusSchoolQuests {
         var state = CircusApprenticeshipProgress.state(player);
         return ProgressionGates.hasDegree(player, 4) && state.getBoolean("testimony.circus_stilt_walker")
                 && state.getBoolean("testimony.circus_knife_thrower")
-                && CircusApprenticeshipProgress.practicalComplete(player, "scarlet_mummer")
-                && CircusApprenticeshipProgress.practicalComplete(player, "marrow_spitter");
+                && CircusApprenticeshipProgress.practicalComplete(player, PuppeteerSummonDefinitions.SCARLET_MUMMER)
+                && CircusApprenticeshipProgress.practicalComplete(player, PuppeteerSummonDefinitions.MARROW_SPITTER);
     }
     private static boolean missingUnderstudyDone(ServerPlayer player) {
         var state = CircusApprenticeshipProgress.state(player);

@@ -17,6 +17,7 @@ public final class CircusStiltWalkerModel extends HumanoidModel<CircusStiltWalke
 	private final ModelPart rightCord;
 	private final ModelPart crown;
 	private final CircusDownedPose downedPose;
+	private final CircusWindupPose windup = new CircusWindupPose();
 
 	public CircusStiltWalkerModel(ModelPart root) {
 		super(root);
@@ -144,6 +145,19 @@ public final class CircusStiltWalkerModel extends HumanoidModel<CircusStiltWalke
 			}
 		}
 		if (entity.getActState() == ActState.ALERT) leftArm.xRot = rightArm.xRot = -0.55F;
+		// Wind-up: both arms raised high and the body rearing back on the stilts; the strike brings them down for
+		// the slam.
+		windup.sample(entity, ageInTicks);
+		float charge = windup.charge();
+		float strike = windup.strike();
+		rightArm.xRot = Mth.lerp(charge, rightArm.xRot, -3.0F);
+		leftArm.xRot = Mth.lerp(charge, leftArm.xRot, -3.0F);
+		rightArm.zRot = Mth.lerp(charge, rightArm.zRot, -0.2F);
+		leftArm.zRot = Mth.lerp(charge, leftArm.zRot, 0.2F);
+		body.xRot = Mth.lerp(charge, body.xRot, -0.12F);
+		rightArm.xRot = Mth.lerp(strike, rightArm.xRot, -0.4F);
+		leftArm.xRot = Mth.lerp(strike, leftArm.xRot, -0.4F);
+		body.xRot = Mth.lerp(strike, body.xRot, 0.2F);
 		downedPose.apply(entity.getActState() == ActState.DOWNED, ageInTicks);
 	}
 }

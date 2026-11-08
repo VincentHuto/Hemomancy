@@ -14,7 +14,7 @@
 4	src/main/java/com/vincenthuto/hemomancy/common/brewing/AdvancedBrewEffects.java	player root keys not yet moved into an attachment (S-1)
 1	src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/MaxBloodLedger.java	player root keys not yet moved into an attachment (S-1)
 4	src/main/java/com/vincenthuto/hemomancy/common/mission/circus/CircusDemonstrations.java	entity, item-entity or NPC marker data, not player state
-20	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/circus/CircusPerformanceController.java	player root keys and entity markers
+1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/circus/CircusPerformanceController.java	entity, item-entity or NPC marker data, not player state
 6	src/main/java/com/vincenthuto/hemomancy/common/mission/circus/CircusPracticalController.java	player root keys and entity markers
 1	src/main/java/com/vincenthuto/hemomancy/common/command/QliphothSubcommand.java	player root keys not yet moved into an attachment (S-1)
 8	src/main/java/com/vincenthuto/hemomancy/common/damage/SchoolDamage.java	entity, item-entity or NPC marker data, not player state

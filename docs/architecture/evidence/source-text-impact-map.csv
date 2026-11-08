@@ -195,6 +195,7 @@ src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrai
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/recipe/ArmatureUpgradeRecipe.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/resources,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerDataMigrationGuardrailTest.java,junit,src/main/resources/data/hemomancy/recipe/armature_upgrade,resource,exact-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/PlayerStateSyncTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/circus/CircusDiscoveryProgress.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerStateSyncTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/manip/KnownManipulationEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerStateSyncTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/event/StationUpgradeEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/PrivateTestHelperRatchetTest.java,junit,src/test/java,other,exact-dir

@@ -82,7 +82,7 @@ class CircusPresentationRegressionTest {
 		String routine = source("common/entity/npc/circus/CircusFireEaterEntity.java");
 		assertTrue(routine.contains("actTick >= 52 && actTick <= 68"));
 		assertTrue(routine.contains("new Vec3(look.x, 0.55D, look.z).normalize()"));
-		assertTrue(routine.contains("for (int step = 1; step <= 8; step++)"));
+		assertTrue(routine.contains("CircusEffects.flameStream(server, mouth, stream, 8"));
 	}
 
 	@Test
@@ -91,8 +91,8 @@ class CircusPresentationRegressionTest {
 		String renderer = source("client/render/entity/npc/CircusPerformerRenderer.java");
 		assertTrue(entity.contains("EntityDataSerializers.INT"));
 		assertTrue(entity.contains("setDeltaMovement"));
-		assertTrue(entity.contains("ParticleTypes.CLOUD"));
-		assertTrue(entity.contains("ParticleTypes.POOF"));
+		assertTrue(entity.contains("CircusEffects.dust(server"));
+		assertTrue(entity.contains("CircusEffects.vault(server"));
 		assertTrue(renderer.contains("acrobat.getFlipProgress(partialTick)"));
 		assertTrue(renderer.contains("Axis.XP.rotationDegrees"));
 	}

@@ -17,6 +17,7 @@ public final class CircusKnifeThrowerModel extends HumanoidModel<CircusKnifeThro
 	private final ModelPart sideCowl;
 	private final ModelPart[] jugglingKnives;
 	private final CircusDownedPose downedPose;
+	private final CircusWindupPose windup = new CircusWindupPose();
 
 	public CircusKnifeThrowerModel(ModelPart root) {
 		super(root);
@@ -137,6 +138,18 @@ public final class CircusKnifeThrowerModel extends HumanoidModel<CircusKnifeThro
 			rightArm.xRot = -1.55F + Mth.sin(ageInTicks * 0.32F) * 0.35F;
 			leftArm.xRot = -0.45F;
 		}
+		// Wind-up: the throwing arm drawn back over the shoulder, the head turned along the throw; the strike whips
+		// it forward and down as the knives leave.
+		windup.sample(entity, ageInTicks);
+		float charge = windup.charge();
+		float strike = windup.strike();
+		rightArm.xRot = Mth.lerp(charge, rightArm.xRot, -2.85F);
+		rightArm.zRot = Mth.lerp(charge, rightArm.zRot, 0.3F);
+		rightArm.yRot = Mth.lerp(charge, rightArm.yRot, 0.35F);
+		leftArm.xRot = Mth.lerp(charge, leftArm.xRot, -1.2F);
+		leftArm.zRot = Mth.lerp(charge, leftArm.zRot, -0.5F);
+		rightArm.xRot = Mth.lerp(strike, rightArm.xRot, -0.85F);
+		rightArm.yRot = Mth.lerp(strike, rightArm.yRot, -0.25F);
 		downedPose.apply(entity.getActState() == ActState.DOWNED, ageInTicks);
 	}
 }

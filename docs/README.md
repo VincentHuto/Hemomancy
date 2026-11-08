@@ -50,6 +50,9 @@ the roll-up links to them rather than restating every item.
 animation and effects, ecology, materials, visuals, systems, resources and lang, runtime, docs drift). It is worked from
 in order; a row that needs a call moves into OPEN_QUESTIONS.md, a fixed row is struck.
 
+[audits/2026-11-06-circus/README.md](audits/2026-11-06-circus/README.md) is the same kind of ledger for the Crimson
+Troupe (five reports: quests, bosses, puppetry, worldgen, tests and docs). Its owner calls are OPEN_QUESTIONS.md §1.7.
+
 ## Engineering docs
 
 | Folder or file | Role |

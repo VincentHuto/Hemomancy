@@ -16,6 +16,7 @@ public final class CircusFireEaterModel extends HumanoidModel<CircusFireEaterEnt
 	private final ModelPart leftCowl;
 	private final ModelPart rightCowl;
 	private final CircusDownedPose downedPose;
+	private final CircusWindupPose windup = new CircusWindupPose();
 
 	public CircusFireEaterModel(ModelPart root) {
 		super(root);
@@ -106,6 +107,22 @@ public final class CircusFireEaterModel extends HumanoidModel<CircusFireEaterEnt
 			leftArm.xRot = -0.8F + Mth.sin(ageInTicks * 0.18F) * 0.08F;
 			throatFrame.xScale = throatFrame.zScale = 1.08F;
 		}
+		// Wind-up: head thrown back and the torch raised to the mouth while the breath is drawn in, the throat
+		// swelling; the strike lunges the head and chest forward into the cone.
+		windup.sample(entity, ageInTicks);
+		float charge = windup.charge();
+		float strike = windup.strike();
+		head.xRot = Mth.lerp(charge, head.xRot, -0.85F);
+		body.xRot = Mth.lerp(charge, body.xRot, -0.12F);
+		rightArm.xRot = Mth.lerp(charge, rightArm.xRot, -2.35F);
+		rightArm.zRot = Mth.lerp(charge, rightArm.zRot, 0.3F);
+		leftArm.xRot = Mth.lerp(charge, leftArm.xRot, -0.4F);
+		float swell = 1.0F + 0.22F * charge;
+		throatFrame.xScale *= swell;
+		throatFrame.zScale *= swell;
+		head.xRot = Mth.lerp(strike, head.xRot, 0.25F);
+		body.xRot = Mth.lerp(strike, body.xRot, 0.2F);
+		rightArm.xRot = Mth.lerp(strike, rightArm.xRot, -1.45F);
 		downedPose.apply(entity.getActState() == ActState.DOWNED, ageInTicks);
 	}
 }

@@ -106,6 +106,7 @@ because of one, it says so.
 | Block tickers | `HemoTickers.create` in `getTicker` |
 | Resend a block entity | `BlockEntitySync.markAndSync` |
 | Earned items that may not fit | `PendingDelivery` (living player, not observational, confirmed insertion) |
+| A slow world search for a player (an item that locates a structure) | `common/util/OffThreadSearch` on the background pool, one search per player, answer back on the server thread; random-spread structure sites predicted without chunk loads by `StructureSitePrediction` (the Scarlet Waybill's `CircusWaybillSearch`; the Relay Chart's `CourtSeatSearch` uses the helper with its own seat search) |
 | Start a Cardinal Rite | `CardinalRiteActivation.tryStart`; kind behaviour is a `RiteKind` hook |
 | Dialogue option events | `DialogueEventRouter` and one `<Npc>DialogueEvents` class per NPC |
 | NPC trades | data under `data/hemomancy/npc_trade/<speaker>/`, run by `NpcTradeService` from `NpcTradeRequestPacket`; never a `DialogueEvent`, a memory, a kit or a progression proof |
@@ -160,8 +161,8 @@ priorities and each site keeps its named preset.
 - Template-pool structures extend `HemoJigsawStructure` (the one jigsaw codec, same six field names); a structure
   with its own start overrides `findGenerationPoint` and still places through `addPieces`. Authored buildings stay
   NBT; procedural geometry stays code. Every pooled template is committed, apart from the listed planned ones.
-- Datagen runs only the blockstate, item-model and Circus pavilion providers; language, recipes, tags and loot are
-  authored. A generated file with an authored twin is deleted.
+- Datagen runs only the blockstate and item-model providers; language, recipes, tags and loot are authored, and
+  structure templates are authored NBT. A generated file with an authored twin is deleted.
 - Player-facing English lives in `en_us.json`: no `Component.literal` shows English text, whether a plain string, a
   concatenated piece, a ternary branch or a `String.format` pattern (`HardCodedEnglishGuardrailTest`). Text with
   arguments is one key with `%s` placeholders, `Component.translatable(key, args)`, or `HemoText.translatable` when an
@@ -226,6 +227,11 @@ models. Log through `Hemomancy.LOGGER` or a class logger, never `System.out`.
   entities over a wide box runs in its own batch and clears what it built.
 - Review, observer and profile clients are rows in `gradle/review-clients.gradle`; multi-client launchers live in
   `tools/review/`. `build.gradle` declares only the base runs.
+- Tracked tools (`.gitignore`): `tools/model_export/`, `tools/review/`, the `*.py` in `tools/circus/` (the puppet,
+  faculty and camp builders, `verify_troupe_assets.py`, `light_pavilion.py` and `nbt_io.py`), and the worldgen generators
+  (`tools/worldgen/mausoleum_complexes.py` + `mausoleum/`, `brined_court_seats.py`, `brined_court_outposts.py` +
+  `brined_court/`, `masons_respite.py`, `harbinger_sites.py` + `harbinger_sites/`, `wayside_sites.py` + `wayside/`). The
+  rest of `tools/` stays local.
 - Dev-only mods that no class imports are `localRuntime` dependencies.
 - `./gradlew.bat test` is green before a change and `alphaCheck` green after it.
 

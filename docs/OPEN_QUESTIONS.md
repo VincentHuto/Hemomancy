@@ -7,6 +7,8 @@ split with possession, NPC trade and the dialogue clean-up). Everything those pa
 Updated 2026-11-06 with your answers to D-1, D-3 to D-10, D-13, D-15 to D-17 and D-19: each is recorded in its topic
 doc's "Rulings that bind" and built uncommitted; D-26 to D-28 are follow-ups those answers raised.
 
+Updated 2026-11-07: §1.7 holds the Crimson Troupe audit's owner calls (D-29 to D-46).
+
 Each item names its topic doc, where the full context sits. When a question is answered, record the answer in that
 topic doc under "Rulings that bind" and delete the row here. Architecture decisions keep their ids from
 `architecture/CONSOLIDATION_PROGRESS.md` (its Decisions table has each one's exact change).
@@ -32,7 +34,7 @@ Sections:
 | D-11 | **Unstained rites.** The purpose grammar is Harbinger-only; the Unstained get their own ritual system later. When, and on what model? | Parked. | [CARDINAL_RITES.md](CARDINAL_RITES.md) |
 | D-12 | **Brined Court elder challenges and fuller Court trading.** The Champion title gives recognition only; elders challenging the player, and trades beyond customs, were deferred by you. | Parked. | [BRINED_COURT.md](BRINED_COURT.md) |
 | D-14 | **Circus deferred pool.** The underwater boundary doc lists deferred items (sea-cucumber forms, siphonophores, whale-fall culture). Most are now the Court's; confirm what, if anything, is still owed to the Circus suite. | Nothing. | [CIRCUS.md](CIRCUS.md) |
-| D-18 | **Circus candidates still unbuilt:** midgame mini-bosses toward the Ringmaster and the snake creature (C-13), the Ringmaster's staff form gated on a hostile route never designed. Build, or strike? | Strike until the Circus gets its own pass. | [CIRCUS.md](CIRCUS.md) |
+| D-18 | **Circus candidates still unbuilt:** midgame mini-bosses toward the Ringmaster and the snake creature (C-13), the Ringmaster's staff form gated on a hostile route never designed. Build, or strike? The 2026-11-06 audit is that pass and asks the C-13 half again as D-33. | Strike until the Circus gets its own pass. | [CIRCUS.md](CIRCUS.md) |
 | D-20 | **Casting v2 §16 "(user)" decisions** never answered: restraint level, quick-cast flick (dropped by the builder), Tier B scope, Still Art ground ring, animation library. | As built. | [MANIPULATIONS_AND_CASTING.md](MANIPULATIONS_AND_CASTING.md) |
 | D-21 | **Working-craft offerings.** 14 of the 20 Working crafts got first-pass offerings "that can be tuned freely"; no balance pass since. | As built until the play-proof pass says otherwise. | [CARDINAL_RITES.md](CARDINAL_RITES.md) |
 | D-22 | **Vent Sanctum threshold chimney:** usable by the player or not, and what happens to someone who enters Hydra. Plus whether other players' Morphling mutations should always be visible (no client setting today). | Not enterable; always visible. | [BRINED_COURT.md](BRINED_COURT.md) |
@@ -156,10 +158,10 @@ logged inside a passing test); the topic doc has the evidence and the probe test
 | PT-56 [NPC-2] | The custom trade card pays rapport; the dialogue offering does not. | As built; the probe stays failing. | [NPC_DIALOGUE_AND_TRADE.md](NPC_DIALOGUE_AND_TRADE.md) |
 | PT-57 [CT-1] | The idle Ringmaster's perch cannot be reached from the pavilion floor. | As built; the probe stays failing. | [CIRCUS.md](CIRCUS.md) |
 | PT-58 [CT-2] | Nothing points to the abandoned stage. | As built; the probe stays failing. | [CIRCUS.md](CIRCUS.md) |
-| PT-59 [CT-3] | Practicals cannot finish in Peaceful. | As built; the probe stays failing. | [CIRCUS.md](CIRCUS.md) |
+| PT-59 [CT-3] | Practicals cannot finish in Peaceful. | As built. The probe passed in the 2026-11-07 runs (two threats left after 5 Peaceful ticks) with no change to the practical code, so it may be timing; recheck before ruling. | [CIRCUS.md](CIRCUS.md) |
 | PT-60 [CT-5] | The Threadkeeper's lesson node is unreachable. | As built; the probe stays failing. | [CIRCUS.md](CIRCUS.md) |
 | PT-61 [CT-6] | The claimed and not-ready finale lines mislead. | As built; the probe stays failing. | [CIRCUS.md](CIRCUS.md) |
-| PT-62 [CT-7] | A lost Ringmaster never settles the site. | As built; the probe stays failing. | [CIRCUS.md](CIRCUS.md) |
+| PT-62 [CT-7] | A lost Ringmaster never settles the site. Since 2026-11-07 he releases it with a line, but no Ringmaster returns to restart it (D-36). | As built; the probe stays failing. | [CIRCUS.md](CIRCUS.md) |
 | PT-63 [CT-8] | One killed rehearsal threat stalls a two-threat practical silently. | As built; the probe stays failing. | [CIRCUS.md](CIRCUS.md) |
 | PT-64 [D6-1] | Only a progenitor binds a Covenant Throne. | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
 | PT-65 [D6-2] | Any progenitor binds any Throne. | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
@@ -188,6 +190,32 @@ logged inside a passing test); the topic doc has the evidence and the probe test
 | PT-89 [CHAIN-2] | The revelation choice waits behind memo whispers in the inbox. | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
 | PT-90 [CHAIN-3] | Bloodline members can never reach D7 (no leave, no Throne, no second line). | As built; the probe stays failing. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md) |
 
+### 1.7 Crimson Troupe audit calls (2026-11-06)
+
+From [the Circus audit](audits/2026-11-06-circus/README.md) section C, items 1 to 18 (its item 19 is PT-21 and PT-57 to
+PT-63 in §1.6). Each report gives the options and the evidence; the ids in brackets are the audit's findings.
+
+| # | Question | Default if unanswered | Topic doc |
+| --- | --- | --- | --- |
+| D-29 | **Reach the Ringmaster.** The private per-viewer galleries, stairs and canopy that acclimation was meant to make solid (500/1000) were never built, so the idle Ringmaster's perch cannot be clicked from the floor (PT-57). Build them as designed (per-player collision, the multiplayer cost), or make real galleries and a reachable perch for everyone and let acclimation change only how they look? (audit P-2, W-4, D-1) | Nothing built; players build up to him. | [CIRCUS.md](CIRCUS.md) |
+| D-30 | **Gate the culmination.** Should the pact or the finale need D4 (the Pattern's Degree), and school work (practicals or The Wrong Audience for Succession, The Missing Understudy for Liberation)? Should the 50-point first talk with each performer still give acclimation? (Q-2, Q-7) | As built: no Degree or school gate; first talks count. | [CIRCUS.md](CIRCUS.md) |
+| D-31 | **Unstained in the Circus.** Refuse, perform but not teach, or Liberation only? Today an Unstained Successor silently loses the Pattern. (Q-6) | As built. | [CIRCUS.md](CIRCUS.md) |
+| D-32 | **Pointers.** A D3 pointer to the Circus before the D4 Waybill (PT-21)? Should anything point at the abandoned stage (PT-58)? (Q-4, W-9) | As built: none. | [CIRCUS.md](CIRCUS.md) |
+| D-33 | **The fight on the boss kit.** Move the Ringmaster (and any Circus mini-bosses) onto the generic half of the Saint/boss kit, and does that settle G-2c for them? Build C-13 now (see D-18), and do the mini-bosses replace acts 2 to 4? (B-3, B-5) | As built: own controller with the kit's wind-ups and telegraphs (2026-11-07); no ladder. | [CIRCUS.md](CIRCUS.md) |
+| D-34 | **Puppets, bystanders, co-op.** Should puppet damage count as the owner's in the acts and the finale? Should troupe area attacks spare players who do not own the site? Solo finale, or co-op with scaling? (B-1, B-8, A-10) | As built: owner hits only, bystanders hit, solo. | [CIRCUS.md](CIRCUS.md) |
+| D-35 | **Liberation's cut.** The captives are cut by a plain right-click and Thread Ripper is the prize (a Summa memory most Liberators can't learn yet). Keep that, or grant Thread Ripper earlier (pact rejection, the Missing Understudy report) and require it? Can it unravel Vesper's puppets, as it can now? (D-2, B-7, P-9) | As built: right-click cuts; Thread Ripper is the reward and works on Vesper's bodies. | [CIRCUS.md](CIRCUS.md) |
+| D-36 | **After a Liberation run.** What happens to performers killed in a failed Liberation and to survivors after a ruin? (Since 2026-11-07 CAROUSEL counts only the performers still there; the dead never return.) Should Succession end with a yield scene like the Kindled Champion's? Does the Ringmaster get music? (B-4, B-13, B-9) | As built: no return, no yield scene, no music. | [CIRCUS.md](CIRCUS.md) |
+| D-37 | **Mental verbs.** Where do attention, illusion, decoys, displacement, flash and sound live: one player-fired act per body, Circus-taught memories or staff forms, or docs only (the Circus's mental side is presentation)? (P-1) | As built: only the Mummer's automatic taunt. | [CIRCUS.md](CIRCUS.md) |
+| D-38 | **Ringmaster Pattern.** A free slot, a group act, or a weak extra body as now? And does it belong in the transposition ring, where it shows today? (P-3, P-12) | As built. | [CIRCUS.md](CIRCUS.md) |
+| D-39 | **Re-role a D3 body.** The Vulture and the Juggler are both D3 ranged volleys; re-role one, and carry each professor's own act into the body they teach? (P-4) | As built. | [CIRCUS.md](CIRCUS.md) |
+| D-40 | **Puppet Interference.** Keep both penalties (Morphlings x1.25 blood; puppets x1.5 thread at 75% range) or one? Add a deliberate Court-Circus synergy? (P-13) | Keep both; no synergy. | [CIRCUS.md](CIRCUS.md) |
+| D-41 | **Circus NPC rig and costumes.** Rebuild the Circus NPCs on the jointed rig now or with the Circus's own pass? Are faculty costumes exempt from the no-brass rule? (Brass is off the Crossbar and Juggler since 2026-11-07.) (P-11, P-10) | Later; costumes not exempt. | [CIRCUS.md](CIRCUS.md) |
+| D-42 | **Rebuild or re-dress the sites.** A full rebuild of the pavilion and camps in a new `tools/worldgen/circus/` generator (dropping the old arena), or a re-dress of the shell around it? The pavilion's builder cannot run (W-3). (W-1..W-3) | The audit recommends the rebuild; nothing until you choose. | [CIRCUS.md](CIRCUS.md) |
+| D-43 | **Set pieces and rarity.** Which set pieces the big top and each camp get (seating tiers, ring curb, king pole, rigging towers, wagons, knife wheel, fire pit, costume trunks, mask walls), and how rare pavilions (48/16) and camps (24/8) should be. (W-1, W-2, W-5) | As built. | [CIRCUS.md](CIRCUS.md) |
+| D-44 | **Loot and site outcomes.** Do Circus sites hold loot, or leave gifts to the NPCs as the Court does? What does a Succeeded or Liberated pavilion look like afterwards, beyond six cobwebs? (W-16, W-11) | No loot; six cobwebs. | [CIRCUS.md](CIRCUS.md) |
+| D-45 | **Guest pay.** An automatic `PendingDelivery` claim, or stays "collect from a Threadkeeper"? One guest act a day per school (as built, on `getDayTime`) or per professor (as the ledger line reads)? (A-3, Q-11, Q-16) | As built; fix the ledger line. | [CIRCUS.md](CIRCUS.md) |
+| D-46 | **Test gate cost.** Is one to two more minutes on `alphaCheck` acceptable for a compact finale and the living-observation rule in the gated `crimson_troupe_validation` batch? (T-2) | As the 2026-11-07 round does: the compact finale goes in the gated batch. | [CIRCUS.md](CIRCUS.md) |
+
 ---
 
 ## 2. Decided without you, awaiting review
@@ -211,6 +239,7 @@ client and kept or changed it. The topic docs list the full set; these are the o
 | NPC trade | Box order Quest Work, Inquiries, Conversation, Trade; one card per Conversation option; payment all or nothing; rapport lore content and balance; D0 players may trade with the Unstained; catalogue substitutions (Bleeding Bulbs not Flasks, vials not enzymes, Scar Blank never sold, only 8 Court roles get cards); only Known and Trusted rapport lines, no Confidant; daily cards pay more and cap at 2 uses. | [NPC_DIALOGUE_AND_TRADE.md](NPC_DIALOGUE_AND_TRADE.md) |
 | Possession rite | Blood cost 0 (the spec's 400 dropped because a test forbids a lump Harbinger blood cost) and filed in the Ancestral recipe-map family; possession borrows the Qliphoth grand floor as a special bond rite. | [ENDGAME_PATHS.md](ENDGAME_PATHS.md), [CARDINAL_RITES.md](CARDINAL_RITES.md) |
 | Circus trade and visuals | The "finale's leavings" card dropped, the D4 bell carrot, act-themed performer cards; the Bellows, Juggler, Hulk, faculty and camp rebuilds were authored from previews only. | [CIRCUS.md](CIRCUS.md) |
+| Circus audit round 1 (2026-11-07) | A lost Ringmaster releases the site rather than settling it; CAROUSEL counts only performers still there; the Waybill search stops at 32 spacing cells; the 18 pavilion lanterns were placed by script; troupe wind-up poses and telegraph looks were authored without a client. | [CIRCUS.md](CIRCUS.md) |
 | Boss presentation | Every frame and opening shot and their lengths; title card on the lower third (the spec and `TitleCard` agree; an earlier note said upper); 50-tick phase cards, unskippable; bars hidden under the opening; skip by holding sneak 20 ticks. | [BOSSES.md](BOSSES.md) |
 | Saint combat kit | One kit for the four Saint fights (the generic half in `common/entity/boss/`, the Saint half in `saint/`); one band set (HUG under 3, NEAR under 6.5, MID under 12); wind-up floors 12 melee and 20 area; the 600-tick empty-chamber leash that resets a trial unrewarded; Saint health and Saint-owned meters x(1 + 0.5 (n - 1)) challengers; deeds as rules and moves on top of the stat floors; the kit's damage factor now reaching health (it was silently dead before verification, so tuning done before it changed every Saint). | [SAINT_MAUSOLEUMS.md](SAINT_MAUSOLEUMS.md) |
 | Saint fights | Every number, move, opening and deed in the four designs (each design's section 20). Hemorath: 600 health, the leak formula, the meter states, 18 moves, the pit sump, a block-light floor of 8 on his bone and a larger heart mass after verification. Seraphae: integrity from 30 with phases at 40 and 75, fourteen moves and the Radiance Flood, a block-light floor of 12 and stronger telegraphs than the others. Putriciel: the Kindling, two Offerings an interval, health floored at 30%, the packed-ash scorch, the pale-mould-over-olive palette chosen at verification, the Offering palm at the brow. Velorum: 640 health, the Still Guard and floors, the stillness numbers, the congregation's waking and pinning costs, the Endless Hour sparing the aisle-end stands and crown lamps (26 of 37 lanterns go dark), a "Velorum:" prefix on his four lines. Seraphae and Velorum voice sheets. The seven new ids added to the frozen registry snapshot. | [SAINT_MAUSOLEUMS.md](SAINT_MAUSOLEUMS.md) |
@@ -239,6 +268,7 @@ you. One played session per area, with a findings log, closes most of these.
   Champion usurp), the two-client strand sync check, a full `alphaCheck` run with `court_worldgen_validation`.
 - **NPC trade**: the Trade box on each side (Harbinger blood tithe, Unstained refusal at D1, Court custom, Circus
   curiosity), the Conversation box with lore glyphs, the Alchemist's daily card below the first screen.
+- **Crimson Troupe**: none of it has been watched in a client (audit section D): the finale bar, opening scene and phase cards, the troupe's new wind-ups and telegraphs, the carousel and horse arcs, perception stages, performer threads, the rebuilt puppet and faculty models, the camps, the new pavilion lanterns, the Luminal Cicada and fresh-chunk placement. There is no Circus review client.
 - **Boss presentation**: every bar frame and opening scene (`runBossPresentationReviewClient`), the Mycophant waking
   and capture scenes, the Saint rise.
 - **Casting**: cast impacts, the body-anchored basics and infusion veins in a played session, not the harness; neither balance pass has been playtested.

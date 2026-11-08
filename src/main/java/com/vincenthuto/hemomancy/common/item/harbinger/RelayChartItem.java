@@ -61,19 +61,6 @@ public final class RelayChartItem extends CovenantWaybillItem {
 		return null;
 	}
 
-	/** The chart that asked, if the player still has it; otherwise any unaimed chart they carry. */
-	private static ItemStack heldOrCarried(ServerPlayer player, ItemStack asked) {
-		var inventory = player.getInventory();
-		for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
-			if (inventory.getItem(slot) == asked) return asked;
-		}
-		for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
-			ItemStack stack = inventory.getItem(slot);
-			if (stack.getItem() instanceof RelayChartItem && target(stack, player.level()) == null) return stack;
-		}
-		return ItemStack.EMPTY;
-	}
-
 	public static boolean foundNothing(ItemStack stack) {
 		return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(NONE);
 	}

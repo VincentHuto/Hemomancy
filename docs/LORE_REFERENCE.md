@@ -296,6 +296,19 @@ The **Circus** is a specialist Harbinger sect, not a separate degree ladder and 
 
 Their physical camp is a rough traveling pavilion of dark cloth, blackened hematic frames, bones, pelts, masks, hanging Crossbars, and visible thread. The complete spectacle exists in layered perception. An outsider first sees heat-haze, scraps, contradictory silhouettes, and incomplete geometry. Familiarity makes the shared vision calmer and more coherent until tents, performers, impossible movement, and apparently solid manifestations agree with one another. Collective imagination can acquire physical consequence, so the danger is not dismissed as harmless hallucination.
 
+The sect the game ships is the **Crimson Troupe**, the main school of Puppeteering. It travels as a pavilion and five teaching camps; an abandoned stage elsewhere holds an old program. Its people:
+
+| Who | What they are |
+| --- | --- |
+| The Ringmaster | Coordinates attention and many tethers from a perch over the ring. The title is a job, not authority over other Harbingers. He made three understudies into the carousel's captives and does not apologise for it. |
+| Seven professors | The Acrobat, Dagger Thrower, Stilt Walker, Strongman, Beast Tamer, Fire Breather and Retired Understudy each teach one artificial body before its Cardinal Ordeal. They string their own puppets from the right hand, as any Harbinger with a Crossbar does. |
+| The Threadkeeper | The school's clerk: inspects Crossbars, keeps the accounts and pays guest performers. |
+| The Impaled Procession | The carousel at the centre of the pavilion. Three failed initiates ride its horses, bound by thread to anchors beneath them. They are the missing understudies the school's records describe. |
+
+The Ringmaster offers a bargain, and both answers cost something. **Succession** takes his place: learn every act, hold every eye, then take the hat. The troupe is downed and lives, the pavilion stands, and his office passes on as a pattern, the Ringmaster Pattern. **Liberation** refuses him: the troupe fights to kill, and cutting a captive's thread kills the person bound to it. Nobody walks off that carousel alive. The anchors are broken, the carousel is ruined for good, and the Ringmaster dies. What the Liberator takes from him is Thread Ripper, a memory for cutting other people's tethers. The faculty keep teaching after either ending, and several do not forgive it: a Stilt Walker will not call a dead captive a liberated student, and the Retired Understudy keeps the three names on the bill.
+
+Neither route is the good one. Succession keeps a school that made people into apparatus; Liberation ends that apparatus by killing the people inside it. The bargain is between Harbingers, made with what the Order's own arts allow.
+
 Scarlet Serpents and Prism Cuttles are natural Hemomancy-reactive animals rather than Circus members. Their hood displays, warning color, chromatophores, camouflage, and false visual tells inform Circus practice without transferring their ecology to the sect. The Mnemonist may direct an Adept toward these specialists after the player has practical experience with puppetry.
 
 ### 6.3c Morphling strains

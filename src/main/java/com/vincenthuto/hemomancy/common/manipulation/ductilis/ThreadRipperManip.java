@@ -70,7 +70,7 @@ public final class ThreadRipperManip extends BloodManipulation {
 		if (hit == null || !(hit.getEntity() instanceof LivingEntity target)) return;
 		boolean tethered = target instanceof BoundPuppeteerSummon;
 		boolean protectedBody = protectedBody(player, target);
-		ThreadRipperRules.Outcome outcome = ThreadRipperRules.outcome(false, tethered,
+		ThreadRipperRules.Outcome outcome = ThreadRipperRules.outcome(tethered,
 				!tethered && foreignSummon(player, target), protectedBody,
 				target.getHealth() / Math.max(1.0F, target.getMaxHealth()));
 		if (outcome == ThreadRipperRules.Outcome.DISRUPT) {

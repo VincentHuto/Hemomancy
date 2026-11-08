@@ -59,4 +59,4 @@ Vampire Bat colonies roost in the Nether's dark air. Chitons and Phlegethontic B
 
 Pelagic Herring and Crimson Does supply cookable fish and venison. Hemojellies float at temperate/warm marine surfaces, gathering small fish with submerged tendrils; Siphonophores zap prey deeper below. Neither treats players as prey.
 
-The **[Crimson Troupe](Crimson-Troupe.md)** teaches Puppeteering from five travelling camp variants and an expanded pavilion. Abandoned stages and the pavilion's records support its Side investigations. Existing pavilions keep their saved architecture.
+The **[Crimson Troupe](Crimson-Troupe.md)** teaches Puppeteering from five travelling camp variants (25x25) and a 65x65 pavilion. Abandoned stages and the pavilion's records support its Side investigations; nothing points to an abandoned stage yet, so it is found by exploring.

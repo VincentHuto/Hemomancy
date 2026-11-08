@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -102,6 +103,22 @@ public class CovenantWaybillItem extends Item {
     protected BlockPos findTarget(ServerLevel level, Player player) {
         return level.findNearestMapStructure(targets, player.blockPosition(), searchRadiusChunks, false);
     }
+
+	/**
+	 * Where a search that lands later records: the stack that asked, if the player still has it; otherwise any unaimed
+	 * stack of this item they carry, or nothing.
+	 */
+	protected final ItemStack heldOrCarried(ServerPlayer player, ItemStack asked) {
+		var inventory = player.getInventory();
+		for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+			if (inventory.getItem(slot) == asked) return asked;
+		}
+		for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+			ItemStack stack = inventory.getItem(slot);
+			if (stack.getItem() == this && target(stack, player.level()) == null) return stack;
+		}
+		return ItemStack.EMPTY;
+	}
 
 	public static BlockPos target(ItemStack stack, Level level) {
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();

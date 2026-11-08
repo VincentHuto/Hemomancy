@@ -6,25 +6,42 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusPerception;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformanceController;
-import net.minecraft.nbt.CompoundTag;
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CircusPlayerProgress {
-	// The root keys circus progress lived under before the CircusProgress attachment (S-6c, sunset 2027-04-23).
-	private static final String LEGACY_DISCOVERED = "hemomancy.circus_discovered";
-	private static final String LEGACY_ACCLIMATION = "hemomancy.circus_acclimation";
-	private static final String LEGACY_ROUTE = "hemomancy.circus_route";
-	private static final String LEGACY_CHALLENGES = "hemomancy.circus_challenges";
-	private static final String LEGACY_MILESTONE_PREFIX = "hemomancy.circus_milestone.";
-	private static final String LEGACY_ROUTE_REPAIRED = "hemomancy.circus_route_repaired";
-	private static final String LEGACY_APPRENTICESHIP = "hemomancy.circus_apprenticeship";
+	/**
+	 * The finale's one-time rewards (the AGENTS.md documentation contract): the Ringmaster's Topper, and the Thread
+	 * Ripper memory when Liberation could not teach it. The completed finale records the exact owed count here before
+	 * the first delivery, and the route is complete, so a finale can never owe them twice.
+	 */
+	public static final PendingDelivery.Claim FINALE_REWARDS = new PendingDelivery.Claim("circus_finale_rewards",
+			player -> {
+				CircusProgress progress = progress(player);
+				List<ItemStack> owed = new ArrayList<>();
+				if (progress.pendingTopper() > 0)
+					owed.add(new ItemStack(ItemInit.ringmaster_topper.get(), progress.pendingTopper()));
+				if (progress.pendingRipperMemory() > 0)
+					owed.add(new ItemStack(ItemInit.memory_thread_ripper.get(), progress.pendingRipperMemory()));
+				return owed;
+			},
+			player -> true,
+			(player, left) -> {
+				CircusProgress progress = progress(player);
+				progress.setPendingTopper(count(left, ItemInit.ringmaster_topper.get()));
+				progress.setPendingRipperMemory(count(left, ItemInit.memory_thread_ripper.get()));
+			});
 
 	private CircusPlayerProgress() {
 	}
@@ -97,39 +114,50 @@ public final class CircusPlayerProgress {
 		return true;
 	}
 
-	public static void sync(ServerPlayer player, boolean active) {
-		PacketHandler.sendToPlayer(player, new PacketSyncCircusPerception(acclimation(player), active));
+	/** Records the Topper as owed (once) and tries to hand it over now. */
+	public static void oweTopper(ServerPlayer player) {
+		progress(player).setPendingTopper(1);
+		PendingDelivery.deliver(player, FINALE_REWARDS);
 	}
 
+	/** Records the Thread Ripper memory as owed (once) and tries to hand it over now. */
+	public static void oweRipperMemory(ServerPlayer player) {
+		progress(player).setPendingRipperMemory(1);
+		PendingDelivery.deliver(player, FINALE_REWARDS);
+	}
+
+	private static int count(List<ItemStack> stacks, Item item) {
+		int count = 0;
+		for (ItemStack stack : stacks) if (stack.is(item)) count += stack.getCount();
+		return count;
+	}
+
+	/** Records whether the player stands inside a pavilion; a change raises the perception dirty flag. */
+	public static void setInside(ServerPlayer player, boolean inside) {
+		progress(player).setInside(inside);
+	}
+
+	/** The {@code PlayerStateSync} lifecycle send: a login, respawn or new dimension starts outside the pavilion. */
+	public static void resyncPerception(ServerPlayer player) {
+		progress(player).setInside(false);
+		syncPerception(player);
+	}
+
+	/** The {@code PlayerStateSync} send for the perception overlay: acclimation and the inside flag, to the owner. */
+	public static void syncPerception(ServerPlayer player) {
+		CircusProgress progress = progress(player);
+		progress.clearPerceptionDirty();
+		PacketHandler.sendToPlayer(player, new PacketSyncCircusPerception(acclimation(player), progress.inside()));
+	}
 
 	/**
-	 * Moves the old circus root keys out of {@code data} into {@code progress}. Root keys that are present win over
-	 * the attachment's values; milestones and apprenticeship entries are added.
+	 * The attachment carries progress and owed rewards through death; the live act and the pavilion this player held
+	 * do not. The copy already holds the act, so it is cleared on the new player as well.
 	 */
-	public static void foldLegacyRootKeys(CompoundTag data, CircusProgress progress) {
-		if (data.contains(LEGACY_DISCOVERED)) progress.setDiscovered(data.getBoolean(LEGACY_DISCOVERED));
-		if (data.contains(LEGACY_ACCLIMATION)) progress.setAcclimation(data.getInt(LEGACY_ACCLIMATION));
-		if (data.contains(LEGACY_ROUTE)) progress.setRoute(data.getString(LEGACY_ROUTE));
-		if (data.contains(LEGACY_ROUTE_REPAIRED)) progress.setRouteRepaired(data.getBoolean(LEGACY_ROUTE_REPAIRED));
-		if (data.contains(LEGACY_CHALLENGES)) progress.setChallenges(data.getInt(LEGACY_CHALLENGES));
-		if (data.contains(LEGACY_APPRENTICESHIP, CompoundTag.TAG_COMPOUND))
-			progress.apprenticeship().merge(data.getCompound(LEGACY_APPRENTICESHIP));
-		for (String key : List.copyOf(data.getAllKeys())) {
-			if (key.startsWith(LEGACY_MILESTONE_PREFIX)) {
-				if (data.getBoolean(key)) progress.addMilestone(key.substring(LEGACY_MILESTONE_PREFIX.length()));
-				data.remove(key);
-			}
-		}
-		for (String key : List.of(LEGACY_DISCOVERED, LEGACY_ACCLIMATION, LEGACY_ROUTE, LEGACY_ROUTE_REPAIRED,
-				LEGACY_CHALLENGES, LEGACY_APPRENTICESHIP)) {
-			data.remove(key);
-		}
-	}
-
-	/** The attachment carries progress through death; the live act and the pavilion this player held do not. */
 	@SubscribeEvent
 	public static void onPlayerClone(PlayerEvent.Clone event) {
 		CircusPerformanceController.cleanup(event.getOriginal());
+		progress(event.getEntity()).clearAct();
 		if (event.getEntity() instanceof ServerPlayer player)
 			CircusPavilionSavedData.get(player.serverLevel()).resetOwned(player.getUUID());
 	}

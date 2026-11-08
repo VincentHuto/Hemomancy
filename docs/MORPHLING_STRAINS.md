@@ -31,7 +31,7 @@ Bonding blood is absorbed through equipped upkeep and resets at each stage. The 
 | Reactive cooldown bands | Developing 3-15 s, Mature 8-20 s, Apex 20-60 s |
 | Giver floors | Shared Table and Colony 50% health, Breakwater 30% |
 | Morphling healing of the host | draws the shared circulation window, 1 bandwidth unit per HP (`MorphlingHealing`) |
-| Upkeep | configured baseline; Puppet Interference x1.25; Sun-Fed waives it at home unless Puppet Interference is active |
+| Upkeep | configured baseline; Puppet Interference x1.25; Sun-Fed waives it at home unless Puppet Interference is active (the puppets pay their side: 75% tether range and x1.5 thread upkeep, HEMOMANCY_REFERENCE §17) |
 | Bloodline ally | anything `ManipulationCombatHelper.allied` counts for the host (teammates, the host's pets and puppets, impressed mobs) |
 | Hostile | a target the host may harm (`canHarm`) that is a monster or is hunting the host |
 | Still / anchored | standing still: under 0.06 blocks of drift per tick and not jumping; anchored: still while sneaking (`MorphlingAnchorState`) |

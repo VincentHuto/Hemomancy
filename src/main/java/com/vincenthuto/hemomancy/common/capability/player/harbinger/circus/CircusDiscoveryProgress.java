@@ -2,8 +2,6 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.circus;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgressRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -13,7 +11,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
@@ -34,11 +31,16 @@ public final class CircusDiscoveryProgress {
 		return true;
 	}
 
+	/**
+	 * Discovery and passive acclimation, checked once a second. Only the inside flag is recorded here; it and the
+	 * acclimation score raise the perception dirty flag, and {@code PlayerStateSync} sends the owner one update at the
+	 * end of a tick that changed them.
+	 */
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 20 != 0) return;
 		if (!player.isAlive() || player.isSpectator()) {
-			CircusPlayerProgress.sync(player, false);
+			CircusPlayerProgress.setInside(player, false);
 			return;
 		}
 		var start = player.serverLevel().structureManager().getStructureWithPieceAt(
@@ -53,16 +55,6 @@ public final class CircusDiscoveryProgress {
 				CircusPlayerProgress.addAcclimation(player, 1);
 			}
 		}
-		CircusPlayerProgress.sync(player, inside);
-	}
-
-	@SubscribeEvent
-	public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) CircusPlayerProgress.sync(player, false);
-	}
-
-	@SubscribeEvent
-	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) CircusPlayerProgress.sync(player, false);
+		CircusPlayerProgress.setInside(player, inside);
 	}
 }

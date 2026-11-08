@@ -22,8 +22,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Writes each dynasty castle piece to a structure {@code .nbt} template, mirroring
- * {@link CircusPavilionStructureProvider}. Pieces carry no jigsaw connector blocks; assembly is
+ * Writes each dynasty castle piece to a structure {@code .nbt} template. Pieces carry no jigsaw connector blocks; assembly is
  * handled in code by {@code DynastyCastleStructure}.
  */
 final class DynastyCastlePieceProvider implements DataProvider {

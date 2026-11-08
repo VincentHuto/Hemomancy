@@ -46,11 +46,6 @@
 4	src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/MortarboundEntity.java	pending the vanilla particle sweep (A-33)
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java	pending the vanilla particle sweep (A-33)
 1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/DrudgeEntity.java	pending the vanilla particle sweep (A-33)
-3	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/circus/CircusAcrobatEntity.java	pending the vanilla particle sweep (A-33)
-3	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/circus/CircusCarouselEntity.java	pending the vanilla particle sweep (A-33)
-3	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/circus/CircusFireEaterEntity.java	pending the vanilla particle sweep (A-33)
-1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/circus/CircusKnifeThrowerEntity.java	pending the vanilla particle sweep (A-33)
-1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/circus/CircusRingmasterEntity.java	pending the vanilla particle sweep (A-33)
 3	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/circus/CircusStiltWalkerEntity.java	block debris under the stilts
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/BloodBoltEntity.java	pending the vanilla particle sweep (A-33)
 1	src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/ConstrictorCordEntity.java	pending the vanilla particle sweep (A-33)

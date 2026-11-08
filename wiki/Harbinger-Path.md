@@ -371,7 +371,7 @@ Advanced Harbingers can call shaped bodies as temporary extensions of learned bl
 - Feed Enthralling Filament to a **Puppeteer's Spindle**. Each item becomes 8 charge; the Spindle stores 512.
 - A fresh **Marionette Crossbar** permanently attunes to the first player who right-clicks with it. Insert it into the Spindle to fill it to its skill-scaled capacity; clicking a learned puppet row immediately prepares that shape, with no separate Attune or Prepare button.
 - The Crossbar holds 256 base charge, plus 32 per Bound Command level. A foreign owner cannot use or retune it.
-- In hand, the Crossbar is a bone-and-brass marionette control trailing living-vein strings. It hangs still until one of its puppets is out. Then it works the strings, jerks when a puppet attacks, and lifts and snaps when you call or recall. In third person each puppet's thread hangs from its own string on the bar.
+- In hand, the Crossbar is a bone-and-hematic-iron marionette control trailing living-vein strings. It hangs still until one of its puppets is out. Then it works the strings, jerks when a puppet attacks, and lifts and snaps when you call or recall. In third person each puppet's thread hangs from its own string on the bar.
 - The Spindle prepares only; it never calls or recalls a body.
 - Called puppets are lowered in on vein strings that drop from above. Recalled, swapped or unravelled ones are hauled back up as they fray apart. Your control thread lets go of a departing body, and it stops counting against your cap the moment it starts to rise.
 

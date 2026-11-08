@@ -54,7 +54,6 @@ public final class CircusJourneyController {
 		if (stage(player) == CircusJourneyStage.ACCLIMATING) {
 			CircusPlayerProgress.addAcclimation(player,
 					CircusProgressRules.MAX_ACCLIMATION - CircusPlayerProgress.acclimation(player));
-			CircusPlayerProgress.sync(player, true);
 		}
 		moveAndExplain(player);
 		return pass(player, "");

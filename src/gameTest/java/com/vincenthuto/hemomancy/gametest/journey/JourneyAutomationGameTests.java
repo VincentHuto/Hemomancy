@@ -270,8 +270,8 @@ public final class JourneyAutomationGameTests {
 						"Degree-4 Succession must finish, award the Ringmaster Pattern, and restore the snapshot. "
 								+ JourneyAutoRunner.describe(player) + " Challenges="
 								+ com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress.challenges(player)
-								+ " active=" + player.getPersistentData().getInt("hemomancy.circus_active_challenge")
-								+ " ticks=" + player.getPersistentData().getInt("hemomancy.circus_challenge_ticks"));
+								+ " active=" + com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformanceController.activeChallenge(player)
+								+ " ticks=" + com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformanceController.actTicks(player));
 				helper.assertTrue(!com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPavilionSavedData
 						.get(player.serverLevel()).hasSite(player.serverLevel(), fixtureOrigin.above()),
 						"Circus automation must remove its fixture pavilion state after restoring the player");

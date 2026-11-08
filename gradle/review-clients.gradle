@@ -73,6 +73,9 @@ def reviewClients = [
     // The Vampire Bat cruising, hunting a wounded mob and roosting, from several sides (VampireBatClientReview)
     vampireBatReviewClient: [dir: 'build/vampire-bat-review', user: 'BatReview', size: review,
                              props: ['hemomancy.vampireBatReview': 'true']],
+    // The Crimson Troupe filmed as frame sequences: performer telegraphs, puppets, the pavilion at night, perception, both finales (CircusClientReview)
+    circusReviewClient: [dir: 'build/circus-review', user: 'CircusReview', memory: ['2G', '6G'], size: review,
+                         props: ['hemomancy.circusReview': 'true', 'hemomancy.circusReview.only': gradleOr('circusReviewOnly', '')]],
     // One animal standing, walking, fleeing and at night, from several sides (AnimalModelClientReview)
     crimsonDoeReviewClient: [dir: 'build/crimson-doe-review', user: 'AnimalReview', size: review,
                              props: ['hemomancy.animalModelReview': 'crimson_doe']],

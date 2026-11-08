@@ -1,6 +1,6 @@
 """Rebuild the Marionette Crossbar's held model: Java model, painted atlas and portable BBModel.
 
-A bone-and-brass marionette control: a grip for the fist, a main bar pointing forward, a front (hand) bar and
+A bone-and-hematic-iron marionette control: a grip for the fist, a main bar pointing forward, a front (hand) bar and
 a rear (foot) bar that rock independently, and five living-vein strings hanging from the tips. The vein strings
 are rendered separately so they can pulse while a puppet is out. Model space is the usual y-down entity space
 with the grip at the origin; MarionetteCrossbarItemRenderer orients it for each display context.
@@ -11,6 +11,8 @@ from puppet_rig import geometry, noise
 from build_faculty import (SHARED, ASSETS, joint, box, tone, metal, blockbench, paint, texture_entry)
 
 ATLAS = 64
+# Blood-side fittings are hematic iron (dark red-black), never brass, bronze or copper.
+PALETTE = dict(SHARED, he0='#1e1014', he1='#3c2026', he2='#643a40')
 MODELS = puppet_rig.ROOT / 'src/main/java/com/vincenthuto/hemomancy/client/model/item'
 TEXTURE = ASSETS / 'textures/item/marionette_crossbar_model.png'
 BBMODEL = ASSETS / 'models/item/bbmodel/MarionetteCrossbarModel.bbmodel'
@@ -30,21 +32,21 @@ def crossbar():
     j = lambda *a, **k: joint(parts, *a, **k)
     j('grip', TOP, (0, 0, 0), [
         box((-1, -2, -1), (2, 6, 2), 'bone'),
-        box((-1.5, 3.5, -1.5), (3, 1, 3), 'brass')])
+        box((-1.5, 3.5, -1.5), (3, 1, 3), 'hematic_iron')])
     j('control', 'grip', (0, -3, 0), [
         box((-1, -1, -8), (2, 2, 14), 'bone'),
         box((-1.5, -1.5, -1.5), (3, 3, 3), 'vein_wrap'),
-        box((-.5, -2.5, -.5), (1, 1, 1), 'brass')])
+        box((-.5, -2.5, -.5), (1, 1, 1), 'hematic_iron')])
     # The cross bars sit half a pixel proud of the main bar, lashed on top of it: equal heights would leave
     # coplanar faces fighting where the bars cross.
     j('front_bar', 'control', (0, 0, -5.5), [
         box((-6, -1.5, -1), (12, 2, 2), 'bone'),
-        box((-7, -2, -1.5), (1, 3, 3), 'brass'),
-        box((6, -2, -1.5), (1, 3, 3), 'brass')])
+        box((-7, -2, -1.5), (1, 3, 3), 'hematic_iron'),
+        box((6, -2, -1.5), (1, 3, 3), 'hematic_iron')])
     j('rear_bar', 'control', (0, 0, 4.5), [
         box((-4.5, -1.5, -1), (9, 2, 2), 'bone'),
-        box((-5.5, -2, -1.5), (1, 3, 3), 'brass'),
-        box((4.5, -2, -1.5), (1, 3, 3), 'brass')])
+        box((-5.5, -2, -1.5), (1, 3, 3), 'hematic_iron'),
+        box((4.5, -2, -1.5), (1, 3, 3), 'hematic_iron')])
     for name, parent, pivot in STRINGS:
         previous = parent
         for i in range(SEGMENTS):
@@ -59,7 +61,7 @@ def crossbar():
 def materials():
     def bone(side, px, py, w, h, gx, gy):
         r = noise(gx, gy, 31)
-        # Grain runs along the bar; worn ends darken toward the brass.
+        # Grain runs along the bar; worn ends darken toward the iron caps.
         if r < .12:
             return 'i0'
         return tone(side, py, h, 'i2', 'i1', 'i0', r)
@@ -77,7 +79,7 @@ def materials():
             return 'r2'
         return 'r0' if side == 'down' or py == h - 1 else 'r1'
 
-    return {'bone': bone, 'brass': metal('g2', 'g1', 'g0'), 'vein_wrap': vein_wrap, 'vein': vein, 'knot': knot}
+    return {'bone': bone, 'hematic_iron': metal('he2', 'he1', 'he0'), 'vein_wrap': vein_wrap, 'vein': vein, 'knot': knot}
 
 
 JAVA = r'''package com.vincenthuto.hemomancy.client.model.item;
@@ -154,7 +156,7 @@ public final class MarionetteCrossbarModel extends Model {
 		}
 	}
 
-	/** The bone-and-brass frame; strings are drawn separately so they can pulse. */
+	/** The bone-and-hematic-iron frame; strings are drawn separately so they can pulse. */
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
 		for (ModelPart[] string : strings) string[0].visible = false;
@@ -197,7 +199,7 @@ def build():
                                                          encoding='utf-8')
     uv_origins = list(materials_by_uv.keys())
     model = blockbench('MarionetteCrossbarModel', parts, uv_origins, [], atlas=ATLAS)
-    paint(model['elements'], materials_by_uv, materials(), SHARED, atlas=ATLAS).save(TEXTURE)
+    paint(model['elements'], materials_by_uv, materials(), PALETTE, atlas=ATLAS).save(TEXTURE)
     model['textures'] = [texture_entry(TEXTURE, {'index': 0, 'name': 'MarionetteCrossbarModel'}, atlas=ATLAS,
                                        relative_dir='../../../textures/item/')]
     BBMODEL.write_text(json.dumps(model, indent=2) + '\n', encoding='utf-8')

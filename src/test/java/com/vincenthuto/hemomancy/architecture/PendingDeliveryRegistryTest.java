@@ -35,7 +35,10 @@ class PendingDeliveryRegistryTest {
 			"VesperOrdealManager.MEMORY",
 			new String[] {"common/encounter/VesperOrdealManager.java", "\":vesper_memory_pending\""},
 			"QliphothBloomEvents.FUNGAL_SPINE",
-			new String[] {"common/rite/harbinger/QliphothBloomEvents.java", "setFungalSpineGranted(true)"});
+			new String[] {"common/rite/harbinger/QliphothBloomEvents.java", "setFungalSpineGranted(true)"},
+			"CircusPlayerProgress.FINALE_REWARDS",
+			new String[] {"common/capability/player/harbinger/circus/CircusPlayerProgress.java",
+					"setPendingTopper(count(left, ItemInit.ringmaster_topper.get()))"});
 
 	@Test
 	void onlyPendingDeliveryCountsInsertions() throws Exception {

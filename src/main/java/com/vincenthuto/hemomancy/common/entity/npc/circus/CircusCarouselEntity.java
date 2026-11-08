@@ -6,7 +6,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.Circu
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -167,7 +169,7 @@ public final class CircusCarouselEntity extends Entity {
 	private void spawnHorseParticles(ServerLevel level) {
 		for (int horse = 0; horse < 3; horse++) {
 			CircusCarouselRules.HorsePose pose = CircusCarouselRules.horsePose(getYRot(), horse);
-			level.sendParticles(ParticleTypes.CRIMSON_SPORE, getX() + pose.x(),
+			level.sendParticles(HemoParticleData.sporiticSpore(CircusEffects.CRIMSON), getX() + pose.x(),
 					getY() + 2.0D + pose.bob(), getZ() + pose.z(), 2, 0.35D, 0.5D, 0.35D, 0.01D);
 		}
 	}
@@ -212,8 +214,12 @@ public final class CircusCarouselEntity extends Entity {
 			captive.discard();
 		}
 		CircusCarouselRules.HorsePose pose = CircusCarouselRules.horsePose(getYRot(), rider);
-		server.sendParticles(ParticleTypes.CRIMSON_SPORE, getX() + pose.x(), getY() + 2.6D + pose.bob(),
-				getZ() + pose.z(), 35, 0.35D, 0.75D, 0.35D, 0.04D);
+		// The cut thread whips from the captive back to the hub before the blood falls.
+		Vec3 riderPoint = new Vec3(getX() + pose.x(), getY() + 2.6D + pose.bob(), getZ() + pose.z());
+		BossTelegraphs.tendril(server, riderPoint, position().add(0.0D, 4.5D, 0.0D), CircusEffects.THREAD_CORE_ARGB,
+				CircusEffects.THREAD_GLOW_ARGB, getId() * 31L + rider);
+		BossTelegraphs.bloodCells(server, riderPoint, CircusEffects.CRIMSON, 30, 0.35D, 0.1D);
+		BossTelegraphs.glow(server, riderPoint, CircusEffects.BONE, 8, 0.3D);
 		server.playSound(null, blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.PLAYERS, 1.0F, 0.8F);
 		serverPlayer.displayClientMessage(net.minecraft.network.chat.Component.translatable(
 				"hemomancy.circus.captive.severed", rider + 1), false);
@@ -289,8 +295,7 @@ public final class CircusCarouselEntity extends Entity {
 		server.playSound(null, blockPosition(), SoundEvents.ANVIL_DESTROY, SoundSource.PLAYERS, 1.1F, 0.65F);
 		if (CircusCarouselEncounterRules.allAnchorsBroken(broken)) {
 			data.setPhase(server, encounterOrigin(), CircusPavilionStateRules.Phase.DESCENT);
-			server.sendParticles(ParticleTypes.EXPLOSION, getX(), getY() + 1.0D, getZ(), 12,
-					2.5D, 0.4D, 2.5D, 0.05D);
+			CircusEffects.collapse(server, position());
 		}
 		return true;
 	}

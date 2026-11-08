@@ -91,7 +91,7 @@ public final class MarionetteCrossbarModel extends Model {
 		}
 	}
 
-	/** The bone-and-brass frame; strings are drawn separately so they can pulse. */
+	/** The bone-and-hematic-iron frame; strings are drawn separately so they can pulse. */
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
 		for (ModelPart[] string : strings) string[0].visible = false;

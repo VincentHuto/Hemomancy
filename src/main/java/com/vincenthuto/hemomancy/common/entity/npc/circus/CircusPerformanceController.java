@@ -7,7 +7,9 @@ import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeActs;
 import com.vincenthuto.hemomancy.common.entity.npc.trade.NpcTradeWant;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgressRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusRouteRules;
 import net.minecraft.ChatFormatting;
@@ -23,19 +25,29 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CircusPerformanceController {
-	private static final String ACTIVE = "hemomancy.circus_active_challenge";
-	private static final String TICKS = "hemomancy.circus_challenge_ticks";
-	private static final String ORIGIN = "hemomancy.circus_challenge_origin";
-	private static final String SUBJECT = "hemomancy.circus_challenge_subject";
-
 	private CircusPerformanceController() {
 	}
 
+	private static CircusProgress act(Player player) {
+		return HemoCapabilityAccess.circusProgress(player);
+	}
+
+	/** The challenge index of the act {@code player} is performing, or -1 when none runs. */
+	public static int activeChallenge(Player player) {
+		return act(player).actChallenge();
+	}
+
+	/** How many ticks the running act has been held. */
+	public static int actTicks(Player player) {
+		return act(player).actTicks();
+	}
+
 	public static boolean beginNext(ServerPlayer player, BlockPos origin) {
-		if (player.getPersistentData().getInt(ACTIVE) > 0) return false;
+		if (activeChallenge(player) >= 0) return false;
 		CircusRouteRules.Route route = CircusPlayerProgress.route(player);
 		int challenge = nextChallenge(CircusPlayerProgress.challenges(player));
 		if (challenge < 0 || (route == CircusRouteRules.Route.NEUTRAL
@@ -47,9 +59,7 @@ public final class CircusPerformanceController {
 					.withStyle(ChatFormatting.DARK_GRAY), false);
 			return false;
 		}
-		player.getPersistentData().putInt(ACTIVE, challenge + 1);
-		player.getPersistentData().putInt(TICKS, 0);
-		player.getPersistentData().putLong(ORIGIN, origin.asLong());
+		act(player).beginAct(challenge, origin.asLong());
 		if (challenge == 0) spawnAttentionSubject(player, origin);
 		armAct(player, origin, challenge);
 		player.displayClientMessage(Component.translatable("hemomancy.circus.challenge.begin." + challenge)
@@ -74,7 +84,7 @@ public final class CircusPerformanceController {
 		spider.setPos(origin.getX() + 3.5D, origin.getY() + 0.2D, origin.getZ() + 0.5D);
 		spider.getPersistentData().putUUID("CircusTrialOwner", player.getUUID());
 		player.serverLevel().addFreshEntity(spider);
-		player.getPersistentData().putUUID(SUBJECT, spider.getUUID());
+		act(player).setActSubject(spider.getUUID());
 	}
 
 	private static void armAct(ServerPlayer player, BlockPos origin, int challenge) {
@@ -94,9 +104,9 @@ public final class CircusPerformanceController {
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		int challenge = player.getPersistentData().getInt(ACTIVE) - 1;
+		int challenge = activeChallenge(player);
 		if (challenge < 0) return;
-		BlockPos origin = BlockPos.of(player.getPersistentData().getLong(ORIGIN));
+		BlockPos origin = BlockPos.of(act(player).actOrigin());
 		// A dead or spectating owner fails the act: spectators earn nothing in the pavilion.
 		if (!player.isAlive() || player.isSpectator() || player.distanceToSqr(origin.getCenter()) > 24.0D * 24.0D) {
 			reset(player, origin, true);
@@ -110,8 +120,8 @@ public final class CircusPerformanceController {
 			return;
 		}
 		if (challenge == 0 && !watchingSubject(player)) return;
-		int ticks = player.getPersistentData().getInt(TICKS) + 1;
-		player.getPersistentData().putInt(TICKS, ticks);
+		int ticks = act(player).actTicks() + 1;
+		act(player).setActTicks(ticks);
 		int required = challenge == 0 ? 200 : challenge == 2 ? 200 : challenge == 3 ? 240 : 300;
 		if (ticks == required / 2)
 			player.displayClientMessage(Component.translatable("hemomancy.circus.challenge.hold." + challenge)
@@ -120,15 +130,15 @@ public final class CircusPerformanceController {
 		CircusPlayerProgress.completeChallenge(player, challenge, challenge == 0 ? 150 : 100);
 		// A performance held to the end is a spectacle the Ringmaster's act card will take.
 		NpcTradeActs.witnessed(player, NpcTradeWant.Act.SPECTACLE);
-		CircusPlayerProgress.sync(player, true);
 		player.displayClientMessage(Component.translatable("hemomancy.circus.challenge.complete." + challenge)
 				.withStyle(ChatFormatting.RED), false);
 		reset(player, origin, false);
 	}
 
 	private static boolean watchingSubject(ServerPlayer player) {
-		if (!player.getPersistentData().hasUUID(SUBJECT)) return false;
-		Entity entity = player.serverLevel().getEntity(player.getPersistentData().getUUID(SUBJECT));
+		UUID subject = act(player).actSubject();
+		if (subject == null) return false;
+		Entity entity = player.serverLevel().getEntity(subject);
 		if (!(entity instanceof LivingEntity living) || !living.isAlive() || player.distanceToSqr(entity) > 10.0D * 10.0D)
 			return false;
 		return player.getEyePosition().vectorTo(entity.getBoundingBox().getCenter()).normalize()
@@ -145,22 +155,20 @@ public final class CircusPerformanceController {
 	}
 
 	private static void clearSubject(ServerPlayer player) {
-		if (player.getPersistentData().hasUUID(SUBJECT)) {
-			Entity subject = player.serverLevel().getEntity(player.getPersistentData().getUUID(SUBJECT));
+		UUID id = act(player).actSubject();
+		if (id != null) {
+			Entity subject = player.serverLevel().getEntity(id);
 			if (subject != null) subject.discard();
 		}
 	}
 
 	private static void clearPlayerState(ServerPlayer player) {
 		clearSubject(player);
-		player.getPersistentData().remove(ACTIVE);
-		player.getPersistentData().remove(TICKS);
-		player.getPersistentData().remove(ORIGIN);
-		player.getPersistentData().remove(SUBJECT);
+		act(player).clearAct();
 	}
 
 	public static void cleanup(Player player) {
-		if (!(player instanceof ServerPlayer serverPlayer) || player.getPersistentData().getInt(ACTIVE) <= 0) return;
-		reset(serverPlayer, BlockPos.of(player.getPersistentData().getLong(ORIGIN)), false);
+		if (!(player instanceof ServerPlayer serverPlayer) || activeChallenge(player) < 0) return;
+		reset(serverPlayer, BlockPos.of(act(player).actOrigin()), false);
 	}
 }

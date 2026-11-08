@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
+import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -21,6 +22,8 @@ public final class CircusAcrobatEntity extends CircusPerformerEntity {
 	private static final EntityDataAccessor<Integer> FLIP_TICKS = SynchedEntityData.defineId(
 			CircusAcrobatEntity.class, EntityDataSerializers.INT);
 	private int attackCooldown;
+	/** Where a wound-up vault will land, locked when the wind-up starts; null for a plain lunge. */
+	private Vec3 vaultTarget;
 
 	public CircusAcrobatEntity(EntityType<? extends CircusAcrobatEntity> type, Level level) {
 		super(type, level);
@@ -48,10 +51,7 @@ public final class CircusAcrobatEntity extends CircusPerformerEntity {
 		if (flipTicks > 0) {
 			if (onGround() && flipTicks > 3) {
 				entityData.set(FLIP_TICKS, 0);
-				if (level() instanceof ServerLevel server) {
-					server.sendParticles(ParticleTypes.POOF, getX(), getY() + 0.1D, getZ(),
-							12, 0.35D, 0.08D, 0.35D, 0.03D);
-				}
+				if (level() instanceof ServerLevel server) CircusEffects.dust(server, position(), 12);
 			} else {
 				entityData.set(FLIP_TICKS, Math.min(16, flipTicks + 1));
 			}
@@ -74,33 +74,60 @@ public final class CircusAcrobatEntity extends CircusPerformerEntity {
 		setDeltaMovement(horizontal.x, 0.65D, horizontal.z);
 		hasImpulse = true;
 		entityData.set(FLIP_TICKS, 1);
-		if (level() instanceof ServerLevel server) {
-			server.sendParticles(ParticleTypes.CLOUD, getX(), getY() + 0.1D, getZ(),
-					12, 0.3D, 0.06D, 0.3D, 0.03D);
+		if (level() instanceof ServerLevel server) CircusEffects.dust(server, position(), 10);
+	}
+
+	/**
+	 * Every 50 ticks the Acrobat picks a spot two blocks behind its target and crouches for the melee wind-up while the
+	 * spot is marked; on the commit tick it vaults there and strikes if the target is still within 2.5 blocks. With
+	 * no safe spot it closes in and winds up a plain lunge instead (2 blocks).
+	 */
+	@Override
+	protected void tickDefense(LivingEntity target) {
+		if (attackCooldown-- > 0) return;
+		attackCooldown = 50 - defenseMove().total();
+		Vec3 look = target.getLookAngle();
+		Vec3 destination = target.position().subtract(look.x * 2.0D, 0.0D, look.z * 2.0D);
+		if (canLandAt(destination)) {
+			vaultTarget = destination;
+			getNavigation().stop();
+			beginDefenseMove(target);
+		} else {
+			getNavigation().moveTo(target, 1.15D);
+			if (distanceToSqr(target) <= 4.0D) {
+				vaultTarget = null;
+				beginDefenseMove(target);
+			}
 		}
 	}
 
 	@Override
-	protected void tickDefense(LivingEntity target) {
-		if (attackCooldown-- > 0) return;
-		attackCooldown = 50;
-		Vec3 look = target.getLookAngle();
-		Vec3 destination = target.position().subtract(look.x * 2.0D, 0.0D, look.z * 2.0D);
-		if (vaultTo(destination) && distanceToSqr(target) <= 6.25D) {
-			target.hurt(damageSources().mobAttack(this), 4.0F);
+	protected void telegraphDefense(ServerLevel server, LivingEntity target, int tick, BossMoveTimeline move) {
+		float charge = tick / (float) move.windup();
+		CircusEffects.gather(server, position().add(0.0D, 0.9D, 0.0D), CircusEffects.BONE, charge);
+		if (tick % 3 != 0) return;
+		if (vaultTarget != null) {
+			BossTelegraphs.ring(server, vaultTarget, 1.0D, CircusEffects.CRIMSON, 16);
+			BossTelegraphs.ring(server, vaultTarget, 2.5D * charge + 0.3D, CircusEffects.BONE, 20);
 		} else {
-			getNavigation().moveTo(target, 1.15D);
-			if (distanceToSqr(target) <= 4.0D) target.hurt(damageSources().mobAttack(this), 4.0F);
+			BossTelegraphs.line(server, position(), target.position(), CircusEffects.CRIMSON);
 		}
+	}
+
+	@Override
+	protected void strikeDefense(LivingEntity target) {
+		boolean vaulted = vaultTarget != null && vaultTo(vaultTarget);
+		vaultTarget = null;
+		if (distanceToSqr(target) > (vaulted ? 6.25D : 4.0D)) return;
+		if (target.hurt(damageSources().mobAttack(this), 4.0F) && level() instanceof ServerLevel server)
+			CircusEffects.impact(server, target.position().add(0.0D, 1.0D, 0.0D), 0.8D);
 	}
 
 	private boolean vaultTo(Vec3 destination) {
 		if (!canLandAt(destination)) return false;
-		if (level() instanceof ServerLevel server) {
-			server.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 1.0D, getZ(), 18,
-					0.25D, 0.55D, 0.25D, 0.08D);
-		}
+		if (level() instanceof ServerLevel server) CircusEffects.vault(server, position());
 		teleportTo(destination.x, destination.y, destination.z);
+		if (level() instanceof ServerLevel server) CircusEffects.vault(server, position());
 		level().playSound(null, blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.45F, 1.5F);
 		return true;
 	}

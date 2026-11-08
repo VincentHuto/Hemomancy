@@ -25,7 +25,5 @@ class CircusPavilionStateRulesTest {
 	void failedAttemptReturnsToNeutralWithoutChangingOutcome() {
 		assertEquals(CircusPavilionStateRules.Phase.IDLE,
 				CircusPavilionStateRules.resetPhase(CircusPavilionStateRules.Outcome.NEUTRAL));
-		assertEquals(CircusPavilionStateRules.Outcome.NEUTRAL,
-				CircusPavilionStateRules.resetOutcome(CircusPavilionStateRules.Outcome.NEUTRAL));
 	}
 }

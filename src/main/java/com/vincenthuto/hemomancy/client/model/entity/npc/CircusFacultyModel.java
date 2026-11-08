@@ -9,6 +9,7 @@ import net.minecraft.util.Mth;
 /** Shared rig behaviour for the faculty figures authored by tools/circus/build_faculty.py. */
 public abstract class CircusFacultyModel extends HumanoidModel<CircusFacultyEntity> {
 	private final CircusDownedPose downedPose;
+	private final CircusWindupPose windup = new CircusWindupPose();
 
 	/** @param seatDepth how far the authored legs reach behind their pivots */
 	protected CircusFacultyModel(ModelPart root, float seatDepth) {
@@ -27,6 +28,12 @@ public abstract class CircusFacultyModel extends HumanoidModel<CircusFacultyEnti
 		leftArm.z = -Mth.sin(body.yRot) * leftArm.getInitialPose().x;
 		ActState state = entity.getActState();
 		animateCostume(state, limbSwing, limbSwingAmount, ageInTicks);
+		// Wind-up: the right arm raised back for an overhead blow; the strike brings it down.
+		windup.sample(entity, ageInTicks);
+		rightArm.xRot = Mth.lerp(windup.charge(), rightArm.xRot, -2.7F);
+		body.xRot = Mth.lerp(windup.charge(), body.xRot, -0.12F);
+		rightArm.xRot = Mth.lerp(windup.strike(), rightArm.xRot, -0.5F);
+		body.xRot = Mth.lerp(windup.strike(), body.xRot, 0.15F);
 		downedPose.apply(state == ActState.DOWNED, ageInTicks);
 	}
 

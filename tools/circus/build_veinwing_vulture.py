@@ -7,7 +7,7 @@ from puppet_rig import ROOT, BBMODELS, build as build_rig, noise, front_edge, ba
 
 MODEL = BBMODELS / 'VeinwingVultureModel.bbmodel'
 PALETTE = ['#130f14', '#2b2026', '#463440', '#6e2433', '#a3303c', '#d65a4a',
-           '#e6d3b0', '#b19e82', '#c98f86', '#8e5a58', '#c8a046', '#f0d27e']
+           '#e6d3b0', '#b19e82', '#c98f86', '#8e5a58', '#3c2026', '#643a40']  # 10-11: hematic iron, never brass
 
 
 def anatomy():
@@ -36,11 +36,11 @@ def anatomy():
     for side, sign in [('left', 1), ('right', -1)]:
         lo = lambda length: 0 if sign > 0 else -length
         joint(side + '_wing', 'root', (sign * 2.5, -4, 0), [
-            box((-1, -1, -1), (2, 2, 2), 'brass'),
+            box((-1, -1, -1), (2, 2, 2), 'hematic_iron'),
             box((lo(6), -.5, -.5), (6, 1, 1), 'spar'),
             box((lo(6) + (1 if sign > 0 else -1), .5, 0), (6, 5, 1), 'sail')])
         joint(side + '_forewing', side + '_wing', (sign * 6, 0, 0), [
-            box((-1, -1, -1), (2, 2, 2), 'brass'),
+            box((-1, -1, -1), (2, 2, 2), 'hematic_iron'),
             box((lo(9), -.5, -.5), (9, 1, 1), 'spar')], (0, -sign * 6, -sign * 17))
         for i, length in enumerate((6, 8, 10)):
             joint(f'{side}_membrane_{i}', side + '_forewing', (sign * (.5 + i * 3), .5, 0), [
@@ -86,7 +86,7 @@ def shade(material, side, px, py, w, h, gx, gy):
     if material == 'spar':
         if px % 4 == 3: return 10
         return 6 if side in ('up', 'north') else 7
-    if material == 'brass':
+    if material == 'hematic_iron':
         return 11 if side == 'up' or py == 0 else 10
     if material == 'needle':
         return 11 if py < h - 1 else 6
@@ -125,12 +125,11 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
 
 // Authored by tools/circus/build_veinwing_vulture.py; regenerate the model, atlas and BBModel together.
 public class VeinwingVultureModel extends EntityModel<VeinwingVultureEntity> {
 	public static final ModelLayerLocation LAYER_LOCATION =
-			new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "veinwing_vulture"), "main");
+			new ModelLayerLocation(Hemomancy.rloc("veinwing_vulture"), "main");
 
 	private final ModelPart root;
 	private final ModelPart head;

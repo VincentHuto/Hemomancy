@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerTuning;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
@@ -20,6 +21,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -48,6 +50,12 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	private boolean dollsSummonedForThreat;
 	private UUID finaleOwner;
 	private boolean finaleLethal;
+	private static final byte WINDUP_EVENT = 70;
+	private static final byte WINDUP_END_EVENT = 71;
+	/** Started by the wind-up entity event; the model reads it against {@link #defenseMove()} to coil and strike. */
+	public final AnimationState windupState = new AnimationState();
+	/** Ticks into the current defense move, counted from its start; -1 when none is running. */
+	private int moveTick = -1;
 
 	protected CircusPerformerEntity(EntityType<? extends CircusPerformerEntity> type, Level level) {
 		super(type, level);
@@ -134,7 +142,7 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 
 	private void tickThreat(LivingEntity threat) {
 		setActState(ActState.ALERT);
-		getLookControl().setLookAt(threat, 30.0F, 30.0F);
+		if (moveTick < 0 || tracksDuringWindup()) getLookControl().setLookAt(threat, 30.0F, 30.0F);
 		double distanceSqr = distanceToSqr(threat);
 		outsideThreatTicks = distanceSqr > CircusPerformerRules.THREAT_RANGE_SQR
 				? outsideThreatTicks + 1 : 0;
@@ -145,7 +153,52 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 		}
 		if (!CircusPerformerRules.warningComplete(++warningTicks)) return;
 		setTarget(threat);
+		if (moveTick >= 0) {
+			tickMove(threat);
+			return;
+		}
 		tickDefense(threat);
+	}
+
+	/**
+	 * Starts a defense move: the model coils through {@link #defenseMove()}'s wind-up while
+	 * {@link #telegraphDefense} marks where it will land, and {@link #strikeDefense} lands it on the commit tick.
+	 * Nothing here deals damage early; the wind-up is the warning.
+	 */
+	protected final void beginDefenseMove(LivingEntity target) {
+		moveTick = 0;
+		level().broadcastEntityEvent(this, WINDUP_EVENT);
+		if (level() instanceof ServerLevel server) telegraphDefense(server, target, 0, defenseMove());
+	}
+
+	protected final boolean isWindingUp() {
+		return moveTick >= 0;
+	}
+
+	private void tickMove(LivingEntity target) {
+		BossMoveTimeline move = defenseMove();
+		moveTick++;
+		if (move.stageAt(moveTick) == BossMoveTimeline.Stage.WINDUP && level() instanceof ServerLevel server)
+			telegraphDefense(server, target, moveTick, move);
+		if (moveTick == move.commitTick()) strikeDefense(target);
+		if (move.stageAt(moveTick + 1) == BossMoveTimeline.Stage.COMPLETE) moveTick = -1;
+	}
+
+	private void cancelDefenseMove() {
+		if (moveTick < 0) return;
+		moveTick = -1;
+		level().broadcastEntityEvent(this, WINDUP_END_EVENT);
+	}
+
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id == WINDUP_EVENT) {
+			windupState.start(tickCount);
+		} else if (id == WINDUP_END_EVENT) {
+			windupState.stop();
+		} else {
+			super.handleEntityEvent(id);
+		}
 	}
 
 	private LivingEntity resolveThreat() {
@@ -154,6 +207,7 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	}
 
 	private void tickDowned() {
+		cancelDefenseMove();
 		setActState(ActState.DOWNED);
 		setTarget(null);
 		getNavigation().stop();
@@ -245,6 +299,7 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	}
 
 	private void setThreat(LivingEntity threat) {
+		cancelDefenseMove();
 		threatId = threat.getUUID();
 		warningTicks = 0;
 		outsideThreatTicks = 0;
@@ -254,6 +309,7 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	}
 
 	private void clearThreat() {
+		cancelDefenseMove();
 		threatId = null;
 		dollsSummonedForThreat = false;
 		setTarget(null);
@@ -274,7 +330,6 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 		if (!level().isClientSide && player instanceof ServerPlayer serverPlayer) {
 			com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusSchoolKnowledge.discover(serverPlayer, "school");
 			boolean firstVisit = CircusPlayerProgress.awardMilestone(serverPlayer, "performer." + roleId(), 50);
-			CircusPlayerProgress.sync(serverPlayer, true);
 			changeState(ActState.RECOVER);
 			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(
 					com.vincenthuto.hemomancy.common.entity.npc.dialogue.CircusSchoolDialogue.hub(this, serverPlayer, firstVisit)));
@@ -354,6 +409,24 @@ public abstract class CircusPerformerEntity extends PathfinderMob
 	protected abstract int performanceDuration();
 	protected abstract void tickPerformance(int actTick);
 	protected abstract void tickDefense(LivingEntity target);
+
+	/** The defense move's wind-up, strike and follow-through; read by the server and the model alike. */
+	public BossMoveTimeline defenseMove() {
+		return CircusPerformerRules.MELEE_MOVE;
+	}
+
+	/** False when the move locks its aim at the start, so the head holds the telegraphed line instead of the target. */
+	protected boolean tracksDuringWindup() {
+		return true;
+	}
+
+	/** Marks where the strike will land, every wind-up tick from 0; draw it from the same geometry the strike tests. */
+	protected void telegraphDefense(ServerLevel server, LivingEntity target, int tick, BossMoveTimeline move) {
+	}
+
+	/** Lands the move on its commit tick. */
+	protected void strikeDefense(LivingEntity target) {
+	}
 
 	public enum ActState {
 		REST, SETUP, PERFORM, RECOVER, ALERT, DOWNED

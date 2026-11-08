@@ -12,6 +12,8 @@ import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonB
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonTrialEvents;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -374,7 +376,7 @@ public final class SummonsTabView {
 		upkeep = PuppeteerSummonRules.interferedThreadUpkeep(upkeep, interference);
 		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.call_charge"), HemoText.translatable("screen.hemomancy.summons_tab_view.charge", callCost), textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.upkeep"), HemoText.translatable("screen.hemomancy.summons_tab_view.charge_min", upkeep), textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.primary_offering"), Component.literal(primaryOffering(definition).getHoverName().getString()),
+		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.primary_offering"), primaryOfferingName(definition),
 				textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, Component.translatable("screen.hemomancy.summons_tab_view.unlock"), unlockHint(definition), textX, drawY, textW, lineH);
 		drawY += 4;
@@ -408,15 +410,27 @@ public final class SummonsTabView {
 		}
 	}
 
+	/**
+	 * The first brazier offering of the body's Cardinal Ordeal, read from the synced rite recipe. Empty for the
+	 * Ringmaster Pattern, which the Succession finale binds without a rite, and for a body whose rite is missing.
+	 */
 	private static ItemStack primaryOffering(PuppeteerSummonDefinition definition) {
-		return new ItemStack(switch (definition.name()) {
-			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> ItemInit.veinwing_harness.get();
-			case PuppeteerSummonDefinitions.MARROW_SPITTER -> ItemInit.marrow_spitter_carriage.get();
-			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> ItemInit.gorebound_yoke.get();
-			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> ItemInit.scarlet_gorget.get();
-			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> ItemInit.mnemonist_cradle.get();
-			default -> ItemInit.enthralling_filament.get();
-		});
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level == null || grantedBySuccession(definition)) {
+			return ItemStack.EMPTY;
+		}
+		CardinalRiteRecipe rite = CardinalRiteRecipe.getRiteByLocation(mc.level, PuppeteerSummonTrialEvents.recipeId(definition));
+		if (rite == null || rite.getBrazierSignature().isEmpty()) {
+			return ItemStack.EMPTY;
+		}
+		ItemStack[] items = rite.getBrazierSignature().getFirst().ingredient().getItems();
+		return items.length == 0 ? ItemStack.EMPTY : items[0].copy();
+	}
+
+	private static Component primaryOfferingName(PuppeteerSummonDefinition definition) {
+		ItemStack offering = primaryOffering(definition);
+		return offering.isEmpty() ? Component.translatable("screen.hemomancy.summons_tab_view.no_offering")
+				: offering.getHoverName();
 	}
 
 	private static int drawStackedDetailLine(GuiGraphics gfx, ProgressScreenContext ctx, Component label, Component value,

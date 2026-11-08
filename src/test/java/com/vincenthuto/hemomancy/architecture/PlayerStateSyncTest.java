@@ -72,6 +72,10 @@ class PlayerStateSyncTest {
 		String stations = SourceAssertions.readMainJava("common/event/StationUpgradeEvents.java");
 		assertFalse(SourceAssertions.methodBody(stations, "public static void onTick(").contains(".sync("),
 				"the station tick only backfills lessons; changes are sent through the dirty flag");
+		String circus = SourceAssertions.readMainJava(
+				"common/capability/player/harbinger/circus/CircusDiscoveryProgress.java");
+		assertFalse(circus.contains("sync(") || circus.contains("PacketSyncCircusPerception"),
+				"the Circus discovery tick records the inside flag; the CIRCUS_PROGRESS row's dirty flag sends it");
 	}
 
 	private static List<Path> javaFiles(Path root) throws Exception {

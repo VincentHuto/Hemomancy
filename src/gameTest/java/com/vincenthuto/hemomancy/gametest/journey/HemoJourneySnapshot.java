@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.gametest.journey;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.circus.CircusProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
@@ -903,16 +902,11 @@ public final class HemoJourneySnapshot {
 		return captured;
 	}
 
-	/**
-	 * A snapshot taken before the CircusProgress attachment holds the old circus root keys, and a reset target holds
-	 * nothing: fold either into a CircusProgress entry.
-	 */
+	/** A reset target holds no CircusProgress entry: give it a fresh one. */
 	private static CompoundTag withCircusProgress(ServerPlayer player, CompoundTag tag) {
 		if (tag.contains(CIRCUS_PROGRESS, Tag.TAG_COMPOUND)) return tag;
 		CompoundTag upgraded = tag.copy();
-		CircusProgress progress = new CircusProgress();
-		CircusPlayerProgress.foldLegacyRootKeys(upgraded, progress);
-		upgraded.put(CIRCUS_PROGRESS, progress.serializeNBT(player.registryAccess()));
+		upgraded.put(CIRCUS_PROGRESS, new CircusProgress().serializeNBT(player.registryAccess()));
 		return upgraded;
 	}
 

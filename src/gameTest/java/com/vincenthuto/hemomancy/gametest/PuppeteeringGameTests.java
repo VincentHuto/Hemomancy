@@ -640,35 +640,6 @@ public final class PuppeteeringGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void legacyRingmasterSaveConvertsToItsOwnEntityKeepingItsBinding(GameTestHelper helper) {
-		ServerLevel level = helper.getLevel();
-		MnemonistPuppetEntity legacy = EntityInit.mnemonist_puppet.get().create(level);
-		UUID owner = UUID.randomUUID();
-		UUID crossbar = UUID.randomUUID();
-		legacy.hemomancy$setSummonName(PuppeteerSummonDefinitions.RINGMASTER_PATTERN);
-		legacy.hemomancy$setOwnerUUID(owner);
-		legacy.hemomancy$setCrossbarUUID(crossbar);
-		legacy.setPos(net.minecraft.world.phys.Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(3, 2, 3))));
-		helper.assertTrue(level.addFreshEntity(legacy), "Legacy Ringmaster fixture must spawn");
-		RingmasterPatternEntity converted = null;
-		try {
-			level.tickNonPassenger(legacy);
-			helper.assertTrue(legacy.isRemoved(), "A Ringmaster saved as a Mnemonist must leave the Mnemonist type");
-			converted = level.getEntitiesOfClass(RingmasterPatternEntity.class, legacy.getBoundingBox().inflate(1.0D))
-					.stream().findFirst().orElse(null);
-			helper.assertTrue(converted != null, "The legacy save must reappear as a Ringmaster Pattern");
-			helper.assertTrue(owner.equals(converted.hemomancy$getOwnerUUID())
-							&& crossbar.equals(converted.hemomancy$getCrossbarUUID())
-							&& PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(converted.hemomancy$getSummonName()),
-					"Conversion must keep the owner, crossbar and summon identity");
-			helper.succeed();
-		} finally {
-			legacy.discard();
-			if (converted != null) converted.discard();
-		}
-	}
-
 	private static void assertGroundPuppetPursuesTarget(GameTestHelper helper, String summonName, String displayName) {
 		// Keep the complete walking lane inside the room, away from template walls and neighbouring tests.
 		for (int x = 8; x <= 10; x++) for (int z = 8; z <= 14; z++) {

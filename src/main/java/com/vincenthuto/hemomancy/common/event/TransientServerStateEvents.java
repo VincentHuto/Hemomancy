@@ -161,6 +161,8 @@ public final class TransientServerStateEvents {
 		EarlyInitiation.clearSessionState();
 		VoyagerVesselGuidance.clearSessionState();
 		com.vincenthuto.hemomancy.common.worldgen.structure.court.CourtSeatSearch.clearSessionState();
+		com.vincenthuto.hemomancy.common.worldgen.structure.circus.CircusWaybillSearch.clearSessionState();
+		com.vincenthuto.hemomancy.common.worldgen.structure.StructureSitePrediction.clearSessionState();
 		CircusPracticalController.clearSessionState();
 		BloodVialInjectionAnimation.clearSessionState();
 		MicroscopeExamination.clearSessionState();
@@ -211,6 +213,7 @@ public final class TransientServerStateEvents {
 		EarlyInitiation.logout(player);
 		VoyagerVesselGuidance.logout(player);
 		com.vincenthuto.hemomancy.common.worldgen.structure.court.CourtSeatSearch.logout(player.getUUID());
+		com.vincenthuto.hemomancy.common.worldgen.structure.circus.CircusWaybillSearch.logout(player.getUUID());
 		BloodVialInjectionAnimation.logout(player);
 		MicroscopeExamination.logout(player);
 		EngramTracing.end(player);

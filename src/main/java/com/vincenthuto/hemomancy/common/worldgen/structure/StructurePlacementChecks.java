@@ -9,7 +9,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import java.util.OptionalInt;
 import com.vincenthuto.hemomancy.common.worldgen.structure.voyager.ActiveHarbingerVoyagerVesselPlacementRules;
-import com.vincenthuto.hemomancy.common.worldgen.structure.circus.CircusPavilionPlacementRules;
 import com.vincenthuto.hemomancy.common.worldgen.structure.voyager.HarbingerVoyagerWreckPlacementRules;
 import com.vincenthuto.hemomancy.common.worldgen.structure.circus.TroupeFootprintScan;
 import com.vincenthuto.hemomancy.common.worldgen.structure.circus.TroupeTerrainColumns;

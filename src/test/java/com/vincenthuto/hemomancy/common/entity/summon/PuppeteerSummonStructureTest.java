@@ -42,9 +42,9 @@ class PuppeteerSummonStructureTest {
 
 		String mnemonist = read("common/entity/summon/MnemonistPuppetEntity.java");
 		assertTrue(mnemonist.contains("if (damaged == null || !replaysMemories()"),
-				"A legacy Ringmaster save must not record memories before it converts");
-		assertTrue(mnemonist.contains("convertLegacyRingmaster((ServerLevel) level())"),
-				"A legacy Ringmaster save must convert to its own entity type");
+				"Only the Mnemonist shape records memories");
+		assertFalse(mnemonist.contains("convertLegacyRingmaster"),
+				"The unreleased mod keeps no legacy Ringmaster conversion");
 
 		String events = read("common/entity/summon/MnemonistPuppetEvents.java");
 		assertTrue(events.contains("MnemonistPuppetEntity.loaded()"), "Damage capture must use the tracked puppets");

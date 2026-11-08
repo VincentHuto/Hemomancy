@@ -2,7 +2,9 @@ package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
 import com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
+import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -72,7 +74,7 @@ public final class CircusKnifeThrowerEntity extends CircusPerformerEntity {
 			knife.setHarmless();
 			knife.shoot(direction.x, direction.y, direction.z, 1.1F, 0.0F);
 			level().addFreshEntity(knife);
-			server.sendParticles(ParticleTypes.CRIT, getEyePosition().x + direction.x,
+			server.sendParticles(HemoParticleData.glow(CircusEffects.BONE), getEyePosition().x + direction.x,
 					getEyePosition().y + direction.y, getEyePosition().z + direction.z,
 					7, 0.02D, 0.02D, 0.02D, 0.12D);
 			level().playSound(null, blockPosition(), SoundEvents.TRIDENT_THROW.value(), SoundSource.NEUTRAL, 0.35F, 1.7F);
@@ -88,7 +90,27 @@ public final class CircusKnifeThrowerEntity extends CircusPerformerEntity {
 		getLookControl().setLookAt(target, 30.0F, 30.0F);
 		if (distanceToSqr(target) > 225.0D) getNavigation().moveTo(target, 0.9D);
 		if (attackCooldown-- > 0 || distanceToSqr(target) > 225.0D) return;
-		attackCooldown = 70;
+		attackCooldown = 70 - defenseMove().total();
+		beginDefenseMove(target);
+	}
+
+	/** The arm draws back for the melee wind-up while the line to the target is marked; every fourth throw is a fan. */
+	@Override
+	protected void telegraphDefense(ServerLevel server, LivingEntity target, int tick, BossMoveTimeline move) {
+		float charge = tick / (float) move.windup();
+		Vec3 hand = getEyePosition().add(getLookAngle().yRot((float) Math.toRadians(-70.0D)).scale(0.45D));
+		CircusEffects.gather(server, hand, CircusEffects.BONE, charge);
+		if (tick % 3 != 0) return;
+		boolean fan = (volley + 1) % 4 == 0;
+		for (double yaw : fan ? new double[] { -10.0D, 0.0D, 10.0D } : new double[] { 0.0D }) {
+			Vec3 reach = target.position().subtract(position()).yRot((float) Math.toRadians(yaw));
+			BossTelegraphs.line(server, position(), position().add(reach), CircusEffects.CRIMSON);
+		}
+		BossTelegraphs.ring(server, target.position(), 0.8D, CircusEffects.BONE, 12);
+	}
+
+	@Override
+	protected void strikeDefense(LivingEntity target) {
 		boolean fan = ++volley % 4 == 0;
 		if (fan) {
 			throwKnife(target, -10.0D, 3.0F);

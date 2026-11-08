@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.circus;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.summon.puppeteer.PuppeteerSummonTrialEvents;
 import com.vincenthuto.hemomancy.common.mission.circus.CircusCurriculum;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -26,8 +27,8 @@ public final class CircusApprenticeshipProgress {
     public static boolean teach(ServerPlayer player, String summon) {
         var lesson = CircusCurriculum.lesson(summon).orElse(null);
         if (lesson == null || !player.isAlive() || player.isSpectator()
-                || HemoCapabilityAccess.getPlayerDegreeNumber(player) < lesson.degree()
-                || !HemoCapabilityAccess.getBloodVolume(player).isActive()) return false;
+                || !ProgressionGates.hasDegree(player, lesson.degree())
+                || !ProgressionGates.isBloodActive(player)) return false;
         state(player).putBoolean("taught." + summon, true);
         CircusSchoolKnowledge.discover(player, summon);
         PuppeteerSummonTrialEvents.awardOrdealRecipes(player, HemoCapabilityAccess.getPlayerDegreeNumber(player));

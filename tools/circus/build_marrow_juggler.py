@@ -7,7 +7,8 @@ from puppet_rig import ROOT, BBMODELS, build as build_rig, noise, front_edge, ba
 
 MODEL = BBMODELS / 'MarrowSpitterModel.bbmodel'
 PALETTE = ['#17121a', '#2d1f2a', '#4b2232', '#74283a', '#a3384a', '#d0625e',
-           '#8a7a6c', '#b8a48a', '#e4d4b4', '#f6ead2', '#6b6470', '#c9a24a']
+           '#8a7a6c', '#b8a48a', '#e4d4b4', '#f6ead2', '#6b6470', '#643a40']
+# 11 is hematic iron (its shadow reuses 1): blood-side fittings are never brass, bronze or copper.
 MASKS = {
     'mourn': ['99999', '90909', '95959', '90009', '90909'],
     'laugh': ['99999', '90909', '99999', '05550', '90009'],
@@ -42,7 +43,7 @@ def anatomy():
             box((-1, -4, -1), (2, 4, 2), 'hood')], (0, 0, sign * 35))
         joint('hood_tip_' + side, 'hood_point_' + side, (0, -4, 0), [
             box((-.5, -3, -.5), (1, 3, 1), 'hood'),
-            box((-1, -5, -1), (2, 2, 2), 'brass')], (0, 0, sign * 45))
+            box((-1, -5, -1), (2, 2, 2), 'hematic_iron')], (0, 0, sign * 45))
     joint('skirt', 'body', (0, 0, 0), [box((-3.5, 0, -2.5), (7, 3, 5), 'robe')])
     for side, sign in [('left', -1), ('right', 1)]:
         for facing, z, tilt, length in [('front', -2.5, -8, 9), ('rear', 2.5, 8, 10)]:
@@ -64,7 +65,7 @@ def anatomy():
             box((-1, -.5, -1), (2, 3, 2), 'sleeve')], (-18, 0, -side * [115, 75, 35][tier]))
         joint('forearm_' + str(i), 'arm_' + str(i), (0, 4.5, 0), [
             box((-.5, 0, -.5), (1, 4, 1), 'bone'),
-            box((-1, 3, -1), (2, 1, 2), 'brass')], (-55, 0, 0))
+            box((-1, 3, -1), (2, 1, 2), 'hematic_iron')], (-55, 0, 0))
         joint('hand_' + str(i), 'forearm_' + str(i), (0, 4, 0), [
             box((-1, 0, -.5), (2, 2, 1), 'bone')], (15, 0, 0))
         joint('fingers_' + str(i), 'hand_' + str(i), (0, 1.5, 0), [
@@ -75,9 +76,9 @@ def anatomy():
     for i in range(3):
         joint('knife_' + str(i), 'body', (0, -8, -6), [
             box((-.5, -5, -.25), (1, 4, .5), 'blade'),
-            box((-1, -1, -.5), (2, 1, 1), 'brass'),
+            box((-1, -1, -.5), (2, 1, 1), 'hematic_iron'),
             box((-.5, 0, -.5), (1, 2, 1), 'grip'),
-            box((-.5, 2, -.5), (1, 1, 1), 'brass')])
+            box((-.5, 2, -.5), (1, 1, 1), 'hematic_iron')])
     return parts
 
 
@@ -128,9 +129,9 @@ def shade(material, side, px, py, w, h, gx, gy):
     if material == 'bone':
         if side == 'down' or (py == h - 1 and h > 2): return 6
         return 8 if side in ('north', 'up') else 7
-    if material == 'brass':
+    if material == 'hematic_iron':
         if side == 'up' or py == 0: return 11
-        return 7 if side != 'north' else 11
+        return 1 if side != 'north' else 11
     if material == 'blade':
         if side == 'north': return 9 if px == 0 else 8
         return 10
@@ -150,14 +151,13 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 
 // Authored by tools/circus/build_marrow_juggler.py; regenerate the model, atlas and BBModel together.
 public class MarrowSpitterModel extends EntityModel<MarrowSpitterEntity> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "marrow_spitter"), "main");
+            Hemomancy.rloc("marrow_spitter"), "main");
     private final ModelPart root, body, hood;
     private final ModelPart[] arms = new ModelPart[6], forearms = new ModelPart[6], hands = new ModelPart[6];
     private final ModelPart[] knives = new ModelPart[3];

@@ -17,6 +17,7 @@ public final class CircusAcrobatModel extends HumanoidModel<CircusAcrobatEntity>
 	private final ModelPart leftTail;
 	private final ModelPart rightTail;
 	private final CircusDownedPose downedPose;
+	private final CircusWindupPose windup = new CircusWindupPose();
 
 	public CircusAcrobatModel(ModelPart root) {
 		super(root);
@@ -116,6 +117,19 @@ public final class CircusAcrobatModel extends HumanoidModel<CircusAcrobatEntity>
 			leftArm.zRot = -0.15F;
 			rightArm.zRot = 0.15F;
 		}
+		// Wind-up: a low crouch, arms swept back to spring; the strike throws both arms forward.
+		windup.sample(entity, ageInTicks);
+		float charge = windup.charge();
+		float strike = windup.strike();
+		body.xRot = Mth.lerp(charge, body.xRot, 0.3F);
+		head.xRot = Mth.lerp(charge, head.xRot, -0.35F);
+		rightArm.xRot = Mth.lerp(charge, rightArm.xRot, 0.95F);
+		leftArm.xRot = Mth.lerp(charge, leftArm.xRot, 0.95F);
+		rightArm.zRot = Mth.lerp(charge, rightArm.zRot, 0.35F);
+		leftArm.zRot = Mth.lerp(charge, leftArm.zRot, -0.35F);
+		rightArm.xRot = Mth.lerp(strike, rightArm.xRot, -1.75F);
+		leftArm.xRot = Mth.lerp(strike, leftArm.xRot, -1.55F);
+		body.xRot = Mth.lerp(strike, body.xRot, 0.15F);
 		downedPose.apply(entity.getActState() == ActState.DOWNED, ageInTicks);
 	}
 }

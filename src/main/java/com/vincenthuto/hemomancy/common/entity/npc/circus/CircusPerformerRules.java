@@ -1,7 +1,15 @@
 package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
+
 public final class CircusPerformerRules {
 	public static final int WARNING_TICKS = 20;
+	/**
+	 * A troupe attack as wind-up, strike and follow-through, on the Saint kit's floors (SaintMove): 12 ticks of
+	 * readable wind-up for a melee or thrown strike, 20 for an area move. The strike lands on the commit tick.
+	 */
+	public static final BossMoveTimeline MELEE_MOVE = new BossMoveTimeline(12, 1, 6);
+	public static final BossMoveTimeline AREA_MOVE = new BossMoveTimeline(20, 1, 6);
 	public static final int THREAT_CLEAR_TICKS = 200;
 	public static final double PERFORMANCE_RANGE_SQR = 24.0D * 24.0D;
 	public static final double THREAT_RANGE_SQR = 48.0D * 48.0D;

@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.circus;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
+import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -18,6 +20,7 @@ import net.minecraft.world.level.Level;
 public final class CircusStiltWalkerEntity extends CircusPerformerEntity {
 	private static final EntityDataAccessor<Integer> SPIN_TICKS = SynchedEntityData.defineId(
 			CircusStiltWalkerEntity.class, EntityDataSerializers.INT);
+	private static final double SLAM_RADIUS = 3.5D;
 	private int attackCooldown;
 
 	public CircusStiltWalkerEntity(EntityType<? extends CircusStiltWalkerEntity> type, Level level) {
@@ -74,18 +77,43 @@ public final class CircusStiltWalkerEntity extends CircusPerformerEntity {
 		return ticks == 0 ? 0.0F : Math.min(1.0F, (ticks + partialTick) / 40.0F);
 	}
 
+	/** The slam is an area move: 20 ticks with both arms raised while its 3.5-block ring is drawn round the stilts. */
+	@Override
+	public BossMoveTimeline defenseMove() {
+		return CircusPerformerRules.AREA_MOVE;
+	}
+
 	@Override
 	protected void tickDefense(LivingEntity target) {
 		if (distanceToSqr(target) > 16.0D) getNavigation().moveTo(target, 0.85D);
 		if (attackCooldown-- > 0 || distanceToSqr(target) > 16.0D) return;
-		attackCooldown = 70;
+		attackCooldown = 70 - defenseMove().total();
+		getNavigation().stop();
+		beginDefenseMove(target);
+	}
+
+	@Override
+	protected void telegraphDefense(ServerLevel server, LivingEntity target, int tick, BossMoveTimeline move) {
+		float charge = tick / (float) move.windup();
+		CircusEffects.gather(server, position().add(0.0D, getBbHeight() * 0.8D, 0.0D), CircusEffects.BONE, charge);
+		if (tick % 4 != 0) return;
+		BossTelegraphs.ring(server, position(), SLAM_RADIUS, CircusEffects.CRIMSON, 32);
+		BossTelegraphs.ring(server, position(), SLAM_RADIUS * charge, CircusEffects.BONE, 18);
+	}
+
+	@Override
+	protected void strikeDefense(LivingEntity target) {
 		level().playSound(null, blockPosition(), SoundEvents.IRON_GOLEM_ATTACK, SoundSource.HOSTILE, 0.9F, 0.65F);
 		if (level() instanceof ServerLevel server) {
 			server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK,
 					level().getBlockState(getBlockPosBelowThatAffectsMyMovement())),
 					getX(), getY() + 0.1D, getZ(), 24, 1.4D, 0.05D, 1.4D, 0.0D);
+			BossTelegraphs.ring(server, position(), SLAM_RADIUS, CircusEffects.CRIMSON, 40);
+			BossTelegraphs.ring(server, position(), SLAM_RADIUS * 0.55D, CircusEffects.CLOT, 24);
+			BossTelegraphs.bloodCells(server, position().add(0.0D, 0.3D, 0.0D), CircusEffects.CRIMSON, 28,
+					SLAM_RADIUS * 0.4D, 0.14D);
 		}
-		for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(3.5D))) {
+		for (LivingEntity victim : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(SLAM_RADIUS))) {
 			if (victim == this || isTroupeMember(victim)) continue;
 			double dx = victim.getX() - getX();
 			double dz = victim.getZ() - getZ();

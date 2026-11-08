@@ -18,10 +18,6 @@ public final class CircusPavilionStateRules {
 		return outcome == Outcome.NEUTRAL ? Phase.IDLE : Phase.COMPLETE;
 	}
 
-	public static Outcome resetOutcome(Outcome outcome) {
-		return outcome;
-	}
-
 	public enum Outcome { NEUTRAL, SUCCESSION, RUIN }
 	public enum Phase { IDLE, PERFORMANCE, RAFTERS, CAROUSEL, DESCENT, COMPLETE }
 }
