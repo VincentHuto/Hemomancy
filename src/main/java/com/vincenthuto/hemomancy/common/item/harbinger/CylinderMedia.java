@@ -8,11 +8,15 @@ public final class CylinderMedia {
 	private CylinderMedia() {}
 
 	public static boolean supported(ItemStack stack) {
-		return stack.is(ItemInit.wax_cylinder.get()) || stack.is(ItemInit.ambergris_cylinder.get());
+		return stack.getItem() instanceof CylinderItem;
 	}
 
 	public static boolean masterCapable(ItemStack stack) {
-		return stack.is(ItemInit.ambergris_cylinder.get());
+		return stack.is(ItemInit.ambergris_cylinder.get()) || retainsShell(stack);
+	}
+
+	public static boolean retainsShell(ItemStack stack) {
+		return stack.is(ItemInit.corpse_wax_cylinder.get());
 	}
 
 	public static boolean blank(ItemStack stack) {

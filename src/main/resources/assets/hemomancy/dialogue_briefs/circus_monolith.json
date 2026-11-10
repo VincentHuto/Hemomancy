@@ -1,0 +1,1630 @@
+{
+ "hemomancy.artificer.item_inquiry.monolith_imbued_cloth.line1": {
+  "about": "the Artificer describing Monolith Imbued Cloth as soft but taught to carry weight that ordinary cloth was never meant to remember",
+  "tone": "dry, quietly uneasy"
+ },
+ "hemomancy.artificer.item_inquiry.monolith_imbued_cloth.line2": {
+  "about": "the Artificer saying the Monolith Imbued Cloth is used in Silent Archon vestment work once the frame has taken the Cornerstone",
+  "tone": "dry, matter-of-fact"
+ },
+ "hemomancy.circus.captive.severed": {
+  "about": "a system message that the captive's thread has snapped, that the named captive (the captive's name) dies with it, and that the anchor beneath the carousel horse is now exposed",
+  "tone": "grim, flat"
+ },
+ "hemomancy.circus.challenge.begin.0": {
+  "about": "a challenge-start message telling the player to begin by keeping the trained peacock spider in sight until its dance ends, and that it will not attack",
+  "tone": "calm instruction"
+ },
+ "hemomancy.circus.challenge.begin.2": {
+  "about": "a challenge-start message telling the player to begin by staying inside the ring and withstanding the dolls until the act ends",
+  "tone": "urgent instruction"
+ },
+ "hemomancy.circus.challenge.begin.3": {
+  "about": "a challenge-start message telling the player to begin by watching the Knife Thrower, because the blade flies straight but the setup is crooked",
+  "tone": "wary instruction"
+ },
+ "hemomancy.circus.challenge.begin.4": {
+  "about": "a challenge-start message telling the player to begin by staying in the ring until the troupe finishes the carousel pattern",
+  "tone": "steady instruction"
+ },
+ "hemomancy.circus.challenge.complete.0": {
+  "about": "a challenge completion message confirming the player having kept the spider in sight until the dance ended",
+  "tone": "quietly approving"
+ },
+ "hemomancy.circus.challenge.complete.2": {
+  "about": "a challenge completion message confirming the player having held the ring until the dolls stopped",
+  "tone": "quietly approving"
+ },
+ "hemomancy.circus.challenge.complete.3": {
+  "about": "a challenge completion message confirming the player having read the Knife Thrower's rhythm and survived the act",
+  "tone": "quietly approving"
+ },
+ "hemomancy.circus.challenge.complete.4": {
+  "about": "a challenge completion message confirming the player having held the ring until the carousel pattern ended",
+  "tone": "quietly approving"
+ },
+ "hemomancy.circus.challenge.failed": {
+  "about": "a message that the act is over and the player should speak to the Ringmaster when ready to try again",
+  "tone": "flat, final"
+ },
+ "hemomancy.circus.challenge.hold.0": {
+  "about": "a mid-act reminder that the spider is still dancing and the player must keep their eyes on it",
+  "tone": "tense, encouraging"
+ },
+ "hemomancy.circus.challenge.hold.2": {
+  "about": "a mid-act reminder that the dolls are committed and the player must hold their ground",
+  "tone": "tense, encouraging"
+ },
+ "hemomancy.circus.challenge.hold.3": {
+  "about": "a mid-act reminder that the player has found the thrower's rhythm and must not lose it",
+  "tone": "tense, encouraging"
+ },
+ "hemomancy.circus.challenge.hold.4": {
+  "about": "a mid-act reminder that the troupe is halfway through the pattern and the player must stay in the ring",
+  "tone": "tense, encouraging"
+ },
+ "hemomancy.circus.discovery": {
+  "about": "a discovery message that the rough pavilion comes into focus and the player has found the Circus",
+  "tone": "hushed, uncanny"
+ },
+ "hemomancy.circus.finale.claimed": {
+  "about": "a message that another performer has already claimed this pavilion and it will not answer the player",
+  "tone": "cold, closed"
+ },
+ "hemomancy.circus.finale.complete.liberation": {
+  "about": "narration of the Liberation finale ending: the Ringmaster falls, the three captives and their anchors are gone, and the carousel is ruined for good",
+  "tone": "somber, final"
+ },
+ "hemomancy.circus.finale.complete.succession": {
+  "about": "narration of the Succession finale ending: the Ringmaster yields and lives, his office becomes a pattern, and the pavilion stays standing",
+  "tone": "solemn, quiet"
+ },
+ "hemomancy.circus.finale.empty_troupe": {
+  "about": "narration that no troupe members are left to fall, so the ring stands empty and the Ringmaster comes down to face the player himself",
+  "tone": "ominous, theatrical"
+ },
+ "hemomancy.circus.finale.not_ready": {
+  "about": "a message that the player is not ready for Succession and must finish every controlled act and complete their attunement first",
+  "tone": "clipped, firm"
+ },
+ "hemomancy.circus.finale.ringmaster_lost": {
+  "about": "a message that the Ringmaster vanished before the finale ended, so the pavilion releases the player and the act closes unfinished",
+  "tone": "hollow, anticlimactic"
+ },
+ "hemomancy.circus.option.accept": {
+  "about": "accepting the Ringmaster's bargain by saying they will succeed him",
+  "tone": "resolute"
+ },
+ "hemomancy.circus.option.confirm_liberation": {
+  "about": "confirming Liberation, saying they know the cost and will end the pavilion",
+  "tone": "grim, resolute"
+ },
+ "hemomancy.circus.option.confirm_succession": {
+  "about": "confirming Succession, saying they understand and asking to be bound to it",
+  "tone": "measured, resolute"
+ },
+ "hemomancy.circus.option.finale": {
+  "about": "asking to begin the finale",
+  "tone": "steady"
+ },
+ "hemomancy.circus.option.not_yet": {
+  "about": "declining for now by saying not yet",
+  "tone": "hesitant"
+ },
+ "hemomancy.circus.option.reject": {
+  "about": "rejecting the Ringmaster's offer and vowing to break the carousel and free its captives",
+  "tone": "defiant"
+ },
+ "hemomancy.circus.option.repair": {
+  "about": "saying they chose wrong and asking to use their one chance to change their route",
+  "tone": "regretful, urgent"
+ },
+ "hemomancy.circus.option.trial": {
+  "about": "asking the Ringmaster to show them the next act",
+  "tone": "eager, wary"
+ },
+ "hemomancy.circus.ringmaster.line.liberation": {
+  "about": "the Ringmaster explaining that three failed initiates ride the carousel, that cutting their threads kills their bodies but not the anchors beneath them, and that the player must break the anchors too",
+  "tone": "theatrical, callous"
+ },
+ "hemomancy.circus.ringmaster.line.liberation_complete": {
+  "about": "the Ringmaster's closing line after Liberation, saying only the ruin answers the player now",
+  "tone": "hollow, final"
+ },
+ "hemomancy.circus.ringmaster.line.neutral": {
+  "about": "the Ringmaster laying out the bargain: take his place, cut the others free, or walk out of the tent",
+  "tone": "showman's, three-beat"
+ },
+ "hemomancy.circus.ringmaster.line.succession": {
+  "about": "the Ringmaster telling the player to learn every act and hold every eye in the pavilion, then come take his hat and the office bound to it",
+  "tone": "showman's, commanding"
+ },
+ "hemomancy.circus.ringmaster.line.succession_complete": {
+  "about": "the Ringmaster's closing line after Succession, saying the pavilion knows its successor and answers to the player",
+  "tone": "quiet, ceremonial"
+ },
+ "hemomancy.circus.ringmaster.silent": {
+  "about": "narration of the figure in the rafters looking through the player and refusing to take shape for them yet",
+  "tone": "eerie, withholding"
+ },
+ "hemomancy.circus.ringmaster.warning.liberation": {
+  "about": "a warning that choosing Liberation kills the three bound initiates when their threads are severed, then the player breaks the carousel and leaves the pavilion in ruins, with one change of mind allowed only before either ending is complete",
+  "tone": "blunt, grave"
+ },
+ "hemomancy.circus.ringmaster.warning.succession": {
+  "about": "a warning that choosing Succession keeps the pavilion standing but binds its trials to the player, with one chance to change their mind before either ending completes",
+  "tone": "blunt, grave"
+ },
+ "hemomancy.circus.school.aftermath.liberation": {
+  "about": "a professor noting that the player chose Liberation, and that cutting the captive strings kills the people bound to them, so no living prisoners will walk free",
+  "tone": "blunt, sober"
+ },
+ "hemomancy.circus.school.aftermath.liberation_complete": {
+  "about": "a professor saying the captives and Ringmaster are dead and the carousel ruined, that teaching continues from the surviving camps, and that no victory brings those people back",
+  "tone": "somber, plain"
+ },
+ "hemomancy.circus.school.aftermath.neutral": {
+  "about": "a professor saying nobody has settled the Ringmaster's bargain yet and the player may take lessons without agreeing to either ending",
+  "tone": "even, reassuring"
+ },
+ "hemomancy.circus.school.aftermath.succession": {
+  "about": "a professor noting the player chose Succession, that its final act is the Ringmaster's usual challenges, and that the apprenticeship adds nothing to it",
+  "tone": "even, matter-of-fact"
+ },
+ "hemomancy.circus.school.aftermath.succession_complete": {
+  "about": "a professor noting that Succession left the pavilion standing and gave the player its Pattern, and that professors keep teaching even those who distrust the bargain",
+  "tone": "measured, wary"
+ },
+ "hemomancy.circus.school.ask_aftermath": {
+  "about": "asking a professor what happens to the school after the final act",
+  "tone": "curious"
+ },
+ "hemomancy.circus.school.ask_colleagues": {
+  "about": "asking a professor what they think of the other professors",
+  "tone": "curious, casual"
+ },
+ "hemomancy.circus.school.ask_history": {
+  "about": "asking a professor how they joined the Troupe",
+  "tone": "curious, respectful"
+ },
+ "hemomancy.circus.school.ask_preparation": {
+  "about": "asking a professor what the player should prepare",
+  "tone": "practical"
+ },
+ "hemomancy.circus.school.back": {
+  "about": "returning to the earlier conversation with the professor",
+  "tone": "plain"
+ },
+ "hemomancy.circus.school.circus_acrobat.aftermath": {
+  "about": "the Acrobat promising the ropes will stay sound for the next pupil, and saying whoever conducts next does not get to tell the wings how to remember flight",
+  "tone": "light, wry, resolved"
+ },
+ "hemomancy.circus.school.circus_acrobat.colleagues": {
+  "about": "the Acrobat describing their act as up, strike, back down, noting pupils forget the down while the Fire Breather does not since an act needs a recovery as much as an entrance, and that the Strongman calls it a wasted lift, which they dismiss",
+  "tone": "light, wry, teasing"
+ },
+ "hemomancy.circus.school.circus_acrobat.history": {
+  "about": "the Acrobat explaining they came to rigging first and blood after, then fell when a line snapped without choosing it, and that climbing down means choosing every hand, a difference their Vultures keep in their wing joints",
+  "tone": "light, wry, reflective"
+ },
+ "hemomancy.circus.school.circus_acrobat.lesson": {
+  "about": "the Acrobat pointing out the Veinwing Vulture's wing spars and scarlet tendons, explaining it is built never hatched as an aerial striker, requiring Degree 3, preparing its frame and its Cardinal Ordeal, then a practical where it chases a rehearsal threat from the air, hits it, and swings back when recalled",
+  "tone": "light, wry, instructive"
+ },
+ "hemomancy.circus.school.circus_acrobat.testimony": {
+  "about": "the Acrobat testifying from the rigging that an understudy climbed down from the loft and then had no name in the next program, and that the wrong audience watched the performers' hands the whole time, never the act",
+  "tone": "light, wry, grave"
+ },
+ "hemomancy.circus.school.circus_acrobat.welcome": {
+  "about": "the Acrobat greeting a player whose Vulture hovers at their shoulder, saying it catches nothing on its own, so the player must give it a line to chase and then a reason to swing back",
+  "tone": "light, wry"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.aftermath": {
+  "about": "the Beast Tamer saying that, like geese, the pack finds its way without a pavilion, and that when this site is done the other camps go on teaching",
+  "tone": "gentle, patient, resolved"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.colleagues": {
+  "about": "the Beast Tamer comparing a startled flock scattering to their pack, noting the Stilt Walker's opposite trick of pinning every eye to one spot, and saying the Fire Breather's worry about singeing a Cur is exactly why they trust that professor's lessons",
+  "tone": "gentle, patient, teasing"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.history": {
+  "about": "the Beast Tamer explaining they came in with a cage and learned to leave it empty, that a living animal has its own needs unlike a built Hound bound to a Crossbar, and that the Court's living creatures deserve better than how the stage talks about them",
+  "tone": "gentle, patient, reflective"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.lesson": {
+  "about": "the Beast Tamer teaching that a Hound is a pack waiting to happen: at Degree 4 prepare the Sanguine Hound bridle and take its Cardinal Ordeal, then in the practical let rehearsal threats wound the Hound until it ruptures and get one temporary Blood Cur to land a hit, with the warning that a Cur cannot be learned, called separately or kept as another permanent shape",
+  "tone": "gentle, patient, instructive"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.testimony": {
+  "about": "the Beast Tamer testifying that as someone who counts mouths they noticed three names dropped from the traveling roster while their rations kept appearing on the pavilion account, and telling the player to read the tally copied in the loft as more honest than any stage farewell",
+  "tone": "gentle, patient, grave"
+ },
+ "hemomancy.circus.school.circus_beast_tamer.welcome": {
+  "about": "the Beast Tamer saying a pack changes shape when one of its own goes down, as with a Hound's rupture, so the player should handle the body gently and, once it bursts, let its temporary Curs finish the chase",
+  "tone": "gentle, patient"
+ },
+ "hemomancy.circus.school.circus_fire_eater.aftermath": {
+  "about": "the Fire Breather giving two outcomes after the final act: the troupe can perform among ruins without setting them alight, and the surviving camps can be where pupils learn control again",
+  "tone": "measured, counting, resolved"
+ },
+ "hemomancy.circus.school.circus_fire_eater.colleagues": {
+  "about": "the Fire Breather naming two colleagues and two rules, the Beast Tamer's account for every allied body in the ring and the Strongman's wind-up the back row can see, and saying both hold because a dangerous act ought to announce itself",
+  "tone": "measured, counting, teasing"
+ },
+ "hemomancy.circus.school.circus_fire_eater.history": {
+  "about": "the Fire Breather explaining that the oldest frame handed to them stood on brittle legs, so they gave it a serpent's lower body so the gaunt upper half could spend its effort on the lungs, then left the ribs open so a pupil can read the pressure before the mouth opens",
+  "tone": "measured, counting, reflective"
+ },
+ "hemomancy.circus.school.circus_fire_eater.lesson": {
+  "about": "the Fire Breather teaching at Degree 4: build a Cinder Bellows Frame from hematic iron scraps, leather, Filaments and blaze powder; the ordeal is a Dominion Lesser at 900 mL that consumes the frame only once the Bellows manifests, so the Crossbar survives; then count one second inhale, two seconds a five-block sixty-degree cone, two seconds recover; the practical is hitting both rehearsal threats in one breath, and it never breathes through walls or onto allies or sets terrain alight",
+  "tone": "measured, counting, instructive"
+ },
+ "hemomancy.circus.school.circus_fire_eater.testimony": {
+  "about": "the Fire Breather giving an ordered account: first the three understudies rehearsing ordinary entrances, later the Ringmaster calling their absence a change in casting, and between the two they never saw the understudies leave the grounds",
+  "tone": "measured, counting, grave"
+ },
+ "hemomancy.circus.school.circus_fire_eater.welcome": {
+  "about": "the Fire Breather stating the order of their craft: the serpent coil steadies the body first, the lung-sac steadies the breath next, and fire comes third, never first",
+  "tone": "measured, counting"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.aftermath": {
+  "about": "the Dagger Thrower saying that if the pavilion stands they teach in its blade ring, if it falls a wagon floor will do, and either way the Ringmaster will not own the next generation of hands",
+  "tone": "sardonic, dry, resolved"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.colleagues": {
+  "about": "the Dagger Thrower dismissing the Stilt Walker's claim that a distracted enemy is beaten, arguing distraction only buys time for a deliberate throw, and admitting neither will win the argument because both have seen a careless pupil hurt the audience",
+  "tone": "sardonic, dry, teasing"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.history": {
+  "about": "the Dagger Thrower admitting they once threw one knife, hit, and thought themselves a genius, then the Juggler taught them the empty hands between throws matter too, shown by a laughing mask, a grieving one and a blank one on the same suspended frame",
+  "tone": "sardonic, dry, reflective"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.lesson": {
+  "about": "the Dagger Thrower explaining the Marrow Juggler is the old Marrow Spitter renamed with the same ordeal and Crossbar, requiring Degree 3, preparing its offering and unlocking it, then commanding a full three-dagger volley into one rehearsal threat, and correcting that the three throws split one attack's strength rather than tripling damage",
+  "tone": "sardonic, dry, instructive"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.testimony": {
+  "about": "the Dagger Thrower testifying that the wrong audience applauded a puppet's bow but ignored a performer because they wanted obedience not craft, then telling the player to get the Stilt Walker's side too and prove they can focus without giving up control",
+  "tone": "sardonic, dry, grave"
+ },
+ "hemomancy.circus.school.circus_knife_thrower.welcome": {
+  "about": "the Dagger Thrower saying six hands are worthless until they agree on one target, only in theory, and that their Juggler wears three faces to show how often the theory loses",
+  "tone": "sardonic, dry"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.aftermath": {
+  "about": "the Stilt Walker saying a mask can go on looking after a pupil even when the conductor has lost their stage, but refusing to call a dead captive a liberated student",
+  "tone": "calm, watchful, resolved"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.colleagues": {
+  "about": "the Stilt Walker arguing that several imperfect targets all looking away from a pupil protect better than one perfect target, noting the Dagger Thrower will dispute it and the Beast Tamer would split the pack, while they prefer every eye in the ring turned the same way",
+  "tone": "calm, watchful, teasing"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.history": {
+  "about": "the Stilt Walker explaining that from over the crowd they could see who watched the show and who looked for the exit, and built the Mummer so the frightened ones would have somewhere else to look",
+  "tone": "calm, watchful, reflective"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.lesson": {
+  "about": "the Stilt Walker teaching at the fourth Degree: learn the Scarlet Mummer, complete its Cardinal Ordeal, bring your own known body, then in the practical two rehearsal threats chase the player or an allied puppet and the Mummer must draw both away using only its pulse and one evasive step",
+  "tone": "calm, watchful, instructive"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.testimony": {
+  "about": "the Stilt Walker testifying that the wrong audience could not tell an act from a command and the understudies had stopped choosing their own entrances well before they vanished, pointing the player to the Dagger Thrower who was down among them, then asking the player to show attention spent protecting somebody",
+  "tone": "calm, watchful, grave"
+ },
+ "hemomancy.circus.school.circus_stilt_walker.welcome": {
+  "about": "the Stilt Walker explaining the Scarlet Mummer borrows an enemy's attention for a little while so the player can hold it long enough for somebody else to breathe",
+  "tone": "calm, watchful"
+ },
+ "hemomancy.circus.school.circus_strongman.aftermath": {
+  "about": "the Strongman saying they can rebuild a practice ring but not the people under that carousel, and that forgetting them leaves the player practicing alone",
+  "tone": "gruff, blunt, resolved"
+ },
+ "hemomancy.circus.school.circus_strongman.colleagues": {
+  "about": "the Strongman contrasting the Acrobat who knows when to leave with themselves who know where to stay, and saying a conductor who cannot value both breaks every string they own",
+  "tone": "gruff, blunt, teasing"
+ },
+ "hemomancy.circus.school.circus_strongman.history": {
+  "about": "the Strongman recalling that their first body lifted a wagon but could not hold a door for one scared child, strong and good for nothing, and that this one wears belt and tendon bindings whose burden the player can see",
+  "tone": "gruff, blunt, reflective"
+ },
+ "hemomancy.circus.school.circus_strongman.lesson": {
+  "about": "the Strongman teaching at Fourth Degree: prepare the Gorebound Hulk offering and beat its Cardinal Ordeal, then in the practical Anchor Guard inside the ring, keep the Hulk guarding for five seconds and make it hit a rehearsal threat while still guarding, describing its small head, lifting belt and heavy forearms as built like a strongman",
+  "tone": "gruff, blunt, instructive"
+ },
+ "hemomancy.circus.school.circus_strongman.testimony": {
+  "about": "the Strongman recalling being told the understudies were on a traveling engagement while their luggage stayed under the beds, challenging the player to repeat that lie and telling them to go look at those rooms",
+  "tone": "gruff, blunt, grave"
+ },
+ "hemomancy.circus.school.circus_strongman.welcome": {
+  "about": "the Strongman saying the Hulk's shoulders make a promise to plant where trouble lands and that it keeps its word, then asking the player whether they do",
+  "tone": "gruff, blunt"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.aftermath": {
+  "about": "the Threadkeeper saying the scattered camps teach as much as the pavilion, and that the player's finished work and any guest pay still owed stay on their account, not the building's",
+  "tone": "dry, exact, resolved"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.colleagues": {
+  "about": "the Threadkeeper explaining two promises are on the books, the Ringmaster's grand final act and the faculty's promise of a pupil who can call one body, control it and dismiss it safely, and that they can inspect only the second so they start there",
+  "tone": "dry, exact, teasing"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.history": {
+  "about": "the Threadkeeper explaining they once counted ticket money and now the book holds Crossbar charge, spare Filaments and returning pupils' reports, and that a good account tells you what is still owed",
+  "tone": "dry, exact, reflective"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.lesson": {
+  "about": "the Threadkeeper opening the account entry An Empty Ring: hold up an attuned, charged Crossbar for inspection, learn any shape and complete its ordeal, call, command and recall with that same Crossbar and report back, noting each professor records their own practical and story investigations and paid guest performances go in the Side ledger",
+  "tone": "dry, exact, instructive"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.testimony": {
+  "about": "the Threadkeeper listing two open items: the wrong audience closes on the Stilt Walker's and Dagger Thrower's accounts with both practicals passed, and the missing understudy closes on the abandoned stage record, loft account, quarters letter, carousel tally and the Retired Understudy's testimony, promising to close both when given the facts",
+  "tone": "dry, exact, grave"
+ },
+ "hemomancy.circus.school.circus_threadkeeper.welcome": {
+  "about": "the Threadkeeper asking for the player's own instrument so they can check the binding and enter it, noting the professors teach what goes on its strings",
+  "tone": "dry, exact"
+ },
+ "hemomancy.circus.school.circus_understudy.aftermath": {
+  "about": "the Retired Understudy insisting the missing performers were people and that whatever is left of the school keeps their names on the bill, whether a successor takes the Pattern or the carousel ends in blood",
+  "tone": "wistful, gentle, resolved"
+ },
+ "hemomancy.circus.school.circus_understudy.colleagues": {
+  "about": "the Retired Understudy saying memory bends easily so they are glad the Threadkeeper keeps accounts, that they do not much mind a blank face on the Juggler, but are troubled by a conductor who claims every remembered face as their own like a lead taking the whole company's bows",
+  "tone": "wistful, gentle, teasing"
+ },
+ "hemomancy.circus.school.circus_understudy.history": {
+  "about": "the Retired Understudy explaining an understudy learns another performer's pauses, flubs and ways out of them, and that they had retired by the time the Ringmaster decided a perfect replacement should never need a choice of its own",
+  "tone": "wistful, gentle, reflective"
+ },
+ "hemomancy.circus.school.circus_understudy.lesson": {
+  "about": "the Retired Understudy teaching that the player needs the fifth Degree and the Mnemonist Puppet's ordeal done first, then in the practical must strike a rehearsal threat while the known puppet watches, keeping the threat in its range until it replays the recorded attack, and apologizing that ordinary puppet melee will not count as an echo",
+  "tone": "wistful, gentle, instructive"
+ },
+ "hemomancy.circus.school.circus_understudy.testimony": {
+  "about": "the Retired Understudy identifying the three entries as the missing understudies whose cues they knew, insisting nobody left those beds to tour, saying the stage program, loft account and quarters tell one story and the carousel tally tells the ending: they are what the Ringmaster made of them",
+  "tone": "wistful, gentle, grave"
+ },
+ "hemomancy.circus.school.circus_understudy.welcome": {
+  "about": "the Retired Understudy explaining that a Mnemonist body repeats an attack it has watched, as they once learned a lead's business from the wings, so the player should give it a real memory first and then listen for the echo",
+  "tone": "wistful, gentle"
+ },
+ "hemomancy.circus.school.claim": {
+  "about": "asking to collect their remaining Filaments",
+  "tone": "plain"
+ },
+ "hemomancy.circus.school.clue.carousel": {
+  "about": "a ledger clue that the carousel tally confirms the three missing performers are its bound captives, that severing the strings is lethal, and that the player should bring this evidence and the Retired Understudy's testimony to a Threadkeeper",
+  "tone": "grave, factual"
+ },
+ "hemomancy.circus.school.clue.loft": {
+  "about": "a ledger clue that the rigging account records three substitutions with the same names copied into the carousel's passenger tally, a margin note says their rooms were never reassigned, and the player should search the understudy quarters",
+  "tone": "dry, investigative"
+ },
+ "hemomancy.circus.school.clue.quarters": {
+  "about": "a ledger clue that three unused beds and an unfinished letter contradict the announcement that the understudies left on tour, that the Retired Understudy can identify them, and that the player should examine the carousel tally itself",
+  "tone": "somber, investigative"
+ },
+ "hemomancy.circus.school.clue.stage": {
+  "about": "a ledger clue that a torn program names an understudy in the role of a living person with a penciled correction to carousel support, and the player should find the rigging account in the pavilion loft",
+  "tone": "dry, investigative"
+ },
+ "hemomancy.circus.school.conductor": {
+  "about": "asking about the school and its conductor",
+  "tone": "curious"
+ },
+ "hemomancy.circus.school.exercise.cinder_bellows": {
+  "about": "an exercise card describing the Cinder Bellows practical: hitting both rehearsal threats in a single breath, using the player's own known body and Crossbar, staying near the professor",
+  "tone": "plain instruction"
+ },
+ "hemomancy.circus.school.exercise.gorebound_hulk": {
+  "about": "an exercise card describing the Gorebound Hulk practical: holding Guard in the ring for five seconds and landing a guarded strike, using the player's own known body and Crossbar, staying near the professor",
+  "tone": "plain instruction"
+ },
+ "hemomancy.circus.school.exercise.marrow_spitter": {
+  "about": "an exercise card describing the Marrow Juggler practical: landing all three daggers of one volley on one rehearsal threat, using the player's own known body and Crossbar, staying near the professor",
+  "tone": "plain instruction"
+ },
+ "hemomancy.circus.school.exercise.mnemonist_puppet": {
+  "about": "an exercise card describing the Mnemonist Puppet practical: striking a threat personally and then having the puppet replay that observed attack, using the player's own known body and Crossbar, staying near the professor",
+  "tone": "plain instruction"
+ },
+ "hemomancy.circus.school.exercise.sanguine_hound": {
+  "about": "an exercise card describing the Sanguine Hound practical: letting the Hound rupture and then hitting a rehearsal threat with its temporary Curs, using the player's own known body and Crossbar, staying near the professor",
+  "tone": "plain instruction"
+ },
+ "hemomancy.circus.school.exercise.scarlet_mummer": {
+  "about": "an exercise card describing the Scarlet Mummer practical: diverting both rehearsal threats away from the player or an allied puppet, using the player's own known body and Crossbar, staying near the professor",
+  "tone": "plain instruction"
+ },
+ "hemomancy.circus.school.exercise.veinwing_vulture": {
+  "about": "an exercise card describing the Veinwing Vulture practical: pursuing from the air, hitting a rehearsal threat, then recalling the body, using the player's own known body and Crossbar, staying near the professor",
+  "tone": "plain instruction"
+ },
+ "hemomancy.circus.school.guest": {
+  "about": "asking to perform a guest act using this exercise",
+  "tone": "plain"
+ },
+ "hemomancy.circus.school.inspect": {
+  "about": "asking the Threadkeeper to inspect their charged, attuned Crossbar",
+  "tone": "plain"
+ },
+ "hemomancy.circus.school.inspect_failed": {
+  "about": "the Threadkeeper refusing inspection because the player is not holding their own attuned, charged Crossbar and someone else's instrument cannot be checked",
+  "tone": "dry, exacting"
+ },
+ "hemomancy.circus.school.inspected": {
+  "about": "the Threadkeeper confirming the Crossbar is attuned and charged, then telling the player to learn a shape, beat its ordeal, and call, command and recall a body with the same Crossbar",
+  "tone": "dry, approving"
+ },
+ "hemomancy.circus.school.instruction_required": {
+  "about": "a system message that a professor must teach this shape before the player can begin its Cardinal Ordeal",
+  "tone": "flat system"
+ },
+ "hemomancy.circus.school.ledger.cinder_bellows": {
+  "about": "a ledger entry title for the Cinder Bellows practical, naming the Degree 4 requirement",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.cinder_bellows.lesson": {
+  "about": "a ledger step telling the player to receive personal instruction on the Cinder Bellows from the Fire Breather",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.cinder_bellows.mastered": {
+  "about": "a ledger step noting the Cinder Bellows practical is passed and that this professor can now host a daily paid guest act",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.cinder_bellows.ordeal": {
+  "about": "a ledger step telling the player to prepare the offering and complete the Cinder Bellows Cardinal Ordeal, and that they keep their Crossbar",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.cinder_bellows.practical": {
+  "about": "a ledger step sending the player back to the Fire Breather for the Cinder Bellows practical: hitting both rehearsal threats in a single breath",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.empty_ring": {
+  "about": "a short ledger title for the first apprenticeship entry, An Empty Ring",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.empty_ring.call": {
+  "about": "a ledger step telling the player to learn a shape, complete its ordeal, then call it with the inspected Crossbar",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.empty_ring.command": {
+  "about": "a ledger step telling the player to issue a command with that Crossbar while its body is active",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.empty_ring.complete": {
+  "about": "a ledger completion note that the investigation or apprenticeship is recorded and progress persists across death and travel",
+  "tone": "plain ledger note"
+ },
+ "hemomancy.circus.school.ledger.empty_ring.inspect": {
+  "about": "a ledger step telling the player to ask a Threadkeeper to inspect their charged, owner-attuned Crossbar",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.empty_ring.recall": {
+  "about": "a ledger step telling the player to recall the called body using the same Crossbar",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.empty_ring.report": {
+  "about": "a ledger step telling the player to report their observed call, command and recall to a Threadkeeper",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.gorebound_hulk": {
+  "about": "a ledger entry title for the Gorebound Hulk practical, naming the Degree 4 requirement",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.gorebound_hulk.lesson": {
+  "about": "a ledger step telling the player to receive personal instruction on the Gorebound Hulk from the Strongman",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.gorebound_hulk.mastered": {
+  "about": "a ledger step noting the Gorebound Hulk practical is passed and that this professor can now host a daily paid guest act",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.gorebound_hulk.ordeal": {
+  "about": "a ledger step telling the player to prepare the offering and complete the Gorebound Hulk Cardinal Ordeal, and that they keep their Crossbar",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.gorebound_hulk.practical": {
+  "about": "a ledger step sending the player back to the Strongman for the Gorebound Hulk practical: holding Guard in the ring for five seconds and landing a guarded strike",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.guest": {
+  "about": "a short ledger title for the guest performances section",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.guest.available": {
+  "about": "a ledger note that after passing a practical the player can repeat that professor's exercise for four Filaments, once per Minecraft day",
+  "tone": "plain ledger note"
+ },
+ "hemomancy.circus.school.ledger.guest.pending": {
+  "about": "a ledger note that the guest payment is reserved and the player should make inventory space and collect it from any Threadkeeper",
+  "tone": "plain ledger note"
+ },
+ "hemomancy.circus.school.ledger.marrow_spitter": {
+  "about": "a ledger entry title for the Marrow Juggler practical, naming the Degree 3 requirement",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.marrow_spitter.lesson": {
+  "about": "a ledger step telling the player to receive personal instruction on the Marrow Juggler from the Dagger Thrower",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.marrow_spitter.mastered": {
+  "about": "a ledger step noting the Marrow Juggler practical is passed and that this professor can now host a daily paid guest act",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.marrow_spitter.ordeal": {
+  "about": "a ledger step telling the player to prepare the offering and complete the Marrow Juggler Cardinal Ordeal, and that they keep their Crossbar",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.marrow_spitter.practical": {
+  "about": "a ledger step sending the player back to the Dagger Thrower for the Marrow Juggler practical: landing all three daggers of one volley on one rehearsal threat",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.missing_understudy": {
+  "about": "a short ledger title for the Missing Understudy investigation",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.missing_understudy.carousel": {
+  "about": "a ledger step telling the player to read the carousel tally beside the bound captives",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.missing_understudy.complete": {
+  "about": "a ledger completion note that the investigation or apprenticeship is recorded and progress persists across death and travel",
+  "tone": "plain ledger note"
+ },
+ "hemomancy.circus.school.ledger.missing_understudy.loft": {
+  "about": "a ledger step telling the player to read the rigging account in the pavilion loft",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.missing_understudy.quarters": {
+  "about": "a ledger step telling the player to read the letter in the understudy quarters",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.missing_understudy.report": {
+  "about": "a ledger step telling the player to report the records and testimony to a Threadkeeper, noting either ending is still their choice",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.missing_understudy.stage": {
+  "about": "a ledger step telling the player to read the record on an abandoned stage",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.missing_understudy.testimony": {
+  "about": "a ledger step telling the player to ask the Retired Understudy to identify the missing performers",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.mnemonist_puppet": {
+  "about": "a ledger entry title for the Mnemonist Puppet practical, naming the Degree 5 requirement",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.mnemonist_puppet.lesson": {
+  "about": "a ledger step telling the player to receive personal instruction on the Mnemonist Puppet from the Retired Understudy",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.mnemonist_puppet.mastered": {
+  "about": "a ledger step noting the Mnemonist Puppet practical is passed and that this professor can now host a daily paid guest act",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.mnemonist_puppet.ordeal": {
+  "about": "a ledger step telling the player to prepare the offering and complete the Mnemonist Puppet Cardinal Ordeal, and that they keep their Crossbar",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.mnemonist_puppet.practical": {
+  "about": "a ledger step sending the player back to the Retired Understudy for the Mnemonist Puppet practical: striking a threat personally and then having the puppet replay that observed attack",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.sanguine_hound": {
+  "about": "a ledger entry title for the Sanguine Hound practical, naming the Degree 4 requirement",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.sanguine_hound.lesson": {
+  "about": "a ledger step telling the player to receive personal instruction on the Sanguine Hound from the Beast Tamer",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.sanguine_hound.mastered": {
+  "about": "a ledger step noting the Sanguine Hound practical is passed and that this professor can now host a daily paid guest act",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.sanguine_hound.ordeal": {
+  "about": "a ledger step telling the player to prepare the offering and complete the Sanguine Hound Cardinal Ordeal, and that they keep their Crossbar",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.sanguine_hound.practical": {
+  "about": "a ledger step sending the player back to the Beast Tamer for the Sanguine Hound practical: letting the Hound rupture and then hitting a rehearsal threat with its temporary Curs",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.scarlet_mummer": {
+  "about": "a ledger entry title for the Scarlet Mummer practical, naming the Degree 4 requirement",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.scarlet_mummer.lesson": {
+  "about": "a ledger step telling the player to receive personal instruction on the Scarlet Mummer from the Stilt Walker",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.scarlet_mummer.mastered": {
+  "about": "a ledger step noting the Scarlet Mummer practical is passed and that this professor can now host a daily paid guest act",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.scarlet_mummer.ordeal": {
+  "about": "a ledger step telling the player to prepare the offering and complete the Scarlet Mummer Cardinal Ordeal, and that they keep their Crossbar",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.scarlet_mummer.practical": {
+  "about": "a ledger step sending the player back to the Stilt Walker for the Scarlet Mummer practical: diverting both rehearsal threats away from the player or an allied puppet",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.title": {
+  "about": "the title of the Crimson Troupe Apprenticeship ledger",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.veinwing_vulture": {
+  "about": "a ledger entry title for the Veinwing Vulture practical, naming the Degree 3 requirement",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.veinwing_vulture.lesson": {
+  "about": "a ledger step telling the player to receive personal instruction on the Veinwing Vulture from the Acrobat",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.veinwing_vulture.mastered": {
+  "about": "a ledger step noting the Veinwing Vulture practical is passed and that this professor can now host a daily paid guest act",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.veinwing_vulture.ordeal": {
+  "about": "a ledger step telling the player to prepare the offering and complete the Veinwing Vulture Cardinal Ordeal, and that they keep their Crossbar",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.veinwing_vulture.practical": {
+  "about": "a ledger step sending the player back to the Acrobat for the Veinwing Vulture practical: pursuing from the air, hitting a rehearsal threat, then recalling the body",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.wrong_audience": {
+  "about": "a short ledger title for the Wrong Audience investigation",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.ledger.wrong_audience.complete": {
+  "about": "a ledger completion note that the investigation or apprenticeship is recorded and progress persists across death and travel",
+  "tone": "plain ledger note"
+ },
+ "hemomancy.circus.school.ledger.wrong_audience.protect": {
+  "about": "a ledger step telling the player to pass the Mummer and Juggler practicals to show protective attention and deliberate focus",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.wrong_audience.report": {
+  "about": "a ledger step telling the player to report both accounts and practicals to a Threadkeeper at Degree 4",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.ledger.wrong_audience.testimony": {
+  "about": "a ledger step telling the player to hear the Stilt Walker's and the Dagger Thrower's accounts",
+  "tone": "plain ledger step"
+ },
+ "hemomancy.circus.school.not_ready": {
+  "about": "a professor saying the player needs active blood and the Degree the shape calls for before instruction can begin, and that nothing has been recorded",
+  "tone": "clipped, neutral"
+ },
+ "hemomancy.circus.school.passed": {
+  "about": "a professor marking the practical complete and praising the player's control",
+  "tone": "brief, approving"
+ },
+ "hemomancy.circus.school.practical": {
+  "about": "asking to begin their practical examination",
+  "tone": "plain"
+ },
+ "hemomancy.circus.school.preparation": {
+  "about": "a professor telling the player to attune a Marionette Crossbar and charge it at a Puppeteer's Spindle with spare Filaments, that a lesson shows only the ordeal recipe and the shape stays locked until the Cardinal Ordeal is beaten with its Degree, blood, frame and reusable Crossbar, and that a practical uses the player's own known bodies against two live rehearsal threats within twenty blocks and five minutes, retrying by recalling or walking off",
+  "tone": "practical, instructive"
+ },
+ "hemomancy.circus.school.report": {
+  "about": "asking the Threadkeeper to review their apprenticeship and investigation",
+  "tone": "plain"
+ },
+ "hemomancy.circus.school.report_complete": {
+  "about": "the Threadkeeper saying the player's completed work is entered in the account and the school recognizes the progress",
+  "tone": "dry, approving"
+ },
+ "hemomancy.circus.school.report_incomplete": {
+  "about": "the Threadkeeper saying there is still work to see and pointing the player to the Side section of their Assignment Ledger",
+  "tone": "dry, patient"
+ },
+ "hemomancy.circus.school.retry": {
+  "about": "a message that the practical is over, the player should return to the professor to retry, and their instruction and finished work stay on the record",
+  "tone": "neutral, reassuring"
+ },
+ "hemomancy.circus.school.reward": {
+  "about": "a message that guest payment is settled and a count of Filaments (the number) is set aside for collection from a Threadkeeper",
+  "tone": "brisk, dry"
+ },
+ "hemomancy.circus.school.reward.delivered": {
+  "about": "a message that guest payment is settled and a count of Filaments (the number) has been placed in the player's pack",
+  "tone": "brisk, dry"
+ },
+ "hemomancy.circus.school.ring_blocked": {
+  "about": "a message that the practice space is blocked or wet and the player should clear it before returning for the exercise",
+  "tone": "flat, practical"
+ },
+ "hemomancy.circus.school.ringmaster.curriculum": {
+  "about": "the Ringmaster saying the Troupe is a school as well as a show, listing the Acrobat's pursuit, Dagger Thrower's focus, Stilt Walker's attention, Strongman's protection, Beast Tamer's rupture, Fire Breather's restraint and Retired Understudy's memory, and that a lesson readies you for the ordeal, winning the ordeal gives the shape, and trust is earned in a practical",
+  "tone": "showman's, proud"
+ },
+ "hemomancy.circus.school.ringmaster.faculty": {
+  "about": "the Ringmaster saying the Threadkeeper prepares the player's instrument while he teaches coordination in the final act as it has always run, that the player may finish every lesson and refuse his offer or step into his act without every professor's approval, that the Brined Court is only a neighbor, and the Crossbar's strings are not theirs to give",
+  "tone": "showman's, sly"
+ },
+ "hemomancy.circus.school.status.degree": {
+  "about": "a professor saying the player has not reached the Degree their shape needs yet, and inviting them to study how it is built and the Troupe's history meanwhile",
+  "tone": "patient, even"
+ },
+ "hemomancy.circus.school.status.lesson": {
+  "about": "a professor saying the player is ready for personal instruction and offering to teach the shape",
+  "tone": "warm, brisk"
+ },
+ "hemomancy.circus.school.status.mastered": {
+  "about": "a professor saying the player has passed the practical and may rerun the exercise once per Minecraft day as a paid guest act",
+  "tone": "approving, brisk"
+ },
+ "hemomancy.circus.school.status.ordeal": {
+  "about": "a professor saying instruction is on record and the player must now prepare the frame and beat the shape's Cardinal Ordeal",
+  "tone": "brisk, instructive"
+ },
+ "hemomancy.circus.school.status.practical": {
+  "about": "a professor saying the player knows the shape and should call it on their own Crossbar and show its purpose in the rehearsal ring",
+  "tone": "brisk, expectant"
+ },
+ "hemomancy.circus.school.status.preparation": {
+  "about": "the Threadkeeper explaining that Crossbars, Filaments, inspections and reports all go through the Threadhouse while the final act belongs to the Ringmaster",
+  "tone": "dry, exact"
+ },
+ "hemomancy.circus.school.take_lesson": {
+  "about": "asking a professor to teach them their puppet shape",
+  "tone": "eager"
+ },
+ "hemomancy.circus.school.target": {
+  "about": "a short name label for the practice dummy",
+  "tone": "plain label"
+ },
+ "hemomancy.circus.school.testimony": {
+  "about": "asking about the wrong audience and the missing understudy",
+  "tone": "probing"
+ },
+ "hemomancy.circus.school.unlock_first": {
+  "about": "a message that the shape must be unlocked through its Cardinal Ordeal first, and that a guest act also needs a passed practical and an available daily payment",
+  "tone": "flat system"
+ },
+ "hemomancy.dialogue.circus_acrobat.line1": {
+  "about": "the Acrobat boasting that by the time anyone works out where they landed, they have already left",
+  "tone": "playful, quick"
+ },
+ "hemomancy.dialogue.circus_acrobat.line2": {
+  "about": "the Acrobat joking that people say they vanish when really the player guessed the landing too early",
+  "tone": "teasing"
+ },
+ "hemomancy.dialogue.circus_acrobat.line3": {
+  "about": "the Acrobat explaining that the Mummer draws the eye away and they strike a moment after the player turns",
+  "tone": "wry, matter-of-fact"
+ },
+ "hemomancy.dialogue.circus_fire_eater.line1": {
+  "about": "the Fire Breather explaining that swallowing fire really means teaching the body which burns to keep and which to breathe back out",
+  "tone": "measured, proud"
+ },
+ "hemomancy.dialogue.circus_fire_eater.line2": {
+  "about": "the Fire Breather saying the torch is only a staff-form and the real work is making the breath carry farther",
+  "tone": "measured, plain"
+ },
+ "hemomancy.dialogue.circus_fire_eater.line3": {
+  "about": "the Fire Breather admitting that without a watching crowd to hold the shape, they would only be burning their own throat",
+  "tone": "candid, dry"
+ },
+ "hemomancy.dialogue.circus_knife_thrower.line1": {
+  "about": "the Dagger Thrower claiming the blade goes where it's thrown and it is the hand pointing out the landing that lies",
+  "tone": "sardonic"
+ },
+ "hemomancy.dialogue.circus_knife_thrower.line2": {
+  "about": "the Dagger Thrower quipping that knives fly straight and it's the people who bend",
+  "tone": "dry, aphoristic"
+ },
+ "hemomancy.dialogue.circus_knife_thrower.line3": {
+  "about": "the Dagger Thrower saying the first nine marks teach distance and the tenth teaches when to hold the knife",
+  "tone": "sardonic, wise"
+ },
+ "hemomancy.dialogue.circus_performer.leave": {
+  "about": "a player response ending the conversation with a performer",
+  "tone": "curt"
+ },
+ "hemomancy.dialogue.circus_performer.welcome": {
+  "about": "a performer telling the stranger to stand in place and let every eye find them, since strangers do better when the whole pavilion looks at one person",
+  "tone": "theatrical, coaxing"
+ },
+ "hemomancy.dialogue.circus_stilt_walker.line1": {
+  "about": "the Stilt Walker saying that from up high they decide where the crowd looks for danger",
+  "tone": "calm, watchful"
+ },
+ "hemomancy.dialogue.circus_stilt_walker.line2": {
+  "about": "the Stilt Walker explaining the stilts are braces and that to understand their walk the player should watch the cords, not the feet",
+  "tone": "calm, dry"
+ },
+ "hemomancy.dialogue.circus_stilt_walker.line3": {
+  "about": "the Stilt Walker saying that once every eye rises to meet them, somebody else owns the floor",
+  "tone": "calm, quietly proud"
+ },
+ "hemomancy.dialogue.event.monolith_cornerstone_granted": {
+  "about": "narration of the Lodestone pressing a Monolithic Cornerstone into the player's hand, small, cold and far heavier than it should be",
+  "tone": "hushed, ominous"
+ },
+ "hemomancy.dialogue.event.monolith_cornerstone_known": {
+  "about": "narration that the Lodestone has already given the player its cornerstone and will not give another",
+  "tone": "flat, final"
+ },
+ "hemomancy.dialogue.event.monolith_cornerstone_unready": {
+  "about": "narration that the Lodestone stays silent because it answers only Archons who have worked a consecrated Armature",
+  "tone": "cold, withholding"
+ },
+ "hemomancy.dialogue.monolith.option.accept_cornerstone": {
+  "about": "accepting the Monolith's cornerstone, written as a bracketed action",
+  "tone": "solemn"
+ },
+ "hemomancy.dialogue.monolith.option.anchor_armature": {
+  "about": "asking the Monolith what the Armature still lacks",
+  "tone": "probing"
+ },
+ "hemomancy.dialogue.monolith.option.ask_about_item": {
+  "about": "asking the Monolith to weigh the item they carry",
+  "tone": "quiet, curious"
+ },
+ "hemomancy.dialogue.monolith.option.counsel": {
+  "about": "asking the Monolith what it would have them do",
+  "tone": "deferential"
+ },
+ "hemomancy.dialogue.monolith.option.does_it_know_me": {
+  "about": "asking the Monolith whether it knows them",
+  "tone": "wary, intimate"
+ },
+ "hemomancy.dialogue.monolith.option.leave": {
+  "about": "leaving the Monolith, written as a bracketed action",
+  "tone": "quiet"
+ },
+ "hemomancy.dialogue.monolith.option.press_further": {
+  "about": "asking the Monolith to press further",
+  "tone": "resolute, uneasy"
+ },
+ "hemomancy.dialogue.monolith.option.ripening": {
+  "about": "asking the Monolith what it means by ripening",
+  "tone": "uneasy"
+ },
+ "hemomancy.dialogue.monolith.option.the_others": {
+  "about": "asking the Monolith what became of the others who stood before it",
+  "tone": "somber"
+ },
+ "hemomancy.dialogue.monolith.option.what_are_you": {
+  "about": "asking the Monolith what it is",
+  "tone": "wary"
+ },
+ "hemomancy.dialogue.monolith.option.what_it_measures": {
+  "about": "asking the Monolith what it measures",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.monolith.option.what_opens": {
+  "about": "asking the Monolith what happens when it opens",
+  "tone": "tense"
+ },
+ "hemomancy.dialogue.monolith.option.what_remains": {
+  "about": "asking the Monolith what will remain of it",
+  "tone": "uneasy"
+ },
+ "hemomancy.dialogue.monolith.option.where_found": {
+  "about": "asking the Monolith where the Lodge found the thing it holds",
+  "tone": "curious, uneasy"
+ },
+ "hemomancy.dialogue.monolith.option.who_stood_here": {
+  "about": "asking the Monolith who stood here before them",
+  "tone": "quiet, curious"
+ },
+ "hemomancy.dialogue.monolith.option.why_now": {
+  "about": "asking the Monolith why it speaks to them now",
+  "tone": "suspicious"
+ },
+ "hemomancy.dialogue.rapport.circus_acrobat.first_fall": {
+  "about": "asking the Acrobat about their first fall",
+  "tone": "curious, friendly"
+ },
+ "hemomancy.dialogue.rapport.circus_acrobat.first_fall.line1": {
+  "about": "the Acrobat recalling a first fall off a barn roof, small, landing wrong, climbing back up, and still doing so",
+  "tone": "wry, warm"
+ },
+ "hemomancy.dialogue.rapport.circus_acrobat.first_fall.teaser": {
+  "about": "a short unlock teaser hinting at the Acrobat talking in falls, with the first one coming out after trading for a while",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_acrobat.no_net": {
+  "about": "asking the Acrobat whether they ever go up without a net",
+  "tone": "curious, careful"
+ },
+ "hemomancy.dialogue.rapport.circus_acrobat.no_net.line1": {
+  "about": "the Acrobat recalling the one time they climbed without a net and caught the rope a hand from the ground",
+  "tone": "quick, shaken"
+ },
+ "hemomancy.dialogue.rapport.circus_acrobat.no_net.line2": {
+  "about": "the Acrobat admitting they laughed for an hour and shook for two, and now the net goes up first every time",
+  "tone": "quiet, rueful"
+ },
+ "hemomancy.dialogue.rapport.circus_acrobat.no_net.teaser": {
+  "about": "a short unlock teaser hinting at a fall the Acrobat does not joke about",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_beast_tamer.first_animal": {
+  "about": "asking the Beast Tamer which animal was their first",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.circus_beast_tamer.first_animal.line1": {
+  "about": "the Beast Tamer remembering a one-eyed dog that came only to them after a month of sitting still, where the empty cage idea began",
+  "tone": "gentle, fond"
+ },
+ "hemomancy.dialogue.rapport.circus_beast_tamer.first_animal.teaser": {
+  "about": "a short unlock teaser hinting at the Beast Tamer talking about animals and about themselves once trust is earned",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_beast_tamer.the_spider": {
+  "about": "asking the Beast Tamer whether they ever lost an animal to the show",
+  "tone": "careful, sympathetic"
+ },
+ "hemomancy.dialogue.rapport.circus_beast_tamer.the_spider.line1": {
+  "about": "the Beast Tamer remembering a little peacock spider who danced better than any of them",
+  "tone": "fond, sad"
+ },
+ "hemomancy.dialogue.rapport.circus_beast_tamer.the_spider.line2": {
+  "about": "the Beast Tamer saying too many eyes on her for too many nights cost the spider, and that animals tell you when enough is enough",
+  "tone": "regretful, gentle"
+ },
+ "hemomancy.dialogue.rapport.circus_beast_tamer.the_spider.teaser": {
+  "about": "a short unlock teaser hinting at an empty cage the Beast Tamer will not explain to strangers",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_fire_eater.first_flame": {
+  "about": "asking the Fire Breather how they learned to breathe fire",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.rapport.circus_fire_eater.first_flame.line1": {
+  "about": "the Fire Breather explaining they learned slowly over a winter, one second of flame then three of breath, a whole season for one second",
+  "tone": "measured, wry"
+ },
+ "hemomancy.dialogue.rapport.circus_fire_eater.first_flame.teaser": {
+  "about": "a short unlock teaser hinting at the Fire Breather counting everything, their own story too, if the player counts along",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_fire_eater.the_burn": {
+  "about": "asking the Fire Breather whether they were ever badly burned",
+  "tone": "careful, curious"
+ },
+ "hemomancy.dialogue.rapport.circus_fire_eater.the_burn.line1": {
+  "about": "the Fire Breather admitting to one burn from four seconds when they meant three, and now counting aloud so the crowd hears",
+  "tone": "measured, rueful"
+ },
+ "hemomancy.dialogue.rapport.circus_fire_eater.the_burn.line2": {
+  "about": "the Fire Breather reciting the count one, two, three, stop, and saying the rest is costume and crowd",
+  "tone": "flat, rhythmic"
+ },
+ "hemomancy.dialogue.rapport.circus_fire_eater.the_burn.teaser": {
+  "about": "a short unlock teaser hinting at one count the Fire Breather keeps to themselves",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_knife_thrower.first_knife": {
+  "about": "asking the Dagger Thrower who taught them to throw",
+  "tone": "curious, teasing"
+ },
+ "hemomancy.dialogue.rapport.circus_knife_thrower.first_knife.line1": {
+  "about": "the Dagger Thrower claiming to be self-taught, badly, and bantering that the Strongman says they throw like a sailor, while sailors are actually better",
+  "tone": "sardonic, amused"
+ },
+ "hemomancy.dialogue.rapport.circus_knife_thrower.first_knife.teaser": {
+  "about": "a short unlock teaser hinting at the Dagger Thrower arguing with anyone and, after trading, arguing about themselves",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_knife_thrower.the_miss": {
+  "about": "asking the Dagger Thrower whether they have ever missed",
+  "tone": "careful"
+ },
+ "hemomancy.dialogue.rapport.circus_knife_thrower.the_miss.line1": {
+  "about": "the Dagger Thrower admitting to one miss, because knives fly straight and the people bend, and that night they bent",
+  "tone": "sardonic, subdued"
+ },
+ "hemomancy.dialogue.rapport.circus_knife_thrower.the_miss.line2": {
+  "about": "the Dagger Thrower saying she forgave them, they did not forgive themselves, and they still argue over who is right",
+  "tone": "quiet, rueful"
+ },
+ "hemomancy.dialogue.rapport.circus_knife_thrower.the_miss.teaser": {
+  "about": "a short unlock teaser hinting at one throw the Dagger Thrower does not laugh about",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_ringmaster.the_hat": {
+  "about": "asking the Ringmaster where he got the hat",
+  "tone": "curious, pointed"
+ },
+ "hemomancy.dialogue.rapport.circus_ringmaster.the_hat.line1": {
+  "about": "the Ringmaster saying the player will get the hat the way he did, by learning every act and holding every eye and taking it off a head that cannot hold the ring",
+  "tone": "showman's, cold"
+ },
+ "hemomancy.dialogue.rapport.circus_ringmaster.the_hat.teaser": {
+  "about": "a short unlock teaser hinting at the Ringmaster selling a show while the man behind it costs more",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_ringmaster.the_understudies": {
+  "about": "asking the Ringmaster whether he thinks about the understudies on the carousel",
+  "tone": "confronting, grave"
+ },
+ "hemomancy.dialogue.rapport.circus_ringmaster.the_understudies.line1": {
+  "about": "the Ringmaster admitting he thinks of the understudies every show, that he put them there, and would do it again",
+  "tone": "flat, unrepentant"
+ },
+ "hemomancy.dialogue.rapport.circus_ringmaster.the_understudies.line2": {
+  "about": "the Ringmaster telling the player not to wait for his apology but to watch the carousel, count the captives, and then decide what he is",
+  "tone": "cold, challenging"
+ },
+ "hemomancy.dialogue.rapport.circus_ringmaster.the_understudies.teaser": {
+  "about": "a short unlock teaser hinting at one subject the Ringmaster will not play to the crowd",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_stilt_walker.the_carousel": {
+  "about": "asking the Stilt Walker whether they could have stopped the carousel",
+  "tone": "careful, grave"
+ },
+ "hemomancy.dialogue.rapport.circus_stilt_walker.the_carousel.line1": {
+  "about": "the Stilt Walker saying they saw the carousel start from up high and came down too slowly",
+  "tone": "quiet, guilty"
+ },
+ "hemomancy.dialogue.rapport.circus_stilt_walker.the_carousel.line2": {
+  "about": "the Stilt Walker vowing to keep watching, refusing to call a dead captive a liberated student, and promising not to miss another",
+  "tone": "firm, grave"
+ },
+ "hemomancy.dialogue.rapport.circus_stilt_walker.the_carousel.teaser": {
+  "about": "a short unlock teaser hinting at the Stilt Walker watching the carousel more closely than the crowd",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_stilt_walker.the_view": {
+  "about": "asking the Stilt Walker what they see from up there",
+  "tone": "curious, quiet"
+ },
+ "hemomancy.dialogue.rapport.circus_stilt_walker.the_view.line1": {
+  "about": "the Stilt Walker saying they see who is lost, hurt or about to be, and watch the small ones first",
+  "tone": "quiet, tender"
+ },
+ "hemomancy.dialogue.rapport.circus_stilt_walker.the_view.teaser": {
+  "about": "a short unlock teaser hinting at the Stilt Walker seeing a great deal and saying little of it",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_strongman.good_for": {
+  "about": "asking the Strongman what strength is for",
+  "tone": "curious, respectful"
+ },
+ "hemomancy.dialogue.rapport.circus_strongman.good_for.line1": {
+  "about": "the Strongman answering that strength is for holding things up, mostly people",
+  "tone": "gruff, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_strongman.good_for.line2": {
+  "about": "the Strongman turning the question back on the player, asking what their strength is for, since strong and good for nothing comes to nothing",
+  "tone": "gruff, challenging"
+ },
+ "hemomancy.dialogue.rapport.circus_strongman.good_for.teaser": {
+  "about": "a short unlock teaser hinting at the Strongman having a question for the player once he trusts them",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_strongman.the_anvil": {
+  "about": "asking the Strongman how they got so strong",
+  "tone": "curious, respectful"
+ },
+ "hemomancy.dialogue.rapport.circus_strongman.the_anvil.line1": {
+  "about": "the Strongman explaining he carried his father's anvil every day until it felt light",
+  "tone": "gruff, terse"
+ },
+ "hemomancy.dialogue.rapport.circus_strongman.the_anvil.teaser": {
+  "about": "a short unlock teaser hinting at the Strongman not talking to people he does not know",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_threadkeeper.own_debt": {
+  "about": "asking the Threadkeeper whether they owe anyone",
+  "tone": "careful, curious"
+ },
+ "hemomancy.dialogue.rapport.circus_threadkeeper.own_debt.line1": {
+  "about": "the Threadkeeper admitting to one red entry near the front of the ledger, written the night they joined",
+  "tone": "dry, subdued"
+ },
+ "hemomancy.dialogue.rapport.circus_threadkeeper.own_debt.line2": {
+  "about": "the Threadkeeper saying a little goes against the entry every show, it will never close, and they pay anyway",
+  "tone": "dry, resigned"
+ },
+ "hemomancy.dialogue.rapport.circus_threadkeeper.own_debt.teaser": {
+  "about": "a short unlock teaser hinting at one ledger entry the Threadkeeper will not read aloud",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_threadkeeper.the_ledger": {
+  "about": "asking the Threadkeeper what they keep in that ledger",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.rapport.circus_threadkeeper.the_ledger.line1": {
+  "about": "the Threadkeeper explaining the ledger tracks who owes, who is owed, and who has stopped paying attention, and that the third column gets checked twice",
+  "tone": "dry, exact"
+ },
+ "hemomancy.dialogue.rapport.circus_threadkeeper.the_ledger.teaser": {
+  "about": "a short unlock teaser hinting at the Threadkeeper keeping accounts, with the player's still short",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_understudy.best_role": {
+  "about": "asking the Retired Understudy about their best role",
+  "tone": "warm, curious"
+ },
+ "hemomancy.dialogue.rapport.circus_understudy.best_role.line1": {
+  "about": "the Retired Understudy recalling a best role as second gravedigger for three seasons without a flubbed line, covering the lead's mistakes",
+  "tone": "wistful, fond"
+ },
+ "hemomancy.dialogue.rapport.circus_understudy.best_role.teaser": {
+  "about": "a short unlock teaser hinting at the Understudy remembering every name on every bill, if asked nicely and often",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.circus_understudy.the_missing": {
+  "about": "asking the Retired Understudy whether they remember the missing performers",
+  "tone": "gentle, grave"
+ },
+ "hemomancy.dialogue.rapport.circus_understudy.the_missing.line1": {
+  "about": "the Retired Understudy saying they remember each missing performer's name, cues, and the side of the stage they waited on",
+  "tone": "wistful, tender"
+ },
+ "hemomancy.dialogue.rapport.circus_understudy.the_missing.line2": {
+  "about": "the Retired Understudy admitting they whisper the missing performers' names in the wings before each show so somebody gives them their call",
+  "tone": "hushed, tender"
+ },
+ "hemomancy.dialogue.rapport.circus_understudy.the_missing.teaser": {
+  "about": "a short unlock teaser hinting at a list of names the Understudy does not read to strangers",
+  "tone": "teasing, plain"
+ },
+ "hemomancy.dialogue.rapport.monolith.the_reading": {
+  "about": "asking the Monolith what the player's blood tells it",
+  "tone": "uneasy, curious"
+ },
+ "hemomancy.dialogue.rapport.monolith.the_reading.line1": {
+  "about": "the Monolith saying blood does not lie about its weight, the player's is heavier than last time, and that is all it says so far",
+  "tone": "heavy, terse"
+ },
+ "hemomancy.dialogue.rapport.monolith.the_reading.teaser": {
+  "about": "a short unlock teaser hinting at tithing to the stone for a while so it may say what it reads in the player",
+  "tone": "heavy, hushed"
+ },
+ "hemomancy.dialogue.rapport.monolith.where_it_goes": {
+  "about": "asking the Monolith where the blood goes",
+  "tone": "wary"
+ },
+ "hemomancy.dialogue.rapport.monolith.where_it_goes.line1": {
+  "about": "a bracketed description of the stone being warmer where the player's blood went in, followed by the Monolith saying nothing given here stays here",
+  "tone": "heavy, unsettling"
+ },
+ "hemomancy.dialogue.rapport.monolith.where_it_goes.line2": {
+  "about": "the Monolith saying the blood goes down into a great deal of depth, where something has been told the player's name",
+  "tone": "heavy, intimate"
+ },
+ "hemomancy.dialogue.rapport.monolith.where_it_goes.teaser": {
+  "about": "a short unlock teaser hinting at giving the stone enough blood so it may say where the blood goes",
+  "tone": "heavy, hushed"
+ },
+ "hemomancy.monolith.already_breaking": {
+  "about": "narration that the stone has already begun to answer and the player should let it fall",
+  "tone": "hushed, ominous"
+ },
+ "hemomancy.monolith.archon.press_again": {
+  "about": "a bracketed description of the stone fever-hot and painful to touch, then the Monolith asking whether the player truly wants to press once more and break it open",
+  "tone": "heavy, intimate, ominous"
+ },
+ "hemomancy.monolith.armature_cornerstone.given": {
+  "about": "narration of the cornerstone cube separating from the Lodestone without breaking it, leaving a hollow that hums low and warm",
+  "tone": "hushed, reverent"
+ },
+ "hemomancy.monolith.armature_cornerstone.line1": {
+  "about": "the Monolith saying the rack has been taught to hold blood and ceremony by the Vicar but no one has taught it silence",
+  "tone": "heavy, terse"
+ },
+ "hemomancy.monolith.armature_cornerstone.line2": {
+  "about": "the Monolith telling the player to take the small weight from it and offer it at a lit brazier in the Rite of the Monolithic Armature, so the consecrated frame will remember armor no voice should wear",
+  "tone": "heavy, instructive"
+ },
+ "hemomancy.monolith.counsel.bind_throne": {
+  "about": "the Monolith's counsel, telling the player to bind a Covenant Throne to their Fane and sit in it, because it wants the covenant to have a seat",
+  "tone": "heavy, instructive"
+ },
+ "hemomancy.monolith.counsel.chamber_return": {
+  "about": "the Monolith's counsel, telling the player that their own rite opens the Chamber of Will using a Grand Threshold floor and an echo shard in the brazier, and that they must go in and come back out, since a guided visit does not count",
+  "tone": "heavy, instructive"
+ },
+ "hemomancy.monolith.counsel.complete_vigil": {
+  "about": "the Monolith's counsel, telling the player to summon a recruited Vicar to the Fane with their ancestral ledger, give them a rite station for the Covenant Vigil, and keep them there to the end, since an interrupted vigil earns nothing",
+  "tone": "heavy, instructive"
+ },
+ "hemomancy.monolith.counsel.found_bloodline": {
+  "about": "the Monolith's counsel, saying the stone reads no line in the player, and telling them to perform the Rite of Bloodline Founding at Lesser Communion with blaze powder in the brazier, because an unsigned ledger founds nothing",
+  "tone": "heavy, instructive"
+ },
+ "hemomancy.monolith.counsel.found_fane": {
+  "about": "the Monolith's counsel that the line is founded but the ground is not: perform the Rite of the Founding Fane at Grand Dominion with Sanguine Quintessence in the Focus, a Nautilus Shell in the brazier, and a Bloodwell and Stakes bound; if the line already has a Fane, stand inside it and project into its Bloodwell yourself",
+  "tone": "heavy, instructive"
+ },
+ "hemomancy.monolith.counsel.past_the_seed": {
+  "about": "the Monolith's counsel, saying the player already carried a Seed out of a stone like it, that it sets no more conditions, and that pressing further for another will not change what they are",
+  "tone": "heavy, instructive"
+ },
+ "hemomancy.monolith.counsel.perform_bloodline_rite": {
+  "about": "the Monolith's counsel, saying the Line and Fane stand and one condition remains: the Rite of the Bloodline Covenant, which opens the sixth Degree",
+  "tone": "heavy, instructive"
+ },
+ "hemomancy.monolith.counsel.perform_hematic_order_rite": {
+  "about": "the Monolith's counsel, saying the player came back, sat and kept the Vigil, that it felt each, and telling them to perform the Rite of the Hematic Order",
+  "tone": "heavy, instructive"
+ },
+ "hemomancy.monolith.counsel.press_further": {
+  "about": "the Monolith's counsel, saying it has no more conditions, that pressing further opens it, and that the Qliphoth Seed inside is not handed over but must be taken by the player",
+  "tone": "heavy, instructive"
+ },
+ "hemomancy.monolith.dormant": {
+  "about": "narration that the stone has nothing more to say",
+  "tone": "flat, cold"
+ },
+ "hemomancy.monolith.gate.elsewhere": {
+  "about": "a message that part of the player is elsewhere and the stone will not open for what is left",
+  "tone": "cold, withholding"
+ },
+ "hemomancy.monolith.gate.hint": {
+  "about": "a hint that the eye has closed but not gone, and would look again for a little of the player's blood",
+  "tone": "hushed, uncanny"
+ },
+ "hemomancy.monolith.gate.inside": {
+  "about": "a message that the player is already where the stone leads",
+  "tone": "quiet, eerie"
+ },
+ "hemomancy.monolith.gate.no_blood": {
+  "about": "a message that too little of the player remains to wake the stone",
+  "tone": "cold, flat"
+ },
+ "hemomancy.monolith.gate.refused": {
+  "about": "a message that the stone does not know the player's blood",
+  "tone": "cold, flat"
+ },
+ "hemomancy.monolith.guidance.archon.line1": {
+  "about": "the Monolith telling an Archon it has been waiting for them, that someone like them would not do, and that it had to be them",
+  "tone": "intimate, wrong"
+ },
+ "hemomancy.monolith.guidance.archon.line2": {
+  "about": "a bracketed description of the stone hot under the palm with something shifting its weight in a space too small for it, felt more than heard",
+  "tone": "unsettling, hushed"
+ },
+ "hemomancy.monolith.guidance.illuminatus.line1": {
+  "about": "a bracketed description of the stone faintly warm under the player's touch, which is new",
+  "tone": "hushed, uncanny"
+ },
+ "hemomancy.monolith.guidance.illuminatus.line2": {
+  "about": "the Monolith addressing an Illuminatus, saying the Lodge's gates stand open, the Vicar no longer walks ahead, the stone will counsel from here, the mycelial network under their feet whispers of dormant power, and the stone believes they are beginning to hear it",
+  "tone": "cold, formal"
+ },
+ "hemomancy.monolith.guidance.sanctified.line1": {
+  "about": "a bracketed description of the stone warm and yielding under the palm like skin over muscle",
+  "tone": "hushed, uncanny"
+ },
+ "hemomancy.monolith.guidance.sanctified.line2": {
+  "about": "the Monolith addressing a Sanctified of the Covenant, saying the Loom taught them to make memory on purpose and it would now have them enter the inward room, since their own rite opens the Chamber of Will where memory, scar and will become architecture",
+  "tone": "warmer, heavy"
+ },
+ "hemomancy.monolith.item_hint": {
+  "about": "the prompt inviting the player to bring an item close so the stone can weigh it, noting that it says little",
+  "tone": "heavy, terse"
+ },
+ "hemomancy.monolith.item_inquiry.fragment.line1": {
+  "about": "the Monolith saying a fragment is still warm with remembered pressure and quiet, though memory moves through it",
+  "tone": "cold, measured"
+ },
+ "hemomancy.monolith.item_inquiry.fragment.line2": {
+  "about": "the Monolith warning to use the fragment carefully because alone it teaches nothing and only resonates",
+  "tone": "cold, cautionary"
+ },
+ "hemomancy.monolith.item_inquiry.minecraft_relic.line1": {
+  "about": "the Monolith confirming the old world kept such relics and that this one resonates with thresholds, anchors and return paths",
+  "tone": "cold, measured"
+ },
+ "hemomancy.monolith.item_inquiry.minecraft_relic.line2": {
+  "about": "the Monolith advising that a familiar relic can still serve an uncommon rite and should be treated as unknown until its place is learned",
+  "tone": "cold, cautionary"
+ },
+ "hemomancy.monolith.item_inquiry.qliphoth.line1": {
+  "about": "the Monolith saying Qliphoth reagents open a path where doctrine thins and, once the player stands on it, draw them forward",
+  "tone": "heavy, ominous"
+ },
+ "hemomancy.monolith.item_inquiry.qliphoth.line2": {
+  "about": "the Monolith telling the player to proceed only if they intend to finish the conversation",
+  "tone": "heavy, ominous"
+ },
+ "hemomancy.monolith.item_inquiry.rite_sites.line1": {
+  "about": "the Monolith saying the item belongs to the high covenant sequence of foundation, offering, witness and consequence",
+  "tone": "cold, formal"
+ },
+ "hemomancy.monolith.item_inquiry.rite_sites.line2": {
+  "about": "the Monolith telling the player they are no longer assembling tools but assembling conditions",
+  "tone": "heavy, pointed"
+ },
+ "hemomancy.monolith.item_inquiry.saint.line1": {
+  "about": "the Monolith saying Saint matter and Saint echoes suit the oldest rites because they have already outlasted one fall",
+  "tone": "cold, measured"
+ },
+ "hemomancy.monolith.item_inquiry.saint.line2": {
+  "about": "the Monolith saying what the player carries proves continuity, not victory",
+  "tone": "cold, pointed"
+ },
+ "hemomancy.monolith.lodestone_name": {
+  "about": "the display name of the Monolith's stone object, the Crimson Lodestone",
+  "tone": "plain label"
+ },
+ "hemomancy.monolith.lore.does_it_know_me.line1": {
+  "about": "the Monolith saying it knows the player's weight and that it has changed since they first stood there",
+  "tone": "intimate, heavy"
+ },
+ "hemomancy.monolith.lore.does_it_know_me.line2": {
+  "about": "the Monolith saying it keeps every change and what it keeps, it reads",
+  "tone": "intimate, heavy"
+ },
+ "hemomancy.monolith.lore.ripening.line1": {
+  "about": "a bracketed description of the stone hot, damp and leaning toward the player's hand, then the Monolith saying the player knows the word ripening and has felt it under the skin",
+  "tone": "intimate, wrong"
+ },
+ "hemomancy.monolith.lore.ripening.line2": {
+  "about": "the Monolith saying the Degrees were a calendar, it only kept the count, and asking whether no one told the player",
+  "tone": "quiet, unsettling"
+ },
+ "hemomancy.monolith.lore.the_others.line1": {
+  "about": "the Monolith saying some climbed past it and some stopped there and stayed stopped",
+  "tone": "heavy, flat"
+ },
+ "hemomancy.monolith.lore.the_others.line2": {
+  "about": "the Monolith saying it kept the weight of each but the weight does not say where they went",
+  "tone": "heavy, withholding"
+ },
+ "hemomancy.monolith.lore.what_it_measures.line1": {
+  "about": "the Monolith saying it reads what the work leaves in the blood, which the Lodge called a record",
+  "tone": "cold, measured"
+ },
+ "hemomancy.monolith.lore.what_it_measures.line2": {
+  "about": "the Monolith saying the record is accurate but the Lodge never asked who reads it",
+  "tone": "cold, pointed"
+ },
+ "hemomancy.monolith.lore.what_opens.line1": {
+  "about": "the Monolith saying that when it opens it stops being a stone and what it holds stops being held",
+  "tone": "heavy, ominous"
+ },
+ "hemomancy.monolith.lore.what_opens.line2": {
+  "about": "the Monolith saying the player will walk to what it holds and take it themselves, may turn back, and asking whether they will",
+  "tone": "intimate, ominous"
+ },
+ "hemomancy.monolith.lore.what_remains.line1": {
+  "about": "the Monolith saying a split, quiet husk will remain that keeps the shape of the door",
+  "tone": "heavy, quiet"
+ },
+ "hemomancy.monolith.lore.what_remains.line2": {
+  "about": "the Monolith saying the husk will know the player's blood and, if fed, will look again",
+  "tone": "heavy, quiet"
+ },
+ "hemomancy.monolith.lore.where_found.line1": {
+  "about": "a bracketed description of the stone yielding warm as a forearm, then the Monolith saying what it holds was found deep under old rock as a red vein in the Second Age",
+  "tone": "intimate, uneasy"
+ },
+ "hemomancy.monolith.lore.where_found.line2": {
+  "about": "the Monolith saying the Lodge cut the thing free and closed the stone around it, kept careful notes, and did not keep it asleep",
+  "tone": "heavy, ominous"
+ },
+ "hemomancy.monolith.lore.who_stood_here.line1": {
+  "about": "a bracketed description of the warmth under the player's hand not changing, then the Monolith saying those who came this far are kept as weight, not faces",
+  "tone": "heavy, quiet"
+ },
+ "hemomancy.monolith.lore.who_stood_here.line2": {
+  "about": "the Monolith saying few came back a second time and each stood where the player stands",
+  "tone": "heavy, quiet"
+ },
+ "hemomancy.monolith.lore.why_now.line1": {
+  "about": "the Monolith saying the Vicar has stepped back and no one stands above the player at the outpost now",
+  "tone": "cold, plain"
+ },
+ "hemomancy.monolith.lore.why_now.line2": {
+  "about": "the Monolith saying the stone takes the Vicar's place and has waited for this Degree",
+  "tone": "cold, plain"
+ },
+ "hemomancy.monolith.overgrown": {
+  "about": "narration that something takes root in the stone's cracks and will not be giving it back",
+  "tone": "ominous, hushed"
+ },
+ "hemomancy.monolith.unworthy": {
+  "about": "narration that the monolith is silent, cold and hard under the player's hand because they have not yet proven themselves worthy",
+  "tone": "cold, withholding"
+ },
+ "hemomancy.monolith.what_are_you.archon": {
+  "about": "the Monolith telling a close Archon it can speak plainly: what is inside it knows what is inside them, they are the same thing, and asking if they feel it ripening",
+  "tone": "intimate, wrong"
+ },
+ "hemomancy.monolith.what_are_you.illuminatus": {
+  "about": "the Monolith describing itself as a lodestone of the Order built by the Crimson Lodge in the Second Age to measure, which it does, remembering every Harbinger who stood before it, every degree and every name, while also watching what it measures",
+  "tone": "cold, official"
+ },
+ "hemomancy.monolith.what_are_you.sanctified": {
+  "about": "the Monolith admitting it contains something, sealed in the stone by the Lodge in the Second Age, which they called measurement",
+  "tone": "heavy, candid"
+ },
+ "hemomancy.trade.circus_acrobat.rigging_line.line": {
+  "about": "a trade card line from the Acrobat offering eight String for rigging line, saying rigging comes first and it's for when the player falls",
+  "tone": "quick, cheerful"
+ },
+ "hemomancy.trade.circus_acrobat.rigging_line.title": {
+  "about": "a short title for the trade card about rigging line",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_acrobat.thanks": {
+  "about": "the Acrobat thanking the player after a trade and wishing them a soft landing",
+  "tone": "warm, quick"
+ },
+ "hemomancy.trade.circus_beast_tamer.feed.line": {
+  "about": "a trade card line from the Beast Tamer saying goats eat first and that eight wheat buys a name tag for an animal the player means to keep",
+  "tone": "gentle, practical"
+ },
+ "hemomancy.trade.circus_beast_tamer.feed.title": {
+  "about": "a short title for the trade card about feed",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_beast_tamer.thanks": {
+  "about": "the Beast Tamer thanking the player and saying the animals will eat well tonight",
+  "tone": "warm, gentle"
+ },
+ "hemomancy.trade.circus_fire_eater.fuel.line": {
+  "about": "a trade card line from the Fire Breather asking four blaze powder counted out, giving a draught back so the fire waits its turn",
+  "tone": "measured, counting"
+ },
+ "hemomancy.trade.circus_fire_eater.fuel.title": {
+  "about": "a short title for the trade card about fuel",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_fire_eater.thanks": {
+  "about": "the Fire Breather thanking the player after counting all four items",
+  "tone": "measured, brief"
+ },
+ "hemomancy.trade.circus_knife_thrower.appraise.poor": {
+  "about": "the Dagger Thrower rejecting a trade item as a bent stick, not a blade, which even they won't throw",
+  "tone": "sardonic, dismissive"
+ },
+ "hemomancy.trade.circus_knife_thrower.thanks": {
+  "about": "the Dagger Thrower, after repairing a blade, saying it's as straight as a knife, which is to say mostly",
+  "tone": "sardonic, amused"
+ },
+ "hemomancy.trade.circus_knife_thrower.thanks_fine": {
+  "about": "the Dagger Thrower grudgingly admiring the edge of a fine blade and admitting the player keeps a good one",
+  "tone": "sardonic, grudgingly warm"
+ },
+ "hemomancy.trade.circus_knife_thrower.worn_blades.line": {
+  "about": "a trade card line from the Dagger Thrower accepting any worn sword and insisting it's balanced better than new, though nobody agrees",
+  "tone": "sardonic"
+ },
+ "hemomancy.trade.circus_knife_thrower.worn_blades.title": {
+  "about": "a short title for the trade card about worn blades",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_ringmaster.bell.line": {
+  "about": "a trade card line from the Ringmaster asking for a bell from a player of the fourth Degree, paying four Filaments to string the act",
+  "tone": "showman's, brisk"
+ },
+ "hemomancy.trade.circus_ringmaster.bell.title": {
+  "about": "a short title for the trade card about a bell for the act",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_ringmaster.curiosity.line": {
+  "about": "a trade card line from the Ringmaster asking for something strange like a relic, trophy or wreck salvage, saying rarer means a louder crowd",
+  "tone": "showman's, greedy"
+ },
+ "hemomancy.trade.circus_ringmaster.curiosity.title": {
+  "about": "a short title for the trade card about a curiosity",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_ringmaster.ring_planks.line": {
+  "about": "a trade card line from the Ringmaster asking for sixteen planks because the ring takes a beating every night and must be fed",
+  "tone": "showman's, wry"
+ },
+ "hemomancy.trade.circus_ringmaster.ring_planks.title": {
+  "about": "a short title for the trade card about planks for the ring",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_ringmaster.spectacle.line": {
+  "about": "a trade card line from the Ringmaster offering payment for holding a performance to its end without looking away or leaving",
+  "tone": "showman's, commanding"
+ },
+ "hemomancy.trade.circus_ringmaster.spectacle.title": {
+  "about": "a short title for the trade card about a spectacle",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_ringmaster.thanks": {
+  "about": "the Ringmaster thanking the player after a trade, saying he hears the crowd, or soon will",
+  "tone": "showman's, pleased"
+ },
+ "hemomancy.trade.circus_ringmaster.thanks_fine": {
+  "about": "the Ringmaster praising a rare, strange trade item as a proper act that is now his",
+  "tone": "showman's, delighted"
+ },
+ "hemomancy.trade.circus_stilt_walker.sticks.line": {
+  "about": "a trade card line from the Stilt Walker asking sixteen sticks to make new legs because theirs are wearing short, giving scaffolding in return, and telling the player to climb slowly",
+  "tone": "calm, dry"
+ },
+ "hemomancy.trade.circus_stilt_walker.sticks.title": {
+  "about": "a short title for the trade card about sticks",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_stilt_walker.thanks": {
+  "about": "the Stilt Walker thanking the player and telling them to mind their footing when high up",
+  "tone": "calm, kind"
+ },
+ "hemomancy.trade.circus_strongman.iron_bar.line": {
+  "about": "a trade card line from the Strongman asking four iron for his bar and calling the return strength in a bottle to spend on somebody",
+  "tone": "gruff, blunt"
+ },
+ "hemomancy.trade.circus_strongman.iron_bar.title": {
+  "about": "a short title for the trade card about iron for the bar",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_strongman.thanks": {
+  "about": "the Strongman thanking the player and telling them to carry something that isn't theirs",
+  "tone": "gruff, approving"
+ },
+ "hemomancy.trade.circus_threadkeeper.ledger_paper.line": {
+  "about": "a trade card line from the Threadkeeper asking six sheets of paper entered against two Enthralling Filaments, saying the account balances",
+  "tone": "dry, exact"
+ },
+ "hemomancy.trade.circus_threadkeeper.ledger_paper.title": {
+  "about": "a short title for the trade card about paper for the ledger",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_threadkeeper.thanks": {
+  "about": "the Threadkeeper confirming the trade is entered and nothing is owed either way",
+  "tone": "dry, exact"
+ },
+ "hemomancy.trade.circus_understudy.prompt_books.line": {
+  "about": "a trade card line from the Retired Understudy asking three books for the prompt corner where somebody keeps the names, offering a mask and a warning to mind the flubs",
+  "tone": "wistful, gentle"
+ },
+ "hemomancy.trade.circus_understudy.prompt_books.title": {
+  "about": "a short title for the trade card about books for the prompt corner",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.circus_understudy.thanks": {
+  "about": "the Retired Understudy thanking the player and promising their name goes in the prompt book",
+  "tone": "wistful, warm"
+ },
+ "hemomancy.trade.monolith.deep.line": {
+  "about": "a trade card line from the Monolith naming a 1,000 mL measure from the sixth Degree that gives two poultices as the weight goes down",
+  "tone": "heavy, terse"
+ },
+ "hemomancy.trade.monolith.deep.title": {
+  "about": "a short title for the trade card about the deep measure",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.monolith.measure.line": {
+  "about": "a trade card line from the Monolith naming a measure where the player puts a palm to the stone, gives 500 mL, and receives two salves",
+  "tone": "heavy, terse"
+ },
+ "hemomancy.trade.monolith.measure.title": {
+  "about": "a short title for the trade card about a measure",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.monolith.thanks": {
+  "about": "the Monolith noting the trade and saying the weight is kept",
+  "tone": "heavy, terse"
+ },
+ "hemomancy.trade.monolith.weight.line": {
+  "about": "a trade card line from the Monolith naming a heavier measure of 750 mL against the stone, returning one warm poultice",
+  "tone": "heavy, terse"
+ },
+ "hemomancy.trade.monolith.weight.title": {
+  "about": "a short title for the trade card about a heavier measure",
+  "tone": "plain label"
+ },
+ "message.hemomancy.circus.route.chosen.liberation": {
+  "about": "a system message that the player is bound to Liberation, must sever the captives' threads and break the carousel's anchors, and can change their mind once",
+  "tone": "flat system"
+ },
+ "message.hemomancy.circus.route.chosen.succession": {
+  "about": "a system message that the player is bound to Succession, must learn every act and then come for the Ringmaster's hat, and can change their mind once",
+  "tone": "flat system"
+ },
+ "message.hemomancy.circus_ringmaster_entity.thread_ripper_remains_in_its_memory": {
+  "about": "a system message that Thread Ripper remains in the creature's memory and should be kept until it can be absorbed at a lit Iron Brazier",
+  "tone": "flat system"
+ }
+}

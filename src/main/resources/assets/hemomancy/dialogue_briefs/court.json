@@ -1,0 +1,2134 @@
+{
+ "hemomancy.alchemist.court.known.alchemist": {
+  "about": "the Alchemist reminding the player that the best cultivators are not the Order's and telling them to ask a Voyager for the Relay Chart",
+  "tone": "dry, impatient"
+ },
+ "hemomancy.alchemist.court.known.found": {
+  "about": "the Alchemist asking the player, who found the Court unaided, whether the strains looked healthier in the Court's beds than in the Alchemist's jars",
+  "tone": "dry, curious"
+ },
+ "hemomancy.alchemist.court.known.letter": {
+  "about": "the Alchemist saying the player has already read the Court's letter, which spares the Alchemist a speech they would have given badly",
+  "tone": "dry, wry"
+ },
+ "hemomancy.alchemist.court.known.voyager": {
+  "about": "the Alchemist noting the Voyagers got to the player first, and that they have seen the Court's beds while the Alchemist has only seen samples",
+  "tone": "dry, grudging"
+ },
+ "hemomancy.alchemist.court.lead.line1": {
+  "about": "the Alchemist, noting the player's strain is past Mature, bluntly saying the best cultivators of these lines are not in the Order and its Latin is an outsider's catalog",
+  "tone": "dry, candid"
+ },
+ "hemomancy.alchemist.court.lead.line2": {
+  "about": "the Alchemist saying the cultivators are at sea, telling the player to ask a Voyager or follow the coast, and asking for a sample of what the Court feeds its strains",
+  "tone": "dry, eager"
+ },
+ "hemomancy.alchemist.court.letter_lost": {
+  "about": "the Alchemist asking what seal was on a sealed letter the player lost from a drowned Votary, and saying Sunburst crust means the Brined Court and a Voyager can chart it",
+  "tone": "dry, probing"
+ },
+ "hemomancy.court.amends": {
+  "about": "a short system message that the player's offering is accepted and the Giving Light counts them a guest again",
+  "tone": "solemn, forgiving"
+ },
+ "hemomancy.court.arbor.directions.line1": {
+  "about": "an Arbor elder explaining that the houses descend as the light does, each holding a little less sun than the one above",
+  "tone": "tender, wistful"
+ },
+ "hemomancy.court.arbor.directions.line2": {
+  "about": "an Arbor elder saying the Kindling at the bottom feed the heads in the dark and that the many do not reach so far, which they grieve",
+  "tone": "tender, sorrowful"
+ },
+ "hemomancy.court.arbor.greet.known": {
+  "about": "an Arbor elder telling the player, as little one, that they found the way themselves, that the many felt them arrive, and that they are glad of them",
+  "tone": "tender, glad"
+ },
+ "hemomancy.court.arbor.greet.member": {
+  "about": "an Arbor elder telling a member that they are theirs now, held as the elders hold each other, and that the Garden is wider for it",
+  "tone": "tender, embracing"
+ },
+ "hemomancy.court.arbor.greet.referred": {
+  "about": "an Arbor elder telling the player that they were told of the elders and came down through the water, and that the light is now on them as on all",
+  "tone": "tender, welcoming"
+ },
+ "hemomancy.court.arbor.greet.stranger": {
+  "about": "an Arbor elder inviting the player, as little one, in under the fronds to be warm, saying no one will ask what they are and nothing is asked of them",
+  "tone": "tender, soothing"
+ },
+ "hemomancy.court.arbor.greet.transgressor": {
+  "about": "an Arbor elder saying something was taken here that was not given, the many feel it, and they cannot open to the player until it is mended",
+  "tone": "tender, grieved"
+ },
+ "hemomancy.court.arbor.house.line1": {
+  "about": "an anchored Arbor elder explaining that they are fixed in place yet have not turned to stone and could walk away but choose to hold",
+  "tone": "tender, resolute"
+ },
+ "hemomancy.court.arbor.house.line2": {
+  "about": "an anchored Arbor elder saying the many live in the bloom and the light, and that speaking to one elder reaches them all",
+  "tone": "tender, communal"
+ },
+ "hemomancy.court.arbor.item_hint": {
+  "about": "an Arbor elder asking the little one to hold an item up to the light and turn it slowly so the elders can say what the many know of it",
+  "tone": "tender, inviting"
+ },
+ "hemomancy.court.arbor.item_inquiry.morphling_sunburst.line1": {
+  "about": "an Arbor elder identifying Sunburst as their own lichen and light, which will hold the carrier as it holds them, with the freedom to let go",
+  "tone": "tender, reassuring"
+ },
+ "hemomancy.court.arbor.rest.line1": {
+  "about": "an Arbor elder inviting the player to rest by their roots in the light, saying nothing is asked of them",
+  "tone": "tender, soothing"
+ },
+ "hemomancy.court.arbor.shunned.line1": {
+  "about": "an Arbor elder explaining that the player is empty of the many and what emptied them could empty the elders, so they are closing to them, but not unkindly",
+  "tone": "tender, sorrowful and firm"
+ },
+ "hemomancy.court.arbor.shunned.line2": {
+  "about": "an Arbor elder telling the little one to go and not to touch the roots",
+  "tone": "tender, firm"
+ },
+ "hemomancy.court.arbor.strain.other": {
+  "about": "an Arbor elder noting the player carries a strain from deeper water that is cold here, yet is welcome, and so is the player",
+  "tone": "tender, kind"
+ },
+ "hemomancy.court.arbor.strain.own": {
+  "about": "an Arbor elder noting Sunburst is on the player's shoulders reaching for the light, and that one day it may hold them as it holds the elders",
+  "tone": "tender, hopeful"
+ },
+ "hemomancy.court.bellwarden.custom.line1": {
+  "about": "the Bellwarden accepting a gift of one wool for the bell's walls, saying it holds warmth in and the player helped keep the bell",
+  "tone": "spare, grateful"
+ },
+ "hemomancy.court.bellwarden.directions.line1": {
+  "about": "the Bellwarden placing the Veiled Fold at their depth under warmer water and the Woven Current's lines above both in the twilight",
+  "tone": "spare, precise"
+ },
+ "hemomancy.court.bellwarden.directions.line2": {
+  "about": "the Bellwarden naming the Last Marrow on the whale falls and the Kindling at the vents below, and asking if the player's air will be enough",
+  "tone": "spare, wary"
+ },
+ "hemomancy.court.bellwarden.gift.line1": {
+  "about": "the Bellwarden giving the player two blocks of dried kelp from the stores and telling them to eat it slowly",
+  "tone": "spare, practical"
+ },
+ "hemomancy.court.bellwarden.greet.known": {
+  "about": "the Bellwarden saying the player found the bell without a guide, which took care, and telling them to sit where shown",
+  "tone": "spare, approving"
+ },
+ "hemomancy.court.bellwarden.greet.member": {
+  "about": "the Bellwarden telling a Still Bell member their place is on the ledge and their share is ready",
+  "tone": "spare, matter-of-fact"
+ },
+ "hemomancy.court.bellwarden.greet.referred": {
+  "about": "the Bellwarden saying someone told the player of the bell, so they know the rule: the bell wastes nothing and mends everything",
+  "tone": "spare, exact"
+ },
+ "hemomancy.court.bellwarden.greet.stranger": {
+  "about": "the Bellwarden telling the stranger who came in through the lower door to close it behind them, because the warmth is counted",
+  "tone": "spare, exact"
+ },
+ "hemomancy.court.bellwarden.house.line1": {
+  "about": "the Bellwarden saying the Still Bell keeps its strength until it is needed and then spends it exactly",
+  "tone": "spare, exacting"
+ },
+ "hemomancy.court.bellwarden.house.line2": {
+  "about": "the Bellwarden saying a guest is in the bell's keeping and is also expected to help keep the bell",
+  "tone": "spare, firm"
+ },
+ "hemomancy.court.bellwarden.item_hint": {
+  "about": "the Bellwarden telling the player to show what they carry and hold it still",
+  "tone": "spare, brisk"
+ },
+ "hemomancy.court.bellwarden.item_inquiry.morphling_hushbell.line1": {
+  "about": "the Bellwarden identifying Hushbell as theirs, slowing hunger and air loss and later sealing the carrier when badly hurt",
+  "tone": "spare, exact"
+ },
+ "hemomancy.court.bellwarden.item_inquiry.morphling_hushbell.line2": {
+  "about": "the Bellwarden telling the player to feed Hushbell in the bell after the Lightkeeper's lesson, where it grows faster in home water",
+  "tone": "spare, instructive"
+ },
+ "hemomancy.court.bellwarden.join.early": {
+  "about": "the Bellwarden saying the bell takes no one before the fifth Degree, telling them to grow into the blood first because the bell will keep",
+  "tone": "spare, patient"
+ },
+ "hemomancy.court.bellwarden.join.line1": {
+  "about": "the Bellwarden accepting the player into the Still Bell and telling them to keep their strength and spend it when it matters",
+  "tone": "spare, solemn"
+ },
+ "hemomancy.court.bellwarden.join.settled": {
+  "about": "the Bellwarden saying the player has moved between houses once, the custom allows one move, and theirs is spent",
+  "tone": "spare, flat"
+ },
+ "hemomancy.court.bellwarden.join.standing": {
+  "about": "the Bellwarden saying they do not know the player's habits yet, and telling them to help keep the bell a while and ask again",
+  "tone": "spare, cautious"
+ },
+ "hemomancy.court.bellwarden.rest.line1": {
+  "about": "the Bellwarden telling the player to lie on the ledge with one blanket and sleep until mended and no longer",
+  "tone": "spare, firm"
+ },
+ "hemomancy.court.bellwarden.shunned.line1": {
+  "about": "the Bellwarden saying the player is scrubbed clean of every partner and in a sealed bell that would reach everyone",
+  "tone": "spare, grave"
+ },
+ "hemomancy.court.bellwarden.shunned.line2": {
+  "about": "the Bellwarden saying the lower door stays shut to the shunned player and no one here will harm them",
+  "tone": "spare, firm"
+ },
+ "hemomancy.court.bellwarden.strain.other": {
+  "about": "the Bellwarden saying the player carries another house's strain, but the bell keeps them all the same",
+  "tone": "spare, plain"
+ },
+ "hemomancy.court.bellwarden.strain.own": {
+  "about": "the Bellwarden noting Hushbell on the player will slow their hunger, and telling them not to waste what it saves",
+  "tone": "spare, firm"
+ },
+ "hemomancy.court.braced_elder.directions.line1": {
+  "about": "the Braced elder saying the Giving Light feeds those reaching the shore above, and the Shared Wake swims the open sea past the reef as one school",
+  "tone": "steadfast, patient"
+ },
+ "hemomancy.court.braced_elder.directions.line2": {
+  "about": "the Braced elder saying the houses grow quieter the deeper they live, down to the Kindling at the vents, whom they have never left their door to see",
+  "tone": "steadfast, wistful"
+ },
+ "hemomancy.court.braced_elder.gift.line1": {
+  "about": "the Braced elder giving the player kelp from the pool to plant where they shelter, saying its holdfast keeps it fast through any storm",
+  "tone": "steadfast, kind"
+ },
+ "hemomancy.court.braced_elder.greet.known": {
+  "about": "the Braced elder saying the guest found the refuge with no one to show the way, that few read the shore so well, and inviting them in because the door is held",
+  "tone": "steadfast, respectful"
+ },
+ "hemomancy.court.braced_elder.greet.member": {
+  "about": "the Braced elder telling a Holding Stone member the door is held for them, as it is for every member of the house, asleep or away",
+  "tone": "steadfast, warm"
+ },
+ "hemomancy.court.braced_elder.greet.referred": {
+  "about": "the Braced elder saying someone above told the guest of the refuge and was right, and that the elder has held this door longer than most of them have lived",
+  "tone": "steadfast, welcoming"
+ },
+ "hemomancy.court.braced_elder.greet.stranger": {
+  "about": "the Braced elder greeting a guest who came in under their arms out of the swell, and saying they hold the door so the sea stays outside",
+  "tone": "steadfast, calm"
+ },
+ "hemomancy.court.braced_elder.house.line1": {
+  "about": "the Braced elder saying they chose to hold the entrance, could still let go and walk away, and stay because people sleep behind them",
+  "tone": "steadfast, quiet"
+ },
+ "hemomancy.court.braced_elder.house.line2": {
+  "about": "the Braced elder saying a promise is a weight others lean their lives on, which they never set down, so they find it hard when others do",
+  "tone": "steadfast, rueful"
+ },
+ "hemomancy.court.braced_elder.item_hint": {
+  "about": "the Braced elder asking the guest to hold an item up where it can be seen, because the elder's hands stay on the stone while they talk",
+  "tone": "steadfast, patient"
+ },
+ "hemomancy.court.braced_elder.item_inquiry.morphling_holdfast.line1": {
+  "about": "the Braced elder explaining that Holdfast takes the hands then the feet and will in time hold the carrier to stone as it holds the speaker to the door",
+  "tone": "steadfast, solemn"
+ },
+ "hemomancy.court.braced_elder.item_inquiry.morphling_holdfast.line2": {
+  "about": "the Braced elder saying Holdfast grips without turning to stone, so they could let go of the door today but stay by choice",
+  "tone": "steadfast, quiet"
+ },
+ "hemomancy.court.braced_elder.join.early": {
+  "about": "the Braced elder explaining the house takes no one before the fifth Degree, telling the guest to grow into it first and return to the door, which will still be held",
+  "tone": "steadfast, patient"
+ },
+ "hemomancy.court.braced_elder.join.line1": {
+  "about": "the Braced elder accepting the player into the Holding Stone, warning that others will lean on them now and that they must let none fall",
+  "tone": "steadfast, solemn"
+ },
+ "hemomancy.court.braced_elder.join.settled": {
+  "about": "the Braced elder telling the guest they already used the single permitted move between houses and so cannot be taken in",
+  "tone": "steadfast, regretful"
+ },
+ "hemomancy.court.braced_elder.join.standing": {
+  "about": "the Braced elder saying they do not know the guest yet so cannot lean on them, and telling them to shelter as a guest first and ask again",
+  "tone": "steadfast, cautious"
+ },
+ "hemomancy.court.braced_elder.shunned.line1": {
+  "about": "the Braced elder saying the player is scrubbed clean of every partner, which could loosen whatever holds the elder here, so the door is closing to them",
+  "tone": "steadfast, heavy and firm"
+ },
+ "hemomancy.court.braced_elder.shunned.line2": {
+  "about": "the Braced elder telling the shunned player to go back out the way they came, promising that no one in the refuge will ever strike them",
+  "tone": "steadfast, gentle and firm"
+ },
+ "hemomancy.court.braced_elder.strain.other": {
+  "about": "the Braced elder saying the guest carries another house's strain, but the door does not ask what you carry and holds for anyone inside",
+  "tone": "steadfast, gentle"
+ },
+ "hemomancy.court.braced_elder.strain.own": {
+  "about": "the Braced elder noting Holdfast growing round the guest's wrists where it always starts, and that one day it may hold a door of its own",
+  "tone": "steadfast, quietly proud"
+ },
+ "hemomancy.court.champion.buds": {
+  "about": "narration that the Champion buds another ring of its crown during the fight",
+  "tone": "plain narration"
+ },
+ "hemomancy.court.champion.called": {
+  "about": "the Head-tender calling the Champion out from among the elders because a petitioner has asked for its title",
+  "tone": "formal, ceremonial"
+ },
+ "hemomancy.court.champion.named": {
+  "about": "the Head-tender announcing that the head lowered its crown and the Sanctum names the player Champion of the Kindling",
+  "tone": "formal, triumphant"
+ },
+ "hemomancy.court.champion.open": {
+  "about": "a system message that the Kindling will now let the player challenge their Champion",
+  "tone": "plain label"
+ },
+ "hemomancy.court.champion.refused_champion": {
+  "about": "a system message that the player already holds the Champion's title",
+  "tone": "plain label"
+ },
+ "hemomancy.court.champion.refused_shunned": {
+  "about": "a system message that the Kindling will not let the shunned player near their Champion",
+  "tone": "plain label"
+ },
+ "hemomancy.court.champion.refused_standing": {
+  "about": "a system message that the Kindling must count the player a friend before the player can challenge their Champion",
+  "tone": "plain label"
+ },
+ "hemomancy.court.champion.refused_strain": {
+  "about": "a system message that only a strain at Apex can challenge the Champion",
+  "tone": "plain label"
+ },
+ "hemomancy.court.champion.refused_unknown": {
+  "about": "a system message that the player does not know the Court yet",
+  "tone": "plain label"
+ },
+ "hemomancy.court.champion.refused_wait": {
+  "about": "a system message that the player's last challenge was too recent and they must wait a day",
+  "tone": "plain label"
+ },
+ "hemomancy.court.champion.won": {
+  "about": "a system message that the player now holds the title of Kindled Champion",
+  "tone": "plain label"
+ },
+ "hemomancy.court.discovery": {
+  "about": "a system message that the player has found the Brined Court, in a hushed awed register",
+  "tone": "hushed, awed"
+ },
+ "hemomancy.court.edge_swimmer.directions.line1": {
+  "about": "the Edge-swimmer saying the Giving Light is on the reef shoreward and the Holding Stone is in the rocks at the waterline",
+  "tone": "hurried, clipped"
+ },
+ "hemomancy.court.edge_swimmer.directions.line2": {
+  "about": "the Edge-swimmer saying the Woven Current's lines are below, the quiet houses deeper, and that the school does not swim that far",
+  "tone": "hurried, clipped"
+ },
+ "hemomancy.court.edge_swimmer.greet.known": {
+  "about": "the Edge-swimmer noting nobody led the player to the school, that few find it alone, and telling them to keep up",
+  "tone": "hurried, grudgingly impressed"
+ },
+ "hemomancy.court.edge_swimmer.greet.member": {
+  "about": "the Edge-swimmer welcoming a Shared Wake member as one of the school, telling them to take a place inside while the school closes around them",
+  "tone": "hurried, welcoming"
+ },
+ "hemomancy.court.edge_swimmer.greet.referred": {
+  "about": "the Edge-swimmer noting someone sent the player, approving, saying the school is moving, and telling them to swim alongside",
+  "tone": "hurried, curt approval"
+ },
+ "hemomancy.court.edge_swimmer.greet.stranger": {
+  "about": "the Edge-swimmer telling the stranger they are outside the school, to stay on the edge where the school is watched, and to keep pace",
+  "tone": "hurried, wary"
+ },
+ "hemomancy.court.edge_swimmer.house.line1": {
+  "about": "the Edge-swimmer saying the Shared Wake's home is the school, that it rarely stops, and that strength is keeping pace with each other",
+  "tone": "hurried, proud"
+ },
+ "hemomancy.court.edge_swimmer.house.line2": {
+  "about": "the Edge-swimmer describing the school's work: swimming the edge, finding food, turning back for the tired, and leaving nobody behind",
+  "tone": "hurried, terse"
+ },
+ "hemomancy.court.edge_swimmer.item_hint": {
+  "about": "the Edge-swimmer telling the player to show what they carry quickly because the school will not wait",
+  "tone": "hurried, impatient"
+ },
+ "hemomancy.court.edge_swimmer.item_inquiry.morphling_mermaids_purse.line1": {
+  "about": "the Edge-swimmer identifying Mermaid's Purse as their strain that banks the hunt and grows the sail",
+  "tone": "hurried, clipped"
+ },
+ "hemomancy.court.edge_swimmer.item_inquiry.morphling_mermaids_purse.line2": {
+  "about": "the Edge-swimmer saying the Lightkeeper's lesson comes first, then the purse should be fed at the nursery where it grows faster",
+  "tone": "hurried, clipped"
+ },
+ "hemomancy.court.edge_swimmer.shunned.line1": {
+  "about": "the Edge-swimmer telling the player they are scrubbed bare of partners and must keep off the school",
+  "tone": "hurried, curt and wary"
+ },
+ "hemomancy.court.edge_swimmer.shunned.line2": {
+  "about": "the Edge-swimmer saying the school swims away from the shunned player, nobody will strike them, and they must not follow",
+  "tone": "hurried, curt"
+ },
+ "hemomancy.court.edge_swimmer.strain.other": {
+  "about": "the Edge-swimmer saying another house's strain is fine because the wake carries anyone who keeps pace",
+  "tone": "hurried, accepting"
+ },
+ "hemomancy.court.edge_swimmer.strain.own": {
+  "about": "the Edge-swimmer noting Mermaid's Purse on the player's flank, banks the hunt, and telling them to share it with the hurt",
+  "tone": "hurried, approving"
+ },
+ "hemomancy.court.gardener.amends.line1": {
+  "about": "the Gardener thanking the player for their amends, saying the offering joins everyone's on the table, the matter is closed, and inviting them to eat",
+  "tone": "motherly, forgiving"
+ },
+ "hemomancy.court.gardener.custom.line1": {
+  "about": "the Gardener accepting food the player brought for the table, explaining it is the Garden's own custom and will be shared round",
+  "tone": "motherly, delighted"
+ },
+ "hemomancy.court.gardener.directions.line1": {
+  "about": "the Gardener listing the houses below the Garden: the Holding Stone on the shore, the Shared Wake in open water and the Woven Current in the twilight",
+  "tone": "motherly, helpful"
+ },
+ "hemomancy.court.gardener.directions.line2": {
+  "about": "the Gardener naming the deeper houses, the Veiled Fold, Still Bell, Last Marrow and Kindling, and telling the player to eat before going that far",
+  "tone": "motherly, fussing"
+ },
+ "hemomancy.court.gardener.food.line1": {
+  "about": "the Gardener serving the player food and urging them to eat it all, asking if it was good and offering more from the pot",
+  "tone": "motherly, doting"
+ },
+ "hemomancy.court.gardener.gift.line1": {
+  "about": "the Gardener giving the player glowing items from the beds as a keepsake of the table",
+  "tone": "motherly, generous"
+ },
+ "hemomancy.court.gardener.greet.known": {
+  "about": "the Gardener marveling that the player found the Garden alone, saying few do, welcoming them, and telling them to sit because there is always more on the table",
+  "tone": "motherly, delighted"
+ },
+ "hemomancy.court.gardener.greet.member": {
+  "about": "the Gardener greeting a returning member of the house, saying the beds and the house missed them, and telling them to wash their hands and come eat",
+  "tone": "motherly, joyful"
+ },
+ "hemomancy.court.gardener.greet.referred": {
+  "about": "the Gardener guessing that someone sent the player down, glad they arrived, telling them to sit and eat, and asking who sent them and how the trip went",
+  "tone": "motherly, curious"
+ },
+ "hemomancy.court.gardener.greet.stranger": {
+  "about": "the Gardener seeing a soaked newcomer, sitting them at the table, promising to feed them before asking their name, and asking if they have eaten today",
+  "tone": "motherly, fussing"
+ },
+ "hemomancy.court.gardener.greet.transgressor": {
+  "about": "the Gardener saying she cannot feed a player who wronged the Garden until they make it right, and telling them to come back with food to share",
+  "tone": "motherly, firm and sad"
+ },
+ "hemomancy.court.gardener.house.line1": {
+  "about": "the Gardener explaining that the Giving Light holds that everyone has something to give and everyone deserves to be fed",
+  "tone": "motherly, simple"
+ },
+ "hemomancy.court.gardener.house.line2": {
+  "about": "the Gardener saying Marimo lives with them in the bloom and sun, and that when someone leaves the Garden it hurts everyone and they do not hide it",
+  "tone": "motherly, aching"
+ },
+ "hemomancy.court.gardener.item_hint": {
+  "about": "the Gardener asking the player to show what they carry, admitting she knows the beds better than the books but will say what she can",
+  "tone": "motherly, inviting"
+ },
+ "hemomancy.court.gardener.item_inquiry.morphling_sunburst.line1": {
+  "about": "the Gardener identifying Sunburst as the Garden's own strain that feeds the carrier back when kept in the sun",
+  "tone": "motherly, delighted"
+ },
+ "hemomancy.court.gardener.item_inquiry.morphling_sunburst.line2": {
+  "about": "the Gardener telling the player to feed Sunburst in the Garden's water after the Lightkeeper's lesson because it grows faster at home",
+  "tone": "motherly, helpful"
+ },
+ "hemomancy.court.gardener.item_inquiry.relay_chart.line1": {
+  "about": "the Gardener recognising a Voyager's Relay Chart that points to the nearest Lighthouse Garden, noting the player has arrived, and asking if they have eaten",
+  "tone": "motherly, amused"
+ },
+ "hemomancy.court.gardener.rest.line1": {
+  "about": "the Gardener telling the player to lie down in the shade by the beds, promising nobody will wake them and the light will be kept low",
+  "tone": "motherly, soothing"
+ },
+ "hemomancy.court.gardener.shunned.line1": {
+  "about": "the Gardener begging the player not to come closer because they are scrubbed clean of everything that lives with the Garden, and it could spread to the beds",
+  "tone": "motherly, anxious and apologetic"
+ },
+ "hemomancy.court.gardener.shunned.line2": {
+  "about": "the Gardener apologizing that she cannot feed the shunned player and telling them to go back up the way they came, carefully",
+  "tone": "motherly, sorrowful"
+ },
+ "hemomancy.court.gardener.strain.other": {
+  "about": "the Gardener noting the player carries another house's strain, saying that is all right because everyone at the table is fed whatever they carry",
+  "tone": "motherly, reassuring"
+ },
+ "hemomancy.court.gardener.strain.own": {
+  "about": "the Gardener delighting at Sunburst on the player, already turning to the light, and saying it knows it has come home",
+  "tone": "motherly, fond"
+ },
+ "hemomancy.court.head_tender.challenge.line1": {
+  "about": "the Head-tender acknowledging a petitioner's request to take the Champion's title, calling it an honor to be asked and a greater one to be refused by strength",
+  "tone": "formal, ceremonial"
+ },
+ "hemomancy.court.head_tender.challenge.line2": {
+  "about": "the Head-tender explaining the challenge is fought in the vent water before the heads, that a loser may ask again after a day, and asking if the petitioner is ready",
+  "tone": "formal, solemn"
+ },
+ "hemomancy.court.head_tender.challenge.refused_shunned": {
+  "about": "the Head-tender refusing the challenge because the Sanctum will not set its Champion against someone carrying the still water",
+  "tone": "formal, firm"
+ },
+ "hemomancy.court.head_tender.challenge.refused_standing": {
+  "about": "the Head-tender refusing the challenge because the Kindling do not yet count the player a friend, and telling them to keep the house's custom at the heads and ask again",
+  "tone": "formal, firm"
+ },
+ "hemomancy.court.head_tender.challenge.refused_strain": {
+  "about": "the Head-tender refusing the challenge because the player's strain has not reached Apex, and telling them to bring one that has, worn or carried",
+  "tone": "formal, firm"
+ },
+ "hemomancy.court.head_tender.challenge.refused_unknown": {
+  "about": "the Head-tender refusing the challenge because the player is not known to the Court and no stranger may ask for the Champion's title",
+  "tone": "formal, firm"
+ },
+ "hemomancy.court.head_tender.challenge.refused_wait": {
+  "about": "the Head-tender refusing the challenge because the player fell less than a day ago, and telling them to rest until the day has turned",
+  "tone": "formal, patient"
+ },
+ "hemomancy.court.head_tender.directions.line1": {
+  "about": "the Head-tender saying the houses rise from the vents as the heat fades: Last Marrow on the whale fall, then Still Bell and Veiled Fold in the midnight water",
+  "tone": "formal, instructive"
+ },
+ "hemomancy.court.head_tender.directions.line2": {
+  "about": "the Head-tender saying above those lie the Woven Current, Shared Wake and Holding Stone, and at the very top the Giving Light who feed whoever comes",
+  "tone": "formal, instructive"
+ },
+ "hemomancy.court.head_tender.gift.line1": {
+  "about": "the Head-tender giving the player light from the vent mouths, as to every petitioner received at the threshold",
+  "tone": "formal, ceremonial"
+ },
+ "hemomancy.court.head_tender.greet.known": {
+  "about": "the Head-tender greeting a petitioner who found the Sanctum unguided, calling that a kind of preparation the heads have noted",
+  "tone": "formal, approving"
+ },
+ "hemomancy.court.head_tender.greet.member": {
+  "about": "the Head-tender greeting a member of the Kindling, saying the threshold knows them and their preparation continues among the heads for as long as they live",
+  "tone": "formal, welcoming"
+ },
+ "hemomancy.court.head_tender.greet.referred": {
+  "about": "the Head-tender greeting a petitioner sent down to the Sanctum, saying someone above believed they should see the heads and they will find out together if that was right",
+  "tone": "formal, measured"
+ },
+ "hemomancy.court.head_tender.greet.stranger": {
+  "about": "the Head-tender greeting a stranger at the threshold of the Vent Sanctum, saying no one crosses who is not ready, and asking what they bring",
+  "tone": "formal, solemn"
+ },
+ "hemomancy.court.head_tender.house.line1": {
+  "about": "the Head-tender explaining that the Kindling cultivates the greatest self and surrenders it to Hydra at life's end, and that surrender is an end, never a duty",
+  "tone": "formal, solemn"
+ },
+ "hemomancy.court.head_tender.house.line2": {
+  "about": "the Head-tender explaining that only the most worthy keep a head while the rest become the body holding the heads up, and that Hydra judges which",
+  "tone": "formal, grave"
+ },
+ "hemomancy.court.head_tender.item_hint": {
+  "about": "the Head-tender asking the petitioner to show what they carry, saying the Sanctum has seen most of what the sea gives up",
+  "tone": "formal, courteous"
+ },
+ "hemomancy.court.head_tender.item_inquiry.morphling_kinbud.line1": {
+  "about": "the Head-tender explaining that Kinbud is the polyp that buds as Hydra buds and that every Kindling began with it along the spine",
+  "tone": "formal, reverent"
+ },
+ "hemomancy.court.head_tender.item_inquiry.morphling_kinbud.line2": {
+  "about": "the Head-tender saying Kinbud fed over a lifetime grows toward the one body, but whether it earns a head is not for anyone present to say",
+  "tone": "formal, grave"
+ },
+ "hemomancy.court.head_tender.item_inquiry.relay_chart.line1": {
+  "about": "the Head-tender recognising a Voyager's Relay Chart drawn toward the Seats, saying it brought the player to the threshold, where it ends",
+  "tone": "formal, solemn"
+ },
+ "hemomancy.court.head_tender.join.early": {
+  "about": "the Head-tender refusing entry before the fifth Degree and telling the petitioner to go up, prepare and return",
+  "tone": "formal, firm"
+ },
+ "hemomancy.court.head_tender.join.line1": {
+  "about": "the Head-tender accepting the petitioner as Kindling, telling them to prepare well because a lifetime is not long for what is prepared toward",
+  "tone": "formal, solemn"
+ },
+ "hemomancy.court.head_tender.join.settled": {
+  "about": "the Head-tender refusing because the petitioner already used the one permitted move between houses",
+  "tone": "formal, regretful"
+ },
+ "hemomancy.court.head_tender.join.standing": {
+  "about": "the Head-tender saying the Sanctum does not know the petitioner yet and telling them to return, witness the feeding and let the heads know them first",
+  "tone": "formal, patient"
+ },
+ "hemomancy.court.head_tender.shunned.line1": {
+  "about": "the Head-tender telling the petitioner that being scrubbed of every partner could spread to the heads, which the Sanctum will not risk",
+  "tone": "formal, firm"
+ },
+ "hemomancy.court.head_tender.shunned.line2": {
+  "about": "the Head-tender closing the threshold to the petitioner, ordering them to withdraw but promising no one will raise a hand",
+  "tone": "formal, firm"
+ },
+ "hemomancy.court.head_tender.strain.other": {
+  "about": "the Head-tender saying the player's strain belongs to a house above and will never reach the heads, though they may witness, and asking if they will watch in silence",
+  "tone": "formal, solemn"
+ },
+ "hemomancy.court.head_tender.strain.own": {
+  "about": "the Head-tender noting that Kinbud grows on the player as on every Kindling, beginning the long preparation for the one body",
+  "tone": "formal, solemn"
+ },
+ "hemomancy.court.host.custom.line1": {
+  "about": "the Host accepting ink for the door's screen, saying it keeps the door dark and nobody will know who gave it",
+  "tone": "guarded, grateful"
+ },
+ "hemomancy.court.host.directions.line1": {
+  "about": "the Host saying the Woven Current hangs its lines up the slope, that they will want to tie the player in, and asking if the player wants that",
+  "tone": "guarded, questioning"
+ },
+ "hemomancy.court.host.directions.line2": {
+  "about": "the Host naming the Still Bell's cold, the Last Marrow and the vents deeper down, and asking where the player will go",
+  "tone": "guarded, questioning"
+ },
+ "hemomancy.court.host.greet.known": {
+  "about": "the Host guessing the player found the cleft on their own, declining to ask how, and inviting them in to this room and not the rest",
+  "tone": "guarded, courteous"
+ },
+ "hemomancy.court.host.greet.member": {
+  "about": "the Host telling a Veiled Fold member they are of the Fold now, asking which room is theirs, then saying not to tell because they do not need to know",
+  "tone": "guarded, wry"
+ },
+ "hemomancy.court.host.greet.referred": {
+  "about": "the Host saying someone sent the player, declining to ask who, and asking if they were told about the room that is open to them",
+  "tone": "guarded, questioning"
+ },
+ "hemomancy.court.host.greet.stranger": {
+  "about": "the Host meeting a stranger at the door, asking why they have come, and saying they will not ask the player's name",
+  "tone": "guarded, courteous"
+ },
+ "hemomancy.court.host.house.line1": {
+  "about": "the Host saying the Veiled Fold sells no history with its shelter, and asking why it would",
+  "tone": "guarded, rhetorical"
+ },
+ "hemomancy.court.host.house.line2": {
+  "about": "the Host saying a guest gets one room and not the whole house, and asking whether the player would open every door to a stranger",
+  "tone": "guarded, pointed"
+ },
+ "hemomancy.court.host.item_hint": {
+  "about": "the Host asking what the player is carrying and saying to show only what they want to",
+  "tone": "guarded, courteous"
+ },
+ "hemomancy.court.host.item_inquiry.morphling_ink_cap.line1": {
+  "about": "the Host identifying Ink Cap as the Fold's strain and asking whether the player has noticed hostile things losing sight of them sooner, which is the veil",
+  "tone": "guarded, probing"
+ },
+ "hemomancy.court.host.item_inquiry.morphling_ink_cap.line2": {
+  "about": "the Host asking whether the Lightkeeper has given the first lesson, then telling the player to feed Ink Cap in the Fold where it grows faster",
+  "tone": "guarded, questioning"
+ },
+ "hemomancy.court.host.rest.line1": {
+  "about": "the Host letting the player sit, promising nobody will come in and offering to draw the screen",
+  "tone": "guarded, gentle"
+ },
+ "hemomancy.court.host.shunned.line1": {
+  "about": "the Host saying the player is scrubbed of every partner, asking if they know what that carries, and saying the door stays shut",
+  "tone": "guarded, firm"
+ },
+ "hemomancy.court.host.shunned.line2": {
+  "about": "the Host asking the shunned player to go, promising no one will touch them and nothing will follow them out",
+  "tone": "guarded, gentle but firm"
+ },
+ "hemomancy.court.host.strain.other": {
+  "about": "the Host noting another house's strain and asking if that matters, then saying not at this door",
+  "tone": "guarded, dryly reassuring"
+ },
+ "hemomancy.court.host.strain.own": {
+  "about": "the Host noting Ink Cap on the player and asking if they feel the veil yet, adding that it is quiet at first",
+  "tone": "guarded, gently probing"
+ },
+ "hemomancy.court.kindled_elder.gift.line1": {
+  "about": "the Kindled elder giving the player light from the vent water, saying this body keeps none of it",
+  "tone": "fragmentary, solemn"
+ },
+ "hemomancy.court.kindled_elder.greet.known": {
+  "about": "the Kindled elder noting the player found the way down alone and approving",
+  "tone": "fragmentary, approving"
+ },
+ "hemomancy.court.kindled_elder.greet.member": {
+  "about": "the Kindled elder greeting a member of the Kindling and telling them to prepare as this body prepares",
+  "tone": "fragmentary, solemn"
+ },
+ "hemomancy.court.kindled_elder.greet.referred": {
+  "about": "the Kindled elder acknowledging the player was sent down to this body",
+  "tone": "fragmentary, solemn"
+ },
+ "hemomancy.court.kindled_elder.greet.stranger": {
+  "about": "the Kindled elder noticing a small stranger below the head",
+  "tone": "fragmentary, remote"
+ },
+ "hemomancy.court.kindled_elder.house.line1": {
+  "about": "the Kindled elder saying this body is nearly ready, but not yet",
+  "tone": "fragmentary, solemn"
+ },
+ "hemomancy.court.kindled_elder.house.line2": {
+  "about": "the Kindled elder saying Hydra will judge whether they become a head or only the body",
+  "tone": "fragmentary, grave"
+ },
+ "hemomancy.court.kindled_elder.item_hint": {
+  "about": "the Kindled elder telling the player to hold up an item to the crown",
+  "tone": "fragmentary, solemn"
+ },
+ "hemomancy.court.kindled_elder.item_inquiry.morphling_kinbud.line1": {
+  "about": "the Kindled elder saying Kinbud is how this body began, small and long ago",
+  "tone": "fragmentary, solemn"
+ },
+ "hemomancy.court.kindled_elder.shunned.line1": {
+  "about": "the Kindled elder noting that the shunned player is an empty body with nothing living on it",
+  "tone": "fragmentary, cold"
+ },
+ "hemomancy.court.kindled_elder.shunned.line2": {
+  "about": "the Kindled elder telling the shunned player to keep away from this body",
+  "tone": "fragmentary, cold"
+ },
+ "hemomancy.court.kindled_elder.strain.other": {
+  "about": "the Kindled elder saying the player's other-house strain is not for the heads",
+  "tone": "fragmentary, dismissive"
+ },
+ "hemomancy.court.kindled_elder.strain.own": {
+  "about": "the Kindled elder recognising Kinbud as the beginning, how this body began",
+  "tone": "fragmentary, solemn"
+ },
+ "hemomancy.court.known": {
+  "about": "a system message that the player now knows of the Brined Court",
+  "tone": "plain label"
+ },
+ "hemomancy.court.lamp_colony.directions.line1": {
+  "about": "the Lamp-colony describing the light growing above the camp through the Shared Wake and Holding Stone up to the Giving Light at the surface",
+  "tone": "calm, descriptive"
+ },
+ "hemomancy.court.lamp_colony.directions.line2": {
+  "about": "the Lamp-colony describing the lightless depths below the camp where the Veiled Fold, Still Bell, Last Marrow and the Kindling lowest of all live",
+  "tone": "calm, hushed"
+ },
+ "hemomancy.court.lamp_colony.gift.line1": {
+  "about": "the Lamp-colony giving the player leads, lines made to tie and untie, so that any joining stays a choice",
+  "tone": "calm, ceremonial"
+ },
+ "hemomancy.court.lamp_colony.greet.known": {
+  "about": "the Lamp-colony saying the player found the camp with no strand to guide them, which the network felt as a small surprise passing from pod to pod",
+  "tone": "calm, mildly surprised"
+ },
+ "hemomancy.court.lamp_colony.greet.member": {
+  "about": "the Lamp-colony telling a Woven Current member that when they tie in the colony will feel them and when they let go it will let them",
+  "tone": "calm, welcoming"
+ },
+ "hemomancy.court.lamp_colony.greet.referred": {
+  "about": "the Lamp-colony saying someone above sent the player to the lines, and that the colony felt them arrive along every strand before one voice let go to greet them",
+  "tone": "calm, welcoming"
+ },
+ "hemomancy.court.lamp_colony.greet.stranger": {
+  "about": "the Lamp-colony explaining it was holding the line when the stranger came, and has let go so that a single voice can speak to them",
+  "tone": "calm, courteous"
+ },
+ "hemomancy.court.lamp_colony.house.line1": {
+  "about": "the Lamp-colony saying that while joined it is many and the camp sees through all of them, and when it lets go it is one again, as now",
+  "tone": "calm, reflective"
+ },
+ "hemomancy.court.lamp_colony.house.line2": {
+  "about": "the Lamp-colony saying every joining is chosen so each can be undone, from its own long experience of letting go and rejoining",
+  "tone": "calm, wise"
+ },
+ "hemomancy.court.lamp_colony.item_hint": {
+  "about": "the Lamp-colony asking the player to hold an item near so it can be seen with the speaker's own eyes while apart from the others",
+  "tone": "calm, courteous"
+ },
+ "hemomancy.court.lamp_colony.item_inquiry.morphling_dead_mans_rope.line1": {
+  "about": "the Lamp-colony identifying Dead Man's Rope as their strain, which let them join the network and still lets them leave it when they choose",
+  "tone": "calm, reflective"
+ },
+ "hemomancy.court.lamp_colony.item_inquiry.morphling_dead_mans_rope.line2": {
+  "about": "the Lamp-colony telling the player to feed the rope in the camp after the Lightkeeper's lesson because a strain grows faster in its own house's water",
+  "tone": "calm, instructive"
+ },
+ "hemomancy.court.lamp_colony.join.early": {
+  "about": "the Lamp-colony saying the house takes no one before the fifth Degree, so the player should grow into the blood first and the lines will still be there",
+  "tone": "calm, patient"
+ },
+ "hemomancy.court.lamp_colony.join.line1": {
+  "about": "the Lamp-colony accepting the player into the Woven Current and saying the camp will feel them on the lines whenever they choose to tie in",
+  "tone": "calm, welcoming"
+ },
+ "hemomancy.court.lamp_colony.join.settled": {
+  "about": "the Lamp-colony saying the player already used the single permitted move between houses so it cannot take them in now",
+  "tone": "calm, regretful"
+ },
+ "hemomancy.court.lamp_colony.join.standing": {
+  "about": "the Lamp-colony saying the network does not know the player yet, so they should stay at the camp a while, bring line for it, then ask again",
+  "tone": "calm, patient"
+ },
+ "hemomancy.court.lamp_colony.shunned.line1": {
+  "about": "the Lamp-colony saying the player is scrubbed of every partner and through one strand that could pass into every one of them at once",
+  "tone": "calm, grave"
+ },
+ "hemomancy.court.lamp_colony.shunned.line2": {
+  "about": "the Lamp-colony saying it is taking hold of the line again, the network closes to the shunned player, but nothing here will ever strike them",
+  "tone": "calm, gentle but firm"
+ },
+ "hemomancy.court.lamp_colony.strain.other": {
+  "about": "the Lamp-colony saying the network does not mind the player carrying another house's strain, though it cannot feel them through it",
+  "tone": "calm, neutral"
+ },
+ "hemomancy.court.lamp_colony.strain.own": {
+  "about": "the Lamp-colony noting its rope is in the player's veins so the network can feel them through it, while the strain grows toward tying them to whomever they choose",
+  "tone": "calm, thoughtful"
+ },
+ "hemomancy.court.lesson.already_taught": {
+  "about": "a system message that the player already knows the Lightkeeper's lesson",
+  "tone": "plain label"
+ },
+ "hemomancy.court.lesson.refused_degree": {
+  "about": "a system message that the Garden teaches nothing before the fifth Degree",
+  "tone": "plain label"
+ },
+ "hemomancy.court.lesson.refused_shunned": {
+  "about": "a system message that the Garden will not teach someone scrubbed clean of partners",
+  "tone": "plain label"
+ },
+ "hemomancy.court.lesson.refused_transgression": {
+  "about": "a system message that the Garden teaches nothing while the player's wrong against it stands",
+  "tone": "plain label"
+ },
+ "hemomancy.court.lesson.taught": {
+  "about": "a system message that a strain fed in its own house's waters grows faster and the player now knows it",
+  "tone": "plain label"
+ },
+ "hemomancy.court.lightkeeper.amends.line1": {
+  "about": "the Lightkeeper thanking the player for their offering, saying it is on the table with everyone's and the Garden is open to them again",
+  "tone": "kindly, forgiving"
+ },
+ "hemomancy.court.lightkeeper.directions.line1": {
+  "about": "the Lightkeeper naming the houses by depth: Holding Stone on the shore, Shared Wake in open water, Woven Current in the twilight",
+  "tone": "kindly, informative"
+ },
+ "hemomancy.court.lightkeeper.directions.line2": {
+  "about": "the Lightkeeper naming the deepest houses, Veiled Fold, Still Bell, Last Marrow and Kindling, and noting each house feeds its own strain best",
+  "tone": "kindly, informative"
+ },
+ "hemomancy.court.lightkeeper.food.line1": {
+  "about": "the Lightkeeper telling the guest to eat first because a lesson is wasted on an empty stomach",
+  "tone": "kindly, dry"
+ },
+ "hemomancy.court.lightkeeper.greet.known": {
+  "about": "the Lightkeeper saying the player found the Garden without a guide, which already tells them something, and inviting them to sit so they can learn what the player came for",
+  "tone": "kindly, appraising"
+ },
+ "hemomancy.court.lightkeeper.greet.member": {
+  "about": "the Lightkeeper welcoming a Giving Light member home, saying the lamp is lit and the beds tended, and asking if they need anything",
+  "tone": "kindly, warm"
+ },
+ "hemomancy.court.lightkeeper.greet.referred": {
+  "about": "the Lightkeeper saying that whoever sent the guest knew the Court begins at the Garden and that the first lesson is the Lightkeeper's to give",
+  "tone": "kindly, welcoming"
+ },
+ "hemomancy.court.lightkeeper.greet.stranger": {
+  "about": "the Lightkeeper welcoming a guest to the Lighthouse Garden, saying they keep the lamp and teach the first lesson to those ready, and asking if the player has been fed yet",
+  "tone": "kindly, gently questioning"
+ },
+ "hemomancy.court.lightkeeper.greet.transgressor": {
+  "about": "the Lightkeeper telling the player they took what was not given, that the Garden stays closed until they bring something back to the table, and asking if they understand",
+  "tone": "kindly, firm"
+ },
+ "hemomancy.court.lightkeeper.house.line1": {
+  "about": "the Lightkeeper explaining that the Giving Light keeps the top of the water nearest Marimo and holds that everyone has something to give and deserves feeding",
+  "tone": "kindly, explanatory"
+ },
+ "hemomancy.court.lightkeeper.house.line2": {
+  "about": "the Lightkeeper explaining that the Garden is where the Court meets the world, so it feeds all who come and some stay, and asking whether the player sees why the lamp stays lit",
+  "tone": "kindly, gently probing"
+ },
+ "hemomancy.court.lightkeeper.item_hint": {
+  "about": "the Lightkeeper inviting the guest to show what they brought, promising to say where it was grown if it came from the Court",
+  "tone": "kindly, inviting"
+ },
+ "hemomancy.court.lightkeeper.item_inquiry.brine_sealed_letter.line1": {
+  "about": "the Lightkeeper recognising a sealed letter from a drowned envoy, saying someone meant to reach the Court and failed, and the player carried it the rest of the way",
+  "tone": "kindly, moved"
+ },
+ "hemomancy.court.lightkeeper.item_inquiry.morphling_sunburst.line1": {
+  "about": "the Lightkeeper explaining that Sunburst is the Giving Light's own strain, a fungus and alga living as one, which feeds its carrier in the sun",
+  "tone": "kindly, explanatory"
+ },
+ "hemomancy.court.lightkeeper.item_inquiry.morphling_sunburst.line2": {
+  "about": "the Lightkeeper explaining that Sunburst fed in the Garden's water after the first lesson grows faster because it is home water",
+  "tone": "kindly, explanatory"
+ },
+ "hemomancy.court.lightkeeper.join.early": {
+  "about": "the Lightkeeper explaining the Court takes no one into a house before the fifth Degree and telling the player to return then and ask again",
+  "tone": "kindly, patient"
+ },
+ "hemomancy.court.lightkeeper.join.line1": {
+  "about": "the Lightkeeper welcoming the player into the Giving Light, promising a place at the table and a share of the work because that is what a house is",
+  "tone": "kindly, warm"
+ },
+ "hemomancy.court.lightkeeper.join.settled": {
+  "about": "the Lightkeeper sorrowfully telling the player they already used the single permitted move between houses and cannot join the Giving Light",
+  "tone": "kindly, sorry"
+ },
+ "hemomancy.court.lightkeeper.join.standing": {
+  "about": "the Lightkeeper saying the Garden barely knows the guest yet, and telling them to spend time there and let the house know them before asking to join",
+  "tone": "kindly, patient"
+ },
+ "hemomancy.court.lightkeeper.lesson.early": {
+  "about": "the Lightkeeper telling the guest the first lesson waits for the fifth Degree, and that until then they are welcome to eat and rest without hurry",
+  "tone": "kindly, patient"
+ },
+ "hemomancy.court.lightkeeper.lesson.known": {
+  "about": "the Lightkeeper reminding the player they already had the first lesson and telling them to take their strain home to its own house's water",
+  "tone": "kindly, gentle"
+ },
+ "hemomancy.court.lightkeeper.lesson.line1": {
+  "about": "the Lightkeeper teaching the first lesson: a strain fed inside its own house's water grows faster than anywhere else",
+  "tone": "kindly, teacherly"
+ },
+ "hemomancy.court.lightkeeper.lesson.line2": {
+  "about": "the Lightkeeper saying the player's Morphling is a partner that wants its home water and answers when fed there, and asking if they see why it is called partnership",
+  "tone": "kindly, teacherly"
+ },
+ "hemomancy.court.lightkeeper.shunned.line1": {
+  "about": "the Lightkeeper apologizing that the player is clean of every partner the Garden lives with, and whatever did that could take the Garden's strains too",
+  "tone": "kindly, regretful"
+ },
+ "hemomancy.court.lightkeeper.shunned.line2": {
+  "about": "the Lightkeeper saying she cannot teach or feed the shunned guest, asking them to keep from the beds and go in peace",
+  "tone": "kindly, firm and sad"
+ },
+ "hemomancy.court.lightkeeper.strain.other": {
+  "about": "the Lightkeeper telling the guest their strain belongs to another house, so the lesson holds for it but only in its own house's water, not the Garden's",
+  "tone": "kindly, explanatory"
+ },
+ "hemomancy.court.lightkeeper.strain.own": {
+  "about": "the Lightkeeper noting the player carries Sunburst, that it will grow faster in this water once they have had the lesson, and telling them to ask for it",
+  "tone": "kindly, encouraging"
+ },
+ "hemomancy.court.linesman.custom.line1": {
+  "about": "the Linesman accepting a gift of line for the camp, saying it will hold a pod if the water pulls tonight",
+  "tone": "easygoing, grateful"
+ },
+ "hemomancy.court.linesman.directions.line1": {
+  "about": "the Linesman saying the Shared Wake, Holding Stone and Giving Light lie above the camp, and advising the player to follow the light if going up",
+  "tone": "easygoing, helpful"
+ },
+ "hemomancy.court.linesman.directions.line2": {
+  "about": "the Linesman saying the Veiled Fold and the Still Bell lie below, and advising a slow descent because the light ends at the camp",
+  "tone": "easygoing, cautionary"
+ },
+ "hemomancy.court.linesman.greet.known": {
+  "about": "the Linesman saying the player found the lines alone in the dark between the walls, and asking whether they would let the Linesman show where the lines hold",
+  "tone": "easygoing, courteous"
+ },
+ "hemomancy.court.linesman.greet.member": {
+  "about": "the Linesman telling a Woven Current member they may tie in whenever they like and let go just as freely without anyone asking why",
+  "tone": "easygoing, welcoming"
+ },
+ "hemomancy.court.linesman.greet.referred": {
+  "about": "the Linesman saying someone told the player the camp hangs here and was right, and offering a line with slack on it if they want one",
+  "tone": "easygoing, welcoming"
+ },
+ "hemomancy.court.linesman.greet.stranger": {
+  "about": "the Linesman noting the stranger came down into the gully without a line, and offering to tie them in while they are here if they will take one",
+  "tone": "easygoing, offering"
+ },
+ "hemomancy.court.linesman.house.line1": {
+  "about": "the Linesman explaining that the Woven Current hangs its camp between the walls on lines, with pods that part or join as the water needs",
+  "tone": "easygoing, plain"
+ },
+ "hemomancy.court.linesman.house.line2": {
+  "about": "the Linesman saying nobody ties you in but yourself, letting go is also your choice, and the camp keeps your place either way",
+  "tone": "easygoing, reassuring"
+ },
+ "hemomancy.court.linesman.item_hint": {
+  "about": "the Linesman offering to say what they know of whatever the player carries if they will show it",
+  "tone": "easygoing, courteous"
+ },
+ "hemomancy.court.linesman.item_inquiry.morphling_dead_mans_rope.line1": {
+  "about": "the Linesman explaining Dead Man's Rope feels the living through its strands and later ties the carrier to anyone who chooses to hold on",
+  "tone": "easygoing, explanatory"
+ },
+ "hemomancy.court.linesman.item_inquiry.morphling_dead_mans_rope.line2": {
+  "about": "the Linesman telling the player to feed Dead Man's Rope in the camp after the Lightkeeper's lesson because the camp's water makes it grow faster",
+  "tone": "easygoing, helpful"
+ },
+ "hemomancy.court.linesman.shunned.line1": {
+  "about": "the Linesman saying the player is scrubbed of every partner and a strand could carry that through the whole camp, so they cannot be tied in",
+  "tone": "easygoing, regretful"
+ },
+ "hemomancy.court.linesman.shunned.line2": {
+  "about": "the Linesman asking the shunned player to keep off the lines, promising nobody will raise a hand to them",
+  "tone": "easygoing, gentle but firm"
+ },
+ "hemomancy.court.linesman.strain.other": {
+  "about": "the Linesman saying another house's strain is fine on the lines and the camp will not ask which if the player holds a strand",
+  "tone": "easygoing, accepting"
+ },
+ "hemomancy.court.linesman.strain.own": {
+  "about": "the Linesman noting Dead Man's Rope in the player's veins and asking them, if they link with someone, to tell that person first that either can let go",
+  "tone": "easygoing, earnest"
+ },
+ "hemomancy.court.marrow_tender.custom.line1": {
+  "about": "the Marrow-tender accepting remains for the fall, saying the elders root in bone and the plumes eat the rest",
+  "tone": "blunt, approving"
+ },
+ "hemomancy.court.marrow_tender.directions.line1": {
+  "about": "the Marrow-tender saying the Still Bell in the cold and the Veiled Fold in its clefts lie above and will take the player in carefully",
+  "tone": "blunt, practical"
+ },
+ "hemomancy.court.marrow_tender.directions.line2": {
+  "about": "the Marrow-tender saying only the Kindling lie below at the vents, who give bodies to their heads, while the speaker would rather their own fed people",
+  "tone": "blunt, wry"
+ },
+ "hemomancy.court.marrow_tender.food.line1": {
+  "about": "the Marrow-tender handing over food from the whale fall, saying it was strong once and is now the player's",
+  "tone": "blunt, plain"
+ },
+ "hemomancy.court.marrow_tender.greet.known": {
+  "about": "the Marrow-tender noting the player found the whale fall on their own when most follow the scavengers down",
+  "tone": "blunt, grudgingly impressed"
+ },
+ "hemomancy.court.marrow_tender.greet.member": {
+  "about": "the Marrow-tender telling a Last Marrow member there is work in the bones and food after it",
+  "tone": "blunt, plain"
+ },
+ "hemomancy.court.marrow_tender.greet.referred": {
+  "about": "the Marrow-tender saying someone told the player about the fall, which is good because there is plenty left on the bones",
+  "tone": "blunt, approving"
+ },
+ "hemomancy.court.marrow_tender.greet.stranger": {
+  "about": "the Marrow-tender greeting a stranger come down to the fall and warning them to mind the ribs, which are sharp where the flesh is gone",
+  "tone": "blunt, gruff"
+ },
+ "hemomancy.court.marrow_tender.house.line1": {
+  "about": "the Marrow-tender saying Last Marrow lives on a whale fall that is both food and shelter and will not last forever",
+  "tone": "blunt, matter-of-fact"
+ },
+ "hemomancy.court.marrow_tender.house.line2": {
+  "about": "the Marrow-tender saying nothing is wasted, and that when they are spent they will root in the bones and feed whoever comes next",
+  "tone": "blunt, calm"
+ },
+ "hemomancy.court.marrow_tender.item_hint": {
+  "about": "the Marrow-tender telling the player to show it, saying if it was once alive they will know what it is good for",
+  "tone": "blunt, practical"
+ },
+ "hemomancy.court.marrow_tender.item_inquiry.morphling_marrowplume.line1": {
+  "about": "the Marrow-tender identifying Marrowplume as their strain that feeds on the dead and heals the carrier with it, and later roots",
+  "tone": "blunt, matter-of-fact"
+ },
+ "hemomancy.court.marrow_tender.item_inquiry.morphling_marrowplume.line2": {
+  "about": "the Marrow-tender telling the player to feed Marrowplume at the fall after the Lightkeeper's lesson because it grows faster in home water",
+  "tone": "blunt, instructive"
+ },
+ "hemomancy.court.marrow_tender.rest.line1": {
+  "about": "the Marrow-tender telling the player to lie under the ribs out of the cold, promising to keep scavengers off",
+  "tone": "blunt, protective"
+ },
+ "hemomancy.court.marrow_tender.shunned.line1": {
+  "about": "the Marrow-tender telling the player they are scrubbed of every partner, which down here would rot the whole fall",
+  "tone": "blunt, grave"
+ },
+ "hemomancy.court.marrow_tender.shunned.line2": {
+  "about": "the Marrow-tender telling the shunned player to stay off the bones, promising nobody will hurt them but they cannot come in",
+  "tone": "blunt, firm"
+ },
+ "hemomancy.court.marrow_tender.strain.other": {
+  "about": "the Marrow-tender saying another house's strain is fine because the fall feeds everyone the same",
+  "tone": "blunt, plain"
+ },
+ "hemomancy.court.marrow_tender.strain.own": {
+  "about": "the Marrow-tender noting Marrowplume on the player's arms will feed them off whatever is left, and telling them to let it",
+  "tone": "blunt, approving"
+ },
+ "hemomancy.court.membership.already_member": {
+  "about": "a system message that the player already belongs to a named house (the house's name fills the blank)",
+  "tone": "plain label"
+ },
+ "hemomancy.court.membership.joined": {
+  "about": "a system message that the player now belongs to a named house (the house's name fills the blank)",
+  "tone": "plain label"
+ },
+ "hemomancy.court.membership.refused_degree": {
+  "about": "a system message that nobody joins a named house before the fifth Degree (the house's name fills the blank)",
+  "tone": "plain label"
+ },
+ "hemomancy.court.membership.refused_shunned": {
+  "about": "a system message that no house will take the shunned player because they keep clear of whatever cleansed them",
+  "tone": "plain label"
+ },
+ "hemomancy.court.membership.refused_standing": {
+  "about": "a system message that the player needs to be a guest of a named house before joining (the house's name fills the blank)",
+  "tone": "plain label"
+ },
+ "hemomancy.court.membership.refused_switch_used": {
+  "about": "a system message that the player has already moved once and their house is fixed",
+  "tone": "plain label"
+ },
+ "hemomancy.court.membership.refused_transgression": {
+  "about": "a system message that a named house will not take the player while their wrong against it stands (the house's name fills the blank)",
+  "tone": "plain label"
+ },
+ "hemomancy.court.membership.switched": {
+  "about": "a system message that the player leaves one named house for another and cannot move again (the two house names fill the blanks)",
+  "tone": "plain label"
+ },
+ "hemomancy.court.nursery_tender.custom.line1": {
+  "about": "the Nursery tender accepting a fish for the young, explaining that sharing the catch with those who cannot hunt yet is the custom",
+  "tone": "gentle, grateful"
+ },
+ "hemomancy.court.nursery_tender.directions.line1": {
+  "about": "the Nursery tender saying the school swims a wide loop through open water and warning to watch for the edge-swimmers, who will see the player first",
+  "tone": "gentle, cautionary"
+ },
+ "hemomancy.court.nursery_tender.directions.line2": {
+  "about": "the Nursery tender saying the Giving Light and Holding Stone are shoreward, the Woven Current's lines hang below in the twilight, and the young are not taken that deep",
+  "tone": "gentle, protective"
+ },
+ "hemomancy.court.nursery_tender.gift.line1": {
+  "about": "the Nursery tender giving the player cooked salmon and asking if they have eaten since leaving the shore",
+  "tone": "gentle, caring"
+ },
+ "hemomancy.court.nursery_tender.greet.known": {
+  "about": "the Nursery tender saying the player found the nursery without the school to lead them, a lot of open water to cross alone",
+  "tone": "gentle, impressed"
+ },
+ "hemomancy.court.nursery_tender.greet.member": {
+  "about": "the Nursery tender welcoming a Shared Wake member, inviting them to help count the young, and noting the cups hold one more than last time",
+  "tone": "gentle, warm"
+ },
+ "hemomancy.court.nursery_tender.greet.referred": {
+  "about": "the Nursery tender saying someone told the player where the nursery is and they are glad, noting the school is out on its loop but keeps this ground for it",
+  "tone": "gentle, welcoming"
+ },
+ "hemomancy.court.nursery_tender.greet.stranger": {
+  "about": "the Nursery tender warning the newcomer to mind the cups with the young in them, and asking if they swam all this way alone",
+  "tone": "gentle, cautionary"
+ },
+ "hemomancy.court.nursery_tender.house.line1": {
+  "about": "the Nursery tender saying the Shared Wake's home is the school and this ground is where the young grow until they can keep pace",
+  "tone": "gentle, warm"
+ },
+ "hemomancy.court.nursery_tender.house.line2": {
+  "about": "the Nursery tender saying strength is keeping pace with each other, with fast ones on the edge and the rest making sure nobody is left behind",
+  "tone": "gentle, practical"
+ },
+ "hemomancy.court.nursery_tender.item_hint": {
+  "about": "the Nursery tender asking the player to hold an item up where it can be seen, gently, and never over the cups",
+  "tone": "gentle, careful"
+ },
+ "hemomancy.court.nursery_tender.item_inquiry.morphling_mermaids_purse.line1": {
+  "about": "the Nursery tender explaining that Mermaid's Purse banks blood on the hunt and gives it to whoever in the school is hurt worst",
+  "tone": "gentle, explanatory"
+ },
+ "hemomancy.court.nursery_tender.item_inquiry.morphling_mermaids_purse.line2": {
+  "about": "the Nursery tender telling the player to feed Mermaid's Purse at the nursery after the Lightkeeper's lesson because it grows faster on home ground",
+  "tone": "gentle, helpful"
+ },
+ "hemomancy.court.nursery_tender.join.early": {
+  "about": "the Nursery tender saying they take no one before the fifth Degree, telling the player to grow into the blood first, and promising the school will still be swimming",
+  "tone": "gentle, patient"
+ },
+ "hemomancy.court.nursery_tender.join.line1": {
+  "about": "the Nursery tender accepting the player into the Shared Wake and telling them to swim with the school when they can and always turn back for the tired",
+  "tone": "gentle, warm"
+ },
+ "hemomancy.court.nursery_tender.join.settled": {
+  "about": "the Nursery tender apologizing that the player already used their one permitted move between houses",
+  "tone": "gentle, sorry"
+ },
+ "hemomancy.court.nursery_tender.join.standing": {
+  "about": "the Nursery tender saying the school barely knows the player yet, and telling them to bring the young a share of their catch, swim with them a while, then ask again",
+  "tone": "gentle, practical"
+ },
+ "hemomancy.court.nursery_tender.shunned.line1": {
+  "about": "the Nursery tender saying the player is scrubbed of every partner and that could pass to the young, who have so little of their own yet",
+  "tone": "gentle, anxious and firm"
+ },
+ "hemomancy.court.nursery_tender.shunned.line2": {
+  "about": "the Nursery tender asking the shunned player to keep away from the nursery and cups, promising nobody will hurt them but they cannot come near",
+  "tone": "gentle, firm and sorry"
+ },
+ "hemomancy.court.nursery_tender.strain.other": {
+  "about": "the Nursery tender saying another house's strain is fine here because the young only care how gently you swim near them",
+  "tone": "gentle, reassuring"
+ },
+ "hemomancy.court.nursery_tender.strain.own": {
+  "about": "the Nursery tender noting Mermaid's Purse on the player's flank, which gives its banked blood to whoever in the school is hurt",
+  "tone": "gentle, approving"
+ },
+ "hemomancy.court.offering_bearer.custom.line1": {
+  "about": "the Offering-bearer accepting the player's offering, saying it goes down to the heads with the Kindling's own and they are fed",
+  "tone": "solemn, grateful"
+ },
+ "hemomancy.court.offering_bearer.directions.line1": {
+  "about": "the Offering-bearer placing the Last Marrow on the whale-fall bones above, with the Still Bell and Veiled Fold above them",
+  "tone": "solemn, measured"
+ },
+ "hemomancy.court.offering_bearer.directions.line2": {
+  "about": "the Offering-bearer saying the Garden is at the top where the light reaches and the houses between will tell the rest of the way",
+  "tone": "solemn, measured"
+ },
+ "hemomancy.court.offering_bearer.greet.known": {
+  "about": "the Offering-bearer telling the visitor that few come down without a guide, and that neither the heads nor the Kindling will mind them",
+  "tone": "solemn, measured"
+ },
+ "hemomancy.court.offering_bearer.greet.member": {
+  "about": "the Offering-bearer greeting a Kindling member and saying their share of the feeding waits by the basins, as they prepare together",
+  "tone": "solemn, formal"
+ },
+ "hemomancy.court.offering_bearer.greet.referred": {
+  "about": "the Offering-bearer saying someone above sent the visitor to the Sanctum and telling them to watch the feeding without hurrying",
+  "tone": "solemn, formal"
+ },
+ "hemomancy.court.offering_bearer.greet.stranger": {
+  "about": "the Offering-bearer telling the visitor they are in the Kindling's water where the heads are fed daily, and not to touch the offerings",
+  "tone": "solemn, cautionary"
+ },
+ "hemomancy.court.offering_bearer.house.line1": {
+  "about": "the Offering-bearer explaining that the Kindling cultivates the greatest self it can and gives it to Hydra at the end of life",
+  "tone": "solemn, measured"
+ },
+ "hemomancy.court.offering_bearer.house.line2": {
+  "about": "the Offering-bearer saying the vents are the heads the Kindling feed all their lives, and that wasting a person before they are ready is the worst thing they know",
+  "tone": "solemn, grave"
+ },
+ "hemomancy.court.offering_bearer.item_hint": {
+  "about": "the Offering-bearer asking the visitor to show an item so the Offering-bearer can say what the Kindling knows of it",
+  "tone": "solemn, formal"
+ },
+ "hemomancy.court.offering_bearer.item_inquiry.morphling_kinbud.line1": {
+  "about": "the Offering-bearer identifying Kinbud as the Kindling's strain that buds along the spine as Hydra buds",
+  "tone": "solemn, measured"
+ },
+ "hemomancy.court.offering_bearer.item_inquiry.morphling_kinbud.line2": {
+  "about": "the Offering-bearer telling the player to carry Kinbud for a lifetime and then they will know what it is for",
+  "tone": "solemn, cryptic"
+ },
+ "hemomancy.court.offering_bearer.shunned.line1": {
+  "about": "the Offering-bearer telling the player they carry nothing living and must stand back from the offerings",
+  "tone": "solemn, firm"
+ },
+ "hemomancy.court.offering_bearer.shunned.line2": {
+  "about": "the Offering-bearer saying nothing of the player's will go down to the heads and ordering them to leave the Sanctum",
+  "tone": "solemn, firm"
+ },
+ "hemomancy.court.offering_bearer.strain.other": {
+  "about": "the Offering-bearer saying the player's strain belongs to another house and will not reach the heads, though they may still watch the feeding",
+  "tone": "solemn, measured"
+ },
+ "hemomancy.court.offering_bearer.strain.own": {
+  "about": "the Offering-bearer noting Kinbud grows along the player's spine and that it is only the beginning of a lifetime of preparation",
+  "tone": "solemn, measured"
+ },
+ "hemomancy.court.presence.hydra.call": {
+  "about": "the Head-tender telling a petitioner to be still and not reach, because the great head rises only to look upon who has come",
+  "tone": "formal, hushed"
+ },
+ "hemomancy.court.presence.marimo.chorus": {
+  "about": "a short title for the chorus of the anchored speaking together",
+  "tone": "plain label"
+ },
+ "hemomancy.court.presence.marimo.chorus.0": {
+  "about": "the anchored elders speaking together, saying the ones in the walls were and still are people who simply stopped needing to move",
+  "tone": "tender, communal"
+ },
+ "hemomancy.court.presence.marimo.chorus.1": {
+  "about": "the anchored elders saying nobody is kept here and each came down a tier at a time over a whole lifetime",
+  "tone": "tender, communal"
+ },
+ "hemomancy.court.presence.marimo.chorus.2": {
+  "about": "the anchored elders saying there is food in the pool and room on the ledges and nobody asks anything of the player",
+  "tone": "tender, communal"
+ },
+ "hemomancy.court.presence.marimo.chorus.3": {
+  "about": "the anchored elders saying that when one goes still at last, the moss carries what they knew to all the rest",
+  "tone": "tender, communal"
+ },
+ "hemomancy.court.presence.marimo.chorus.4": {
+  "about": "the anchored elders saying that is how they talk to the walls, and how the walls answer when they are quiet enough",
+  "tone": "tender, communal"
+ },
+ "hemomancy.court.presence.marimo.chorus.5": {
+  "about": "the anchored elders saying Marimo gives slowly, food first, then belonging, then a place in the walls, and asking if the player is hungry",
+  "tone": "tender, communal"
+ },
+ "hemomancy.court.presence.marimo.first": {
+  "about": "the anchored elders greeting the player who has come all the way down, saying they felt each tier of the stair and the player may stay as long as they like",
+  "tone": "tender, welcoming"
+ },
+ "hemomancy.court.presence.refused.marimo": {
+  "about": "a system message that Marimo's moss cannot be taken away",
+  "tone": "plain label"
+ },
+ "hemomancy.court.presence.refused.site": {
+  "about": "a system message that the Court does not let this site be broken",
+  "tone": "plain label"
+ },
+ "hemomancy.court.presence.says": {
+  "about": "a format showing a speaker's name followed by what they say (the speaker's name and their line fill the blanks)",
+  "tone": "plain label"
+ },
+ "hemomancy.court.refused": {
+  "about": "a system message that nothing is given, a bare refusal",
+  "tone": "plain label"
+ },
+ "hemomancy.court.rest.recent": {
+  "about": "a system message that the player rested here only a little while ago",
+  "tone": "plain label"
+ },
+ "hemomancy.court.rooted_elder.gift.line1": {
+  "about": "the Rooted elder giving the player bone meal ground from an old whale fall so something can grow wherever they go",
+  "tone": "slow, tender"
+ },
+ "hemomancy.court.rooted_elder.greet.known": {
+  "about": "the Rooted elder telling you who follow that the player found the fall unled, so they read the scavengers well, as the elder once did when young and walking",
+  "tone": "slow, approving"
+ },
+ "hemomancy.court.rooted_elder.greet.member": {
+  "about": "the Rooted elder telling a Last Marrow member that the fall will feed them as it feeds the house for as long as there is bone",
+  "tone": "slow, warm"
+ },
+ "hemomancy.court.rooted_elder.greet.referred": {
+  "about": "the Rooted elder saying someone above sent you who follow down to the bones, and that the elder's plumes felt the water stir as they came",
+  "tone": "slow, welcoming"
+ },
+ "hemomancy.court.rooted_elder.greet.stranger": {
+  "about": "the Rooted elder greeting you who follow, glad to be awake for their arrival though unable to rise to meet them",
+  "tone": "slow, gentle"
+ },
+ "hemomancy.court.rooted_elder.house.line1": {
+  "about": "the Rooted elder saying they chose to root in the bone when their strength began to fail, so what remained would feed the young",
+  "tone": "slow, tender"
+ },
+ "hemomancy.court.rooted_elder.house.line2": {
+  "about": "the Rooted elder saying rooting is a choice they could still undo, but they would rather be of use here",
+  "tone": "slow, serene"
+ },
+ "hemomancy.court.rooted_elder.item_hint": {
+  "about": "the Rooted elder asking the player to hold an item out over the bone, because the elder cannot lean closer",
+  "tone": "slow, patient"
+ },
+ "hemomancy.court.rooted_elder.item_inquiry.morphling_marrowplume.line1": {
+  "about": "the Rooted elder explaining that Marrowplume is Last Marrow's strain, feeds on what the dead leave, and rooted the speaker in this bone when their strength was spent",
+  "tone": "slow, reflective"
+ },
+ "hemomancy.court.rooted_elder.item_inquiry.morphling_marrowplume.line2": {
+  "about": "the Rooted elder telling the player to feed Marrowplume on the fall once they have had the Lightkeeper's lesson, since a strain grows faster in its own house's water",
+  "tone": "slow, instructive"
+ },
+ "hemomancy.court.rooted_elder.join.early": {
+  "about": "the Rooted elder saying the house takes no one before the fifth Degree, telling the player to grow into the blood first and return to the bones",
+  "tone": "slow, patient"
+ },
+ "hemomancy.court.rooted_elder.join.line1": {
+  "about": "the Rooted elder accepting you who follow into Last Marrow, and saying that when their strength is spent it will feed those who come after",
+  "tone": "slow, solemn"
+ },
+ "hemomancy.court.rooted_elder.join.settled": {
+  "about": "the Rooted elder saying the player already used the one permitted move between houses, so cannot be taken in",
+  "tone": "slow, regretful"
+ },
+ "hemomancy.court.rooted_elder.join.standing": {
+  "about": "the Rooted elder saying they do not know you who follow well enough yet, and telling them to work beside the tenders on the fall and ask again",
+  "tone": "slow, patient"
+ },
+ "hemomancy.court.rooted_elder.shunned.line1": {
+  "about": "the Rooted elder saying the player is scrubbed of every partner and in the bones that emptiness could spread to every elder rooted, so they cannot come near",
+  "tone": "slow, sorrowful"
+ },
+ "hemomancy.court.rooted_elder.shunned.line2": {
+  "about": "the Rooted elder saying they are drawing their plumes in and the tenders will keep the player from the fall, but no one will do them harm",
+  "tone": "slow, gentle but firm"
+ },
+ "hemomancy.court.rooted_elder.strain.other": {
+  "about": "the Rooted elder saying the player's other-house strain makes no difference because the fall feeds them just the same and nothing is wasted",
+  "tone": "slow, kind"
+ },
+ "hemomancy.court.rooted_elder.strain.own": {
+  "about": "the Rooted elder noting Marrowplume already on the player's arms, which at its fullest will let them root as the elder has, though roots can always be drawn out again",
+  "tone": "slow, tender"
+ },
+ "hemomancy.court.sleeper.greet.known": {
+  "about": "narration of frost forming along the lowest fold of the mantle, with nothing inside it stirring, as a player who found the bell alone arrives",
+  "tone": "hushed narration"
+ },
+ "hemomancy.court.sleeper.greet.member": {
+  "about": "narration of the mantle easing a little at its lowest fold for a Still Bell member and then settling still",
+  "tone": "hushed narration"
+ },
+ "hemomancy.court.sleeper.greet.referred": {
+  "about": "narration of the folded mantle rising once with a slow breath and going still again as a player sent to the bell arrives",
+  "tone": "hushed narration"
+ },
+ "hemomancy.court.sleeper.greet.stranger": {
+  "about": "narration of the sleeper hanging sealed in its mantle from a bone hook in the dome and not waking for the stranger",
+  "tone": "hushed narration"
+ },
+ "hemomancy.court.sleeper.house.line1": {
+  "about": "narration of the Still Bell's sleepers being woken only when the bell needs one, and this one not yet being needed",
+  "tone": "plain narration"
+ },
+ "hemomancy.court.sleeper.house.line2": {
+  "about": "narration of a single barely-heard word from the sleeper through the mantle, which is the word still",
+  "tone": "plain narration"
+ },
+ "hemomancy.court.sleeper.item_hint": {
+  "about": "narration of the sleeper's eyes staying closed under the frost on its brows when the player shows an item",
+  "tone": "hushed narration"
+ },
+ "hemomancy.court.sleeper.shunned.line1": {
+  "about": "narration of the mantle drawing tighter around the sleeper as the shunned player comes near",
+  "tone": "hushed narration"
+ },
+ "hemomancy.court.sleeper.shunned.line2": {
+  "about": "narration that the sleeper stays sealed and nothing in the bell moves toward the shunned player",
+  "tone": "hushed narration"
+ },
+ "hemomancy.court.sleeper.strain.other": {
+  "about": "narration that the sleeper gives no sign of the strain the player carries",
+  "tone": "hushed narration"
+ },
+ "hemomancy.court.sleeper.strain.own": {
+  "about": "narration of a faint frost-blue pulse passing along the fold nearest the player, in time with their Hushbell",
+  "tone": "hushed narration"
+ },
+ "hemomancy.court.standing.raised": {
+  "about": "a system message that the player has risen to a new standing title in a named house (the standing's name and the house's name fill the blanks)",
+  "tone": "plain label"
+ },
+ "hemomancy.court.tidewarden.custom.line1": {
+  "about": "the Tidewarden accepting stone for the passage, saying it goes in with the next repair and that sharing the upkeep is the custom",
+  "tone": "clipped, grateful"
+ },
+ "hemomancy.court.tidewarden.directions.line1": {
+  "about": "the Tidewarden saying the Giving Light is above in the sun where the player can eat, and the Shared Wake swims open water and is to be followed",
+  "tone": "clipped, helpful"
+ },
+ "hemomancy.court.tidewarden.directions.line2": {
+  "about": "the Tidewarden describing the Woven Current's lines in the twilight, and saying they themselves do not go deeper because their post is here",
+  "tone": "clipped, dutiful"
+ },
+ "hemomancy.court.tidewarden.greet.known": {
+  "about": "the Tidewarden saying the player found the refuge alone, so they read the rocks well, and telling them to stay inside the walls while the Tidewarden keeps the sea out",
+  "tone": "clipped, approving"
+ },
+ "hemomancy.court.tidewarden.greet.member": {
+  "about": "the Tidewarden welcoming a Holding Stone member home, saying their place by the pool is kept and nobody moved it",
+  "tone": "clipped, warm"
+ },
+ "hemomancy.court.tidewarden.greet.referred": {
+  "about": "the Tidewarden saying they were told the player would come, noting that they did, and that the passage is clear because it was checked this morning",
+  "tone": "clipped, satisfied"
+ },
+ "hemomancy.court.tidewarden.greet.stranger": {
+  "about": "the Tidewarden stopping a stranger in the refuge, warning them to mind the wet rock, and promising the passage is kept and they will be safe in it",
+  "tone": "clipped, commanding then promising"
+ },
+ "hemomancy.court.tidewarden.house.line1": {
+  "about": "the Tidewarden explaining that the Holding Stone keeps the shelters and passages because someone always has to",
+  "tone": "clipped, matter-of-fact"
+ },
+ "hemomancy.court.tidewarden.house.line2": {
+  "about": "the Tidewarden saying a promise here is a wall that people build their days on, so promises are not made lightly",
+  "tone": "clipped, grave"
+ },
+ "hemomancy.court.tidewarden.item_hint": {
+  "about": "the Tidewarden telling the player to show what they carry, saying they will know it if it came off the shore",
+  "tone": "clipped, brisk"
+ },
+ "hemomancy.court.tidewarden.item_inquiry.morphling_holdfast.line1": {
+  "about": "the Tidewarden identifying Holdfast as their house's strain that grips stone not shell and grips sooner when fed here",
+  "tone": "clipped, matter-of-fact"
+ },
+ "hemomancy.court.tidewarden.item_inquiry.morphling_holdfast.line2": {
+  "about": "the Tidewarden telling the player to feed Holdfast in the refuge's water after the Lightkeeper's lesson because it grows faster at home",
+  "tone": "clipped, instructive"
+ },
+ "hemomancy.court.tidewarden.item_inquiry.relay_chart.line1": {
+  "about": "the Tidewarden recognising a Voyager's Relay Chart that points to the Garden, saying the small refuge is not on it and that is fine",
+  "tone": "clipped, wry"
+ },
+ "hemomancy.court.tidewarden.rest.line1": {
+  "about": "the Tidewarden telling the player to sit in the shelter out of the swell and promising to watch the door",
+  "tone": "clipped, protective"
+ },
+ "hemomancy.court.tidewarden.shunned.line1": {
+  "about": "the Tidewarden telling the player to stay outside because they are scrubbed bare and whatever did that could strip the growth off the refuge",
+  "tone": "clipped, firm"
+ },
+ "hemomancy.court.tidewarden.shunned.line2": {
+  "about": "the Tidewarden saying the refuge is closed to the shunned player, promising not to hurt them and not to open it either",
+  "tone": "clipped, firm"
+ },
+ "hemomancy.court.tidewarden.strain.other": {
+  "about": "the Tidewarden saying the player's strain is another house's, which is fine because the refuge shelters everyone, and telling them to keep to the passage",
+  "tone": "clipped, plain"
+ },
+ "hemomancy.court.tidewarden.strain.own": {
+  "about": "the Tidewarden noting Holdfast on the player's arms, a good grip, that will take the stone when they need it",
+  "tone": "clipped, approving"
+ },
+ "hemomancy.court.veiled_resident.gift.line1": {
+  "about": "the Veiled resident giving the player dark glass that lets them see out but no one see in",
+  "tone": "terse, quiet"
+ },
+ "hemomancy.court.veiled_resident.greet.known": {
+  "about": "the Veiled resident saying the player came alone and that the resident noticed",
+  "tone": "terse, watchful"
+ },
+ "hemomancy.court.veiled_resident.greet.member": {
+  "about": "the Veiled resident acknowledging one of the Fold and promising to ask nothing more",
+  "tone": "terse, quiet"
+ },
+ "hemomancy.court.veiled_resident.greet.referred": {
+  "about": "the Veiled resident saying someone named this place to the player and asking who",
+  "tone": "terse, wary"
+ },
+ "hemomancy.court.veiled_resident.greet.stranger": {
+  "about": "the Veiled resident saying the player sees them, which few do, and asking why",
+  "tone": "terse, wary"
+ },
+ "hemomancy.court.veiled_resident.house.line1": {
+  "about": "the Veiled resident saying they fold away when still and that they choose to",
+  "tone": "terse, quiet"
+ },
+ "hemomancy.court.veiled_resident.house.line2": {
+  "about": "the Veiled resident saying belonging asks nothing of their name, and asking whether the player's does",
+  "tone": "terse, probing"
+ },
+ "hemomancy.court.veiled_resident.item_hint": {
+  "about": "the Veiled resident telling the player to show an item, or not",
+  "tone": "terse, indifferent"
+ },
+ "hemomancy.court.veiled_resident.item_inquiry.morphling_ink_cap.line1": {
+  "about": "the Veiled resident identifying Ink Cap as theirs, saying it veils now and later hides",
+  "tone": "terse, quiet"
+ },
+ "hemomancy.court.veiled_resident.item_inquiry.morphling_ink_cap.line2": {
+  "about": "the Veiled resident saying the Lightkeeper's lesson comes first and then Ink Cap should be fed in the Fold, where it grows faster",
+  "tone": "terse, quiet"
+ },
+ "hemomancy.court.veiled_resident.join.early": {
+  "about": "the Veiled resident refusing before the fifth Degree and telling the player to come back then",
+  "tone": "terse, flat"
+ },
+ "hemomancy.court.veiled_resident.join.line1": {
+  "about": "the Veiled resident accepting the player into the Fold and telling them to keep their own counsel",
+  "tone": "terse, quiet"
+ },
+ "hemomancy.court.veiled_resident.join.settled": {
+  "about": "the Veiled resident saying the player already moved houses once and that was their one",
+  "tone": "terse, flat"
+ },
+ "hemomancy.court.veiled_resident.join.standing": {
+  "about": "the Veiled resident saying they do not know the player yet and telling them to stay a while and then ask",
+  "tone": "terse, flat"
+ },
+ "hemomancy.court.veiled_resident.shunned.line1": {
+  "about": "the Veiled resident saying the player is scrubbed of every partner and the resident folds away from them",
+  "tone": "terse, cold"
+ },
+ "hemomancy.court.veiled_resident.shunned.line2": {
+  "about": "the Veiled resident promising no one will harm the shunned player and telling them to go",
+  "tone": "terse, firm"
+ },
+ "hemomancy.court.veiled_resident.strain.other": {
+  "about": "the Veiled resident saying another house's strain hides nothing here",
+  "tone": "terse, flat"
+ },
+ "hemomancy.court.veiled_resident.strain.own": {
+  "about": "the Veiled resident noting the veil is starting on the player and telling them to keep it",
+  "tone": "terse, approving"
+ },
+ "hemomancy.court.warden.amends": {
+  "about": "a Garden warden telling the player their returned offering is all anyone wanted and inviting them to sit with the house again",
+  "tone": "warm, forgiving"
+ },
+ "hemomancy.court.warden.named.growth": {
+  "about": "a Garden warden naming the player's wrong: they tore up growth planted for everyone, neither only theirs nor only the speaker's",
+  "tone": "grave, accusing"
+ },
+ "hemomancy.court.warden.named.harm": {
+  "about": "a Garden warden naming the player's wrong: they raised a hand against a resident, which nobody in the Garden does",
+  "tone": "grave, accusing"
+ },
+ "hemomancy.court.warden.named.second_gift": {
+  "about": "a Garden warden naming the player's wrong: they took a gift set out for others, though there is always enough when shared",
+  "tone": "grave, accusing"
+ },
+ "hemomancy.court.warden.named.undercroft": {
+  "about": "a Garden warden naming the player's wrong: they reached into the walls for one of the anchored, who are still people and felt it",
+  "tone": "grave, accusing"
+ },
+ "hemomancy.court.warden.turned_away": {
+  "about": "a Garden warden turning the player away until they make amends, and telling them to bring an offering of food",
+  "tone": "firm, sorrowful"
+ },
+ "hemomancy.dialogue.court.option.amends": {
+  "about": "offering the food in the player's hand to the house as amends for a wrong",
+  "tone": "contrite"
+ },
+ "hemomancy.dialogue.court.option.ask_about_item": {
+  "about": "asking the speaker about something the player carries",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.back": {
+  "about": "asking the speaker something else, returning to the main question list",
+  "tone": "plain"
+ },
+ "hemomancy.dialogue.court.option.challenge": {
+  "about": "asking to challenge the Kindling's Champion for the title",
+  "tone": "resolute"
+ },
+ "hemomancy.dialogue.court.option.directions": {
+  "about": "asking where the other houses of the Court live",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.food": {
+  "about": "saying the player could eat, asking for food",
+  "tone": "plain, hopeful"
+ },
+ "hemomancy.dialogue.court.option.gift": {
+  "about": "accepting the speaker's welcome gift",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.house": {
+  "about": "asking the speaker to tell the player about their house",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.join": {
+  "about": "asking to join the speaker's house",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.leave": {
+  "about": "leaving the conversation",
+  "tone": "plain"
+ },
+ "hemomancy.dialogue.court.option.lesson": {
+  "about": "asking for the Lightkeeper's first lesson",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.lost_letter": {
+  "about": "telling the speaker that the player lost a sealed letter a drowned Votary was carrying",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.offer": {
+  "about": "giving the food in the player's hand to the house",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.offer_catch": {
+  "about": "giving the fish in the player's hand for the nursery's young",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.offer_ink": {
+  "about": "giving the ink in the player's hand for the door's screen",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.offer_line": {
+  "about": "giving the line in the player's hand for the camp",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.offer_remains": {
+  "about": "giving the remains in the player's hand for the whale fall",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.offer_stone": {
+  "about": "giving the stone in the player's hand for the passages",
+  "tone": "polite, practical"
+ },
+ "hemomancy.dialogue.court.option.offer_wool": {
+  "about": "giving the wool in the player's hand for the bell's warmth",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.read_letter": {
+  "about": "asking who a sealed letter was meant for",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.court.option.rest": {
+  "about": "asking if the player may rest here a while",
+  "tone": "polite"
+ },
+ "hemomancy.dialogue.newcomer.court_arbor": {
+  "about": "an Arbor elder telling the player, new to the blood, that the Order's Vicars walk on land and will show them the first steps",
+  "tone": "tender, gentle"
+ },
+ "hemomancy.dialogue.newcomer.court_bellwarden": {
+  "about": "the Bellwarden telling a player new to the blood to go to a Vicar on land first, who teaches the beginning, and to come back after",
+  "tone": "spare, firm"
+ },
+ "hemomancy.dialogue.newcomer.court_braced_elder": {
+  "about": "the Braced elder telling a guest new to the blood that the Order's Vicars teach beginners on land, so go to them first, and the door will wait",
+  "tone": "steadfast, patient"
+ },
+ "hemomancy.dialogue.newcomer.court_edge_swimmer": {
+  "about": "the Edge-swimmer telling a player with no Vicar yet to go to land first, because the school will still be swimming",
+  "tone": "hurried, clipped"
+ },
+ "hemomancy.dialogue.newcomer.court_gardener": {
+  "about": "the Gardener asking whether the player has met a Vicar yet, telling them to eat with the Garden first, and saying the Order's Vicars on land will tell them the rest",
+  "tone": "motherly, caring"
+ },
+ "hemomancy.dialogue.newcomer.court_head_tender": {
+  "about": "the Head-tender telling a petitioner who has not yet begun that the Order's Vicars receive beginners on land, and to return to the Sanctum when they are Harbinger",
+  "tone": "formal, courteous"
+ },
+ "hemomancy.dialogue.newcomer.court_host": {
+  "about": "the Host asking if the player is new to the blood, telling them to find a Vicar on land first to teach them, and adding that the Vicar will not ask why they came either",
+  "tone": "guarded, wry"
+ },
+ "hemomancy.dialogue.newcomer.court_kindled_elder": {
+  "about": "the Kindled elder telling the player they are too new and must go to the Vicars on land first",
+  "tone": "fragmentary, dismissive"
+ },
+ "hemomancy.dialogue.newcomer.court_lamp_colony": {
+  "about": "the Lamp-colony telling a player new to the blood to go first to the Vicars on land, who teach the beginnings, and to return to the lines later",
+  "tone": "calm, kind"
+ },
+ "hemomancy.dialogue.newcomer.court_lightkeeper": {
+  "about": "the Lightkeeper telling a player very new to the blood to find an Order Vicar on land first, and promising the Garden will still be there after",
+  "tone": "kindly, patient"
+ },
+ "hemomancy.dialogue.newcomer.court_linesman": {
+  "about": "the Linesman asking if the player is new to the blood and advising them, if they will take advice, to find a Vicar on land first who teaches the start, saying the camp will keep",
+  "tone": "easygoing, advising"
+ },
+ "hemomancy.dialogue.newcomer.court_marrow_tender": {
+  "about": "the Marrow-tender telling a player new to the blood to go to a Vicar on land first to learn the start, and then they will be some use down here",
+  "tone": "blunt, practical"
+ },
+ "hemomancy.dialogue.newcomer.court_nursery_tender": {
+  "about": "the Nursery tender asking if the player is new to the blood, telling them to find a Vicar on land first because they teach the beginnings, and saying the tender only teaches the young to swim",
+  "tone": "gentle, wry"
+ },
+ "hemomancy.dialogue.newcomer.court_offering_bearer": {
+  "about": "the Offering-bearer telling the visitor who has barely begun that the Order's Vicars teach the first steps on land, and to go to them",
+  "tone": "solemn, formal"
+ },
+ "hemomancy.dialogue.newcomer.court_rooted_elder": {
+  "about": "the Rooted elder telling you who follow, new to the blood, to go to the Vicars on land first because they teach the beginnings",
+  "tone": "slow, gentle"
+ },
+ "hemomancy.dialogue.newcomer.court_sleeper": {
+  "about": "narration that the sleeper does not wake, implying whoever keeps the bell would send the new player to a Vicar on land first",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.newcomer.court_tidewarden": {
+  "about": "the Tidewarden asking if the player has no Vicar yet, telling them to find one on land who teaches the first steps, and saying the Tidewarden keeps passages and not lessons",
+  "tone": "clipped, dry"
+ },
+ "hemomancy.dialogue.newcomer.court_veiled_resident": {
+  "about": "the Veiled resident asking if the player is new to the blood and telling them to go to a Vicar on land first",
+  "tone": "terse, flat"
+ },
+ "hemomancy.dialogue.rapport.court_bellwarden.the_sleepers": {
+  "about": "asking the Bellwarden whether they ever wish they could sleep too",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_bellwarden.the_sleepers.line1": {
+  "about": "the Bellwarden admitting they wish for sleep every night but someone must stay awake",
+  "tone": "spare, weary"
+ },
+ "hemomancy.dialogue.rapport.court_bellwarden.the_sleepers.line2": {
+  "about": "the Bellwarden saying that when the bell wakes one to keep it they will sleep, because one awake keeper is enough",
+  "tone": "spare, quiet"
+ },
+ "hemomancy.dialogue.rapport.court_bellwarden.the_sleepers.teaser": {
+  "about": "a short teaser that the Bellwarden has kept watch a long time and may say more once trusted",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_bellwarden.the_stores": {
+  "about": "asking the Bellwarden whether the stores will last",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_bellwarden.the_stores.line1": {
+  "about": "the Bellwarden saying the stores last long enough if nobody wastes, that they count them each morning, and have never counted short",
+  "tone": "spare, firm"
+ },
+ "hemomancy.dialogue.rapport.court_bellwarden.the_stores.teaser": {
+  "about": "a short teaser that the Bellwarden counts everything and some counts are private",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_gardener.first_bed": {
+  "about": "asking the Gardener which bed they planted first",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_gardener.first_bed.line1": {
+  "about": "the Gardener telling of the first bed by the steps with the crooked edge that they were so proud of they slept beside it, and offering the rest over a bowl",
+  "tone": "motherly, fond"
+ },
+ "hemomancy.dialogue.rapport.court_gardener.first_bed.teaser": {
+  "about": "a short teaser that the Gardener loves to talk about the beds once the player has shared the table a while",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_gardener.when_you_go": {
+  "about": "asking the Gardener whether it hurts when visitors leave",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_gardener.when_you_go.line1": {
+  "about": "the Gardener admitting it hurts every time: they feed visitors, their color returns, and they go up the water",
+  "tone": "motherly, wistful"
+ },
+ "hemomancy.dialogue.rapport.court_gardener.when_you_go.line2": {
+  "about": "the Gardener saying they know visitors must go and still set out one extra bowl for a while after, out of habit",
+  "tone": "motherly, rueful"
+ },
+ "hemomancy.dialogue.rapport.court_gardener.when_you_go.teaser": {
+  "about": "a short teaser that something about leaving sits heavy with the Gardener",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_host.own_room": {
+  "about": "asking the Host whether they have a room of their own here",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_host.own_room.line1": {
+  "about": "the Host asking why they would tell a guest that, then wryly crediting the player for never asking their name",
+  "tone": "guarded, wry"
+ },
+ "hemomancy.dialogue.rapport.court_host.own_room.line2": {
+  "about": "the Host admitting yes, behind the second screen, unseen, and asking if the player minds",
+  "tone": "guarded, vulnerable"
+ },
+ "hemomancy.dialogue.rapport.court_host.own_room.teaser": {
+  "about": "a short teaser that even the Host keeps one door closed",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_host.the_screen": {
+  "about": "asking the Host who painted the screen",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_host.the_screen.line1": {
+  "about": "the Host asking whether it matters whose hand painted it, saying many and a little their own, and that they will not ask whose ink the player brings either",
+  "tone": "guarded, deflecting"
+ },
+ "hemomancy.dialogue.rapport.court_host.the_screen.teaser": {
+  "about": "a short teaser that the Host gives a room and not answers, not yet",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_linesman.first_line": {
+  "about": "asking the Linesman who tied their first line",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_linesman.first_line.line1": {
+  "about": "the Linesman saying the one who tied their first line has since let go, which is allowed, and offering to show the knot that still holds",
+  "tone": "easygoing, fond"
+ },
+ "hemomancy.dialogue.rapport.court_linesman.first_line.teaser": {
+  "about": "a short teaser that the Linesman offers lines freely and the story of the first one less so",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_linesman.letting_go": {
+  "about": "asking the Linesman whether they have ever let go of a line",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_linesman.letting_go.line1": {
+  "about": "the Linesman recounting letting go once when young, when the pod pulled somewhere they did not want to go",
+  "tone": "easygoing, reflective"
+ },
+ "hemomancy.dialogue.rapport.court_linesman.letting_go.line2": {
+  "about": "the Linesman saying they returned on their own later to find their place left open, and promising the player's will be open too if they ever let go",
+  "tone": "easygoing, reassuring"
+ },
+ "hemomancy.dialogue.rapport.court_linesman.letting_go.teaser": {
+  "about": "a short teaser telling the player to bring line for the camp a while if they want to hear what letting go is like",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_marrow_tender.rooting": {
+  "about": "asking the Marrow-tender whether they will root here one day",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_marrow_tender.rooting.line1": {
+  "about": "the Marrow-tender saying they have picked their spot near the third rib where the plumes grow thick",
+  "tone": "blunt, calm"
+ },
+ "hemomancy.dialogue.rapport.court_marrow_tender.rooting.line2": {
+  "about": "the Marrow-tender telling the player not to look like that, since it is a plan and they will still be of use",
+  "tone": "blunt, gruff"
+ },
+ "hemomancy.dialogue.rapport.court_marrow_tender.rooting.teaser": {
+  "about": "a short teaser that the Marrow-tender has already picked where to root",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_marrow_tender.the_hook": {
+  "about": "asking the Marrow-tender how long they have worked the fall",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_marrow_tender.the_hook.line1": {
+  "about": "the Marrow-tender saying they have worked since the ribs were white, and that their hook is older than them and belonged to someone now rooted nearby",
+  "tone": "blunt, reminiscent"
+ },
+ "hemomancy.dialogue.rapport.court_marrow_tender.the_hook.teaser": {
+  "about": "a short teaser that the Marrow-tender talks over the work and talks more if the fall is given something",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_nursery_tender.own_cup": {
+  "about": "asking the Nursery tender whether they were raised in these cups",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_nursery_tender.own_cup.line1": {
+  "about": "the Nursery tender saying they were told they were raised in the cup by the big boulder, though they remember nothing",
+  "tone": "gentle, wistful"
+ },
+ "hemomancy.dialogue.rapport.court_nursery_tender.own_cup.line2": {
+  "about": "the Nursery tender saying they now keep that cup clean for the next young one, as someone once did for them",
+  "tone": "gentle, warm"
+ },
+ "hemomancy.dialogue.rapport.court_nursery_tender.own_cup.teaser": {
+  "about": "a short teaser to ask about the tender's own start once trust has grown",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_nursery_tender.the_cups": {
+  "about": "asking the Nursery tender how many young are in the cups now",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_nursery_tender.the_cups.line1": {
+  "about": "the Nursery tender saying there are more young than last season counting the small one in the far cup, counted every time the school loops, and asking the player to help count the far side",
+  "tone": "gentle, hopeful"
+ },
+ "hemomancy.dialogue.rapport.court_nursery_tender.the_cups.teaser": {
+  "about": "a short teaser that the tender is busy but will make time to talk if the player helps the nursery",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_offering_bearer.the_descent": {
+  "about": "asking the Offering-bearer how long the walk down to the vents is",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_offering_bearer.the_descent.line1": {
+  "about": "the Offering-bearer saying the walk is long enough to prepare on the way, that they carry the food, the heads take it, and they climb back",
+  "tone": "solemn, quiet"
+ },
+ "hemomancy.dialogue.rapport.court_offering_bearer.the_descent.teaser": {
+  "about": "a short teaser that the Offering-bearer talks about the walk down only with people the Kindling know well",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_offering_bearer.worthy": {
+  "about": "asking the Offering-bearer whether they hope to be worthy one day",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_offering_bearer.worthy.line1": {
+  "about": "the Offering-bearer admitting every bearer hopes to keep a head and that a lifetime of preparation is what it asks",
+  "tone": "solemn, reserved"
+ },
+ "hemomancy.dialogue.rapport.court_offering_bearer.worthy.line2": {
+  "about": "the Offering-bearer saying they will not waste their lifetime and telling the player not to waste theirs",
+  "tone": "solemn, earnest"
+ },
+ "hemomancy.dialogue.rapport.court_offering_bearer.worthy.teaser": {
+  "about": "a short teaser that the Offering-bearer keeps a hope no visitor hears",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_tidewarden.the_passage": {
+  "about": "asking the Tidewarden whether they have lost anyone in the passages",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_tidewarden.the_passage.line1": {
+  "about": "the Tidewarden saying they lost one person to the swell because they were late",
+  "tone": "clipped, pained"
+ },
+ "hemomancy.dialogue.rapport.court_tidewarden.the_passage.line2": {
+  "about": "the Tidewarden saying they have never been late since, test every way first, and promising to get the player through",
+  "tone": "clipped, resolute"
+ },
+ "hemomancy.dialogue.rapport.court_tidewarden.the_passage.teaser": {
+  "about": "a short teaser that the Tidewarden will say this once and only to someone trusted",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.court_tidewarden.the_pole": {
+  "about": "asking the Tidewarden where their sounding pole came from",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.court_tidewarden.the_pole.line1": {
+  "about": "the Tidewarden saying the pole was the last warden's, found in the passage and kept as a promise to them",
+  "tone": "clipped, quiet"
+ },
+ "hemomancy.dialogue.rapport.court_tidewarden.the_pole.teaser": {
+  "about": "a short teaser that the Tidewarden keeps watch and not stories, not yet",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_bellwarden.custom.line": {
+  "about": "the Bellwarden asking for one wool for the bell's walls against the cold as a guest's share",
+  "tone": "spare, firm"
+ },
+ "hemomancy.trade.court_bellwarden.custom.opens": {
+  "about": "a trade-box note that gifts build standing with the Still Bell, and at the fifth Degree a guest may ask the Bellwarden to join",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_bellwarden.custom.title": {
+  "about": "a short title for the wool trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_bellwarden.thanks": {
+  "about": "the Bellwarden acknowledging receipt of one wool that goes into the walls",
+  "tone": "spare, grateful"
+ },
+ "hemomancy.trade.court_gardener.custom.line": {
+  "about": "the Gardener asking the player to bring any food for the table, since there is always more when everyone brings a little",
+  "tone": "motherly, inviting"
+ },
+ "hemomancy.trade.court_gardener.custom.opens": {
+  "about": "a trade-box note that gifts build standing with the Giving Light, and at the fifth Degree a guest may ask the Lightkeeper to join",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_gardener.custom.title": {
+  "about": "a short title for the shared-food trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_gardener.thanks": {
+  "about": "the Gardener thanking the player for food now on the table and telling them to sit and eat something themselves",
+  "tone": "motherly, grateful"
+ },
+ "hemomancy.trade.court_host.custom.line": {
+  "about": "the Host asking for ink sac or black dye for the door's screen and asking whether the Host needs to know whose it is",
+  "tone": "guarded, wry"
+ },
+ "hemomancy.trade.court_host.custom.opens": {
+  "about": "a trade-box note that gifts build standing with the Veiled Fold, and at the fifth Degree a guest may ask the Veiled resident to join",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_host.custom.title": {
+  "about": "a short title for the ink trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_host.thanks": {
+  "about": "the Host accepting the ink, saying nobody will know whose, and asking if that is not better",
+  "tone": "guarded, grateful"
+ },
+ "hemomancy.trade.court_linesman.custom.line": {
+  "about": "the Linesman asking if the player has string to spare for splicing into the lines, with no harm if not",
+  "tone": "easygoing, casual"
+ },
+ "hemomancy.trade.court_linesman.custom.opens": {
+  "about": "a trade-box note that gifts build standing with the Woven Current, and at the fifth Degree a guest may ask the Lamp-colony to join",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_linesman.custom.title": {
+  "about": "a short title for the line trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_linesman.thanks": {
+  "about": "the Linesman saying the string will hold and offering to tie it in where the player can see",
+  "tone": "easygoing, grateful"
+ },
+ "hemomancy.trade.court_marrow_tender.custom.line": {
+  "about": "the Marrow-tender asking for bones or rotten flesh, saying nothing that comes down is wasted",
+  "tone": "blunt, practical"
+ },
+ "hemomancy.trade.court_marrow_tender.custom.opens": {
+  "about": "a trade-box note that gifts build standing with the Last Marrow, and at the fifth Degree a guest may ask the Rooted elder to join",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_marrow_tender.custom.title": {
+  "about": "a short title for the remains trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_marrow_tender.thanks": {
+  "about": "the Marrow-tender saying the gift will feed the plumes and nothing is wasted",
+  "tone": "blunt, grateful"
+ },
+ "hemomancy.trade.court_nursery_tender.custom.line": {
+  "about": "the Nursery tender asking for one raw fish so the young in the cups eat tonight, as the catch is shared",
+  "tone": "gentle, warm"
+ },
+ "hemomancy.trade.court_nursery_tender.custom.opens": {
+  "about": "a trade-box note that gifts build standing with the Shared Wake, and at the fifth Degree a guest may ask the Nursery tender to join",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_nursery_tender.custom.title": {
+  "about": "a short title for the fish trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_nursery_tender.thanks": {
+  "about": "the Nursery tender saying the fish will be in the cups before dark and thanking the player for thinking of the young",
+  "tone": "gentle, grateful"
+ },
+ "hemomancy.trade.court_offering_bearer.custom.line": {
+  "about": "the Offering-bearer asking for food for the heads, which goes down to the vents with theirs as part of the preparation",
+  "tone": "solemn, formal"
+ },
+ "hemomancy.trade.court_offering_bearer.custom.opens": {
+  "about": "a trade-box note that gifts build standing with the Kindling, and at the fifth Degree a guest may ask the Head-tender to join",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_offering_bearer.custom.title": {
+  "about": "a short title for the offering trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_offering_bearer.thanks": {
+  "about": "the Offering-bearer confirming the offering is received and goes down to the heads",
+  "tone": "solemn, grateful"
+ },
+ "hemomancy.trade.court_tidewarden.custom.line": {
+  "about": "the Tidewarden asking for one block of stone for the passage, promising to set it themselves",
+  "tone": "clipped, firm"
+ },
+ "hemomancy.trade.court_tidewarden.custom.opens": {
+  "about": "a trade-box note that gifts build standing with the Holding Stone, and at the fifth Degree a guest may ask the Braced elder to join",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_tidewarden.custom.title": {
+  "about": "a short title for the stone trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.court_tidewarden.thanks": {
+  "about": "the Tidewarden saying the stone is in the wall and promising to keep it there",
+  "tone": "clipped, grateful"
+ },
+ "hemomancy.vicar.court.chart": {
+  "about": "a Vicar telling the player that any Voyager will draw them another Relay Chart if they lose the way",
+  "tone": "measured, helpful"
+ },
+ "hemomancy.vicar.court.known.alchemist": {
+  "about": "a Vicar saying the Alchemist has already pointed the player seaward, and that the Voyagers can chart the way to the Brined Court",
+  "tone": "measured, wry"
+ },
+ "hemomancy.vicar.court.known.found": {
+  "about": "a Vicar saying the Brined Court found the player before the Vicar could send them, that the record prefers the player's account, and asking if it was what they expected",
+  "tone": "measured, curious"
+ },
+ "hemomancy.vicar.court.known.letter": {
+  "about": "a Vicar noting the player already had a letter from the Court, saying a drowned envoy's seal is better warrant than the Vicar's own, and pointing them to a Voyager for a chart",
+  "tone": "measured, approving"
+ },
+ "hemomancy.vicar.court.known.voyager": {
+  "about": "a Vicar saying a Voyager already told the player of the Brined Court so the Vicar will not repeat it badly, and asking what they made of the account",
+  "tone": "measured, curious"
+ },
+ "hemomancy.vicar.court.lead": {
+  "about": "a Vicar telling a player at the fifth Degree that the record kept back until now that other Harbingers carried the blood into the sea, and the furthest-going call themselves the Brined Court",
+  "tone": "measured, revelatory"
+ },
+ "hemomancy.vicar.court.letter_lost": {
+  "about": "a Vicar asking the player to describe the seal of a letter taken from a drowned Votary and lost, since Sunburst crust can only mean the Brined Court and the record accepts a careful description",
+  "tone": "measured, probing"
+ },
+ "hemomancy.vicar.court.voyager": {
+  "about": "a Vicar admitting no warrant to speak for the Brined Court and knowing them only through others' letters, and telling the player to ask a Voyager on the Erythrocoral Reef, leaving the choice to go to them",
+  "tone": "measured, candid"
+ },
+ "hemomancy.voyager.court.known.alchemist": {
+  "about": "a Voyager noting the Alchemist already sent the player seaward, and that the Order lists these strains while the Court raises them",
+  "tone": "dry, scholarly"
+ },
+ "hemomancy.voyager.court.known.found": {
+  "about": "a Voyager saying the player found the Court before anyone sent them, which no survey can plan for, and asking what the water did on arrival",
+  "tone": "scholarly, curious"
+ },
+ "hemomancy.voyager.court.known.letter": {
+  "about": "a Voyager noting the player read a drowned envoy's letter and saying they are finishing the voyage the envoy never completed",
+  "tone": "scholarly, wry"
+ },
+ "hemomancy.voyager.court.known.voyager": {
+  "about": "a Voyager saying they have discussed the Brined Court before and their survey of it reads the same",
+  "tone": "scholarly, flat"
+ },
+ "hemomancy.voyager.court.letter_lost": {
+  "about": "a Voyager asking what seal material a lost sealed letter had, since Sunburst crust means it was bound for the Brined Court",
+  "tone": "scholarly, probing"
+ },
+ "hemomancy.voyager.court.line1": {
+  "about": "a Voyager explaining that some Harbingers went into the sea and stayed, are called the Brined Court, and raise the strains the Voyagers only catalog",
+  "tone": "scholarly, matter-of-fact"
+ },
+ "hemomancy.voyager.court.line2": {
+  "about": "a Voyager explaining that the Voyagers deal with the Court at a cordial distance, measuring and witnessing without presuming, and that the nearest door is the Lighthouse Garden",
+  "tone": "scholarly, measured"
+ }
+}

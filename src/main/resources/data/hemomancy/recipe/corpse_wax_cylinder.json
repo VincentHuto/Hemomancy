@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {"item": "hemomancy:adipocere"},
+    {"item": "hemomancy:adipocere"},
+    {"item": "hemomancy:hematic_iron_scrap"},
+    {"item": "hemomancy:active_befouling_ash"},
+    {"item": "minecraft:paper"}
+  ],
+  "result": {"id": "hemomancy:corpse_wax_cylinder", "count": 1}
+}

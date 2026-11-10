@@ -103,6 +103,7 @@ public final class WorldEffectDispatcher {
             PossessionSceneRenderer.render(event.getPoseStack(), partialTick);
             HeartNodeMomentRenderer.render(event.getPoseStack(), partialTick);
             ClawSlashRenderer.render(event.getPoseStack(), partialTick);
+            LivingSyringeDrawRenderer.render(event.getPoseStack(), partialTick);
             PuppeteerThreadRenderer.render(event.getPoseStack(), partialTick);
             HematicSutureLinkRenderer.render(event.getPoseStack(), partialTick);
             TendonLineRenderer.render(event.getPoseStack(), partialTick);

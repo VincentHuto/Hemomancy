@@ -30,7 +30,7 @@ public enum CreativeTabGroup {
 			"hematic_microscope", "scrying_dish", "hematic_suture_needle", "vascular_poultice", "vitality_chalice", "vascular_status_gauge",
 			"sanguine_conduit", "charm_of_vascularium", "unsigned_ancestral_ledger",
 			"terrestrial_speculum", "sporitic_thurible", "mind_spike", "listening_scar", "ahaematic_colloid", "wax_cylinder",
-			"ambergris_cylinder", "memory_thread")),
+			"ambergris_cylinder", "corpse_wax_cylinder", "memory_thread")),
 	STATIONS(List.of(
 			"gourd", "vial_centrifuge", "centrifugal_governor_kit", "fractionating_rotor_kit",
 			"phlebotomists_field_case", "phlebotomists_cabinet", "ghastly_alembic", "hematic_condenser_kit",

@@ -26,5 +26,6 @@ public final class ClientReloadListenerRegistrar {
             FaneBoundaryRenderer.clearCaches();
             if (BloodVolumeOverlay.instance != null) BloodVolumeOverlay.instance.clearCaches();
         });
+        event.registerReloadListener(com.vincenthuto.hemomancy.client.screen.dialogue.DialogueBriefs.INSTANCE);
     }
 }

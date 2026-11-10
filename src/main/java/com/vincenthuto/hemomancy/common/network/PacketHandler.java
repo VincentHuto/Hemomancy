@@ -67,7 +67,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "39";
+    public static final String PROTOCOL_VERSION = "40";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -118,6 +118,7 @@ public class PacketHandler {
         net.playToClient(DatapackSyncPacket.TYPE, DatapackSyncPacket.STREAM_CODEC, DatapackSyncPacket::handle);
         net.playToClient(PacketHematicMicroscopeViewing.TYPE, PacketHematicMicroscopeViewing.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketBloodVialInjection.TYPE, PacketBloodVialInjection.STREAM_CODEC, ClientPayloadHandlers::dispatch);
+        net.playToClient(PacketLivingSyringeDraw.TYPE, PacketLivingSyringeDraw.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToServer(ManipulationChargeVisualPacket.TYPE, ManipulationChargeVisualPacket.STREAM_CODEC,
                 ManipulationChargeVisualPacket::handle);
         net.playToClient(BloodFlowPacket.TYPE, BloodFlowPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);

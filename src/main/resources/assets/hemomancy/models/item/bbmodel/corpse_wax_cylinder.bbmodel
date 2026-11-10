@@ -1,0 +1,1059 @@
+{
+  "meta": {
+    "format_version": "4.10",
+    "model_format": "java_block",
+    "box_uv": false
+  },
+  "name": "corpse_wax_cylinder",
+  "ambientocclusion": false,
+  "resolution": {
+    "width": 16,
+    "height": 16
+  },
+  "elements": [
+    {
+      "name": "bound cuff",
+      "from": [
+        2.5,
+        5.5,
+        7.0
+      ],
+      "to": [
+        3.75,
+        6.0,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            5.4,
+            16.0,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            5.4,
+            16.0,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        }
+      },
+      "uuid": "6eb189df-d817-507b-bf6f-5183f1dc4306",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "bound cuff",
+      "from": [
+        2.5,
+        6.0,
+        6.25
+      ],
+      "to": [
+        3.75,
+        7.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            4.2,
+            16.0,
+            5.4
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            4.2,
+            16.0,
+            5.4
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        }
+      },
+      "uuid": "c1fa78b9-af8b-526c-a1f6-db2b800d7fb2",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "bound cuff",
+      "from": [
+        2.5,
+        7.0,
+        5.5
+      ],
+      "to": [
+        3.75,
+        9.0,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            1.8,
+            16.0,
+            4.2
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            1.8,
+            16.0,
+            4.2
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
+        }
+      },
+      "uuid": "471c1afe-88fa-5c1e-82d9-052ef5f059cd",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "bound cuff",
+      "from": [
+        2.5,
+        9.0,
+        6.25
+      ],
+      "to": [
+        3.75,
+        10.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.6,
+            16.0,
+            1.8
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.6,
+            16.0,
+            1.8
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        }
+      },
+      "uuid": "627c0f54-8ade-558f-a3e7-a5a0d014daed",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "bound cuff",
+      "from": [
+        2.5,
+        10.0,
+        7.0
+      ],
+      "to": [
+        3.75,
+        10.5,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            0.6
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        }
+      },
+      "uuid": "17ef95de-e496-534b-b5bc-da1f0e7039c7",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "adipocere",
+      "from": [
+        3.75,
+        5.75,
+        7.25
+      ],
+      "to": [
+        12.75,
+        6.25,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            5.33,
+            12.0,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            5.33,
+            12.0,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        }
+      },
+      "uuid": "0ac5e81a-f768-575b-8fb1-3c968fab98da",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "adipocere",
+      "from": [
+        3.75,
+        6.25,
+        6.5
+      ],
+      "to": [
+        12.75,
+        7.25,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            4.0,
+            12.0,
+            5.33
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            4.0,
+            12.0,
+            5.33
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        }
+      },
+      "uuid": "f9fe642e-3293-5fcf-834c-716566599b09",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "adipocere",
+      "from": [
+        3.75,
+        7.25,
+        5.75
+      ],
+      "to": [
+        12.75,
+        8.75,
+        10.25
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            2.0,
+            12.0,
+            4.0
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            2.0,
+            12.0,
+            4.0
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        }
+      },
+      "uuid": "c7ac55df-7db6-5ddb-ba9f-36b4ba799f04",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "adipocere",
+      "from": [
+        3.75,
+        8.75,
+        6.5
+      ],
+      "to": [
+        12.75,
+        9.75,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.67,
+            12.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.67,
+            12.0,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        }
+      },
+      "uuid": "97a98124-fb01-5e52-a7cf-2e50a3051f38",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "adipocere",
+      "from": [
+        3.75,
+        9.75,
+        7.25
+      ],
+      "to": [
+        12.75,
+        10.25,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            0.67
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            0.67
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        }
+      },
+      "uuid": "52ec1c0e-2441-5d33-92f6-e85194101db7",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "knotted cuff",
+      "from": [
+        12.75,
+        5.5,
+        7.0
+      ],
+      "to": [
+        13.5,
+        6.0,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            5.4,
+            16.0,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            5.4,
+            16.0,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        }
+      },
+      "uuid": "ae4ba9cc-6064-5058-a2b9-9f29288b76de",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "knotted cuff",
+      "from": [
+        12.75,
+        6.0,
+        6.25
+      ],
+      "to": [
+        13.5,
+        7.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            4.2,
+            16.0,
+            5.4
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            4.2,
+            16.0,
+            5.4
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        }
+      },
+      "uuid": "26f6f7b5-6470-5479-b9ec-9291fb71e304",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "knotted cuff",
+      "from": [
+        12.75,
+        7.0,
+        5.5
+      ],
+      "to": [
+        13.5,
+        9.0,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            1.8,
+            16.0,
+            4.2
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            1.8,
+            16.0,
+            4.2
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
+        }
+      },
+      "uuid": "31074299-ebfc-51af-9692-e27411e8206b",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "knotted cuff",
+      "from": [
+        12.75,
+        9.0,
+        6.25
+      ],
+      "to": [
+        13.5,
+        10.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.6,
+            16.0,
+            1.8
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.6,
+            16.0,
+            1.8
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        }
+      },
+      "uuid": "83a7ace0-ecb0-579d-9bdd-3d26540b53b9",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "knotted cuff",
+      "from": [
+        12.75,
+        10.0,
+        7.0
+      ],
+      "to": [
+        13.5,
+        10.5,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            0.6
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        }
+      },
+      "uuid": "5ec16440-6cc4-5ec8-b370-a54985f73286",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    }
+  ],
+  "outliner": [
+    "6eb189df-d817-507b-bf6f-5183f1dc4306",
+    "c1fa78b9-af8b-526c-a1f6-db2b800d7fb2",
+    "471c1afe-88fa-5c1e-82d9-052ef5f059cd",
+    "627c0f54-8ade-558f-a3e7-a5a0d014daed",
+    "17ef95de-e496-534b-b5bc-da1f0e7039c7",
+    "0ac5e81a-f768-575b-8fb1-3c968fab98da",
+    "f9fe642e-3293-5fcf-834c-716566599b09",
+    "c7ac55df-7db6-5ddb-ba9f-36b4ba799f04",
+    "97a98124-fb01-5e52-a7cf-2e50a3051f38",
+    "52ec1c0e-2441-5d33-92f6-e85194101db7",
+    "ae4ba9cc-6064-5058-a2b9-9f29288b76de",
+    "26f6f7b5-6470-5479-b9ec-9291fb71e304",
+    "31074299-ebfc-51af-9692-e27411e8206b",
+    "83a7ace0-ecb0-579d-9bdd-3d26540b53b9",
+    "5ec16440-6cc4-5ec8-b370-a54985f73286"
+  ],
+  "textures": [
+    {
+      "name": "corpse_wax_cylinder.png",
+      "id": "skin",
+      "uuid": "7b82700b-a0ef-5a2b-ad12-3f4481cee673",
+      "uv_width": 16,
+      "uv_height": 16,
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABWklEQVR4nK2Rv0sCYRjHv4pTf8CLR4P6Itxw0BAah1MSmItTwa1NbRI11SRNCU1iNAu1OLscgujkDzwkjBsMeY4bQrkxsDnuHhQJE4Se6XkfPt/neb/PE3obvAJQhAAw87zJlACoSQmAc4fc+ci7uDXMZns+8sJcnXneOq0IMZmSQ66alNQYG+dpRYh8LgsgDMBsts1mG0Fw7063vzDfqTF+LlZk4UBm9LPTawYiDrkJGeNHq9JoAboa5+fJVWHV4unlrlau+wLmACzUOBMOuflcdt3Mw03Vsok1EfHxRctmDrkAEjLGBniOEySPJaNWrls2hS6P0tglwjvRACJ7+1EA0UPB1nnrAL4/55sFWNLHGX1VZc1mQTSgq/f1njYEYNlULBkA6K8JiaB3Txtatr/HlCZ5FGH8T6Z5zZZNKc2/kWVTp9tfHWGDgP0VSwb/hOltpn/tZDsN4AeXHK67YUTu2AAAAABJRU5ErkJggg==",
+      "mode": "bitmap",
+      "namespace": "hemomancy",
+      "folder": "item"
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        26,
+        34,
+        12
+      ],
+      "scale": [
+        1.43,
+        1.43,
+        1.43
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "fixed": {
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    },
+    "thirdperson_righthand": {
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        30,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ]
+    }
+  }
+}

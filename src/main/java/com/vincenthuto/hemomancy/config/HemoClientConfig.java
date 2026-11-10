@@ -8,6 +8,7 @@ public class HemoClientConfig {
     public static ModConfigSpec.BooleanValue BOSS_BAR_FRAMES;
     public static ModConfigSpec.BooleanValue CINEMATIC_BOSS_SCENES;
     public static ModConfigSpec.BooleanValue BOSS_SCENE_SHAKE;
+    public static ModConfigSpec.BooleanValue DIALOGUE_BRIEF_MODE;
 
 	public static ModConfigSpec.IntValue HUD_LOCATION;
 	public static ModConfigSpec.EnumValue<MorphlingHudMode> MORPHLING_HUD_MODE;
@@ -68,6 +69,11 @@ public class HemoClientConfig {
                 .comment("Let boss openings move the camera. Off keeps the letterbox and title card but leaves the view with you.").define("cinematicBossScenes", true);
         BOSS_SCENE_SHAKE = CLIENT_BUILDER.translation("hemomancy.configuration.bossSceneShake")
                 .comment("Shake the view during boss openings.").define("bossSceneShake", true);
+        CLIENT_BUILDER.pop();
+        CLIENT_BUILDER.push("debug");
+        DIALOGUE_BRIEF_MODE = CLIENT_BUILDER.translation("hemomancy.configuration.dialogueBriefMode")
+                .comment("Writing aid: show each NPC line and player response as a brief of what it is about and its tone, read from assets/hemomancy/dialogue_briefs, instead of the real text.")
+                .define("dialogueBriefMode", false);
         CLIENT_BUILDER.pop();
 		CLIENT_BUILDER.comment("Client settings for the power generator").push("powergen");
 
@@ -191,6 +197,10 @@ public class HemoClientConfig {
 
 	public static FaneBoundaryStyle faneBoundaryStyle() {
 		return FANE_BOUNDARY_STYLE == null ? FaneBoundaryStyle.SURFACE : FANE_BOUNDARY_STYLE.get();
+	}
+
+	public static boolean dialogueBriefMode() {
+		return DIALOGUE_BRIEF_MODE != null && DIALOGUE_BRIEF_MODE.get();
 	}
 
 	public static CardinalRiteHudMode cardinalRiteHud() {

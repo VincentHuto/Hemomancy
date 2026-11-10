@@ -131,12 +131,14 @@ public class ResonantForgeScreen extends AbstractContainerScreen<ResonantForgeMe
         text(g, Component.translatable("screen.hemomancy.resonant_forge.wheel_wear", menu.wheelUses(),
                 ResonantForgeRules.WHEEL_SERVICE_INTERVAL), 126, 27,
                 menu.wheelUses() >= 28 ? 0xFFFF7777 : MUTED, .48F);
-        var cylinder = menu.forge().getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER)
-                .get(com.vincenthuto.hemomancy.common.init.DataComponentInit.RESONANT_PATTERN.get());
-        if (cylinder != null) text(g, Component.translatable(cylinder.master()
-                        ? "screen.hemomancy.resonant_forge.cylinder.reusable"
-                        : "screen.hemomancy.resonant_forge.cylinder.consumed"),
-                16, 72, cylinder.master() ? 0xFFE7B878 : MUTED, .48F);
+        var cylinder = menu.forge().getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER);
+        var pattern = cylinder.get(com.vincenthuto.hemomancy.common.init.DataComponentInit.RESONANT_PATTERN.get());
+        if (pattern != null) {
+            boolean returnsShell = com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia.retainsShell(cylinder);
+            String outcome = pattern.master() ? "reusable" : returnsShell ? "shell" : "consumed";
+            text(g, Component.translatable("screen.hemomancy.resonant_forge.cylinder." + outcome),
+                    16, 72, pattern.master() || returnsShell ? 0xFFE7B878 : MUTED, .48F);
+        }
         if (menu.operation() != 0)
             text(g, Component.translatable("screen.hemomancy.resonant_forge.cancel"), 42, 113, PALE, .6F);
     }

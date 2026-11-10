@@ -11,14 +11,14 @@ class PlayerAnimationRegistryTest {
 	@Test
 	void thirdPersonPosesKeepTheirPriorityOrder() {
 		assertEquals(List.of("cardinal_staff_planting", "offset_reset", "casting", "hematic_microscope",
-						"blood_vial_injection", "living_torch_breath", "unstained_weapon_swing", "living_weapon_stroke",
-						"somnolent_seat"),
+						"blood_vial_injection", "living_syringe_draw", "living_torch_breath", "unstained_weapon_swing",
+						"living_weapon_stroke", "somnolent_seat"),
 				PlayerAnimationRegistry.THIRD_PERSON.stream().map(PlayerAnimationRegistry.Entry::name).toList());
 	}
 
 	@Test
 	void onlyTheAnimationPosesClaimTheFrame() {
-		assertEquals(List.of("hematic_microscope", "blood_vial_injection", "living_torch_breath",
+		assertEquals(List.of("hematic_microscope", "blood_vial_injection", "living_syringe_draw", "living_torch_breath",
 						"unstained_weapon_swing", "living_weapon_stroke"),
 				PlayerAnimationRegistry.THIRD_PERSON.stream().filter(PlayerAnimationRegistry.Entry::claims)
 						.map(PlayerAnimationRegistry.Entry::name).toList());

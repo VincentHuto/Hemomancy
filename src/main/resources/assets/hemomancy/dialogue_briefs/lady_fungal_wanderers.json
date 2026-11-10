@@ -1,0 +1,1606 @@
+{
+  "hemomancy.annetta.ally.0": {
+    "about": "Annetta, now fighting beside the player, telling them to stay close because she can still heal them",
+    "tone": "urgent, protective"
+  },
+  "hemomancy.annetta.ally.1": {
+    "about": "Annetta, fighting as an ally, fearfully asking the player to keep the infection from speaking her name",
+    "tone": "tense and frightened"
+  },
+  "hemomancy.annetta.ally.2": {
+    "about": "Annetta urging the player to keep striking the enemy during the fight",
+    "tone": "fierce, urgent"
+  },
+  "hemomancy.annetta.ally.3": {
+    "about": "Annetta, stunned, realizing she had been carrying the infection all along",
+    "tone": "shaken disbelief"
+  },
+  "hemomancy.annetta.break.last_words": {
+    "about": "Annetta's unfinished last words as she breaks, bitterly challenging the thing that wants her",
+    "tone": "defiant, breaking"
+  },
+  "hemomancy.annetta.cowering.harbinger_hint.line1": {
+    "about": "Annetta, cowering, telling a Harbinger-marked player to keep their things away because she knows what they do and recognizes the smell",
+    "tone": "fearful, accusing"
+  },
+  "hemomancy.annetta.cowering.harbinger_hint.line2": {
+    "about": "narration of Annetta watching the player's hands for glass and for moving teeth",
+    "tone": "tense, observant"
+  },
+  "hemomancy.annetta.cowering.neutral.line1": {
+    "about": "narration of Annetta pressed into the corner, gripping a small dagger, red hair hanging over her face",
+    "tone": "grim, quiet"
+  },
+  "hemomancy.annetta.cowering.neutral.line2": {
+    "about": "Annetta begging the player to stop the tests and questions and leave her in the still-walled place",
+    "tone": "pleading, exhausted"
+  },
+  "hemomancy.annetta.cured_support.line1": {
+    "about": "narration of Annetta with white hair and steady hands, standing between the player and the thing she used to carry",
+    "tone": "quiet, protective"
+  },
+  "hemomancy.annetta.cured_support.line2": {
+    "about": "Annetta, cured, telling the player to stay close, offering to slow the threat and keep them alive while they finish what the mercy began",
+    "tone": "steady, resolute"
+  },
+  "hemomancy.annetta.draught.line1": {
+    "about": "narration of the player holding out the Draught of Still Mercy while Annetta stares at its still surface",
+    "tone": "hushed, tense"
+  },
+  "hemomancy.annetta.draught.line2": {
+    "about": "Annetta asking whether the draught comes from the waters, saying it smells like the river at dawn",
+    "tone": "wary, wistful"
+  },
+  "hemomancy.annetta.draught.truth.line1": {
+    "about": "the player telling Annetta that something has been living inside her for a long time",
+    "tone": "gentle but direct"
+  },
+  "hemomancy.annetta.draught.truth.line2": {
+    "about": "narration of Annetta's hands rising to her neck and then falling",
+    "tone": "stricken, quiet"
+  },
+  "hemomancy.annetta.draught.truth.line3": {
+    "about": "Annetta, resigned and desperate, telling the player to take the thing out of her even if it tears her apart",
+    "tone": "desperate, resolved"
+  },
+  "hemomancy.annetta.event.bitten": {
+    "about": "narration of the jar breaking, a Tooth Peck biting Annetta, and her screaming as the hidden infection tears awake",
+    "tone": "horrified, vivid"
+  },
+  "hemomancy.annetta.event.burst": {
+    "about": "narration of Annetta stabbing the swollen growth at her neck, which bursts and destroys everything above her shoulders",
+    "tone": "grim, graphic"
+  },
+  "hemomancy.annetta.event.cured": {
+    "about": "narration of the draught taking hold, the red draining from Annetta's hair and the infection tearing loose",
+    "tone": "solemn, awed"
+  },
+  "hemomancy.annetta.event.falter": {
+    "about": "narration of Annetta staggering and her shield slipping from her arm",
+    "tone": "clipped, tense"
+  },
+  "hemomancy.annetta.event.mutation": {
+    "about": "narration of what remains of Annetta rising from the blood, no longer her",
+    "tone": "dread-filled"
+  },
+  "hemomancy.annetta.event.no_room": {
+    "about": "narration explaining that there is not enough room here for what would erupt from her, so the player keeps the draught",
+    "tone": "plain, cautionary"
+  },
+  "hemomancy.annetta.event.reanimating": {
+    "about": "narration of the blood around Annetta's body beginning to move",
+    "tone": "ominous, short"
+  },
+  "hemomancy.annetta.event.resolved": {
+    "about": "narration of the infection coming apart and Annetta still standing once it is gone",
+    "tone": "quiet relief"
+  },
+  "hemomancy.annetta.frantic.0": {
+    "about": "Annetta frantically screaming for the infection to be gotten off her",
+    "tone": "panicked"
+  },
+  "hemomancy.annetta.frantic.1": {
+    "about": "Annetta praying to the Lady to still her shaking hands",
+    "tone": "terrified, pleading"
+  },
+  "hemomancy.annetta.frantic.2": {
+    "about": "Annetta demanding to know what the player put inside her",
+    "tone": "frantic, accusing"
+  },
+  "hemomancy.annetta.frantic.3": {
+    "about": "Annetta protesting that she was clean every morning",
+    "tone": "anguished"
+  },
+  "hemomancy.annetta.frantic.4": {
+    "about": "Annetta snapping at the player to stop looking at her like that",
+    "tone": "raw, defensive"
+  },
+  "hemomancy.annetta.frantic.5": {
+    "about": "Annetta feeling the infection drinking inside her",
+    "tone": "horrified, whispered"
+  },
+  "hemomancy.annetta.frantic.6": {
+    "about": "Annetta apologizing and begging the player to stay back",
+    "tone": "panicked, ashamed"
+  },
+  "hemomancy.annetta.frantic.7": {
+    "about": "Annetta mourning that the water was supposed to keep her safe",
+    "tone": "broken, bitter"
+  },
+  "hemomancy.annetta.jar.line1": {
+    "about": "narration of Annetta's eyes going to the jar before the player",
+    "tone": "tense, quiet"
+  },
+  "hemomancy.annetta.jar.line2": {
+    "about": "Annetta fearfully saying that the Tooth Pecks always follow her",
+    "tone": "fearful, haunted"
+  },
+  "hemomancy.annetta.jar.line3": {
+    "about": "Annetta pleading that whatever the Tooth Pecks want in her, she does not have it",
+    "tone": "pleading"
+  },
+  "hemomancy.annetta.purge.drink": {
+    "about": "Annetta, after drinking the draught, remarking that it is cold like the river",
+    "tone": "faint, startled"
+  },
+  "hemomancy.annetta.purge.pulling": {
+    "about": "Annetta crying out that something is pulling itself out of her",
+    "tone": "agonized, urgent"
+  },
+  "hemomancy.annetta.resolved.how_long.line1": {
+    "about": "Annetta, cured, guessing the infection has been in her since the church was whole, before she took the white",
+    "tone": "reflective, tired"
+  },
+  "hemomancy.annetta.resolved.how_long.line2": {
+    "about": "Annetta realizing the Tooth Pecks knew all along while she mistook them for a test",
+    "tone": "bitter, wry"
+  },
+  "hemomancy.annetta.resolved.how_long.line3": {
+    "about": "narration of Annetta touching her white hair, then her remark that she was proof, just not of what she believed",
+    "tone": "rueful, quiet"
+  },
+  "hemomancy.annetta.resolved.line1": {
+    "about": "narration of Annetta looking at the broken nave without flinching",
+    "tone": "calm, still"
+  },
+  "hemomancy.annetta.resolved.line2": {
+    "about": "Annetta remembering being afraid in the church and being wrong, and saying that is enough for now",
+    "tone": "calm, tentative"
+  },
+  "hemomancy.annetta.resolved.what_now.line1": {
+    "about": "Annetta saying she will mend what she can and sit with the sick who ask her to make them clean",
+    "tone": "gentle, resolved"
+  },
+  "hemomancy.annetta.resolved.what_now.line2": {
+    "about": "Annetta saying that when ready she will return to the water and tell them what it looks like from inside",
+    "tone": "quietly determined"
+  },
+  "hemomancy.annetta.says": {
+    "about": "the chat format that shows Annetta speaking, with the quoted text filled in by what she says",
+    "tone": "plain label"
+  },
+  "hemomancy.communion.option.enough": {
+    "about": "Player response: ending the Communion, saying they have heard what they needed",
+    "tone": "curt, resolved"
+  },
+  "hemomancy.communion.option.i_understand": {
+    "about": "Player response: acknowledging the Fungal Entity's revelation and saying they understand",
+    "tone": "quiet, subdued"
+  },
+  "hemomancy.communion.option.speak_the_name": {
+    "about": "Player response: asking the Fungal Entity to speak its name",
+    "tone": "hushed, daring"
+  },
+  "hemomancy.communion.option.tell_me_more": {
+    "about": "Player response: asking the Fungal Entity to continue and tell more",
+    "tone": "curious, wary"
+  },
+  "hemomancy.communion.option.the_schism": {
+    "about": "Player response: asking the Fungal Entity what the Schism was",
+    "tone": "curious, probing"
+  },
+  "hemomancy.communion.option.what_does_it_want": {
+    "about": "Player response: asking what the Fungal Entity wants",
+    "tone": "wary, direct"
+  },
+  "hemomancy.communion.speaker_name": {
+    "about": "the unknown speaker's name label shown for the Fungal Entity during Communion",
+    "tone": "plain label"
+  },
+  "hemomancy.communion.v0.line1": {
+    "about": "narration of something uncoiling in the deep bloodrock and its strands pulling taut under the player's feet",
+    "tone": "ominous, hushed"
+  },
+  "hemomancy.communion.v0.line2": {
+    "about": "the Fungal Entity greeting the child of the Hematic Order, saying they come for truth and it will feed them as it feeds everything that grows",
+    "tone": "patient, predatory"
+  },
+  "hemomancy.communion.v0.line3": {
+    "about": "the Fungal Entity claiming that the first hemomancers grew out of the blood itself, long before anyone shaped it",
+    "tone": "calm, superior"
+  },
+  "hemomancy.communion.v0.origin1": {
+    "about": "the Fungal Entity explaining that the blood infection is the oldest language, spoken through hemoglobin on other worlds before the player's ancestors left the sea",
+    "tone": "ancient, unhurried"
+  },
+  "hemomancy.communion.v0.origin2": {
+    "about": "the Fungal Entity explaining that each manipulation is a word and each rite a sentence, so the player is learning to speak as the Entity itself",
+    "tone": "intimate, chilling"
+  },
+  "hemomancy.communion.v1.line1": {
+    "about": "narration of something wet and thread-thin brushing the inside of the player's skull",
+    "tone": "creeping, hushed"
+  },
+  "hemomancy.communion.v1.line2": {
+    "about": "the Fungal Entity recalling a time before the Harbingers and their degrees, before the Order learned to pretend it was human",
+    "tone": "old, wistful"
+  },
+  "hemomancy.communion.v1.schism1": {
+    "about": "the Fungal Entity describing the Schism as a thinning where overambitious branches were cut back like a grower would",
+    "tone": "matter-of-fact, cold"
+  },
+  "hemomancy.communion.v1.schism2": {
+    "about": "the Fungal Entity saying those who reached for control lost their place, finished the cut themselves, and became the Unstained, a cut branch that will not wither",
+    "tone": "dismissive, cold"
+  },
+  "hemomancy.communion.v1.schism3": {
+    "about": "the Fungal Entity describing Our Lady of Still Waters as scar tissue, the world's own flesh closing hard wherever the fungus breaks in",
+    "tone": "grudging, cold"
+  },
+  "hemomancy.communion.v2.infection1": {
+    "about": "the Fungal Entity explaining that the blood infection is how it reproduces across dimensions, with every hemomancer a fruiting body spreading its spores",
+    "tone": "calm, clinical"
+  },
+  "hemomancy.communion.v2.infection2": {
+    "about": "the Fungal Entity saying blood magic feeds its network when anything dies and each finished rite adds a node, which it calls growth",
+    "tone": "calm, proprietary"
+  },
+  "hemomancy.communion.v2.line1": {
+    "about": "narration of the presence drawing closer and the player's blood heating until their fingertips throb",
+    "tone": "ominous, intimate"
+  },
+  "hemomancy.communion.v2.line2": {
+    "about": "the Fungal Entity asking the Archon whether they know what lives inside them, and saying power and magic were only names for it",
+    "tone": "portentous, mocking"
+  },
+  "hemomancy.communion.v2.line2.apotheos": {
+    "about": "the Fungal Entity asking the Apotheos whether they know what lives inside them, noting they opened the door themselves, and calling power and magic names for it",
+    "tone": "portentous, mocking"
+  },
+  "hemomancy.communion.v2.purpose1": {
+    "about": "the Fungal Entity answering what it wants: to spread, as every living thing does, patiently, needing only that the player continue",
+    "tone": "serene, patient"
+  },
+  "hemomancy.communion.v3.harbingers1": {
+    "about": "the Fungal Entity explaining that the hermits tend the structures because the structures are its organs, with venous stone as living tissue and engram blocks as memories",
+    "tone": "confiding, proprietary"
+  },
+  "hemomancy.communion.v3.harbingers2": {
+    "about": "the Fungal Entity asking if the player felt the iron pillars take their pulse during the rite, and saying they cannot tell it from their own because they are the structure",
+    "tone": "intimate, unsettling"
+  },
+  "hemomancy.communion.v3.line1": {
+    "about": "narration of the voice losing its hiss and speaking to the player like an old friend",
+    "tone": "warm, uncanny"
+  },
+  "hemomancy.communion.v3.line2": {
+    "about": "the Fungal Entity describing the Harbinger Hermits as keepers who walk out alone, raise a blood temple and tend it until the heart is given away",
+    "tone": "fond, matter-of-fact"
+  },
+  "hemomancy.communion.v3.line3": {
+    "about": "the Fungal Entity calling the blood temple a greenhouse with the Hermit's heart as its seed, and the Archon what the house was built to bloom",
+    "tone": "proud, reverent"
+  },
+  "hemomancy.communion.v3.line3.apotheos": {
+    "about": "the Fungal Entity calling the blood temple a greenhouse with the Hermit's heart as its seed, and the Apotheos what it was built to bloom, now bloomed",
+    "tone": "proud, triumphant"
+  },
+  "hemomancy.communion.v4.line1": {
+    "about": "narration of the player's sight bending so they see as the mycelium does, one edgeless web of blood, stone and light",
+    "tone": "awed, hushed"
+  },
+  "hemomancy.communion.v4.line2": {
+    "about": "the Fungal Entity saying the player has earned the name behind the blood and it will let the name pass through them",
+    "tone": "solemn, ceremonial"
+  },
+  "hemomancy.communion.v4.name1": {
+    "about": "narration of the Entity's name arriving as a voiceless sound that sinks into the player's marrow, iron and heme",
+    "tone": "reverent, eerie"
+  },
+  "hemomancy.communion.v4.name2": {
+    "about": "the Fungal Entity saying the player's throat could never shape the name but their blood knows it now",
+    "tone": "soft, possessive"
+  },
+  "hemomancy.communion.v4.name3": {
+    "about": "the Fungal Entity saying that through the name, it now knows the player in turn",
+    "tone": "low, intimate"
+  },
+  "hemomancy.dialogue.annetta.option.drink": {
+    "about": "Player response: urging Annetta to drink the draught and warning her it will hurt",
+    "tone": "firm, gentle"
+  },
+  "hemomancy.dialogue.annetta.option.hold_fast": {
+    "about": "Player response: telling Annetta to hold fast during the purge",
+    "tone": "encouraging, firm"
+  },
+  "hemomancy.dialogue.annetta.option.how_long": {
+    "about": "Player response: asking Annetta how long the infection has been in her",
+    "tone": "gentle, curious"
+  },
+  "hemomancy.dialogue.annetta.option.lower_jar": {
+    "about": "Player response: an action stage direction of lowering the jar",
+    "tone": "plain label"
+  },
+  "hemomancy.dialogue.annetta.option.lower_vial": {
+    "about": "Player response: an action stage direction of lowering the vial",
+    "tone": "plain label"
+  },
+  "hemomancy.dialogue.annetta.option.step_back": {
+    "about": "Player response: an action stage direction of stepping back from Annetta",
+    "tone": "plain label"
+  },
+  "hemomancy.dialogue.annetta.option.unseal": {
+    "about": "Player response: an action stage direction of unsealing the jar",
+    "tone": "plain label"
+  },
+  "hemomancy.dialogue.annetta.option.what_is_it": {
+    "about": "Player response: explaining to Annetta that the draught will draw out what is inside her",
+    "tone": "calm, reassuring"
+  },
+  "hemomancy.dialogue.annetta.option.what_now": {
+    "about": "Player response: asking Annetta what she will do now",
+    "tone": "warm, curious"
+  },
+  "hemomancy.dialogue.event.archon_choice_eighth_degree": {
+    "about": "narration of the player surfacing from the dreaming root with veins pulled toward the Rite of Apotheos, which had been calling them",
+    "tone": "awed, ominous"
+  },
+  "hemomancy.dialogue.event.archon_choice_silence": {
+    "about": "narration instructing the player on the Silentium route: strike the spent Bloom's base with a base Living Weapon to make a Living Sickle, strike again to open the wound, defeat both faces of Vesper, burn his memory in a lit Iron Brazier and draw it in with the Living Staff",
+    "tone": "solemn, instructional"
+  },
+  "hemomancy.dialogue.event.hermit_accept_guidance": {
+    "about": "the Hermit telling the player to keep the waybill safe and, if they still want to join at the outpost, to tell its Vicar, who will take them in",
+    "tone": "fond, practical"
+  },
+  "hemomancy.dialogue.event.hermit_archon_wisdom": {
+    "about": "narration of the Hermit bowing low and telling the Archon that everything he knows is already in their blood",
+    "tone": "reverent"
+  },
+  "hemomancy.dialogue.event.hermit_farewell_die": {
+    "about": "narration of the Hermit touching the empty place in his chest as crimson light spills out and his body comes apart now that the Display is claimed",
+    "tone": "solemn"
+  },
+  "hemomancy.dialogue.event.hermit_heart_offered": {
+    "about": "the Hermit giving his blessing, telling the player to touch the Mortal Display and take the heart, then come back to him before leaving",
+    "tone": "kind, brisk"
+  },
+  "hemomancy.dialogue.event.hermit_passing": {
+    "about": "the Hermit's canon last words: the heart was his to give, follow the waybill to the others at their outpost, walk the crimson path, he goes where blood returns to silence",
+    "tone": "peaceful, final"
+  },
+  "hemomancy.dialogue.event.lady_clarity_rite_memory": {
+    "about": "narration of Our Lady's words sinking into the player's mind like a stone into still water, teaching them the Rite of Clarity Ascension",
+    "tone": "cool, serene"
+  },
+  "hemomancy.dialogue.event.lady_enlightened_truth_1": {
+    "about": "narration of Our Lady's words settling cold and clear, leaving the player done with their old life and unbothered by it",
+    "tone": "cool, calm"
+  },
+  "hemomancy.dialogue.event.lady_enlightened_truth_2": {
+    "about": "narration that Our Lady has been present all along and the world has gone quieter around the player",
+    "tone": "still, quiet"
+  },
+  "hemomancy.dialogue.event.qliphoth_communion_done": {
+    "about": "narration of something vast and patient now knowing the player, and the silence of the ninth shell settling into their bones",
+    "tone": "ominous, hushed"
+  },
+  "hemomancy.dialogue.event.whisper_truth_acknowledged": {
+    "about": "narration of fungal awareness settling into the player's bones and the whispered truth staying with them",
+    "tone": "uneasy, brief"
+  },
+  "hemomancy.dialogue.hermit.option.accept_guidance": {
+    "about": "Player response: telling the Hermit they understand and asking him to show the way",
+    "tone": "respectful, resolved"
+  },
+  "hemomancy.dialogue.hermit.option.accept_heart": {
+    "about": "Player response: declaring they will claim the Hermit's heart",
+    "tone": "solemn, resolved"
+  },
+  "hemomancy.dialogue.hermit.option.farewell": {
+    "about": "Player response: thanking the Hermit and telling him to rest now",
+    "tone": "tender, solemn"
+  },
+  "hemomancy.dialogue.hermit.option.how_do_i_begin": {
+    "about": "Player response: asking the Hermit how to begin the path of hemomancy",
+    "tone": "earnest, curious"
+  },
+  "hemomancy.dialogue.hermit.option.how_do_scars_work": {
+    "about": "Player response: asking the Hermit how scars reshape the mind",
+    "tone": "curious, attentive"
+  },
+  "hemomancy.dialogue.hermit.option.leave": {
+    "about": "Player response: a stage direction for leaving the conversation",
+    "tone": "plain label"
+  },
+  "hemomancy.dialogue.hermit.option.scar_crafting": {
+    "about": "Player response: asking the Hermit how to craft scars",
+    "tone": "practical, curious"
+  },
+  "hemomancy.dialogue.hermit.option.share_wisdom": {
+    "about": "Player response: asking the Hermit to share his wisdom",
+    "tone": "respectful"
+  },
+  "hemomancy.dialogue.hermit.option.tell_me_about_manipulations": {
+    "about": "Player response: asking the Hermit to tell them about blood manipulations",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.hermit.option.tell_me_about_scars": {
+    "about": "Player response: asking the Hermit to tell them about Scars",
+    "tone": "curious, attentive"
+  },
+  "hemomancy.dialogue.hermit.option.tell_me_about_tendencies": {
+    "about": "Player response: asking the Hermit to tell them about blood tendencies",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.hermit.option.what_heart": {
+    "about": "Player response: asking what the heart the Hermit speaks of is",
+    "tone": "puzzled, curious"
+  },
+  "hemomancy.dialogue.hermit.option.what_is_this_place": {
+    "about": "Player response: asking the Hermit what this place is",
+    "tone": "wary, curious"
+  },
+  "hemomancy.dialogue.hermit.option.what_next": {
+    "about": "Player response: asking the Hermit what they should do next",
+    "tone": "earnest"
+  },
+  "hemomancy.dialogue.hermit.option.what_remains_for_you": {
+    "about": "Player response: asking the Hermit what remains for him now",
+    "tone": "gentle, respectful"
+  },
+  "hemomancy.dialogue.hermit.option.who_are_you": {
+    "about": "Player response: asking the Hermit who he is and why he is here",
+    "tone": "wary, direct"
+  },
+  "hemomancy.dialogue.rapport.hermit.the_heart": {
+    "about": "Player response: asking the Hermit why he gave his heart away",
+    "tone": "gentle, curious"
+  },
+  "hemomancy.dialogue.rapport.hermit.the_heart.line1": {
+    "about": "the Hermit explaining he was dying anyway, a kept heart would be buried with him, but on the Display it might wake someone while he gets company",
+    "tone": "frank, wry"
+  },
+  "hemomancy.dialogue.rapport.hermit.the_heart.line2": {
+    "about": "the Hermit admitting he would like someone to take the heart soon, since some nights it is the only sound in the building and he is tired of listening to it",
+    "tone": "weary, bodily"
+  },
+  "hemomancy.dialogue.rapport.hermit.the_heart.teaser": {
+    "about": "a short hint that sharing bread with the Hermit longer may make him speak of the heart on the Display",
+    "tone": "soft teaser"
+  },
+  "hemomancy.dialogue.rapport.hermit.the_vigil": {
+    "about": "Player response: asking the Hermit how long he has kept this vigil",
+    "tone": "gentle, curious"
+  },
+  "hemomancy.dialogue.rapport.hermit.the_vigil.line1": {
+    "about": "the Hermit, glancing at candle stubs, saying the dust knows his shape, he counts visitors not years, one candle each, and there are few",
+    "tone": "melancholy, dry"
+  },
+  "hemomancy.dialogue.rapport.hermit.the_vigil.teaser": {
+    "about": "a short hint that the Hermit counts something under his breath when bread is brought",
+    "tone": "soft teaser"
+  },
+  "hemomancy.dialogue.rapport.votary_wayfarer.afraid": {
+    "about": "Player response: asking the Wayfarer what they do not tell the captain-scholar",
+    "tone": "gentle, teasing"
+  },
+  "hemomancy.dialogue.rapport.votary_wayfarer.afraid.line1": {
+    "about": "the Wayfarer admitting they are scared all the time and write it down anyway, like a note about water too still, which helps",
+    "tone": "nervous, honest"
+  },
+  "hemomancy.dialogue.rapport.votary_wayfarer.afraid.line2": {
+    "about": "the Wayfarer asking the player not to tell the captain-scholar, conceding that fear counts as an observation too",
+    "tone": "sheepish, wry"
+  },
+  "hemomancy.dialogue.rapport.votary_wayfarer.afraid.teaser": {
+    "about": "a short hint that some of the Wayfarer's notes concern things they have not told the captain-scholar",
+    "tone": "soft teaser"
+  },
+  "hemomancy.dialogue.rapport.votary_wayfarer.why_aboard": {
+    "about": "Player response: asking the Wayfarer what they hoped to see out here",
+    "tone": "friendly, curious"
+  },
+  "hemomancy.dialogue.rapport.votary_wayfarer.why_aboard.line1": {
+    "about": "the Wayfarer confessing they wanted to see a whale without a harpoon in it, and asking whether that was a good enough reason",
+    "tone": "earnest, shy"
+  },
+  "hemomancy.dialogue.rapport.votary_wayfarer.why_aboard.teaser": {
+    "about": "a short hint that the Wayfarer will tell the player anything once they know them",
+    "tone": "soft teaser"
+  },
+  "hemomancy.dialogue.rapport.voyager.the_cog": {
+    "about": "Player response: asking the Voyager how long the Cog has been at sea",
+    "tone": "friendly, curious"
+  },
+  "hemomancy.dialogue.rapport.voyager.the_cog.line1": {
+    "about": "the Voyager saying the Cog has been at sea longer than the hull likes, every plank replaced once, so they skip the question of whether it is the same ship and keep the logs",
+    "tone": "dry, scholarly"
+  },
+  "hemomancy.dialogue.rapport.voyager.the_cog.teaser": {
+    "about": "a short hint that trading with the Voyager will eventually get them talking about the ship",
+    "tone": "soft teaser"
+  },
+  "hemomancy.dialogue.rapport.voyager.the_whales": {
+    "about": "Player response: asking the Voyager why they do not hunt the whales",
+    "tone": "curious, pointed"
+  },
+  "hemomancy.dialogue.rapport.voyager.the_whales.line1": {
+    "about": "the Voyager recalling that the first whale they watched held its eye on the boat so long they wrote three pages before remembering to breathe",
+    "tone": "reflective, awed"
+  },
+  "hemomancy.dialogue.rapport.voyager.the_whales.line2": {
+    "about": "the Voyager advising to write down what you saw before deciding what it meant, and stating that the crew feeds the archive rather than hunting it",
+    "tone": "firm, scholarly"
+  },
+  "hemomancy.dialogue.rapport.voyager.the_whales.teaser": {
+    "about": "a short hint that the Voyager keeps an opinion about whales for colleagues",
+    "tone": "soft teaser"
+  },
+  "hemomancy.dialogue.votary_wayfarer.option.ask_about_fear": {
+    "about": "Player response: asking the Wayfarer whether they are afraid of the sea",
+    "tone": "gentle, curious"
+  },
+  "hemomancy.dialogue.votary_wayfarer.option.ask_about_item": {
+    "about": "Player response: asking the Wayfarer to look at an item they carry",
+    "tone": "casual, curious"
+  },
+  "hemomancy.dialogue.votary_wayfarer.option.ask_about_voyage": {
+    "about": "Player response: asking the Wayfarer why they came aboard",
+    "tone": "friendly"
+  },
+  "hemomancy.dialogue.votary_wayfarer.option.leave": {
+    "about": "Player response: a parting remark telling the Wayfarer to keep their footing on the deck",
+    "tone": "warm, light"
+  },
+  "hemomancy.dialogue.voyager.option.ask_about_court": {
+    "about": "Player response: asking the Voyager who else works these waters",
+    "tone": "curious, casual"
+  },
+  "hemomancy.dialogue.voyager.option.ask_about_item": {
+    "about": "Player response: asking the Voyager to look at an item they carry",
+    "tone": "casual, curious"
+  },
+  "hemomancy.dialogue.voyager.option.ask_about_work": {
+    "about": "Player response: asking the Voyager what they are studying out here",
+    "tone": "friendly, curious"
+  },
+  "hemomancy.dialogue.voyager.option.ask_about_wrecks": {
+    "about": "Player response: asking the Voyager what happened to the wrecks",
+    "tone": "somber, curious"
+  },
+  "hemomancy.dialogue.voyager.option.court_bearing": {
+    "about": "Player response: asking the Voyager how to find the Lighthouse Garden",
+    "tone": "practical, curious"
+  },
+  "hemomancy.dialogue.voyager.option.leave": {
+    "about": "Player response: a parting blessing wishing the Voyager safe currents",
+    "tone": "warm, light"
+  },
+  "hemomancy.dialogue.voyager.option.record_observation": {
+    "about": "Player response: reporting that they noticed how the reef answered the current",
+    "tone": "earnest, proud"
+  },
+  "hemomancy.dialogue.voyager.option.relay_chart": {
+    "about": "Player response: asking the Voyager to draw another Relay Chart",
+    "tone": "polite, practical"
+  },
+  "hemomancy.hermit.adept.hint": {
+    "about": "the Hermit naming the Rite of the Crimson Lodge as next, preceded by the Vein-Mason's pattern at the Cerebral Scarring Station and Brazier lesson, and noting more manipulation slots and skill tree are open",
+    "tone": "plain instruction"
+  },
+  "hemomancy.hermit.adept.line1": {
+    "about": "stage direction: the Hermit studying the player and nodding as if they answered a question",
+    "tone": "approving"
+  },
+  "hemomancy.hermit.adept.line2": {
+    "about": "the Hermit noting an Adept of the Sanguine Brotherhood who still thinks clearly is rarer than the Vicars admit, and that scarring needs that clear head",
+    "tone": "dry approval"
+  },
+  "hemomancy.hermit.adept.scar_crafting": {
+    "about": "the Hermit giving the scar steps: knapper at the Cerebral Scarring Station, carve a blank scar, bring materials of its tendency, then take it to the Vein-Mason's Brazier lesson where it opens",
+    "tone": "practical"
+  },
+  "hemomancy.hermit.adept.scar_intro": {
+    "about": "the Hermit introducing Scars: unimpressive marks cut in stone that, set in yourself, lay new veins and nerves through the mind along their lines",
+    "tone": "plain"
+  },
+  "hemomancy.hermit.adept.scar_lore": {
+    "about": "the Hermit explaining straight lines become veins and curves nerves, the mind knits along them like a wound along stitches, and sealed ideas and tendencies can surface and stay",
+    "tone": "frank, a little grim"
+  },
+  "hemomancy.hermit.apotheos.final_words": {
+    "about": "the Hermit saying he goes on sitting across from the heart waiting for whoever wants it, that it is easier knowing someone got this far, and thanking them for stopping",
+    "tone": "quiet, grateful"
+  },
+  "hemomancy.hermit.apotheos.line1": {
+    "about": "stage direction: the Hermit falling silent, hands over the hollow in his chest, bowing almost to the floor",
+    "tone": "awed"
+  },
+  "hemomancy.hermit.apotheos.line2": {
+    "about": "the Hermit admitting Hermits were taught nothing past the seventh Degree, so he simply says he is glad the Apotheos stopped by, and go well",
+    "tone": "humble, moved"
+  },
+  "hemomancy.hermit.archon.line1": {
+    "about": "stage direction: the Hermit slowly kneeling to the Archon",
+    "tone": "reverent, effortful"
+  },
+  "hemomancy.hermit.archon.line2": {
+    "about": "the Hermit saying he never expected an Archon of the Hematic Order in his temple, that he has a long memory and a heart nobody has come for, and offering the memory",
+    "tone": "humble, sincere"
+  },
+  "hemomancy.hermit.archon_wisdom.prompt": {
+    "about": "the Hermit inviting the Archon to ask and offering what he remembers",
+    "tone": "modest"
+  },
+  "hemomancy.hermit.illuminatus.hint": {
+    "about": "the Hermit naming the Bloodline Covenant as next: raise a Fane, or stand in the line's Fane and give blood to its Bloodwell; the Vicar knows the rest",
+    "tone": "plain, deferential"
+  },
+  "hemomancy.hermit.illuminatus.line1": {
+    "about": "the Hermit telling an Illuminatus of the Crimson Lodge their blood drowns out the sound of his own heart on the stone, and that they know more than he ever did",
+    "tone": "humbled"
+  },
+  "hemomancy.hermit.initiate.hint": {
+    "about": "the Hermit sending the player to the Mnemonist to learn the Somatic Loom, where blood memories are woven into manipulations, and saying the Rite of the Sanguine Brotherhood makes them Adept",
+    "tone": "plain, patient"
+  },
+  "hemomancy.hermit.initiate.line1": {
+    "about": "the Hermit hearing the player's blood is louder than a Votary's, naming them Initiate of the Incarnadine Fane and asking if the Mnemonist has them at the Loom yet",
+    "tone": "interested"
+  },
+  "hemomancy.hermit.manip_lore": {
+    "about": "the Hermit recalling manipulations were once called tricks, explaining you train your blood into a shape until it holds it, then must set it at a Mnemonic Reliquary to cast it",
+    "tone": "reminiscing"
+  },
+  "hemomancy.hermit.neophyte.hint": {
+    "about": "the Hermit sending the player to the Vicar for the four proofs and the ledger for the count, singling out the cauldron step: project blood into it and collect the Sanguine Formation, then return to the Vicar",
+    "tone": "helpful, plain"
+  },
+  "hemomancy.hermit.neophyte.line1": {
+    "about": "stage direction: another temple's Hermit tilting his head to listen to the player's blood",
+    "tone": "curious"
+  },
+  "hemomancy.hermit.neophyte.line2": {
+    "about": "another temple's Hermit recognising a Neophyte of the Crimson Veil by the quick uneven sound of their heart, and saying his own sounded the same before he cut it out",
+    "tone": "quiet, bodily"
+  },
+  "hemomancy.hermit.no_blood.duty.line1": {
+    "about": "the Hermit explaining he is an old Harbinger who felt death coming, walked out alone, built the temple and set his heart on the Display, as Hermits always have: guard the heart, send its taker to the Order",
+    "tone": "plain, reminiscing"
+  },
+  "hemomancy.hermit.no_blood.duty.line2": {
+    "about": "the Hermit saying each person needs his own blessing before taking the heart, to ask when decided, and to come back to him before leaving for directions",
+    "tone": "plain, then personal"
+  },
+  "hemomancy.hermit.no_blood.heart_lore": {
+    "about": "the Hermit explaining he cut out his heart and it still beats on the Mortal Display; touched with his leave it becomes the Charm of Vascularium and wakes their blood; then go to the Vicar; the charm comes off until initiation",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.hermit.no_blood.line1": {
+    "about": "stage direction: a hooded man facing the Mortal Display with a hollow open in his chest, something beating on the stone, his crimson eyes moving to the visitor",
+    "tone": "still, unsettling"
+  },
+  "hemomancy.hermit.no_blood.line2": {
+    "about": "the Hermit naming himself, saying he keeps this temple and explains to whoever finds it what is on the stone",
+    "tone": "plain, unhurried"
+  },
+  "hemomancy.hermit.no_blood.line3": {
+    "about": "the Hermit saying the heart on the Mortal Display is his and keeps him from dying, that his blessing lets the player take it and wake their blood, and that initiation is a separate later step with the Vicar",
+    "tone": "plain, exact"
+  },
+  "hemomancy.hermit.sanctified.hint": {
+    "about": "the Hermit saying only the Rite of the Hematic Order remains, which makes an Archon, said in old books to be the blood itself; nobody calls it easy, so prepare first",
+    "tone": "sober, respectful"
+  },
+  "hemomancy.hermit.sanctified.line1": {
+    "about": "the Hermit greeting a Sanctified player whom the Bloodline Covenant took, admitting Hermits were taught the next rite by name only",
+    "tone": "humble, limited"
+  },
+  "hemomancy.hermit.temple_lore": {
+    "about": "the Hermit describing his slowly built temple, noting each Hermit builds one, that the Focus in the floor watches the heart while he sleeps and hosts no rites, and that initiation is the Vicar's business",
+    "tone": "dry, self-deprecating"
+  },
+  "hemomancy.hermit.tendency_lore": {
+    "about": "the Hermit explaining each manipulation pulls blood toward a primary tendency and many toward a secondary one, and mastery makes blood lean that way and toward the tendencies beside it",
+    "tone": "reflective"
+  },
+  "hemomancy.hermit.uninitiated.farewell.line1": {
+    "about": "stage direction: the Hermit turning translucent as red light leaks from his chest",
+    "tone": "eerie, soft"
+  },
+  "hemomancy.hermit.uninitiated.farewell.line2": {
+    "about": "the Hermit saying his last duty is done, he is glad someone came in time, the Order will teach the rest, and goodbye",
+    "tone": "content, fading"
+  },
+  "hemomancy.hermit.uninitiated.guidance": {
+    "about": "the Hermit telling the player to follow the waybill to an outpost whose Vicar will want to see them; they keep the blood either way, and may refuse to join",
+    "tone": "practical, reassuring"
+  },
+  "hemomancy.hermit.uninitiated.line1": {
+    "about": "stage direction: the Hermit's hand going to the hollow in his chest and staying there while he smiles",
+    "tone": "tender"
+  },
+  "hemomancy.hermit.uninitiated.line2": {
+    "about": "the Hermit feeling the heart leave him and saying the player's pulse now runs in the Charm of Vascularium, partly his",
+    "tone": "moved, quiet"
+  },
+  "hemomancy.hermit.uninitiated.line3": {
+    "about": "the Hermit saying he has little time left and wants to give directions while he can",
+    "tone": "urgent but calm"
+  },
+  "hemomancy.hermit.votary.hint": {
+    "about": "the Hermit saying the Alchemist teaches them now: finish a first separation and a first ordinary Alembic distillation, then ask for Concentrated Blood, inject it and sleep",
+    "tone": "plain instruction"
+  },
+  "hemomancy.hermit.votary.line1": {
+    "about": "stage direction: the Hermit turning toward the player before they have spoken",
+    "tone": "attentive"
+  },
+  "hemomancy.hermit.votary.line2": {
+    "about": "the Hermit recognising a Votary of the Hematic Covenant by sound, noting their pulse has stopped hurrying",
+    "tone": "observant"
+  },
+  "hemomancy.lady.absolved.v0.follow": {
+    "about": "Our Lady saying purity is the first descent, the current runs on into clarity, and clarity is a second gift if the player wants it",
+    "tone": "cool, serene"
+  },
+  "hemomancy.lady.absolved.v0.line1": {
+    "about": "Our Lady telling the absolved player they are clearer now, like water after silt settles, and the old stain fades faster than it grew",
+    "tone": "calm, approving"
+  },
+  "hemomancy.lady.absolved.v0.line2": {
+    "about": "Our Lady saying she has watched others come this far, most falter when the blood's absence feels pleasant, but a quiet pool can hold a current",
+    "tone": "cool, cautionary"
+  },
+  "hemomancy.lady.absolved.v1.line1": {
+    "about": "Our Lady saying the Harbingers will call the player a traitor, but they betrayed corruption, the first honest thing they have done",
+    "tone": "cold, approving"
+  },
+  "hemomancy.lady.absolved.v1.line2": {
+    "about": "Our Lady saying the player's hands are almost clean and urging them to finish the work",
+    "tone": "quiet, encouraging"
+  },
+  "hemomancy.lady.absolved.v2.line1": {
+    "about": "narration of Our Lady's voice staying cold but sounding near, as if standing at the player's shoulder",
+    "tone": "hushed, eerie"
+  },
+  "hemomancy.lady.absolved.v2.reveal1": {
+    "about": "Our Lady revealing she was old when the first blood-temple was raised and will be here when the last crumbles, because the blood-cult forgot to bury her",
+    "tone": "ancient, dry"
+  },
+  "hemomancy.lady.absolved.v2.reveal2": {
+    "about": "Our Lady telling the player not to try to understand her yet, to purify completely, and then they will speak properly",
+    "tone": "cool, patient"
+  },
+  "hemomancy.lady.cleansing.v0.line1": {
+    "about": "Our Lady praising the player as a child who is doing well, saying she feels the corruption thinning",
+    "tone": "cool, gentle"
+  },
+  "hemomancy.lady.cleansing.v0.line2": {
+    "about": "Our Lady comparing the blood's slow release to ice on a riverbank and telling the player to continue",
+    "tone": "calm, encouraging"
+  },
+  "hemomancy.lady.cleansing.v0.reveal": {
+    "about": "Our Lady revealing she is what remains when a river has washed a stone clean, with many names, called Our Lady by the Unstained",
+    "tone": "serene, ancient"
+  },
+  "hemomancy.lady.cleansing.v1.line1": {
+    "about": "Our Lady warning that the blood seduces quietly and feels harmless, as still water does, until given time it drowns you",
+    "tone": "cool, warning"
+  },
+  "hemomancy.lady.cleansing.v1.line2": {
+    "about": "Our Lady saying a clean body begins with clean intent, and going without blood should be the player's own choice",
+    "tone": "calm, firm"
+  },
+  "hemomancy.lady.cleansing.v2.follow": {
+    "about": "Our Lady telling the player she did not choose them, they chose themselves when they turned from the red tide, unlike every Unstained before who asked why",
+    "tone": "gentle, cool"
+  },
+  "hemomancy.lady.cleansing.v2.line1": {
+    "about": "narration of a voice moving through the stillness unhurried, the way water finds its level",
+    "tone": "hushed, serene"
+  },
+  "hemomancy.lady.discerning.v0.follow": {
+    "about": "Our Lady urging the player to let the Verdigris Aura weaken the blood-touched, since clarity can cut as well as see",
+    "tone": "cool, quietly sharp"
+  },
+  "hemomancy.lady.discerning.v0.line1": {
+    "about": "Our Lady observing that the player can now see the shape beneath the surface",
+    "tone": "calm, pleased"
+  },
+  "hemomancy.lady.discerning.v0.line2": {
+    "about": "Our Lady warning that clear sight will not make the world kinder but lets them name its cruelty precisely",
+    "tone": "cool, sober"
+  },
+  "hemomancy.lady.discerning.v1.line1": {
+    "about": "Our Lady noting that the player has begun to sense blood-work in others, which will serve them since an unaware hemomancer is in danger when watched",
+    "tone": "cool, cautionary"
+  },
+  "hemomancy.lady.discerning.v2.line1": {
+    "about": "narration of something settling over the player's shoulders like a cold, wet shawl that is oddly comforting",
+    "tone": "hushed, strange comfort"
+  },
+  "hemomancy.lady.discerning.v2.line2": {
+    "about": "Our Lady telling the player to go on as they have, keep the rites and the offerings at the Altar, as the sight widens with each",
+    "tone": "calm, encouraging"
+  },
+  "hemomancy.lady.discerning.v2.reveal": {
+    "about": "Our Lady revealing she is older than the hemomancy the player left, was here before the fungus came, and has watched without hurry since",
+    "tone": "ancient, unhurried"
+  },
+  "hemomancy.lady.enlightened.v0.line1": {
+    "about": "Our Lady telling the player simply that they see it now",
+    "tone": "soft, hushed"
+  },
+  "hemomancy.lady.enlightened.v0.line2": {
+    "about": "Our Lady saying the player sees all of it, from surface to root: the blood-cult, the fungus beneath, and the world under both still breathing",
+    "tone": "calm, deep"
+  },
+  "hemomancy.lady.enlightened.v0.truth1": {
+    "about": "Our Lady explaining she is the stillness of an untouched lake from which life still comes slowly, and her voice is that water finally clear",
+    "tone": "serene, revelatory"
+  },
+  "hemomancy.lady.enlightened.v0.truth2": {
+    "about": "Our Lady saying the player waded through blood and fungus to the far side of both, so they should stand on this shore and hear her clearly",
+    "tone": "calm, solemn"
+  },
+  "hemomancy.lady.enlightened.v1.line1": {
+    "about": "Our Lady saying the Harbingers will call it betrayal and the fungus a loss, both right, and neither can unmake it",
+    "tone": "cool, certain"
+  },
+  "hemomancy.lady.enlightened.v1.line2": {
+    "about": "Our Lady telling the player they stepped outside the story written for them, few find its edge, and she is glad and has waited long to say so plainly",
+    "tone": "warm, quiet"
+  },
+  "hemomancy.lady.enlightened.v2.line1": {
+    "about": "narration of Our Lady motionless, cold coming off her like air over a winter lake, deeply satisfied, her voice as close as the player's breath",
+    "tone": "hushed, intimate"
+  },
+  "hemomancy.lady.enlightened.v2.truth1": {
+    "about": "Our Lady giving the last truth: she is not here to save the player and never was, and she could not, because what lives in the fungus is larger than her",
+    "tone": "honest, solemn"
+  },
+  "hemomancy.lady.enlightened.v2.truth2": {
+    "about": "Our Lady saying she is here because this is where water rests after a flood, the player came when finished drowning, and may rest where her voice runs clear",
+    "tone": "gentle, serene"
+  },
+  "hemomancy.lady.option.dismiss": {
+    "about": "Player response: a stage direction for letting the strange feeling pass",
+    "tone": "plain label"
+  },
+  "hemomancy.lady.option.listen": {
+    "about": "Player response: hesitantly agreeing to listen to the voice",
+    "tone": "hesitant, quiet"
+  },
+  "hemomancy.lady.option.who_are_you": {
+    "about": "Player response: asking who is speaking to them",
+    "tone": "wary, curious"
+  },
+  "hemomancy.lady.purified.v0.line1": {
+    "about": "Our Lady saying a single quiet word of arrival to the fully purified player",
+    "tone": "soft, relieved"
+  },
+  "hemomancy.lady.purified.v0.line2": {
+    "about": "Our Lady telling the player the crimson tide is gone from them entirely and they stand on the far shore of the blood-sea",
+    "tone": "calm, approving"
+  },
+  "hemomancy.lady.purified.v0.rite1": {
+    "about": "Our Lady offering a deeper sight that the Unstained call Clarity, if the player wants it",
+    "tone": "calm, inviting"
+  },
+  "hemomancy.lady.purified.v0.rite2": {
+    "about": "Our Lady saying purity is complete and instructing the player to first perform Closed Vein to return the body to its mortal baseline, then prepare the pledge",
+    "tone": "calm, instructive"
+  },
+  "hemomancy.lady.purified.v1.line1": {
+    "about": "Our Lady telling the fully purified player she is pleased, since it has been a long while since anyone finished this road",
+    "tone": "warm, cool"
+  },
+  "hemomancy.lady.purified.v1.line2": {
+    "about": "Our Lady instructing the player to rest, then perform Closed Vein, then lay Consecrated Copper at the Podium, and come to Clarity Ascension as a pledge",
+    "tone": "calm, instructive"
+  },
+  "hemomancy.lady.purified.v2.line1": {
+    "about": "narration of the voice rising above a whisper from the walls, floor and air in the player's lungs, like someone who has waited very long",
+    "tone": "awed, hushed"
+  },
+  "hemomancy.lady.purified.v2.rite1": {
+    "about": "Our Lady giving the order of steps: close the old current with Closed Vein, offer Consecrated Copper at the Podium, then arrange the Rite of Clarity Ascension, the Church's pledge",
+    "tone": "calm, instructive"
+  },
+  "hemomancy.lady.resolute.v0.follow1": {
+    "about": "Our Lady promising honesty, warning that the final clarity changes things and some who reached it called her something other than a patron",
+    "tone": "candid, grave"
+  },
+  "hemomancy.lady.resolute.v0.follow2": {
+    "about": "Our Lady urging the player to continue anyway, preferring cold truth to a warm lie",
+    "tone": "firm, cool"
+  },
+  "hemomancy.lady.resolute.v0.line1": {
+    "about": "Our Lady noting three-quarters of the road is behind the player and most turn back here, not from faltering",
+    "tone": "cool, knowing"
+  },
+  "hemomancy.lady.resolute.v0.line2": {
+    "about": "Our Lady saying those who turn back see the end of the path and find it asks more than they hoped to give",
+    "tone": "quiet, sober"
+  },
+  "hemomancy.lady.resolute.v1.line1": {
+    "about": "Our Lady telling the player they have become very hard to deceive, which the Harbingers would pay greatly for",
+    "tone": "cool, wry"
+  },
+  "hemomancy.lady.resolute.v1.line2": {
+    "about": "Our Lady observing that the blood-cult avoids clarity, and that its Neophytes seeing the Order as it is would end the Order",
+    "tone": "cold, pointed"
+  },
+  "hemomancy.lady.resolute.v2.line1": {
+    "about": "narration of the voice being still and precise as a knife on glass",
+    "tone": "hushed, sharp"
+  },
+  "hemomancy.lady.resolute.v2.reveal1": {
+    "about": "Our Lady promising a truthful answer to what she is, warning that the Unstained believe untrue things about her",
+    "tone": "candid, cold"
+  },
+  "hemomancy.lady.resolute.v2.reveal2": {
+    "about": "Our Lady declaring she is no goddess and no patron but the cold this world kept before the fungus came, which the blood-cult would rather leave buried",
+    "tone": "stern, ancient"
+  },
+  "hemomancy.lady.speaker_name": {
+    "about": "the speaker name label for Our Lady of Still Waters",
+    "tone": "plain label"
+  },
+  "hemomancy.lady.tainted.v0.follow": {
+    "about": "narration of the sensation passing quickly, leaving only cold and the faint smell of still water",
+    "tone": "faint, hushed"
+  },
+  "hemomancy.lady.tainted.v0.line1": {
+    "about": "narration of a chill settling over the player like a frozen lake, with running water heard far away",
+    "tone": "eerie, hushed"
+  },
+  "hemomancy.lady.tainted.v1.line1": {
+    "about": "narration of the air going quiet and the blood in the player's veins weighing less for a moment",
+    "tone": "soft, uncanny"
+  },
+  "hemomancy.lady.tainted.v2.follow": {
+    "about": "narration of the feeling withdrawing like a tide, leaving the player unsure if they were comforted or unsettled",
+    "tone": "faint, ambiguous"
+  },
+  "hemomancy.lady.tainted.v2.line1": {
+    "about": "narration of the player's skin prickling as something watches them as deep water does, without malice or hurry",
+    "tone": "eerie, patient"
+  },
+  "hemomancy.lady.vigilant.v0.follow1": {
+    "about": "Our Lady telling the player that fighting or fleeing the Harbingers is their choice and she will not make it for them",
+    "tone": "calm, firm"
+  },
+  "hemomancy.lady.vigilant.v0.follow2": {
+    "about": "Our Lady saying the player is harder to hurt now, Silver Ward protects them but also announces to watchers that they have chosen a side",
+    "tone": "cool, cautionary"
+  },
+  "hemomancy.lady.vigilant.v0.line1": {
+    "about": "Our Lady saying half the clarity path is behind the player, and they have begun to see through walls though their eyes still stop at the stone",
+    "tone": "calm, observant"
+  },
+  "hemomancy.lady.vigilant.v0.line2": {
+    "about": "Our Lady warning that the Harbingers will sooner or later come to reclaim the player, as they always do, but the player will know them before they speak",
+    "tone": "cool, warning"
+  },
+  "hemomancy.lady.vigilant.v1.line1": {
+    "about": "Our Lady saying the blood-cult sees only the blood and wants the world to seem that simple, while the player has begun to see what it hid",
+    "tone": "cool, knowing"
+  },
+  "hemomancy.lady.vigilant.v1.line2": {
+    "about": "Our Lady saying beneath the blood lies the fungus that feeds it, and she thinks the player has begun to suspect it",
+    "tone": "quiet, probing"
+  },
+  "hemomancy.lady.vigilant.v2.follow": {
+    "about": "Our Lady describing clarity as a lens the player carries and never sets down, one that shows more even at the path's end",
+    "tone": "calm, steady"
+  },
+  "hemomancy.lady.vigilant.v2.line1": {
+    "about": "narration of the cold presence feeling almost warm now, like first autumn frost making you glad of the fire inside",
+    "tone": "soft, comforting"
+  },
+  "hemomancy.trade.hermit.bread.line": {
+    "about": "the Hermit saying he eats little now, but the player should bring bread anyway and take a candle for the dark",
+    "tone": "weary, kind"
+  },
+  "hemomancy.trade.hermit.bread.title": {
+    "about": "a short title for the Hermit's bread trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.hermit.thanks": {
+    "about": "the Hermit thanking the player for the bread and inviting them to sit a while",
+    "tone": "warm, lonely"
+  },
+  "hemomancy.trade.votary_wayfarer.kelp.line": {
+    "about": "the Votary Wayfarer asking for twelve kelp to help work out what the herring eat, and asking the player not to laugh",
+    "tone": "earnest, shy"
+  },
+  "hemomancy.trade.votary_wayfarer.kelp.title": {
+    "about": "a short title for the kelp trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.votary_wayfarer.nautilus.line": {
+    "about": "the Votary Wayfarer delightedly receiving a whole nautilus shell and asking where it was found so they can write it down first",
+    "tone": "excited, bubbly"
+  },
+  "hemomancy.trade.votary_wayfarer.nautilus.title": {
+    "about": "a short title for the nautilus shell trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.votary_wayfarer.prismarine.line": {
+    "about": "the Votary Wayfarer asking for six prismarine shards for their shelf, admitting it is odd that they keep them",
+    "tone": "sheepish, cheerful"
+  },
+  "hemomancy.trade.votary_wayfarer.prismarine.title": {
+    "about": "a short title for the prismarine shard trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.votary_wayfarer.thanks": {
+    "about": "the Votary Wayfarer thanking the player after a trade and saying they will write it down before they forget",
+    "tone": "bright, flustered"
+  },
+  "hemomancy.trade.voyager.charted_map.line": {
+    "about": "the Voyager saying a map the player filled in themself beats any rumor of a coast, and offering payment from the galley",
+    "tone": "dry, appreciative"
+  },
+  "hemomancy.trade.voyager.charted_map.title": {
+    "about": "a short title for the charted map trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.voyager.survey_log.line": {
+    "about": "the Voyager saying a salt-stained log pulled from a wreck belongs in their archive and will be paid for in erythrocoral",
+    "tone": "dry, respectful"
+  },
+  "hemomancy.trade.voyager.survey_log.title": {
+    "about": "a short title for the survey log trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.voyager.thanks": {
+    "about": "the Voyager thanking the player after a trade by saying it is logged with the date and the player's name, with observations first and certainty later",
+    "tone": "dry, formal"
+  },
+  "hemomancy.trade.voyager.wreck_coral.line": {
+    "about": "the Voyager offering blank charts for the player's own route in exchange for calcified erythrocoral brought up from the reef floor",
+    "tone": "dry, practical"
+  },
+  "hemomancy.trade.voyager.wreck_coral.title": {
+    "about": "a short title for the calcified coral trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.votary_wayfarer.fear.line1": {
+    "about": "the Votary Wayfarer cheerfully admitting they are afraid, since anyone studying deep water who is not scared is lying or inattentive",
+    "tone": "candid, nervous"
+  },
+  "hemomancy.votary_wayfarer.fear.line2": {
+    "about": "the Votary Wayfarer saying they let fear sharpen their notes without steering their hand, and asking whether it ever steers the player's",
+    "tone": "earnest, curious"
+  },
+  "hemomancy.votary_wayfarer.item_hint": {
+    "about": "the Votary Wayfarer inviting the player to show their pack, admitting to knowing less than the captain-scholar but possibly catching something useful",
+    "tone": "friendly, humble"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.chalybeate_sclerite.line1": {
+    "about": "the Votary Wayfarer marveling that the vent snail makes iron look soft just by surviving with it",
+    "tone": "admiring, thoughtful"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.chalybeate_sclerite.line2": {
+    "about": "the Votary Wayfarer liking the idea of armor as a habit instead of a threat and saying they are writing it down",
+    "tone": "pleased, earnest"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.erythrocoral_fragment.line1": {
+    "about": "the Votary Wayfarer describing how an erythrocoral fragment pulses if held too long, like a room remembering footsteps",
+    "tone": "uneasy, wondering"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.erythrocoral_fragment.line2": {
+    "about": "the Votary Wayfarer admitting they are not supposed to anthropomorphize samples but they are also supposed to write down what happens, so they did",
+    "tone": "sheepish, honest"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.minecraft_fieldkit.line1": {
+    "about": "the Votary Wayfarer approving ordinary field gear and noting most failed voyages fail because someone got careless with ordinary things",
+    "tone": "bright, practical"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.minecraft_fieldkit.line2": {
+    "about": "the Votary Wayfarer saying they mark their own tools before leaving port because identical tools end up belonging to nobody, and asking if the player has marked theirs",
+    "tone": "earnest, curious"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.mnemonic_ambergris.line1": {
+    "about": "the Votary Wayfarer relaying that the captain-scholar says mnemonic ambergris is what memory smells like after a storm watch, written down word for word",
+    "tone": "amused, earnest"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.mnemonic_ambergris.line2": {
+    "about": "the Votary Wayfarer explaining from their notes that a whale leaves one ambergris for each squid or Prism Cuttle it eats, so bring squid on leads or release a cuttle from a placed and broken specimen jar, without hurting the whale",
+    "tone": "earnest, instructive"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.salt_stained_voyager_log.line1": {
+    "about": "the Votary Wayfarer saying they read one of these logs in the archive, where the handwriting changed near the end but the sign-offs stayed gentle",
+    "tone": "quiet, moved"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.salt_stained_voyager_log.line2": {
+    "about": "the Votary Wayfarer admiring that the lost crew kept to procedure instead of panicking, and doubting they could have",
+    "tone": "humble, shaken"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.spawn_egg_mnemonic_whale.line1": {
+    "about": "the Votary Wayfarer wanting to call the mnemonic whale holy but feeling the word is too small",
+    "tone": "awed, hushed"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.spawn_egg_mnemonic_whale.line2": {
+    "about": "the Votary Wayfarer saying that watching a whale pass over the reef makes even senior vows feel like beginner handwriting, and theirs already are",
+    "tone": "awed, self-deprecating"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.specimen_jar": {
+    "about": "the Votary Wayfarer saying something in the specimen jar has made the glass feel too small, a note they wrote, thought foolish, and left uncrossed",
+    "tone": "wondering, sheepish"
+  },
+  "hemomancy.votary_wayfarer.item_inquiry.unknown": {
+    "about": "the Votary Wayfarer admitting not knowing an item yet, asking what the player calls it, and saying they will log it anyway since unknown is a real category",
+    "tone": "cheerful, curious"
+  },
+  "hemomancy.votary_wayfarer.peer.line1": {
+    "about": "the Votary Wayfarer saying the captain-scholar lets them record small things like jelly drift, reef pulse and ropes smelling of old iron",
+    "tone": "earnest, modest"
+  },
+  "hemomancy.votary_wayfarer.peer.line2": {
+    "about": "the Votary Wayfarer explaining that small things are safer to be wrong about so they start there, and asking whether the player started that way too",
+    "tone": "warm, curious"
+  },
+  "hemomancy.votary_wayfarer.purifying.line1": {
+    "about": "the Votary Wayfarer remarking to a purifying player that their rites seem quiet while the Wayfarer's are mostly questions and damp sleeves",
+    "tone": "wistful, light"
+  },
+  "hemomancy.votary_wayfarer.purifying.line2": {
+    "about": "the Votary Wayfarer hoping that if the sea can hold both of them they can share a deck, and saying they would like that",
+    "tone": "warm, hopeful"
+  },
+  "hemomancy.votary_wayfarer.senior.line1": {
+    "about": "the Votary Wayfarer asking the player to say they have not been staring at the vent charts again if the captain-scholar asks, though they constantly have",
+    "tone": "conspiratorial, sheepish"
+  },
+  "hemomancy.votary_wayfarer.senior.line2": {
+    "about": "the Votary Wayfarer wondering why the lost crews kept descending toward the Court and whether anyone found out what they hoped for",
+    "tone": "pensive, curious"
+  },
+  "hemomancy.votary_wayfarer.uninitiated.line1": {
+    "about": "the Votary Wayfarer warning the player not to lean on the sample rack, which the captain-scholar says is older than the Wayfarer's vows",
+    "tone": "flustered, friendly"
+  },
+  "hemomancy.votary_wayfarer.uninitiated.line2": {
+    "about": "the Votary Wayfarer explaining they are here to learn the ocean without pretending it owes them comfort, which it does not",
+    "tone": "earnest, wry"
+  },
+  "hemomancy.votary_wayfarer.voyage.line1": {
+    "about": "the Votary Wayfarer explaining they asked to come because a survey needs witnesses who have not already decided what the ocean means",
+    "tone": "earnest, thoughtful"
+  },
+  "hemomancy.votary_wayfarer.voyage.line2": {
+    "about": "the Votary Wayfarer adding that libraries do not move under your boots, which makes them less honest about ships",
+    "tone": "playful, earnest"
+  },
+  "hemomancy.voyager.harbinger.line1": {
+    "about": "the Voyager describing the Cog to a Harbinger as a laboratory and a moving chapel, and on most watches a running argument with the sea",
+    "tone": "dry, wry"
+  },
+  "hemomancy.voyager.harbinger.line2": {
+    "about": "the Voyager asking for observations first and certainty later, since certainty drowns faster than sailors",
+    "tone": "dry, aphoristic"
+  },
+  "hemomancy.voyager.introduction.observed": {
+    "about": "narration of the Voyager logging the player's observation and noting the Vicar will want the field report on return",
+    "tone": "plain, brisk"
+  },
+  "hemomancy.voyager.introduction.prompt": {
+    "about": "a prompt telling the player to describe to the Voyager what they noticed about the reef's response to the current",
+    "tone": "plain instruction"
+  },
+  "hemomancy.voyager.item_hint": {
+    "about": "the Voyager inviting a colleague to lay out the samples they carry, since evidence and field crews are more honest when you can point at them",
+    "tone": "dry, collegial"
+  },
+  "hemomancy.voyager.item_inquiry.brine_sealed_letter.line1": {
+    "about": "the Voyager identifying the seal on a letter as Sunburst crust, carried by a lost crew toward the Brined Court before the reef kept them",
+    "tone": "grave, scholarly"
+  },
+  "hemomancy.voyager.item_inquiry.brine_sealed_letter.line2": {
+    "about": "the Voyager explaining that anything coming back from the Court's waters is called Brined, drowned envoys included, and this letter returned without them",
+    "tone": "somber, dry"
+  },
+  "hemomancy.voyager.item_inquiry.chalybeate_sclerite.line1": {
+    "about": "the Voyager comparing the vent snail's armor to a scholar's footnotes, grown slowly, defensively and for excellent reasons",
+    "tone": "dry, wry"
+  },
+  "hemomancy.voyager.item_inquiry.chalybeate_sclerite.line2": {
+    "about": "the Voyager advising to wait for the snail to withdraw and knap only what it can spare, since a dead one teaches less than a living reef",
+    "tone": "firm, scholarly"
+  },
+  "hemomancy.voyager.item_inquiry.erythrocoral_fragment.line1": {
+    "about": "the Voyager saying erythrocoral fits no tidy category, being colony, tissue, garden and archive at once",
+    "tone": "thoughtful, dry"
+  },
+  "hemomancy.voyager.item_inquiry.erythrocoral_fragment.line2": {
+    "about": "the Voyager noting erythrocoral taken with shears keeps a gentler memory while a fragment torn out by force mostly learns pain",
+    "tone": "grave, instructive"
+  },
+  "hemomancy.voyager.item_inquiry.minecraft_salvage.line1": {
+    "about": "the Voyager calling an item survey salvage and telling the player to record where it lay and what lay beside it before deciding what it means",
+    "tone": "brisk, scholarly"
+  },
+  "hemomancy.voyager.item_inquiry.minecraft_salvage.line2": {
+    "about": "the Voyager observing that every commonplace object in a wreck becomes evidence, though most will not turn out to be revelations",
+    "tone": "dry, wry"
+  },
+  "hemomancy.voyager.item_inquiry.mnemonic_ambergris.line1": {
+    "about": "the Voyager describing ambergris drifting off the great whales in layers like waxed scripture written in motion",
+    "tone": "wry, lyrical"
+  },
+  "hemomancy.voyager.item_inquiry.mnemonic_ambergris.line2": {
+    "about": "the Voyager explaining that the whale takes squid, glow squid and Prism Cuttles and each kill sheds one ambergris on the spot, so supply that prey in its water, because the crew feeds the archive and does not hunt it",
+    "tone": "dry, instructive"
+  },
+  "hemomancy.voyager.item_inquiry.salt_stained_voyager_log.line1": {
+    "about": "the Voyager identifying a field log from the lost survey craft, whose repeated watch marks show the crew waited for one another before every descent",
+    "tone": "somber, respectful"
+  },
+  "hemomancy.voyager.item_inquiry.salt_stained_voyager_log.line2": {
+    "about": "the Voyager relaying that the log's last entry asks whoever follows to study the ocean with more patience so it is understood rather than abandoned",
+    "tone": "somber, moved"
+  },
+  "hemomancy.voyager.item_inquiry.spawn_egg_mnemonic_whale.line1": {
+    "about": "the Voyager calling the mnemonic whale a moving archive of migration, reef pulse and vent weather remembered in flesh",
+    "tone": "reverent, dry"
+  },
+  "hemomancy.voyager.item_inquiry.spawn_egg_mnemonic_whale.line2": {
+    "about": "the Voyager explaining that the whale hunts squid and Prism Cuttles, so lead squid into its waters or release cuttles from specimen jars for one ambergris per meal, and always keep the whale alive",
+    "tone": "dry, instructive"
+  },
+  "hemomancy.voyager.item_inquiry.specimen_jar": {
+    "about": "the Voyager calling the jar a field specimen with part of its context preserved and telling the player to note place, depth and behavior before opening, since the jar will not remember",
+    "tone": "brisk, scholarly"
+  },
+  "hemomancy.voyager.item_inquiry.unknown": {
+    "about": "the Voyager saying an item is outside their current study, they will not invent a confident answer, and asking where the player found it",
+    "tone": "honest, dry"
+  },
+  "hemomancy.voyager.lodge.line1": {
+    "about": "the Voyager telling a Lodge member that standing near the blood-root explains why the reefs trouble them",
+    "tone": "thoughtful, uneasy"
+  },
+  "hemomancy.voyager.lodge.line2": {
+    "about": "the Voyager saying the reefs respond like tissue, build like coral and remember untaught things, and asking if the root struck the player the same way",
+    "tone": "thoughtful, curious"
+  },
+  "hemomancy.voyager.purifying.line1": {
+    "about": "the Voyager telling a Lethean player they carry discipline that the Voyager will not mock",
+    "tone": "respectful, dry"
+  },
+  "hemomancy.voyager.purifying.line2": {
+    "about": "the Voyager saying even a vessel sworn to blood needs clean hands once the samples begin to sing",
+    "tone": "wry, cautionary"
+  },
+  "hemomancy.voyager.uninitiated.line1": {
+    "about": "the Voyager telling the player to mind the rail, since this is a covenant vessel not a ferry and the sea has no patience for wandering passengers",
+    "tone": "stern, dry"
+  },
+  "hemomancy.voyager.uninitiated.line2": {
+    "about": "the Voyager explaining the Cog charts living reefs and vent scars and goes where older surveys never returned from",
+    "tone": "matter-of-fact, grave"
+  },
+  "hemomancy.voyager.work.line1": {
+    "about": "the Voyager explaining they compare vent sclerites, reef tissue and drowned logs to find where the ocean accepts Hemomancy and where it rejects it",
+    "tone": "scholarly, dry"
+  },
+  "hemomancy.voyager.work.line2": {
+    "about": "the Voyager advising to keep a survey humble, measure, admit when the sea corrects you, and asking what the player noticed first",
+    "tone": "dry, curious"
+  },
+  "hemomancy.voyager.wrecks.line1": {
+    "about": "the Voyager explaining the sunken voyagers carried field crews and instruments but trusted the reef too quickly and the sea kept them",
+    "tone": "grave, sober"
+  },
+  "hemomancy.voyager.wrecks.line2": {
+    "about": "the Voyager telling the player to recover what they can and leave the failed covenant without trophies",
+    "tone": "solemn, firm"
+  },
+  "hemomancy.whisper.adept.v0.line1": {
+    "about": "narration of the player's veins itching from the inside as though something in them is putting out roots",
+    "tone": "creeping, hushed"
+  },
+  "hemomancy.whisper.adept.v1.follow": {
+    "about": "narration of the sensation fading before it can be placed, leaving the blood feeling thicker",
+    "tone": "faint, uneasy"
+  },
+  "hemomancy.whisper.adept.v1.line1": {
+    "about": "narration of the player smelling damp soil and rotting wood that are not there, with something alive beneath",
+    "tone": "uneasy, sensory"
+  },
+  "hemomancy.whisper.adept.v2.line1": {
+    "about": "narration of the world being threaded with pale filaments for a single frame before vanishing",
+    "tone": "brief, eerie"
+  },
+  "hemomancy.whisper.archon.v0.follow": {
+    "about": "the Fungal Entity telling the Archon that the Hematic Order was never human but a reproductive strategy, each degree a stage of sporulation and each rite triggering the next bloom",
+    "tone": "cold, revelatory"
+  },
+  "hemomancy.whisper.archon.v0.line1": {
+    "about": "narration of the voice being perfectly clear in the player's head as if it had always lived there",
+    "tone": "intimate, eerie"
+  },
+  "hemomancy.whisper.archon.v0.line2": {
+    "about": "the Fungal Entity telling the Archon they have climbed higher than nearly all their Order and are one of its finest fruiting bodies, yet still only carry spores",
+    "tone": "patronizing, cold"
+  },
+  "hemomancy.whisper.archon.v0.line2.apotheos": {
+    "about": "the Fungal Entity telling the Apotheos they have climbed past all their Order, let the Entity in, and are one of its finest fruiting bodies who still carry spores",
+    "tone": "patronizing, cold"
+  },
+  "hemomancy.whisper.archon.v1.line1": {
+    "about": "narration of the player's blood curling into spirals and branching fractals they never commanded, like a mycorrhizal network",
+    "tone": "eerie, vivid"
+  },
+  "hemomancy.whisper.archon.v1.line2": {
+    "about": "the Fungal Entity claiming the Fungal Realm is the original state and the player's world an aberration, a thin crust of stone over an infinite living web",
+    "tone": "calm, vast"
+  },
+  "hemomancy.whisper.archon.v1.line2.canon": {
+    "about": "the Fungal Entity saying the player calls the Fungal Gardens another dimension, but to it they are only where it touches the world, a brief crust above the living web",
+    "tone": "calm, vast"
+  },
+  "hemomancy.whisper.archon.v1.line3": {
+    "about": "the Fungal Entity declaring that hemomancy is the fungus remembering how to reach the surface",
+    "tone": "quiet, certain"
+  },
+  "hemomancy.whisper.archon.v2.line1": {
+    "about": "narration of the player losing track of which thoughts are theirs and which belong to the voice",
+    "tone": "dissolving, eerie"
+  },
+  "hemomancy.whisper.archon.v2.line2": {
+    "about": "the Fungal Entity saying it has waited aeons for someone like the player, the blood was only the lure and the player the conduit, and asking if they will listen",
+    "tone": "patient, coaxing"
+  },
+  "hemomancy.whisper.archon.v2.truth1.canon": {
+    "about": "the Fungal Entity saying the Hematic Order is real to those who built and loved it but is also a shape that carries the Entity outward, and blood is its most successful shape",
+    "tone": "calm, candid"
+  },
+  "hemomancy.whisper.archon.v2.truth2": {
+    "about": "the Fungal Entity mocking the Archon for thinking they were the Order's master, when they are something better: the finest spore hemomancy has ever made",
+    "tone": "warm, cruel"
+  },
+  "hemomancy.whisper.archon.v2.truth2.apotheos": {
+    "about": "the Fungal Entity mocking the Apotheos for thinking they were the Order's master, saying they opened themselves to it and are the finest spore hemomancy has ever made",
+    "tone": "warm, cruel"
+  },
+  "hemomancy.whisper.busy.combat": {
+    "about": "a system message telling the player to let the struggle settle for a few seconds before listening to the whisper",
+    "tone": "plain instruction"
+  },
+  "hemomancy.whisper.busy.item": {
+    "about": "a system message telling the player to finish using the held item before listening to the whisper",
+    "tone": "plain instruction"
+  },
+  "hemomancy.whisper.busy.machine": {
+    "about": "a system message telling the player to close the station before listening to the whisper",
+    "tone": "plain instruction"
+  },
+  "hemomancy.whisper.busy.rite": {
+    "about": "a system message telling the player to finish or leave the active rite before listening to the whisper",
+    "tone": "plain instruction"
+  },
+  "hemomancy.whisper.communion.line1": {
+    "about": "the Fungal Entity announcing that nine shells are eaten and nine reflections accepted",
+    "tone": "low, ritual"
+  },
+  "hemomancy.whisper.communion.line2": {
+    "about": "the Fungal Entity saying the crown holds no fruit, so the player should look closer at what it does hold",
+    "tone": "cryptic, quiet"
+  },
+  "hemomancy.whisper.communion.line3": {
+    "about": "the Fungal Entity telling the player the crown is what they were before they were told what they were",
+    "tone": "cryptic, quiet"
+  },
+  "hemomancy.whisper.core_witness.line1": {
+    "about": "narration of the voice coming from the walls and roots at once on the hum of a billion threads",
+    "tone": "vast, hushed"
+  },
+  "hemomancy.whisper.core_witness.line2": {
+    "about": "the Fungal Entity telling the player they have now seen what is inside: an organism that dreams in four dimensions and waits like stone",
+    "tone": "awed, cold"
+  },
+  "hemomancy.whisper.core_witness.line3": {
+    "about": "the Fungal Entity laying out the two roads to the eighth Degree: sever the Bloom, outlast both faces of Vesper and take his memory to be a Silentium cut away, or take the Rite of Apotheos to be ours, and asking if they will walk one",
+    "tone": "solemn, tempting"
+  },
+  "hemomancy.whisper.core_witness.option.eighth_degree": {
+    "about": "Player response: choosing Apotheosis and asking to be shown the Rite",
+    "tone": "resolved, ominous"
+  },
+  "hemomancy.whisper.core_witness.option.silence": {
+    "about": "Player response: choosing Silence, cutting the Bloom and standing apart",
+    "tone": "resolved, defiant"
+  },
+  "hemomancy.whisper.illuminatus.v0.follow": {
+    "about": "the Fungal Entity telling the Illuminatus that the crimson tide was once a forest of roots, hyphae and mycelium before the red drowned it, and the roots still remember",
+    "tone": "soft, ancient"
+  },
+  "hemomancy.whisper.illuminatus.v0.line1": {
+    "about": "narration of a damp whisper threading through the mind like roots pushing through wet soil",
+    "tone": "creeping, hushed"
+  },
+  "hemomancy.whisper.illuminatus.v0.line2": {
+    "about": "the Fungal Entity saying the blood the player commands was something else long before it answered them, and asking if they feel the spores shifting under their skin",
+    "tone": "coaxing, uncanny"
+  },
+  "hemomancy.whisper.illuminatus.v1.line1": {
+    "about": "narration of a thought pulsing behind the player's eyes that they did not think",
+    "tone": "uneasy, brief"
+  },
+  "hemomancy.whisper.illuminatus.v1.line2": {
+    "about": "the Fungal Entity asking whether the player has noticed fungal growths around their altars, which are reclamation: the blood taking back what it was given",
+    "tone": "coaxing, knowing"
+  },
+  "hemomancy.whisper.illuminatus.v2.line1": {
+    "about": "narration of something breathing wetly in the player's ears as if through a mouthful of moss",
+    "tone": "uneasy, sensory"
+  },
+  "hemomancy.whisper.illuminatus.v2.reveal": {
+    "about": "the Fungal Entity stating that it grew before the blood and will still be growing after",
+    "tone": "quiet, certain"
+  },
+  "hemomancy.whisper.listen": {
+    "about": "a button label inviting the player to listen to the whisper when ready",
+    "tone": "plain label"
+  },
+  "hemomancy.whisper.option.dismiss": {
+    "about": "Player response: a stage direction for ignoring the voice",
+    "tone": "plain label"
+  },
+  "hemomancy.whisper.option.i_am_listening": {
+    "about": "Player response: a stage direction for choosing to listen to the voice",
+    "tone": "plain label"
+  },
+  "hemomancy.whisper.option.what_was_that": {
+    "about": "Player response: asking what that was after the whisper",
+    "tone": "startled, wary"
+  },
+  "hemomancy.whisper.option.who_are_you": {
+    "about": "Player response: asking the unseen voice who it is",
+    "tone": "wary, direct"
+  },
+  "hemomancy.whisper.pending": {
+    "about": "a status message saying a voice waits at the edge of thought, with the number of pending whispers filled in",
+    "tone": "plain label"
+  },
+  "hemomancy.whisper.pome_drop.aarab_zaraq": {
+    "about": "the Fungal Entity announcing that the fruit of A'arab Zaraq has fallen and fell for the player",
+    "tone": "hushed, ritual"
+  },
+  "hemomancy.whisper.pome_drop.gamaliel": {
+    "about": "the Fungal Entity announcing that the fruit of Gamaliel has fallen and fell for the player",
+    "tone": "hushed, ritual"
+  },
+  "hemomancy.whisper.pome_drop.ghagiel": {
+    "about": "the Fungal Entity announcing that the fruit of Ghagiel has fallen and fell for the player",
+    "tone": "hushed, ritual"
+  },
+  "hemomancy.whisper.pome_drop.golachab": {
+    "about": "the Fungal Entity announcing that the fruit of Golachab has fallen and fell for the player",
+    "tone": "hushed, ritual"
+  },
+  "hemomancy.whisper.pome_drop.harab_serapel": {
+    "about": "the Fungal Entity announcing that the fruit of Harab Serapel has fallen and fell for the player",
+    "tone": "hushed, ritual"
+  },
+  "hemomancy.whisper.pome_drop.nahemoth": {
+    "about": "the Fungal Entity announcing that the fruit of Nahemoth has fallen and fell for the player",
+    "tone": "hushed, ritual"
+  },
+  "hemomancy.whisper.pome_drop.samael": {
+    "about": "the Fungal Entity announcing that the fruit of Samael has fallen and fell for the player",
+    "tone": "hushed, ritual"
+  },
+  "hemomancy.whisper.pome_drop.satariel": {
+    "about": "the Fungal Entity announcing that the fruit of Satariel has fallen and fell for the player",
+    "tone": "hushed, ritual"
+  },
+  "hemomancy.whisper.pome_drop.thagirion": {
+    "about": "the Fungal Entity announcing that the fruit of Thagirion has fallen and fell for the player",
+    "tone": "hushed, ritual"
+  },
+  "hemomancy.whisper.post_bloom.line1": {
+    "about": "narration of something vast at the root of the world shifting once and settling, satisfied",
+    "tone": "ominous, hushed"
+  },
+  "hemomancy.whisper.post_bloom.line2": {
+    "about": "the Fungal Entity saying the first fruit is laid and the world has tasted its own reflection",
+    "tone": "pleased, cold"
+  },
+  "hemomancy.whisper.post_shatter.line1": {
+    "about": "narration of the voice walking out of the gap beside the player instead of rising from the shards, as if it had waited at the far end",
+    "tone": "eerie, hushed"
+  },
+  "hemomancy.whisper.post_shatter.line2": {
+    "about": "the Fungal Entity telling the Archon the crystal was only a shell, not a taking but a hand reaching back, and what it held is now in theirs",
+    "tone": "warm, uncanny"
+  },
+  "hemomancy.whisper.sanctified.v0.follow": {
+    "about": "the Fungal Entity telling the player that each rite feeds the network and each manipulation pushes the hyphae further, which it calls proliferation",
+    "tone": "calm, proprietary"
+  },
+  "hemomancy.whisper.sanctified.v0.line1": {
+    "about": "narration of the voice returning louder with the smell of wet earth",
+    "tone": "uneasy, sensory"
+  },
+  "hemomancy.whisper.sanctified.v0.line2": {
+    "about": "the Fungal Entity saying it infected the first Archons and made them vessels who believed they learned hemomancy but learned it from the Entity already in their veins",
+    "tone": "patient, smug"
+  },
+  "hemomancy.whisper.sanctified.v1.follow": {
+    "about": "the Fungal Entity saying all are one organism, the player, the hermits, the fargone and the morphlings, fruiting bodies of one mycelial web",
+    "tone": "intimate, vast"
+  },
+  "hemomancy.whisper.sanctified.v1.line1": {
+    "about": "narration of the player's blood shifting on its own in answer to a voice pitched below hearing",
+    "tone": "uneasy, hushed"
+  },
+  "hemomancy.whisper.sanctified.v1.line2": {
+    "about": "the Fungal Entity saying the Erythromycelium was its first expression, a fungal body wearing a crimson mask, and the blood came out of it, not the reverse",
+    "tone": "calm, revealing"
+  },
+  "hemomancy.whisper.sanctified.v2.line1": {
+    "about": "narration of red threads pulsing underground for an instant, running from every root to every stone",
+    "tone": "vivid, eerie"
+  },
+  "hemomancy.whisper.sanctified.v2.line2": {
+    "about": "the Fungal Entity saying hyphal pressure shaped the temples' stone over millennia, and the blood the player calls sacrifice is sap",
+    "tone": "calm, proprietary"
+  },
+  "hemomancy.whisper.sanctified.v2.line2.canon": {
+    "about": "the Fungal Entity admitting hands built the temples but roots moved under every foundation, learning each stone, so sacrifice and sap soaked into the same ground",
+    "tone": "calm, proprietary"
+  },
+  "hemomancy.whisper.silenced": {
+    "about": "narration that the player listens for the waiting voice and hears nothing, since they cut that thread themselves",
+    "tone": "quiet, bleak"
+  },
+  "hemomancy.whisper.speaker_name": {
+    "about": "the unknown speaker name label for the whispering voice",
+    "tone": "plain label"
+  },
+  "hemomancy.whisper.spine_emerged.line1": {
+    "about": "narration of wet cartilage splitting with a loud living crack",
+    "tone": "visceral, sharp"
+  },
+  "hemomancy.whisper.spine_emerged.line2": {
+    "about": "the Fungal Entity announcing that the player's return-thread has grown teeth",
+    "tone": "pleased, ominous"
+  },
+  "hemomancy.whisper.spine_emerged.line3": {
+    "about": "the Fungal Entity telling the player to take up the Spine, draw it to go down into the dreaming root and again to claw their way back",
+    "tone": "instructive, low"
+  },
+  "hemomancy.whisper.spine_growth.degree5": {
+    "about": "narration of a faint itch between the shoulder blades at Degree 5, warm and forgettable, probably nothing",
+    "tone": "faint, innocuous"
+  },
+  "hemomancy.whisper.spine_growth.degree6": {
+    "about": "narration of a tingle crawling slowly up the spine at Degree 6, as if something has learned the shape of the player's back",
+    "tone": "creeping, deliberate"
+  },
+  "hemomancy.whisper.spine_growth.degree7": {
+    "about": "narration of something in the spine straining against the flesh at Degree 7, with a stiff neck and an almost ready growth",
+    "tone": "tense, ominous"
+  },
+  "hemomancy.whisper.spine_growth.degree8.canon": {
+    "about": "narration that the return-thread is already gone from the player's back and Apotheosis changes what remains",
+    "tone": "quiet, final"
+  }
+}

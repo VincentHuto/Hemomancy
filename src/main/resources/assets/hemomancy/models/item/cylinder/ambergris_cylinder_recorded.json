@@ -1,0 +1,6 @@
+{
+  "parent": "hemomancy:item/cylinder/ambergris_cylinder",
+  "textures": {
+    "skin": "hemomancy:item/ambergris_cylinder_recorded"
+  }
+}

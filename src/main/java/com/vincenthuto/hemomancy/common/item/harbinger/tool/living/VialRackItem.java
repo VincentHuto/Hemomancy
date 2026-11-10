@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -122,10 +123,17 @@ public class VialRackItem extends Item {
 
 	public static NonNullList<ItemStack> getVials(ItemStack rack) {
 		ensureInitialized(rack);
+		return getVials(rack, provider());
+	}
+
+	// Read the stored contents without initializing or rewriting the stack during rendering.
+	private static NonNullList<ItemStack> getVials(ItemStack rack, HolderLookup.Provider registries) {
 		NonNullList<ItemStack> vials = NonNullList.withSize(MAX_VIALS, ItemStack.EMPTY);
 		ListTag list = rack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getList(TAG_VIALS, Tag.TAG_COMPOUND);
-		for (int i = 0; i < MAX_VIALS; i++) {
-			vials.set(i, i < list.size() ? ItemStack.parseOptional(provider(), list.getCompound(i)) : ItemStack.EMPTY);
+		if (list.size() == MAX_VIALS) {
+			for (int i = 0; i < MAX_VIALS; i++) {
+				vials.set(i, ItemStack.parseOptional(registries, list.getCompound(i)));
+			}
 		}
 		return vials;
 	}
@@ -164,6 +172,14 @@ public class VialRackItem extends Item {
 
 	public static boolean isEmptyVial(ItemStack stack) {
 		return !stack.isEmpty() && stack.getItem() == ItemInit.bloody_vial.get() && !com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData.isFilled(stack);
+	}
+
+	public static int countFilledVials(ItemStack rack, HolderLookup.Provider registries) {
+		int filled = 0;
+		for (ItemStack vial : getVials(rack, registries)) {
+			if (BloodSampleData.isSpecimenVessel(vial) && BloodSampleData.isFilled(vial)) filled++;
+		}
+		return filled;
 	}
 
 	public static int countEmptyVials(ItemStack rack) {

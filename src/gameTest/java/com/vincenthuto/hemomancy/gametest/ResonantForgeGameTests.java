@@ -46,13 +46,54 @@ import java.util.UUID;
 @PrefixGameTestTemplate(false)
 public final class ResonantForgeGameTests {
     @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
+    public static void corpseWaxRetainsItsShellAndHoldsMasterPatterns(GameTestHelper helper) {
+        ItemStack blank = new ItemStack(ItemInit.corpse_wax_cylinder.get());
+        blank.set(DataComponents.CUSTOM_NAME, Component.literal("Bog wax"));
+        ResonantPattern pattern = new ResonantPattern(
+                List.of(new ResonantPattern.Entry("minecraft:unbreaking", 3)), "", 0, 0, false);
+        ItemStack recorded = blank.copy();
+        recorded.set(DataComponentInit.RESONANT_PATTERN.get(), pattern);
+
+        ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 5), Direction.NORTH);
+        forge.receiveBlood(5000);
+        forge.setItem(ResonantForgeBlockEntity.APPLICATION_ITEM, new ItemStack(Items.DIAMOND_PICKAXE));
+        forge.setItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER, recorded.copy());
+        helper.assertTrue(forge.startApply(), "Forge refused an ordinary Corpse Wax pattern");
+        tick(forge, helper, ResonantForgeRules.OPERATION_TICKS);
+        helper.assertTrue(ItemStack.matches(blank, forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER))
+                        && !forge.getItem(ResonantForgeBlockEntity.APPLICATION_OUTPUT).isEmpty(),
+                "Application did not leave the same Corpse Wax shell blank");
+
+        forge.setItem(ResonantForgeBlockEntity.GRINDING_CYLINDER, recorded);
+        helper.assertTrue(!forge.startStabilizing(), "Base Forge stabilized a Corpse Wax pattern");
+        helper.assertTrue(forge.completeUpgrade(ResonantForgeTier.PRECISION, UUID.randomUUID())
+                && forge.completeUpgrade(ResonantForgeTier.MASTERWORK, UUID.randomUUID()), "Masterwork setup failed");
+        helper.assertTrue(forge.startStabilizing(), "Masterwork Forge refused to stabilize Corpse Wax");
+        tick(forge, helper, ResonantForgeRules.MASTER_OPERATION_TICKS);
+        ItemStack master = forge.removeItemNoUpdate(ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT);
+        ItemStack expected = blank.copy();
+        expected.set(DataComponentInit.RESONANT_PATTERN.get(), pattern.asMaster());
+        helper.assertTrue(ItemStack.matches(expected, master), "Stabilization lost the pattern or cylinder identity");
+
+        forge.removeItemNoUpdate(ResonantForgeBlockEntity.APPLICATION_OUTPUT);
+        forge.setItem(ResonantForgeBlockEntity.APPLICATION_ITEM, new ItemStack(Items.DIAMOND_PICKAXE));
+        forge.setItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER, master);
+        helper.assertTrue(forge.startApply(), "Masterwork Forge refused a Master Corpse Wax pattern");
+        tick(forge, helper, ResonantForgeRules.OPERATION_TICKS);
+        helper.assertTrue(ItemStack.matches(expected, forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER)),
+                "Master application did not retain the Corpse Wax pattern");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
     public static void shiftClickSplitsBlankCylinderStacks(GameTestHelper helper) {
         ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 5), Direction.NORTH);
         var player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setPos(forge.getBlockPos().getCenter());
         var menu = new com.vincenthuto.hemomancy.common.menu.tile.crafting.ResonantForgeMenu(
                 1, player.getInventory(), forge, new SimpleContainerData(10));
-        for (var medium : List.of(ItemInit.wax_cylinder.get(), ItemInit.ambergris_cylinder.get())) {
+        for (var medium : List.of(ItemInit.wax_cylinder.get(), ItemInit.ambergris_cylinder.get(),
+                ItemInit.corpse_wax_cylinder.get())) {
             player.getInventory().setItem(9, new ItemStack(medium, 2));
             helper.assertTrue(!menu.quickMoveStack(player, ResonantForgeBlockEntity.SLOT_COUNT).isEmpty(),
                     "Shift-click rejected a stack of two blank cylinders");
@@ -77,7 +118,8 @@ public final class ResonantForgeGameTests {
         player.setPos(forge.getBlockPos().getCenter());
         var menu = new com.vincenthuto.hemomancy.common.menu.tile.crafting.ResonantForgeMenu(
                 1, player.getInventory(), forge, new SimpleContainerData(10));
-        for (var medium : List.of(ItemInit.wax_cylinder.get(), ItemInit.ambergris_cylinder.get())) {
+        for (var medium : List.of(ItemInit.wax_cylinder.get(), ItemInit.ambergris_cylinder.get(),
+                ItemInit.corpse_wax_cylinder.get())) {
             ItemStack audio = new ItemStack(medium, 2);
             audio.set(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get(),
                     new com.vincenthuto.hemomancy.common.item.component.ClairaudiographRecording(

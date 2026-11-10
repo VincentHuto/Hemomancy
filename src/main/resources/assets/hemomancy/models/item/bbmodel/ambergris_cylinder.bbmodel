@@ -5,301 +5,1055 @@
     "box_uv": false
   },
   "name": "ambergris_cylinder",
+  "ambientocclusion": false,
   "resolution": {
-    "width": 32,
-    "height": 32
+    "width": 16,
+    "height": 16
   },
   "elements": [
     {
-      "name": "wax",
-      "from": [
-        3,
-        6,
-        6
-      ],
-      "to": [
-        13,
-        10,
-        10
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            0,
-            0,
-            10,
-            4
-          ],
-          "texture": 0
-        },
-        "south": {
-          "uv": [
-            0,
-            0,
-            10,
-            4
-          ],
-          "texture": 0
-        },
-        "east": {
-          "uv": [
-            0,
-            0,
-            4,
-            4
-          ],
-          "texture": 0
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            4,
-            4
-          ],
-          "texture": 0
-        },
-        "up": {
-          "uv": [
-            0,
-            0,
-            10,
-            4
-          ],
-          "texture": 0
-        },
-        "down": {
-          "uv": [
-            0,
-            0,
-            10,
-            4
-          ],
-          "texture": 0
-        }
-      },
-      "type": "cube",
-      "uuid": "9739143b-0d7d-565a-9571-1cab3159b85d"
-    },
-    {
-      "name": "upper bevel",
-      "from": [
-        4,
-        5.3,
-        6.6
-      ],
-      "to": [
-        12,
-        10.7,
-        9.4
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            0,
-            0,
-            8,
-            5.3999999999999995
-          ],
-          "texture": 0
-        },
-        "south": {
-          "uv": [
-            0,
-            0,
-            8,
-            5.3999999999999995
-          ],
-          "texture": 0
-        },
-        "east": {
-          "uv": [
-            0,
-            0,
-            2.8000000000000007,
-            5.3999999999999995
-          ],
-          "texture": 0
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            2.8000000000000007,
-            5.3999999999999995
-          ],
-          "texture": 0
-        },
-        "up": {
-          "uv": [
-            0,
-            0,
-            8,
-            2.8000000000000007
-          ],
-          "texture": 0
-        },
-        "down": {
-          "uv": [
-            0,
-            0,
-            8,
-            2.8000000000000007
-          ],
-          "texture": 0
-        }
-      },
-      "type": "cube",
-      "uuid": "5e94ff06-701d-5cce-af30-8cfd919f6369"
-    },
-    {
-      "name": "left end",
+      "name": "hematic collar",
       "from": [
         2.5,
         5.5,
+        7.0
+      ],
+      "to": [
+        3.5,
+        6.0,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            5.4,
+            16.0,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            5.4,
+            16.0,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        }
+      },
+      "uuid": "0f14b498-3d4f-5703-95d2-f025a44d9e8d",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hematic collar",
+      "from": [
+        2.5,
+        6.0,
+        6.25
+      ],
+      "to": [
+        3.5,
+        7.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            4.2,
+            16.0,
+            5.4
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            4.2,
+            16.0,
+            5.4
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        }
+      },
+      "uuid": "522a3a4d-3abd-5107-95da-6f7b4d8cdbdb",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hematic collar",
+      "from": [
+        2.5,
+        7.0,
         5.5
       ],
       "to": [
         3.5,
-        10.5,
+        9.0,
         10.5
       ],
       "faces": {
         "north": {
+          "texture": 0,
           "uv": [
-            0,
-            0,
-            1.0,
-            5.0
-          ],
-          "texture": 0
+            12.0,
+            1.8,
+            16.0,
+            4.2
+          ]
         },
         "south": {
+          "texture": 0,
           "uv": [
-            0,
-            0,
-            1.0,
-            5.0
-          ],
-          "texture": 0
-        },
-        "east": {
-          "uv": [
-            0,
-            0,
-            5.0,
-            5.0
-          ],
-          "texture": 0
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            5.0,
-            5.0
-          ],
-          "texture": 0
+            12.0,
+            1.8,
+            16.0,
+            4.2
+          ]
         },
         "up": {
+          "texture": 0,
           "uv": [
-            0,
-            0,
-            1.0,
-            5.0
-          ],
-          "texture": 0
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
         },
         "down": {
+          "texture": 0,
           "uv": [
-            0,
-            0,
-            1.0,
-            5.0
-          ],
-          "texture": 0
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
         }
       },
+      "uuid": "73b0e39e-d9ab-54ac-b699-1c197af4ffb4",
       "type": "cube",
-      "uuid": "5ba6dc77-2804-5879-9993-f6c4ca05c22d"
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
     },
     {
-      "name": "right end",
+      "name": "hematic collar",
+      "from": [
+        2.5,
+        9.0,
+        6.25
+      ],
+      "to": [
+        3.5,
+        10.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.6,
+            16.0,
+            1.8
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.6,
+            16.0,
+            1.8
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        }
+      },
+      "uuid": "1e546b64-df07-5d72-9110-d18ff4640efe",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hematic collar",
+      "from": [
+        2.5,
+        10.0,
+        7.0
+      ],
+      "to": [
+        3.5,
+        10.5,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            0.6
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        }
+      },
+      "uuid": "1d7b33be-b2fa-57e1-b8ea-94bd60f37cc9",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mnemonic resin",
+      "from": [
+        3.5,
+        5.75,
+        7.25
+      ],
+      "to": [
+        12.5,
+        6.25,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            5.33,
+            12.0,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            5.33,
+            12.0,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        }
+      },
+      "uuid": "5920b1c5-1018-5003-b880-92cef6691020",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mnemonic resin",
+      "from": [
+        3.5,
+        6.25,
+        6.5
+      ],
+      "to": [
+        12.5,
+        7.25,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            4.0,
+            12.0,
+            5.33
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            4.0,
+            12.0,
+            5.33
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        }
+      },
+      "uuid": "7095b708-a11c-5948-b61f-33748177f4a6",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mnemonic resin",
+      "from": [
+        3.5,
+        7.25,
+        5.75
+      ],
+      "to": [
+        12.5,
+        8.75,
+        10.25
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            2.0,
+            12.0,
+            4.0
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            2.0,
+            12.0,
+            4.0
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        }
+      },
+      "uuid": "45001fdf-a101-53f0-92ac-4482d6ffd117",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mnemonic resin",
+      "from": [
+        3.5,
+        8.75,
+        6.5
+      ],
+      "to": [
+        12.5,
+        9.75,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.67,
+            12.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.67,
+            12.0,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        }
+      },
+      "uuid": "41cbd164-66e9-599b-bb3f-21b0050f46a0",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mnemonic resin",
+      "from": [
+        3.5,
+        9.75,
+        7.25
+      ],
+      "to": [
+        12.5,
+        10.25,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            0.67
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            0.67
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            6.0
+          ]
+        }
+      },
+      "uuid": "849d087c-64be-5ad5-9c17-d7e6a39608ee",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hematic collar",
       "from": [
         12.5,
         5.5,
+        7.0
+      ],
+      "to": [
+        13.5,
+        6.0,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            5.4,
+            16.0,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            5.4,
+            16.0,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        }
+      },
+      "uuid": "7e07dccc-e6cf-57d1-b464-5ec6a4fbfd04",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hematic collar",
+      "from": [
+        12.5,
+        6.0,
+        6.25
+      ],
+      "to": [
+        13.5,
+        7.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            4.2,
+            16.0,
+            5.4
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            4.2,
+            16.0,
+            5.4
+          ]
+        },
+        "down": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        }
+      },
+      "uuid": "5cecfeba-e347-5105-b3f7-de67172b9095",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hematic collar",
+      "from": [
+        12.5,
+        7.0,
         5.5
       ],
       "to": [
         13.5,
-        10.5,
+        9.0,
         10.5
       ],
       "faces": {
         "north": {
+          "texture": 0,
           "uv": [
-            0,
-            0,
-            1.0,
-            5.0
-          ],
-          "texture": 0
+            12.0,
+            1.8,
+            16.0,
+            4.2
+          ]
         },
         "south": {
+          "texture": 0,
           "uv": [
-            0,
-            0,
-            1.0,
-            5.0
-          ],
-          "texture": 0
-        },
-        "east": {
-          "uv": [
-            0,
-            0,
-            5.0,
-            5.0
-          ],
-          "texture": 0
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            5.0,
-            5.0
-          ],
-          "texture": 0
+            12.0,
+            1.8,
+            16.0,
+            4.2
+          ]
         },
         "up": {
+          "texture": 0,
           "uv": [
-            0,
-            0,
-            1.0,
-            5.0
-          ],
-          "texture": 0
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
         },
         "down": {
+          "texture": 0,
           "uv": [
-            0,
-            0,
-            1.0,
-            5.0
-          ],
-          "texture": 0
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
         }
       },
+      "uuid": "c55fdb64-19f1-5815-8a50-6aa1263ddfe6",
       "type": "cube",
-      "uuid": "d341b09a-ec50-5137-9248-0cfd6ca2020a"
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hematic collar",
+      "from": [
+        12.5,
+        9.0,
+        6.25
+      ],
+      "to": [
+        13.5,
+        10.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.6,
+            16.0,
+            1.8
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.6,
+            16.0,
+            1.8
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        }
+      },
+      "uuid": "d32c8700-b791-5fca-a656-11c20a9ff53b",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hematic collar",
+      "from": [
+        12.5,
+        10.0,
+        7.0
+      ],
+      "to": [
+        13.5,
+        10.5,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            0.6
+          ]
+        },
+        "up": {
+          "texture": 0,
+          "uv": [
+            12.0,
+            0.0,
+            16.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        },
+        "east": {
+          "texture": 0,
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        }
+      },
+      "uuid": "d36069fe-7951-5e40-baf9-39becc411d32",
+      "type": "cube",
+      "box_uv": false,
+      "origin": [
+        8,
+        8,
+        8
+      ]
     }
+  ],
+  "outliner": [
+    "0f14b498-3d4f-5703-95d2-f025a44d9e8d",
+    "522a3a4d-3abd-5107-95da-6f7b4d8cdbdb",
+    "73b0e39e-d9ab-54ac-b699-1c197af4ffb4",
+    "1e546b64-df07-5d72-9110-d18ff4640efe",
+    "1d7b33be-b2fa-57e1-b8ea-94bd60f37cc9",
+    "5920b1c5-1018-5003-b880-92cef6691020",
+    "7095b708-a11c-5948-b61f-33748177f4a6",
+    "45001fdf-a101-53f0-92ac-4482d6ffd117",
+    "41cbd164-66e9-599b-bb3f-21b0050f46a0",
+    "849d087c-64be-5ad5-9c17-d7e6a39608ee",
+    "7e07dccc-e6cf-57d1-b464-5ec6a4fbfd04",
+    "5cecfeba-e347-5105-b3f7-de67172b9095",
+    "c55fdb64-19f1-5815-8a50-6aa1263ddfe6",
+    "d32c8700-b791-5fca-a656-11c20a9ff53b",
+    "d36069fe-7951-5e40-baf9-39becc411d32"
   ],
   "textures": [
     {
-      "id": "0",
       "name": "ambergris_cylinder.png",
-      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAdklEQVR4nO2WwQnAMAwDLe1U6BodobNlnK5kk+K+Eug7fkQPYdAncTgU4Wl3J2mpiJjmEg+Apdz9m6NWeKw4dPRYuX160wtUXISV208MCEIIQghCKAltyyTEdZx9eQf46wMQhNgUQuo7hjqhC0IoCa0yC7g9hC8MnYz0T2/HGQAAAABJRU5ErkJggg=="
+      "id": "skin",
+      "uuid": "dc636449-d1b9-5aca-8644-9bca8e1057db",
+      "uv_width": 16,
+      "uv_height": 16,
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABbUlEQVR4nK1Sv0sCURz/nJ0SQovJcUINav4gdVIMzpsMikxwaTnIKRr6ExqbavGvuMDhXAQJavak0psk8ZKjRUiOwyHBQAvi7qlUKCH0nd77vs+v73uPKqSToYALgH/bDYCNeHtPL1rLAKB2+gAyueDh1X2W4y/ONuP5oi0UcBGo1jJ+oUMBVyYX1FqGIgoA4vmiIgo0gaqdfiYXlKX6TJV4kqMU8Nh4OD8+AkATpbY+RPkZADFkI1424pWlOjH/XmYktdMPM04SgHRlqU7cbiwVAMnEzuV1CQBVSCfb+jDMOIk8gLLcnW3JWtIG+misiMLBSYk6jUaxTNmWQgOgm4NPAPponOV4AJValXHYAcTWVuYTMEXHfKzV4Wec+QTdQu+5e/6NDwCeNwOcyQEWOGQt7dS++ewAFFF4vR0D/Lva+J+hKZ9naxJp+qPuDLZSq+6ur86PxDjsZmKOj3XNoZsG/cfQACYc/LjWRfUFE2ujC/eTJGEAAAAASUVORK5CYII=",
+      "mode": "bitmap",
+      "namespace": "hemomancy",
+      "folder": "item"
     }
-  ]
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        26,
+        34,
+        12
+      ],
+      "scale": [
+        1.43,
+        1.43,
+        1.43
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "fixed": {
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    },
+    "thirdperson_righthand": {
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        30,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ]
+    }
+  }
 }

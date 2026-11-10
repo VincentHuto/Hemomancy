@@ -1,0 +1,1654 @@
+{
+  "hemomancy.alchemist.adept.chisel_lore": {
+    "about": "the Alchemist explaining that the old Chisel Station name means the Cerebral Scarring Station, the only bench, where a knapper cuts a pattern into a blank scar and wears down more for longer patterns, and urging the player to learn the pattern first",
+    "tone": "dry, careful"
+  },
+  "hemomancy.alchemist.adept.crimson_vessel": {
+    "about": "the Alchemist describing the Degree 4 rite: offer the Pallid Vessel and an amethyst shard at a Greater Working floor, fill four anchors, awaken the Bastion support sigil, project into the daemon, losing the Pallid Vessel and gaining the 1,800 mL Crimson Vessel that feeds back faster",
+    "tone": "clinical, matter-of-fact"
+  },
+  "hemomancy.alchemist.adept.lantern.line1": {
+    "about": "the Alchemist reminding the player they have been able to build a Mycelial Lantern since Degree 3 and should keep a culture alive instead of spending every enzyme at once",
+    "tone": "dry, practical"
+  },
+  "hemomancy.alchemist.adept.lantern.line2": {
+    "about": "the Alchemist explaining that spores go in the culture slot, the lantern is fed blood, keeps fruiting the matching enzyme while the culture stays, and its output must be emptied before it fills",
+    "tone": "brisk, instructive"
+  },
+  "hemomancy.alchemist.adept.line1": {
+    "about": "narration of the Alchemist setting a precision tool down on the bench and turning to the player, visibly impressed",
+    "tone": "quiet, observational"
+  },
+  "hemomancy.alchemist.adept.line2": {
+    "about": "the Alchemist greeting an Adept, acknowledging they can run the machines and promising to show them the stations that work on the player themselves",
+    "tone": "approving, dry"
+  },
+  "hemomancy.alchemist.adept.morphlings.line1": {
+    "about": "the Alchemist warning that a wild Morphling polyp is a living specimen carrying none of the player's instructions and must not be handled like a puppet",
+    "tone": "stern, clinical"
+  },
+  "hemomancy.alchemist.adept.morphlings.line2": {
+    "about": "the Alchemist asking for a supported polyp in a specimen jar to record what it might become, and noting the Incubator comes later and neither it nor a forced fight is needed to start observing",
+    "tone": "measured, instructive"
+  },
+  "hemomancy.alchemist.adept.scar_station_lore": {
+    "about": "the Alchemist describing the Cerebral Scarring Station as a surgical instrument that looks like a bench, where a knapper carves a pattern into a blank scar, noting learning happens at an Iron Brazier (the Vein-Mason's lesson) and that a learned route changes sustainable manipulations and tendency strength",
+    "tone": "precise, lecturing"
+  },
+  "hemomancy.alchemist.apotheos.line1": {
+    "about": "narration of the Alchemist stopping work and staring at the player for a long moment, awed and unsteady on their feet",
+    "tone": "awed, hushed"
+  },
+  "hemomancy.alchemist.apotheos.line2": {
+    "about": "the Alchemist greeting an Apotheos player, admitting they cannot measure what the blood has become, but offering to help finish any unfinished work since the machines still run",
+    "tone": "shaken, humble"
+  },
+  "hemomancy.alchemist.apotheos.reflection": {
+    "about": "the Alchemist admitting they believed the Alembic, Centrifuge, Loom and Incubator were the summit of hemomantic engineering, and realizing the player is the summit and they were building toward them",
+    "tone": "reverent, confessional"
+  },
+  "hemomancy.alchemist.archon.line1": {
+    "about": "narration of the Alchemist straightening instinctively and bowing their head before an Archon",
+    "tone": "solemn, respectful"
+  },
+  "hemomancy.alchemist.archon.line2": {
+    "about": "the Alchemist greeting an Archon, saying the workshop remains open to them and asking whether anything needs preparing or repairing",
+    "tone": "deferential, courteous"
+  },
+  "hemomancy.alchemist.armor_research.barbed.line1": {
+    "about": "the Alchemist assigning a catalog task: record a Barbed Urchin, a Desiccant and a Venom Rib Centipede in the Bestiary",
+    "tone": "clipped, businesslike"
+  },
+  "hemomancy.alchemist.armor_research.barbed.line2": {
+    "about": "the Alchemist explaining that only records are needed, because the creatures' spines and venom teach more about the Barbed armor answer than another surrendered carcass",
+    "tone": "dry, practical"
+  },
+  "hemomancy.alchemist.armor_research.chitinite.line1": {
+    "about": "the Alchemist assigning a catalog task: record a Chalybeate Snail, a Chitinite and a Fervent Chitinite",
+    "tone": "clipped, businesslike"
+  },
+  "hemomancy.alchemist.armor_research.chitinite.line2": {
+    "about": "the Alchemist stressing records again with no bodies, since the shells show the Artificer where Chitinite armor can give without breaking",
+    "tone": "dry, practical"
+  },
+  "hemomancy.alchemist.armor_research.claim.prompt": {
+    "about": "the Alchemist confirming the player's Bestiary holds the three requested records and saying they will check them against the Artificer's work before issuing another reagent",
+    "tone": "formal, procedural"
+  },
+  "hemomancy.alchemist.armor_research.prismatic.line1": {
+    "about": "the Alchemist assigning a catalog task: record a Prism Cuttle, a Scarlet Serpent and a Verdigris Moth",
+    "tone": "clipped, businesslike"
+  },
+  "hemomancy.alchemist.armor_research.prismatic.line2": {
+    "about": "the Alchemist repeating that only records are needed, since the shifting pigments explain what the Prismatic armor answer is copying",
+    "tone": "dry, practical"
+  },
+  "hemomancy.alchemist.artificer_crimson_vestment.prompt": {
+    "about": "the Alchemist saying the player's consecrated frame has been inspected and that they will now issue the Crimson Lacquer needed to finish the vestment",
+    "tone": "efficient, matter-of-fact"
+  },
+  "hemomancy.alchemist.artificer_three_answers.prompt": {
+    "about": "the Alchemist accepting the Artificer's inspection and handing over the reagent matching the player's chosen armor family so they can put that answer to work",
+    "tone": "brisk, approving"
+  },
+  "hemomancy.alchemist.bloodwood_lesson.line1": {
+    "about": "the Alchemist explaining that Bloodwood starts from any sapling, which must absorb 900 mL of the player's projected blood, possibly over several casts",
+    "tone": "instructive, dry"
+  },
+  "hemomancy.alchemist.bloodwood_lesson.line2": {
+    "about": "the Alchemist asking where the player is planting it and explaining it needs open ground with replaceable space eight blocks out and thirteen above, with leaves growing around obstacles",
+    "tone": "practical, curious"
+  },
+  "hemomancy.alchemist.bloodwood_lesson.line3": {
+    "about": "the Alchemist warning that a Dead Bush is the worse idea: 1,800 mL makes leafless, hungry Heartwood that bleeds nearby things and anyone within four blocks into one trunk core, which must be filled to 1,800 mL or about nine cows before cutting for Ravenous Heartwood, else only a log",
+    "tone": "grim, cautionary"
+  },
+  "hemomancy.alchemist.body_answers.line1": {
+    "about": "the Alchemist telling a player who has separated blood by tendency to stop treating those answers as mere ingredients",
+    "tone": "pointed, lecturing"
+  },
+  "hemomancy.alchemist.body_answers.line2": {
+    "about": "the Alchemist walking through the Alembic brew: Sanguine Formation in the Alembic, Fervent Enzyme as catalyst, empty the Bloody Flask into the tank via the lower-right container input, reinsert the returned clay flask, brewing uses 2,500 mL and fills it, and the tank can be topped up by Projection",
+    "tone": "clipped, procedural"
+  },
+  "hemomancy.alchemist.body_answers.line3": {
+    "about": "the Alchemist telling the player to drink the result so their arms learn the Thelemic Memory Sanguine Fists with a reserve of the preparation, select it from the same radial as Noetic Memories and activate it, warning each answer costs blood and strains vessels",
+    "tone": "frank, cautionary"
+  },
+  "hemomancy.alchemist.body_answers.prompt": {
+    "about": "the Alchemist saying the player now knows what blood separates into and offering to show how those answers are brewed back into the body",
+    "tone": "dry, inviting"
+  },
+  "hemomancy.alchemist.brewing.athanor.claimed": {
+    "about": "the Alchemist explaining the Athanor: a second catalyst socket, the Condenser's 7,500 mL tank retained, permanent heat from the mantle, Alembic recipes at half time, a cancelled rite returning offerings but not spent blood, and the finished tier keeping when moved",
+    "tone": "precise, informative"
+  },
+  "hemomancy.alchemist.brewing.athanor.prompt": {
+    "about": "the Alchemist saying the player's Condenser work checks out and offering to release the Athanor Kit and show the greater circuit",
+    "tone": "approving, brisk"
+  },
+  "hemomancy.alchemist.brewing.athanor.ready": {
+    "about": "the Alchemist instructing the player to take the Athanor Kit to a Condenser on a working greater Cardinal floor, place it on a lit brazier with five more offerings and feed the three marked bulbs in order",
+    "tone": "clipped, procedural"
+  },
+  "hemomancy.alchemist.brewing.athanor.requirements": {
+    "about": "the Alchemist listing requirements for the Athanor kit: take out a distillation result, finish a refinement and a two-effect compound at a Condenser and take each out, and reach Degree 6 with blood awake, noting an earlier unaccepted kit does not matter",
+    "tone": "plain, businesslike"
+  },
+  "hemomancy.alchemist.brewing.athanor.title": {
+    "about": "a short title for the dialogue option about the Sanguine Athanor",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.brewing.condenser.claimed": {
+    "about": "the Alchemist confirming the Condenser Kit is the player's and they can build another, explaining a cancelled rite returns offerings and a finished Condenser raises the tank from 5,000 to 7,500 mL without adding blood and keeps it when moved",
+    "tone": "precise, informative"
+  },
+  "hemomancy.alchemist.brewing.condenser.prompt": {
+    "about": "the Alchemist saying the player has done the lesser work and brought enough evidence, so they can release the Condenser Kit and explain the rite that seats it",
+    "tone": "approving, brisk"
+  },
+  "hemomancy.alchemist.brewing.condenser.ready": {
+    "about": "the Alchemist instructing the player to take the Condenser Kit to a lit brazier on a working lesser Cardinal floor with five more offerings, noting the Alembic sits one plinth behind the Focus and its two blood circuits must close in order",
+    "tone": "clipped, procedural"
+  },
+  "hemomancy.alchemist.brewing.condenser.requirements": {
+    "about": "the Alchemist stating that after distilling something at an ordinary Alembic and taking the result out personally, and reaching Degree 4 with blood awake, they will trust the player with a Condenser kit",
+    "tone": "plain, businesslike"
+  },
+  "hemomancy.alchemist.brewing.condenser.title": {
+    "about": "a short title for the dialogue option about the Hematic Condenser",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.centrifuge.fractionating.claimed": {
+    "about": "the Alchemist describing the Fractionating Rotor's effect: five-second spins with about half again as much primary material, one iron powder per ordinary vial, half of mixed specimens yielding a second fraction from their own profile, needing room in eight shared output slots, and sacred syringes still giving one residuum",
+    "tone": "precise, informative"
+  },
+  "hemomancy.alchemist.centrifuge.fractionating.prompt": {
+    "about": "the Alchemist saying the player has worked the calibrated rotor and offering to teach them to recover a second fraction",
+    "tone": "approving, brisk"
+  },
+  "hemomancy.alchemist.centrifuge.fractionating.ready": {
+    "about": "the Alchemist explaining that mixed specimens hold another useful fraction and listing the kit rite: lit brazier with an Amethyst Shard, Ghast Tear, Hematic Iron Block, Chromatic Sublimate and Enzyme Primer, calibrated centrifuge two blocks behind the Focus on a Greater floor, eight anchors, three 50 mL circuits, then the procession",
+    "tone": "clipped, procedural"
+  },
+  "hemomancy.alchemist.centrifuge.fractionating.requirements": {
+    "about": "the Alchemist stating requirements for the next rotor: take an ordinary specimen result from a completed calibrated or fractionating spin, be Degree 6 with blood awake and earlier separation work proven, and noting a skipped first gift is fine",
+    "tone": "plain, businesslike"
+  },
+  "hemomancy.alchemist.centrifuge.fractionating.title": {
+    "about": "a short title for the dialogue option about the Fractionating Rotor",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.centrifuge.governor.claimed": {
+    "about": "the Alchemist describing the governor's effects: a quarter more primary material on average, seven-and-a-half-second spins, three in four vials returning iron powder, balanced opposing vials, a craftable replacement kit, and a cancelled rite returning offerings and the Staff but not spent blood",
+    "tone": "precise, informative"
+  },
+  "hemomancy.alchemist.centrifuge.governor.prompt": {
+    "about": "the Alchemist saying the player's separation work holds up and offering a governor and instruction in its two circuits",
+    "tone": "approving, brisk"
+  },
+  "hemomancy.alchemist.centrifuge.governor.ready": {
+    "about": "the Alchemist explaining that steadier spin leaves less behind and listing the rite: governor on a lit brazier with an Iron Ingot, Chain, Sanguine Glass, Ferric Binder and Neurotic Enzyme, base centrifuge two blocks behind the Focus on a Greater floor, four anchors, two 50 mL circuits, then the procession",
+    "tone": "clipped, procedural"
+  },
+  "hemomancy.alchemist.centrifuge.governor.requirements": {
+    "about": "the Alchemist stating that balancing a spin and taking an ordinary specimen result, already done in First Separation, plus Degree 4 with blood awake, earns a Centrifugal Governor Kit",
+    "tone": "plain, businesslike"
+  },
+  "hemomancy.alchemist.centrifuge.governor.title": {
+    "about": "a short title for the dialogue option about the Calibrated Rotor",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.clarity.line1": {
+    "about": "narration of the Alchemist looking straight through the player and silently returning to work",
+    "tone": "cold, dismissive"
+  },
+  "hemomancy.alchemist.deep_dark_commission.bearing": {
+    "about": "the Alchemist giving Deep Dark terrain coordinates (X, Y, Z filled in) in the Overworld, telling the player to find a safe way down and look for a sculk catalyst without fighting a Warden, and warning the bearing marks a region, not a safe entrance or Vigil archive",
+    "tone": "cautionary, matter-of-fact"
+  },
+  "hemomancy.alchemist.deep_dark_commission.bearing_missing": {
+    "about": "the Alchemist reporting no Deep Dark terrain within 2,048 blocks, noting there may be some farther out, and suggesting the player ask from another Overworld outpost",
+    "tone": "apologetic, dry"
+  },
+  "hemomancy.alchemist.deep_dark_commission.bearing_overworld": {
+    "about": "the Alchemist telling the player to ask for a Deep Dark bearing while in the Overworld, since from the current dimension their position cannot be aligned to anything underground",
+    "tone": "patient, dry"
+  },
+  "hemomancy.alchemist.deep_dark_commission.lead": {
+    "about": "the Alchemist offering a Deep Dark commission: no permission needed to go down but ask for a bearing first, sample Ahaematic colloid from a sculk catalyst or Warden, and examine it under a Hematic Microscope because it is not ordinary blood",
+    "tone": "grave, businesslike"
+  },
+  "hemomancy.alchemist.deep_dark_commission.ready": {
+    "about": "the Alchemist refusing to send the player back for a second sample because they already examined an Ahaematic sample or carried that analysis into the later replay",
+    "tone": "dry, unbothered"
+  },
+  "hemomancy.alchemist.deep_dark_commission.recorded": {
+    "about": "narration of the Alchemist recording the player's Ahaematic findings, the player keeping the sample and the Vigil inquiry remaining theirs to finish",
+    "tone": "neutral narration"
+  },
+  "hemomancy.alchemist.deep_dark_commission.report.prompt": {
+    "about": "a button-style prompt for the player to report the Ahaematic analysis to the Alchemist, noting the sample is kept",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.deep_dark_commission.task": {
+    "about": "the Alchemist asking what the sample showed, noting the Vigil Beneath and its recordings are a separate inquiry this report will not close",
+    "tone": "curious, precise"
+  },
+  "hemomancy.alchemist.enzyme_uses.brewing": {
+    "about": "the Alchemist listing ordinary brewing stand uses of enzymes: Vivacious gives Regeneration, Fervent Fire Resistance, Neurotic Swiftness, Incandescent Night Vision, Ruinous Poison, Frigid Slowness, Ferric Strength, and Umbral turns Night Vision into Invisibility",
+    "tone": "brisk, list-like"
+  },
+  "hemomancy.alchemist.enzyme_uses.culture": {
+    "about": "the Alchemist explaining that from Degree 3 an enzyme combined with a Spore Sac and Hyphal Substrate makes a matching culture, which in a Mycelial Lantern keeps fruiting that enzyme at 600 blood per 2,400 ticks",
+    "tone": "instructive, precise"
+  },
+  "hemomancy.alchemist.enzyme_uses.workshop": {
+    "about": "the Alchemist summing up that Centrifuge plus culture makes the player's first living workshop, noting a Gourdvine Tap can supply the Lantern but blood must still be gathered",
+    "tone": "dry, satisfied"
+  },
+  "hemomancy.alchemist.first_draws.offer": {
+    "about": "the Alchemist offering the First Draws assignment: five empty Blood Vials (extras held until there is room), left-click common animals for five samples across at least three species, keep the filled vials, and craft more from a glass bottle and redstone dust",
+    "tone": "instructive, brisk"
+  },
+  "hemomancy.alchemist.first_draws.progress": {
+    "about": "the Alchemist asking how many species the player has sampled, encouraging more draws from common animals so five samples across three species make a set for the Centrifuge, and noting the next Degree is still the Vicar's call",
+    "tone": "encouraging, dry"
+  },
+  "hemomancy.alchemist.first_separation.briefing": {
+    "about": "the Alchemist briefing First Separation: two loose Blood Vials (held if no room), left-click a cow with each without harming it, place both in opposing Centrifuge slots, recover Vivacious Enzyme, then return for a Living Syringe and vial rack before learning the Ghastly Alembic",
+    "tone": "clipped, procedural"
+  },
+  "hemomancy.alchemist.first_separation.claim.prompt": {
+    "about": "the Alchemist asking whether the enzyme came through a balanced spin and offering to close the assignment and issue the next supplies once shown the result",
+    "tone": "expectant, dry"
+  },
+  "hemomancy.alchemist.first_separation.complete": {
+    "about": "the Alchemist approving the enzyme, handing over a Living Syringe and vial rack (held if inventory is full), and assigning one complete ordinary Ghastly Alembic distillation, after which they will prepare Concentrated Blood",
+    "tone": "approving, brisk"
+  },
+  "hemomancy.alchemist.first_separation.next_distillation": {
+    "about": "the Alchemist reminding the player that tools wait if the inventory is full, and that they next need one completed Ghastly Alembic distillation, then to ask for Concentrated Blood",
+    "tone": "patient, procedural"
+  },
+  "hemomancy.alchemist.first_separation.offer.line1": {
+    "about": "the Alchemist noting the Vicar already tested the player's hand with blood and saying they now want to see what the player can separate from a living sample",
+    "tone": "dry, curious"
+  },
+  "hemomancy.alchemist.first_separation.offer.line2": {
+    "about": "the Alchemist offering the First Separation: draw two cattle samples, balance the vials opposite each other in a Vial Centrifuge, recover surviving Vivacious Enzyme, and agree to receive the empty vials",
+    "tone": "brisk, inviting"
+  },
+  "hemomancy.alchemist.fungal_survey.ready": {
+    "about": "the Alchemist confirming the player has seen the habitat and carries both specimens, so the comparison can be recorded now",
+    "tone": "brisk, approving"
+  },
+  "hemomancy.alchemist.fungal_survey.recorded": {
+    "about": "narration of the Alchemist recording the Overworld survey and handing both plants back",
+    "tone": "neutral narration"
+  },
+  "hemomancy.alchemist.fungal_survey.report.prompt": {
+    "about": "a button-style prompt for the player to show both fungal specimens for inspection, noting they keep them",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.fungal_survey.specimens": {
+    "about": "the Alchemist saying the visit is recorded and the player must carry an Infected Fungus and a Puffball Fungus to report, which will be inspected and returned untouched",
+    "tone": "precise, reassuring"
+  },
+  "hemomancy.alchemist.fungal_survey.visit": {
+    "about": "the Alchemist telling the player to first observe the Fungal Gardens biome in the Overworld, noting the projection garden elsewhere says nothing about local growth",
+    "tone": "firm, dry"
+  },
+  "hemomancy.alchemist.gourd_use.fill": {
+    "about": "the Alchemist explaining how to fill a gourd: corked in the Ghastly Alembic's blood-output slot, filled from the reservoir, taken out; it holds a separate reserve without raising body capacity, and fits the Scarlet Vanity's gourd slot or the pack",
+    "tone": "instructive, plain"
+  },
+  "hemomancy.alchemist.gourd_use.withdraw": {
+    "about": "the Alchemist explaining gourd use: use it in hand to open or cork, equip it and use Toggle Gourd Open/Closed (normally H), open feeds stored blood when the reserve is low and blood is active, empty it before upgrading, with Red at Degree 4, Black at Degree 5 and Curved Horn at Degree 6",
+    "tone": "instructive, precise"
+  },
+  "hemomancy.alchemist.illuminatus.ashen_vessel": {
+    "about": "the Alchemist describing the Degree 5 rite: offer the Crimson Vessel and a ghast tear at a Greater Working floor, fill four anchors, awaken the Bastion sigil, project into the daemon, consuming the Crimson Vessel for a 3,500 mL black gourd that feeds back slower",
+    "tone": "clinical, matter-of-fact"
+  },
+  "hemomancy.alchemist.illuminatus.incubator_lore": {
+    "about": "the Alchemist explaining the Morphling Incubator raises cultivated fungal symbionts under controlled conditions, making one strain of a polyp stable enough to live with",
+    "tone": "informative, measured"
+  },
+  "hemomancy.alchemist.illuminatus.line1": {
+    "about": "the Alchemist greeting an Illuminatus, noting few reach the Crimson Lodge and that the machines now run on principles the uninitiated call impossible and the Alchemist calls badly documented",
+    "tone": "dry, wry"
+  },
+  "hemomancy.alchemist.initiate.line1": {
+    "about": "the Alchemist greeting an Initiate as ready for the Somatic Loom, noting most advanced Outpost processes run through it",
+    "tone": "approving, brisk"
+  },
+  "hemomancy.alchemist.initiate.loom_lore": {
+    "about": "the Alchemist explaining the Somatic Loom: prepare a blank vessel and catalyst, store the enzyme colors, project blood, thread fragments home with the Living Staff while watching for false ones; meaning is the Mnemonist's; the frame is raised by a Cardinal Focus on a Lesser Working floor, explained separately",
+    "tone": "practical, brisk"
+  },
+  "hemomancy.alchemist.initiate.loom_raising": {
+    "about": "the Alchemist explaining how to raise the Loom on a Lesser Working floor: build the frame beside the Focus, seat a Sanguine Formation, light its braziers, feed the frame, and the floor swallows it and forges the Loom",
+    "tone": "clipped, procedural"
+  },
+  "hemomancy.alchemist.initiate.memory_weaving": {
+    "about": "the Alchemist giving the bench version of memory weaving: the Loom writes the manipulation into the memory before it reaches the Reliquary, which just switches on what is known, while the Mnemonist gives the full grammar",
+    "tone": "dry, concise"
+  },
+  "hemomancy.alchemist.initiate.mnemonist_breadcrumb": {
+    "about": "the Alchemist telling the player they have cataloged enough red expression and should take a blank vessel to the Mnemonist, who shows how a memory is made ready before the Loom writes into it",
+    "tone": "brisk, directing"
+  },
+  "hemomancy.alchemist.initiate.pallid_vessel.rite": {
+    "about": "the Alchemist describing the Pallid Vessel rite: offer one Dried Gourd in a lit brazier at a Lesser Working floor of bone blocks and polished Venous Stone Bricks, empty Focus, plant the Living Staff, fill four anchors with Blood Projection, project into the daemon, with no helper, sigil or ordeal",
+    "tone": "clipped, procedural"
+  },
+  "hemomancy.alchemist.item_hint": {
+    "about": "the Alchemist asking what the player is carrying and offering to say which items belong on the bench",
+    "tone": "dry, curious"
+  },
+  "hemomancy.alchemist.item_inquiry.barbed_blade.line1": {
+    "about": "the Alchemist explaining the Barbed Blade's living barbs draw blood on contact and return a little to the wielder's reserve with each hit, adding up over a long fight",
+    "tone": "dry, appraising"
+  },
+  "hemomancy.alchemist.item_inquiry.barbed_blade.line2": {
+    "about": "the Alchemist advising the Barbed Blade is better at gathering than killing: carry it to fight and refill at once, choose something else when the target must die fast",
+    "tone": "frank, practical"
+  },
+  "hemomancy.alchemist.item_inquiry.blaze_powder.line1": {
+    "about": "the Alchemist describing blaze powder as a volatile Nether combustion compound that the Alembic reads as a good Flammeus input and strips into Fervent Enzyme concentrate",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.blaze_powder.line2": {
+    "about": "the Alchemist warning that blaze powder can ignite from friction, so keep it dry, away from blood vials and open flame until use",
+    "tone": "cautionary, curt"
+  },
+  "hemomancy.alchemist.item_inquiry.blood_crystal_shard.line1": {
+    "about": "the Alchemist explaining a blood crystal shard is a less pure fragment of crystallized sanguine energy, usable as a lower-tier Alembic input or supplement",
+    "tone": "informative, measured"
+  },
+  "hemomancy.alchemist.item_inquiry.blood_crystal_shard.line2": {
+    "about": "the Alchemist advising the player to hoard shards, since the Alembic takes them at reduced yield, and run a worthwhile batch instead of wasting a run on a handful",
+    "tone": "practical, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.blood_gourd.line1": {
+    "about": "the Alchemist explaining the blood gourd is the main storage vessel, upgraded as initiation deepens, with more room meaning a deeper reserve and longer casting",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.blood_gourd.line2": {
+    "about": "the Alchemist listing gourd tiers White, Red, then Black, each holding more, and warning the player not to get attached to the starting White",
+    "tone": "dry, wry"
+  },
+  "hemomancy.alchemist.item_inquiry.bloody_flask.line1": {
+    "about": "the Alchemist stating a Bloody Flask is a portable reserve and no part of the syringe-and-rack assay",
+    "tone": "curt, clinical"
+  },
+  "hemomancy.alchemist.item_inquiry.bloody_flask.line2": {
+    "about": "the Alchemist saying to use the flask when blood has to travel, and that machines accept either vessel as red fluid",
+    "tone": "curt, practical"
+  },
+  "hemomancy.alchemist.item_inquiry.brewing_stand.line1": {
+    "about": "the Alchemist describing the brewing stand as the common practitioner's still, with a water-and-base process giving blunt biological responses, the Alembic's rough ancestor like boiling meat before cooking",
+    "tone": "dry, mildly condescending"
+  },
+  "hemomancy.alchemist.item_inquiry.brewing_stand.line2": {
+    "about": "the Alchemist contrasting the stand's threshold effects with the Alembic's precise tendency concentrates, warning that stand skill does not teach what the Alembic does",
+    "tone": "dry, pointed"
+  },
+  "hemomancy.alchemist.item_inquiry.brine_sealed_letter.line1": {
+    "about": "the Alchemist noticing sunburst crust on the letter's seal as dried strain exudate, meaning whoever sealed it cultivated that strain",
+    "tone": "observant, intrigued"
+  },
+  "hemomancy.alchemist.item_inquiry.brine_sealed_letter.line2": {
+    "about": "the Alchemist noting the letter is meant for the Brined Court, that a Voyager can chart the way, and asking for a scraping of the seal first",
+    "tone": "dry, curious"
+  },
+  "hemomancy.alchemist.item_inquiry.cabinet.line1": {
+    "about": "the Alchemist describing the Phlebotomist's Cabinet: nine pigeonholes holding sixty-four full vials each, one exemplar on display, loose vials still moving one at a time",
+    "tone": "precise, appreciative"
+  },
+  "hemomancy.alchemist.item_inquiry.cabinet.line2": {
+    "about": "the Alchemist explaining each pigeonhole accepts only exact matches including name and identification, so examined and unknown samples stay apart, and shift-click moves as many vials as fit",
+    "tone": "instructive, exacting"
+  },
+  "hemomancy.alchemist.item_inquiry.cabinet.line3": {
+    "about": "the Alchemist explaining a clear glass pane can be fitted to view the collection with the door shut, removed by sneak-using a Knapper, with survival returning the pane and creative costing and returning nothing, and the Knapper not wearing down",
+    "tone": "instructive, detailed"
+  },
+  "hemomancy.alchemist.item_inquiry.cabinet.line4": {
+    "about": "the Alchemist warning to empty the cabinet before dismantling: it cannot be pushed, ordinary explosions leave a filled one intact, creative destruction discards contents, and a carried cabinet never holds specimens",
+    "tone": "cautionary, exacting"
+  },
+  "hemomancy.alchemist.item_inquiry.chalybeate_sclerite.line1": {
+    "about": "the Alchemist remarking that iron sulfide in a living skirt sounds ridiculous yet the snail makes it work",
+    "tone": "wry, grudgingly impressed"
+  },
+  "hemomancy.alchemist.item_inquiry.chalybeate_sclerite.line2": {
+    "about": "the Alchemist advising to knap the sclerite while the creature is withdrawn, since killing it for scraps already ruins the material",
+    "tone": "stern, practical"
+  },
+  "hemomancy.alchemist.item_inquiry.cleansing_hemolymph.line1": {
+    "about": "the Alchemist describing cleansing hemolymph as a blue-tinted lytic fluid from Hemolymphopoda and Ice Fish whose circulatory chemistry works against standard blood-matrix compounds",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.cleansing_hemolymph.line2": {
+    "about": "the Alchemist calling it an efficient, stable lytic agent and disclaiming interest in what others use it for",
+    "tone": "detached, guarded"
+  },
+  "hemomancy.alchemist.item_inquiry.dendritic_distributor.line1": {
+    "about": "the Alchemist explaining the Dendritic Distributor saves a whole manipulation loadout as a remembered neural pattern, while the memories themselves are learned elsewhere and the station only keeps them in order",
+    "tone": "precise, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.dendritic_distributor.line2": {
+    "about": "the Alchemist noting saving or overwriting a pattern costs blood and raw experience, with three patterns held at first and more opened by deeper synaptic discipline",
+    "tone": "matter-of-fact, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_ferric.line1": {
+    "about": "the Alchemist describing Ferric Enzyme as the iron tendency, blood that conducts, reinforces and binds structure, used by Ferric manipulations to harden the body and channel energy precisely",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_ferric.line2": {
+    "about": "the Alchemist explaining Ferric concentrates from metallic or mineral-dense organic compounds and, with measured conductivity, is the pick for stable metallic reagents",
+    "tone": "clinical, matter-of-fact"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_fervent.line1": {
+    "about": "the Alchemist describing Fervent Enzyme as the Flammeus tendency of combustion, heat, ignition and volatile pressure, with manipulations channeling blood-heat outward",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_fervent.line2": {
+    "about": "the Alchemist instructing to distill combustible compounds in the Alembic and then run the enriched output through the centrifuge",
+    "tone": "terse, procedural"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_frigid.line1": {
+    "about": "the Alchemist describing Frigid Enzyme as the Congeatio tendency of stasis, blood gone cold, slow and crystalline, whose manipulations immobilize, preserve and hold things still",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_frigid.line2": {
+    "about": "the Alchemist advising that running naturally preserving or cold-resistant materials through the Alembic yields Congeatio",
+    "tone": "terse, procedural"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_incandescent.line1": {
+    "about": "the Alchemist describing Incandescent Enzyme as the Lux tendency of radiance, blood carrying light, illusory force and distorted perception, bending what can be seen",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_incandescent.line2": {
+    "about": "the Alchemist noting Lux concentrates from luminescent organic materials, which are what to run through the Alembic",
+    "tone": "terse, procedural"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_neurotic.line1": {
+    "about": "the Alchemist describing Neurotic Enzyme as the Ductilis tendency of nerve impulse, acceleration, transmission and motion in a form chemistry can read",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_neurotic.line2": {
+    "about": "the Alchemist saying Neurotic Enzyme belongs in recipes where blood must carry a signal rather than hold a shape",
+    "tone": "terse, practical"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_ruinous.line1": {
+    "about": "the Alchemist describing Ruinous Enzyme as the Mortem tendency of entropy, blood that breaks down, dissolves and ends things, speeding decay and sapping vitality",
+    "tone": "clinical, grim"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_ruinous.line2": {
+    "about": "the Alchemist noting Mortem concentrates from decomposing organic material in the Alembic and that the Covenant is rightly wary of it",
+    "tone": "dry, ominous"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_umbral.line1": {
+    "about": "the Alchemist describing Umbral Enzyme as the Tenebris tendency of shadow, blood pulled into concealment, with manipulations suppressing visibility and dulling perception",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_umbral.line2": {
+    "about": "the Alchemist saying Tenebris comes from materials with a natural affinity for darkness run through the Alembic",
+    "tone": "terse, procedural"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_vivacious.line1": {
+    "about": "the Alchemist describing Vivacious Enzyme as the Animus tendency of life-force and vitality, whose manipulations speed healing, quicken the body and sustain it under strain",
+    "tone": "clinical, warm"
+  },
+  "hemomancy.alchemist.item_inquiry.enzyme_vivacious.line2": {
+    "about": "the Alchemist explaining to distill organic life-force materials in the Alembic first, then run the enriched blood samples through the Vial Centrifuge to get Vivacious Enzyme",
+    "tone": "terse, procedural"
+  },
+  "hemomancy.alchemist.item_inquiry.erythrocoral_fragment.line1": {
+    "about": "the Alchemist saying erythrocoral stays useful if cut cleanly, while tearing it leaves wet pulp with ambitions",
+    "tone": "wry, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.erythrocoral_fragment.line2": {
+    "about": "the Alchemist advising that the reef grows in beds so it should be worked like a garden rather than quarried",
+    "tone": "practical, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.foul_paste.line1": {
+    "about": "the Alchemist describing Foul Paste as a dense binding substrate from organic material, to be kept sealed and used only in recipe amounts",
+    "tone": "terse, cautionary"
+  },
+  "hemomancy.alchemist.item_inquiry.foul_paste.line2": {
+    "about": "the Alchemist noting the Alembic makes Foul Paste from particular organic inputs and advising a steady supply, since interruptions waste reagent",
+    "tone": "practical, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.fungal_implantation_pylon.line1": {
+    "about": "the Alchemist explaining the Fungal Implantation Pylon installs one cultivated fungal scar and can later replace or remove it, without granting extra fungal slots",
+    "tone": "precise, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.fungal_implantation_pylon.line2": {
+    "about": "the Alchemist explaining that at Degree 4 the pylon frame is raised beside a Cardinal Focus on a Lesser Working floor with Hyphal Substrate in the Focus, fed until the floor takes it",
+    "tone": "clipped, procedural"
+  },
+  "hemomancy.alchemist.item_inquiry.fungal_implantation_pylon.locked": {
+    "about": "the Alchemist saying the implantation pylon is Degree 4 scar work and the player should cultivate the fungal scar first rather than build the station early",
+    "tone": "firm, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.glass_bottle.line1": {
+    "about": "the Alchemist describing a glass bottle as a common alchemical vessel that seals adequately until pressure shatters it and lacks a blood vial's calibrated volume",
+    "tone": "dry, dismissive"
+  },
+  "hemomancy.alchemist.item_inquiry.glass_bottle.line2": {
+    "about": "the Alchemist saying to use bottles for unstabilized material and to keep blood distillation, processing and tendency work in the proper vessel",
+    "tone": "curt, practical"
+  },
+  "hemomancy.alchemist.item_inquiry.glowstone_dust.line1": {
+    "about": "the Alchemist describing glowstone dust as a luminescent Nether mineral the Alembic counts as a good Lux input and strips into Incandescent Enzyme concentrate",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.glowstone_dust.line2": {
+    "about": "the Alchemist praising the clean extraction and good Incandescent yield, calling glowstone one of the most reliable conventional Lux inputs",
+    "tone": "approving, matter-of-fact"
+  },
+  "hemomancy.alchemist.item_inquiry.hematic_iron_scrap.line1": {
+    "about": "the Alchemist describing hematic iron scrap as a by-product of long blood-soaked iron smelting, taking up blood compounds to become fire resistant, stronger and faintly conductive to blood energy",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.hematic_iron_scrap.line2": {
+    "about": "the Alchemist advising to smelt scrap into ingots before use, since scrap is chemically unstable and the ingot holds the useful properties",
+    "tone": "practical, curt"
+  },
+  "hemomancy.alchemist.item_inquiry.hemolytic_vial.line1": {
+    "about": "the Alchemist describing hemolytic solution as a lytic compound that breaks blood matrices down at cell level, which blood-afflicted organisms need for structure and so are harmed by it",
+    "tone": "clinical, guarded"
+  },
+  "hemomancy.alchemist.item_inquiry.hemolytic_vial.line2": {
+    "about": "the Alchemist saying it is made by a different process from standard blood distillation, it works, and nothing more will be said",
+    "tone": "curt, evasive"
+  },
+  "hemomancy.alchemist.item_inquiry.iron_ingot.line1": {
+    "about": "the Alchemist saying ordinary iron will not obey blood, that Hematic Iron is learned through Blood Projection and recovered through the Order's salvage, and that a dramatic furnace does nothing for an ingot",
+    "tone": "dry, scornful"
+  },
+  "hemomancy.alchemist.item_inquiry.iron_ingot.line2": {
+    "about": "the Alchemist telling the player to use the blood-structure plan or salvage damaged iron the proven way, since heat alone will not make metal obey",
+    "tone": "curt, practical"
+  },
+  "hemomancy.alchemist.item_inquiry.living_weapon_graft.line1": {
+    "about": "the Alchemist saying the graft is biological instruction for a Living Staff, that they can judge whether it is materially stable, but the rite belongs to the Redwright",
+    "tone": "careful, deferring"
+  },
+  "hemomancy.alchemist.item_inquiry.living_weapon_graft.line2": {
+    "about": "the Alchemist directing the player to ask the Artificer how the Iron Brazier and Blood Absorption make the staff accept the limb-pattern, as that is his rite",
+    "tone": "brisk, deferring"
+  },
+  "hemomancy.alchemist.item_inquiry.minecraft_reagent.line1": {
+    "about": "the Alchemist saying common apparatus is still worth reading properly, since its shape, heat tolerance and residue show what work it will survive",
+    "tone": "dry, appraising"
+  },
+  "hemomancy.alchemist.item_inquiry.minecraft_reagent.line2": {
+    "about": "the Alchemist telling the player to bring it to a bench when a formula calls for it, noting familiarity gives it no hemomantic purpose",
+    "tone": "curt, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.mnemonic_reliquary.line1": {
+    "about": "the Alchemist explaining the Mnemonic Reliquary sorts known bodily and willed memories into the active set, which they call a loadout though the Mnemonist would not",
+    "tone": "dry, mildly teasing"
+  },
+  "hemomancy.alchemist.item_inquiry.mnemonic_reliquary.line2": {
+    "about": "the Alchemist stressing the Reliquary adds nothing itself, since abilities live in the memory item and it only chooses which known ones are switched on",
+    "tone": "precise, flat"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_dead_mans_rope.line1": {
+    "about": "the Alchemist describing the Dead Man's Rope Morphling, which throws strands that catch falls and, from Mature, can tie to an ally or a block",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_dead_mans_rope.line2": {
+    "about": "the Alchemist noting either end can let go and asking whether the player has tried reeling toward a block anchor, calling it a decent grapple for a fungus",
+    "tone": "wry, curious"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_holdfast.line1": {
+    "about": "the Alchemist describing the Holdfast Morphling grips stone, making a player standing on it or underwater hard to shift",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_holdfast.line2": {
+    "about": "the Alchemist explaining Holdfast does not plate the player but holds position and shelters those behind, with sneaking into a hit showing how it braces",
+    "tone": "informative, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_hushbell.line1": {
+    "about": "the Alchemist describing the Hushbell Morphling as conserving: slower hunger, slower air loss and resistance to poison",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_hushbell.line2": {
+    "about": "the Alchemist warning that Hushbell hardens when the player stands still and folds shut for a few seconds after a bad hit, leaving the player unable to act, so plan for it",
+    "tone": "cautionary, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_incubator.line1": {
+    "about": "the Alchemist stating the Morphling Incubator stabilizes cultivated fungal symbionts, which remain living dependents with their own nature",
+    "tone": "measured, cautionary"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_incubator.line2": {
+    "about": "the Alchemist explaining that development depends on strain, enzyme and husbandry, the Incubator only sets conditions, and what grows keeps its nature and will not ask permission",
+    "tone": "measured, ominous"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_incubator.locked": {
+    "about": "the Alchemist saying the Morphling Incubator is beyond the player's current initiation and they should return at the fifth Degree",
+    "tone": "firm, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_ink_cap.line1": {
+    "about": "the Alchemist describing the Ink Cap Morphling hides the player so hostiles notice them later, much later in the dark or underwater",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_ink_cap.line2": {
+    "about": "the Alchemist explaining that at Apex Ink Cap spends 500 mL to save the player's life once and cover their exit in ink, and that it is for escape, not ambush",
+    "tone": "cautionary, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_kinbud.line1": {
+    "about": "the Alchemist describing the Kinbud Morphling stings and regrows part of each wound taken over the following ten seconds",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_kinbud.line2": {
+    "about": "the Alchemist noting Kinbud works harder near heat and its second head is the player's body, not a summon, so it takes no orders",
+    "tone": "dry, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_marrowplume.line1": {
+    "about": "the Alchemist describing the Marrowplume Morphling feeds on bone and fight remnants, healing the player faster near bone blocks or right after a kill",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_marrowplume.line2": {
+    "about": "the Alchemist noting that from Apex kills may yield more and always a bone, and preempting the question that players, bosses and spawner stock are excluded",
+    "tone": "dry, anticipatory"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_mermaids_purse.line1": {
+    "about": "the Alchemist describing the Mermaid's Purse Morphling banks blood from the player's strikes and spends it on whoever bleeds worst, including the player",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_mermaids_purse.line2": {
+    "about": "the Alchemist explaining it feeds best at speed, with sprint-swimming before a strike raising yield by half, and that it likes company, like a school",
+    "tone": "dry, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_sunburst.line1": {
+    "about": "the Alchemist describing the Sunburst Morphling feeds on sunlight through a tissue alga, covering its own upkeep when worn under open sky",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.morphling_sunburst.line2": {
+    "about": "the Alchemist warning that under a roof Sunburst costs blood like any strain and that it feeds a failing neighbor before the wearer",
+    "tone": "cautionary, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.nether_wart.line1": {
+    "about": "the Alchemist describing Nether Wart as the usual brewing base catalyst, whose organic structure in the Alembic binds volatile distillations that would otherwise throw off waste",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.nether_wart.line2": {
+    "about": "the Alchemist saying that in the Alembic Nether Wart acts as a process stabilizer rather than a brewing base, and should be added when a run gives erratic output",
+    "tone": "practical, curt"
+  },
+  "hemomancy.alchemist.item_inquiry.recycled_enzyme.line1": {
+    "about": "the Alchemist describing Recycled Enzyme as salvage-grade reagent, weaker and less specific than a fresh separation",
+    "tone": "flat, clinical"
+  },
+  "hemomancy.alchemist.item_inquiry.recycled_enzyme.line2": {
+    "about": "the Alchemist noting that dismantling a learned memory returns no enzyme, because the modern Loom keeps what it weaves",
+    "tone": "dry, matter-of-fact"
+  },
+  "hemomancy.alchemist.item_inquiry.redstone.line1": {
+    "about": "the Alchemist explaining redstone is the standard energy conductor in applied mechanics, its mineral chemistry carrying blood-mineral signatures that the Alembic reads as Ferric input",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.redstone.line2": {
+    "about": "the Alchemist noting Ferric conducts, reinforces and channels energy precisely, much like redstone in mechanical systems, which is why the Alembic processes it that way",
+    "tone": "clinical, matter-of-fact"
+  },
+  "hemomancy.alchemist.item_inquiry.refusal": {
+    "about": "the Alchemist refusing to teach blood-work about an item to a player who is deliberately washing their blood away",
+    "tone": "cold, disapproving"
+  },
+  "hemomancy.alchemist.item_inquiry.salt_stained_voyager_log.line1": {
+    "about": "the Alchemist remarking that field logs are full of errors but some are worth having, since someone tested reef tissue, vent scale and seawater in one alembic and lived to write annoyed corrections",
+    "tone": "wry, appreciative"
+  },
+  "hemomancy.alchemist.item_inquiry.salt_stained_voyager_log.line2": {
+    "about": "the Alchemist advising that any sample from that wreck should be treated as contaminated by both salt and devotion",
+    "tone": "dry, cautionary"
+  },
+  "hemomancy.alchemist.item_inquiry.sanguine_formation.line1": {
+    "about": "the Alchemist describing Sanguine Formation as crystallized blood mineral that condenses over time when blood is projected into an empty cauldron",
+    "tone": "clinical, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.sanguine_formation.line2": {
+    "about": "the Alchemist noting a bare cauldron's shape sometimes slumps back to nothing, while a cauldron raised through the Vicar's Working rites holds more, sets faster and loses none",
+    "tone": "informative, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.scar_blank.line1": {
+    "about": "the Alchemist explaining a blank Scar item is stock for the Cerebral Scarring Station, with the pattern and catalyst deciding which route is carved",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.scar_blank.line2": {
+    "about": "the Alchemist explaining that a carved Scar goes in an empty Iron Brazier, lit with Blood Projection, then Blood Absorption is held on the offering to learn the route for 100 mL, not worn on the body",
+    "tone": "instructive, precise"
+  },
+  "hemomancy.alchemist.item_inquiry.scar_blank.locked": {
+    "about": "the Alchemist saying blank scar plates are useless to the player yet because the Cerebral Scarring Station opens at the fourth Degree",
+    "tone": "firm, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.scar_station.line1": {
+    "about": "the Alchemist explaining the Cerebral Scarring Station carves a route into a blank Scar item from a dynamic template and its catalyst",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.scar_station.line2": {
+    "about": "the Alchemist stating the station only makes the instruction and that getting it into practice is the Vein-Mason's business, through their rite, the Effigy and the Brazier",
+    "tone": "dry, deferring"
+  },
+  "hemomancy.alchemist.item_inquiry.scar_station.locked": {
+    "about": "the Alchemist saying the Cerebral Scarring Station opens at the fourth Degree and to return then",
+    "tone": "curt, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.slime_ball.line1": {
+    "about": "the Alchemist remarking that slime's sticky elasticity resembles Ductilis, which matters only if a working recipe calls for it",
+    "tone": "dry, dismissive"
+  },
+  "hemomancy.alchemist.item_inquiry.slime_ball.line2": {
+    "about": "the Alchemist warning that resemblance gets nothing from a centrifuge, so the player shouldn't feed it slime and hope",
+    "tone": "wry, curt"
+  },
+  "hemomancy.alchemist.item_inquiry.somatic_loom.line1": {
+    "about": "the Alchemist listing what the Somatic Loom takes: a blank Hematic Memory, the exact catalyst, stored enzyme units and projected blood",
+    "tone": "clipped, informative"
+  },
+  "hemomancy.alchemist.item_inquiry.somatic_loom.line2": {
+    "about": "the Alchemist explaining that once blood is paid the engram spreads across the floor with fragments at a star's points, threaded home with the Living Staff, each step spinning enzyme thread so a tidy route costs less",
+    "tone": "instructive, precise"
+  },
+  "hemomancy.alchemist.item_inquiry.somatic_loom.locked": {
+    "about": "the Alchemist saying the player is not far enough into initiation for the Somatic Loom and should return at the third Degree",
+    "tone": "firm, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.specimen_jar": {
+    "about": "the Alchemist saying the jar holds a sealed living specimen, offering to say what is inside but warning the jar does not make it harmless",
+    "tone": "cautionary, dry"
+  },
+  "hemomancy.alchemist.item_inquiry.spore_sac.line1": {
+    "about": "the Alchemist describing a Spore Sac as a concentrated fungal specimen that must be kept tightly sealed because dry does not mean dead",
+    "tone": "cautionary, clinical"
+  },
+  "hemomancy.alchemist.item_inquiry.spore_sac.line2": {
+    "about": "the Alchemist explaining Spore Sacs are used in fungal recipes and cultures, and that at Degree 4 Hyphal Substrate in a Cardinal Focus lets a Working floor forge a Fungal Implantation Pylon",
+    "tone": "informative, brisk"
+  },
+  "hemomancy.alchemist.item_inquiry.unknown": {
+    "about": "the Alchemist saying the item is outside what they work with and telling the player to ask someone else",
+    "tone": "curt, dismissive"
+  },
+  "hemomancy.alchemist.living_bestiary.intro.line1": {
+    "about": "the Alchemist explaining the Red Taxonomy covers rooted things while the Living Bestiary covers everything that tries to leave the jar",
+    "tone": "dry, wry"
+  },
+  "hemomancy.alchemist.living_bestiary.intro.line2": {
+    "about": "the Alchemist asking for Hemomancy fauna in specimen jars, offering to record and return the creature or keep it for dissection with compensation",
+    "tone": "businesslike, brisk"
+  },
+  "hemomancy.alchemist.living_bestiary.intro.line3": {
+    "about": "the Alchemist suggesting the player use an empty jar on a Chitinite to see how capture works, noting rooted specimens cannot be jarred and must be brought by hand",
+    "tone": "instructive, dry"
+  },
+  "hemomancy.alchemist.living_bestiary.morphlings.line1": {
+    "about": "the Alchemist explaining wild Morphling Polyps have not settled into a strain, and where one grows decides which partner organisms it picks up, which decide the strain",
+    "tone": "informative, measured"
+  },
+  "hemomancy.alchemist.living_bestiary.morphlings.line2": {
+    "about": "the Alchemist explaining that surrendering a captured polyp yields a matching wild-bound morphling that is useful but stays capped until an Incubator stabilizes it",
+    "tone": "informative, matter-of-fact"
+  },
+  "hemomancy.alchemist.living_bestiary.record.prompt": {
+    "about": "the Alchemist telling the player to keep the specimen intact, since only observations entered in the Bestiary are needed",
+    "tone": "mild, businesslike"
+  },
+  "hemomancy.alchemist.living_bestiary.surrender.prompt": {
+    "about": "the Alchemist warning that surrendering the jar uses up the specimen in the study and asking whether the player is sure they are done with it",
+    "tone": "grave, clinical"
+  },
+  "hemomancy.alchemist.living_bestiary.surrender_polyp.prompt": {
+    "about": "the Alchemist asking which living layer the player is surrendering and warning the chosen polyp is used up in the study",
+    "tone": "grave, clinical"
+  },
+  "hemomancy.alchemist.machines_overview": {
+    "about": "the Alchemist summarizing the machine order: Centrifuge separates sampled blood, Alembic distills reagents, Loom weaves prepared memories, each assuming the player survived the one before",
+    "tone": "dry, wry"
+  },
+  "hemomancy.alchemist.morphling_handling.inspect.prompt": {
+    "about": "a button-style prompt for the player to have the Alchemist inspect a captured Polyp or earlier Bestiary record, keeping the jar and specimen",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.morphling_handling.lead": {
+    "about": "the Alchemist asking the player to capture a wild Morphling Polyp in an empty Specimen Jar and return with the filled jar in their main hand, noting an earlier Bestiary record of a Polyp counts",
+    "tone": "instructive, brisk"
+  },
+  "hemomancy.alchemist.morphling_handling.ready": {
+    "about": "the Alchemist saying the player has brought a Polyp or has a Bestiary record, so the handling study can be marked without taking another specimen",
+    "tone": "approving, brisk"
+  },
+  "hemomancy.alchemist.morphling_handling.recorded": {
+    "about": "narration of the Alchemist recording the player's Morphling handling while the player keeps the specimen",
+    "tone": "neutral narration"
+  },
+  "hemomancy.alchemist.morphling_handling.task": {
+    "about": "the Alchemist clarifying this is field handling, that incubation comes later and is the Incubator's job, not the bench's",
+    "tone": "firm, dry"
+  },
+  "hemomancy.alchemist.neophyte.blood_gourd_basics": {
+    "about": "the Alchemist saying a blood gourd is for later and the Vicar's first bloodcraft proof does not need one, asking whether the player can absorb and project blood yet and promising to discuss a vessel after",
+    "tone": "patient, dry"
+  },
+  "hemomancy.alchemist.neophyte.centrifuge_lore": {
+    "about": "the Alchemist explaining the Vial Centrifuge comes after the Vicar grants Degree 2, and until then the player should explore what Blood Absorption and Projection can make by hand",
+    "tone": "firm, patient"
+  },
+  "hemomancy.alchemist.neophyte.line1": {
+    "about": "narration of the Alchemist nodding in approval as the player approaches",
+    "tone": "quiet, observational"
+  },
+  "hemomancy.alchemist.neophyte.line2": {
+    "about": "the Alchemist greeting a Neophyte, leaving the bloodcraft proof and Degree 2 to the Vicar and asking the player to draw a few clean samples from ordinary animals and keep them for the Centrifuge",
+    "tone": "dry, brisk"
+  },
+  "hemomancy.alchemist.pallid_vessel.offer": {
+    "about": "the Alchemist telling an Initiate they will want a reserve outside their own veins, so they should make the Pallid Vessel, the first blood gourd, and show it works",
+    "tone": "brisk, encouraging"
+  },
+  "hemomancy.alchemist.pallid_vessel.progress.complete": {
+    "about": "the Alchemist confirming the player's first vessel is on record and that the red one comes at Degree 4, starting from the white gourd and an Amethyst Shard",
+    "tone": "approving, brisk"
+  },
+  "hemomancy.alchemist.pallid_vessel.progress.fill": {
+    "about": "the Alchemist noting the rite is recorded so the gourd exists, and telling the player to fill it by setting it in the Alembic's blood-output slot, letting it draw and taking it back",
+    "tone": "instructive, brisk"
+  },
+  "hemomancy.alchemist.pallid_vessel.progress.ready": {
+    "about": "the Alchemist saying the rite is recorded and the gourd holds blood, calling it a clean run, and asking to inspect it before returning it",
+    "tone": "approving, dry"
+  },
+  "hemomancy.alchemist.pallid_vessel.progress.rite": {
+    "about": "the Alchemist saying nothing is on the player's record yet, asking whether they performed the rite themselves since a handed-over gourd will not count, and repeating the procedure",
+    "tone": "skeptical, patient"
+  },
+  "hemomancy.alchemist.pallid_vessel.recorded.briefed": {
+    "about": "narration of the Alchemist adding the Pallid Vessel to the player's ledger",
+    "tone": "neutral narration"
+  },
+  "hemomancy.alchemist.pallid_vessel.recorded.complete": {
+    "about": "narration of the Alchemist recording the Pallid Vessel and setting aside two Dried Gourds and an Amethyst Shard for the player",
+    "tone": "neutral narration"
+  },
+  "hemomancy.alchemist.pallid_vessel.recorded.filled": {
+    "about": "narration that the player's ledger records blood in the White Blood Gourd",
+    "tone": "neutral narration"
+  },
+  "hemomancy.alchemist.pallid_vessel.recorded.rite": {
+    "about": "narration that the player's ledger records the Rite of the Pallid Vessel",
+    "tone": "neutral narration"
+  },
+  "hemomancy.alchemist.pallid_vessel.report.prompt": {
+    "about": "a button-style prompt for the player to show the Alchemist their filled White Blood Gourd, keeping the gourd and its blood",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.pallid_vessel.steps": {
+    "about": "the Alchemist telling the player to put blood in the white gourd via the Ghastly Alembic's blood-output slot or a Gourdvine Tap, noting it holds 1,000 mL, any amount proves the seal, and this is bench work not the Woven Vessel so the third-Degree proof does not wait on it",
+    "tone": "instructive, precise"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.bearing": {
+    "about": "the Alchemist giving a Basin's approximate distance (a block count) and compass direction from the player's aligned Nether position, filled in by placeholders, and describing blackstone banks around dark ichor to look for",
+    "tone": "matter-of-fact, brisk"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.bearing_end": {
+    "about": "the Alchemist saying a Nether bearing cannot be lined up from the End and to ask again from the Overworld or the Nether",
+    "tone": "patient, dry"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.bearing_missing": {
+    "about": "the Alchemist reporting no Basin within about 8,000 Nether blocks of the aligned position and suggesting asking again from another Nether reach",
+    "tone": "apologetic, dry"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.direction.east": {
+    "about": "a single direction word, east, filling the Basin bearing sentence",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.direction.here": {
+    "about": "a single direction word, nearby, filling the Basin bearing sentence",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.direction.north": {
+    "about": "a single direction word, north, filling the Basin bearing sentence",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.direction.northeast": {
+    "about": "a single direction word, northeast, filling the Basin bearing sentence",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.direction.northwest": {
+    "about": "a single direction word, northwest, filling the Basin bearing sentence",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.direction.south": {
+    "about": "a single direction word, south, filling the Basin bearing sentence",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.direction.southeast": {
+    "about": "a single direction word, southeast, filling the Basin bearing sentence",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.direction.southwest": {
+    "about": "a single direction word, southwest, filling the Basin bearing sentence",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.direction.west": {
+    "about": "a single direction word, west, filling the Basin bearing sentence",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.lead": {
+    "about": "the Alchemist describing Nether basins of dark ichor banked with blackstone and living-looking growth, admitting the place reads nearly organic to them but that this is interpretation, not fact to be written down",
+    "tone": "thoughtful, careful"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.recorded": {
+    "about": "narration of the Alchemist recording the Basin comparison and returning the sample and all five Scyphus",
+    "tone": "neutral narration"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.report.prompt": {
+    "about": "a button-style prompt for the player to show the Alchemist the Basin blood sample and five Scyphus, noting nothing is used up",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.sample_ready": {
+    "about": "the Alchemist, pleased the player has blood from a Basin creature, asking them to bring enough Scyphus to compare the sample against the local growth",
+    "tone": "approving, brisk"
+  },
+  "hemomancy.alchemist.phlegethontic_commission.task": {
+    "about": "the Alchemist specifying the commission: blood from an Excoriated or Phlegethontic Bombardier plus five self-gathered Escharian Scyphus, sampled, rack ejected by sneak-using the Living Syringe, placed in an idle Vial Centrifuge without spinning, the vial held in main hand, all returned, and not permission to enter the Nether",
+    "tone": "clipped, exacting"
+  },
+  "hemomancy.alchemist.preparations.alembic": {
+    "about": "the Alchemist explaining how to distill Sanguine Formation in the base Alembic with aligned enzyme catalyst, blood from the stored tank, an empty clay flask or jug in the lower-right container input, and that Condenser (Degree 4) and Athanor (Degree 6) upgrade the same Alembic",
+    "tone": "instructive, precise"
+  },
+  "hemomancy.alchemist.preparations.briefed": {
+    "about": "the Alchemist reminding the player they were given Sanguine Formation, Fervent Enzyme and a Bloody Flask for Body Answers, and that if the tincture is already distilled they should drink it and be done",
+    "tone": "brisk, dry"
+  },
+  "hemomancy.alchemist.preparations.capacity": {
+    "about": "the Alchemist explaining a tincture teaches the body a Thelemic memory placed in the Reliquary beside the Mnemonist's Noetic memories, sharing one active capacity, with deliberate Noetic weaving being the Loom's job",
+    "tone": "instructive, precise"
+  },
+  "hemomancy.alchemist.preparations.complete": {
+    "about": "the Alchemist noting the first tincture is drunk so Body Answers is done, and that the other seven Thelemic preparations use the same base formula with their own aligned enzymes",
+    "tone": "approving, brisk"
+  },
+  "hemomancy.alchemist.preparations.title": {
+    "about": "a short title for the dialogue topic asking what the player should make in the Alembic now",
+    "tone": "plain label"
+  },
+  "hemomancy.alchemist.preparations.unbriefed": {
+    "about": "the Alchemist noting the player may have distilled a tincture during second-Degree work, that Body Answers follows First Separation, and that its first preparation is Sanguine Fists, a tincture and not a Loom-woven memory",
+    "tone": "instructive, dry"
+  },
+  "hemomancy.alchemist.purifying.explain": {
+    "about": "narration of the Alchemist not looking up, followed by a curt dismissal saying nothing needs explaining, blood knowledge takes commitment, time on that path is lost to these machines, and they are busy",
+    "tone": "cold, dismissive"
+  },
+  "hemomancy.alchemist.purifying.line1": {
+    "about": "narration of the Alchemist glancing up, looking the player over briefly, and turning back to their instruments with a blank face",
+    "tone": "cold, observational"
+  },
+  "hemomancy.alchemist.purifying.line2": {
+    "about": "the Alchemist refusing to teach someone who won't use the lessons, saying the player's path leads away from what the machines offer, asking where they stand and to return once decided",
+    "tone": "cold, curt"
+  },
+  "hemomancy.alchemist.red_taxonomy.bleeding_heart.line1": {
+    "about": "the Alchemist explaining Bleeding Heart is a flower that borrowed the shape of the body's vessels, showing the blood-memory has learned floral anatomy",
+    "tone": "thoughtful, clinical"
+  },
+  "hemomancy.alchemist.red_taxonomy.bleeding_heart.line2": {
+    "about": "the Alchemist pointing out the hanging wound-shape as vascular mimicry, a plant copying an injury's outline without knowing grief",
+    "tone": "wry, reflective"
+  },
+  "hemomancy.alchemist.red_taxonomy.devils_tooth.line1": {
+    "about": "the Alchemist describing Devil's Tooth as a defensive fruiting expression whose blood-like exudate begins to behave like blood under stress",
+    "tone": "clinical, wary"
+  },
+  "hemomancy.alchemist.red_taxonomy.devils_tooth.line2": {
+    "about": "the Alchemist reading the caustic secretion and tooth-shaped pressure as a plain warning that the infection wants the world's hands off",
+    "tone": "dry, ominous"
+  },
+  "hemomancy.alchemist.red_taxonomy.infected_fungus.line1": {
+    "about": "the Alchemist calling Infected Fungus the baseline sample, ordinary fungal tissue taught to carry hemomantic instruction",
+    "tone": "clinical, matter-of-fact"
+  },
+  "hemomancy.alchemist.red_taxonomy.infected_fungus.line2": {
+    "about": "the Alchemist noting its commonness makes it useful, since it shows what the blood-fungus does when it has nothing to prove",
+    "tone": "dry, thoughtful"
+  },
+  "hemomancy.alchemist.red_taxonomy.intro.line1": {
+    "about": "the Alchemist telling a new Votary they want field samples, not obedient answers: blood-touched fungi or near-fungal flora",
+    "tone": "brisk, pointed"
+  },
+  "hemomancy.alchemist.red_taxonomy.intro.line2": {
+    "about": "the Alchemist listing acceptable samples in any order: Infected Fungus, Stinkhorn, Sarcodes, Bleeding Heart, Rafflesia, Devil's Tooth, and Puffball as a control, each cataloged on arrival",
+    "tone": "businesslike, brisk"
+  },
+  "hemomancy.alchemist.red_taxonomy.intro.line3": {
+    "about": "the Alchemist explaining leftovers sort into three lanes: Bleeding Heart and Sarcodes make Bleeding Bulbs, Infected Fungus, Stinkhorn and Devil's Tooth make Foul Paste, and Puffball and Rafflesia make Spore Sacs",
+    "tone": "instructive, precise"
+  },
+  "hemomancy.alchemist.red_taxonomy.intro.line4": {
+    "about": "the Alchemist noting a sampled Fungling also separates into Infected Fungus, and that mixing Foul Paste into a log makes Infested Wood, whose space above must stay empty and dark for the culture to grow",
+    "tone": "instructive, brisk"
+  },
+  "hemomancy.alchemist.red_taxonomy.puffball_fungus.line1": {
+    "about": "the Alchemist calling Puffball the control, less dramatic and devotional, which is why it is useful",
+    "tone": "dry, matter-of-fact"
+  },
+  "hemomancy.alchemist.red_taxonomy.puffball_fungus.line2": {
+    "about": "the Alchemist arguing an assay needs contrast, asking how one would know a whisper if every specimen screamed",
+    "tone": "wry, rhetorical"
+  },
+  "hemomancy.alchemist.red_taxonomy.rafflesia.line1": {
+    "about": "the Alchemist describing Rafflesia as theft on an architectural scale, a bloom living off a body it never meant to repay",
+    "tone": "wry, disapproving"
+  },
+  "hemomancy.alchemist.red_taxonomy.rafflesia.line2": {
+    "about": "the Alchemist pointing at the bloom's size and remarking a small parasite with enough appetite and patience becomes a structure",
+    "tone": "dry, reflective"
+  },
+  "hemomancy.alchemist.red_taxonomy.sarcodes.line1": {
+    "about": "the Alchemist describing Sarcodes as feeding through networks it did not build, elegant, unpleasant and frankly very Harbinger",
+    "tone": "wry, appraising"
+  },
+  "hemomancy.alchemist.red_taxonomy.sarcodes.line2": {
+    "about": "the Alchemist explaining Sarcodes reads another system well enough to make it feed the plant, parasitism as a kind of literacy",
+    "tone": "dry, reflective"
+  },
+  "hemomancy.alchemist.red_taxonomy.stinkhorn_fungus.line1": {
+    "about": "the Alchemist describing Stinkhorn as turning dispersal into an attack, using smell to carry the blood-fungus where claws cannot",
+    "tone": "clinical, wry"
+  },
+  "hemomancy.alchemist.red_taxonomy.stinkhorn_fungus.line2": {
+    "about": "the Alchemist observing the blood-fungus needs no claws, only a carrier willing to follow the wrong scent, and there is no shortage of those",
+    "tone": "dry, cynical"
+  },
+  "hemomancy.alchemist.red_taxonomy.submit.prompt": {
+    "about": "the Alchemist acknowledging the item is one of the blood-fed fungi requested and asking the player to hand it over to add it to the taxonomy",
+    "tone": "brisk, businesslike"
+  },
+  "hemomancy.alchemist.sanctified.curved_horn": {
+    "about": "the Alchemist describing the Degree 6 rite: offer the black gourd with dragon's breath on a Grand Working floor with Hematic Iron Pillars, fill four anchors, wake the Bastion sigil, project into the daemon, yielding a fast 1,500 mL burst vessel that adds no capacity and consumes the earlier vessel and pillars",
+    "tone": "clinical, matter-of-fact"
+  },
+  "hemomancy.alchemist.sanctified.final_machines": {
+    "about": "the Alchemist saying the machines now run as one process: the Alembic distills with Centrifuge output, Centrifuge enzymes stock the Loom, and the Loom writes into memory, so running every station means speaking the full language of hemomancy",
+    "tone": "reflective, proud"
+  },
+  "hemomancy.alchemist.sanctified.line1": {
+    "about": "the Alchemist greeting a Sanctified player at the threshold of the Hematic Order, saying the machines have given all they can for now and what remains is the final synthesis",
+    "tone": "solemn, approving"
+  },
+  "hemomancy.alchemist.thelemic_memory_catalogue.line1": {
+    "about": "the Alchemist saying seven preparations remain, each needing Sanguine Formation, blood stored in the Alembic and an empty clay flask or jug, with the catalyst matched to the tendency the body should remember",
+    "tone": "instructive, brisk"
+  },
+  "hemomancy.alchemist.thelemic_memory_catalogue.line2": {
+    "about": "the Alchemist pairing enzymes to purposes: Ferric labor, Neurotic motion, Umbral silence, Incandescent sight, Vivacious the heart, Frigid endurance, Ruinous carrion",
+    "tone": "clipped, list-like"
+  },
+  "hemomancy.alchemist.thelemic_memory_catalogue.line3": {
+    "about": "the Alchemist noting a compatible Morphling makes the answer cheaper and gentler, some strains add a reflex, and none of it locks in the player's final path",
+    "tone": "reassuring, dry"
+  },
+  "hemomancy.alchemist.uninitiated.line1": {
+    "about": "narration of a figure in fitted work robes looking up from a crowded rig of vessels and tubing and looking the player over carefully",
+    "tone": "quiet, observational"
+  },
+  "hemomancy.alchemist.uninitiated.line2": {
+    "about": "the Alchemist introducing themselves as the Harbinger Alchemist who keeps the Outpost's machines running, mostly making blood useful, and saying the machines would be wasted on someone uninitiated",
+    "tone": "dry, guarded"
+  },
+  "hemomancy.alchemist.uninitiated.machines_locked": {
+    "about": "the Alchemist explaining the machines respond only to blood refined through the Covenant's rites, and promising to teach each one once the player earns their first Degree",
+    "tone": "firm, dry"
+  },
+  "hemomancy.alchemist.votary.alembic_lore": {
+    "about": "the Alchemist saying the player can now study the Ghastly Alembic, which distills plants, fungi and creature matter into reagents, with clean results depending on the fire, the vessel's state and the recipe",
+    "tone": "instructive, precise"
+  },
+  "hemomancy.alchemist.votary.centrifuge_lore": {
+    "about": "the Alchemist explaining the Vial Centrifuge does first separation, sending balanced sampled vials out as one of eight enzyme expressions, and that the Votary Degree also opens the Ghastly Alembic for wider reagent distillation",
+    "tone": "instructive, brisk"
+  },
+  "hemomancy.alchemist.votary.first_distillation.assignment": {
+    "about": "the Alchemist assigning the player to make a Ghastly Alembic, run one ordinary distillation and take the result, since First Separation proved enzyme recovery and the Alembic proves blood as reagent, then ask for Concentrated Blood",
+    "tone": "brisk, businesslike"
+  },
+  "hemomancy.alchemist.votary.gourd_upgrades": {
+    "about": "the Alchemist urging the player to keep upgrading their gourd whenever rites allow, because a stronger vessel means deeper reserves, steadier casting and fewer desperate choices, for as long as they advance",
+    "tone": "firm, practical"
+  },
+  "hemomancy.alchemist.votary.line1": {
+    "about": "the Alchemist greeting a Votary, noting their blood tendency is taking shape and that the Vial Centrifuge will show why that matters",
+    "tone": "dry, encouraging"
+  },
+  "hemomancy.anchorite.opinion.alchemist.line1": {
+    "about": "the Anchorite speaking of the Alchemist, saying the Alchemist restores damaged tissue with Salve and Poultice, which the player needs the moment they are hurt",
+    "tone": "plain, earnest"
+  },
+  "hemomancy.anchorite.opinion.alchemist.line2": {
+    "about": "the Anchorite saying the Alchemist changes what a repaired vessel can bear, so recovery and conditioning sit side by side and neither replaces the other",
+    "tone": "plain, measured"
+  },
+  "hemomancy.clinical.inquiry.alchemist_echo": {
+    "about": "the Alchemist saying they can identify the blood but ordinary analysis does not explain the auditory pattern, and telling the player after examining three creature sources to ask about Beyond Ordinary Analysis and take the question to the Mnemonist",
+    "tone": "puzzled, clinical"
+  },
+  "hemomancy.clinical.inquiry.alchemist_field_case": {
+    "about": "the Alchemist explaining the Field Case carries clinical specimens, that they teach which samples belong together, and that after referring the player the Artificer teaches how to build one",
+    "tone": "brisk, deferring"
+  },
+  "hemomancy.dialogue.alchemist.conductive_mark_recognized": {
+    "about": "the Alchemist saying the player's Ductilis record predicts a conductive response, grudgingly accepting the Mnemonist's term Noetic Memory, and noting the Loom formula is recorded",
+    "tone": "dry, resigned"
+  },
+  "hemomancy.dialogue.alchemist.option.accept_body_answers": {
+    "about": "asking the Alchemist to show how blood changes the body",
+    "tone": "eager"
+  },
+  "hemomancy.dialogue.alchemist.option.accept_first_draws": {
+    "about": "accepting the Alchemist's offer of five empty Blood Vials for the First Draws assignment",
+    "tone": "willing"
+  },
+  "hemomancy.dialogue.alchemist.option.accept_first_separation": {
+    "about": "accepting the Alchemist's First Separation assignment",
+    "tone": "willing"
+  },
+  "hemomancy.dialogue.alchemist.option.accept_pallid_vessel": {
+    "about": "agreeing to make the Pallid Vessel",
+    "tone": "resolved"
+  },
+  "hemomancy.dialogue.alchemist.option.artificer_crimson_vestment": {
+    "about": "telling the Alchemist the Artificer sent them for Crimson Lacquer",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.dialogue.alchemist.option.artificer_three_answers": {
+    "about": "telling the Alchemist the Artificer sent them about their first armor answer",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.dialogue.alchemist.option.ashen_vessel": {
+    "about": "asking the Alchemist how to make an Ashen Vessel",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.ask_about_court": {
+    "about": "asking the Alchemist where the sea strains come from",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.ask_about_item": {
+    "about": "saying they have a question about something they found and want the Alchemist to look at it",
+    "tone": "curious, tentative"
+  },
+  "hemomancy.dialogue.alchemist.option.ask_about_mnemonist_work": {
+    "about": "asking the Alchemist what work the Mnemonist needs done",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.ask_armor_research": {
+    "about": "asking the Alchemist which specimens to study for the armor",
+    "tone": "practical"
+  },
+  "hemomancy.dialogue.alchemist.option.begin_living_bestiary": {
+    "about": "asking the Alchemist what living specimens they need for the Living Bestiary",
+    "tone": "curious, eager"
+  },
+  "hemomancy.dialogue.alchemist.option.begin_red_taxonomy": {
+    "about": "asking the Alchemist what field samples they need for the Red Taxonomy",
+    "tone": "curious, eager"
+  },
+  "hemomancy.dialogue.alchemist.option.bloodwood_lesson": {
+    "about": "asking the Alchemist how to grow bloodwood",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.claim_armor_research": {
+    "about": "telling the Alchemist they have cataloged the armor specimens",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.dialogue.alchemist.option.complete_first_separation": {
+    "about": "reporting that they recovered the enzyme in the First Separation",
+    "tone": "proud, plain"
+  },
+  "hemomancy.dialogue.alchemist.option.court_lead": {
+    "about": "asking the Alchemist where to look for the Brined Court",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.crimson_vessel": {
+    "about": "asking the Alchemist how to make a Crimson Vessel",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.curved_horn": {
+    "about": "asking the Alchemist how to make a Curved Horn",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.deep_dark_bearing": {
+    "about": "asking the Alchemist for a bearing to the Deep Dark",
+    "tone": "practical"
+  },
+  "hemomancy.dialogue.alchemist.option.deep_dark_commission": {
+    "about": "asking the Alchemist what they need from the Deep Dark",
+    "tone": "curious, wary"
+  },
+  "hemomancy.dialogue.alchemist.option.enzyme_uses": {
+    "about": "asking the Alchemist what enzymes can be used for",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.first_distillation_assignment": {
+    "about": "asking the Alchemist what the first Alembic assignment is",
+    "tone": "plain"
+  },
+  "hemomancy.dialogue.alchemist.option.first_draws_assignment": {
+    "about": "asking the Alchemist about the First Draws assignment",
+    "tone": "plain"
+  },
+  "hemomancy.dialogue.alchemist.option.first_separation_assignment": {
+    "about": "asking the Alchemist about the First Separation assignment",
+    "tone": "plain"
+  },
+  "hemomancy.dialogue.alchemist.option.fungal_survey": {
+    "about": "telling the Alchemist they are reporting on the Overworld fungal gardens",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.dialogue.alchemist.option.gourd_use": {
+    "about": "asking the Alchemist how to fill and use a blood gourd",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd": {
+    "about": "asking the Alchemist how to keep upgrading their blood gourd",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.inspect_morphling_handling": {
+    "about": "asking the Alchemist to inspect their Polyp fieldwork",
+    "tone": "plain"
+  },
+  "hemomancy.dialogue.alchemist.option.lantern_cultivation": {
+    "about": "asking the Alchemist how to keep an enzyme culture going in a Mycelial Lantern",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.leave": {
+    "about": "a bracketed option to end the conversation with the Alchemist",
+    "tone": "plain label"
+  },
+  "hemomancy.dialogue.alchemist.option.loom_raising": {
+    "about": "asking the Alchemist how to raise the Somatic Loom",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.morphling_handling": {
+    "about": "bringing up handling a wild Morphling with the Alchemist",
+    "tone": "plain"
+  },
+  "hemomancy.dialogue.alchemist.option.pallid_vessel": {
+    "about": "asking the Alchemist to teach the first blood vessel",
+    "tone": "eager"
+  },
+  "hemomancy.dialogue.alchemist.option.phlegethontic_bearing": {
+    "about": "asking the Alchemist to point toward a Nether Basin",
+    "tone": "practical"
+  },
+  "hemomancy.dialogue.alchemist.option.phlegethontic_commission": {
+    "about": "asking the Alchemist what they are studying in the Nether",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.purifying.i_can_explain": {
+    "about": "starting to explain themselves to the Alchemist who has dismissed them",
+    "tone": "hesitant"
+  },
+  "hemomancy.dialogue.alchemist.option.record_living_specimen": {
+    "about": "asking the Alchemist to record this living specimen and return it",
+    "tone": "plain"
+  },
+  "hemomancy.dialogue.alchemist.option.report_deep_dark_commission": {
+    "about": "reporting the Ahaematic analysis to the Alchemist",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.dialogue.alchemist.option.report_fungal_survey": {
+    "about": "asking the Alchemist to record their fungal survey",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.dialogue.alchemist.option.report_pallid_vessel": {
+    "about": "telling the Alchemist the white gourd is holding blood",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.dialogue.alchemist.option.report_phlegethontic_commission": {
+    "about": "showing the Alchemist the Basin sample and Scyphus",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.dialogue.alchemist.option.specimen_jar_lesson": {
+    "about": "asking the Alchemist whether they can take two specimen jars to start",
+    "tone": "hopeful"
+  },
+  "hemomancy.dialogue.alchemist.option.submit_red_taxonomy_sample": {
+    "about": "saying they brought a blood-fungal sample for the Red Taxonomy",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.dialogue.alchemist.option.surrender_living_specimen": {
+    "about": "offering to surrender this living specimen for study",
+    "tone": "resigned, plain"
+  },
+  "hemomancy.dialogue.alchemist.option.surrender_polyp_black_yeast": {
+    "about": "offering to surrender this polyp for study as a Ink Cap Morphling",
+    "tone": "resigned, plain"
+  },
+  "hemomancy.dialogue.alchemist.option.surrender_polyp_bone_bacteria": {
+    "about": "offering to surrender this polyp for study as a Marrowplume Morphling",
+    "tone": "resigned, plain"
+  },
+  "hemomancy.dialogue.alchemist.option.surrender_polyp_cold_bacteria": {
+    "about": "offering to surrender this polyp for study as a Hushbell Morphling",
+    "tone": "resigned, plain"
+  },
+  "hemomancy.dialogue.alchemist.option.surrender_polyp_coralline_alga": {
+    "about": "offering to surrender this polyp for study as a Holdfast Morphling",
+    "tone": "resigned, plain"
+  },
+  "hemomancy.dialogue.alchemist.option.surrender_polyp_gut_bacteria": {
+    "about": "offering to surrender this polyp for study as a Mermaid's Purse Morphling",
+    "tone": "resigned, plain"
+  },
+  "hemomancy.dialogue.alchemist.option.surrender_polyp_light_bacteria": {
+    "about": "offering to surrender this polyp for study as a Dead Man's Rope Morphling",
+    "tone": "resigned, plain"
+  },
+  "hemomancy.dialogue.alchemist.option.surrender_polyp_sun_alga": {
+    "about": "offering to surrender this polyp for study as a Sunburst Morphling",
+    "tone": "resigned, plain"
+  },
+  "hemomancy.dialogue.alchemist.option.surrender_polyp_vent_bacteria": {
+    "about": "offering to surrender this polyp for study as a Kinbud Morphling",
+    "tone": "resigned, plain"
+  },
+  "hemomancy.dialogue.alchemist.option.tell_me_about_alembic": {
+    "about": "asking the Alchemist to tell them about the Ghastly Alembic",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds": {
+    "about": "asking the Alchemist to tell them about blood gourds",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge": {
+    "about": "asking the Alchemist to tell them about the Vial Centrifuge",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.tell_me_about_chisel_station": {
+    "about": "asking the Alchemist to tell them about the Chisel Station",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.tell_me_about_loom": {
+    "about": "asking the Alchemist to tell them about the Somatic Loom",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.tell_me_about_machines": {
+    "about": "asking the Alchemist to tell them about the machines in the Outpost",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.tell_me_about_morphling_incubator": {
+    "about": "asking the Alchemist to tell them about the Morphling Incubator",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.tell_me_about_morphlings": {
+    "about": "asking the Alchemist to tell them about wild morphlings",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.tell_me_about_scar_station": {
+    "about": "asking the Alchemist to tell them about the Cerebral Scarring Station",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.thelemic_memory_catalogue": {
+    "about": "asking the Alchemist what else the body can learn",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.vagrant_biology_report": {
+    "about": "reporting the local biology around the Vagrant Mind to the Alchemist",
+    "tone": "matter-of-fact"
+  },
+  "hemomancy.dialogue.alchemist.option.vagrant_inquiry": {
+    "about": "asking the Alchemist what lives around the Vagrant Mind",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.what_do_you_see": {
+    "about": "asking the Alchemist what they see when they look at the player now",
+    "tone": "uneasy, curious"
+  },
+  "hemomancy.dialogue.alchemist.option.what_is_memory_weaving": {
+    "about": "asking the Alchemist what memory weaving is",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.what_machines": {
+    "about": "asking the Alchemist what machines are available at the Outpost",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.what_remains": {
+    "about": "asking the Alchemist what remains to be learned at this stage",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.alchemist.option.wild_morphlings": {
+    "about": "asking the Alchemist how to study wild Morphlings",
+    "tone": "curious"
+  },
+  "hemomancy.dialogue.ending.alchemist.apotheos": {
+    "about": "the Alchemist telling an Apotheos player the machines still work and to bring what needs mending",
+    "tone": "quiet, reverent"
+  },
+  "hemomancy.dialogue.ending.alchemist.apotheos_pending": {
+    "about": "the Alchemist reacting to a player pursuing Apotheosis, knowing it only from old stories where no one returned recognizable, noting the rite is unfinished and asking what the apparatus needs meanwhile",
+    "tone": "uneasy, solemn"
+  },
+  "hemomancy.dialogue.ending.alchemist.silent_absorb": {
+    "about": "the Alchemist telling the player who beat Vesper but still carries his memory to burn it in a lit Iron Brazier and pull it in with the Staff to finish it",
+    "tone": "direct, instructive"
+  },
+  "hemomancy.dialogue.ending.alchemist.silent_archon": {
+    "about": "the Alchemist acknowledging a Silentium player who returned from Vesper with his memory, and offering to keep making and mending their instruments",
+    "tone": "subdued, respectful"
+  },
+  "hemomancy.dialogue.ending.alchemist.silent_pending": {
+    "about": "the Alchemist saying the player's refusal is on record but Vesper is still ahead, and the workshop remains open for repairs and preparations",
+    "tone": "steady, dry"
+  },
+  "hemomancy.dialogue.ending.alchemist.undecided": {
+    "about": "the Alchemist saying there is work ahead they cannot measure yet and asking what the player needs from the workshop",
+    "tone": "uncertain, dry"
+  },
+  "hemomancy.dialogue.event.alchemist_armor_research_reward_granted": {
+    "about": "narration of the Alchemist comparing the player's Bestiary notes with the Artificer's work and giving another matching reagent",
+    "tone": "neutral narration"
+  },
+  "hemomancy.dialogue.event.alchemist_bestiary_known": {
+    "about": "narration of the Alchemist tapping the jar and saying it is already recorded, followed by the Living Bestiary progress count (current of total filled in)",
+    "tone": "dry narration"
+  },
+  "hemomancy.dialogue.event.alchemist_bestiary_layer_missing": {
+    "about": "narration of the Alchemist studying the polyp and saying that layer is not in this specimen",
+    "tone": "dry narration"
+  },
+  "hemomancy.dialogue.event.alchemist_bestiary_missing_specimen": {
+    "about": "narration of the Alchemist gesturing to the bench and asking for a filled specimen jar, since an empty one cannot be studied",
+    "tone": "dry narration"
+  },
+  "hemomancy.dialogue.event.alchemist_bestiary_not_research": {
+    "about": "narration of the Alchemist studying the named item, shaking their head and saying it is useful glasswork but does not belong in this bestiary",
+    "tone": "dry narration"
+  },
+  "hemomancy.dialogue.event.alchemist_bestiary_polyp_surrendered": {
+    "about": "narration of the Alchemist dissecting the polyp and sealing the active layer into the named item, noting it is still wild-bound and should be incubated to fully mature",
+    "tone": "clinical narration"
+  },
+  "hemomancy.dialogue.event.alchemist_bestiary_recorded": {
+    "about": "narration of the Alchemist recording the named creature and returning the jar, with Living Bestiary progress filled in",
+    "tone": "neutral narration"
+  },
+  "hemomancy.dialogue.event.alchemist_bestiary_recorded.tooth_pecks": {
+    "about": "narration of the Alchemist lowering their voice as Tooth Pecks scrape the glass, calling them a social-biting dental swarm useful if each tooth is treated as a witness, with Bestiary progress filled in",
+    "tone": "hushed, wry"
+  },
+  "hemomancy.dialogue.event.alchemist_bestiary_surrendered": {
+    "about": "narration of the Alchemist accepting the named specimen for study and returning the named item",
+    "tone": "neutral narration"
+  },
+  "hemomancy.dialogue.event.alchemist_bestiary_surrendered.tooth_pecks": {
+    "about": "narration of the Alchemist accepting the Tooth Pecks, sliding an item across the bench and quipping the bench will be covered in tooth marks by morning",
+    "tone": "wry narration"
+  },
+  "hemomancy.dialogue.event.alchemist_bestiary_unready": {
+    "about": "narration of the Alchemist keeping the ledger shut and saying living specimens come only after the player has learned the Votary's discipline",
+    "tone": "curt narration"
+  },
+  "hemomancy.dialogue.event.alchemist_red_taxonomy_first_vial": {
+    "about": "narration that the player's first useful specimen earns one empty Blood Vial from the Alchemist for field sampling",
+    "tone": "neutral narration"
+  },
+  "hemomancy.dialogue.event.alchemist_red_taxonomy_known": {
+    "about": "narration of the Alchemist waving away the named sample, saying it is already cataloged and asking for a different expression",
+    "tone": "dry narration"
+  },
+  "hemomancy.dialogue.event.alchemist_red_taxonomy_missing_sample": {
+    "about": "narration of the Alchemist looking at the player's empty hands and saying a sample is needed, since an idea cannot be tested",
+    "tone": "dry narration"
+  },
+  "hemomancy.dialogue.event.alchemist_red_taxonomy_recorded": {
+    "about": "narration of the Alchemist sealing the named sample in a specimen vessel, with Red Taxonomy progress out of four filled in",
+    "tone": "neutral narration"
+  },
+  "hemomancy.dialogue.event.alchemist_red_taxonomy_reward": {
+    "about": "narration that the fourth diagnosis finishes the field assay and the Alchemist hands over jars and empty blood vials for continued sampling",
+    "tone": "neutral narration"
+  },
+  "hemomancy.dialogue.event.alchemist_red_taxonomy_unready": {
+    "about": "narration of the Alchemist shutting the specimen case and telling the player to learn the Votary's discipline first",
+    "tone": "curt narration"
+  },
+  "hemomancy.dialogue.newcomer.alchemist": {
+    "about": "the Alchemist telling a newcomer that the Vicar can explain who the Order is and that they should speak to him before touching any apparatus",
+    "tone": "curt, protective"
+  },
+  "hemomancy.dialogue.rapport.alchemist.failed_assay": {
+    "about": "asking the Alchemist about the worst result they have ever had",
+    "tone": "curious, gentle"
+  },
+  "hemomancy.dialogue.rapport.alchemist.failed_assay.line1": {
+    "about": "the Alchemist recalling a sealed control sample that kept growing and was logged, burned, and the burning logged",
+    "tone": "dry, haunted"
+  },
+  "hemomancy.dialogue.rapport.alchemist.failed_assay.line2": {
+    "about": "the Alchemist admitting they never learned what it was, preferring a wrong answer to none, then asking the player to pass a rack",
+    "tone": "weary, deflecting"
+  },
+  "hemomancy.dialogue.rapport.alchemist.failed_assay.teaser": {
+    "about": "a teaser noting the Alchemist keeps a notebook they never open in front of visitors",
+    "tone": "intriguing, quiet"
+  },
+  "hemomancy.dialogue.rapport.alchemist.the_bench": {
+    "about": "asking the Alchemist how they ended up at this bench",
+    "tone": "curious, friendly"
+  },
+  "hemomancy.dialogue.rapport.alchemist.the_bench.line1": {
+    "about": "the Alchemist explaining they labeled a rack properly in front of the wrong Vicar and have labeled racks since, and the bench is the only thing in the outpost that obeys them",
+    "tone": "wry, rueful"
+  },
+  "hemomancy.dialogue.rapport.alchemist.the_bench.teaser": {
+    "about": "a teaser saying that with enough samples the Alchemist might talk about something other than samples",
+    "tone": "intriguing, light"
+  },
+  "hemomancy.dialogue.recruit.alchemist.accept": {
+    "about": "the Alchemist saying that if the player says yes their expertise goes into the pool, with the Order's craft behind every drop, so spend it carefully",
+    "tone": "dry, businesslike"
+  },
+  "hemomancy.dialogue.recruit.alchemist.consider": {
+    "about": "the Alchemist reacting to a request to pledge their blood to the player's, calling it unusual but granting the Lodge teaches that shared knowledge flows best through shared veins",
+    "tone": "wary, thoughtful"
+  },
+  "hemomancy.succession.fracture.alchemist": {
+    "about": "a fractured, fading voice of the Alchemist in a succession, trailing off about a mixture and a name that is not theirs",
+    "tone": "broken, dreamlike"
+  },
+  "hemomancy.succession.profession.alchemist": {
+    "about": "a label naming the Alchemist profession",
+    "tone": "plain label"
+  },
+  "hemomancy.succession.teaching.alchemist": {
+    "about": "the Alchemist teaching Sanguine Quintessence gives life but memory comes elsewhere: seat it in the Focus, then the donor's vial, the player's own vial and Ambergris in that order, sneak-use an empty vial for 100 mL of one's own blood, and successors may work at an Alembic or Centrifuge",
+    "tone": "instructive, measured"
+  },
+  "hemomancy.trade.alchemist.appraise.poor": {
+    "about": "the Alchemist rejecting a vial because it is the wrong blood or none at all, and telling the player to check it against the card",
+    "tone": "curt, dry"
+  },
+  "hemomancy.trade.alchemist.cold_reagent.line": {
+    "about": "the Alchemist offering two Frigid Enzymes for one Incandescent Enzyme and admitting they cannot say why it balances but it does on the bench",
+    "tone": "dry, shrugging"
+  },
+  "hemomancy.trade.alchemist.cold_reagent.title": {
+    "about": "a short title for the cold reagent enzyme trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.alchemist.ferric_draw.line": {
+    "about": "the Alchemist offering a trade for two filled vials of Ferric blood, paying double if the vials are examined first because the assay is skipped",
+    "tone": "brisk, businesslike"
+  },
+  "hemomancy.trade.alchemist.ferric_draw.title": {
+    "about": "a short title for the Ferric blood vial trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.alchemist.fresh_draw.line": {
+    "about": "the Alchemist offering two Bleeding Bulbs for 250 mL of the player's own blood, to be used as a control sample",
+    "tone": "clinical, matter-of-fact"
+  },
+  "hemomancy.trade.alchemist.fresh_draw.title": {
+    "about": "a short title for the trade card exchanging the player's own blood for Bleeding Bulbs",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.alchemist.living_syringe_reissue.line": {
+    "about": "the Alchemist offering to culture a fresh Living Syringe for eight hematic scrap, warning that losing this one too means the next assay is drawn from the player's own vein",
+    "tone": "stern, dry"
+  },
+  "hemomancy.trade.alchemist.living_syringe_reissue.title": {
+    "about": "a short title for the Living Syringe replacement trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.alchemist.pelagic_oil.line": {
+    "about": "the Alchemist offering glowstone for four cooked pelagic herring from the Voyager's ship, which they render into oil",
+    "tone": "dry, practical"
+  },
+  "hemomancy.trade.alchemist.pelagic_oil.title": {
+    "about": "a short title for the herring-for-glowstone trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.alchemist.reef_salts.line": {
+    "about": "the Alchemist offering two primers for four erythrocoral fragments, noting the Voyager brings some but never enough",
+    "tone": "dry, wistful"
+  },
+  "hemomancy.trade.alchemist.reef_salts.title": {
+    "about": "a short title for the erythrocoral fragments trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.alchemist.spent_enzyme.line": {
+    "about": "the Alchemist offering one primer for four recycled enzymes, saying there is still use in them and they will do the cleaning",
+    "tone": "practical, dry"
+  },
+  "hemomancy.trade.alchemist.spent_enzyme.title": {
+    "about": "a short title for the recycled enzyme trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.alchemist.spore_stock.line": {
+    "about": "the Alchemist offering a trade for three spore sacs for the culture shelf, and telling the player to label them next time with what they were grown on",
+    "tone": "dry, mildly scolding"
+  },
+  "hemomancy.trade.alchemist.spore_stock.title": {
+    "about": "a short title for the spore sac trade card",
+    "tone": "plain label"
+  },
+  "hemomancy.trade.alchemist.thanks": {
+    "about": "the Alchemist acknowledging a completed trade, saying it is logged and going on the bench tonight",
+    "tone": "dry, satisfied"
+  },
+  "hemomancy.trade.alchemist.thanks_fine": {
+    "about": "the Alchemist praising a clean sample and noting how rare those are",
+    "tone": "dry, pleased"
+  }
+}

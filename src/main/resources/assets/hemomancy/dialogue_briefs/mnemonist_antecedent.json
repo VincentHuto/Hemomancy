@@ -1,0 +1,1478 @@
+{
+ "hemomancy.antecedent.cylinder.description": {
+  "about": "an item tooltip for an old ambergris cylinder cut with unfamiliar grooves, telling the player to play it in a Clairaudiograph and bring an analyzed dark sample",
+  "tone": "plain, curious"
+ },
+ "hemomancy.antecedent.cylinder.heard": {
+  "about": "a short tooltip label marking an Antecedent cylinder recording as already heard",
+  "tone": "plain label"
+ },
+ "hemomancy.antecedent.cylinder.lower_district_survey": {
+  "about": "the item name of a weathered ambergris cylinder holding the Lower District Survey recording",
+  "tone": "plain label"
+ },
+ "hemomancy.antecedent.cylinder.playback_help": {
+  "about": "a tooltip note that this is an ancient recording and that playing it in the machine preserves both the cylinder and any specimen",
+  "tone": "plain, reassuring"
+ },
+ "hemomancy.antecedent.cylinder.severed_record": {
+  "about": "the item name of a weathered ambergris cylinder holding the Severed Record recording",
+  "tone": "plain label"
+ },
+ "hemomancy.antecedent.cylinder.the_quieting": {
+  "about": "the item name of a weathered ambergris cylinder holding The Quieting recording",
+  "tone": "plain label"
+ },
+ "hemomancy.antecedent.cylinder.title.lower_district_survey": {
+  "about": "a short title for the Lower District Survey recording",
+  "tone": "plain label"
+ },
+ "hemomancy.antecedent.cylinder.title.severed_record": {
+  "about": "a short title for the Severed Record recording",
+  "tone": "plain label"
+ },
+ "hemomancy.antecedent.cylinder.title.the_quieting": {
+  "about": "a short title for The Quieting recording",
+  "tone": "plain label"
+ },
+ "hemomancy.antecedent.cylinder.unheard": {
+  "about": "a short tooltip label marking an Antecedent cylinder recording as not yet heard",
+  "tone": "plain label"
+ },
+ "hemomancy.antecedent.dialogue.clue.1": {
+  "about": "a scholar saying the recording points to a quiet place below the city, past the end of a wool-lined passage, where the Last Listeners kept watch",
+  "tone": "measured, hushed"
+ },
+ "hemomancy.antecedent.dialogue.clue.2": {
+  "about": "a scholar giving directions: follow the Ancient City roads to a small enclosed entrance that could sit beside any district, go through the passage, and keep going when the wool stops",
+  "tone": "careful, instructive"
+ },
+ "hemomancy.antecedent.dialogue.clue.3": {
+  "about": "a scholar warning the player to leave the damaged structures alone there, since a missing piece may be why the growth cannot answer itself",
+  "tone": "cautious, firm"
+ },
+ "hemomancy.antecedent.dialogue.clue.4": {
+  "about": "a scholar admitting they do not know whether the old work held through skill or through neglect, and asking the player not to test it by putting anything back together",
+  "tone": "uneasy, earnest"
+ },
+ "hemomancy.antecedent.dialogue.clue.title": {
+  "about": "a player response asking where the Last Listeners kept vigil",
+  "tone": "curious"
+ },
+ "hemomancy.antecedent.dialogue.comparison.1": {
+  "about": "a scholar declining to say the Antecedent and the infection share an Entity, since the similarities seen so far are only on the surface",
+  "tone": "careful, skeptical"
+ },
+ "hemomancy.antecedent.dialogue.comparison.2": {
+  "about": "a scholar explaining that the sculk sample has no blood and answers none of the eight tendencies, so no enzyme can be drawn from it, and that Erythromycelium is something else",
+  "tone": "clinical, firm"
+ },
+ "hemomancy.antecedent.dialogue.comparison.3": {
+  "about": "a scholar steering the player toward a better question: how each growth spreads and what it needs to stay alive",
+  "tone": "measured, redirecting"
+ },
+ "hemomancy.antecedent.dialogue.comparison.4": {
+  "about": "a scholar contrasting sculk, which stays put and feeds on the dead, with Erythromycelium, which moves through living hosts, and demanding stronger evidence before claiming a shared origin",
+  "tone": "dry, rigorous"
+ },
+ "hemomancy.antecedent.dialogue.comparison.title": {
+  "about": "a player response asking whether the Antecedent could be the same Entity as the fungal infection",
+  "tone": "skeptical"
+ },
+ "hemomancy.antecedent.dialogue.conclusion.1": {
+  "about": "the Alchemist admitting they were wrong about the sample: sound makes it move, but it also turned toward the machine when the recording fell silent",
+  "tone": "humbled, precise"
+ },
+ "hemomancy.antecedent.dialogue.conclusion.2": {
+  "about": "the Alchemist reporting that the sound trace stayed flat throughout, yet something was present in the grooves and the sample seemed to sense it",
+  "tone": "quiet, puzzled"
+ },
+ "hemomancy.antecedent.dialogue.conclusion.3": {
+  "about": "the Alchemist admitting they cannot say what the signal is, since their machine may be missing part of the sound or the old recording may carry something else",
+  "tone": "honest, uncertain"
+ },
+ "hemomancy.antecedent.dialogue.conclusion.4": {
+  "about": "the Alchemist noting the speaker said the growth was stopped from answering itself without being killed, and sending the player to the Vicar with the cylinder and the vial",
+  "tone": "thoughtful, directing"
+ },
+ "hemomancy.antecedent.dialogue.conclusion.title": {
+  "about": "a player response asking what the controlled replay established",
+  "tone": "curious"
+ },
+ "hemomancy.antecedent.dialogue.housing.1": {
+  "about": "the Alchemist explaining the archive shows how to build a small listening device, and offering to make its housing for four iron nuggets and one Echo Shard",
+  "tone": "practical, brisk"
+ },
+ "hemomancy.antecedent.dialogue.housing.2": {
+  "about": "the Alchemist giving steps: hold the housing in one hand and an analyzed Ahaematic vial in the other, use the housing to load it, keep it beside the Clairaudiograph through the whole silent section, then fit or remove it at a Scarlet Vanity",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.antecedent.dialogue.housing.title": {
+  "about": "a player response asking to reconstruct a Listening Scar housing",
+  "tone": "eager"
+ },
+ "hemomancy.antecedent.dialogue.initial_alchemist.1": {
+  "about": "the Alchemist examining the vial, saying the microscope finds no blood cell in it yet the material moves together",
+  "tone": "intrigued, clinical"
+ },
+ "hemomancy.antecedent.dialogue.initial_alchemist.2": {
+  "about": "the Alchemist asking the player to tap the glass and watch it pull back, and admitting all eight tendencies were tested and none fit",
+  "tone": "puzzled, candid"
+ },
+ "hemomancy.antecedent.dialogue.initial_alchemist.3": {
+  "about": "the Alchemist recalling that the Vicar once warned them off a similar account in the old histories, and sending the player to him with the sample",
+  "tone": "wary, practical"
+ },
+ "hemomancy.antecedent.dialogue.initial_alchemist.4": {
+  "about": "the Alchemist telling the player to keep the vial, learn what makes the material move, and search an Ancient City for records left by people who lived near it",
+  "tone": "brisk, encouraging"
+ },
+ "hemomancy.antecedent.dialogue.initial_alchemist.title": {
+  "about": "a player response telling the Alchemist that the dark sample has no blood in it",
+  "tone": "plain statement"
+ },
+ "hemomancy.antecedent.dialogue.initial_vicar.1": {
+  "about": "the Vicar explaining that the Alchemist was right to send the player over a sample that does not behave like blood, though he cannot name it from a vial alone",
+  "tone": "measured, grave"
+ },
+ "hemomancy.antecedent.dialogue.initial_vicar.2": {
+  "about": "the Vicar mentioning an old, vague passage that may describe something similar, and refusing to build a history around a single sample",
+  "tone": "cautious, reserved"
+ },
+ "hemomancy.antecedent.dialogue.initial_vicar.3": {
+  "about": "the Vicar sending the player to an Ancient City to find something its people recorded for themselves, since an instruction or field report beats any later account",
+  "tone": "deliberate, guiding"
+ },
+ "hemomancy.antecedent.dialogue.initial_vicar.4": {
+  "about": "the Vicar asking the player to bring back whatever they find along with the vial, so he can compare the words with what the sample does",
+  "tone": "patient, formal"
+ },
+ "hemomancy.antecedent.dialogue.initial_vicar.title": {
+  "about": "a player response telling the Vicar that the Alchemist sent them with a dark sample",
+  "tone": "plain statement"
+ },
+ "hemomancy.antecedent.dialogue.recognition.1": {
+  "about": "the Vicar reacting to the recording: the speaker says they stopped the growth from answering itself yet it stayed alive, matching an account in the oldest histories",
+  "tone": "startled, reflective"
+ },
+ "hemomancy.antecedent.dialogue.recognition.2": {
+  "about": "the Vicar describing the old histories' wound that never healed, with living material beneath it, and noting they say the break held without explaining what was broken",
+  "tone": "solemn, scholarly"
+ },
+ "hemomancy.antecedent.dialogue.recognition.3": {
+  "about": "the Vicar noting the account has no author, date or named rite, that the Second Age read it as a lesson in restraint, and that this recording strains that reading",
+  "tone": "troubled, candid"
+ },
+ "hemomancy.antecedent.dialogue.recognition.4": {
+  "about": "the Vicar speculating that if the speaker meant the sculk, they may have cut the way its parts answer each other, and the growth survived the loss",
+  "tone": "tentative, thoughtful"
+ },
+ "hemomancy.antecedent.dialogue.recognition.5": {
+  "about": "the Vicar insisting this is still a guess: the growth reacted to a recording, but it is unproven that it speaks, remembers or understands",
+  "tone": "restrained, honest"
+ },
+ "hemomancy.antecedent.dialogue.recognition.6": {
+  "about": "the Vicar explaining that later writers called these fragments the Antecedent for seeming older than blood, and that the city's own name for it is unknown",
+  "tone": "quiet, wondering"
+ },
+ "hemomancy.antecedent.dialogue.recognition.7": {
+  "about": "the Vicar urging the player to find the place where the damaged growth was watched, since their records may say what they separated and why the sculk was left alive, and to ask about the Last Listeners when ready",
+  "tone": "grave, directing"
+ },
+ "hemomancy.antecedent.dialogue.recognition.title": {
+  "about": "a player response asking what the old recording meant",
+  "tone": "curious"
+ },
+ "hemomancy.antecedent.dialogue.recording.1": {
+  "about": "the Alchemist inspecting the ambergris cylinder and noting its grooves came from a different machine, so its makers also knew how to store a recording",
+  "tone": "interested, analytical"
+ },
+ "hemomancy.antecedent.dialogue.recording.2": {
+  "about": "the Alchemist reacting to the player's report of a silent section by noting another trace on the spectrograph there, though the machine plays no sound",
+  "tone": "sharp, absorbed"
+ },
+ "hemomancy.antecedent.dialogue.recording.3": {
+  "about": "the Alchemist telling the player to bring the analyzed dark sample back, place it in or beside the Clairaudiograph, and play the cylinder again",
+  "tone": "instructive, brisk"
+ },
+ "hemomancy.antecedent.dialogue.recording.4": {
+  "about": "the Alchemist asking the player to set the machine within eight blocks for a full replay, noting a sample reacting only to sound should sit still through the silence",
+  "tone": "methodical, expectant"
+ },
+ "hemomancy.antecedent.dialogue.recording.title": {
+  "about": "a player response saying they found an old recording beneath an Ancient City",
+  "tone": "excited"
+ },
+ "hemomancy.antecedent.dialogue.replay.1": {
+  "about": "the Alchemist questioning the player about when the sample climbed the glass toward the machine, then accepting that it was during the silence and asking to see it",
+  "tone": "sharp, probing"
+ },
+ "hemomancy.antecedent.dialogue.replay.2": {
+  "about": "the Alchemist saying they want to watch it happen themselves and asking the player to set up the cylinder again",
+  "tone": "brisk, insistent"
+ },
+ "hemomancy.antecedent.dialogue.replay.3": {
+  "about": "the Alchemist instructing the player to put the analyzed vial beside the machine and play the whole silent section within eight blocks while watching both traces",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.antecedent.dialogue.replay.4": {
+  "about": "the Alchemist stating the test: if the vial moves while the sound trace stays flat, ordinary sound is not the cause",
+  "tone": "analytical, exact"
+ },
+ "hemomancy.antecedent.dialogue.replay.title": {
+  "about": "a player response reporting that the sample reacted during the silence",
+  "tone": "urgent"
+ },
+ "hemomancy.antecedent.epilogue": {
+  "about": "the Antecedent speaking as a collective, \"we\", at the end of the Last Listeners vigil: they remember waiting here for the dead and no longer wait",
+  "tone": "haunting, spare"
+ },
+ "hemomancy.antecedent.housing.cost": {
+  "about": "a tooltip line stating the reconstruction costs four iron nuggets and one Echo Shard",
+  "tone": "plain label"
+ },
+ "hemomancy.antecedent.microscope.acoustic": {
+  "about": "a microscope readout line stating the stimulus is acoustic and no nervous structures are observed",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.antecedent.microscope.readout": {
+  "about": "a multi-line microscope analysis readout listing unknown substrate, no hematic content, null enzyme response, indeterminate cellularity, reactive motility, classification incertae",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.antecedent.microscope.unknown_stimulus": {
+  "about": "a microscope readout line reporting a vibrational unknown stimulus with coordinated motility but no matching acoustic stimulus",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.antecedent.recording.behind": {
+  "about": "a bracketed caption describing a click behind the listener that is not on the recording",
+  "tone": "eerie, terse"
+ },
+ "hemomancy.antecedent.recording.crackle": {
+  "about": "a bracketed caption for cylinder crackle and distant cavern sounds",
+  "tone": "plain caption"
+ },
+ "hemomancy.antecedent.recording.crash": {
+  "about": "a bracketed caption for a crash that draws the heartbeats away",
+  "tone": "plain caption"
+ },
+ "hemomancy.antecedent.recording.heartbeat": {
+  "about": "a bracketed caption for heavy heartbeats approaching",
+  "tone": "plain caption"
+ },
+ "hemomancy.antecedent.recording.quieting.1": {
+  "about": "an unknown recorder issuing terse rules: no bells below the third stair, no iron wheels, wrap the road, walk softly",
+  "tone": "clipped, imperative"
+ },
+ "hemomancy.antecedent.recording.quieting.2": {
+  "about": "a distant voice warning to leave if the floor answers twice and, if it answers three times, not to return for those below",
+  "tone": "grim, imperative"
+ },
+ "hemomancy.antecedent.recording.severed.1": {
+  "about": "an unknown recorder opening a log entry by naming the lower district and record nineteen",
+  "tone": "flat, procedural"
+ },
+ "hemomancy.antecedent.recording.severed.10": {
+  "about": "an unknown recorder answering a question with a bare admission of not knowing",
+  "tone": "bleak, terse"
+ },
+ "hemomancy.antecedent.recording.severed.11": {
+  "about": "an unknown recorder stating that they cut the voice",
+  "tone": "bleak, terse"
+ },
+ "hemomancy.antecedent.recording.severed.12": {
+  "about": "an unknown recorder stating that the flesh remained after the cut",
+  "tone": "bleak, terse"
+ },
+ "hemomancy.antecedent.recording.severed.2": {
+  "about": "an unknown recorder reporting that the growth to the west has stopped",
+  "tone": "flat, procedural"
+ },
+ "hemomancy.antecedent.recording.severed.3": {
+  "about": "a distant voice repeating the word stopped as a question",
+  "tone": "tense, clipped"
+ },
+ "hemomancy.antecedent.recording.severed.4": {
+  "about": "an unknown recorder correcting that the growth has not died but stopped",
+  "tone": "flat, insistent"
+ },
+ "hemomancy.antecedent.recording.severed.5": {
+  "about": "an unknown recorder reporting that the catalysts still take the dead and the listeners still answer movement, so nothing there has changed",
+  "tone": "flat, procedural"
+ },
+ "hemomancy.antecedent.recording.severed.6": {
+  "about": "an unknown recorder observing that the parts no longer answer one another as they did",
+  "tone": "uneasy, terse"
+ },
+ "hemomancy.antecedent.recording.severed.7": {
+  "about": "an unknown recorder ordering everyone not to move",
+  "tone": "urgent, hushed"
+ },
+ "hemomancy.antecedent.recording.severed.8": {
+  "about": "an unknown recorder stating that the cut held",
+  "tone": "grim, terse"
+ },
+ "hemomancy.antecedent.recording.severed.9": {
+  "about": "a distant voice asking why they are still alive if the cut held",
+  "tone": "tense, clipped"
+ },
+ "hemomancy.antecedent.recording.shriek": {
+  "about": "a bracketed caption for a distant Shrieker",
+  "tone": "plain caption"
+ },
+ "hemomancy.antecedent.recording.silence": {
+  "about": "a bracketed caption stating there is no audible signal",
+  "tone": "plain caption"
+ },
+ "hemomancy.antecedent.recording.survey.1": {
+  "about": "an unknown recorder reading a lower district survey: the growth takes the dead, and the listeners answer movement but do not pass the black floor",
+  "tone": "flat, procedural"
+ },
+ "hemomancy.antecedent.recording.survey.2": {
+  "about": "a distant voice ordering that the growth not be carried upward, the dead kept elsewhere, and the last clean stair marked",
+  "tone": "clipped, imperative"
+ },
+ "hemomancy.antecedent.sample.identified": {
+  "about": "an item tooltip stating the sample is alive but not blood, shows no tendency response, reacts to vibration, and is unsuitable for injection or enzyme separation",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.antecedent.sample.unknown": {
+  "about": "an item tooltip describing an opaque gritty suspension and telling the player to examine it with a Hematic Microscope",
+  "tone": "plain, curious"
+ },
+ "hemomancy.antecedent.scar.awakened": {
+  "about": "a short tooltip stating the Listening Scar has awakened and answers",
+  "tone": "quiet, eerie"
+ },
+ "hemomancy.antecedent.scar.instructions.0": {
+  "about": "a tooltip instruction to hold analyzed Ahaematic Colloid in the other hand and use the item, noting it returns the empty vial",
+  "tone": "plain instruction"
+ },
+ "hemomancy.antecedent.scar.instructions.1": {
+  "about": "a tooltip instruction to hold the item beside the Clairaudiograph through the entire silent response",
+  "tone": "plain instruction"
+ },
+ "hemomancy.antecedent.scar.instructions.2": {
+  "about": "a tooltip telling the player to fit it to their Charm at a Scarlet Vanity, with a closing line that they cannot hear the sculk but can hear it listen",
+  "tone": "quiet, eerie"
+ },
+ "hemomancy.antecedent.scar.socket": {
+  "about": "a tooltip stating the Listening Scar socket can be fitted or removed at a Scarlet Vanity",
+  "tone": "plain label"
+ },
+ "hemomancy.antecedent.vigil.subtitle": {
+  "about": "a subtitle telling the player to pass where the wool ends",
+  "tone": "hushed"
+ },
+ "hemomancy.antecedent.vigil.title": {
+  "about": "a title card for the Antecedent vigil of the Last Listeners",
+  "tone": "solemn"
+ },
+ "hemomancy.dialogue.ending.mnemonist.apotheos": {
+  "about": "the Mnemonist noting the record says Apotheos and offering to help the player still recover the memories they came for",
+  "tone": "formal, even"
+ },
+ "hemomancy.dialogue.ending.mnemonist.apotheos_pending": {
+  "about": "the Mnemonist saying they can preserve the record of the Apotheos rite but will not call it finished yet",
+  "tone": "formal, withholding"
+ },
+ "hemomancy.dialogue.ending.mnemonist.silent_absorb": {
+  "about": "the Mnemonist saying Vesper's defeat is recorded but his memory is not, and telling the player to burn it in a lit Iron Brazier and draw it in with the Living Staff to close the record",
+  "tone": "grave, instructive"
+ },
+ "hemomancy.dialogue.ending.mnemonist.silent_archon": {
+  "about": "the Mnemonist noting the record says Silentium, that Vesper's memory is now filed in the player, and that the older lessons remain available",
+  "tone": "quiet, solemn"
+ },
+ "hemomancy.dialogue.ending.mnemonist.silent_pending": {
+  "about": "the Mnemonist telling a player who refused that the record is not finished until Vesper falls",
+  "tone": "stern, spare"
+ },
+ "hemomancy.dialogue.ending.mnemonist.undecided": {
+  "about": "the Mnemonist offering to record what the player has seen while refusing to name what has not happened",
+  "tone": "formal, measured"
+ },
+ "hemomancy.dialogue.event.mnemonist_circus_waybill": {
+  "about": "narration of the Mnemonist folding a scarlet waybill along a line that tugs toward the nearest Circus",
+  "tone": "quiet, atmospheric"
+ },
+ "hemomancy.dialogue.event.mnemonist_starter_already_known": {
+  "about": "narration of the Mnemonist smiling faintly because the player's blood already knows the motion of the chosen crude memory",
+  "tone": "warm, dry"
+ },
+ "hemomancy.dialogue.event.mnemonist_starter_granted": {
+  "about": "narration of the Mnemonist handing over a crude memory shard whose echo waits for the player's blood",
+  "tone": "quiet, atmospheric"
+ },
+ "hemomancy.dialogue.event.mnemonist_starter_unavailable": {
+  "about": "narration of the Mnemonist closing their hand around the echo because this lesson is not the player's to claim now",
+  "tone": "stern, quiet"
+ },
+ "hemomancy.dialogue.event.mnemonist_woven_vessel_complete": {
+  "about": "narration of the Mnemonist indexing the blank vessel, then walking the player through the Loom weave: choose Blood Shot with one bulb, 50 mL blood and one Vivacious Enzyme, hold the Living Staff, watch the fragment until it sounds, then sweep its thread along the star into the Loom",
+  "tone": "formal, instructive"
+ },
+ "hemomancy.dialogue.event.mnemonist_woven_vessel_known": {
+  "about": "narration of the Mnemonist closing the archive and saying the vessel is already indexed, so the player should go and use what it taught",
+  "tone": "dry, final"
+ },
+ "hemomancy.dialogue.event.mnemonist_woven_vessel_missing_archive": {
+  "about": "narration of the Mnemonist waiting beside an empty desk and saying they need a book, ink and three sheets of paper, since memory without an index is only hunger",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.dialogue.event.mnemonist_woven_vessel_missing_memory": {
+  "about": "narration of the Mnemonist extending an empty hand and saying the blank memory must come first because a lesson needs a vessel",
+  "tone": "dry, patient"
+ },
+ "hemomancy.dialogue.event.mnemonist_woven_vessel_unready": {
+  "about": "narration of the Mnemonist listening to the player's pulse and refusing for now, telling them to return as an Initiate with the lessons still awake in their blood",
+  "tone": "gentle, firm"
+ },
+ "hemomancy.dialogue.mnemonist.conductive_mark_recognized": {
+  "about": "the Mnemonist recognizing the conductive pattern in the player's first weave, the one the Alchemist measured in Ductilis tissue, and noting it is one Noetic Memory with two routes to it",
+  "tone": "wry, formal"
+ },
+ "hemomancy.dialogue.mnemonist.option.anchorite_counsel": {
+  "about": "asking the Mnemonist, on the Vein-Mason's advice, how a scar should bear a memory",
+  "tone": "respectful"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_chamber": {
+  "about": "asking the Mnemonist why they dream of a chamber",
+  "tone": "uneasy, curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_circus": {
+  "about": "asking the Mnemonist what the Circus actually is",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_crude_memories": {
+  "about": "asking the Mnemonist to explain crude memories",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_distributor": {
+  "about": "asking the Mnemonist how to save a memory loadout",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_item": {
+  "about": "asking the Mnemonist what they can say about the item the player is holding",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_loom": {
+  "about": "asking the Mnemonist to tell them about the Somatic Loom",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_memory": {
+  "about": "asking the Mnemonist what blood-memory is",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_memory_practice": {
+  "about": "asking the Mnemonist how to choose which memories to keep ready",
+  "tone": "thoughtful"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_mnemonic_doctrine": {
+  "about": "asking the Mnemonist to return to their earlier remark that memory has three movements",
+  "tone": "thoughtful"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_reliquary": {
+  "about": "asking the Mnemonist to tell them about the Mnemonic Reliquary",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_scriptorium": {
+  "about": "asking the Mnemonist what the Scriptorium does",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.ask_about_slots": {
+  "about": "asking the Mnemonist how active manipulation slots work",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.mnemonist.option.begin_guided_chamber": {
+  "about": "telling the Mnemonist to begin the guided glimpse of the Chamber",
+  "tone": "ready, resolute"
+ },
+ "hemomancy.dialogue.mnemonist.option.choose_blood_rush": {
+  "about": "choosing Blood Rush as the first crude memory",
+  "tone": "decisive"
+ },
+ "hemomancy.dialogue.mnemonist.option.choose_blood_shot": {
+  "about": "choosing Blood Shot as the first crude memory",
+  "tone": "decisive"
+ },
+ "hemomancy.dialogue.mnemonist.option.choose_deadly_gaze": {
+  "about": "choosing Deadly Gaze as the first crude memory",
+  "tone": "decisive"
+ },
+ "hemomancy.dialogue.mnemonist.option.choose_starter": {
+  "about": "asking the Mnemonist to teach them a first crude memory",
+  "tone": "eager"
+ },
+ "hemomancy.dialogue.mnemonist.option.guided_chamber": {
+  "about": "asking the Mnemonist to guide them through the Chamber",
+  "tone": "hopeful"
+ },
+ "hemomancy.dialogue.mnemonist.option.leave": {
+  "about": "ending the conversation by saying they have heard enough",
+  "tone": "polite, brief"
+ },
+ "hemomancy.dialogue.mnemonist.option.morphling_puppet_interference": {
+  "about": "asking the Mnemonist why their Morphling worries at the puppet threads",
+  "tone": "puzzled"
+ },
+ "hemomancy.dialogue.mnemonist.option.reliquary_understood": {
+  "about": "asking the Mnemonist to show them how to weave the Reliquary",
+  "tone": "eager"
+ },
+ "hemomancy.dialogue.mnemonist.option.take_circus_waybill": {
+  "about": "asking the Mnemonist for a waybill to the Circus pavilion",
+  "tone": "plain request"
+ },
+ "hemomancy.dialogue.mnemonist.option.turn_in_woven_vessel": {
+  "about": "telling the Mnemonist they have brought the blank vessel and archive materials",
+  "tone": "plain statement"
+ },
+ "hemomancy.dialogue.mnemonist.option.vagrant_bearing": {
+  "about": "asking the Mnemonist where to look for a Vagrant Mind",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.vagrant_inquiry": {
+  "about": "asking the Mnemonist what the Vagrant Mind is",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.mnemonist.option.vagrant_memory_report": {
+  "about": "offering to tell the Mnemonist what they saw inside the Vagrant Mind",
+  "tone": "earnest"
+ },
+ "hemomancy.dialogue.mnemonist.option.woven_vessel": {
+  "about": "asking the Mnemonist how to prepare a blank memory",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.newcomer.mnemonist": {
+  "about": "the Mnemonist greeting a newcomer, saying they seek a beginning and that the Vicar can give its shape",
+  "tone": "brief, redirecting"
+ },
+ "hemomancy.dialogue.rapport.mnemonist.first_voice": {
+  "about": "a player question asking the Mnemonist what the first memory they ever heard was",
+  "tone": "gentle, curious"
+ },
+ "hemomancy.dialogue.rapport.mnemonist.first_voice.line1": {
+  "about": "the Mnemonist recalling a faded memory on their first shelf that kept only how to wait like a heron, which they listened to for a month and learned",
+  "tone": "wistful, quiet"
+ },
+ "hemomancy.dialogue.rapport.mnemonist.first_voice.teaser": {
+  "about": "a teaser line saying trading with the Mnemonist may earn the story of the first thing they heard",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.mnemonist.what_it_cost": {
+  "about": "a player question asking the Mnemonist what listening has cost them",
+  "tone": "gentle, careful"
+ },
+ "hemomancy.dialogue.rapport.mnemonist.what_it_cost.line1": {
+  "about": "the Mnemonist admitting listening cost them their own voice for a while, buried under many lessons not theirs, so they had to file themselves like any memory",
+  "tone": "somber, candid"
+ },
+ "hemomancy.dialogue.rapport.mnemonist.what_it_cost.line2": {
+  "about": "the Mnemonist saying their own file sits on the lowest shelf and closing with an aphorism that a reachable shelf is one you visit",
+  "tone": "dry, wistful"
+ },
+ "hemomancy.dialogue.rapport.mnemonist.what_it_cost.teaser": {
+  "about": "a teaser line saying the Mnemonist keeps some files closed to strangers",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.recruit.mnemonist.accept": {
+  "about": "the Mnemonist accepting recruitment, calling it covenant and saying one lesson will be carried in more than one body",
+  "tone": "solemn, warm"
+ },
+ "hemomancy.dialogue.recruit.mnemonist.consider": {
+  "about": "the Mnemonist considering a bloodline bond, saying a bloodline is also a memory and that binding them adds 1,000 mL of blood to the shared pool",
+  "tone": "measured, formal"
+ },
+ "hemomancy.mnemonist.anchorite_counsel.line1": {
+  "about": "the Mnemonist offering to explain what an instruction means and which tendency leads it, while leaving the carrying tissue to the Anchorite",
+  "tone": "formal, precise"
+ },
+ "hemomancy.mnemonist.anchorite_counsel.line2": {
+  "about": "the Mnemonist instructing the player to match an active cerebral scar to the Noetic Memory's primary tendency, then change the arrangement and prove the new route still bears the instruction",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.anchorite_counsel.prompt": {
+  "about": "a prompt saying the Anchorite sent the player because memory and scar must agree, and to take the Mnemonist's counsel and return to prove both routes",
+  "tone": "formal, directing"
+ },
+ "hemomancy.mnemonist.chamber.guided.familiar": {
+  "about": "the Mnemonist telling a player who has already found the Chamber to come back with them once on purpose and look at what the dream missed",
+  "tone": "calm, inviting"
+ },
+ "hemomancy.mnemonist.chamber.guided.first": {
+  "about": "the Mnemonist saying the player may not remember the Chamber and offering to take them there long enough to look around with open eyes",
+  "tone": "gentle, measured"
+ },
+ "hemomancy.mnemonist.chamber.guided.rules": {
+  "about": "the Mnemonist laying out the rules of the guided glimpse: two minutes, tending the Arbor and moving temporary item copies allowed, no dropping, building or ordeals, original items restored, and returning home completes the lesson without attuning them",
+  "tone": "formal, precise"
+ },
+ "hemomancy.mnemonist.chamber.guided.started": {
+  "about": "narration that the Mnemonist leads the player into the Chamber",
+  "tone": "quiet, atmospheric"
+ },
+ "hemomancy.mnemonist.chamber.guided.unavailable": {
+  "about": "a system message saying the guided visit cannot begin yet and that the player must finish any item transfer and return with active blood and no other visit or projection underway",
+  "tone": "plain, firm"
+ },
+ "hemomancy.mnemonist.chamber.line1": {
+  "about": "the Mnemonist identifying the player's dreamed place as their Chamber of Will, where ordinary sleep in early Degrees may grant a minute or two",
+  "tone": "calm, explanatory"
+ },
+ "hemomancy.mnemonist.chamber.line2": {
+  "about": "the Mnemonist saying the player may walk the Chamber and tend the Arbor, and that objects and changes remain after waking",
+  "tone": "calm, explanatory"
+ },
+ "hemomancy.mnemonist.chamber.line3": {
+  "about": "the Mnemonist explaining that at the third Degree the player can build a Somnolent Seat to visit on purpose and stay longer, and that the Chamber keeps what they build",
+  "tone": "calm, instructive"
+ },
+ "hemomancy.mnemonist.chamber.rite": {
+  "about": "the Mnemonist explaining that attunement comes through the Rite of the Chamber of Will at the sixth Degree, not early dreams, guided glimpses or Seat visits, and needs no Mnemonist present",
+  "tone": "formal, clear"
+ },
+ "hemomancy.mnemonist.chamber.seat.controls": {
+  "about": "the Mnemonist explaining Seat controls: sneak-use outside the Chamber to go straight in or sleep in it through a normal rest, and use the paired Seat beside the Arbor to start home",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.chamber.seat.duration": {
+  "about": "the Mnemonist stating un-attuned Seat durations of five minutes at the third Degree, ten at the fourth and twenty from the fifth, with the return timed however the player entered",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.chamber.support": {
+  "about": "the Mnemonist saying longer visits give time to work, that a Mnemonist serving the bloodline can help prepare and interpret them, and that neither the Seat nor the later rite requires one",
+  "tone": "measured, reassuring"
+ },
+ "hemomancy.mnemonist.circus.discovered.line1": {
+  "about": "the Mnemonist acknowledging the player found the Circus pavilion and stating that the acts are the practice, with nothing hidden behind the show",
+  "tone": "dry, approving"
+ },
+ "hemomancy.mnemonist.circus.discovered.line2": {
+  "about": "the Mnemonist advising the player to watch who begins an act and who answers, since manifestations take shape in that exchange",
+  "tone": "quiet, instructive"
+ },
+ "hemomancy.mnemonist.circus.undiscovered.line1": {
+  "about": "the Mnemonist describing a Harbinger company called the Circus that works through performance, where every body under the pavilion practices something different",
+  "tone": "measured, wary"
+ },
+ "hemomancy.mnemonist.circus.undiscovered.line2": {
+  "about": "the Mnemonist warning that the show is not an invitation, and that together the whole troupe can make one intention real, which is the danger",
+  "tone": "stern, quiet"
+ },
+ "hemomancy.mnemonist.clarity.line1": {
+  "about": "the Mnemonist remarking that the silence around a player in Clarity is bright, painfully so",
+  "tone": "quiet, uneasy"
+ },
+ "hemomancy.mnemonist.clarity.line2": {
+  "about": "the Mnemonist allowing questions from a player who left the Harbinger path, noting the old path is still on file but they will not return its living lessons",
+  "tone": "gentle, firm"
+ },
+ "hemomancy.mnemonist.crude_memories.line1": {
+  "about": "the Mnemonist explaining crude memories are rough early echoes: use one, pay its blood cost, and the manipulation joins the known lessons",
+  "tone": "clear, instructive"
+ },
+ "hemomancy.mnemonist.crude_memories.line2": {
+  "about": "the Mnemonist explaining that a new lesson files into an empty active slot, or waits in the library if every slot is full until the player learns the arranging",
+  "tone": "clear, instructive"
+ },
+ "hemomancy.mnemonist.distributor.line1": {
+  "about": "the Mnemonist explaining the Dendritic Distributor saves named arrangements of known Noetic and Thelemic memories, teaches none, and keeps Blood Absorption and Blood Projection fixed outside custom patterns",
+  "tone": "formal, precise"
+ },
+ "hemomancy.mnemonist.distributor.line2": {
+  "about": "the Mnemonist stating that saving or overwriting a pattern costs 100 mL of blood and 25 raw XP, renaming and applying are free, and there are three pattern slots until Synaptic Memory adds more",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.distributor.line3": {
+  "about": "the Mnemonist explaining that applying a pattern checks capacity and known memories, replaces the active arrangement, and switches off any running Thelemic memory the pattern omits",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.distributor.line4": {
+  "about": "the Mnemonist giving the build recipe for the Distributor as a Working on a greater Working floor: frame Infested Venous Stone with four Iron Bars, hold a Sanguine Formation, offer a Tendon Line and Ferric Binder, feed it 500 mL of blood",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.item_hint": {
+  "about": "the Mnemonist asking the player to show what they carry so it can be sorted into what holds a memory and what only pretends to",
+  "tone": "dry, inviting"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_blood_rush.line1": {
+  "about": "the Mnemonist identifying a crude Blood Rush shard as the body's memory of panic put to use as speed",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_blood_rush.line2": {
+  "about": "the Mnemonist calling it an early lesson in movement and warning that fast blood is still blood spent",
+  "tone": "dry, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_blood_shot.line1": {
+  "about": "the Mnemonist identifying a crude Blood Shot shard as pressure and release, a line of blood drawn through the air, and as simple as lessons get",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_blood_shot.line2": {
+  "about": "the Mnemonist noting it is unavailable before initiation, after which an empty active slot takes the lesson automatically",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_deadly_gaze.line1": {
+  "about": "the Mnemonist identifying a crude Deadly Gaze shard as intent sent through the eyes before the hand moves, an ugly little lesson but a useful one",
+  "tone": "dry, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_deadly_gaze.line2": {
+  "about": "the Mnemonist warning that crude is not harmless and the player should be careful what they teach their blood to hate",
+  "tone": "grave, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_glacial_grasp.line1": {
+  "about": "the Mnemonist identifying a crude Glacial Grasp shard, Congeatio slowing the world until a mistake can be studied",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_glacial_grasp.line2": {
+  "about": "the Mnemonist saying the cold means no harm and the stillness it buys can save the player's life",
+  "tone": "calm, reassuring"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_hematic_flare.line1": {
+  "about": "the Mnemonist identifying a crude Hematic Flare shard, Lux stretching blood thin and white so whatever hides stands lit",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_hematic_flare.line2": {
+  "about": "the Mnemonist warning it is not mercy, since it lets nothing go unseen, the caster included",
+  "tone": "stern, spare"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_hemorrhage.line1": {
+  "about": "the Mnemonist identifying a crude Hemorrhage shard as a small opening followed by insistence, with Mortem knowing how endings begin",
+  "tone": "somber, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_hemorrhage.line2": {
+  "about": "the Mnemonist urging restraint because blood learns cruel habits easily and keeps them",
+  "tone": "grave, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_sanguine_ignition.line1": {
+  "about": "the Mnemonist identifying a crude Sanguine Ignition shard as fever, a spark, the red thought before flame, filed under Flammeus",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_sanguine_ignition.line2": {
+  "about": "the Mnemonist calling it an eager lesson and warning against mistaking eagerness for mastery",
+  "tone": "dry, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_sanguine_mending.line1": {
+  "about": "the Mnemonist identifying a crude Sanguine Mending shard that repairs the caster, noting Ferric memory likes repair but takes payment first",
+  "tone": "dry, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_sanguine_mending.line2": {
+  "about": "the Mnemonist saying the wound closes while the player's reserve answers for it",
+  "tone": "spare, matter-of-fact"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_void_shroud.line1": {
+  "about": "the Mnemonist identifying a crude Void Shroud shard as Tenebris work that pulls the dark close so the caster breathes quietly under it",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.crude_memory_void_shroud.line2": {
+  "about": "the Mnemonist noting it hides the caster from enemies and warning it may begin hiding them from themselves",
+  "tone": "uneasy, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.enthralling_filament.line1": {
+  "about": "the Mnemonist naming Enthralling Filament as a restraint fiber supplied by Peacock Spiders, surface Hemojellies and Blood Drunk Puppeteers, woven into memory by the Somatic Loom, with the Spindle storing its tension for a Crossbar",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.enthralling_filament.line2": {
+  "about": "the Mnemonist telling the player to keep the filament, that at the second Degree they may study the fiber, and that a first true string waits until memory preparation is taught",
+  "tone": "measured, patient"
+ },
+ "hemomancy.mnemonist.item_inquiry.hematic_memory.line1": {
+  "about": "the Mnemonist identifying a blank Hematic Memory, nothing written in it, a cup waiting for a voice",
+  "tone": "quiet, wistful"
+ },
+ "hemomancy.mnemonist.item_inquiry.hematic_memory.line2": {
+  "about": "the Mnemonist explaining the Loom can weave a chosen lesson into it once the player's Degree and materials are ready",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.living_weapon_graft.line1": {
+  "about": "the Mnemonist explaining a limb-pattern graft gives the Living Staff a shape to grow, though the staff still answers only through known manipulations",
+  "tone": "formal, precise"
+ },
+ "hemomancy.mnemonist.item_inquiry.living_weapon_graft.line2": {
+  "about": "the Mnemonist telling the player to do the matching deed: craft the graft and burn it in the Brazier while the staff drinks the memory",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_axonal_transduction.line1": {
+  "about": "the Mnemonist explaining Axonal Transduction, carried by the Naeglerophaeon's ganglion: absorb it in the Iron Brazier at the sixth Degree, recall and enable it with usual controls, and it needs sixty-five Ductilis alignment",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_axonal_transduction.line2": {
+  "about": "the Mnemonist describing how it works: touching a Synaptic Node sends the body into the joined nerves, forward carries on, backward retraces, look to choose a branch, another node reforms the body, sneak passes or slows, each entry costs 150 mL and staying is free",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_black_veil_covenant.line1": {
+  "about": "the Mnemonist identifying Black Veil Covenant as Tenebris you can see, raising a chapel of dark blood and branching veins",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_black_veil_covenant.line2": {
+  "about": "the Mnemonist warning that inside its sphere the shadow is literal and the player should walk carefully",
+  "tone": "dry, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blackhearted.line1": {
+  "about": "the Mnemonist filing Blackhearted under Mortem, teaching the heart to feed on the death meant for it",
+  "tone": "somber, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blackhearted.line2": {
+  "about": "the Mnemonist warning of the limit: once the vessel saturates, the debt breaks inward and the lesson goes silent",
+  "tone": "grave, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_binding.line1": {
+  "about": "the Mnemonist calling Blood Binding simple restraint, if another body is only blood taught to stay",
+  "tone": "dry, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_binding.line2": {
+  "about": "the Mnemonist noting the tendrils start at the caster's feet, so the caster should keep footing, and they hold the target just as still",
+  "tone": "dry, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_rush.line1": {
+  "about": "the Mnemonist identifying a refined Blood Rush memory with fewer burrs than the crude shard that spends its lesson more cleanly",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_rush.line2": {
+  "about": "the Mnemonist advising the player to keep the crude version on file since it taught the body how to begin",
+  "tone": "warm, dry"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_shot.line1": {
+  "about": "the Mnemonist identifying a refined Blood Shot memory as the same first line of force as the scraped shard, only cleaner",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_blood_shot.line2": {
+  "about": "the Mnemonist noting full memories keep their rank gates, so the crystal can be ready before the player is",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_cauterizing_rebuke.line1": {
+  "about": "the Mnemonist identifying Cauterizing Rebuke as Flammeus used as medicine, if the player can stand the smell of burning",
+  "tone": "dry, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_cauterizing_rebuke.line2": {
+  "about": "the Mnemonist explaining it burns venom and rot out of the caster and then treats nearby enemies the same way",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_conductive_mark.line1": {
+  "about": "the Mnemonist identifying Conductive Mark as a patient sign, bright enough for allied blood-work to find",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_conductive_mark.line2": {
+  "about": "the Mnemonist explaining that Ductilis, Lux and Ferric blows can catch the mark and leap from it into nearby enemies",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_cruor_javelin.line1": {
+  "about": "the Mnemonist identifying Cruor Javelin as Congeatio that brings its own cold and throws it rather than waiting for the river",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_cruor_javelin.line2": {
+  "about": "the Mnemonist explaining that what it strikes stiffens and iron finishes what the frost started",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_deadly_gaze.line1": {
+  "about": "the Mnemonist identifying a refined Deadly Gaze as shaped on purpose, unlike the crude one scraped from old panic",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_deadly_gaze.line2": {
+  "about": "the Mnemonist saying refining steadies a memory but the lesson stays as ugly as it was",
+  "tone": "grave, dry"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_ferric_rampart.line1": {
+  "about": "the Mnemonist identifying Ferric Rampart as blood gathered into overlapping iron plates",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_ferric_rampart.line2": {
+  "about": "the Mnemonist advising the player to learn it after the first level of Sanguine Magnetism and noting the wall needs firm ground and room to stand",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_ferric_spikes.line1": {
+  "about": "the Mnemonist identifying Ferric Spikes as rusted blades rising from a line of blood",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_ferric_spikes.line2": {
+  "about": "the Mnemonist explaining the second level of Sanguine Magnetism steadies their shape and Ductilis can run a current through the summoned iron",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_fruiting_contagion.line1": {
+  "about": "the Mnemonist saying Mortem never stops at one wound and Fruiting Contagion makes rot that has taken hold bear fruit",
+  "tone": "somber, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_fruiting_contagion.line2": {
+  "about": "the Mnemonist clarifying it cannot start rot, only hurry it, so something must already be dying",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_general.line1": {
+  "about": "the Mnemonist identifying a full memory crystal as stable, made on purpose, and fit for proper loadout work",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_general.line2": {
+  "about": "the Mnemonist advising the player to carry one only if they mean to use it, since refined memories hold their shape longer than crude shards",
+  "tone": "dry, advising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_glacial_rampart.line1": {
+  "about": "the Mnemonist identifying Glacial Rampart as Congeatio cold stood upright on a spine of blood, frost settling",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_glacial_rampart.line2": {
+  "about": "the Mnemonist saying it is a short-lived wall between the caster and harm that buys time",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_gloam_laceration.line1": {
+  "about": "the Mnemonist identifying Gloam Laceration as a Tenebris knife kept where the light forgets to look",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_gloam_laceration.line2": {
+  "about": "the Mnemonist explaining it bites deepest from a shroud or true darkness and what it opens keeps bleeding",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_grave_debt.line1": {
+  "about": "the Mnemonist identifying Grave Debt as a Mortem ledger written against a living balance",
+  "tone": "somber, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_grave_debt.line2": {
+  "about": "the Mnemonist explaining that when the vessel falls low it bursts, and death may return a measure of blood to the creditor",
+  "tone": "grave, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_beacon.line1": {
+  "about": "the Mnemonist identifying Hematic Beacon as a signal fire carried under the skin",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_beacon.line2": {
+  "about": "the Mnemonist explaining allies inside it hold steadier while every enemy inside stands lit for the covenant to name",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_flare.line1": {
+  "about": "the Mnemonist identifying the full Hematic Flare as Lux that strikes without waiting for the dark to confess",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_flare.line2": {
+  "about": "the Mnemonist explaining it brands hidden things and burns what it catches, turning concealment into a wound",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_impressment.line1": {
+  "about": "the Mnemonist identifying Hematic Impressment as borrowed loyalty written directly into another pulse",
+  "tone": "somber, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_impressment.line2": {
+  "about": "the Mnemonist explaining only one vessel can bear the caster's command at a time and stronger blood sheds it sooner",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_rebuke.line1": {
+  "about": "the Mnemonist identifying Hematic Rebuke as a command sent down another body's nerves so it feels fear before any blade is drawn",
+  "tone": "somber, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_rebuke.line2": {
+  "about": "the Mnemonist stating it cannot command bloodless bodies or greater wills",
+  "tone": "spare, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_riposte.line1": {
+  "about": "the Mnemonist identifying Hematic Riposte as raising a limb the body never grew that answers faster than the caster's own hand",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_hematic_riposte.line2": {
+  "about": "the Mnemonist warning it guards only what the caster faces and only for a heartbeat, so a mistimed use spends blood on air",
+  "tone": "dry, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_insatiable_hunger.line1": {
+  "about": "the Mnemonist identifying Insatiable Hunger as Mortem work that turns appetite against its own remedy",
+  "tone": "somber, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_insatiable_hunger.line2": {
+  "about": "the Mnemonist explaining healing thins under it and food deepens the ache where it should comfort",
+  "tone": "grave, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_iron_retort.line1": {
+  "about": "the Mnemonist identifying Iron Retort as Ferric patience folded into a single answer",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_iron_retort.line2": {
+  "about": "the Mnemonist explaining the guard takes and dulls the first bite, then answers through the attacker's own opening",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_ironhearted.line1": {
+  "about": "the Mnemonist identifying Ironhearted as Ferric blood building a second pulse and shutting it in an iron cage",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_ironhearted.line2": {
+  "about": "the Mnemonist advising the player to hold the memory steady until the metal closes and noting the borrowed heart is spent before their own",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_lodestone_collapse.line1": {
+  "about": "the Mnemonist identifying Lodestone Collapse as a point ahead of the caster becoming a lodestone that calls every nearby enemy home",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_lodestone_collapse.line2": {
+  "about": "the Mnemonist explaining enemies come in together and are crushed together, a wall shields them, and iron already in them is spent on the blow",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_lumen_suture.line1": {
+  "about": "the Mnemonist identifying Lumen Suture as Lux that can set a needle of light exactly where needed instead of lighting a room",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_lumen_suture.line2": {
+  "about": "the Mnemonist explaining a pale thread closes the pain and cuts blindness from the wound",
+  "tone": "gentle, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_prismatic_reproof.line1": {
+  "about": "the Mnemonist identifying Prismatic Reproof as judging a threat by splitting it into every color it tried to hide",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_prismatic_reproof.line2": {
+  "about": "the Mnemonist explaining it hits harder on prey already exposed by Illumination and the judgment uses up that light",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_radiant_wake.line1": {
+  "about": "the Mnemonist identifying Radiant Wake as Lux thin enough to bear the caster's weight, which will not lift them but will not let them fall",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_radiant_wake.line2": {
+  "about": "the Mnemonist explaining people near the caster stay mended, hostile things stay exposed, and the sky is paid for by being seen",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_magnetism.line1": {
+  "about": "the Mnemonist identifying Sanguine Magnetism as Ferric blood knowing where iron wants to gather",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_sanguine_magnetism.line2": {
+  "about": "the Mnemonist explaining a pillar rises and hostile bodies are dragged close enough to hold still",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_scalding_updraft.line1": {
+  "about": "the Mnemonist identifying Scalding Updraft as hot air rising from under the caster's own feet, kept in the blood",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_scalding_updraft.line2": {
+  "about": "the Mnemonist explaining the player stands on the fire's breath and is thrown where their legs cannot, though it needs footing to push from",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_searing_lash.line1": {
+  "about": "the Mnemonist identifying Searing Lash as Flammeus heat run along something swingable, since heat travels best that way",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_searing_lash.line2": {
+  "about": "the Mnemonist explaining what it strikes is marked for greater burning and warning not to lash anything the player is unwilling to finish",
+  "tone": "grave, cautionary"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_synaptic_jolt.line1": {
+  "about": "the Mnemonist identifying Synaptic Jolt as the stopping side of Ductilis, which moves the body and can halt a nerve as readily",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_synaptic_jolt.line2": {
+  "about": "the Mnemonist explaining it is a short bolt that interrupts and staggers the struck vessel so it cannot answer cleanly for a moment",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_umbral_rend.line1": {
+  "about": "the Mnemonist identifying Umbral Rend as a hand closing on what is already held, with Tenebris needing to lay the dark on first",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_umbral_rend.line2": {
+  "about": "the Mnemonist saying a target with no shadow on it gives nothing to tear, so the player must wait",
+  "tone": "dry, spare"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_umbral_reversal.line1": {
+  "about": "the Mnemonist identifying Umbral Reversal as stepping back out of a too-certain chase into the dark",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.memory_umbral_reversal.line2": {
+  "about": "the Mnemonist explaining it needs darkness to land the caster, or a Veil pretending the world has none, and leaves anyone close obscured",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.minecraft_archive.line1": {
+  "about": "the Mnemonist identifying ordinary book pages as the start of every archive, a mundane store of knowledge that is still useful",
+  "tone": "dry, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.minecraft_archive.line2": {
+  "about": "the Mnemonist saying enough of these let them index blood-memory instead of guessing at it",
+  "tone": "practical, dry"
+ },
+ "hemomancy.mnemonist.item_inquiry.mnemonic_blueprint.blank": {
+  "about": "the Mnemonist identifying a blank mnemonic blueprint that waits for spatial memory and cannot hold manipulation lessons",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.mnemonic_blueprint.rite": {
+  "about": "the Mnemonist explaining a blueprint holds a rite's distances, order and relations, mapping the rite without carrying any of its authority",
+  "tone": "formal, precise"
+ },
+ "hemomancy.mnemonist.item_inquiry.mnemonic_blueprint.structure": {
+  "about": "the Mnemonist explaining a blueprint fixes a blood structure into something portable that guides the hand, though understanding must be the player's own",
+  "tone": "formal, measured"
+ },
+ "hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.line1": {
+  "about": "the Mnemonist explaining the Mnemonic Reliquary arranges Thelemic and Noetic Memories within one active loadout",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.line2": {
+  "about": "the Mnemonist explaining the Reliquary chooses which known lessons sit nearest the pulse while new ones come from the memory item",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.mnemonic_reliquary.locked": {
+  "about": "the Mnemonist saying the Reliquary is a third-Degree weave and, until then, the player should let first bodily lessons settle into the open slots nearest the pulse",
+  "tone": "patient, firm"
+ },
+ "hemomancy.mnemonist.item_inquiry.naeglerophaeon_ganglion.line1": {
+  "about": "the Mnemonist hearing the ganglion still conduct and explaining the Loom recipe: beside a blank Hematic Memory in a Cortical-crowned Somatic Loom, four Neurotic enzymes, 600 mL of blood, yielding the sixth-Degree memory Axonal Transduction",
+  "tone": "intent, instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.naeglerophaeon_ganglion.line2": {
+  "about": "the Mnemonist explaining how to lay Nerve Fibers or Bundles in one unbroken run with Synaptic Nodes at entrances and exits, leaving room for the body to reform, and noting a dormant Synaptic Step can be dismantled to return this organ",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.orb_of_perspective.line1": {
+  "about": "the Mnemonist explaining the Orb of Perspective is a fixed eye for a room built from memory, with skies drawn only from places its owner reached and nothing invented",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.orb_of_perspective.line2": {
+  "about": "the Mnemonist explaining that throwing it off the Chamber floor changes the remembered perspective and the Orb returns to whoever owns the cell",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.salt_stained_voyager_log.line1": {
+  "about": "the Mnemonist asking the player to hold a salt-ruined log still while it is read, and summarizing current marks, specimen counts and a prayer before the descent",
+  "tone": "dry, absorbed"
+ },
+ "hemomancy.mnemonist.item_inquiry.salt_stained_voyager_log.line2": {
+  "about": "the Mnemonist reading the log's last line, which asks the reader to use what they learned if they fail to surface, and quoting that this is what remains of them",
+  "tone": "somber, quiet"
+ },
+ "hemomancy.mnemonist.item_inquiry.scar_pattern.blank": {
+  "about": "the Mnemonist identifying an unwritten scar motif that the Effigy has not yet persuaded blood to leave a route on",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.scar_pattern.loadout": {
+  "about": "the Mnemonist explaining a multi-route motif: put it in an empty Iron Brazier, light it with Blood Projection, hold Blood Absorption on the offering, costing 50 mL and replacing the active cerebral loadout",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.item_inquiry.scar_pattern.template": {
+  "about": "the Mnemonist identifying a single scar route written out as a carving lesson for the Cerebral Scarring Station",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.scar_pattern_general.line1": {
+  "about": "the Mnemonist identifying a scar pattern schema as instruction for flesh, tendency and threshold",
+  "tone": "quiet, appraising"
+ },
+ "hemomancy.mnemonist.item_inquiry.scar_pattern_general.line2": {
+  "about": "the Mnemonist saying a pattern has no power of its own and only hands the blood a grammar, which the blood must be able to speak",
+  "tone": "reflective, dry"
+ },
+ "hemomancy.mnemonist.item_inquiry.somatic_loom.line1": {
+  "about": "the Mnemonist explaining the Somatic Loom takes tendency inputs, blood and a pattern and returns a blood memory woven on purpose",
+  "tone": "clear, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.somatic_loom.line2": {
+  "about": "the Mnemonist contrasting a crude shard as an echo found by chance with a Loom crystal made to order",
+  "tone": "dry, factual"
+ },
+ "hemomancy.mnemonist.item_inquiry.somatic_loom.locked": {
+  "about": "the Mnemonist saying the Somatic Loom stays closed before the third Degree and scraped echoes must carry the player a little longer",
+  "tone": "patient, firm"
+ },
+ "hemomancy.mnemonist.item_inquiry.unknown": {
+  "about": "the Mnemonist saying they hear no lesson in the held item, unless it is clever enough to keep quiet",
+  "tone": "dry, wry"
+ },
+ "hemomancy.mnemonist.loom.cortical.claimed": {
+  "about": "the Mnemonist telling the player the Cortical Crown is already theirs, since a loom wears only so much mind, and they now know how another is folded",
+  "tone": "calm, final"
+ },
+ "hemomancy.mnemonist.loom.cortical.prompt": {
+  "about": "a prompt option for asking the Mnemonist for the crown that lets the loom think the whole memory",
+  "tone": "plain request"
+ },
+ "hemomancy.mnemonist.loom.cortical.ready": {
+  "about": "the Mnemonist praising a memory that stood taller for the player than most and telling them to take the crown plus five offerings to the Rite of the Cortical Weave",
+  "tone": "warm, formal"
+ },
+ "hemomancy.mnemonist.loom.cortical.requirements": {
+  "about": "the Mnemonist stating the Cortical Crown's requirements: first weave a Magister's memory on a Ganglionic Loom, then at the sixth Degree with blood awake the crown carries a Perfectus memory at full stature, no earlier harness needed",
+  "tone": "formal, precise"
+ },
+ "hemomancy.mnemonist.loom.cortical.title": {
+  "about": "a short title for the Cortical Crown loom upgrade card",
+  "tone": "plain label"
+ },
+ "hemomancy.mnemonist.loom.ganglionic.claimed": {
+  "about": "the Mnemonist telling the player the Ganglionic Harness is already theirs, since a loom that has learned to feel does not forget, and they know how the nerve is bound",
+  "tone": "calm, final"
+ },
+ "hemomancy.mnemonist.loom.ganglionic.prompt": {
+  "about": "a prompt option for asking the Mnemonist for the harness that lets the loom hear its own engram",
+  "tone": "plain request"
+ },
+ "hemomancy.mnemonist.loom.ganglionic.ready": {
+  "about": "the Mnemonist praising the player for threading a memory home and keeping it, handing over the harness, and telling them to set it with five more offerings at the Rite of the Ganglionic Weave",
+  "tone": "warm, formal"
+ },
+ "hemomancy.mnemonist.loom.ganglionic.requirements": {
+  "about": "the Mnemonist stating the Ganglionic Harness requirements: first weave one memory home at a Somatic Loom with every fragment threaded, keep blood awake, and at the fifth Degree receive a nerve harness letting the loom hold Magister memories",
+  "tone": "formal, precise"
+ },
+ "hemomancy.mnemonist.loom.ganglionic.title": {
+  "about": "a short title for the Ganglionic Harness loom upgrade card",
+  "tone": "plain label"
+ },
+ "hemomancy.mnemonist.loom.line1": {
+  "about": "the Mnemonist introducing the Somatic Loom as where scraped shards give way to memories woven on purpose",
+  "tone": "calm, explanatory"
+ },
+ "hemomancy.mnemonist.loom.line2": {
+  "about": "the Mnemonist explaining the Loom ritual: pay blood, an eight-pointed star engram opens with fragments at its points, and the player threads every fragment home along the star's lines with the staff without crossing two colors",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.loom.line3": {
+  "about": "the Mnemonist warning some fragments are false, that the blood files failures as carefully as lessons, and that resting the eyes on a fragment shows its memory while a false one shows someone else's and beats against the loom",
+  "tone": "quiet, warning"
+ },
+ "hemomancy.mnemonist.memory_lore.line1": {
+  "about": "the Mnemonist explaining Hematic Memory is repeatable instruction preserved in blood, with no whole life on their shelves, only what someone could do again",
+  "tone": "reflective, formal"
+ },
+ "hemomancy.mnemonist.memory_lore.line2": {
+  "about": "the Mnemonist explaining some lessons are patterns projected through manipulation while others are prepared in the body and enacted when its vessels answer",
+  "tone": "reflective, formal"
+ },
+ "hemomancy.mnemonist.memory_practice.line1": {
+  "about": "the Mnemonist telling the player to choose the exact Loom recipe before paying blood, since the blank vessel and catalyst shape the weave and stored enzymes alone do not choose the result",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.memory_practice.line2": {
+  "about": "the Mnemonist explaining the Reliquary arranges known Noetic and Thelemic memories within one active capacity and swapping the active set erases nothing learned",
+  "tone": "clear, reassuring"
+ },
+ "hemomancy.mnemonist.mnemonic_doctrine.line1": {
+  "about": "the Mnemonist reciting a three-part saying that Mneme keeps, Nous knows and Thelema acts",
+  "tone": "solemn, aphoristic"
+ },
+ "hemomancy.mnemonist.mnemonic_doctrine.line2": {
+  "about": "the Mnemonist unpacking the saying: memory keeps the trace, intellect sees its pattern, will enacts it, with Noetic and Thelemic practice being two methods on one substrate",
+  "tone": "reflective, formal"
+ },
+ "hemomancy.mnemonist.mnemonic_doctrine.line3": {
+  "about": "the Mnemonist admitting these are working labels kept because their predictions earn their keep",
+  "tone": "dry, candid"
+ },
+ "hemomancy.mnemonist.morphling_puppet_interference.line1": {
+  "about": "the Mnemonist explaining the incorporated organism feels projected will as foreign tension and worries at it like edible tissue",
+  "tone": "clinical, measured"
+ },
+ "hemomancy.mnemonist.morphling_puppet_interference.line2": {
+  "about": "the Mnemonist explaining the puppet's imposed will pushes back, its repeated intent scatters the organism's attention and its feeding rhythm falters",
+  "tone": "clinical, measured"
+ },
+ "hemomancy.mnemonist.morphling_puppet_interference.line3": {
+  "about": "the Mnemonist saying neither practice rules out the other and the player may keep both, though the divided strain makes each less efficient",
+  "tone": "even, practical"
+ },
+ "hemomancy.mnemonist.neophyte.line1": {
+  "about": "the Mnemonist greeting a Neophyte and saying they can hear the first crude echoes gathering around them",
+  "tone": "warm, quiet"
+ },
+ "hemomancy.mnemonist.neophyte.line2": {
+  "about": "the Mnemonist telling the player that crude memories in old places still work, to use one and learn it, and at the second Degree bring that experience and choose one on purpose",
+  "tone": "instructive, patient"
+ },
+ "hemomancy.mnemonist.purifying.line1": {
+  "about": "narration of the Mnemonist's eyes softening while their hands fold closed",
+  "tone": "quiet, atmospheric"
+ },
+ "hemomancy.mnemonist.purifying.line2": {
+  "about": "the Mnemonist telling a player purging lessons from their blood that questions will be answered but no new memory will be pressed into a wound they are cleaning",
+  "tone": "gentle, firm"
+ },
+ "hemomancy.mnemonist.reliquary.line1": {
+  "about": "the Mnemonist explaining the Reliquary keeps lessons already survived as an orderly shelf, with the learning still coming from the memories themselves",
+  "tone": "calm, explanatory"
+ },
+ "hemomancy.mnemonist.reliquary.line2": {
+  "about": "the Mnemonist explaining the Reliquary arranges Noetic and Thelemic Memories into one active loadout, changing what sits near the surface while the deeper library stays in the player",
+  "tone": "calm, explanatory"
+ },
+ "hemomancy.mnemonist.scriptorium.eightfold": {
+  "about": "the Mnemonist explaining that at the fifth Degree the Rite of the Eightfold Script rules the lines in red so one inscription can be singled out above the rest",
+  "tone": "formal, precise"
+ },
+ "hemomancy.mnemonist.scriptorium.materials": {
+  "about": "the Mnemonist giving the Scriptorium build recipe as a Working on a greater Working floor: an Enchanting Table with Sanguine Glass and Hematic Iron Blocks, hold a Ferric Binder, offer an Enzyme Primer, a Blood Crystal Shard and a Lapis Block, and feed 500 mL of blood",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.scriptorium.palimpsest.claimed": {
+  "about": "the Mnemonist refusing to issue the Palimpsest burin twice because it is already the player's, who now knows how to shape another",
+  "tone": "firm, dry"
+ },
+ "hemomancy.mnemonist.scriptorium.palimpsest.prompt": {
+  "about": "a prompt option for asking the Mnemonist for the burin that writes over what was written",
+  "tone": "plain request"
+ },
+ "hemomancy.mnemonist.scriptorium.palimpsest.ready": {
+  "about": "the Mnemonist praising the player for choosing a line and making it stay, handing over the burin, and telling them to take it with five more offerings to the Rite of the Palimpsest",
+  "tone": "warm, formal"
+ },
+ "hemomancy.mnemonist.scriptorium.palimpsest.requirements": {
+  "about": "the Mnemonist stating the Palimpsest burin requirements: first learn ordinary inscription, then single out an inscription at an Eightfold Scriptorium, and at the seventh Degree with blood awake the burin cuts where the quill only marked",
+  "tone": "formal, precise"
+ },
+ "hemomancy.mnemonist.scriptorium.palimpsest.title": {
+  "about": "a short title for the Palimpsest Burin Scriptorium upgrade card",
+  "tone": "plain label"
+ },
+ "hemomancy.mnemonist.scriptorium.palimpsest_lesson": {
+  "about": "the Mnemonist explaining that at the seventh Degree the Rite of the Palimpsest scrapes the page back to what the blood remembers so the chosen inscription can be cut deeper than ink allows",
+  "tone": "formal, reflective"
+ },
+ "hemomancy.mnemonist.scriptorium.role": {
+  "about": "the Mnemonist explaining the Loom weaves memories to learn while the Scriptorium inscribes equipment, an optional workshop the Woven Vessel does not need",
+  "tone": "clear, concise"
+ },
+ "hemomancy.mnemonist.scriptorium.rubricator.claimed": {
+  "about": "the Mnemonist saying the quill is already the player's and, if another is needed, they know how it is cut",
+  "tone": "calm, final"
+ },
+ "hemomancy.mnemonist.scriptorium.rubricator.prompt": {
+  "about": "a prompt option for asking the Mnemonist for the quill that marks one line in red",
+  "tone": "plain request"
+ },
+ "hemomancy.mnemonist.scriptorium.rubricator.ready": {
+  "about": "the Mnemonist confirming the player has written at a Scriptorium, handing over the quill, and telling them to set it with five more offerings at the Rite of the Eightfold Script",
+  "tone": "warm, formal"
+ },
+ "hemomancy.mnemonist.scriptorium.rubricator.requirements": {
+  "about": "the Mnemonist stating the Rubricator's Quill requirements: first write something at a Scriptorium, keep blood awake, and at the fifth Degree the Mnemonist will lend the quill the old rubricators used",
+  "tone": "formal, precise"
+ },
+ "hemomancy.mnemonist.scriptorium.rubricator.title": {
+  "about": "a short title for the Rubricator's Quill Scriptorium upgrade card",
+  "tone": "plain label"
+ },
+ "hemomancy.mnemonist.slots.line1": {
+  "about": "the Mnemonist explaining active mnemonic slots hold the Noetic and Thelemic lessons the blood keeps near the surface while the whole memory reaches past them",
+  "tone": "calm, explanatory"
+ },
+ "hemomancy.mnemonist.slots.line2": {
+  "about": "the Mnemonist explaining crude lessons may fill empty slots on their own early on and later the Reliquary lets the player choose which lessons sleep close to the pulse",
+  "tone": "calm, explanatory"
+ },
+ "hemomancy.mnemonist.starter_choice.line1": {
+  "about": "the Mnemonist telling the player to choose one crude memory for the field, noting one already learned stays with them, choosing erases nothing, and only one shard can be given",
+  "tone": "measured, clear"
+ },
+ "hemomancy.mnemonist.starter_choice.line2": {
+  "about": "the Mnemonist advising the player to choose by instinct among reach, motion or gaze",
+  "tone": "quiet, brief"
+ },
+ "hemomancy.mnemonist.uninitiated.line1": {
+  "about": "narration of a robed Harbinger pressing two fingers to their own wrist, listening to a pulse the player cannot hear",
+  "tone": "quiet, atmospheric"
+ },
+ "hemomancy.mnemonist.uninitiated.line2": {
+  "about": "the Mnemonist turning away an uninitiated player, saying blood keeps its mouth closed for an uncut heir, and promising to teach them to listen without drowning after initiation",
+  "tone": "gentle, firm"
+ },
+ "hemomancy.mnemonist.votary.line1": {
+  "about": "the Mnemonist telling a Votary to choose a crude memory for reach, motion or gaze and use it in the field, with the Reliquary coming later to arrange known lessons",
+  "tone": "instructive, measured"
+ },
+ "hemomancy.mnemonist.woven.line1": {
+  "about": "the Mnemonist telling the player their blood knows enough words now that crude shards will no longer do",
+  "tone": "quiet, approving"
+ },
+ "hemomancy.mnemonist.woven.line2": {
+  "about": "the Mnemonist explaining the Loom weaves a chosen lesson thread by thread and the finished crystal teaches it without a word",
+  "tone": "calm, explanatory"
+ },
+ "hemomancy.mnemonist.woven_vessel.archive.line1": {
+  "about": "the Mnemonist telling the player to bring the blank vessel with a book, ink and paper so they can index the first lesson, with the weaving still happening at the Loom",
+  "tone": "clear, instructive"
+ },
+ "hemomancy.mnemonist.woven_vessel.recipe.line1": {
+  "about": "the Mnemonist giving the recipe for one blank Hematic Memory from four Sanguine Formations, four Blood Stained Stones and one Neurotic Enzyme",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.mnemonist.woven_vessel.recipe.line2": {
+  "about": "the Mnemonist explaining where to get Blood Stained Stone, in a Hermitage Remnant or crafted from Venous Stone, a Sanguine Formation and redstone, bringing the blank to eight formations, and that Chicken blood can yield Neurotic Enzyme though some spins yield Vivacious",
+  "tone": "clipped instructional"
+ },
+ "hemomancy.succession.fracture.mnemonist": {
+  "about": "a fractured, echoing voice of the Mnemonist saying they remember the player remembering them",
+  "tone": "eerie, fragmented"
+ },
+ "hemomancy.succession.profession.mnemonist": {
+  "about": "a short profession label naming the Mnemonist",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.teaching.mnemonist": {
+  "about": "the Mnemonist teaching that a Bequest is permission not possession, that a dead successor leaves a Bound Mnemonic Remnant restored with an Effigy, Quintessence, the player's blood and a free workplace without new Ambergris, recovered at the fane bloodwell if lost, and old copies go inert",
+  "tone": "formal, precise"
+ },
+ "hemomancy.trade.mnemonist.appraise.poor": {
+  "about": "the Mnemonist rejecting an offered empty jar because there is nothing in it to hear",
+  "tone": "dry, dismissive"
+ },
+ "hemomancy.trade.mnemonist.books.line": {
+  "about": "the Mnemonist offering a trade of two books for the index in exchange for three glow ink sacs, calling it a fair exchange for once",
+  "tone": "dry, wry"
+ },
+ "hemomancy.trade.mnemonist.books.title": {
+  "about": "a short title for the books-for-glow-ink trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.mnemonist.faded_memories.line": {
+  "about": "the Mnemonist describing a trade for two faded memories whose lesson has gone but whose thread remains",
+  "tone": "quiet, wistful"
+ },
+ "hemomancy.trade.mnemonist.faded_memories.title": {
+  "about": "a short title for the faded memories trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.mnemonist.living_specimen.line": {
+  "about": "the Mnemonist describing a trade for one jar holding a living specimen, listening to what it carries, with the infection's own creatures carrying more",
+  "tone": "quiet, curious"
+ },
+ "hemomancy.trade.mnemonist.living_specimen.title": {
+  "about": "a short title for the living specimen trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.mnemonist.thanks": {
+  "about": "the Mnemonist briefly acknowledging a completed trade by saying it is filed",
+  "tone": "brief, dry"
+ },
+ "hemomancy.trade.mnemonist.thanks_fine": {
+  "about": "the Mnemonist acknowledging a fine trade item still humming and filing it with thanks",
+  "tone": "warm, quiet"
+ },
+ "hemomancy.vagrant_mind_inquiry.bearing": {
+  "about": "the Mnemonist saying they have placed a likely Vagrant Mind in the outer End near given X and Z coordinates, and telling the player to find the Cortical Drift around it and follow its nerve bridges",
+  "tone": "measured, directing"
+ },
+ "hemomancy.vagrant_mind_inquiry.bearing_missing": {
+  "about": "the Mnemonist reporting no Vagrant Mind was found in the searched part of the outer End and telling the player to travel farther among the outer islands and ask again",
+  "tone": "plain, apologetic"
+ },
+ "hemomancy.vagrant_mind_inquiry.biology.prompt": {
+  "about": "a prompt option for reporting the Mind visit and nearby biology, noting no specimen is handed over",
+  "tone": "plain label"
+ },
+ "hemomancy.vagrant_mind_inquiry.biology_lead": {
+  "about": "the Alchemist telling the player to visit the Vagrant Mind and then watch a Choir Keeper, Myelin Borer or living chorus growth, wanting the living system around the Mind rather than a list of kills",
+  "tone": "brisk, focused"
+ },
+ "hemomancy.vagrant_mind_inquiry.biology_ready": {
+  "about": "the Alchemist noting the player has seen the Mind and something alive around its network, asking for their findings, and mentioning the Mnemonist can take a separate report on the same visit",
+  "tone": "brisk, curious"
+ },
+ "hemomancy.vagrant_mind_inquiry.biology_recorded": {
+  "about": "a system note that the Alchemist recorded the field observation and the Mnemonist's inquiry stays open if not yet reported",
+  "tone": "plain, neutral"
+ },
+ "hemomancy.vagrant_mind_inquiry.memory.prompt": {
+  "about": "a prompt option for giving the Mnemonist an account of the Vagrant Mind, noting it costs and earns no memory slot",
+  "tone": "plain label"
+ },
+ "hemomancy.vagrant_mind_inquiry.memory_found": {
+  "about": "the Mnemonist asking the player, who has stood inside the Mind, to describe what held its nerve web together, with no piece of it needed",
+  "tone": "quiet, intent"
+ },
+ "hemomancy.vagrant_mind_inquiry.memory_lead": {
+  "about": "the Mnemonist telling the player a Cortical Drift in the outer End holds a hollow Vagrant Mind, asking them to study its nerve web and report on memory organized outside a familiar body, with no trophy wanted",
+  "tone": "measured, intrigued"
+ },
+ "hemomancy.vagrant_mind_inquiry.memory_recorded": {
+  "about": "a system note that the Mnemonist recorded the player's account and that their memory loadout and costs are unchanged",
+  "tone": "plain, neutral"
+ },
+ "hemomancy.vicar.circus_referral.mnemonist": {
+  "about": "the Vicar sending the player to the Mnemonist about their practice, to ask for a Scarlet Waybill as a route back, and assuring them the next Degree does not depend on anything done at the pavilion",
+  "tone": "measured, reassuring"
+ }
+}

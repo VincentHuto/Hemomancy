@@ -5,7 +5,7 @@ alloys are antiseptic Unstained metals (and silver is consecrated copper), so no
 copper or silver tones belong on this machine.
 
 Emits the block, carver-stylus, feed and inventory models, a painted one-texel-per-unit atlas,
-the mounted wax-cylinder textures and an editable Blockbench project. Python 3 + Pillow + NumPy.
+and an editable Blockbench project. Python 3 + Pillow + NumPy.
 `--preview` also writes a textured turnaround to build/model-previews/clairaudiograph.png.
 
 Coordinates are block pixels for the north-facing state; the front (player side) is z = 0.
@@ -305,24 +305,6 @@ def model_json(elements, height, particle=True):
             'texture_size': [ATLAS_W, height], 'textures': textures, 'elements': elements}
 
 
-def mounted_wax_textures():
-    """Recolour the ambergris cylinder mesh texture into the pale wax the machine mounts."""
-    for suffix in ('', '_recorded'):
-        src = Image.open(ASSETS / f'textures/item/ambergris_cylinder{suffix}.png').convert('RGBA')
-        out = src.copy()
-        px = out.load()
-        for y in range(src.height):
-            for x in range(src.width):
-                r, g, b, a = px[x, y]
-                if y < 16 and not (r > 110 and g < 60):      # wax body, leaving carved grooves crimson
-                    shade = (r + g + b) / 3 - 150
-                    px[x, y] = clamp((214, 196, 150), shade * .6 + (noise('wax', x, y) * 8 - 4)) + (a,)
-                elif y >= 16:                               # mandrel end caps: blackened iron
-                    shade = (r + g + b) / 3 - 70
-                    px[x, y] = clamp((58, 50, 52), shade * .5) + (a,)
-        out.save(ASSETS / f'textures/item/wax_cylinder_mounted{suffix}.png')
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--preview', action='store_true')
@@ -345,7 +327,6 @@ def main():
         (ASSETS / 'models' / (name + '.json')).write_text(json.dumps(model, indent=2) + '\n')
     project = blockbench('clairaudiograph', dict(item, ambientocclusion=False))
     (SOURCE / 'clairaudiograph.bbmodel').write_text(json.dumps(project, indent=2) + '\n')
-    mounted_wax_textures()
     print(f'Exported Clairaudiograph: {len(models["block"])} block cubes, {len(models["stylus"])} stylus cubes, '
           f'{ATLAS_W}x{atlas.height} atlas')
     if args.preview:
@@ -355,19 +336,17 @@ def main():
 # --- preview ------------------------------------------------------------------------------
 
 def preview_extras():
-    """Stand-ins for what ClairaudiographRenderer draws: the mounted cylinder and a sample vial."""
-    cx, cy, cz = CYLINDER
-    wax = {f: {'uv': [0, 0, 8, 2], 'texture': '#cyl'} for f in SIZES}
-    caps = {f: {'uv': [0, 9, 2, 11], 'texture': '#cyl'} for f in SIZES}
+    """Place the actual cylinder mesh and a sample vial stand-in."""
+    from cylinders import geometry
+
+    cylinder = geometry('wax_cylinder')
+    for element in cylinder:
+        for corner in ('from', 'to'):
+            element[corner] = [p + center - 8 for p, center in zip(element[corner], CYLINDER)]
     vial = {f: {'uv': [0, 0, 16, 16], 'texture': '#vial'} for f in SIZES}
     x0, y0, z0, x1, y1, z1 = CHAMBER
     mx, mz = (x0 + x1) / 2, (z0 + z1) / 2
-    return [
-        {'from': [cx - 5, cy - 2, cz - 2], 'to': [cx + 5, cy + 2, cz + 2], 'faces': wax},
-        {'from': [cx - 4, cy - 2.7, cz - 1.4], 'to': [cx + 4, cy + 2.7, cz + 1.4], 'faces': wax},
-        {'from': [cx - 4, cy - 1.4, cz - 2.7], 'to': [cx + 4, cy + 1.4, cz + 2.7], 'faces': wax},
-        {'from': [cx - 5.5, cy - 2.5, cz - 2.5], 'to': [cx - 4.5, cy + 2.5, cz + 2.5], 'faces': caps},
-        {'from': [cx + 4.5, cy - 2.5, cz - 2.5], 'to': [cx + 5.5, cy + 2.5, cz + 2.5], 'faces': caps},
+    return cylinder + [
         {'from': [mx - .75, y0 + .25, mz - .75], 'to': [mx + .75, y0 + 3.25, mz + .75], 'faces': vial},
     ]
 
@@ -433,7 +412,7 @@ def preview(outputs):
     def load(resource, crop=True):
         im = Image.open(ASSETS / 'textures' / (resource + '.png')).convert('RGBA')
         return np.array(im.crop((0, 0, im.width, im.width)) if crop else im)
-    textures = {'atlas': load(f'block/{ATLAS}', False), 'cyl': load('item/wax_cylinder_mounted_recorded'),
+    textures = {'atlas': load(f'block/{ATLAS}', False), 'skin': load('item/wax_cylinder_recorded'),
                 'vial': load('block/blood_still')}
     model = outputs['item/clairaudiograph']['elements'] + preview_extras()
     views = [(0, 25), (35, 30), (-40, 30), (90, 15), (180, 30), (140, 35), (-120, 30), (20, 70)]
@@ -441,7 +420,7 @@ def preview(outputs):
     sheet = Image.new('RGBA', (360 * 4, 360 * 2 + 30), (30, 24, 28, 255))
     for i, t in enumerate(tiles):
         sheet.paste(t, (360 * (i % 4), 30 + 360 * (i // 4)))
-    ImageDraw.Draw(sheet).text((10, 8), 'Clairaudiograph - actual atlas; mounted cylinder and vial are renderer stand-ins',
+    ImageDraw.Draw(sheet).text((10, 8), 'Clairaudiograph - actual atlas and mounted cylinder; vial is a stand-in',
                                fill=(220, 200, 200))
     out = ROOT / 'build/model-previews/clairaudiograph.png'
     out.parent.mkdir(parents=True, exist_ok=True)

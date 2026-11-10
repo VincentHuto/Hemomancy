@@ -6,12 +6,14 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.*;
+import com.vincenthuto.hemomancy.common.item.itemhandler.LivingSyringeItemHandler;
 import com.vincenthuto.hemomancy.common.network.DatapackSyncPacket;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.*;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -27,6 +29,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.*;
 import org.apache.logging.log4j.Level;
@@ -224,6 +227,64 @@ public final class BloodProfileGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void syringeModelTracksRackFillingAndEjection(GameTestHelper h) {
+        var player = player(h);
+        var syringe = syringe(h, player);
+        var registries = h.getLevel().registryAccess();
+        var target = EntityType.COW.create(h.getLevel());
+        for (int filled = 0; filled < 8; filled++) {
+            h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 3 + filled,
+                    "Wrong syringe model for a rack with " + filled + " filled vials");
+            syringe.getItem().interactLivingEntity(syringe, player, target, InteractionHand.MAIN_HAND);
+        }
+        h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 0,
+                "The syringe still showed a rack after the last draw ejected it");
+        var fullRack = player.getInventory().items.stream()
+                .filter(stack -> stack.is(ItemInit.vial_rack.get())).findFirst().orElseThrow();
+        var tag = new CompoundTag();
+        tag.put(LivingSyringeItem.TAG_LOADED_RACK, fullRack.save(registries));
+        syringe.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 11, "A mounted full rack lost its model");
+
+        var vials = VialRackItem.getVials(fullRack);
+        vials.set(0, ItemStack.EMPTY);
+        vials.set(7, com.vincenthuto.hemomancy.common.item.component.AhaematicSample.create("entity", "minecraft:warden"));
+        VialRackItem.setVials(fullRack, vials);
+        tag.put(LivingSyringeItem.TAG_LOADED_RACK, fullRack.save(registries));
+        syringe.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 10,
+                "An absent vial counted as a sample or a colloid was omitted");
+        target.discard();
+        player.discard();
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void syringeModelReadsLegacyVialWithoutMutatingContents(GameTestHelper h) {
+        var registries = h.getLevel().registryAccess();
+        var syringe = new ItemStack(ItemInit.living_syringe.get());
+        var legacy = new LivingSyringeItemHandler(syringe, 1);
+        var vial = new ItemStack(ItemInit.bloody_vial.get());
+        legacy.setStackInSlot(0, vial);
+        legacy.save();
+        h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 1, "Empty legacy vial was invisible");
+
+        var tag = new CompoundTag();
+        tag.putString(BloodVialItem.TAG_ENTITY_TYPE, "absent_mod:missing_creature");
+        vial.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        legacy.setDirty();
+        legacy.save();
+        var before = syringe.copy();
+        h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 2, "A saved sample lost its fill appearance");
+        h.assertTrue(ItemStack.matches(before, syringe), "Reading the model rewrote the syringe contents");
+
+        legacy.setStackInSlot(0, ItemStack.EMPTY);
+        legacy.save();
+        h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 0, "Removed vial remained visible");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void looseVialRejectsRestrictedTargetsWithoutChangingAnything(GameTestHelper h) {
         var player = player(h);
         player.getInventory().add(new ItemStack(ItemInit.living_syringe.get()));
@@ -267,6 +328,52 @@ public final class BloodProfileGameTests {
         before = syringe.copy();
         syringe.getItem().interactLivingEntity(syringe, player, target, InteractionHand.MAIN_HAND);
         h.assertTrue(ItemStack.matches(before, syringe), "Dead target changed rack");
+        target.discard();
+        player.discard();
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void syringeLoadsALooseVialOnlyWithoutARackAndReturnsItFilled(GameTestHelper h) {
+        var player = player(h);
+        HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
+        var registries = h.getLevel().registryAccess();
+        var syringe = new ItemStack(ItemInit.living_syringe.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, syringe);
+        player.getInventory().add(new ItemStack(ItemInit.bloody_vial.get(), 2));
+        syringe.getItem().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 1, "Syringe did not load the loose vial");
+        h.assertTrue(player.getInventory().countItem(ItemInit.bloody_vial.get()) == 1, "Loading took the wrong vial count");
+        var target = EntityType.IRON_GOLEM.create(h.getLevel());
+        target.setInvulnerable(false);
+        target.setHealth(1);
+        syringe.getItem().interactLivingEntity(syringe, player, target, InteractionHand.MAIN_HAND);
+        h.assertTrue(LivingSyringeItem.modelLoad(syringe, registries) == 0, "The filled vial stayed in the syringe");
+        boolean returned = false;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            returned |= BloodSampleData.entityType(player.getInventory().getItem(i)) == EntityType.IRON_GOLEM;
+        }
+        h.assertTrue(returned, "The filled vial never reached the inventory");
+        h.assertTrue(HemoCapabilityAccess.clinicalBlood(player).collected, "A single-vial sample lost its evidence");
+
+        var withRack = syringe(h, player);
+        var bare = new ItemStack(ItemInit.living_syringe.get());
+        var rack = ItemStack.parseOptional(registries, withRack.get(DataComponents.CUSTOM_DATA).copyTag().getCompound(LivingSyringeItem.TAG_LOADED_RACK));
+        player.setItemInHand(InteractionHand.MAIN_HAND, bare);
+        player.getInventory().add(rack);
+        bare.getItem().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        h.assertTrue(LivingSyringeItem.modelLoad(bare, registries) >= 3, "A carried rack lost priority over a loose vial");
+
+        var ejecting = new ItemStack(ItemInit.living_syringe.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, ejecting);
+        player.getInventory().add(new ItemStack(ItemInit.bloody_vial.get()));
+        ejecting.getItem().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        h.assertTrue(LivingSyringeItem.modelLoad(ejecting, registries) == 1, "Syringe did not load the vial to eject");
+        int vials = player.getInventory().countItem(ItemInit.bloody_vial.get());
+        player.setShiftKeyDown(true);
+        ejecting.getItem().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        h.assertTrue(LivingSyringeItem.modelLoad(ejecting, registries) == 0
+                && player.getInventory().countItem(ItemInit.bloody_vial.get()) == vials + 1, "Sneak-use did not return the vial");
         target.discard();
         player.discard();
         h.succeed();

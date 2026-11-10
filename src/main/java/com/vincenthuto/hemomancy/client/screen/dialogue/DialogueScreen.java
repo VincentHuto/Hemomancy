@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -35,6 +36,7 @@ public final class DialogueScreen extends Screen {
 	private static final int LINE_HEIGHT = 12;
 	private static final int CONTENT_PAD = 6;
 	private static final int SCROLL_STEP = 24;
+	private static final Component RESPONSE_MARK = Component.literal("> ");
 	private static final String PNG_SUFFIX = ".png";
 	private static final String PORTRAIT_SUFFIX = "_portrait.png";
 
@@ -145,11 +147,20 @@ public final class DialogueScreen extends Screen {
 		if (value.startsWith(DialogueNode.TRANSLATE_PREFIX)) {
 			String[] parts = value.substring(DialogueNode.TRANSLATE_PREFIX.length())
 					.split(Pattern.quote(DialogueNode.ARGUMENT_SEPARATOR), -1);
-			return Component.translatable(parts[0], (Object[]) Arrays.copyOfRange(parts, 1, parts.length));
+			Component brief = DialogueBriefs.line(parts[0]);
+			return brief != null ? brief
+					: Component.translatable(parts[0], (Object[]) Arrays.copyOfRange(parts, 1, parts.length));
 		}
-		return value.startsWith(DialogueNode.LITERAL_PREFIX)
-				? Component.literal(value.substring(DialogueNode.LITERAL_PREFIX.length()))
-				: Component.translatable(value);
+		if (value.startsWith(DialogueNode.LITERAL_PREFIX)) {
+			return Component.literal(value.substring(DialogueNode.LITERAL_PREFIX.length()));
+		}
+		Component brief = DialogueBriefs.line(value);
+		return brief != null ? brief : Component.translatable(value);
+	}
+
+	private static Component optionText(String key) {
+		Component brief = DialogueBriefs.option(key);
+		return brief != null ? brief : Component.translatable(key);
 	}
 
 	private void renderHeader(GuiGraphics gfx) {
@@ -262,11 +273,12 @@ public final class DialogueScreen extends Screen {
 		for (int index : DialogueImportance.specialActions(tree)) {
 			int x = content.x() + CONTENT_PAD + glow;
 			int width = content.width() - (CONTENT_PAD + glow) * 2;
-			boolean hot = navigation.focusIndex() == clickTargets.size() || contains(x, y, width, 24, mouseX, mouseY);
-			renderGlowingButton(gfx, x, y, width, 24, hot,
-					Component.translatable(tree.getStartNode().options().get(index).text()));
-			clickTargets.add(ClickTarget.action(x, y, width, 24, index));
-			y += 24 + glow * 2;
+			Component label = optionText(tree.getStartNode().options().get(index).text());
+			int height = responseHeight(font.split(label, responseTextWidth(width)).size());
+			boolean hot = navigation.focusIndex() == clickTargets.size() || contains(x, y, width, height, mouseX, mouseY);
+			renderGlowingButton(gfx, x, y, width, height, hot, label);
+			clickTargets.add(ClickTarget.action(x, y, width, height, index));
+			y += height + glow * 2;
 		}
 		int x = content.x() + CONTENT_PAD;
 		int width = content.width() - CONTENT_PAD * 2;
@@ -282,7 +294,12 @@ public final class DialogueScreen extends Screen {
 	private void renderGlowingButton(GuiGraphics gfx, int x, int y, int width, int height, boolean hot, Component label) {
 		float time = minecraft == null || minecraft.level == null ? 0.0F : AnimationTime.gameTime(minecraft.level);
 		DialogueActionGlow.draw(gfx, x, y, width, height, time, hot);
-		gfx.drawCenteredString(font, label, x + width / 2, y + (height - font.lineHeight) / 2 + 1, 0xFFFFF0DC);
+		var lines = font.split(label, responseTextWidth(width));
+		int lineY = y + (height - font.lineHeight - (lines.size() - 1) * LINE_HEIGHT) / 2 + 1;
+		for (var line : lines) {
+			gfx.drawCenteredString(font, line, x + width / 2, lineY, 0xFFFFF0DC);
+			lineY += LINE_HEIGHT;
+		}
 	}
 
 	private int renderCategory(GuiGraphics gfx, int mouseX, int mouseY, int startY) {
@@ -397,11 +414,13 @@ public final class DialogueScreen extends Screen {
 		y += 5;
 		for (int i = 0; i < currentNode.options().size(); i++) {
 			DialogueOption option = currentNode.options().get(i);
-			int lines = Math.max(1, font.split(Component.translatable(option.text()), width - 24).size());
-			int height = Math.max(24, lines * LINE_HEIGHT + 10);
+			var text = font.split(optionText(option.text()), responseTextWidth(width));
+			var detail = option.presentation().detailKey() == null ? List.<FormattedCharSequence>of()
+					: font.split(Component.translatable(option.presentation().detailKey()), responseTextWidth(width));
+			int height = responseHeight(text.size() + detail.size());
 			boolean enabled = option.presentation().enabled() && !isClaimPending(option);
 			renderResponse(gfx, x, y, width, height, mouseX, mouseY, enabled,
-					navigation.focusIndex() == i, option);
+					navigation.focusIndex() == i, option, text, detail);
 			clickTargets.add(ClickTarget.option(x, y, width, height, i, enabled));
 			y += height + 5;
 		}
@@ -409,22 +428,34 @@ public final class DialogueScreen extends Screen {
 	}
 
 	private void renderResponse(GuiGraphics gfx, int x, int y, int width, int height, int mouseX, int mouseY,
-			boolean enabled, boolean focused, DialogueOption option) {
+			boolean enabled, boolean focused, DialogueOption option,
+			List<FormattedCharSequence> text, List<FormattedCharSequence> detail) {
 		boolean hovered = enabled && contains(x, y, width, height, mouseX, mouseY);
 		if (enabled && option.presentation().isSpecialAction()) {
-			renderGlowingButton(gfx, x, y, width, height, hovered || focused, Component.translatable(option.text()));
+			renderGlowingButton(gfx, x, y, width, height, hovered || focused, optionText(option.text()));
 			return;
 		}
 		ResourceLocation sprite = !enabled ? style.buttonDisabledSprite()
 				: (hovered || focused ? style.buttonSelectedSprite() : style.buttonSprite());
 		gfx.blitSprite(sprite, x, y, width, height);
 		int color = enabled ? style.optionColor() : style.disabledColor();
-		gfx.drawString(font, Component.literal("> ").append(Component.translatable(option.text())),
-				x + 8, y + 7, color, false);
-		if (option.presentation().detailKey() != null) {
-			gfx.drawString(font, Component.translatable(option.presentation().detailKey()),
-				x + 16, y + height - 11, style.disabledColor(), false);
-		}
+		gfx.drawString(font, RESPONSE_MARK, x + 8, y + 7, color, false);
+		int textX = x + responseTextInset();
+		drawLines(gfx, text, textX, y + 7, color);
+		drawLines(gfx, detail, textX, y + 7 + text.size() * LINE_HEIGHT, style.disabledColor());
+	}
+
+	/** Text starts after the mark, so wrapped lines hang under the first word instead of under the mark. */
+	private int responseTextInset() {
+		return 8 + font.width(RESPONSE_MARK);
+	}
+
+	private int responseTextWidth(int buttonWidth) {
+		return Math.max(1, buttonWidth - responseTextInset() - 8);
+	}
+
+	private static int responseHeight(int lines) {
+		return Math.max(24, lines * LINE_HEIGHT + 10);
 	}
 
 	private void renderCard(GuiGraphics gfx, int x, int y, int width, int height, int mouseX, int mouseY,
@@ -744,8 +775,14 @@ public final class DialogueScreen extends Screen {
 		}
 	}
 
+	private void drawLines(GuiGraphics gfx, List<FormattedCharSequence> lines, int x, int y, int color) {
+		for (int i = 0; i < lines.size(); i++) {
+			gfx.drawString(font, lines.get(i), x, y + i * LINE_HEIGHT, color, false);
+		}
+	}
+
 	private void drawWrapped(GuiGraphics gfx, Component text, int x, int y, int width, int maxLines, int color) {
-		List<net.minecraft.util.FormattedCharSequence> lines = font.split(text, Math.max(1, width));
+		List<FormattedCharSequence> lines = font.split(text, Math.max(1, width));
 		for (int i = 0; i < Math.min(maxLines, lines.size()); i++) {
 			gfx.drawString(font, lines.get(i), x, y + i * LINE_HEIGHT, color, false);
 		}

@@ -38,6 +38,7 @@ hemomancy:listening_scar
 hemomancy:ahaematic_colloid
 hemomancy:wax_cylinder
 hemomancy:ambergris_cylinder
+hemomancy:corpse_wax_cylinder
 hemomancy:memory_thread
 hemomancy:gourd
 hemomancy:vial_centrifuge

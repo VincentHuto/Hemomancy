@@ -239,8 +239,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> erythrocoral_fragment = BASEITEMS.register("erythrocoral_fragment",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> listening_scar = SPECIALITEMS.register("listening_scar", ListeningScarItem::new);
-    public static final DeferredHolder<Item, Item> wax_cylinder = SPECIALITEMS.register("wax_cylinder", WaxCylinderItem::new);
+    public static final DeferredHolder<Item, Item> wax_cylinder = SPECIALITEMS.register("wax_cylinder", CylinderItem::new);
     public static final DeferredHolder<Item, Item> ambergris_cylinder = SPECIALITEMS.register("ambergris_cylinder", AmbergrisCylinderItem::new);
+    public static final DeferredHolder<Item, Item> corpse_wax_cylinder = SPECIALITEMS.register("corpse_wax_cylinder", CylinderItem::new);
     public static final DeferredHolder<Item, Item> bound_mnemonic_remnant = BASEITEMS.register("bound_mnemonic_remnant",
             () -> new BoundMnemonicRemnantItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> mnemonic_ambergris = BASEITEMS.register("mnemonic_ambergris",

@@ -2,6 +2,8 @@
 
 The Living Syringe is required for thick-skinned creatures, including coastal Chitons, selected powerful mobs, villagers, and all Hemomancy NPCs. A loose vial displays a requirement message and collects nothing from these sources. Hold and use the syringe with an empty vial in its rack; simply carrying it does not count. Ordinary unrestricted creatures still support loose-vial collection. See [entity blood profiles](Blood-Profiles.md) for the datapack settings and the six new Pelagic sources.
 
+The Living Syringe wraps around the wrist and draws through a hollow fang. Its chamber hinges open when bare, then closes around the speedloader and turns the next vial into line with the fang after a draw while the rack remains attached. Its circular speedloader shows a red chamber for each collected sample, whether attached or carried separately. Sneak-use the syringe to remove the rack early. When a creature draw fills the last available vial, the syringe ejects the rack automatically.
+
 The Alchemist teaches blood as specimen: collection, observation, injection, and stationary storage. The Artificer teaches field construction. The Mnemonist teaches retained expression beyond physiology.
 
 | Degree | Lesson | What to do |
@@ -31,7 +33,7 @@ The Field Case recipe consumes an empty Cabinet, six leather, and two Hematic Ir
 
 ## Mnemonic recording
 
-The Alchemist refers the unexplained echo to the Mnemonist. After formal D3 teaching, place a filled creature vial and a blank Wax Cylinder in the Clairaudiograph, choose a call, and Carve for four seconds. The blood is consumed and the empty vial remains. Recording itself still accepts unidentified creature blood. Carved cylinders play without further blood and cannot be used as blank stock. Existing Ambergris Cylinders also work; they are only required for Masterwork Forge patterns.
+The Alchemist refers the unexplained echo to the Mnemonist. After formal D3 teaching, place a filled creature vial and a blank Wax, Ambergris or Corpse Wax Cylinder in the Clairaudiograph, choose a call, and Carve for four seconds. The blood is consumed and the empty vial remains. The machine accepts unidentified creature blood. Carved cylinders play without further blood and cannot be used as blank stock. [Cylinder recipes and playback](Clairaudiograph.md)
 
 ## Knowledge and existing saves
 

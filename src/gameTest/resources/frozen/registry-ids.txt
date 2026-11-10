@@ -880,6 +880,7 @@ minecraft:item hemomancy:constrictor_cord
 minecraft:item hemomancy:containment_anchor_block
 minecraft:item hemomancy:cooked_pelagic_herring
 minecraft:item hemomancy:cooked_venison
+minecraft:item hemomancy:corpse_wax_cylinder
 minecraft:item hemomancy:cortical_crown
 minecraft:item hemomancy:cortical_folds
 minecraft:item hemomancy:covenant_mantle

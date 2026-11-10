@@ -139,7 +139,7 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
         ResonantPattern pattern = cylinder.get(DataComponentInit.RESONANT_PATTERN.get());
         if (target.isEmpty() || !CylinderMedia.supported(cylinder) || cylinder.getCount() != 1 || pattern == null)
             return fail(Status.MISSING_INPUT);
-        if (pattern.master() && !CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_AMBERGRIS);
+        if (pattern.master() && !CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_DURABLE_CYLINDER);
         if (pattern.master() && !ResonantForgeRules.canUseMaster(tier())) return fail(Status.MASTER_REQUIRES_D7);
         var preview = ResonantForgeTransfer.apply(target, pattern, level.registryAccess());
         if (!preview.success()) return fail(map(preview.failure()));
@@ -159,7 +159,7 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
         if (!CylinderMedia.blank(cylinder)) return fail(Status.CYLINDER_NOT_BLANK);
         if (!selection.isBlank() && !ResonantForgeRules.canSelectIndividual(tier())) return fail(Status.SELECTION_REQUIRES_D5);
         if (masterMode && !ResonantForgeRules.canUseMaster(tier())) return fail(Status.MASTER_REQUIRES_D7);
-        if (masterMode && !CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_AMBERGRIS);
+        if (masterMode && !CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_DURABLE_CYLINDER);
         var preview = ResonantForgeTransfer.capture(source, level.registryAccess(), selection, masterMode);
         if (!preview.success()) return fail(Status.NO_PATTERN);
         int cost = ResonantForgeRules.grindingCost(preview.pattern())
@@ -178,7 +178,7 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
         if (!CylinderMedia.supported(cylinder) || cylinder.getCount() != 1
                 || pattern == null || pattern.isEmpty() || pattern.master())
             return fail(Status.MISSING_INPUT);
-        if (!CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_AMBERGRIS);
+        if (!CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_DURABLE_CYLINDER);
         return begin(Operation.STABILIZE, ResonantForgeRules.MASTER_OPERATION_TICKS,
                 ResonantForgeRules.MASTER_SURCHARGE);
     }
@@ -241,7 +241,15 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
         if (!result.success()) return false;
         items.set(APPLICATION_OUTPUT, result.equipment());
         items.set(APPLICATION_ITEM, ItemStack.EMPTY);
-        if (!pattern.master()) items.set(APPLICATION_CYLINDER, ItemStack.EMPTY);
+        if (!pattern.master()) {
+            if (CylinderMedia.retainsShell(cylinder)) {
+                ItemStack shell = cylinder.copy();
+                shell.remove(DataComponentInit.RESONANT_PATTERN.get());
+                items.set(APPLICATION_CYLINDER, shell);
+            } else {
+                items.set(APPLICATION_CYLINDER, ItemStack.EMPTY);
+            }
+        }
         hammerUses++;
         return true;
     }
@@ -480,7 +488,7 @@ public class ResonantForgeBlockEntity extends HemoContainerBlockEntity implement
     public enum Operation { NONE, APPLY, GRIND, STABILIZE }
     public enum Status {
         IDLE, WORKING, MISSING_INPUT, OUTPUT_BLOCKED, INSUFFICIENT_BLOOD, HAMMER_WORN, WHEEL_WORN,
-        CYLINDER_NOT_BLANK, SELECTION_REQUIRES_D5, MASTER_REQUIRES_D7, MASTER_REQUIRES_AMBERGRIS, NO_PATTERN, UNSUPPORTED_ENCHANTMENT,
+        CYLINDER_NOT_BLANK, SELECTION_REQUIRES_D5, MASTER_REQUIRES_D7, MASTER_REQUIRES_DURABLE_CYLINDER, NO_PATTERN, UNSUPPORTED_ENCHANTMENT,
         INCOMPATIBLE_ENCHANTMENTS, DIFFERENT_CURSE, UNSUPPORTED_CURSE, NO_CHANGE, INPUT_CHANGED
     }
 }

@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.DrudgeElectrodeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFittingHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -72,17 +73,9 @@ public final class ItemPropertiesRegistrar {
             ItemProperties.register(ItemInit.ahaematic_colloid.get(),Hemomancy.rloc("colloid_motion"),
                     (stack,world,entity,seed)->com.vincenthuto.hemomancy.common.item.component.AhaematicSample.is(stack)?com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects.sampleFrame():0);
 
-            ItemProperties.register(ItemInit.vial_rack.get(), Hemomancy.rloc("state"),
-                    (ItemStack stack, ClientLevel world, LivingEntity ent, int seed) -> {
-                        int emptyCount = VialRackItem.countEmptyVials(stack);
-                        if (emptyCount == VialRackItem.MAX_VIALS) {
-                            return 0.0F;
-                        }
-                        if (emptyCount == 0) {
-                            return 2.0F;
-                        }
-                        return 1.0F;
-                    });
+            ItemProperties.register(ItemInit.vial_rack.get(), Hemomancy.rloc("filled_vials"),
+                    (stack, world, entity, seed) -> VialRackItem.countFilledVials(stack,
+                            world != null ? world.registryAccess() : ClientBridge.get().clientRegistries()));
 
             ItemProperties.register(ItemInit.barbed_shield.get(), ResourceLocation.withDefaultNamespace("blocking"),
                     (ItemStack stack, ClientLevel world, LivingEntity ent, int seed) ->
@@ -113,8 +106,6 @@ public final class ItemPropertiesRegistrar {
                             ent != null && LivingCrossbowItem.isCharged(stack)
                                     && LivingCrossbowItem.hasChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F);
 
-            ItemProperties.register(ItemInit.living_syringe.get(), Hemomancy.rloc("open"),
-                    HemoItemProperties.booleanTag("state"));
             ItemProperties.register(ItemInit.curved_horn.get(), Hemomancy.rloc("open"),
                     HemoItemProperties.booleanTag("state"));
             ItemProperties.register(ItemInit.blood_gourd_white.get(), Hemomancy.rloc("open"),

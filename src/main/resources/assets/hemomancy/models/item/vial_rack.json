@@ -1,26 +1,53 @@
 {
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "hemomancy:item/vial_rack_empty"
-  },
+  "parent": "hemomancy:item/vial_rack/empty",
   "overrides": [
     {
       "predicate": {
-        "hemomancy:state": 0
+        "hemomancy:filled_vials": 1
       },
-      "model": "hemomancy:item/vial_rack_empty"
+      "model": "hemomancy:item/vial_rack/filled_1"
     },
     {
       "predicate": {
-        "hemomancy:state": 1
+        "hemomancy:filled_vials": 2
       },
-      "model": "hemomancy:item/vial_rack_partial"
+      "model": "hemomancy:item/vial_rack/filled_2"
     },
     {
       "predicate": {
-        "hemomancy:state": 2
+        "hemomancy:filled_vials": 3
       },
-      "model": "hemomancy:item/vial_rack_full"
+      "model": "hemomancy:item/vial_rack/filled_3"
+    },
+    {
+      "predicate": {
+        "hemomancy:filled_vials": 4
+      },
+      "model": "hemomancy:item/vial_rack/filled_4"
+    },
+    {
+      "predicate": {
+        "hemomancy:filled_vials": 5
+      },
+      "model": "hemomancy:item/vial_rack/filled_5"
+    },
+    {
+      "predicate": {
+        "hemomancy:filled_vials": 6
+      },
+      "model": "hemomancy:item/vial_rack/filled_6"
+    },
+    {
+      "predicate": {
+        "hemomancy:filled_vials": 7
+      },
+      "model": "hemomancy:item/vial_rack/filled_7"
+    },
+    {
+      "predicate": {
+        "hemomancy:filled_vials": 8
+      },
+      "model": "hemomancy:item/vial_rack/filled_8"
     }
   ]
 }

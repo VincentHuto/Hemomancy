@@ -1,0 +1,13 @@
+{
+  "parent": "hemomancy:item/vial_rack/empty",
+  "textures": {
+    "sample_1": "#sample_full",
+    "sample_2": "#sample_full",
+    "sample_3": "#sample_full",
+    "sample_4": "#sample_full",
+    "sample_5": "#sample_empty",
+    "sample_6": "#sample_empty",
+    "sample_7": "#sample_empty",
+    "sample_8": "#sample_empty"
+  }
+}

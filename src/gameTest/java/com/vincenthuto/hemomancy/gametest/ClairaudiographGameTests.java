@@ -25,6 +25,36 @@ public class ClairaudiographGameTests {
     }
     private static ClairaudiographRecording choice(){return ClairaudiographCatalogue.choices("minecraft:pig").getFirst().recording();}
     private static void tick(ClairaudiographBlockEntity be,int n){for(int i=0;i<n;i++)ClairaudiographBlockEntity.tick(be.getLevel(),be.getBlockPos(),be.getBlockState(),be);}
+    @GameTest(template = "empty")
+    public static void corpseWaxRecipeProducesRecordableMedium(GameTestHelper helper) {
+        var input = net.minecraft.world.item.crafting.CraftingInput.of(3, 2, java.util.List.of(
+                new ItemStack(ItemInit.adipocere.get()), new ItemStack(ItemInit.adipocere.get()),
+                new ItemStack(ItemInit.hematic_iron_scrap.get()), new ItemStack(ItemInit.active_befouling_ash.get()),
+                new ItemStack(Items.PAPER), ItemStack.EMPTY));
+        var recipe = helper.getLevel().getRecipeManager()
+                .byKey(com.vincenthuto.hemomancy.Hemomancy.rloc("corpse_wax_cylinder")).orElseThrow().value();
+        helper.assertTrue(recipe instanceof net.minecraft.world.item.crafting.CraftingRecipe crafting
+                && crafting.matches(input, helper.getLevel()), "Corpse Wax recipe refused its ingredients");
+        ItemStack blank = ((net.minecraft.world.item.crafting.CraftingRecipe) recipe)
+                .assemble(input, helper.getLevel().registryAccess());
+        helper.assertTrue(blank.is(ItemInit.corpse_wax_cylinder.get()) && blank.getCount() == 1,
+                "Corpse Wax recipe produced the wrong cylinder");
+
+        var be = machine(helper);
+        be.inventory.setStackInSlot(1, ItemStack.EMPTY);
+        helper.assertTrue(be.inventory.insertItem(1, blank, false).isEmpty() && be.startCarve(choice()),
+                "Clairaudiograph refused the crafted cylinder");
+        tick(be, 80);
+        var saved = be.saveWithFullMetadata(helper.getLevel().registryAccess());
+        var restored = new ClairaudiographBlockEntity(be.getBlockPos(), be.getBlockState());
+        restored.loadWithComponents(saved, helper.getLevel().registryAccess());
+        helper.assertTrue(restored.inventory.getStackInSlot(1).is(ItemInit.corpse_wax_cylinder.get())
+                && choice().equals(restored.recording()), "Corpse Wax recording lost its medium or call on reload");
+        be.startPlayback(false);
+        helper.assertTrue(be.playing(), "Corpse Wax recording could not play");
+        helper.succeed();
+    }
+
     @GameTest(template="empty") public static void waxCylinderRecordsAndRejectsOccupiedMedia(GameTestHelper h){
         h.assertTrue(h.getLevel().getRecipeManager().byKey(net.minecraft.resources.ResourceLocation.parse("hemomancy:wax_cylinder")).isPresent(),
                 "Ordinary wax recipe failed to load");

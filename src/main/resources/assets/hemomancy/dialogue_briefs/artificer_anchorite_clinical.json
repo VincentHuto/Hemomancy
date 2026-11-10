@@ -1,0 +1,1618 @@
+{
+ "hemomancy.anchorite.carve_reminder.line1": {
+  "about": "the Vein-Mason reminding the player that the scar pattern is not yet flesh, and telling them to carve it cell by cell at the Cerebral Scarring Station",
+  "tone": "austere, terse"
+ },
+ "hemomancy.anchorite.carve_reminder.line2": {
+  "about": "the Vein-Mason walking through carving: load the pattern, trace the purple stencil in red, carve (a rejected carving keeps work), then place the Scar in an empty lit Iron Brazier, light it with Blood Projection for 50 mL, and hold Blood Absorption to learn it for 100 mL, noting the old template alone will not teach it",
+  "tone": "flat, exacting"
+ },
+ "hemomancy.anchorite.completed.line1": {
+  "about": "the Vein-Mason's short verdict that the player's wound has become architecture, marking the scar lesson as complete",
+  "tone": "quietly approving"
+ },
+ "hemomancy.anchorite.completed.line2": {
+  "about": "the Vein-Mason saying more patterns will now answer the player, and warning them to weigh each cut by what it opens and closes in the body",
+  "tone": "austere, measured"
+ },
+ "hemomancy.anchorite.continuation_reward.prompt": {
+  "about": "the Vein-Mason saying the first wound answered another, and inviting the player to take the next pattern when ready to choose for themselves",
+  "tone": "spare, approving"
+ },
+ "hemomancy.anchorite.d5.activation": {
+  "about": "the Vein-Mason explaining how to run a Thelemic dose: distill and drink it, equip and select its memory, press the manipulation-use key to enable it (spending blood and reserve), and crouch with the key to arm an overexertion response costing twice the blood and two-and-a-half times the strain",
+  "tone": "clipped, instructive"
+ },
+ "hemomancy.anchorite.d5.cause_strain": {
+  "about": "the Vein-Mason telling the player to use a Thelemic Memory until one body section becomes Varicose, and that only the body's own instruction counts, not steel or projected will",
+  "tone": "stern, exact"
+ },
+ "hemomancy.anchorite.d5.complete": {
+  "about": "the Vein-Mason noting the vessel has been injured, repaired and prepared, and offering the deeper pattern",
+  "tone": "solemn, brief"
+ },
+ "hemomancy.anchorite.d5.diagnosis.prompt": {
+  "about": "the Vein-Mason offering to read the player's vessel before treatment, saying that once the injury is named the medicine will be clear",
+  "tone": "calm, clinical"
+ },
+ "hemomancy.anchorite.d5.fortify": {
+  "about": "the Vein-Mason explaining that medicine restores what was spent, and that the fourth-Degree rite Hematic Fortification permanently cuts vascular strain by 15 percent, after which the player should return with earned diagnosis and treatment kept",
+  "tone": "austere, factual"
+ },
+ "hemomancy.anchorite.d5.recover": {
+  "about": "the Vein-Mason matching treatments to damage: the Alchemist's Salve for one failing course, the Poultice across two, and Vascular Mending for clotting or widespread Varicosity",
+  "tone": "clipped, practical"
+ },
+ "hemomancy.anchorite.d5.return_diagnosis": {
+  "about": "the Vein-Mason offering to read where the player's current catches, so the damage rather than habit chooses the medicine",
+  "tone": "calm, clinical"
+ },
+ "hemomancy.anchorite.d5.reward.prompt": {
+  "about": "the Vein-Mason saying the player has borne injury, treatment and preparation, and trusting them with the deeper pattern",
+  "tone": "solemn, sparing praise"
+ },
+ "hemomancy.anchorite.d5.stop": {
+  "about": "the Vein-Mason giving training safety rules: watch the named body section in Vascular Status, stop when it first becomes Varicose below 50 health, press the use key again without crouching to disable the memory, bring Salve, return for diagnosis before treatment, and know that earned progress stays",
+  "tone": "stern, procedural"
+ },
+ "hemomancy.anchorite.d6.change_loadout": {
+  "about": "the Vein-Mason telling the player to prepare a different arrangement at the Mason's Effigy and burn it, so the active scar set changes",
+  "tone": "terse, directive"
+ },
+ "hemomancy.anchorite.d6.complete": {
+  "about": "the Vein-Mason saying the current changed because the player changed its banks, and that the final pattern is ready",
+  "tone": "quiet, approving"
+ },
+ "hemomancy.anchorite.d6.first_route": {
+  "about": "the Vein-Mason telling the player to keep a cerebral scar aligned with a Noetic Memory's primary tendency and cast that memory, noting mechanical projections do not count",
+  "tone": "terse, exacting"
+ },
+ "hemomancy.anchorite.d6.referral": {
+  "about": "the Vein-Mason explaining that a scar can route an instruction, that writing it is a Mnemonist's work, and asking the player to carry the question to one",
+  "tone": "measured, austere"
+ },
+ "hemomancy.anchorite.d6.referral.prompt": {
+  "about": "the Vein-Mason handing the question about routing to the Mnemonist, telling the player to take the referral, hear their counsel, then return to prove the route",
+  "tone": "spare, directive"
+ },
+ "hemomancy.anchorite.d6.reward.prompt": {
+  "about": "the Vein-Mason saying the player changed the route and it bore another instruction, so the final pattern is theirs",
+  "tone": "solemn, brief"
+ },
+ "hemomancy.anchorite.d6.second_route": {
+  "about": "the Vein-Mason telling the player to make the changed architecture bear another matching Noetic Memory",
+  "tone": "terse, directive"
+ },
+ "hemomancy.anchorite.d6.seek_counsel": {
+  "about": "the Vein-Mason sending the player back to the Mnemonist first, since the Mnemonist reads what the memory means and the Vein-Mason decides how the body carries it",
+  "tone": "austere, firm"
+ },
+ "hemomancy.anchorite.effigy_instruction.line1": {
+  "about": "the Vein-Mason explaining that the scar is known and the Mason's Effigy arranges scars the blood already remembers, and that whoever charges a motif must know all its scars and have room for them",
+  "tone": "austere, measured"
+ },
+ "hemomancy.anchorite.effigy_instruction.line2": {
+  "about": "the Vein-Mason detailing Effigy use: craft Runic Motif Paper from Paper, Charcoal and Sanguine Formation, choose a known scar and press Prepare, place the paper and project 500 mL per scar, selection stays fixed, charging can stop and resume, breaking returns paper not blood, and only the Brazier commits the Pattern",
+  "tone": "flat, exacting"
+ },
+ "hemomancy.anchorite.first_lesson.given.line1": {
+  "about": "the Vein-Mason saying the pattern lays a route and power moves only when a scar carries it",
+  "tone": "austere, quiet"
+ },
+ "hemomancy.anchorite.first_lesson.given.line2": {
+  "about": "the Vein-Mason ordering the first lesson steps: carve the Scar item, burn it, only then may the Effigy prepare a living motif, with a nearby Scarring Station allowed under watch for the first scar and the player's own built station required afterward",
+  "tone": "stern, procedural"
+ },
+ "hemomancy.anchorite.first_lesson.line1": {
+  "about": "the Vein-Mason introducing themself as the Vein-Mason who teaches vessels where to remember breaking and then mends them around that memory",
+  "tone": "austere, solemn"
+ },
+ "hemomancy.anchorite.first_lesson.line2": {
+  "about": "the Vein-Mason saying the player's strongest tendency has chosen the first cut, and telling them to take its old Scar Pattern and carve it at the Cerebral Scarring Station",
+  "tone": "terse, directive"
+ },
+ "hemomancy.anchorite.first_lesson.line3": {
+  "about": "the Vein-Mason listing carving ingredients (blank plate, catalyst, knapper, pattern) and noting an empty lit Iron Brazier decides afterward whether the scar becomes memory",
+  "tone": "clipped, instructive"
+ },
+ "hemomancy.anchorite.first_lesson.prompt": {
+  "about": "the Vein-Mason telling the player that their strongest tendency sets the first cut, and to accept the pattern and carve it at the Scarring Station",
+  "tone": "spare, directive"
+ },
+ "hemomancy.anchorite.inquiry.blank_memory.line1": {
+  "about": "the Vein-Mason on a blank memory vessel, saying the Mnemonist gives it meaning while the Vein-Mason cares where that meaning travels through the player",
+  "tone": "austere, dry"
+ },
+ "hemomancy.anchorite.inquiry.blank_memory.line2": {
+  "about": "the Vein-Mason saying the Mnemonist's craft is instruction and theirs is tissue, and the two must agree",
+  "tone": "terse, measured"
+ },
+ "hemomancy.anchorite.inquiry.blank_scar.line1": {
+  "about": "the Vein-Mason identifying a Blank Scar as tissue prepared to receive an authored pattern",
+  "tone": "flat, informative"
+ },
+ "hemomancy.anchorite.inquiry.blank_scar.line2": {
+  "about": "the Vein-Mason contrasting the Artificer, who reinforces what faces the world, with themself, who reinforces what must carry the current within",
+  "tone": "austere, measured"
+ },
+ "hemomancy.anchorite.inquiry.brazier.line1": {
+  "about": "the Vein-Mason saying the Iron Brazier either teaches a carved scar or commits an Effigy pattern",
+  "tone": "flat, informative"
+ },
+ "hemomancy.anchorite.inquiry.brazier.line2": {
+  "about": "the Vein-Mason detailing Brazier use: place one offering with ordinary use, Blood Projection lights it for 50 mL, hold Blood Absorption until it dissolves, a carved Scar costs 100 mL to learn, a prepared Pattern 50 mL to commit, and sneaking retrieves the offering unburned",
+  "tone": "flat, exacting"
+ },
+ "hemomancy.anchorite.inquiry.conductive_mark.line1": {
+  "about": "the Vein-Mason describing Conductive Mark as Noetic, a projected instruction led by its primary tendency",
+  "tone": "flat, informative"
+ },
+ "hemomancy.anchorite.inquiry.conductive_mark.line2": {
+  "about": "the Vein-Mason explaining that an aligned active cerebral scar lets the memory's vascular route bear less strain",
+  "tone": "terse, informative"
+ },
+ "hemomancy.anchorite.inquiry.effigy.line1": {
+  "about": "the Vein-Mason saying the Effigy prepares a set from scars already burned into memory",
+  "tone": "flat, informative"
+ },
+ "hemomancy.anchorite.inquiry.effigy.line2": {
+  "about": "the Vein-Mason telling the player to burn the prepared motif at an Iron Brazier to make that set active",
+  "tone": "terse, directive"
+ },
+ "hemomancy.anchorite.inquiry.gauge.line1": {
+  "about": "the Vein-Mason saying the vascular gauge reports the vessel's state while the repair is the player's work, and to read the number beside the flow state",
+  "tone": "austere, dry"
+ },
+ "hemomancy.anchorite.inquiry.gauge.line2": {
+  "about": "the Vein-Mason explaining that hovering a gauge section shows which Noetic and Thelemic routes burden it",
+  "tone": "flat, informative"
+ },
+ "hemomancy.anchorite.inquiry.pattern.line1": {
+  "about": "the Vein-Mason explaining that a Scar Pattern carries instruction, to be carved at the station, with learned scars arranged at the Effigy",
+  "tone": "flat, informative"
+ },
+ "hemomancy.anchorite.inquiry.pattern.line2": {
+  "about": "the Vein-Mason noting that tier-three instruction still requires Deep Inscription",
+  "tone": "terse, warning"
+ },
+ "hemomancy.anchorite.inquiry.poultice.line1": {
+  "about": "the Vein-Mason saying the Poultice distributes repair across the two weakest body sections",
+  "tone": "flat, informative"
+ },
+ "hemomancy.anchorite.inquiry.poultice.line2": {
+  "about": "the Vein-Mason warning that once clotting begins the player should stop improvising and perform Vascular Mending",
+  "tone": "stern, terse"
+ },
+ "hemomancy.anchorite.inquiry.salve.line1": {
+  "about": "the Vein-Mason saying the Alchemist's Salve closes one local failure and is field medicine, not conditioning",
+  "tone": "flat, dismissive"
+ },
+ "hemomancy.anchorite.inquiry.salve.line2": {
+  "about": "the Vein-Mason telling the player to use the Salve when one body section falls below Stable",
+  "tone": "terse, directive"
+ },
+ "hemomancy.anchorite.inquiry.tier_one.line1": {
+  "about": "the Vein-Mason explaining that a first-tier pattern deepens one tendency while active and can route a matching Noetic Memory",
+  "tone": "flat, informative"
+ },
+ "hemomancy.anchorite.inquiry.tier_one.line2": {
+  "about": "the Vein-Mason explaining that routing through a first pattern eases strain by five percent, matching scars share one route, and only the strongest route applies",
+  "tone": "flat, exacting"
+ },
+ "hemomancy.anchorite.item_hint": {
+  "about": "the Vein-Mason inviting the player to set an item before them so they can say what it asks of the vessel",
+  "tone": "austere, quiet"
+ },
+ "hemomancy.anchorite.loadout_reminder.line1": {
+  "about": "the Vein-Mason reminding the player the Effigy has written the motif and that the Brazier now decides whether the arrangement can live in them",
+  "tone": "austere, measured"
+ },
+ "hemomancy.anchorite.loadout_reminder.line2": {
+  "about": "the Vein-Mason directing the player to place the prepared Scar Pattern in an empty lit Iron Brazier, light it with Blood Projection for 50 mL, hold Blood Absorption, and noting that committing costs 50 mL, changes the active cerebral loadout, and needs no relearning of the scar",
+  "tone": "flat, exacting"
+ },
+ "hemomancy.anchorite.locked.line1": {
+  "about": "the Vein-Mason refusing to teach scars yet because the player's vessel is not prepared",
+  "tone": "austere, curt"
+ },
+ "hemomancy.anchorite.locked.line2": {
+  "about": "the Vein-Mason telling the player to return at the fourth Degree with active blood, since the mind must survive a sympathetic wound",
+  "tone": "stern, spare"
+ },
+ "hemomancy.anchorite.opinion.artificer.line1": {
+  "about": "the Vein-Mason saying the Artificer shores up what meets the world: plate, weapon, frame and graft",
+  "tone": "austere, dry"
+ },
+ "hemomancy.anchorite.opinion.artificer.line2": {
+  "about": "the Vein-Mason saying they work inward, where scar and vessel decide whether an instruction survives its passage",
+  "tone": "austere, measured"
+ },
+ "hemomancy.anchorite.refusal.line1": {
+  "about": "the Vein-Mason refusing the player because still-water has touched them and a scar cut into that body would fight itself cruelly",
+  "tone": "cold, firm"
+ },
+ "hemomancy.anchorite.refusal.line2": {
+  "about": "the Vein-Mason telling the player to leave scar-work to those who still bargain with blood-memory",
+  "tone": "cold, curt"
+ },
+ "hemomancy.anchorite.replace_pattern.prompt": {
+  "about": "the Vein-Mason offering to replace the last pattern they gave, but only if the player lost it",
+  "tone": "terse, wary"
+ },
+ "hemomancy.anchorite.reward.claimed.line1": {
+  "about": "the Vein-Mason saying the next pattern is the player's, to be carved only when the body can afford another instruction",
+  "tone": "austere, measured"
+ },
+ "hemomancy.anchorite.reward.claimed.line2": {
+  "about": "the Vein-Mason noting Motif Paper revises a scar loadout, which reads like a sentence, and urging the player to place its pauses with care",
+  "tone": "austere, wry"
+ },
+ "hemomancy.anchorite.reward.line1": {
+  "about": "the Vein-Mason noting the player made the first wound answer another, and calling that enough for now",
+  "tone": "sparing, approving"
+ },
+ "hemomancy.anchorite.reward.line2": {
+  "about": "the Vein-Mason handing over a second old pattern, observing the player's blood shouted the first, and telling them to listen to the voice beneath it and practice choosing",
+  "tone": "solemn, quietly encouraging"
+ },
+ "hemomancy.artificer.armature.line1": {
+  "about": "the Artificer saying the Armature is no anvil but works the piece the player is wearing while they hold still",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.artificer.armature.line2": {
+  "about": "the Artificer listing Armature steps as short orders: wear the armor, load the bowls with reagent, fill the reservoir, step into the frame, hold still",
+  "tone": "clipped, imperative"
+ },
+ "hemomancy.artificer.armature.line3": {
+  "about": "the Artificer stating the Armature works worn pieces in order helm, chest, legs, boots, and that finished pieces keep their change if it stops partway",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.armature_hint.line1": {
+  "about": "the Artificer telling the player that Armature access begins at the second Degree and until then they only watch the rack",
+  "tone": "curt, flat"
+ },
+ "hemomancy.artificer.armature_hint.line2": {
+  "about": "the Artificer saying Armature work first needs stable blood and proper iron, and to bring both when the player gets there",
+  "tone": "gruff, brief"
+ },
+ "hemomancy.artificer.assignment.assumed_limb.demonstration": {
+  "about": "an assignment objective telling the player to transform the Living Staff into a weapon form and defeat a hostile with it",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.assumed_limb.first_upgrade": {
+  "about": "an assignment objective telling the player to complete one Living Weapon Graft rite",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.assumed_limb.learn_forms": {
+  "about": "the Artificer telling the player to learn all seven base Living Weapon forms first before the final fitting",
+  "tone": "gruff, firm"
+ },
+ "hemomancy.artificer.assignment.crimson_vestment.consecrate": {
+  "about": "an assignment objective telling the player to complete the Rite of Armature Consecration",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.crimson_vestment.correspondence": {
+  "about": "an assignment objective telling the player to take the Artificer's inspection to an Alchemist, who will give them Crimson Lacquer",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.crimson_vestment.demonstration": {
+  "about": "an assignment objective telling the player to land a direct hit so the full vestment draws or banks blood",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.crimson_vestment.first_upgrade": {
+  "about": "an assignment objective telling the player to complete the first Blood Lust upgrade",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.crimson_vestment.full_set": {
+  "about": "an assignment objective telling the player to complete the full Blood Lust set and wear it",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.three_answers.correspondence": {
+  "about": "the Artificer telling the player to take their record of the chosen armor answer to an Alchemist, who will match its reagent and point out useful Bestiary specimens",
+  "tone": "gruff, businesslike"
+ },
+ "hemomancy.artificer.assignment.three_answers.demonstration": {
+  "about": "an assignment objective telling the player to prove the armor set answers in the field through retaliation, projectile reduction or prismatic flash",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.three_answers.first_upgrade": {
+  "about": "the Artificer telling the player to make their first Barbed, Chitinite or Prismatic armor piece, and that the first family they make is the answer recorded",
+  "tone": "gruff, firm"
+ },
+ "hemomancy.artificer.assignment.three_answers.full_set": {
+  "about": "an assignment objective telling the player to complete the full set of their recorded armor family and wear it",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.weight_of_frame.cornerstone": {
+  "about": "an assignment objective telling the player to complete the Rite of the Monolithic Armature",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.weight_of_frame.demonstration": {
+  "about": "an assignment objective telling the player to activate their lineage's own armor ability",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.weight_of_frame.first_upgrade": {
+  "about": "the Artificer telling the player to complete their first seventh-Degree armor upgrade, whose lineage will be recorded permanently",
+  "tone": "gruff, solemn"
+ },
+ "hemomancy.artificer.assignment.weight_of_frame.full_set": {
+  "about": "an assignment objective telling the player to complete the full set of their recorded seventh-Degree lineage and wear it",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.worn_vow.first_upgrade": {
+  "about": "an assignment objective telling the player to use the Armature and complete one Hematic Iron upgrade",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.worn_vow.full_set": {
+  "about": "an assignment objective telling the player to complete the full Hematic Iron set and wear it before asking for the final fitting",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignment.worn_vow.place_armature": {
+  "about": "an assignment objective telling the player to place a Hematic Armature in their own workshop and then return",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.assignments.line1": {
+  "about": "the Artificer approving that the player has done staff fittings, saying a fitting means they have worn the work long enough that it answers back",
+  "tone": "gruff, dryly approving"
+ },
+ "hemomancy.artificer.assignments.line2": {
+  "about": "the Artificer demanding to know where the armor is, and insisting it must be worn on the player, since armor in a pack does not count for a worn vow",
+  "tone": "gruff, pointed"
+ },
+ "hemomancy.artificer.d7_lineage.edacious": {
+  "about": "a short label naming the Edacious lineage",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.d7_lineage.none": {
+  "about": "a short label meaning no seventh-Degree lineage has been recorded yet",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.d7_lineage.phantasmal": {
+  "about": "a short label naming the Phantasmal lineage",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.d7_lineage.sheolic": {
+  "about": "a short label naming the Sheolic lineage",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.d7_lineage.silent_archon": {
+  "about": "a short label naming the Silent Archon lineage",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.fork_family.barbed": {
+  "about": "a short label naming the Barbed armor family",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.fork_family.chitinite": {
+  "about": "a short label naming the Chitinite armor family",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.fork_family.none": {
+  "about": "a short label meaning no armor family has been chosen yet",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.fork_family.prismatic": {
+  "about": "a short label naming the Prismatic armor family",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.forks.line1": {
+  "about": "the Artificer summarizing the three armor forks: Barbed sends insults back, Chitinite endures them, and Prismatic makes the strike lose its way",
+  "tone": "gruff, terse"
+ },
+ "hemomancy.artificer.forks.line2": {
+  "about": "the Artificer asking what the player expects to fight and telling them to choose by danger, since color has nothing to do with it",
+  "tone": "gruff, pointed"
+ },
+ "hemomancy.artificer.grafts.line1": {
+  "about": "the Artificer warning that the player's Living Staff has the appetite of a living inheritance, so it must not be treated like a wand, noting memories train the player while grafts train the staff",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.artificer.grafts.line2": {
+  "about": "the Artificer instructing the player to act like the form first, craft the graft, light the Brazier with Blood Projection, and draw the shape in with Blood Absorption",
+  "tone": "clipped, imperative"
+ },
+ "hemomancy.artificer.grafts.line3": {
+  "about": "the Artificer clarifying that Somatic Loom work stays at the Loom while living limbs return to the staff through the brazier",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.identity.line1": {
+  "about": "the Artificer introducing themself as the Redwright, Artificer of the Living Vow",
+  "tone": "gruff, plain"
+ },
+ "hemomancy.artificer.identity.line2": {
+  "about": "the Artificer distinguishing their work: the Alchemist refines blood, the Mnemonist teaches memory, and they teach the body's tools to take a blood-vow",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.artificer.identity.line3": {
+  "about": "the Artificer saying armor is a vow worn under pressure and a staff-form is a limb not yet disciplined",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.artificer.item_hint": {
+  "about": "the Artificer asking what the player is carrying and telling them to set it out so they can say which pieces belong to the frame",
+  "tone": "gruff, impatient"
+ },
+ "hemomancy.artificer.item_inquiry.aculeate_vitriol.line1": {
+  "about": "the Artificer identifying Aculeate Vitriol as Barbed work that teaches Hematic Iron to answer harm with thorn, venom and spite",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.artificer.item_inquiry.aculeate_vitriol.line2": {
+  "about": "the Artificer asking whether the player wants armor that remembers who hurt it and hits back, and telling them to put the vitriol in the Armature",
+  "tone": "gruff, dryly teasing"
+ },
+ "hemomancy.artificer.item_inquiry.chromatic_sublimate.line1": {
+  "about": "the Artificer identifying Chromatic Sublimate as Prismatic work: flash, misdirection, spectacle and angles that leave a strike unsure where it lands",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.artificer.item_inquiry.chromatic_sublimate.line2": {
+  "about": "the Artificer saying Prismatic armor is taught to lie while it takes hits, lies well, and should not be mistaken for decoration",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.artificer.item_inquiry.crimson_lacquer.line1": {
+  "about": "the Artificer identifying Crimson Lacquer as a Lodge-grade coat for armor that has already picked its fork",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.artificer.item_inquiry.crimson_lacquer.line2": {
+  "about": "the Artificer explaining that the frame must be consecrated first, then the lacquer carries Barbed, Chitinite or Prismatic work up into Blood Lust",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.item_inquiry.grinning_mask.line1": {
+  "about": "the Artificer identifying the Grinning Mask as meant for Blood Lust built on Prismatic work",
+  "tone": "gruff, terse"
+ },
+ "hemomancy.artificer.item_inquiry.grinning_mask.line2": {
+  "about": "the Artificer saying to fit the mask there, and that a clean hit gets the wearer moving before the reply comes",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.artificer.item_inquiry.hematic_armature.line1": {
+  "about": "the Artificer describing the Hematic Armature as a ritual frame that changes armor while it is worn, and insisting it is not a forge",
+  "tone": "gruff, correcting"
+ },
+ "hemomancy.artificer.item_inquiry.hematic_armature.line2": {
+  "about": "the Artificer listing Armature use: feed its bowls, fill its blood reservoir, wear the piece to be changed, stand in the rack, and if the bargain holds the metal learns",
+  "tone": "clipped, imperative"
+ },
+ "hemomancy.artificer.item_inquiry.hematic_iron_scrap.line1": {
+  "about": "the Artificer saying Hematic Iron Scrap is metal that has started listening but is not armor until it learns to obey",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.artificer.item_inquiry.hematic_iron_scrap.line2": {
+  "about": "the Artificer telling the player to wear iron and feed the scrap to the Armature, so the first iron piece can take the Hematic shape",
+  "tone": "clipped, imperative"
+ },
+ "hemomancy.artificer.item_inquiry.iron_armor.line1": {
+  "about": "the Artificer dismissing plain iron armor as honest and dull, never having met the player's blood",
+  "tone": "gruff, dismissive"
+ },
+ "hemomancy.artificer.item_inquiry.iron_armor.line2": {
+  "about": "the Artificer offering the first lesson: wear the iron armor into the Armature along with Hematic Iron Scrap",
+  "tone": "gruff, challenging"
+ },
+ "hemomancy.artificer.item_inquiry.iron_brazier.line1": {
+  "about": "the Artificer saying the Iron Brazier burns rite-fire and uses up whatever is fed to it as instruction",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.item_inquiry.iron_brazier.line2": {
+  "about": "the Artificer instructing: set a Living Weapon Graft in the Brazier, light it with Blood Projection, hold the Living Staff and draw with Blood Absorption, so the flame hands the limb over rather than eating it",
+  "tone": "clipped, imperative"
+ },
+ "hemomancy.artificer.item_inquiry.living_staff.line1": {
+  "about": "the Artificer saying a Living Staff is hungry for shape and has no interest in memory",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.artificer.item_inquiry.living_staff.line2": {
+  "about": "the Artificer explaining the graft rite teaches the staff to answer with the ordinary living weapon manipulations while the player still picks the form through the usual loadout and radial",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.item_inquiry.living_weapon_graft.line1": {
+  "about": "the Artificer describing a Living Weapon Graft as a prepared limb-pattern earned by behaving like the form it carries",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.artificer.item_inquiry.living_weapon_graft.line2": {
+  "about": "the Artificer instructing: set the graft in the Iron Brazier, light it with Blood Projection, draw through a Living Staff, and if the blood has earned the shape the player gets that form's conjure lesson",
+  "tone": "gruff, procedural"
+ },
+ "hemomancy.artificer.item_inquiry.lodestone_faceplate.line1": {
+  "about": "the Artificer identifying the Lodestone Faceplate as meant for Blood Lust built on Chitinite shelter",
+  "tone": "gruff, terse"
+ },
+ "hemomancy.artificer.item_inquiry.lodestone_faceplate.line2": {
+  "about": "the Artificer saying to fit the faceplate there, and that a clean hit gives a brief second skin",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.artificer.item_inquiry.memory_of_vesper.line1": {
+  "about": "the Artificer recognizing the Memory of Vesper as a staff-bearing inheritance, and saying the sermon in it is not their business",
+  "tone": "gruff, guarded"
+ },
+ "hemomancy.artificer.item_inquiry.memory_of_vesper.line2": {
+  "about": "the Artificer explaining the Memory no longer answers a bare hand: set it in an Iron Brazier, light it with Blood Projection, and draw the refusal out through a Living Staff",
+  "tone": "gruff, procedural"
+ },
+ "hemomancy.artificer.item_inquiry.monolithic_cornerstone.line1": {
+  "about": "the Artificer saying the Monolithic Cornerstone teaches the frame to remember a weight ordinary blood should not carry, with the extra strength a side effect",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.artificer.item_inquiry.monolithic_cornerstone.line2": {
+  "about": "the Artificer explaining the Cornerstone is offered at a Cardinal rite beside a consecrated Armature, after which the frame can carry the final Blood Lust forms and Silent Archon work",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.item_inquiry.refusal": {
+  "about": "the Artificer ending the conversation because the player's blood has refused the Artificer's frame, though they know the item",
+  "tone": "cold, curt"
+ },
+ "hemomancy.artificer.item_inquiry.sclerotic_oleum.line1": {
+  "about": "the Artificer identifying Sclerotic Oleum as Chitinite work: shell, endurance and ferric shelter",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.artificer.item_inquiry.sclerotic_oleum.line2": {
+  "about": "the Artificer saying to use the oleum for armor that holds the line, though it will not answer every bite",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.artificer.item_inquiry.tengu_mask.line1": {
+  "about": "the Artificer identifying the Tengu Mask as meant for Blood Lust built on Barbed spite",
+  "tone": "gruff, terse"
+ },
+ "hemomancy.artificer.item_inquiry.tengu_mask.line2": {
+  "about": "the Artificer saying to fit the mask there, and that every clean hit keeps the target bleeding after the blade is gone",
+  "tone": "gruff, grim"
+ },
+ "hemomancy.artificer.item_inquiry.velorum_mask.line1": {
+  "about": "the Artificer describing the Velorum Mask as heavy iron that never warms and keeps a still, silent witness",
+  "tone": "gruff, subdued"
+ },
+ "hemomancy.artificer.item_inquiry.velorum_mask.line2": {
+  "about": "the Artificer saying Saint-metal does not care which path the player's Blood Lust took, and that a clean hit lets its witness give a little blood back",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.item_inquiry.vicars_consecration_kit.line1": {
+  "about": "the Artificer explaining they made the Armature Consecration Kit for the base rack, the Vicar teaches the rite, and the kit readies the frame for it",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.item_inquiry.vicars_consecration_kit.line2": {
+  "about": "the Artificer explaining the kit is offered during the Rite of Armature Consecration, and that afterward the frame can witness Lodge-grade Blood Lust work where before it only did craft",
+  "tone": "gruff, measured"
+ },
+ "hemomancy.artificer.late_armature.given": {
+  "about": "the Artificer telling the player to take the kit to a Greater Cardinal Focus for the rite, and to keep the frame clear until both blood circuits close",
+  "tone": "clipped, imperative"
+ },
+ "hemomancy.artificer.late_armature.line1": {
+  "about": "the Artificer announcing they will issue one Armature Consecration Kit, to be taken to a Greater Cardinal Focus on a Greater Working floor with a base Armature and the Living Staff",
+  "tone": "gruff, procedural"
+ },
+ "hemomancy.artificer.late_armature.line2": {
+  "about": "the Artificer explaining the rite readies the frame for Blood Lust armor, that an interrupted rite returns the offering, and that no second free kit can be given",
+  "tone": "gruff, firm"
+ },
+ "hemomancy.artificer.late_armature.line3": {
+  "about": "the Artificer explaining how to craft another kit from two Hematic Iron Scraps around Ferric Binder, a Blood Crystal Shard and a Sanguine Formation, and offering to show the pattern",
+  "tone": "gruff, helpful"
+ },
+ "hemomancy.artificer.living_staff.construction": {
+  "about": "the Artificer teaching Living Staff construction: lay a line of iron bars with Venous Stone at both ends, hold a Sanguine Formation, project 150 mL of blood into the bars, noting a Neophyte can already form it and should learn it before the Vicar has them plant it for a rite",
+  "tone": "gruff, instructive"
+ },
+ "hemomancy.artificer.living_staff.use": {
+  "about": "the Artificer explaining Living Staff use: the bond is earned once formed, select Conjure Staff to recall it to an empty hand, select Blood Absorption or Blood Projection and hold the Staff to channel it, use it on a Cardinal Focus to start a matching rite, and an early staff will not raise Degree or let inactive blood answer a rite",
+  "tone": "gruff, instructive"
+ },
+ "hemomancy.artificer.monolithic_armature.line1": {
+  "about": "the Artificer saying the Cornerstone teaches the frame to remember a weight ordinary blood should not carry, with the extra strength a side effect",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.artificer.monolithic_armature.line2": {
+  "about": "the Artificer explaining where Blood Lust branches by lineage: Proboscis for Edacious, Fervent Husk for Sheolic, Ambergris for Phantasmal, and Silent Archon cloth being its own vow",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.neophyte.line1": {
+  "about": "the Artificer telling a Neophyte they have earned a spot by the rack, though the spot belongs to the work and not to them",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.artificer.neophyte.line2": {
+  "about": "the Artificer saying Armature work waits until the player has stable blood and proper iron",
+  "tone": "curt, flat"
+ },
+ "hemomancy.artificer.refusal.line1": {
+  "about": "the Artificer refusing the player because they have set their blood against the Artificer's tools, and iron is not fitted to blood that refuses it",
+  "tone": "cold, curt"
+ },
+ "hemomancy.artificer.refusal.line2": {
+  "about": "the Artificer dismissing the player, telling them to take their stillness elsewhere",
+  "tone": "cold, dismissive"
+ },
+ "hemomancy.artificer.resonant_forge.early": {
+  "about": "the Artificer telling a third-Degree player they can build the Resonant Forge on a Working floor from an anvil, cauldron, grindstone and two Hematic Iron blocks, plus Ferric Binder, 500 mL of blood and a blank Wax Cylinder, that it is not needed yet, and that a full transfer lesson comes at the fourth Degree",
+  "tone": "gruff, encouraging"
+ },
+ "hemomancy.artificer.resonant_forge.lesson": {
+  "about": "the Artificer teaching the forge's grinding side: set enchanted equipment and a blank Wax Cylinder there, keep blood in the basin, start the wheel, and it cuts the pattern out into cleaned equipment and an engraved cylinder",
+  "tone": "clipped, instructive"
+ },
+ "hemomancy.artificer.resonant_forge.master.claimed": {
+  "about": "the Artificer explaining the master cam can stabilize an engraved Ambergris Cylinder for 1,000 mL, after which it survives every proper application, and that ordinary wax cannot hold a master pattern",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.resonant_forge.master.prompt": {
+  "about": "the Artificer saying the player's precision forge is ready for its last mechanism and offering the Master Cam Kit along with the rite that seats it",
+  "tone": "gruff, approving"
+ },
+ "hemomancy.artificer.resonant_forge.master.ready": {
+  "about": "the Artificer handing over the Master Cam Kit and explaining the Rite of the Enduring Pattern: set the kit with five more offerings on lit braziers, three points of reader, hammer and stabilizer, each given 250 mL in order",
+  "tone": "clipped, procedural"
+ },
+ "hemomancy.artificer.resonant_forge.master.requirements": {
+  "about": "the Artificer stating Master Cam requirements: learn grinding and application, grind a single chosen vibration from a tool at a Precision Forge personally, be seventh Degree with blood awake, and an unclaimed earlier gift does not matter",
+  "tone": "gruff, exacting"
+ },
+ "hemomancy.artificer.resonant_forge.master.title": {
+  "about": "a dialogue option title for asking the Artificer about a lasting pattern",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.resonant_forge.practice": {
+  "about": "the Artificer telling a sixth-Degree player to practice moving a Scriptorium curse or a chosen enchantment, explaining the base wheel moves the whole pattern while a Precision governor picks one part, on the same forge with no new tier",
+  "tone": "clipped, instructive"
+ },
+ "hemomancy.artificer.resonant_forge.precision.claimed": {
+  "about": "the Artificer saying the governor is the player's and the Rite of the True Groove changes the forge they already have, keeping its blood, tools and wear",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.artificer.resonant_forge.precision.prompt": {
+  "about": "the Artificer saying the player knows the base forge and has reached the fifth Degree, so they can be given the Precision Governor Kit for the next rite",
+  "tone": "gruff, approving"
+ },
+ "hemomancy.artificer.resonant_forge.precision.ready": {
+  "about": "the Artificer handing over the Precision Governor Kit and explaining the rite: seat the forge behind a Cardinal Focus, set the kit with five more offerings on lit braziers, close two marked grooves with 250 mL each, then the wheel can choose one enchantment or the curse beneath",
+  "tone": "clipped, procedural"
+ },
+ "hemomancy.artificer.resonant_forge.precision.requirements": {
+  "about": "the Artificer stating that the player must grind one pattern into wax and hammer one pattern back into a tool, then at the fifth Degree gets a governor able to separate one vibration from the rest",
+  "tone": "gruff, exacting"
+ },
+ "hemomancy.artificer.resonant_forge.precision.title": {
+  "about": "a dialogue option title for asking the Artificer about a finer groove",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.resonant_forge.prompt": {
+  "about": "the Artificer explaining the forge copies an enchantment's cadence into ambergris wax and hammers it into another tool, and offering to put the pattern in the player's notes if they are building one",
+  "tone": "gruff, offering"
+ },
+ "hemomancy.artificer.resonant_forge.taught": {
+  "about": "the Artificer teaching application: move the engraved cylinder beside target equipment on the hammer side, start application, compatible enchantments carry over, an ordinary cylinder is used up, Ambergris also works for ordinary patterns, and the hammer and wheel need tending when they wear",
+  "tone": "clipped, instructive"
+ },
+ "hemomancy.artificer.resonant_forge.title": {
+  "about": "a dialogue option title for asking the Artificer about the Resonant Forge",
+  "tone": "plain label"
+ },
+ "hemomancy.artificer.scarlet_vanity.line1": {
+  "about": "the Artificer saying a fitting in a pocket is only an appointment, and telling the player to raise the Scarlet Vanity on a Working floor at Degree 3 to wear it on the staff",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.artificer.scarlet_vanity.line2": {
+  "about": "the Artificer noting the same bench holds the player's charm, blood gourd and Morphling Jar, four slots on one bench",
+  "tone": "gruff, brief"
+ },
+ "hemomancy.artificer.unawakened.line1": {
+  "about": "the Artificer turning away a player whose blood has not awakened, warning their tools would just bruise them",
+  "tone": "gruff, blunt"
+ },
+ "hemomancy.artificer.unawakened.line2": {
+  "about": "the Artificer telling the player to come back once their blood is awake, so the iron has a reason to listen",
+  "tone": "gruff, curt"
+ },
+ "hemomancy.artificer.workshop.line1": {
+  "about": "the Artificer saying the rack is listening and the player should talk to it with armor, reagent and blood",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.artificer.workshop.line2": {
+  "about": "the Artificer telling the player to ask cleanly, because a cluttered lesson makes bad metal",
+  "tone": "gruff, curt"
+ },
+ "hemomancy.clinical.cabinet.lesson": {
+  "about": "the Alchemist teaching the Phlebotomist's Cabinet after three examined sources: keep provenance in order, nine pigeonholes each hold 64 component-identical full vials, click a vial in or click empty-handed to withdraw one, fit a glass pane to see inside, sneak-use a Knapper to remove it, then craft one and store and withdraw a sample",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.cabinet.prompt": {
+  "about": "the Alchemist saying three distinct sources are enough to begin a proper collection and offering to teach the Phlebotomist's Cabinet",
+  "tone": "dry, practical"
+ },
+ "hemomancy.clinical.cabinet.title": {
+  "about": "a short title for the Phlebotomist's Cabinet lesson",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.clairaudiograph.lesson": {
+  "about": "the Mnemonist teaching the Clairaudiograph once the Alchemist has identified the specimen: put a filled creature Blood Vial and a blank cylinder in, select a call, Carve for four seconds, the blood is used up and the empty vial kept, Preview plays only for the player while Play reaches nearby listeners, and a carved cylinder holds an expression with no injectable property",
+  "tone": "measured, procedural"
+ },
+ "hemomancy.clinical.clairaudiograph.prompt": {
+  "about": "the Mnemonist saying the Alchemist has named the specimen and offering to teach the player to carve what its blood remembers saying",
+  "tone": "measured, intrigued"
+ },
+ "hemomancy.clinical.clairaudiograph.title": {
+  "about": "a short title for the Clairaudiograph lesson about carving a creature's remembered calls",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.echo_referral.lesson": {
+  "about": "the Alchemist saying they can identify the blood and its properties but the residual auditory pattern is outside their field, so the player should go to the Mnemonist, with questions allowed at Degree 2 and formal recording instruction starting at Degree 3",
+  "tone": "curt, deflecting"
+ },
+ "hemomancy.clinical.echo_referral.prompt": {
+  "about": "the Alchemist saying the player's samples carry something physiology cannot explain, and offering to refer the residue to the Mnemonist",
+  "tone": "dry, candid"
+ },
+ "hemomancy.clinical.echo_referral.title": {
+  "about": "a short title for the lesson referring unexplained sample residue to the Mnemonist",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.field_case.lesson": {
+  "about": "the Artificer teaching the Field Case after the Alchemist's referral: rebuild an empty Cabinet with leather and Hematic Iron Scraps (consuming the Cabinet), place the case before opening it, nine cells hold sixteen matching vials each, to pick it up close menus, wait for the lid and sneak-use it empty-handed, and carried it keeps each specimen's identity and count",
+  "tone": "gruff, instructive"
+ },
+ "hemomancy.clinical.field_case.prompt": {
+  "about": "the Artificer confirming the Alchemist's referral is in order and offering to show how to rebuild a Cabinet for travel without losing specimens",
+  "tone": "gruff, approving"
+ },
+ "hemomancy.clinical.field_case.title": {
+  "about": "a short title for the Field Case lesson about carrying a laboratory abroad",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.field_referral.lesson": {
+  "about": "the Alchemist saying the Cabinet suits the laboratory, not the road, and sending the player to the Artificer they have met with their storage practice and Hematic Iron to ask for a Field Case, while the Alchemist answers for specimens and the Artificer for hinges and catches",
+  "tone": "dry, brisk"
+ },
+ "hemomancy.clinical.field_referral.prompt": {
+  "about": "the Alchemist noting the player's cabinet work is sound and they have met the Artificer, and offering a referral for field equipment",
+  "tone": "dry, approving"
+ },
+ "hemomancy.clinical.field_referral.title": {
+  "about": "a short title for the referral turning laboratory storage into a travelling Cabinet",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.injection.lesson": {
+  "about": "the Alchemist teaching injection: having seen what the specimen carries, hold Use with a filled creature Blood Vial for 0.8 seconds, the blood is used up and the vial kept, read the identified response first, benefits are temporary with possible drawbacks, Transfusion Saturation blocks another injection for twenty seconds, and the microscope does not consume the sample",
+  "tone": "dry, cautionary"
+ },
+ "hemomancy.clinical.injection.locked": {
+  "about": "a note telling the player to examine a sample and learn Borrowed Physiology before injecting",
+  "tone": "flat, clipped"
+ },
+ "hemomancy.clinical.injection.prompt": {
+  "about": "the Alchemist saying the player has examined blood closely enough to understand the risk and offering to teach borrowing its physiology",
+  "tone": "dry, wary"
+ },
+ "hemomancy.clinical.injection.title": {
+  "about": "a short title for the Borrowed Physiology injection lesson",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.inquiry.alembic": {
+  "about": "the Alchemist explaining that at Degree 2 the Ghastly Alembic opens reagent distillation and broader tendency work, contrasting microscopy that describes a specimen with distillation and centrifugation that extract useful material",
+  "tone": "dry, informative"
+ },
+ "hemomancy.clinical.inquiry.artificer_cabinet": {
+  "about": "the Artificer saying Bloodwood holds the cells and Hematic Iron reinforces the frame, that provenance and exact specimen matching are the Alchemist's lessons, and that after the player uses the Cabinet and is referred they can discuss converting it for the field",
+  "tone": "gruff, deflecting"
+ },
+ "hemomancy.clinical.inquiry.artificer_microscope": {
+  "about": "the Artificer admitting they can reproduce the microscope housing but cannot say why one bear's blood freezes in the glass while another's boils, and telling the player to ask the Alchemist",
+  "tone": "gruff, curt"
+ },
+ "hemomancy.clinical.inquiry.artificer_recording": {
+  "about": "the Artificer saying they understand the recording machine's frame and moving parts, while the Alchemist identifies the sample and the Mnemonist explains the voice it keeps, and telling the player to ask them before treating it as ordinary",
+  "tone": "gruff, cautious"
+ },
+ "hemomancy.clinical.inquiry.blank_cylinder": {
+  "about": "the Mnemonist explaining a blank cylinder: make two ordinary Wax Cylinders from honeycomb, Active Befouling Ash and paper, set one beside a filled creature Blood Vial in the Clairaudiograph, select a call, carve for four seconds, and note Ambergris also works and is needed for lasting Masterwork patterns",
+  "tone": "measured, procedural"
+ },
+ "hemomancy.clinical.inquiry.carved_cylinder": {
+  "about": "the Mnemonist explaining a carved cylinder already carries an expression: place it in the Clairaudiograph and press Play without fresh blood, it cannot be reused as blank stock, Preview is only for the player and Play reaches nearby listeners",
+  "tone": "measured, informative"
+ },
+ "hemomancy.clinical.inquiry.centrifuge": {
+  "about": "the Alchemist explaining the Vial Centrifuge belongs to Degree-2 work: put usable creature samples in opposing slots, start a balanced spin, recover the enzyme and report the separation, with the Ghastly Alembic as the other proof needed before Concentrated Blood",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.inquiry.centrifuge_upgrades": {
+  "about": "the Alchemist explaining that at the fourth Degree they teach a governor after personal separation, at the sixth a fractionating rotor after a personal calibrated spin, both Cardinal upgrades of this same machine, and that gifted or crafted kits cannot replace practice",
+  "tone": "dry, firm"
+ },
+ "hemomancy.clinical.inquiry.echo_hint": {
+  "about": "the Mnemonist suggesting there may be an echo in the player's samples but physiology comes first, telling them to examine three creature sources and get the Alchemist's referral, and at Degree 3 learn to retain the expression",
+  "tone": "measured, hedged"
+ },
+ "hemomancy.clinical.inquiry.empty_vial": {
+  "about": "the Alchemist telling the player to left-click a living creature with an empty Blood Vial to collect a specimen, noting the First Separation briefing supplies two and a filled vial should be brought back for microscopy",
+  "tone": "dry, practical"
+ },
+ "hemomancy.clinical.inquiry.identified_vial": {
+  "about": "the Alchemist explaining an identified vial records tendencies and properties, that after the Borrowed Physiology lesson holding Use for 0.8 seconds injects it, the tooltip shows temporary responses and drawbacks, the empty vial is kept, and Transfusion Saturation prevents immediate re-injection",
+  "tone": "dry, informative"
+ },
+ "hemomancy.clinical.inquiry.later": {
+  "about": "the Alchemist saying the item belongs to a later lesson and telling the player to begin with the Degree-1 sampling and observation practice",
+  "tone": "curt, redirecting"
+ },
+ "hemomancy.clinical.inquiry.sampling": {
+  "about": "the Alchemist explaining the Living Syringe draws creature blood into empty vials in its loaded eight-vial rack, is needed for thick-skinned creatures and NPCs that loose vials cannot draw from, and that the player should bring one filled vial before building a large collection",
+  "tone": "dry, practical"
+ },
+ "hemomancy.clinical.inquiry.unidentified_vial": {
+  "about": "the Alchemist saying the vial holds an unidentified specimen, telling the player to show a filled creature vial for the microscope lesson, with the microscope in the main hand and sample in the offhand for a two-second examination",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.inquiry.unreadable_cylinder": {
+  "about": "the Mnemonist saying the cylinder's inscription cannot be read, advising keeping it as is since it is not blank wax, and suggesting its recording definition changed or went missing",
+  "tone": "measured, puzzled"
+ },
+ "hemomancy.clinical.ledger.cabinet": {
+  "about": "a short ledger title for the ordered-collection Cabinet lesson",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.cabinet.desc": {
+  "about": "a ledger description saying that after three source identifications the player learns the Cabinet recipe from the Alchemist",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.clairaudiograph": {
+  "about": "a short ledger title for the lesson on what blood remembers saying",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.clairaudiograph.desc": {
+  "about": "a ledger description saying that at Degree 3 the player meets the Mnemonist and uses the Alchemist's referral to learn recording and cylinder recipes",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.crafted": {
+  "about": "a short ledger title for crafting a Cabinet",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.crafted.desc": {
+  "about": "a ledger description telling the player to craft their own stationary specimen Cabinet after learning its recipe",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.echo_referral": {
+  "about": "a short ledger title for the beyond-ordinary-analysis referral",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.echo_referral.desc": {
+  "about": "a ledger description saying that after three source identifications and Degree 2 the player asks the Alchemist for a Mnemonist referral",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.echoes": {
+  "about": "a short ledger section title for the clinical study of retained expressions",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.examined": {
+  "about": "a short ledger title for examining a specimen",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.examined.desc": {
+  "about": "a ledger description: microscope in main hand, vial in offhand, hold Use for two uninterrupted seconds, then return to the Alchemist",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.field_case": {
+  "about": "a short ledger title for the Laboratory Abroad Field Case lesson",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.field_case.desc": {
+  "about": "a ledger description saying the player takes the Alchemist's referral to the Artificer to learn the Field Case recipe and placement rules",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.fieldwork": {
+  "about": "a short ledger section title for the clinical study of the laboratory abroad",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.injection": {
+  "about": "a short ledger title for the Borrowed Physiology lesson",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.injection.desc": {
+  "about": "a ledger description saying the player learns direct injection from the Alchemist after their first personal examination",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.iron": {
+  "about": "a short ledger title for meeting the Artificer",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.iron.desc": {
+  "about": "a ledger description telling the player to obtain Hematic Iron Scraps, speak to the Artificer, then return to the Alchemist",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.microscope": {
+  "about": "a short ledger title for learning microscopy",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.microscope.desc": {
+  "about": "a ledger description telling the player to hold a filled creature vial while speaking to the Alchemist to learn the Hematic Microscope recipe",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.observation": {
+  "about": "a short ledger section title for the clinical study of collecting and observing",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.referral": {
+  "about": "a short ledger title for the Cabinet-for-the-road referral",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.referral.desc": {
+  "about": "a ledger description saying that at Degree 2 the player completes Cabinet practice and asks the Alchemist for a field-conversion referral",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.sources": {
+  "about": "a short ledger title for identifying three creature sources",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.sources.desc": {
+  "about": "a ledger description saying the player must personally examine three different entity types, duplicates count once, and trade-identified vials do not replace their own examination",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.storage": {
+  "about": "a short ledger title for storing and withdrawing",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.ledger.storage.desc": {
+  "about": "a ledger description saying the player must personally insert and withdraw a full sample through a Cabinet menu and automated transfers do not count",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.microscope.lesson": {
+  "about": "the Alchemist asking to see the player's filled creature vial and teaching microscopy: the recipe is added to their notes, hold the microscope in the main hand and a filled vial in the offhand, hold Use for two seconds, read tendencies and properties, and return after a successful examination",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.microscope.prompt": {
+  "about": "the Alchemist saying the player brought a viable sample and offering to teach reading it under the Hematic Microscope and add the design to their notes",
+  "tone": "dry, approving"
+ },
+ "hemomancy.clinical.microscope.title": {
+  "about": "a short title for the Hematic Microscopy lesson",
+  "tone": "plain label"
+ },
+ "hemomancy.clinical.next.cabinet": {
+  "about": "the Alchemist noting the player has identified three distinct sources and telling them to ask for the Phlebotomist's Cabinet lesson and recipe",
+  "tone": "dry, brisk"
+ },
+ "hemomancy.clinical.next.collect": {
+  "about": "the Alchemist directing the player to start with the First Separation assignment: sample living creatures with its loose vials, balance the Centrifuge, recover the enzyme, report back for a Living Syringe and initialized eight-vial rack, then bring one filled creature vial to discuss observation",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.next.degree_two": {
+  "about": "the Alchemist laying out the path after the Vicar grants Degree 2: complete First Separation and an Alembic distillation, ask for Concentrated Blood, inject it, then sleep to reach Degree 3",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.next.echo_referral": {
+  "about": "the Alchemist telling the player to examine three creature sources, ask about the residual echo at Degree 2, and bring that referral to the Mnemonist for formal study at Degree 3",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.next.examine": {
+  "about": "the Alchemist telling the player to craft the Hematic Microscope, hold it in the main hand with a single filled creature Blood Vial in the offhand, hold Use for two uninterrupted seconds, then return",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.next.field_case": {
+  "about": "the Alchemist telling the player to place the Field Case to open it, to pick it up close all menus, let the lid shut and sneak-use it empty-handed, and to ask what belongs in its cells",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.next.field_referral": {
+  "about": "the Alchemist saying the player must be referred first: at Degree 2 craft a Cabinet, personally insert and withdraw a sample, obtain Hematic Iron Scraps, meet the Artificer, then return to the Alchemist for the handoff",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.next.formal_study": {
+  "about": "the Mnemonist confirming the Alchemist's referral is recorded and telling the player that at Degree 3 they should ask for What Blood Remembers Saying to learn the Clairaudiograph and Wax Cylinder recipes",
+  "tone": "measured, brisk"
+ },
+ "hemomancy.clinical.next.injection": {
+  "about": "the Alchemist telling the player that after examining a creature sample themself they should ask about Borrowed Physiology, which unlocks direct injection",
+  "tone": "dry, brisk"
+ },
+ "hemomancy.clinical.next.iron_artificer": {
+  "about": "the Alchemist telling the player that at Degree 2 they should obtain Hematic Iron Scraps and meet the Artificer, then return after crafting, filling and withdrawing from their Cabinet",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.next.later_study": {
+  "about": "the Alchemist saying the Artificer handles the player's field conversion, to ask about Beyond Ordinary Analysis once three creature sources are examined, and that formal mnemonic recording is the Mnemonist's work",
+  "tone": "dry, deflecting"
+ },
+ "hemomancy.clinical.next.recording": {
+  "about": "the Mnemonist telling the player to use a filled creature vial and blank Wax Cylinder in the Clairaudiograph, choose a call and Carve, noting a carved cylinder replays without more blood",
+  "tone": "measured, procedural"
+ },
+ "hemomancy.clinical.next.referral": {
+  "about": "the Alchemist telling the player to ask for A Cabinet for the Road and then take the referral to the Artificer",
+  "tone": "dry, brisk"
+ },
+ "hemomancy.clinical.next.show_vial": {
+  "about": "the Alchemist telling the player to return holding one filled creature Blood Vial in either hand, after which they get the microscope lesson and recipe",
+  "tone": "dry, brisk"
+ },
+ "hemomancy.clinical.next.storage": {
+  "about": "the Alchemist telling the player to craft a Phlebotomist's Cabinet themself, insert a full sample through its menu, withdraw one, and noting hoppers and Field Cases do not count toward stationary Cabinet practice",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.next.three_sources": {
+  "about": "the Alchemist telling the player to examine blood from three creature types with the microscope then speak to them, noting repeats of one type count once and already identified vials still need the player's own two-second examination",
+  "tone": "dry, procedural"
+ },
+ "hemomancy.clinical.next.title": {
+  "about": "a player question asking the Alchemist what their next clinical assignment is",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.anchorite.option.about_alchemist": {
+  "about": "asking the Vein-Mason how their work differs from the Alchemist's",
+  "tone": "curious, respectful"
+ },
+ "hemomancy.dialogue.anchorite.option.about_artificer": {
+  "about": "asking the Vein-Mason how their work differs from the Artificer's",
+  "tone": "curious, respectful"
+ },
+ "hemomancy.dialogue.anchorite.option.accept_first_pattern": {
+  "about": "asking the Vein-Mason to teach the first scar",
+  "tone": "earnest, deferential"
+ },
+ "hemomancy.dialogue.anchorite.option.accept_referral": {
+  "about": "agreeing to take the Vein-Mason's question about routing to a Mnemonist",
+  "tone": "resolute, plain"
+ },
+ "hemomancy.dialogue.anchorite.option.ask_about_item": {
+  "about": "asking the Vein-Mason what the item the player holds is",
+  "tone": "curious, plain"
+ },
+ "hemomancy.dialogue.anchorite.option.claim_d5": {
+  "about": "telling the Vein-Mason the player has completed the recovery ladder and claiming the next lesson",
+  "tone": "steady, plain"
+ },
+ "hemomancy.dialogue.anchorite.option.claim_d6": {
+  "about": "telling the Vein-Mason the changed route held and claiming the reward",
+  "tone": "steady, plain"
+ },
+ "hemomancy.dialogue.anchorite.option.claim_reward": {
+  "about": "telling the Vein-Mason the player has committed their first scar loadout and asking for the reward",
+  "tone": "steady, plain"
+ },
+ "hemomancy.dialogue.anchorite.option.diagnose": {
+  "about": "asking the Vein-Mason to read the player's damaged vessel",
+  "tone": "wary, plain"
+ },
+ "hemomancy.dialogue.anchorite.option.leave": {
+  "about": "ending the conversation with the Vein-Mason",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.anchorite.option.replace_pattern": {
+  "about": "asking the Vein-Mason to replace a pattern the player lost",
+  "tone": "sheepish, plain"
+ },
+ "hemomancy.dialogue.artificer.option.armature_hint": {
+  "about": "asking the Artificer when armor-work begins",
+  "tone": "curious, plain"
+ },
+ "hemomancy.dialogue.artificer.option.armor_path": {
+  "about": "asking the Artificer which armor path the player should choose",
+  "tone": "earnest, plain"
+ },
+ "hemomancy.dialogue.artificer.option.ask_about_item": {
+  "about": "asking the Artificer what the item the player holds is",
+  "tone": "curious, plain"
+ },
+ "hemomancy.dialogue.artificer.option.assignments": {
+  "about": "asking the Artificer to mark the player's equipment rites and assignments",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.assumed_limb.briefing": {
+  "about": "asking to begin the Assumed Limb assignment",
+  "tone": "eager, plain"
+ },
+ "hemomancy.dialogue.artificer.option.assumed_limb.fitting": {
+  "about": "asking the Artificer to fit the player's full Living Arsenal",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.assumed_limb.inspection": {
+  "about": "asking the Artificer to inspect the player's first living graft",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.assumed_limb.replacement": {
+  "about": "asking the Artificer to replace a lost Assumed Limb Fitting",
+  "tone": "sheepish, plain"
+ },
+ "hemomancy.dialogue.artificer.option.claim_assumed_limb_reward": {
+  "about": "telling the Artificer the player has completed a living graft and claiming the reward",
+  "tone": "steady, plain"
+ },
+ "hemomancy.dialogue.artificer.option.claim_blood_lust_fitting": {
+  "about": "asking the Artificer to fit the player's Blood Lust vestment",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.claim_consecration_kit": {
+  "about": "asking the Artificer for the Armature Consecration Kit",
+  "tone": "plain, direct"
+ },
+ "hemomancy.dialogue.artificer.option.claim_crimson_vestment_reward": {
+  "about": "telling the Artificer the player has made Blood Lust armor and claiming the reward",
+  "tone": "steady, plain"
+ },
+ "hemomancy.dialogue.artificer.option.claim_d7_fitting": {
+  "about": "asking the Artificer to fit the player's weighted frame",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.claim_d7_reward": {
+  "about": "asking the Artificer to issue the material for the player's recorded seventh-Degree lineage",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.claim_fork_fitting": {
+  "about": "asking the Artificer to fit the player's chosen armor shell",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.claim_hematic_iron_fitting": {
+  "about": "asking the Artificer to fit the player's Hematic Iron set",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.claim_living_arsenal_fitting": {
+  "about": "asking the Artificer to fit the player's full living arsenal",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.claim_three_answers_reward": {
+  "about": "telling the Artificer the player has chosen an armor answer and claiming the reward",
+  "tone": "steady, plain"
+ },
+ "hemomancy.dialogue.artificer.option.claim_worn_vow_reward": {
+  "about": "telling the Artificer the player has made Hematic Iron armor and claiming the reward",
+  "tone": "steady, plain"
+ },
+ "hemomancy.dialogue.artificer.option.crimson_vestment.briefing": {
+  "about": "asking to begin the Crimson Vestment assignment",
+  "tone": "eager, plain"
+ },
+ "hemomancy.dialogue.artificer.option.crimson_vestment.fitting": {
+  "about": "asking the Artificer to fit the player's Crimson Vestment",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.crimson_vestment.inspection": {
+  "about": "asking the Artificer to inspect the player's consecrated frame",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.crimson_vestment.replacement": {
+  "about": "asking the Artificer to replace a lost Crimson Vestment Fitting",
+  "tone": "sheepish, plain"
+ },
+ "hemomancy.dialogue.artificer.option.late_armature": {
+  "about": "asking the Artificer to teach the Lodge-grade Armature",
+  "tone": "earnest, plain"
+ },
+ "hemomancy.dialogue.artificer.option.leave": {
+  "about": "ending the conversation with the Artificer",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.artificer.option.living_grafts": {
+  "about": "asking the Artificer to tell the player about living grafts",
+  "tone": "curious, plain"
+ },
+ "hemomancy.dialogue.artificer.option.living_staff": {
+  "about": "asking the Artificer to teach the player to make a Living Staff",
+  "tone": "eager, plain"
+ },
+ "hemomancy.dialogue.artificer.option.monolithic_armature": {
+  "about": "asking the Artificer to teach the Monolithic Armature",
+  "tone": "earnest, plain"
+ },
+ "hemomancy.dialogue.artificer.option.recover.barbed": {
+  "about": "telling the Artificer the player's first armor answer was Barbed, to restore a lost record",
+  "tone": "plain, matter-of-fact"
+ },
+ "hemomancy.dialogue.artificer.option.recover.chitinite": {
+  "about": "telling the Artificer the player's first armor answer was Chitinite, to restore a lost record",
+  "tone": "plain, matter-of-fact"
+ },
+ "hemomancy.dialogue.artificer.option.recover.edacious": {
+  "about": "telling the Artificer the player's first seventh-Degree lineage was Edacious, to restore a lost record",
+  "tone": "plain, matter-of-fact"
+ },
+ "hemomancy.dialogue.artificer.option.recover.phantasmal": {
+  "about": "telling the Artificer the player's first seventh-Degree lineage was Phantasmal, to restore a lost record",
+  "tone": "plain, matter-of-fact"
+ },
+ "hemomancy.dialogue.artificer.option.recover.prismatic": {
+  "about": "telling the Artificer the player's first armor answer was Prismatic, to restore a lost record",
+  "tone": "plain, matter-of-fact"
+ },
+ "hemomancy.dialogue.artificer.option.recover.sheolic": {
+  "about": "telling the Artificer the player's first seventh-Degree lineage was Sheolic, to restore a lost record",
+  "tone": "plain, matter-of-fact"
+ },
+ "hemomancy.dialogue.artificer.option.recover.silent_archon": {
+  "about": "telling the Artificer the player's first seventh-Degree lineage was Silent Archon, to restore a lost record",
+  "tone": "plain, matter-of-fact"
+ },
+ "hemomancy.dialogue.artificer.option.reminder": {
+  "about": "asking the Artificer what work remains for the player",
+  "tone": "plain, direct"
+ },
+ "hemomancy.dialogue.artificer.option.scarlet_vanity": {
+  "about": "asking the Artificer how the player equips their fittings",
+  "tone": "curious, plain"
+ },
+ "hemomancy.dialogue.artificer.option.teach_armature": {
+  "about": "asking the Artificer to teach the Hematic Armature",
+  "tone": "earnest, plain"
+ },
+ "hemomancy.dialogue.artificer.option.three_answers.briefing": {
+  "about": "asking to begin The Three Answers assignment",
+  "tone": "eager, plain"
+ },
+ "hemomancy.dialogue.artificer.option.three_answers.fitting": {
+  "about": "asking the Artificer to fit the player's recorded armor answer",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.three_answers.inspection": {
+  "about": "asking the Artificer to inspect the player's first armor answer",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.three_answers.replacement": {
+  "about": "asking the Artificer to replace a lost fork fitting",
+  "tone": "sheepish, plain"
+ },
+ "hemomancy.dialogue.artificer.option.weight_of_frame.briefing": {
+  "about": "asking to begin the Weight of the Frame assignment",
+  "tone": "eager, plain"
+ },
+ "hemomancy.dialogue.artificer.option.weight_of_frame.fitting": {
+  "about": "asking the Artificer to fit the player's Monolithic Frame",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.weight_of_frame.inspection": {
+  "about": "asking the Artificer to inspect the player's monolithic lineage",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.weight_of_frame.replacement": {
+  "about": "asking the Artificer to replace a lost Monolithic Frame Fitting",
+  "tone": "sheepish, plain"
+ },
+ "hemomancy.dialogue.artificer.option.who_are_you": {
+  "about": "asking the Artificer who they are",
+  "tone": "curious, plain"
+ },
+ "hemomancy.dialogue.artificer.option.worn_vow.briefing": {
+  "about": "asking to begin The Worn Vow assignment",
+  "tone": "eager, plain"
+ },
+ "hemomancy.dialogue.artificer.option.worn_vow.fitting": {
+  "about": "asking the Artificer to fit the player's Worn Vow",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.worn_vow.inspection": {
+  "about": "asking the Artificer to inspect the player's Hematic Iron work",
+  "tone": "plain, businesslike"
+ },
+ "hemomancy.dialogue.artificer.option.worn_vow.replacement": {
+  "about": "asking the Artificer to replace a lost Worn Vow Fitting",
+  "tone": "sheepish, plain"
+ },
+ "hemomancy.dialogue.ending.artificer.apotheos": {
+  "about": "the Artificer noting the player's frame has changed after the Apotheos path and asking what still needs fitting, telling them to show it",
+  "tone": "gruff, curious"
+ },
+ "hemomancy.dialogue.ending.artificer.apotheos_pending": {
+  "about": "the Artificer saying the player chose the road called Apotheosis, that they know it only from stories, that no frame they know fits what walks out the far end, and that until the rite is done they fit the frame the player has",
+  "tone": "gruff, uneasy"
+ },
+ "hemomancy.dialogue.ending.artificer.silent_absorb": {
+  "about": "the Artificer noting Vesper is down but his memory is not yet in the player, telling them to light the Iron Brazier, set the Memory in, and draw it through the Living Staff",
+  "tone": "gruff, practical"
+ },
+ "hemomancy.dialogue.ending.artificer.silent_archon": {
+  "about": "the Artificer acknowledging the Silentium path, that the player held against Vesper and took his memory in, saying they can still fit the armature and will finish what the player left there",
+  "tone": "gruff, quietly respectful"
+ },
+ "hemomancy.dialogue.ending.artificer.silent_pending": {
+  "about": "the Artificer noting the player chose silence while Vesper is still ahead, telling them to wear a frame that survives him and bring back whatever he breaks",
+  "tone": "gruff, grim"
+ },
+ "hemomancy.dialogue.ending.artificer.undecided": {
+  "about": "the Artificer noting the player reached Archon, that the frame is unfinished, and telling them to bring it back when the next strain shows",
+  "tone": "gruff, brief"
+ },
+ "hemomancy.dialogue.event.anchorite_d5_reward": {
+  "about": "narration of the Vein-Mason supplying a tier-two pattern, a Blank Scar, a catalyst and four Runic Motifs",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.anchorite_d6_reward": {
+  "about": "narration of the Vein-Mason supplying a tier-three pattern, Blank Scar, catalyst and eight Runic Motifs, with a note that Deep Inscription is still needed to carve it",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.anchorite_diagnosis": {
+  "about": "a diagnosis readout giving the worst body section (its name), flow state, health out of 100 and recommended treatment, each filled by a value",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.dialogue.event.artificer_assumed_limb_reward_granted": {
+  "about": "narration of the Artificer handing the player a blank Hematic Memory and a dry remark that they learned the limb and should keep the next wound somewhere clean",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.dialogue.event.artificer_blood_lust_fitting_granted": {
+  "about": "narration of the Artificer giving the Crimson Vestment Fitting, which adds no edge to the staff and only shows the work was witnessed",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.dialogue.event.artificer_blood_lust_fitting_known": {
+  "about": "narration of the Artificer glancing at the fitting and remarking the Lodge already saw that vestment",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.dialogue.event.artificer_blood_lust_fitting_reissued": {
+  "about": "narration of the Artificer replacing the lost Crimson Vestment Fitting with a warning not to lose the appointment again",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.dialogue.event.artificer_blood_lust_fitting_unready": {
+  "about": "narration of the Artificer refusing the fitting and demanding the full Blood Lust set worn at once with no substitutes",
+  "tone": "gruff, stern"
+ },
+ "hemomancy.dialogue.event.artificer_consecration_kit_granted": {
+  "about": "narration of the Artificer giving the player an Armature Consecration Kit",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.artificer_consecration_kit_known": {
+  "about": "narration noting the Artificer already issued the player's kit, that a canceled rite returns its offerings, and that the player now knows how to craft another",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.artificer_consecration_kit_unready": {
+  "about": "narration of the Artificer withholding the kit until the player has worked the Armature themself and reached the fifth Degree with awake blood",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.artificer_crimson_vestment_inspected": {
+  "about": "the Artificer reporting the consecrated frame holds, giving an inspection detail (filled by a value), and telling the player to take the referral to an Alchemist",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.dialogue.event.artificer_crimson_vestment_reward_granted": {
+  "about": "narration of the Alchemist giving the player Crimson Lacquer, telling them to finish the vestment and let the Artificer see it answer",
+  "tone": "dry, brisk"
+ },
+ "hemomancy.dialogue.event.artificer_d7_fitting_granted": {
+  "about": "narration of the Artificer giving the Monolithic Frame Fitting, which adds no strength and only records the weight the player took on",
+  "tone": "gruff, solemn"
+ },
+ "hemomancy.dialogue.event.artificer_d7_fitting_known": {
+  "about": "narration of the Artificer nodding once and saying they have already fitted the player for that weight",
+  "tone": "gruff, terse"
+ },
+ "hemomancy.dialogue.event.artificer_d7_fitting_reissued": {
+  "about": "narration of the Artificer replacing the Monolithic Frame Fitting with a dry remark that something so heavy should be harder to lose",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.dialogue.event.artificer_d7_fitting_unready": {
+  "about": "narration of the Artificer looking over the player's armor and demanding a complete matching Archon-grade set, since mixed pieces are not a vow",
+  "tone": "gruff, stern"
+ },
+ "hemomancy.dialogue.event.artificer_d7_reward_granted": {
+  "about": "a system note that the issued material matches the player's first lineage and later upgrades will not rewrite it",
+  "tone": "plain notice"
+ },
+ "hemomancy.dialogue.event.artificer_equipment_full": {
+  "about": "a short status note that the full recorded armor set is equipped",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.event.artificer_equipment_incomplete": {
+  "about": "a short status note telling the player to equip the full recorded set first",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.event.artificer_fork_fitting_granted": {
+  "about": "narration of the Artificer giving the fitting for the player's chosen shell (thorn, shell or prism), saying the answer now has a witness",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.dialogue.event.artificer_fork_fitting_known": {
+  "about": "narration of the Artificer leaving the drawer closed because the player already has the fitting for that shell",
+  "tone": "gruff, curt"
+ },
+ "hemomancy.dialogue.event.artificer_fork_fitting_reissued": {
+  "about": "narration of the Artificer replacing the chosen-shell fitting with a remark not to lose the answer twice",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.dialogue.event.artificer_fork_fitting_unready": {
+  "about": "narration of the Artificer refusing the fitting and demanding one complete forked set, since mixing them shows the player has not decided",
+  "tone": "gruff, stern"
+ },
+ "hemomancy.dialogue.event.artificer_hematic_iron_fitting_granted": {
+  "about": "narration of the Artificer giving the Worn Vow Fitting, which gives armor nothing but gives the staff a new face",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.dialogue.event.artificer_hematic_iron_fitting_known": {
+  "about": "narration of the Artificer tapping the fitting and saying they already witnessed the player's first vow",
+  "tone": "gruff, terse"
+ },
+ "hemomancy.dialogue.event.artificer_hematic_iron_fitting_reissued": {
+  "about": "narration of the Artificer replacing the Worn Vow Fitting and saying losing it does not cancel the appointment",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.dialogue.event.artificer_hematic_iron_fitting_unready": {
+  "about": "narration of the Artificer looking at the gaps and demanding a full Hematic Iron set worn on the body before fitting",
+  "tone": "gruff, stern"
+ },
+ "hemomancy.dialogue.event.artificer_inspection_unready": {
+  "about": "a system note that the work has not been inspected yet",
+  "tone": "plain notice"
+ },
+ "hemomancy.dialogue.event.artificer_living_arsenal_fitting_granted": {
+  "about": "narration of the Artificer giving the Assumed Limb Fitting, which records all seven assumed limbs as proof of work and grants no fang or hidden strength",
+  "tone": "gruff, matter-of-fact"
+ },
+ "hemomancy.dialogue.event.artificer_living_arsenal_fitting_known": {
+  "about": "narration of the Artificer giving a hard smile and saying the player's arsenal is already fitted",
+  "tone": "gruff, dry"
+ },
+ "hemomancy.dialogue.event.artificer_living_arsenal_fitting_reissued": {
+  "about": "narration of the Artificer replacing the Assumed Limb Fitting, noting the staff still carries the record and only the fitting was lost",
+  "tone": "gruff, wry"
+ },
+ "hemomancy.dialogue.event.artificer_living_arsenal_fitting_unready": {
+  "about": "narration of the Artificer listening to the staff and noting some of the seven forms are still missing",
+  "tone": "gruff, flat"
+ },
+ "hemomancy.dialogue.event.artificer_reward_unready": {
+  "about": "a system note that the material has not been earned or was already issued",
+  "tone": "plain notice"
+ },
+ "hemomancy.dialogue.event.artificer_three_answers_inspected": {
+  "about": "the Artificer reporting the recorded fork (its name filled in), an inspection detail (filled by a value), and telling the player to take the inspection to an Alchemist to compare with Bestiary records",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.dialogue.event.artificer_three_answers_reward_granted": {
+  "about": "narration of the Alchemist giving the reagent for the player's recorded armor family, with an offer to refine another measure if they catalog its living examples",
+  "tone": "dry, brisk"
+ },
+ "hemomancy.dialogue.event.artificer_weight_of_frame_inspected": {
+  "about": "a report of the recorded Degree 7 lineage (its name filled in), an inspection detail (filled by a value), noting the matching material has been issued",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.dialogue.event.artificer_worn_vow_reward_granted": {
+  "about": "narration of the Artificer giving the player Hematic Iron Scrap, saying one piece is done and the player should now teach the rest of the set",
+  "tone": "gruff, brisk"
+ },
+ "hemomancy.dialogue.event.vein_mason_first_lesson": {
+  "about": "narration of the Vein-Mason giving the player a Scar Pattern and the materials to carve it",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.vein_mason_known": {
+  "about": "narration noting the Vein-Mason has already given the player their first pattern",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.vein_mason_reward_claimed": {
+  "about": "narration of the Vein-Mason giving the player a second pattern, a blank scar, its catalyst and fresh Motif Paper",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.vein_mason_reward_known": {
+  "about": "narration noting the Vein-Mason has already given the player the continuation kit",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.vein_mason_reward_unready": {
+  "about": "narration noting the Vein-Mason waits for the player to commit their first loadout",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.vein_mason_unready": {
+  "about": "narration noting the Vein-Mason will not teach the player yet",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.rapport.artificer.first_fitting": {
+  "about": "asking the Artificer what the first thing they ever made was",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.artificer.first_fitting.line1": {
+  "about": "the Artificer recalling their first made object, a bone-and-iron rack hook that held, which was all they asked of it and remains the best thing they have made",
+  "tone": "gruff, quietly proud"
+ },
+ "hemomancy.dialogue.rapport.artificer.first_fitting.teaser": {
+  "about": "a teaser saying the Redwright does not talk about his own work to strangers",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.artificer.the_vow": {
+  "about": "asking the Artificer why they will not fit gear that has not answered",
+  "tone": "probing, respectful"
+ },
+ "hemomancy.dialogue.rapport.artificer.the_vow.line1": {
+  "about": "the Artificer recalling fitting a set once on a promise: clean work never worn under pressure, taken into the dark where it did not know its wearers",
+  "tone": "gruff, heavy"
+ },
+ "hemomancy.dialogue.rapport.artificer.the_vow.line2": {
+  "about": "the Artificer saying the wearers came back and the set did not, which is why the metal now learns the player first and only then is fitted",
+  "tone": "gruff, grave"
+ },
+ "hemomancy.dialogue.rapport.artificer.the_vow.teaser": {
+  "about": "a teaser saying that continued trading with the Redwright might reveal why he inspects so hard",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.cicatrix_anchorite.own_scars": {
+  "about": "asking the Vein-Mason whose scars taught them",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.cicatrix_anchorite.own_scars.line1": {
+  "about": "narration of the Vein-Mason turning one wrist to the light to show scars like a riverbed, followed by a line that they are the Vein-Mason's own, carved badly at first",
+  "tone": "solemn, quiet"
+ },
+ "hemomancy.dialogue.rapport.cicatrix_anchorite.own_scars.line2": {
+  "about": "the Vein-Mason explaining that the early bad carving taught the route where it may not go, after which it carried",
+  "tone": "austere, reflective"
+ },
+ "hemomancy.dialogue.rapport.cicatrix_anchorite.own_scars.teaser": {
+  "about": "a teaser saying the Vein-Mason's own scars are not for strangers",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.cicatrix_anchorite.the_respite": {
+  "about": "asking the Vein-Mason why they live out here, away from the outposts",
+  "tone": "curious, gentle"
+ },
+ "hemomancy.dialogue.rapport.cicatrix_anchorite.the_respite.line1": {
+  "about": "the Vein-Mason saying a current needs banks that hold still, the outposts never hold still, and they do",
+  "tone": "austere, quiet"
+ },
+ "hemomancy.dialogue.rapport.cicatrix_anchorite.the_respite.teaser": {
+  "about": "a teaser saying the Vein-Mason says little but a few more trades might draw out a little more",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.artificer.appraise.poor": {
+  "about": "the Artificer rejecting a worn item as past saving and telling the player to melt it down themself",
+  "tone": "gruff, dismissive"
+ },
+ "hemomancy.trade.artificer.bone_offcuts.line": {
+  "about": "the Artificer describing a trade of eight bone bricks from the Vein-Mason, which hold a rack straight, in exchange for powder back",
+  "tone": "gruff, businesslike"
+ },
+ "hemomancy.trade.artificer.bone_offcuts.title": {
+  "about": "a short title for the bone offcuts trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.artificer.husk_lacquer.line": {
+  "about": "the Artificer describing a trade of four chitinous husks boiled down to Crimson Lacquer, not available before the third Degree",
+  "tone": "gruff, businesslike"
+ },
+ "hemomancy.trade.artificer.husk_lacquer.title": {
+  "about": "a short title for the husk-for-lacquer trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.artificer.scrap_in.line": {
+  "about": "the Artificer describing a trade of eight pieces of scrap that they grind, giving powder back",
+  "tone": "gruff, businesslike"
+ },
+ "hemomancy.trade.artificer.scrap_in.title": {
+  "about": "a short title for the scrap-in trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.artificer.suture_work.line": {
+  "about": "the Artificer describing a trade of four string and one Blood Crystal Shard for a needle they make, which the player must keep sharp",
+  "tone": "gruff, businesslike"
+ },
+ "hemomancy.trade.artificer.suture_work.title": {
+  "about": "a short title for the suture work trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.artificer.thanks": {
+  "about": "the Artificer closing a completed trade with a curt acknowledgement and calling for the next customer",
+  "tone": "gruff, curt"
+ },
+ "hemomancy.trade.artificer.thanks_fine": {
+  "about": "the Artificer approving good metal after a trade and asking who has been looking after it",
+  "tone": "gruff, grudgingly warm"
+ },
+ "hemomancy.trade.artificer.venous_offcuts.line": {
+  "about": "the Artificer describing a trade of eight polished venous stone from the Vein-Mason, used to bind frames, giving two binders in return",
+  "tone": "gruff, businesslike"
+ },
+ "hemomancy.trade.artificer.venous_offcuts.title": {
+  "about": "a short title for the venous offcuts trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.artificer.worn_tools.line": {
+  "about": "the Artificer saying they take iron or better tools that are worn but not broken, and the player should bring them in before they snap",
+  "tone": "gruff, businesslike"
+ },
+ "hemomancy.trade.artificer.worn_tools.title": {
+  "about": "a short title for the worn tools trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.cicatrix_anchorite.bone.line": {
+  "about": "the Vein-Mason describing a trade of eight bones for four bricks, noting bone bears weight",
+  "tone": "austere, terse"
+ },
+ "hemomancy.trade.cicatrix_anchorite.bone.title": {
+  "about": "a short title for the bone trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.cicatrix_anchorite.clay.line": {
+  "about": "the Vein-Mason describing a trade of six clay for stone, saying their banks need mortar",
+  "tone": "austere, terse"
+ },
+ "hemomancy.trade.cicatrix_anchorite.clay.title": {
+  "about": "a short title for the clay-for-the-banks trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.cicatrix_anchorite.thanks": {
+  "about": "the Vein-Mason closing a trade with a short verdict that it is good and enough for now",
+  "tone": "austere, sparing"
+ }
+}

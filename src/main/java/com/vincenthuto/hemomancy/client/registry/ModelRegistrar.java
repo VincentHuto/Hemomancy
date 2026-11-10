@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.client.render.item.*;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.CylinderRenderer;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSyringeRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.*;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.*;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle.SaintSarcophagusRenderer;
@@ -53,6 +55,8 @@ public final class ModelRegistrar {
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/phlebotomists_cabinet_" + part)));
         event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_stylus")));
         event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_feed")));
+        CylinderRenderer.registerModels(event::register);
+        LivingSyringeRenderer.registerModels(event::register);
         event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/ghastly_alembic_condenser")));
         event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/ghastly_alembic_athanor")));
         for (String part : ResonantForgeRenderer.PART_MODELS)
@@ -103,6 +107,8 @@ public final class ModelRegistrar {
 
     @SubscribeEvent
     public static void onModifyBakingResult(ModelEvent.ModifyBakingResult evt) {
+        evt.getModels().computeIfPresent(ModelResourceLocation.inventory(ItemInit.living_syringe.getId()),
+                (id, model) -> LivingSyringeRenderer.withRenderOwner(model));
         // The Saint Sarcophagus is a cell longer than a block model reaches: bake its head section in with each facing
         BakedModel sarcophagusHead = evt.getModels().get(SaintSarcophagusRenderer.part("head"));
         if (sarcophagusHead != null)

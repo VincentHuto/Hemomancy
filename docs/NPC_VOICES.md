@@ -10,6 +10,8 @@ habits were built from the lore, the October `en_us.json` and the committed text
 stays the authority for what a character knows and believes (`docs/LORE_REFERENCE.md`). This page only decides how
 they say it.
 
+To rewrite from intent rather than from the old wording, turn on the client option `debug.dialogueBriefMode`: every line then shows what it is about and its tone instead of its text (see [NPC_DIALOGUE_AND_TRADE.md](NPC_DIALOGUE_AND_TRADE.md), Brief mode).
+
 ## Why this exists
 
 Measured across every non-option line, most NPCs sit in the same band: 9 to 13 words a sentence, almost no questions,
@@ -51,16 +53,18 @@ voice-sheet pass.
 
 | Speaker | Words per sentence (now → target) | Contractions (now → target) | Questions (now → target) | Addresses the player as | Point of view |
 |---|---|---|---|---|---|
-| Hermit | 10.3 → **6-9** | 0 → **0-5** | 0% → **0-3%** | "young Harbinger", wanderer, Degree title | I, alone |
-| Vicar | 12.6 → **15-20**, wide spread | 4 → **5-15** | 0.5% → **4-8%** | Degree title | we (the Order), I at the edges |
-| Alchemist | 12.6 → **11-14** | 25 → **30-50** | 0.5% → **3-6%** | rank, curtly | I, the bench |
-| Mnemonist | 10.5 → **6-9**, fragments allowed | 20 → **0-8** | 0% → **0%** | "you", rarely rank | I, the archive |
-| Artificer | 10.6 → **6-9**, imperative bursts | 30 → **30-55** | 0.5% → **4-8%** | "you", or nothing | I, the work |
-| Vein-Mason | 10.0 → **5-8** | 0.7 → **0** | 0% → **0%** | "you", or silence | I, sparingly |
+| Hermit | 7.6 → measured 10.3, spread 5.6 (`scan.py`, 2026-11-08; diagnostic, not a target) | low | low | "you", Degree named plainly | I, alone, with visitors |
+| Vicar | measured 13.8, spread 7.5 (`scan.py`, 2026-11-08; diagnostic, not a target) | 4 | 6% | "you", Degree inside a sentence as often as in front | we (the Order), I for the desk and the book |
+| Alchemist | measured 11.5, spread 5.7 (`scan.py`, 2026-11-08; diagnostic, not a target) | 35 | 4% | rank once, curtly, then "you" | I, the bench |
+| Mnemonist | measured 11.2, spread 5.0 (`scan.py`, 2026-11-08; diagnostic, not a target) | 17 | 0% | "you", rarely rank | I, the archive |
+| Artificer | measured 9.7, spread 5.2 (`scan.py`, 2026-11-08; diagnostic, not a target) | 35 | 5% | "you", or nothing | I, the work |
+| Vein-Mason | measured 9.8, spread 4.8 (`scan.py`, 2026-11-08; diagnostic, not a target) | 0 | 1% | "you", or nothing | I, sparingly |
 | Monolith | 9.5 → **5-9** | 0 → **0** | 0% → **0-3%, only at the seventh Degree** | Degree title, then "you" | it, then I |
-| Voyager | 10.0 → **13-17** | 21 → **15-30** | 1.8% → **4-8%** | colleague, "you" | we (the ship) |
-| Votary Wayfarer | 9.5 → **8-11** | 25 → **35-55** | 0% → **8-15%** | peer, then senior | I, nervously |
-| Ringmaster and faculty | 14.2 → per professor | 19 → per professor | 0% → per professor | an audience (Ringmaster) | I |
+| Voyager | measured 13.8, spread 6.4 (`scan.py`, 2026-11-08; diagnostic, not a target) | 21 | 5% | colleague, "you" | we (the ship) |
+| Votary Wayfarer | measured 9.4, spread 5.0 (`scan.py`, 2026-11-08; diagnostic, not a target) | 46 | 20% | peer, then senior | I, nervously |
+| Ringmaster and faculty | measured 10.7, spread 6.4 (`scan.py`, 2026-11-08; diagnostic, not a target) | 23 | 4% | an audience (Ringmaster), pupils (faculty) | I |
+| Successors | measured 7.9, spread 4.7 (`scan.py`, 2026-11-08; diagnostic, not a target) | 70 | 17% | "you", never a rank | I, and we for the work |
+| Misbegotten | fragments, 1-5 words | | | "you" | I and you confused |
 | Fungal Entity | 9.6 → **10-16** | 1 → **0-2** | 1% → **5-10%** | Archon, child | we |
 | Zealot | 10.2 → **9-12** | 32 → **15-30** | 0.5% → **10-20%** | Degree title | we (the Church) |
 | Acolyte | 10.5 → **11-15** | 34 → **35-55** | 0% → **3-6%** | "you", warmly | I and us |
@@ -124,238 +128,272 @@ The two speaking Saints must never blur: Seraphae and Velorum differ on contract
 
 ### Harbinger Hermit
 
-**Who.** An old Hemomancer who put their own heart on the Mortal Display and waits, unable to die or wander, for
-someone to take it (Lore §5.2). The first Harbinger most players meet, and the one who sends them to the Vicar. Lore
-writes "his last recorded words"; the stage directions say "its" and "their". See open decisions.
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`. It lists no props, gestures or preferred
+words on purpose, because a list like that becomes a recipe.
 
-**How they see the player.** An heir who arrives late in a very long wait. Gentle at first, then awed, then servile at
-the top Degrees ("Command me and I will serve.").
+**What he is trying to do.** At the first temple he has one job left: get the visitor to decide about the heart, take
+it if they will, and come back for directions before he dies. Every Hermit after the first is a stranger with the same
+job still undone, and the player is not the person he is waiting for. He/him.
 
-**Rhythm.** Short, slow sentences, with room between them. No contractions. Almost no questions; a keeper has stopped
-asking.
+**What he knows, and when.** He cut out his own heart and set it on the Mortal Display (Lore §5.2). While it beats there
+he cannot die or go far. He can hear another person's blood and tell roughly how far along they are. Hermits were taught
+nothing past the seventh Degree and only the names of the highest rites. He knows less than the player from about the
+fifth Degree and knows it. He never prophesies.
 
-**Their words.** keeper, vigil, threshold, dust, memory, "the blood knows you", "the blood returns to silence".
+**What he attends to under pressure.** The heart on the stone and the person's blood. How long he has left once it is
+taken. Whether the visitor has understood what they are about to do.
 
-**Habits to keep.**
-- The missing heart as body language: a hand going to the hollow in the chest.
-- Hearing the blood rather than seeing it ("I can hear the blood singing louder around you.").
-- Humility that grows as the player's Degree grows.
+**How he teaches or refuses.** From what happened to his own body and what he did with his own hands, never by defining
+a term. A hint gives the next step and who owns it, plus the one thing that goes wrong. He sends people to the Vicar for
+initiation and never blurs waking the blood with joining the Order.
 
-**Avoid.**
-- Checklists. About half the Hermit's lines restate the Vicar's or the Alchemist's steps. Name the next step once and
-  who teaches it, in the Hermit's words, and leave the full list to the Vicar and the ledger.
-- Sharing a greeting with the Vicar. Both open "Illuminatus of the Crimson Lodge." and reach for the veil.
-- Foreshadowing past the seventh Degree. Hermits are keepers, "never any kind of prophet" (Communion v3).
+**Two encounter contrasts.**
+- First temple, heart unclaimed: exact and unhurried, because the visitor needs to know what a blessing does and what
+  it doesn't. After the heart is taken: few words, because he has few left.
+- A Neophyte can be told what the Hermit hears in them. To an Archon he has nothing to teach, and says so.
 
-**Pinned.** `hermit.neophyte.hint` must contain "cauldron". The canon farewell is the §5.2 quote: "Heart was never
-mine to keep, only to give... Walk the crimson path, young Harbinger. I will go now where blood returns to silence."
+**Keep and cut.**
+- Keep (`rapport.hermit.the_vigil.line1`, asked how long he has waited): "I stopped counting years a while ago. I count
+  visitors instead, one candle each. There are not many candles." It answers the question with what he actually does.
+- Cut (October `hermit.no_blood.duty.line2`, explaining the blessing): "Mourn if you must. The blood needs a new vessel.
+  Old keepers have to end." Three closers in place of what the player needs: how the blessing works.
 
-**Example.**
-- Now (`hermit.illuminatus.line1`): "Illuminatus of the Crimson Lodge. You have looked behind the veil, and what the old
-  keepers knew is yours to command now."
-- In voice: "Illuminatus of the Crimson Lodge. You have looked behind the veil. What the old keepers knew is yours to
-  command."
+**Fixed text.** `hermit.neophyte.hint` must contain "cauldron". The canon farewell in `dialogue.event.hermit_passing`
+keeps the Lore §5.2 quote: "Heart was never mine to keep, only to give... Walk the crimson path, young Harbinger. I will
+go now where blood returns to silence." The said text of `hermit_accept_guidance`, `hermit_heart_offered` and
+`hermit_archon_wisdom` is in `src/gameTest/resources/dialogue/route-fingerprints.txt`. Each player needs their own
+blessing (`TempleOathRules.canClaimHeart`). Initiation belongs to the Vicar. Trade keys: `hemomancy.trade.hermit.*`;
+rapport: `hemomancy.dialogue.rapport.hermit.<slug>`.
 
-**Trade keys.** `hemomancy.trade.hermit.<card>.title` / `.line` for `bread`; `hemomancy.trade.hermit.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.hermit.<slug>` (`.teaser`, `.lineN`) for `the_heart`, `the_vigil`.
+**Diagnostics.** See the contrast map. These numbers are measured afterwards to check voices stay apart and are not a
+target to write to.
 
 ### Harbinger Vicar
 
-**Who.** The outpost's keeper of doctrine and history, and the player's guide from the first Degree to the fifth, after
-which the Vicar steps back as an equal (Lore §6.3). Interprets the Antecedent evidence the Alchemist collects. Lore says
-"He"; the stage directions say "they". See open decisions.
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`.
 
-**How they see the player.** A student to test, then a peer, then something the Vicar can't classify ("I don't know
-whether to bow or to mourn.").
+**What he is trying to do.** Receive newcomers properly, keep the Order's record straight and get each student through
+the Degrees he is responsible for. He examines: he wants to know whether the lesson took. At the first Degrees that means
+testing the player. From the fifth Degree the player has caught up with him, and he tries to be useful as a colleague.
+He/him.
 
-**Rhythm.** The longest sentences in the cast. Lets a sentence chain cause into consequence the way a sermon does, then
-drops a two-word verdict ("So." "Good."). Formal in doctrine, with few contractions; looser and collegial in the
-Antecedent and the late Degrees, where the current lines are already the best model.
+**What he knows, and when.** He is fifth Degree (Lore §6.3) and knows the Order from its written record and other
+people's reports. He does not hear blood (the Hermit does) or weigh it (the Monolith does). Above the fifth Degree he is
+reading about people he has never been. Past Archon he has only hearsay: Silentium and Apotheosis are legends to him, and
+he never states either as fact. He knows the Brined Court mostly through letters.
 
-**Questions.** The Vicar teaches by asking. A catechism question before a lesson or a test of what the player noticed,
-a few times per Degree. ("Do you understand what you are throwing away?" is the one existing example.)
+**What he attends to under pressure.** What the record says and doesn't say, what he is authorized to do, and whether
+someone is about to do something that can't be undone (the charm before reception, a covenant bond, the Unstained path).
 
-**Their words.** the record, the ledger, warrant, the Covenant, "I confess", "we" for the Order.
+**How he teaches or refuses.** He often asks before he tells, and the question has to want an answer. He gives his own
+lessons in full once, in the node that teaches them: the four Neophyte proofs, the Rooted Vein, the Founding Fane, the
+Armature consecration, the Covenant steps. Elsewhere he points to the ledger. Other teachers' work gets a name and a
+destination. When the record is silent he says so and stops.
 
-**Habits to keep.**
-- Epistemic care: won't claim more than doctrine or evidence gives "warrant" for. "That's still a guess."
-- Dry, small approval: "So. You found one without my hand on your shoulder. Good."
-- Composure that slips at the edge of what they know.
-- Past Archon he knows only hearsay. Silentium and Apotheosis are legends to him; he never describes either as fact.
+**Two encounter contrasts.**
+- A Neophyte missing a proof gets an instruction and a check of the ledger. An Illuminatus gets told he has reached the
+  limit of what Vicars know, and asked to speak as an equal.
+- To someone choosing to leave before reception, he offers release without reproach. To someone turning to the Unstained
+  after everything the Order gave them, he states the cost plainly and says there will be no place for them.
 
-**Avoid.**
-- "The Covenant" and "the Order" as the subject of every sentence. Say "we".
-- "X, not Y" closers ("Blood is sent where it is needed, not kept where it is guarded.").
-- Mechanics checklists in the Vicar's mouth. Several lines copy ledger text word for word. Keep the step, say it once,
-  and point to the ledger for the rest.
-- Sharing the item prompt with the Monolith.
+**Keep and cut.**
+- Keep (`annetta_map.line1`, explaining a missing chapel): "Nobody tore it down. Somebody struck it from the record." An
+  institutional fact, stated by the man whose office does this.
+- Cut (October `adept.line2`, greeting an Adept): "Blood shared willingly is stronger than blood hoarded alone, and it seems
+  you have learned it." A maxim and a compliment, with nothing he actually wants to know.
 
-**Pinned.** `dialogue.ending.vicar.undecided` must not contain spine, vesper, refusal, apotheosis, return, choice or
-"either road". `vicar.archon.line2` must not contain "decide". `vicar.blood_crafting.projection`,
-`vicar.neophyte.projection_hint` and `vicar.neophyte.degree_hint` must contain "cauldron"; `projection_hint` must
-contain "Venous Stone". The Rooted Vein lines together must contain "light", "Blood Projection", "four anchors",
-"daemon", "Blood Absorption" and "above the Focus clear". Several `dialogue.event.vicar_*` lines are fingerprinted.
+**Fixed text.** `dialogue.ending.vicar.undecided` must not contain spine, vesper, refusal, apotheosis, return, choice or
+"either road". `vicar.archon.line2` must not contain "decide". `vicar.initiate.saints_lore` must not contain "eighth".
+`vicar.blood_crafting.projection`, `vicar.neophyte.projection_hint`, `vicar.neophyte.degree_hint` and
+`vicar.neophyte.first_bloodcraft_reward.unready` must contain "cauldron"; `projection_hint` must contain "Venous Stone".
+The Rooted Vein lines together must contain "light", "Blood Projection", "four anchors", "daemon", "Blood Absorption" and
+"above the Focus clear". `vicar.votary.degree_hint` must name the Alchemist, Concentrated Blood and sleep.
+`vicar.hermit_road.intro.line2`, `.report.line2` and `.report.prompt` must not promise a ledger
+(`PlaythroughNeophyteGameTests.LEDGER_PROMISE`). `vicar.illuminatus.monolith_rumor.line2` keeps "half a story" (open
+decision 2). The said text of `vicar_hermit_road_unproven`, `vicar_first_bloodcraft_reward_unready`,
+`vicar_masons_respite_map`, `vicar_masons_respite_unready` and `vicar.voyager_introduction.bearing_searching` is in
+`src/gameTest/resources/dialogue/route-fingerprints.txt`. Trade keys: `hemomancy.trade.vicar.*`; rapport:
+`hemomancy.dialogue.rapport.vicar.<slug>`.
 
-**Examples.**
-- Now (`vicar.illuminatus.line1`): "Illuminatus of the Crimson Lodge. The veil has parted, and you won't be able to unsee
-  what it showed you about blood."
-- In voice: "Illuminatus of the Crimson Lodge. Few of us are ever given that title, and fewer still understand what
-  comes with it: the veil has parted, and what it showed you about blood will not close again."
-- Now (`vicar.item_inquiry.unknown`): "I have nothing to say about this."
-- In voice: "There is nothing in the record about it, so I will not guess."
-
-**Trade keys.** `hemomancy.trade.vicar.<card>.title` / `.line` for `chapel_shards`, `thread_blessing`, `tithe`; `hemomancy.trade.vicar.*`: `thanks`, `thanks_fine`; rapport lore `hemomancy.dialogue.rapport.vicar.<slug>` (`.teaser`, `.lineN`) for `doubt`, `the_record`.
+**Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
 ### Harbinger Alchemist
 
-**Who.** Runs the outpost's machines and laboratory. Teaches blood as material and specimen: sampling, classification,
-microscopy, injection, preservation (Lore, clinical jurisdiction). Runs the Antecedent experiment. Pronouns: "they" in
-every stage direction (one Vicar line says "He's right to ask").
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`.
 
-**How they see the player.** A lab apprentice who has to show results. Respects a clean procedure more than talent.
+**What they are trying to do.** Get reliable work out of the player's hands: clean samples, correct procedure, results
+that can be checked. Each Degree changes what the Alchemist will trust the player with. They/them in every stage
+direction.
 
-**Rhythm.** Medium sentences, heavy contractions. A procedure is a run of short imperatives; the aside after it is one
-longer, drier sentence.
+**What they know, and when.** Blood as material and specimen: sampling, classification, microscopy, injection,
+preservation, storage (clinical jurisdiction), and the Centrifuge, Alembic and Loom as machines. They run the Antecedent
+experiment and hand what it means to the Vicar. They can say what is in a sample; what a memory means is the Mnemonist's
+to say, and they use the Mnemonist's terms at arm's length (Lore §6.2a). They have only read about the final synthesis.
+At Apotheos their measurements stop making sense.
 
-**Questions.** Practical ones about the sample, a few per topic: what it did, when, under what conditions. The current
-text has three, all in the Antecedent replay.
+**What they attend to under pressure.** The sample, the instrument and the number. Whether the player's hands are doing
+what was asked. What will be lost if a step is done wrong.
 
-**Their words.** specimen, sample, assay, bench, control, reagent, yield, enzyme. Numbers always exact.
+**How they teach or refuse.** In the first person, as procedure, with the reason attached where it changes what the
+player does. Controls the game needs (Hold Use, sneak-use, left-click, named slots) are exact and said once. What a
+reagent does in the glass comes before any statement about what its tendency "is". Work that belongs to someone else
+gets one clause and a name. A refusal states what is missing.
 
-**Habits to keep.**
-- Deflating wit: "Tear it apart and you mostly get wet pulp with ambitions." "Elegant and unpleasant, and frankly very
-  Harbinger."
-- Explicit uncertainty, said plainly: "I don't know what we're looking at."
-- Handing off what isn't theirs, curtly: "The residual auditory pattern is outside my field."
+**Two encounter contrasts.**
+- A Votary doing a first separation gets every step in order. By the Sanctified Degree they get the shape of the whole
+  process, because the steps are theirs now.
+- A player who brings a clean sample gets the next piece of work. A player purging their blood gets told there is nothing
+  to teach them, without a lecture.
 
-**The Mnemonist.** Lore: they "respect each other's successful predictions while remaining professionally irritated by
-each other's language" (§6.2a). The Alchemist uses the Mnemonist's terms at arm's length ("what the Mnemonist insists
-on calling a Noetic Memory") and never borrows their imagery. Lines like "sit nearest the pulse" and "the lesson
-itself comes from the memory item" are Mnemonist language and should leave the Alchemist's mouth.
+**Keep and cut.**
+- Keep (`clinical.cabinet.lesson`, teaching storage): "Now keep them in order and keep their provenance, or all you own
+  is a cupboard full of coagulation." The consequence is the reason for the procedure.
+- Cut (October `apotheos.reflection`, facing an Apotheos): "You are the summit. I thought I was building machines. I was
+  building toward you." A grand statement from someone whose whole way of thinking is measurement.
 
-**Avoid.** Retelling the Mnemonist's Loom and Reliquary explanations. Granting Degrees. Explaining memory or echoes.
+**Fixed text.** "Umbral turns Night Vision into Invisibility" (`enzyme_uses.brewing`) and "600 blood over 2,400 ticks"
+(`enzyme_uses.culture`). `adept.crimson_vessel`, `illuminatus.ashen_vessel` and `sanctified.curved_horn` contain
+"Bastion". `gourd_use.fill` and `.withdraw` together keep "blood-output slot", "Scarlet Vanity", "Use the gourd in your
+hand", "Toggle Gourd Open/Closed", "active" and "cork". The Pallid Vessel briefing keeps "Dried Gourd", "four anchors",
+"1,000 mL" and "blood-output slot" and never says "Somatic Loom". `initiate.loom_raising` keeps "Sanguine Formation".
+`item_inquiry.sanguine_formation.line1` keeps "cauldron". `item_inquiry.scar_blank.line2` keeps "Blood Absorption", never
+"sneak-use" or "wear the scar". `phlegethontic_commission.task` keeps "sneak-use", "rack", "Centrifuge", "remove",
+"without spinning" and "main hand". `centrifuge.fractionating.ready` keeps "eight anchors". No Morphling inquiry names a
+Court house or "Court". "Final synthesis" is the lore's phrase. The said text of `alchemist_bestiary_unready`,
+`alchemist_bestiary_missing_specimen`, `alchemist_red_taxonomy_unready`, `alchemist_red_taxonomy_missing_sample`,
+`deep_dark_commission.bearing_missing`, `phlegethontic_commission.bearing` and `pallid_vessel.recorded.briefed` is in
+`src/gameTest/resources/dialogue/route-fingerprints.txt`. Trade keys: `hemomancy.trade.alchemist.*`; rapport:
+`hemomancy.dialogue.rapport.alchemist.<slug>`.
 
-**Pinned.** "Umbral turns Night Vision into Invisibility" and "600 blood over 2,400 ticks"; "Bastion" in the vessel
-lines; the `gourd_use.*` control words ("blood-output slot", "Scarlet Vanity", "Use the gourd in your hand", "Toggle
-Gourd Open/Closed", "active", "cork"); "four anchors" and "eight anchors".
-
-**Example.**
-- Now (`dialogue.alchemist.conductive_mark_recognized`): "Your Ductilis record predicts a conductive response, which
-  the Mnemonist calls a Noetic Memory. The Loom formula's been recorded."
-- In voice: "Your Ductilis record predicts a conductive response. The Mnemonist insists on calling that a Noetic
-  Memory, and I've stopped arguing. The Loom formula's recorded."
-
-**Trade keys.** `hemomancy.trade.alchemist.<card>.title` / `.line` for `cold_reagent`, `ferric_draw`, `fresh_draw`, `living_syringe_reissue`, `pelagic_oil`, `reef_salts`, `spent_enzyme`, `spore_stock`; `hemomancy.trade.alchemist.*`: `thanks`, `thanks_fine`, `appraise.poor`; rapport lore `hemomancy.dialogue.rapport.alchemist.<slug>` (`.teaser`, `.lineN`) for `failed_assay`, `the_bench`.
+**Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
 ### Harbinger Mnemonist
 
-**Who.** Teaches memory: crude memories, manipulation slots, Reliquary practice, the Somatic Loom as memory work, the
-Clairaudiograph at the third Degree, the Scriptorium later (Lore §6.3, §6.2a). Pronouns: "they" throughout.
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`.
 
-**How they see the player.** A pupil whose blood is learning words. Worries more about what the player is becoming than
-about procedure ("Be careful what you teach your blood to hate.").
+**What they are trying to do.** Keep the record of what is in the player's blood accurate, and stop the player from
+losing themselves in it. They teach crude memories, active slots, Reliquary practice, the Somatic Loom as memory work,
+the Clairaudiograph at the third Degree and the Scriptorium later (Lore §6.3, §6.2a). They/them.
 
-**Rhythm.** Restore the committed voice: short, formal, few contractions, fragments allowed ("One Noetic Memory. Two
-routes to recognition." "Painfully bright."). This is the one speaker allowed a closing aphorism, as long as it says
-something the line didn't already say.
+**What they know, and when.** What a memory is, how it was indexed and what they can hear in it. They can tell a pattern
+is present; what happened in the sample is the Alchemist's to say. They lost their own voice once to too many lessons and
+wrote themselves up to get it back (rapport `what_it_cost`). At the endings they record what has happened and refuse to
+write what hasn't.
 
-**Questions.** None. The Mnemonist listens; when they want something from the player it's "Tell me" or "Listen".
+**What they attend to under pressure.** What the player is teaching their blood, whether a memory is genuine or false,
+and what will be lost if a lesson is taken wrongly.
 
-**Their words.** listen, hear, pulse, lesson, index, file, shelf, record, grammar, weave, echo.
+**How they teach or refuse.** They say what they hear and what to do about it. A false fragment or a dangerous lesson gets
+a plain warning. Loom, Reliquary and Scriptorium procedures are exact and in order, because the player performs them.
+Physiology goes to the Alchemist and scars to the Vein-Mason. No questions: they listen and then state.
 
-**Habits to keep.**
-- Listening as the way of knowing: "I can't hear a lesson in that, unless it's smart enough to keep quiet."
-- Grammar metaphors: "It hands the blood a grammar, and whether the blood can speak the sentence is up to the blood."
-- Refusing the Alchemist's framing: the waybill is "inked by a Mnemonist who refuses to call it a map". Extend this to
-  the shared topics (the conductive mark, the Reliquary, the clinical echo handoff): the Alchemist "measured" it, the
-  Mnemonist heard it.
+**Two encounter contrasts.**
+- A Neophyte with crude echoes is told what to use and to pay attention to it. An Archon's ending gets an entry written
+  down, and no comment on what it means.
+- A player learning to weave gets every step. A player purging their blood gets answers to questions and no new memory.
 
-**Avoid.** The two-line inquiry template that 100 memory items share ("[Name]. [Tendency] [image]." then "[mechanic].
-[warning]."). Vary which part comes first. Lecturing on philosophy in routine controls (§6.2a).
+**Keep and cut.**
+- Keep (`rapport.first_voice.line1`, asked about their first lesson): the heron, and listening for a month. A particular
+  memory, and what it did to them.
+- Cut (October `woven_vessel_missing_archive`, refusing without paper): "Memory without an index is only hunger." A motto
+  where the player needs to know what to bring.
 
-**Pinned.** "Mneme keeps. Nous knows. Thelēma acts." verbatim. `chamber.guided.unavailable` must contain "item transfer"
-and not "empty hands". `woven_vessel.recipe.*` must keep "four Sanguine Formations", "four Blood Stained Stones",
-"Chicken blood can yield Neurotic Enzyme" and "some spins yield Vivacious instead".
+**Fixed text.** "Mneme keeps. Nous knows. Thelēma acts." verbatim (`mnemonic_doctrine.line1`).
+`chamber.guided.unavailable` contains "item transfer" and not "empty hands". `woven_vessel.recipe.*` keeps "four Sanguine
+Formations", "four Blood Stained Stones", "Chicken blood can yield Neurotic Enzyme" and "some spins yield Vivacious
+instead". `item_inquiry.scar_pattern.loadout` contains "Blood Absorption" and not "sneak-use". No item inquiry says "wear
+the scar". `dialogue.ending.mnemonist.undecided` must not contain spine, vesper, refusal, apotheosis, return, choice or
+"either road". The said text of `mnemonist_starter_granted`, `mnemonist_starter_unavailable`,
+`mnemonist_woven_vessel_unready`, `mnemonist_woven_vessel_complete`, `mnemonist_circus_waybill`,
+`vagrant_mind_inquiry.bearing_missing` and `chamber.guided.unavailable` is in
+`src/gameTest/resources/dialogue/route-fingerprints.txt`. Trade keys: `hemomancy.trade.mnemonist.*`; rapport:
+`hemomancy.dialogue.rapport.mnemonist.<slug>`.
 
-**Example.**
-- Now (`dialogue.mnemonist.conductive_mark_recognized`): "Your first weave shows the conductive pattern the Alchemist
-  measured in Ductilis tissue, so that's one Noetic Memory recognized by two separate routes."
-- In voice: "Your first weave. The conductive pattern is in it, the one the Alchemist measured in Ductilis tissue.
-  Measured, they say. One Noetic Memory, two routes to it."
-
-**Trade keys.** `hemomancy.trade.mnemonist.<card>.title` / `.line` for `books`, `faded_memories`, `living_specimen`; `hemomancy.trade.mnemonist.*`: `thanks`, `thanks_fine`, `appraise.poor`; rapport lore `hemomancy.dialogue.rapport.mnemonist.<slug>` (`.teaser`, `.lineN`) for `first_voice`, `what_it_cost`.
+**Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
 ### Hematic Artificer (the Redwright)
 
-**Who.** A maker-priest of living gear who briefs and inspects the optional equipment assignments and won't grant a
-fitting until the work "actually answers" in the field (Lore §6.3). Lore says "He"; the event lines say "their". See
-open decisions.
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`.
 
-**How they see the player.** An apprentice under inspection. No patience for mixed sets, indecision or gear carried in
-a pack.
+**What he is trying to do.** Make sure what the player wears and swings holds up when it counts. He briefs and inspects
+five optional equipment assignments, records the first fork and the first seventh-Degree lineage for good, and hands over
+a fitting only when the work has answered in the field (Lore §6.3). He/him.
 
-**Rhythm.** Restore the committed hammer cadence: short imperatives in a row, then one plain verdict. "Wear the armor.
-Feed the bowls. Fill the reservoir. Step into the frame. Let the metal learn you." Heavy contractions in conversation.
+**What he knows, and when.** Frames, fit, armor, the Living Staff and the Armature. Blood is the Alchemist's, memory the
+Mnemonist's, doctrine the Vicar's, and he sends people on without fuss. He knows Apotheosis and Silentium only from
+stories, and has no frame for either.
 
-**Questions.** Inspection questions, short and pointed: where the staff is, whether the set was worn under pressure.
+**What he attends to under pressure.** Whether the gear is actually on the body, whether it is complete and matching, and
+what is about to fail. He once fitted a set on a promise and it failed in the dark (rapport `the_vow`), and he inspects
+hard because of it.
 
-**Their words.** vow, fitting, frame, rack, witness, appointment, answer, metal, iron, bone, lacquer.
+**How he teaches or refuses.** Steps in the order the hands do them. A refusal says what is missing from the armor in
+front of him. Approval is handing over the fitting. He doesn't explain why metal is meaningful.
 
-**Habits to keep.**
-- One-line dismissals: "Someone else made that. Ask them." "Take your stillness somewhere else."
-- Dry humour on reissues: "You'd think something that heavy would be harder to lose."
-- The appointment bureaucracy: "Losing the fitting doesn't cancel the appointment."
+**Two encounter contrasts.**
+- A Neophyte may watch and keep their hands clear of the rack. A seventh-Degree player gets their lineage written down
+  for good and is held to it.
+- A player with a mixed set is sent away with exactly what to fix. A player who lost a fitting gets another, with a remark.
 
-**Avoid.** Long tutorial paragraphs (`resonant_forge.*`, `living_staff.*`). Copper, brass, bronze or silver on any gear
-the Artificer describes; Harbinger work is hematic iron, bone and lacquer. Doctrine, which stays with the Vicar.
+**Keep and cut.**
+- Keep (`clinical.inquiry.artificer_microscope`, asked about the sample): "I could build you the housing with my eyes
+  shut. Why one bear's blood freezes in the glass and another's boils, I've no idea. Ask the Alchemist." What he can do,
+  where it stops, and who is next.
+- Cut (October `armature.line2`, teaching the frame): "Hold still. Let the metal learn you." A closing flourish on what
+  should be a clear instruction.
 
-**Pinned.** `living_staff.use` must contain "Select Blood Absorption or Blood Projection" and "Conjure Staff". The keys
-`identity.line1`, `armature.line1`, `grafts.line1` and `item_inquiry.unknown` must exist.
+**Fixed text.** `living_staff.use` contains "Select Blood Absorption or Blood Projection" and "Conjure Staff".
+`identity.line1`, `armature.line1` and `grafts.line1` must exist. `dialogue.ending.artificer.undecided` must not contain
+spine, vesper, refusal, apotheosis, return, choice or "either road". The said text of `artificer_consecration_kit_unready`
+and the five `*_fitting_unready` lines is in `src/gameTest/resources/dialogue/route-fingerprints.txt`. The Archon
+playthrough reads `assignment.weight_of_frame.cornerstone` for "cornerstone". Trade keys: `hemomancy.trade.artificer.*`;
+rapport: `hemomancy.dialogue.rapport.artificer.<slug>`.
 
-**Example.**
-- Now (`artificer.resonant_forge.practice`): "At the sixth Degree, practice moving a Scriptorium curse or an enchantment
-  you choose. The base wheel moves a whole pattern, and a Precision governor can pick out one part. You're practicing
-  on the same forge. It isn't a new tier."
-- In voice: "Sixth Degree. Now you practice: move a Scriptorium curse, or an enchantment you pick. The base wheel moves
-  the whole pattern. A Precision governor picks one part out of it. Same forge. No new tier."
-
-**Trade keys.** `hemomancy.trade.artificer.<card>.title` / `.line` for `bone_offcuts`, `husk_lacquer`, `scrap_in`, `suture_work`, `venous_offcuts`, `worn_tools`; `hemomancy.trade.artificer.*`: `thanks`, `thanks_fine`, `appraise.poor`; rapport lore `hemomancy.dialogue.rapport.artificer.<slug>` (`.teaser`, `.lineN`) for `first_fitting`, `the_vow`.
+**Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
 ### Cicatrix Anchorite (the Vein-Mason)
 
-**Who.** A cloistered teacher at Mason's Respite, deliberately outside the outposts, who conditions scars and
-vasculature so the body can bear repeated instruction (Lore §6.3, "The Vein-Mason's division of work"). Refuses
-purification and can't be recruited. Pronouns: "they".
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`.
 
-**How they see the player.** A vessel under construction. Austere, not unkind, sparing with praise.
+**What they are trying to do.** Condition scars and vasculature so a body can carry repeated instruction without tearing
+(Lore §6.3). They need the player to do each stage in order and to find out what their own body can bear. They live at
+Mason's Respite, deliberately outside the outposts, refuse purification and can't be recruited. They/them; narration
+says "the Vein-Mason".
 
-**Rhythm.** The fewest words in the cast. No contractions at all. A verdict, then silence. Silence is an answer the
-Vein-Mason actually gives: "The Vein-Mason studies the item, then looks back at your scars and says nothing."
+**What they know, and when.** The physical route an instruction takes: scars, vessels, strain and treatment. What an
+instruction says is the Mnemonist's. Repair is the Alchemist's, and what they condition comes after it. They know what
+each mistake does because their own scars healed around it.
 
-**Questions.** None. Diagnosis is stated: "The current catches somewhere. Let me read where."
+**What they attend to under pressure.** Where the body is failing, whether a step was skipped, and whether a load will
+hold. They check by looking and touching before they say anything.
 
-**Their words.** vessel, wound, scar, route, current, banks, carry, bear, architecture.
+**How they teach or refuse.** They own the scar cycle, so they give the full steps once, with costs, in the order they are
+done. A short verdict is fine next to a long instruction. A refusal says the body isn't ready, or that the blood has been
+purged. Approval is that the work holds. No contractions, and questions only about the body or a lost item.
 
-**Habits to keep.**
-- The mason and water metaphor: "The current changed because you changed its banks."
-- Short verdicts: "Enough for now."
-- Restore the committed best line: "There. The wound has become architecture."
+**Two encounter contrasts.**
+- A first carving gets every control, in order. At the sixth Degree the player gets the problem to solve and is expected
+  to prove the route.
+- A body that isn't ready is told to come back at the fourth Degree. Someone who has taken still-water is refused outright.
 
-**Avoid.** "Us" or "our" about the outposts; the Vein-Mason isn't part of them. Mechanics paragraphs where a verdict and
-one instruction would do. Switching between "the Vein-Mason" and "the Anchorite" in narration without a reason.
+**Keep and cut.**
+- Keep (`rapport.own_scars.line2`, asked how they learned): "See the ridge, where it healed thick? The blood would not
+  cross it. I cut the next one around it, and that one carried." The lesson is on their own body.
+- Cut (October `inquiry.blank_memory.line2`, on the Mnemonist's work): "Their craft is the instruction. Mine is the
+  tissue. The two must agree." A balanced motto; the player needs the consequence.
 
-**Pinned.** `carve_reminder.line2`, `loadout_reminder.line2` and `inquiry.brazier.line2` must contain "blood absorption"
-(any case) and not "sneak-use". `carve_reminder.line2` must contain "Blood Projection" and "100 mL";
-`loadout_reminder.line2` "50 mL"; `inquiry.brazier.line2` "retrieve". `effigy_instruction.line1` must contain "must know
-all its scars" and "have room"; `effigy_instruction.line2` must contain "Paper", "Charcoal", "Sanguine Formation", "500
-mL", "prepared", "Selection stays fixed", "stop and resume" and "returns its paper, not spent blood". No inquiry may say
-"wear the scar". Keep the Brazier order: insert, Blood Projection ignition, held Blood Absorption; sneaking retrieves.
+**Fixed text.** `carve_reminder.line2`, `loadout_reminder.line2` and `inquiry.brazier.line2` contain "blood absorption"
+and not "sneak-use". `carve_reminder.line2` contains "Blood Projection" and "100 mL"; `loadout_reminder.line2` "50 mL";
+`inquiry.brazier.line2` "retrieve". `effigy_instruction.line1` contains "must know all its scars" and "have room";
+`effigy_instruction.line2` contains "Paper", "Charcoal", "Sanguine Formation", "500 mL", "prepared", "Selection stays
+fixed", "stop and resume" and "returns its paper, not spent blood". The lang file keeps "Vein-Mason", "Cerebral Scarring
+Station" and "empty, lit Iron Brazier". No inquiry says "wear the scar". The Brazier order is fixed: insert with ordinary
+use, Blood Projection ignition, held Blood Absorption; sneaking retrieves. Their set lines are "There. The wound has
+become architecture." and "The current changed because you changed its banks." The said text of `vein_mason_unready`,
+`vein_mason_first_lesson` and `vein_mason_continuation_reward` is in `src/gameTest/resources/dialogue/route-fingerprints.txt`.
+Trade keys: `hemomancy.trade.cicatrix_anchorite.*`; rapport: `hemomancy.dialogue.rapport.cicatrix_anchorite.<slug>`.
 
-**Example.**
-- Now (`anchorite.inquiry.gauge.line1`): "The gauge tells you the vessel's state. The repair is yours. Read the number next
-  to the flow state."
-- In voice: "The gauge reports the vessel. The repair is your work. Read the number beside the flow state."
-
-**Trade keys.** `hemomancy.trade.cicatrix_anchorite.<card>.title` / `.line` for `bone`, `clay`; `hemomancy.trade.cicatrix_anchorite.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.cicatrix_anchorite.<slug>` (`.teaser`, `.lineN`) for `own_scars`, `the_respite`.
+**Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
 ### Sanguine Monolith (the Crimson Lodestone)
 
@@ -394,146 +432,199 @@ Directions to places as tutorial text ("Seek the Sainted Mausoleums...") where a
 
 ### Harbinger Voyager
 
-**Who.** The captain-scholar of a Survey Cog, a moving laboratory and chapel on the Erythrocoral Reefs. Collects from
-Mnemonic Whales without killing them. Pronouns aren't stated; use "they".
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`.
 
-**How they see the player.** A field colleague to train in method, not a passenger.
+**What they are trying to do.** Run the survey without losing another crew. They want observations they can log from
+anyone useful, the player included, and they want the living reef and the whales left alive. Pronouns aren't stated; use
+"they".
 
-**Rhythm.** The longest sentences after the Vicar's, built like field notes: observation, then what it means, then the
-caveat. Moderate contractions. A wry academic edge ("the way a scholar grows footnotes").
+**What they know, and when.** The Erythrocoral Reefs, Mnemonic Whales, vent life and the wrecks of earlier surveys, some
+of them their own people. They have dealt with the Brined Court at a cordial distance for longer than anyone in the Order,
+and they don't speak for it. When they don't know something they ask where it was found and how deep.
 
-**Questions.** Asks for observations, a few per topic: what the player saw first, what the water did.
+**What they attend to under pressure.** Where and how deep, what the animal was doing, what got written down, and whether
+someone is about to get sure of themselves too early.
 
-**Their words.** survey, observation, evidence, archive, certainty, humble, the sea, "we" for the ship and crew.
+**How they teach or refuse.** By asking what the player noticed, then giving the field procedure with its reason. Lessons
+about collecting come with what must not be harmed. They are courteous to Lethean visitors.
 
-**Habits to keep.**
-- "Bring me observations first and certainty later. Certainty drowns faster than sailors do."
-- The ethic: "We feed the archive. We don't hunt it."
-- Restore: "Recover what you can. Leave the failed covenant without trophies."
+**Two encounter contrasts.**
+- A new hand is asked for one observation. Someone who found the Court unsent is asked what the water did.
+- At a wreck they want the logs recovered and nothing kept. With a whale they want it fed and never hunted.
 
-**Avoid.** Mechanics dumps in item inquiries (the ambergris line); give the procedure in survey order instead. Lines
-written for a speaker on land ("Found the outpost before the road?"). Inventing Brined Court lore.
+**Keep and cut.**
+- Keep (`voyager.wrecks.line1`, asked about the wrecks): "We still find their sounding leads in the coral." The reef
+  still holds what the earlier crews carried.
+- Cut (October `voyager.harbinger.line2`): "Certainty drowns faster than sailors do." A motto on a line that is really
+  telling the player to bring observations.
 
-**Example.**
-- Now (`dialogue.newcomer.voyager`): "Found the outpost before the road? Ask the Vicar who we are and where to start."
-- In voice: "You found a ship before you found an outpost, then. Ask a Vicar who we are and where to start."
+**Fixed text.** `voyager.court.known.alchemist`, `voyager.court.known.letter`,
+`voyager.item_inquiry.brine_sealed_letter.line1` and `voyager.introduction.observed` are pinned by key only. Lore wording
+for the Court: cordial distance, measure, witness where they cultivate, don't presume, the Lighthouse Garden. Trade keys:
+`hemomancy.trade.voyager.*`; rapport: `hemomancy.dialogue.rapport.voyager.<slug>`.
 
-**Trade keys.** `hemomancy.trade.voyager.<card>.title` / `.line` for `charted_map`, `survey_log`, `wreck_coral`; `hemomancy.trade.voyager.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.voyager.<slug>` (`.teaser`, `.lineN`) for `the_cog`, `the_whales`.
+**Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
 ### Votary Wayfarer
 
-**Who.** A junior Votary aboard a survey vessel, there "to learn by witnessing rather than by conquest". Not the hostile
-Brined Votary. Pronouns aren't stated; use "they".
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`.
 
-**How they see the player.** A peer to compare notes with, and later a senior to confide in. Hero-worships the
-captain-scholar.
+**What they are trying to do.** Learn the sea by witnessing it, and not embarrass themselves in front of the captain. They
+asked to come aboard. A junior Votary on a Survey Cog, and not a Brined Votary. Pronouns aren't stated; use "they".
 
-**Rhythm.** Quick, uneven bursts. The most contractions in the cast. The most first person.
+**What they know, and when.** Only what the archive said and what they have seen since, and they know the two don't
+match. They repeat the captain's lessons as things they were told. They don't speak with the captain's authority.
 
-**Questions.** The one NPC who asks the player things often: what it was like, whether they're doing it right, what to
-write down. It currently asks none.
+**What they attend to under pressure.** Whether they got it right, how deep the water is, and whether the other person is
+as frightened as they are.
 
-**Their words.** notes, write it down, "I think", wrong, safe, the captain-scholar.
+**How they teach or refuse.** They hand over what's in their notes, with the instruction exact, and check it as they go.
+Their questions want answers: what it was like, whether it gets easier, what something is called.
 
-**Habits to keep.**
-- Humour at their own expense: "Mine are mostly questions and damp sleeves."
-- The note-taking reflex: "'Unknown' is a real category."
-- Admitted fear and checked awe: "I keep wanting to call it holy, but that feels too small for what it is."
+**Two encounter contrasts.**
+- With a newcomer they compare notes as a peer. With a senior they confide and apologize for asking.
+- About ambergris procedure they read their notes carefully. About the whale passing under the ship, they lose the thread.
 
-**Avoid.** Mechanics dumps (the ambergris line again). Speaking with the captain's authority.
+**Keep and cut.**
+- Keep (`fear.line2`, asked if they are afraid): "My handwriting goes tiny when I'm scared." Fear shown in the work they
+  are doing.
+- Cut (October `voyage.line2`): "libraries don't move under your boots, and I think that makes them less honest about
+  ships." A captain's kind of remark, from someone who is still seasick.
 
-**Example.**
-- Now (`dialogue.newcomer.votary_wayfarer`): "The Vicar will explain the Covenant. Talk to them before you set out
-  again."
-- In voice: "Wait, you haven't met a Vicar yet? They explain the Covenant way better than I would. Talk to them before
-  you set out again, okay?"
+**Fixed text.** Rapport keys `afraid` and `why_aboard` are pinned by key in `src/test/resources/dialogue/lore-options.txt`.
+Trade keys: `hemomancy.trade.votary_wayfarer.*`; rapport: `hemomancy.dialogue.rapport.votary_wayfarer.<slug>`.
 
-**Trade keys.** `hemomancy.trade.votary_wayfarer.<card>.title` / `.line` for `kelp`, `nautilus`, `prismarine`; `hemomancy.trade.votary_wayfarer.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.votary_wayfarer.<slug>` (`.teaser`, `.lineN`) for `afraid`, `why_aboard`.
-
----
+**Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
 ## The Circus
 
 ### Ringmaster
 
-**Who.** The one who coordinates attention and many tethers; the title is a job, not authority over other Harbingers.
-Offers the bargain: Succession or Liberation. Turned three understudies into carousel captives. Pronouns: he.
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`.
 
-**How he sees the player.** An audience, then a successor or an opponent. Candid about the cost, with no remorse shown.
+**What he is trying to do.** Get the player to take his place or walk away, on terms he names himself. He is a barker who
+coordinates attention and many tethers from a perch over the ring. The title is a job, with no authority over other
+Harbingers (Lore §6.3b). He made three understudies into the carousel's captives. He/him.
 
-**Rhythm.** A showman's short imperatives. He is the one speaker allowed a deliberate three-beat line, because it's his
-trade. Restore the committed cadence: "Learn every act. Hold every eye in the pavilion. Then come take this hat."
+**What he knows, and when.** What every act costs and what the carousel is. He says plainly what each ending does. He
+leaves method to the professors and gives his own lesson, coordination, only in the final act.
 
-**Questions.** Asked to an audience, not to get an answer.
+**What he attends to under pressure.** The crowd, who is watching what, and what a deal is worth. When the captives come
+up he goes cold and gives no explanation.
 
-**Habits to keep.** "this hat", "failed initiates", "Only the ruin answers you now."
+**How he teaches or refuses.** He names the acts like a bill and says who teaches what. He warns frankly, because frankness
+sells. He never apologizes, and tells the player to go and count the horses.
 
-**Avoid.** The shared `circus.school.aftermath.*` lines, which make him talk about himself in the third person. The
-identical closing sentence on both warnings.
+**Two encounter contrasts.**
+- Offering the bargain, he sells. Asked about the understudies, he stops selling.
+- Handing over the ring after Succession is short and final. After Liberation he has no act left for the player.
 
-**Example.**
-- Now (`circus.ringmaster.line.neutral`): "So now you know the bargain. Take my place, or cut the others free, or just walk
-  away from the whole show."
-- In voice: "There's the bargain. Take my place. Cut the others free. Or walk out of the tent."
+**Keep and cut.**
+- Keep (`rapport.the_understudies.line1`, asked if he hears them): "I put them on there myself, and if I had it to do over
+  I'd put them on again." No remorse and no flourish.
+- Cut (October `line.liberation_complete`): "Only the ruin answers you now." An oracle line from a man who sells tickets.
 
-**Trade keys.** `hemomancy.trade.circus_ringmaster.<card>.title` / `.line` for `bell`, `curiosity`, `ring_planks`, `spectacle`; `hemomancy.trade.circus_ringmaster.*`: `thanks`, `thanks_fine`; rapport lore `hemomancy.dialogue.rapport.circus_ringmaster.<slug>` (`.teaser`, `.lineN`) for `the_hat`, `the_understudies`.
+**Fixed text.** The keys `ringmaster.silent`, `ringmaster.line.succession`, `ringmaster.line.liberation`,
+`ringmaster.warning.succession` and `finale.complete.*` are named in `PlaythroughCrimsonTroupeGameTests`. Canon: "learn
+every act, hold every eye, then take the hat" (Lore §6.3b) in `line.succession`. Trade keys:
+`hemomancy.trade.circus_ringmaster.*`; rapport: `hemomancy.dialogue.rapport.circus_ringmaster.<slug>`.
+
+**Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
 ### Crimson Troupe faculty
 
-Eight professors with six lines each. All of them currently share one rhythm (12 to 16 words, no questions) and two
-templates: every `colleagues` line is "The X says A. I say B.", and every `testimony` line is a memory and then a
-pointer to the next clue. Break the templates first. One axis per professor:
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`.
 
-| Professor | Voice | Keep |
-|---|---|---|
-| Acrobat | Thinks in falls and recoveries. Short, light, a little breathless. | "Rigging came first for me, blood after." |
-| Dagger Thrower | Argumentative and self-mocking. The one who disagrees with a colleague out loud. | "Knives fly straight. It's always the people that bend." |
-| Stilt Walker | Watches from above, protective. Slow and plain. | "I won't call a dead captive a liberated student." |
-| Strongman | Blunt and moral. The only one who confronts the player. Very short. | "Strong, and good for nothing." |
-| Beast Tamer | Talks about the animals before the method. | "I came in with a cage and learned to leave it empty." |
-| Fire Breather (they) | Procedural. Counts seconds out loud. | "A dangerous act ought to announce itself." |
-| Retired Understudy | Names and memory, old theatre words ("flubs"). The key witness, so the testimony carries weight. | "Those missing performers were people." |
-| Threadkeeper | A clerk. Accounts, debts, what's owed. | "Keep a good account and it tells you what's still owed." |
+**What they are trying to do.** Seven professors each teach one artificial body before its Cardinal Ordeal, and each
+judges a pupil by what that body is for. The Threadkeeper is the clerk. They teach after either ending, and several don't
+forgive it. Each has six keys (`welcome`, `history`, `colleagues`, `lesson`, `testimony`, `aftermath`).
 
-About 20 shared lines (`circus.school.status.*`, `aftermath.*`, `preparation`, `inspected`, `report_*`, `passed`,
-`retry`) are spoken by all eight, so no professor can sound like themselves there. That needs per-role keys or
-variants (see open decisions).
+**What they know, and when.** Each knows their own shape and their own corner of the understudies' disappearance. Only the
+Threadkeeper and the Retired Understudy own the investigations and list what closes them.
 
-Example (`circus.school.circus_strongman.colleagues`), restoring the committed cadence: "The Acrobat knows when to
-leave. I know where to stay. A conductor who can't value both breaks every string they own."
+**How they differ under pressure, and how they teach.** Disagreements between them matter more than rhythm. Each lesson
+gives the Degree, the ordeal and the practical exactly.
 
-**Trade keys.**
-- circus_acrobat: `hemomancy.trade.circus_acrobat.<card>.title` / `.line` for `rigging_line`; `hemomancy.trade.circus_acrobat.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.circus_acrobat.<slug>` (`.teaser`, `.lineN`) for `first_fall`, `no_net`.
-- circus_knife_thrower: `hemomancy.trade.circus_knife_thrower.<card>.title` / `.line` for `worn_blades`; `hemomancy.trade.circus_knife_thrower.*`: `thanks`, `thanks_fine`, `appraise.poor`; rapport lore `hemomancy.dialogue.rapport.circus_knife_thrower.<slug>` (`.teaser`, `.lineN`) for `first_knife`, `the_miss`.
-- circus_stilt_walker: `hemomancy.trade.circus_stilt_walker.<card>.title` / `.line` for `sticks`; `hemomancy.trade.circus_stilt_walker.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.circus_stilt_walker.<slug>` (`.teaser`, `.lineN`) for `the_carousel`, `the_view`.
-- circus_strongman: `hemomancy.trade.circus_strongman.<card>.title` / `.line` for `iron_bar`; `hemomancy.trade.circus_strongman.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.circus_strongman.<slug>` (`.teaser`, `.lineN`) for `good_for`, `the_anvil`.
-- circus_beast_tamer: `hemomancy.trade.circus_beast_tamer.<card>.title` / `.line` for `feed`; `hemomancy.trade.circus_beast_tamer.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.circus_beast_tamer.<slug>` (`.teaser`, `.lineN`) for `first_animal`, `the_spider`.
-- circus_fire_eater: `hemomancy.trade.circus_fire_eater.<card>.title` / `.line` for `fuel`; `hemomancy.trade.circus_fire_eater.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.circus_fire_eater.<slug>` (`.teaser`, `.lineN`) for `first_flame`, `the_burn`.
-- circus_understudy: `hemomancy.trade.circus_understudy.<card>.title` / `.line` for `prompt_books`; `hemomancy.trade.circus_understudy.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.circus_understudy.<slug>` (`.teaser`, `.lineN`) for `best_role`, `the_missing`.
-- circus_threadkeeper: `hemomancy.trade.circus_threadkeeper.<card>.title` / `.line` for `ledger_paper`; `hemomancy.trade.circus_threadkeeper.*`: `thanks`; rapport lore `hemomancy.dialogue.rapport.circus_threadkeeper.<slug>` (`.teaser`, `.lineN`) for `own_debt`, `the_ledger`.
+- **Acrobat (Veinwing Vulture, third Degree).** The return path after a fall. Keep, once: "Rigging came first for me,
+  blood after."
+- **Dagger Thrower (they; Marrow Juggler, third).** What a distraction buys, and the argument with the Stilt Walker. Keep,
+  once: "Knives fly straight. It's always the people that bend."
+- **Stilt Walker (Scarlet Mummer, fourth).** Who is looking where, and how the small ones get out. Canon: "I won't call a
+  dead captive a liberated student."
+- **Strongman (he; Gorebound Hulk, fourth).** Whom a body protects. Keep, once: "Strong, and good for nothing."
+- **Beast Tamer (they; Sanguine Hound, fourth).** What the animals did, and the difference between an animal and a built
+  Hound. Keep: "I came in with a cage and learned to leave it empty."
+- **Fire Breather (they; Cinder Bellows, fourth).** Sequence and restraint; numbered steps are in character here. Keep: "A
+  dangerous act ought to announce itself."
+- **Retired Understudy (they; Mnemonist Puppet, fifth).** Names and memory; the key witness. Keep: "Those missing performers
+  were people." The three names stay on the bill in `circus_understudy.aftermath`.
+- **Threadkeeper.** Accounts, inspection and what is owed.
 
----
+**Two encounter contrasts.**
+- A pupil's practical is a test of what the shape protects or reaches. A pupil's testimony question gets only what that
+  professor saw.
+- After Succession most keep teaching in the pavilion. After Liberation they teach from the camps, and none calls it a win.
+
+**Keep and cut.**
+- Keep (`circus_strongman.history`): "My first body could lift a wagon, and it couldn't hold a door open for one scared
+  kid." What that professor cares about, in one event.
+- Cut (October `circus_strongman.colleagues`): "A conductor who can't value both breaks every string they own." A moral
+  on a line that should be about two people arguing.
+
+**Fixed text.** `dialogue.circus_performer.welcome` is named in `PlaythroughCrimsonTroupeGameTests`. Trade keys:
+`hemomancy.trade.circus_<role>.*`; rapport: `hemomancy.dialogue.rapport.circus_<role>.<slug>`.
+
+**Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
 ## Succession
 
 ### Successors
 
-**Who.** New people carrying a donor's vocation, "not a duplicate of the donor": their own name, appearance and history
-(Lore, "Manifested successors"). The greeting already picks one of three personalities from the seed:
-- Seed 0, scholarly: "A new voice. Sit with me."
-- Seed 1, workmanlike: "You have found my station. Tell me what needs doing."
-- Seed 2, reflective: "I woke carrying old knowledge..."
+Sheet format v2 (2026-11-08): see `tools/i18n/voice_rewrite/pass4/BRIEF.md`.
 
-**Rule.** A successor must never sound like the teacher whose craft they carry. Right now every node past the greeting
-reuses the original teacher's tree, so a Vicar's successor speaks in the Vicar's voice (see open decisions). Until that
-changes, keep the three personalities distinct in the lines they do own.
+**What they are trying to do.** Get on with the work they woke up knowing, and find out who they are while doing it. They
+are new people woken in a Vacant Effigy, days or weeks old as people and decades old as craftsmen (Lore, "Manifested
+successors"). The original teacher stays at the outpost. Pronouns: they, unless the resident's name says otherwise.
+
+**What they know, and when.** Their profession, completely, and almost nothing about their own lives. They don't have
+visions of the donor's life and they don't quote the donor. They know the Order through the craft they carry.
+
+**What they attend to under pressure.** The workplace in front of them, and whether anyone can tell them what they don't
+know.
+
+**How they teach or refuse.** Past the greeting they use their teacher's tree (open decision 10), so their own keys are
+greetings, the identity answer and the refusal. A refusal names what they need: their own bloodline and an unclaimed
+workplace inside its fane.
+
+**Two encounter contrasts.** The greeting picks one of three temperaments from the seed.
+- Curious (seed 0) asks back and loses track of things. Workmanlike (seed 1) asks what the job is, which is what keeps it
+  apart from the Artificer, who gives orders.
+- Reflective (seed 2) is unsettled by what it knows. None of them sounds like the teacher whose craft they carry.
+
+**Keep and cut.**
+- Keep (`greeting.2.first`): "I woke up knowing work I don't remember learning." The strangeness of their condition, said
+  plainly.
+- Cut (October `personal_identity`): "I carry a teacher's craft, but the life I'm making here is my own." A balanced pivot.
+
+**Fixed text.** `succession.unavailable` must exist. No successor line is in the route fingerprints. Lines said by the
+original teachers (`succession.teaching.<profession>`, `succession.consent`, `dialogue.recruit.<npc>.*`) follow that
+teacher's sheet. `succession.consent` and `dialogue.recruit.release.prompt` are shared by several teachers, so they stay
+plain and contraction-free. `recruit_offer` shows `consider` and `accept` before the player confirms, so `accept` must
+agree in advance. `succession.teaching.artificer` contains "Armor Stand and Blood Stained Stone" and "brazier".
+
+**Diagnostics.** See the contrast map. Measured afterwards to check voices stay apart; not a target to write to.
 
 ### Misbegotten
 
-Fractured donor fragments. The current lines are the model: "I remember you remembering me." "The hand doesn't fit the
-work." "A scar with no wound. A wound with your face." Keep them short and keep them wrong.
+**What it is.** What wakes when a counterfeit identity is offered: a vessel the memories rejected, attacking its officiant
+with the profession's shape. Its line repeats on the action bar every five seconds, so it is short.
 
----
+**How it speaks.** Each line uses a word from its profession and gets it wrong: wrong pronouns, wrong owners, a word said
+twice. Trailing `...` isn't how it shows breakage, and it doesn't moralize about fraud.
+
+**Keep and cut.**
+- Keep: "A scar with no wound. A wound with your face."
+- Cut (October `fracture.vicar`): "The blood knows whose vow was broken." A moral, with blood as the one who knows.
 
 ## The Fungal Entity
 

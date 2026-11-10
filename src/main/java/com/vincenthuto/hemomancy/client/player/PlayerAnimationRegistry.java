@@ -13,6 +13,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -43,6 +44,7 @@ public final class PlayerAnimationRegistry {
 			}),
 			claims("hematic_microscope", PlayerAnimationRegistry::microscope),
 			claims("blood_vial_injection", PlayerAnimationRegistry::injection),
+			claims("living_syringe_draw", PlayerAnimationRegistry::syringeDraw),
 			claims("living_torch_breath", PlayerAnimationRegistry::torchBreath),
 			claims("unstained_weapon_swing", PlayerAnimationRegistry::unstainedSwing),
 			claims("living_weapon_stroke", PlayerAnimationRegistry::livingStroke),
@@ -93,6 +95,24 @@ public final class PlayerAnimationRegistry {
 		var injection = BloodVialInjectionClientState.animation(player);
 		if (injection == null) return false;
 		BloodVialInjectionPose.apply(model, injection.elapsed(partialTick), injection.packet.right());
+		return true;
+	}
+
+	private static boolean syringeDraw(LivingEntity entity, HumanoidModel<?> model, float partialTick) {
+		if (!(entity instanceof Player player)) return false;
+		var draw = LivingSyringeDrawClientState.animation(player);
+		if (draw == null) return false;
+		float bodyYaw = Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
+		float aimYaw = Mth.wrapDegrees(player.getViewYRot(partialTick) - bodyYaw);
+		float aimPitch = player.getViewXRot(partialTick);
+		var target = draw.target();
+		if (target != null) {
+			Vec3 reach = target.getPosition(partialTick).add(0, target.getBbHeight() * .5, 0).subtract(player.getEyePosition(partialTick).add(0, -.3, 0));
+			aimYaw = Mth.wrapDegrees((float) Math.toDegrees(Math.atan2(reach.z, reach.x)) - 90 - bodyYaw);
+			aimPitch = (float) -Math.toDegrees(Math.atan2(reach.y, reach.horizontalDistance()));
+		}
+		LivingSyringeDrawPose.apply(model, draw.elapsed(partialTick), draw.packet.right(),
+				aimPitch * Mth.DEG_TO_RAD, aimYaw * Mth.DEG_TO_RAD);
 		return true;
 	}
 

@@ -66,11 +66,11 @@ TEXTURES = {
     'scab': 'hemomancy:block/blood_scorched_scab',
     'amber': 'hemomancy:block/mnemonic_ambergris_block',
     'venous': 'hemomancy:block/chiseled_polished_venous_stone',
-    'wax': 'hemomancy:item/ambergris_cylinder_recorded',
-    'waxcap': 'hemomancy:item/ambergris_cylinder',
+    'wax': 'hemomancy:item/wax_cylinder_recorded',
+    'waxcap': 'hemomancy:item/wax_cylinder',
 }
 # Materials that sample a sub-rectangle of their texture instead of world-aligned tiling.
-REGIONS = {'wax': (0, 0, 16, 8), 'waxcap': (0, 8, 16, 16),
+REGIONS = {'wax': (0, 0, 12, 6), 'waxcap': (0, 8, 8, 16),
            'stone': (0, 0, 12, 12), 'rim': (0, 0, 8, 12), 'pivot': (0, 0, 10, 6)}
 CAP = {'wax': 'waxcap', 'amber': 'amber', 'stone': 'stone', 'log': 'logtop', 'bone': 'bonecap'}
 TAN = math.tan(math.radians(22.5))

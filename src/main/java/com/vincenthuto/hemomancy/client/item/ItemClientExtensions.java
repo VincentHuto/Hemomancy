@@ -41,6 +41,7 @@ import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingPistolItemRe
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSickleItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSpearItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingTorchItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSyringeRenderer;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.SanguisLanceaItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.crossbar.MarionetteCrossbarItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.tile.harbinger.crafting.HematicArmatureItemRenderer;
@@ -61,7 +62,8 @@ import com.vincenthuto.hemomancy.client.render.item.unstained.AbsolutionDaggerIt
 import com.vincenthuto.hemomancy.client.render.item.unstained.SilthmereGlaiveItemRenderer;
 import com.vincenthuto.hemomancy.client.render.item.unstained.UnstainedWarhammerItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.AmbergrisCylinderItem;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.CylinderRenderer;
+import com.vincenthuto.hemomancy.common.item.harbinger.CylinderItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.MemoryOfVesperItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.MonolithFragmentItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.MonolithImbuedClothItem;
@@ -87,6 +89,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingPistolI
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSickleItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSpearItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.SanguisLanceaItem;
 import com.vincenthuto.hemomancy.common.item.shared.armor.BarbedArmorItem;
 import com.vincenthuto.hemomancy.common.item.shared.armor.BarbedShieldItem;
@@ -128,7 +131,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
  */
 public final class ItemClientExtensions {
 	static final Map<Class<? extends Item>, Function<Item, IClientItemExtensions>> BY_CLASS = Map.ofEntries(
-			Map.entry(AmbergrisCylinderItem.class, ItemClientExtensions::ambergrisCylinderItem),
+			Map.entry(CylinderItem.class, item -> CylinderRenderer.EXTENSIONS),
 			Map.entry(AbstractSpecialBloodLustArmorItem.class, ItemClientExtensions::abstractSpecialBloodLustArmorItem),
 			Map.entry(BloodLustArmorItem.class, ItemClientExtensions::bloodLustArmorItem),
 			Map.entry(MarrowCrownArmorItem.class, ItemClientExtensions::marrowCrownArmorItem),
@@ -151,6 +154,7 @@ public final class ItemClientExtensions {
 			Map.entry(LivingPistolItem.class, ItemClientExtensions::livingPistolItem),
 			Map.entry(LivingSickleItem.class, ItemClientExtensions::livingSickleItem),
 			Map.entry(LivingSpearItem.class, ItemClientExtensions::livingSpearItem),
+			Map.entry(LivingSyringeItem.class, item -> LivingSyringeRenderer.EXTENSIONS),
 			Map.entry(LivingTorchItem.class, ItemClientExtensions::livingTorchItem),
 			Map.entry(SanguisLanceaItem.class, ItemClientExtensions::sanguisLanceaItem),
 			Map.entry(MarionetteCrossbarItem.class, ItemClientExtensions::marionetteCrossbarItem),
@@ -199,7 +203,6 @@ public final class ItemClientExtensions {
 		return null;
 	}
 
-	static IClientItemExtensions ambergrisCylinderItem(Item item) {return com.vincenthuto.hemomancy.client.render.item.harbinger.AmbergrisCylinderRenderer.EXTENSIONS;}
 
 	static IClientItemExtensions abstractSpecialBloodLustArmorItem(Item item) {
 		return SpecialBloodLustClientExtensions.create(((AbstractSpecialBloodLustArmorItem) item).texturePrefix());

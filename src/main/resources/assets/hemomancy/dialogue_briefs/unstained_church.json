@@ -1,0 +1,1650 @@
+{
+ "hemomancy.acolyte.about_clarity.line1": {
+  "about": "the Acolyte, a gentle parishioner, explaining that clarity comes after purity: first the infection is quieted, then the player learns to see without fever clouding it",
+  "tone": "soft, reassuring"
+ },
+ "hemomancy.acolyte.about_clarity.line2": {
+  "about": "the Acolyte, a gentle parishioner, hedging that consecrated copper teaches endurance, as it was explained to them: it changed, oxidized, then settled and stayed",
+  "tone": "hesitant, gentle"
+ },
+ "hemomancy.acolyte.about_clarity.line3": {
+  "about": "the Acolyte, a gentle parishioner, saying that once the player's blood is fully pale, the copper's lesson can stop being a wound and become a halo",
+  "tone": "soft, hopeful"
+ },
+ "hemomancy.acolyte.absolved.line1": {
+  "about": "the Acolyte, a gentle parishioner, telling an Absolved player that most of the old red blood has gone pale, and that mourning it is all right and common",
+  "tone": "warm, consoling"
+ },
+ "hemomancy.acolyte.absolved.line2": {
+  "about": "the Acolyte, a gentle parishioner, urging the player to let grief run out through clean water, leaving something that is truly theirs rather than the blood's",
+  "tone": "tender, quiet"
+ },
+ "hemomancy.acolyte.clarity.line1": {
+  "about": "the Acolyte, a gentle parishioner, telling a player who has taken the second water that quiet blood makes the world louder, and asking if it feels like too much some days",
+  "tone": "concerned, gentle"
+ },
+ "hemomancy.acolyte.clarity.line2": {
+  "about": "the Acolyte, a gentle parishioner, warning that sharp sight can still lie and a clear eye can turn merciless without noticing",
+  "tone": "soft, cautionary"
+ },
+ "hemomancy.acolyte.cleansing.line1": {
+  "about": "the Acolyte, a gentle parishioner, telling a Cleansing player they are in the long middle, where blood has learned fear and frightened things hold on harder",
+  "tone": "soft, empathetic"
+ },
+ "hemomancy.acolyte.cleansing.line2": {
+  "about": "the Acolyte, a gentle parishioner, explaining that the Rite of the Silver Veil lays a temporary ward, and that walking it means leaving the closing wound alone",
+  "tone": "hesitant, careful"
+ },
+ "hemomancy.acolyte.corrupted.line1": {
+  "about": "the Acolyte, a gentle parishioner, telling a Corrupted player that the first dose opened a painful wound because the blood-memory is less sure of itself now",
+  "tone": "sympathetic, gentle"
+ },
+ "hemomancy.acolyte.corrupted.line2": {
+  "about": "the Acolyte, a gentle parishioner, warning that the old crimson current still answers if called, and each call teaches it the player's name again",
+  "tone": "uneasy, caring"
+ },
+ "hemomancy.acolyte.enlightened.line1": {
+  "about": "narration of the Acolyte bowing until their forehead nearly touches their clasped hands before an Enlightened player",
+  "tone": "reverent narration"
+ },
+ "hemomancy.acolyte.enlightened.line2": {
+  "about": "the Acolyte, a gentle parishioner, admitting they can't tell whether the Lady weeps for joy or as a warning, and that among the Unstained it is the same water",
+  "tone": "humble, wistful"
+ },
+ "hemomancy.acolyte.how_clarity.line1": {
+  "about": "the Acolyte, a gentle parishioner, explaining that consecrated copper at the podium readies the player, the Rite of Clarity Ascension wakes it, and clarity deepens through offerings that teach perceiving rather than hungering",
+  "tone": "patient, hedged"
+ },
+ "hemomancy.acolyte.how_clarity.line2": {
+  "about": "the Acolyte, a gentle parishioner, listing silver chalices, hemolytic plating and the verdigris rites as aids that strengthen the halo purity made room for",
+  "tone": "warm, informative"
+ },
+ "hemomancy.acolyte.how_purify.line1": {
+  "about": "the Acolyte, a gentle parishioner, explaining that purity grows through restraint, mercy and offerings that ask nothing of blood, as they understand it",
+  "tone": "gentle, hedged"
+ },
+ "hemomancy.acolyte.how_purify.line2": {
+  "about": "the Acolyte, a gentle parishioner, explaining that hemolytic solution at the podium readies the player, Lethean Baptism begins purity, and then come Lethean flowers, pale dew, sleep, clean labor and tended animals",
+  "tone": "patient, practical"
+ },
+ "hemomancy.acolyte.how_purify.line3": {
+  "about": "the Acolyte, a gentle parishioner, begging the player not to rush, because closing a wound too fast leaves rot under the skin",
+  "tone": "earnest, pleading"
+ },
+ "hemomancy.acolyte.lady_lore.line1": {
+  "about": "the Acolyte, a gentle parishioner, describing Our Lady of Still Waters as living wherever a fever breaks, belonging to this world in the cold water rather than a heaven",
+  "tone": "soft, devout"
+ },
+ "hemomancy.acolyte.lady_lore.line2": {
+  "about": "the Acolyte, a gentle parishioner, saying that when the crimson fungus spread through blood and memory, the world fought it as a body fights infection, and that they believe that part",
+  "tone": "quiet, sincere"
+ },
+ "hemomancy.acolyte.lady_lore.line3": {
+  "about": "the Acolyte, a gentle parishioner, describing the Lady as that answer with a face, patient and defensive rather than cruel, with someone in the stillness they can't name",
+  "tone": "tender, uncertain"
+ },
+ "hemomancy.acolyte.not_on_path.line1": {
+  "about": "narration of the Acolyte lowering their voice as the church air cools around a player not yet on the path",
+  "tone": "hushed narration"
+ },
+ "hemomancy.acolyte.not_on_path.line2": {
+  "about": "the Acolyte, a gentle parishioner, telling a player who hasn't started the washing that a Zealot can talk through troubling blood, after which they would bring hemolytic solution to the podium",
+  "tone": "kind, directing"
+ },
+ "hemomancy.acolyte.purified.line1": {
+  "about": "the Acolyte, a gentle parishioner, telling the player their blood is now white like winter bone and the first transformation has set for good",
+  "tone": "warm, quietly awed"
+ },
+ "hemomancy.acolyte.purified.line2": {
+  "about": "the Acolyte, a gentle parishioner, explaining that for clarity the player brings consecrated copper to the podium, walks the Rite of Clarity Ascension, and lets the last crimson habit go quiet, with no hurry",
+  "tone": "gentle, unhurried"
+ },
+ "hemomancy.acolyte.silver_veil.line1": {
+  "about": "the Acolyte, a gentle parishioner, describing the Silver Veil as purification's inner skin that holds the crimson current away from the player",
+  "tone": "soft, thoughtful"
+ },
+ "hemomancy.acolyte.silver_veil.line2": {
+  "about": "the Acolyte, a gentle parishioner, saying that once there is distance from the crimson current, the player can make their own choice",
+  "tone": "quiet, encouraging"
+ },
+ "hemomancy.acolyte.tainted.line1": {
+  "about": "the Acolyte, a gentle parishioner, telling a Tainted player the stain is thinning, they may feel hollow where power used to answer, and hoping they are sleeping",
+  "tone": "caring, hesitant"
+ },
+ "hemomancy.acolyte.tainted.line2": {
+  "about": "the Acolyte, a gentle parishioner, offering the thought that the hollow is room the player is getting back",
+  "tone": "gentle, consoling"
+ },
+ "hemomancy.acolyte.verdigris.line1": {
+  "about": "the Acolyte, a gentle parishioner, explaining that verdigris is what copper becomes after long exposure, changed but still useful, and that they like that",
+  "tone": "fond, soft"
+ },
+ "hemomancy.acolyte.verdigris.line2": {
+  "about": "the Acolyte, a gentle parishioner, saying nobody reaches purity untouched, not even the longest-standing members, and that one arrives by honestly surviving the contact",
+  "tone": "honest, gentle"
+ },
+ "hemomancy.acolyte.who_are_you.line1": {
+  "about": "the Acolyte, a gentle parishioner, answering that they keep the still water, mostly sitting with people and witnessing what the infection does before anyone judges",
+  "tone": "warm, a little wry"
+ },
+ "hemomancy.acolyte.who_are_you.line2": {
+  "about": "the Acolyte, a gentle parishioner, saying some of them were Harbingers or had Harbingers in the family, a few came for the people, and all know it is easier to inherit the crimson than shed it",
+  "tone": "candid, soft"
+ },
+ "hemomancy.annetta.cowering.unstained_hint.line1": {
+  "about": "Annetta, a frightened woman cowering, telling a player from the still waters that they know why she can no longer pray cleanly",
+  "tone": "fragile, broken"
+ },
+ "hemomancy.annetta.cowering.unstained_hint.line2": {
+  "about": "Annetta saying she will drink anything to make the noise stop and is exhausted from being proof",
+  "tone": "exhausted, desperate"
+ },
+ "hemomancy.clarity.awakened": {
+  "about": "the name of the Awakened clarity stage of the Unstained path, shown as a stage label",
+  "tone": "plain label"
+ },
+ "hemomancy.clarity.discerning": {
+  "about": "the name of the Discerning clarity stage of the Unstained path, shown as a stage label",
+  "tone": "plain label"
+ },
+ "hemomancy.clarity.enlightened": {
+  "about": "the name of the Enlightened clarity stage of the Unstained path, shown as a stage label",
+  "tone": "plain label"
+ },
+ "hemomancy.clarity.resolute": {
+  "about": "the name of the Resolute clarity stage of the Unstained path, shown as a stage label",
+  "tone": "plain label"
+ },
+ "hemomancy.clarity.vigilant": {
+  "about": "the name of the Vigilant clarity stage of the Unstained path, shown as a stage label",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.acolyte.option.about_clarity": {
+  "about": "asking the Acolyte what comes after purity",
+  "tone": "curious, quiet"
+ },
+ "hemomancy.dialogue.acolyte.option.about_lady": {
+  "about": "asking the Acolyte to tell about Our Lady",
+  "tone": "curious, respectful"
+ },
+ "hemomancy.dialogue.acolyte.option.about_silver_veil": {
+  "about": "asking the Acolyte what the Silver Veil is",
+  "tone": "curious, quiet"
+ },
+ "hemomancy.dialogue.acolyte.option.about_verdigris": {
+  "about": "asking the Acolyte to tell about verdigris",
+  "tone": "curious, quiet"
+ },
+ "hemomancy.dialogue.acolyte.option.how_clarity": {
+  "about": "asking the Acolyte how to awaken clarity",
+  "tone": "earnest, curious"
+ },
+ "hemomancy.dialogue.acolyte.option.how_purify": {
+  "about": "asking the Acolyte how to purify oneself",
+  "tone": "earnest, hopeful"
+ },
+ "hemomancy.dialogue.acolyte.option.task_chalice": {
+  "about": "offering the Acolyte a silver chalice as an observance task",
+  "tone": "willing, humble"
+ },
+ "hemomancy.dialogue.acolyte.option.task_consecrate": {
+  "about": "offering to help the Acolyte consecrate the church as an observance task",
+  "tone": "willing, humble"
+ },
+ "hemomancy.dialogue.acolyte.option.task_gather": {
+  "about": "offering to gather Ghost Pipe for the Acolyte as an observance task",
+  "tone": "willing, humble"
+ },
+ "hemomancy.dialogue.acolyte.option.task_hemolytic": {
+  "about": "offering to bring hemolytic solution to the Acolyte as an observance task",
+  "tone": "willing, humble"
+ },
+ "hemomancy.dialogue.acolyte.option.task_wreath": {
+  "about": "offering the Acolyte a poppy wreath as an observance task",
+  "tone": "willing, humble"
+ },
+ "hemomancy.dialogue.acolyte.option.vow_gather_remedies": {
+  "about": "vowing to gather the remedies the church asks for",
+  "tone": "resolute, solemn"
+ },
+ "hemomancy.dialogue.acolyte.option.vow_gentle_separation": {
+  "about": "reporting that the player has completed the Gentle Separation vow",
+  "tone": "quiet, sincere"
+ },
+ "hemomancy.dialogue.acolyte.option.who_are_you": {
+  "about": "asking the Acolyte who they are",
+  "tone": "curious, friendly"
+ },
+ "hemomancy.dialogue.action.confirm": {
+  "about": "a hint telling the player to review what a dialogue choice will do and continue when ready",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.event.accept_church": {
+  "about": "narration of the Zealot nodding and telling the player to follow the silver bells, which will lead them to the church",
+  "tone": "calm narration"
+ },
+ "hemomancy.dialogue.event.accept_purification": {
+  "about": "narration of the Zealot's eyes brightening as they tell the player to bring hemolytic solution to the podium and begin",
+  "tone": "warm narration"
+ },
+ "hemomancy.dialogue.event.gives_stained_church_map": {
+  "about": "narration of a stained route being set down for the player, who recognizes the marked church before ever seeing it",
+  "tone": "eerie narration"
+ },
+ "hemomancy.dialogue.event.reject_help": {
+  "about": "narration of the Zealot watching the player turn away help, silver eyes dimming",
+  "tone": "sorrowful narration"
+ },
+ "hemomancy.dialogue.event.relay_chart_carrying": {
+  "about": "a system message that the player already carries a Relay Chart",
+  "tone": "plain notice"
+ },
+ "hemomancy.dialogue.event.relay_chart_issued": {
+  "about": "a system message that the Voyager draws the player a Relay Chart",
+  "tone": "plain notice"
+ },
+ "hemomancy.dialogue.event.scout_gives_notes": {
+  "about": "narration of the Scout pressing a small water-stained journal into the player's hands, her grip loosening almost at once",
+  "tone": "mournful narration"
+ },
+ "hemomancy.dialogue.event.unstained_starter_already_claimed": {
+  "about": "a system message that the Zealot already gave the player their entry supplies and that anything in the church chest is shared with other visitors",
+  "tone": "plain notice"
+ },
+ "hemomancy.dialogue.event.unstained_starter_granted": {
+  "about": "a system message that the Zealot supplies the missing entry kit: two Hemolytic Solutions and the Liber Immaculatus, one solution for the Podium and one for making Cleansed Stone",
+  "tone": "plain, instructive"
+ },
+ "hemomancy.dialogue.guardian.option.ask_about_item": {
+  "about": "telling the Guardian the player has a question about something they found",
+  "tone": "casual, curious"
+ },
+ "hemomancy.dialogue.guardian.option.leave": {
+  "about": "acknowledging the Guardian and ending the conversation",
+  "tone": "curt, plain"
+ },
+ "hemomancy.dialogue.guardian.option.replace_absolution_dagger": {
+  "about": "asking the Guardian for a replacement Absolution Dagger",
+  "tone": "plain, asking"
+ },
+ "hemomancy.dialogue.guardian.option.task_bell": {
+  "about": "promising to ring the Pale Watch bell as an observance task",
+  "tone": "resolute, brief"
+ },
+ "hemomancy.dialogue.guardian.option.task_plating": {
+  "about": "promising to plate the quiet watch with hemolytic plating as an observance task",
+  "tone": "resolute, brief"
+ },
+ "hemomancy.dialogue.guardian.option.vow_shelter_afflicted": {
+  "about": "reporting that the player sheltered another person from the stain",
+  "tone": "quiet, sincere"
+ },
+ "hemomancy.dialogue.guardian.replace_absolution_dagger.prompt": {
+  "about": "the Guardian agreeing to replace a lost Absolution Dagger and stating the cost: two Pale Silver Ingots and one Cleansed Blood Crystal Shard, for pledged hands only",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.dialogue.memo.make_note": {
+  "about": "a bracketed prompt inviting the player to make a note of what was just said before it fades",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.acolyte.the_lady": {
+  "about": "asking the Acolyte whether they have ever felt Our Lady near",
+  "tone": "gentle, curious"
+ },
+ "hemomancy.dialogue.rapport.acolyte.the_lady.line1": {
+  "about": "the Acolyte, a gentle parishioner, confessing they felt the Lady once by the water at dawn when sleepless, unsure if it was peace or tiredness",
+  "tone": "hushed, vulnerable"
+ },
+ "hemomancy.dialogue.rapport.acolyte.the_lady.line2": {
+  "about": "the Acolyte, a gentle parishioner, saying they told nobody because it felt private, and asking the player to keep it between them",
+  "tone": "shy, trusting"
+ },
+ "hemomancy.dialogue.rapport.acolyte.the_lady.teaser": {
+  "about": "a short teaser hinting the Acolyte hasn't told the others something",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.acolyte.the_people": {
+  "about": "asking the Acolyte whether they like it at the church",
+  "tone": "friendly, curious"
+ },
+ "hemomancy.dialogue.rapport.acolyte.the_people.line1": {
+  "about": "the Acolyte, a gentle parishioner, admitting they came for the soup and stayed for the people who make it, not sure they believe all of it, and asking how the player is holding up",
+  "tone": "warm, self-deprecating"
+ },
+ "hemomancy.dialogue.rapport.acolyte.the_people.teaser": {
+  "about": "a short teaser noting the Acolyte talks easily but not yet about themself",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.guardian.the_hammer": {
+  "about": "asking the Guardian where they learned to fight",
+  "tone": "curious, careful"
+ },
+ "hemomancy.dialogue.rapport.guardian.the_hammer.line1": {
+  "about": "the Guardian answering tersely that they learned on the line and nowhere else, strike to stop and then stop",
+  "tone": "flat, blunt"
+ },
+ "hemomancy.dialogue.rapport.guardian.the_hammer.teaser": {
+  "about": "a short teaser saying the Guardian doesn't talk to strangers",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.guardian.the_line": {
+  "about": "asking the Guardian why they hold the line",
+  "tone": "curious, respectful"
+ },
+ "hemomancy.dialogue.rapport.guardian.the_line.line1": {
+  "about": "the Guardian saying someone once stood in the line for them and took a blow they had earned",
+  "tone": "gruff, low"
+ },
+ "hemomancy.dialogue.rapport.guardian.the_line.line2": {
+  "about": "the Guardian saying they owe that person and can't repay them, so they hold the line instead",
+  "tone": "gruff, quiet"
+ },
+ "hemomancy.dialogue.rapport.guardian.the_line.teaser": {
+  "about": "a short teaser saying that trading with the Guardian long enough may reveal why they hold",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.scout.anyone_waiting": {
+  "about": "asking the dying Scout whether there is anyone the player should tell",
+  "tone": "gentle, solemn"
+ },
+ "hemomancy.dialogue.rapport.scout.anyone_waiting.line1": {
+  "about": "the dying Scout naming her sister at the Church, who mends the robes",
+  "tone": "faint, tired"
+ },
+ "hemomancy.dialogue.rapport.scout.anyone_waiting.line2": {
+  "about": "the dying Scout asking the player to tell her sister she finished and that it mattered, but not to mention the cold",
+  "tone": "weak, tender"
+ },
+ "hemomancy.dialogue.rapport.scout.anyone_waiting.teaser": {
+  "about": "a short teaser saying the Scout would only say some things to someone she trusts",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.scout.why_scouting": {
+  "about": "asking the Scout why she came down here alone",
+  "tone": "gentle, curious"
+ },
+ "hemomancy.dialogue.rapport.scout.why_scouting.line1": {
+  "about": "the Scout explaining she volunteered because nobody else would, the Church needed eyes below, and she is quiet and patient",
+  "tone": "tired, plain"
+ },
+ "hemomancy.dialogue.rapport.scout.why_scouting.teaser": {
+  "about": "a short teaser saying the Scout is still writing and may talk if given paper",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.zealot.the_one_lost": {
+  "about": "asking the Zealot whether they have lost anyone to the stain",
+  "tone": "careful, sympathetic"
+ },
+ "hemomancy.dialogue.rapport.zealot.the_one_lost.line1": {
+  "about": "the Zealot revealing their brother told them it was only curiosity and they believed him a year too long",
+  "tone": "pained, restrained"
+ },
+ "hemomancy.dialogue.rapport.zealot.the_one_lost.line2": {
+  "about": "the Zealot explaining that when they ask the player why they are here, they ask the question they never asked their brother",
+  "tone": "earnest, steady"
+ },
+ "hemomancy.dialogue.rapport.zealot.the_one_lost.teaser": {
+  "about": "a short teaser saying the Zealot only gives some answers to people who have earned them",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.zealot.why_church": {
+  "about": "asking the Zealot what brought them to the Church",
+  "tone": "curious, respectful"
+ },
+ "hemomancy.dialogue.rapport.zealot.why_church.line1": {
+  "about": "the Zealot recalling a fever that wouldn't break and a woman who sat with them, who asked what they wanted cured, and asking the player if they know their answer",
+  "tone": "reflective, probing"
+ },
+ "hemomancy.dialogue.rapport.zealot.why_church.teaser": {
+  "about": "a short teaser saying the Zealot asks the questions but might answer one after long trade",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.reward_not_delivered": {
+  "about": "a system message that no reward was delivered, advising the player to check the requirements or reopen the conversation near the speaker",
+  "tone": "plain notice"
+ },
+ "hemomancy.dialogue.scout.option.go_in_peace": {
+  "about": "a bracketed action of the player taking the notes and stepping away from the Scout",
+  "tone": "quiet, solemn"
+ },
+ "hemomancy.dialogue.scout.option.leave": {
+  "about": "the player's silent response of an ellipsis, leaving the dying Scout",
+  "tone": "silent, somber"
+ },
+ "hemomancy.dialogue.scout.option.take_notes": {
+  "about": "accepting the Scout's notes and promising they will be used",
+  "tone": "solemn, sincere"
+ },
+ "hemomancy.dialogue.scout.option.what_did_you_see": {
+  "about": "asking the Scout what she noticed about the creatures",
+  "tone": "gentle, curious"
+ },
+ "hemomancy.dialogue.scout.option.what_happened": {
+  "about": "asking the Scout what happened to her",
+  "tone": "gentle, concerned"
+ },
+ "hemomancy.dialogue.unstained.observance.active": {
+  "about": "an Unstained speaker telling the player they already carry this observance, that their book shows what remains, and to return when the offering is ready",
+  "tone": "calm, practical"
+ },
+ "hemomancy.dialogue.unstained.observance.available": {
+  "about": "an Unstained speaker offering to enter an observance in the player's book with its offering and reward, only if the player means to finish it",
+  "tone": "solemn, measured"
+ },
+ "hemomancy.dialogue.unstained.observance.ready": {
+  "about": "an Unstained speaker saying the work is done and asking for the offering so the observance can be marked fulfilled",
+  "tone": "warm, formal"
+ },
+ "hemomancy.dialogue.zealot.option.about_altar": {
+  "about": "asking the Zealot about the Altar of Cleansing",
+  "tone": "plain, direct"
+ },
+ "hemomancy.dialogue.zealot.option.about_clarity_rite": {
+  "about": "asking the Zealot what the Rite of Clarity is",
+  "tone": "plain, direct"
+ },
+ "hemomancy.dialogue.zealot.option.about_silver_ward": {
+  "about": "asking the Zealot about Silver Ward",
+  "tone": "plain, direct"
+ },
+ "hemomancy.dialogue.zealot.option.about_verdigris": {
+  "about": "asking the Zealot what verdigris means",
+  "tone": "plain, direct"
+ },
+ "hemomancy.dialogue.zealot.option.accept_church": {
+  "about": "asking to join the Zealot's church",
+  "tone": "earnest, humble"
+ },
+ "hemomancy.dialogue.zealot.option.accept_purification": {
+  "about": "agreeing to begin the purification",
+  "tone": "resolute, hopeful"
+ },
+ "hemomancy.dialogue.zealot.option.ask_about_annetta": {
+  "about": "asking the Zealot what became of Annetta",
+  "tone": "somber, curious"
+ },
+ "hemomancy.dialogue.zealot.option.ask_about_item": {
+  "about": "telling the Zealot the player has a question about something they found",
+  "tone": "casual, curious"
+ },
+ "hemomancy.dialogue.zealot.option.how_craft_hemolytic": {
+  "about": "asking the Zealot how to make hemolytic solution",
+  "tone": "practical, curious"
+ },
+ "hemomancy.dialogue.zealot.option.leave": {
+  "about": "a bracketed choice to leave the conversation with the Zealot",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.zealot.option.not_interested": {
+  "about": "declining the Zealot's cause as of no interest",
+  "tone": "cold, dismissive"
+ },
+ "hemomancy.dialogue.zealot.option.take_stained_map": {
+  "about": "accepting the stained map and promising to go carefully",
+  "tone": "wary, quiet"
+ },
+ "hemomancy.dialogue.zealot.option.take_vows": {
+  "about": "asking to take the church's vows of clean service",
+  "tone": "solemn, resolute"
+ },
+ "hemomancy.dialogue.zealot.option.task_pallid_icon": {
+  "about": "promising to bear a Pallid Icon as an observance task",
+  "tone": "willing, solemn"
+ },
+ "hemomancy.dialogue.zealot.option.task_still_waters": {
+  "about": "promising to gather the Still Waters as an observance task",
+  "tone": "willing, solemn"
+ },
+ "hemomancy.dialogue.zealot.option.tell_me_more": {
+  "about": "asking the Zealot to tell more about the Unstained path",
+  "tone": "curious, open"
+ },
+ "hemomancy.dialogue.zealot.option.vow_clean_labor": {
+  "about": "reporting that the player has completed the clean labor vow",
+  "tone": "quiet, sincere"
+ },
+ "hemomancy.dialogue.zealot.option.vow_stillwater_labor": {
+  "about": "reporting that the player has gathered the Still Waters for the vow",
+  "tone": "quiet, sincere"
+ },
+ "hemomancy.dialogue.zealot.reject_response": {
+  "about": "the Zealot answering a player who refused the cause, warning that every rite drives the stain deeper and asking what the player thinks they are buying",
+  "tone": "sharp, grave"
+ },
+ "hemomancy.drudge.memory_unsupported": {
+  "about": "a system message that this memory cannot be installed in a Drudge",
+  "tone": "plain notice"
+ },
+ "hemomancy.guardian.ambient.line1": {
+  "about": "narration of the Guardian holding still and meeting the player's eyes, then curtly telling them to stand their ground and keep their hands clean",
+  "tone": "curt, watchful"
+ },
+ "hemomancy.guardian.item_hint": {
+  "about": "the Guardian curtly telling the player to pick an item from their pack and they will say whether it belongs in the field",
+  "tone": "curt, flat"
+ },
+ "hemomancy.guardian.item_inquiry.absolution_dagger.line1": {
+  "about": "the Guardian, a terse Unstained warrior, naming the Absolution Dagger, issued to every pledged Unstained at Clarity Ascension, for last resort, mercy and self-defense",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.absolution_dagger.line2": {
+  "about": "the Guardian, a terse Unstained warrior, noting hemolytic treatment is built in so a temporary coating shouldn't be wasted on it",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.bow.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing a bow as keeping blood at a distance, good for that alone",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.bow.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to shoot plain arrows and keep the quiver full",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.crossbow.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing a crossbow as hard-hitting at range with a slow reload, which is its price",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.crossbow.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to pick their shot before the line closes",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.golden_apple.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing a golden apple as a concentrated restorative, not the Church's, which works, and admitting having eaten one when field medicine ran out",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.golden_apple.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to carry proper Unstained field medicine, keeping the apple for when badly hurt with no options",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.hemolytic_plating.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing hemolytic plating as four solutions cured into one sheet that disrupts blood-magic on contact and lines gear for afflicted ground",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.hemolytic_plating.line2": {
+  "about": "the Guardian, a terse Unstained warrior, explaining raw solution breaks down on cloth or plain metal, plating holds the compound for good, and Unstained armor and shields need it",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.hemolytic_solution.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing hemolytic solution as breaking down blood-matrix corruption, carried for treatment and for gear that takes it",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.hemolytic_solution.line2": {
+  "about": "the Guardian, a terse Unstained warrior, noting the Absolution Dagger doesn't need it because its treatment is permanent",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.hemolytic_vial.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing a hemolytic vial as solution in brittle glass, thrown to shatter and purge blood-taint",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.hemolytic_vial.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to know the target before spending the dose",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.iron_chestplate.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing plain iron armor as stopping ordinary blows but doing nothing against infection",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.iron_chestplate.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to maintain it until proper Unstained armor is ready",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.iron_sword.line1": {
+  "about": "the Guardian, a terse Unstained warrior, saying a blade works but arm's length is dangerous near infectious blood",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.iron_sword.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to keep distance and discipline, and apply a sanctioned treatment if the weapon takes one",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.lethean_brew.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing Lethean brew as pale distillate run through the Pallid Retort, stronger than dew and accepted by the Altar of Cleansing as an offering",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.lethean_brew.line2": {
+  "about": "the Guardian, a terse Unstained warrior, warning to be careful: dew takes the chosen manipulation, brew takes every one the player knows, so do not spill it",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.lethean_dew.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing Lethean Dew as bottled water in a Stillwater Condenser with Ghost Pipe nearby, not gathered off a holy dawn",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.lethean_dew.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to carry it sealed, the first rule of field medicine being not to contaminate the medicine",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.lethean_poppy.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing Lethean Poppies as said to bloom where Our Lady walked, so finding one means she was there first",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.lethean_poppy.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to mark where they grow, since Zealots upstream need to know where clean ground is",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.liber_immaculatus.line1": {
+  "about": "the Guardian, a terse Unstained warrior, saying the Liber records the path, that every Guardian swears to understand it and many walked it",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.liber_immaculatus.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to read its First Steps and then approach the Podium",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.minecraft_arms.line1": {
+  "about": "the Guardian, a terse Unstained warrior, calling ordinary arms serviceable and telling the player to keep them clean, keep reach, and open blood only with cause",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.minecraft_arms.line2": {
+  "about": "the Guardian, a terse Unstained warrior, saying that against active infection distance and restraint count, not decoration",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.pale_distillate.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing pale distillate as Lethean Dew with a Lethean Poppy, or Ghost Pipe through the Pallid Retort, feeding pale silver and brew",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.pale_distillate.line2": {
+  "about": "the Guardian, a terse Unstained warrior, saying it isn't needed in a fight, Zealots ask for it, so carry it when they do and otherwise leave it to ritual work",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.pale_silver_bell.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing the Pale Silver Bell: one chime puts Silver Ward on the player and weakens nearby hostiles",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.pale_silver_bell.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to ring it once and mean it, since panic tells the line nothing",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.pale_silver_ingot.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing Pale Silver as Consecrated Copper and pale distillate, with no ore to mine and iron no substitute",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.pale_silver_ingot.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to guard it because every ingot is somebody's finished ritual work",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.pallid_icon.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing the Pallid Icon as a consecrated copy of the river relic, not the original, carried as the Church's emblem",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.pallid_icon.line2": {
+  "about": "the Guardian, a terse Unstained warrior, saying it calls up a brief apparition, so ask what is needed and then keep watch",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.shield.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing a shield as stopping force with nothing special against blood",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.shield.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to keep it between the wound and their face",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.silthmere_glaive.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing the Silthmere Glaive as sanctioned for its reach, with the edge mattering less, keeping infectious blood away from the hands",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.silthmere_glaive.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to hold the line and give the wound room",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.sporitic_thurible.line1": {
+  "about": "the Guardian, a terse Unstained warrior, identifying a sporitic thurible as Harbinger work, fungal support smoke paid for in blood",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.sporitic_thurible.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to keep it off a clean line since its fumes serve the fungus, not the Unstained",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.unknown": {
+  "about": "the Guardian brushing off an unfamiliar item as not their work and telling the player to ask someone else",
+  "tone": "curt, dismissive"
+ },
+ "hemomancy.guardian.item_inquiry.unstained_armor.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing Unstained armor as fieldwear for anyone standing close to active corruption",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.unstained_armor.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to keep every seal sound because color doesn't make gear clean, the wearer does",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.unstained_shield.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing Unstained guardwork as built for a clean defensive line",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.unstained_shield.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to raise it early and let it do its job",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.guardian.item_inquiry.warhammer.line1": {
+  "about": "the Guardian, a terse Unstained warrior, describing the hammer as hard-hitting and keeping the wound closed, which is why Guardians reach for it first",
+  "tone": "terse, blunt"
+ },
+ "hemomancy.guardian.item_inquiry.warhammer.line2": {
+  "about": "the Guardian, a terse Unstained warrior, telling the player to strike to stop and save what they came to contain",
+  "tone": "gruff, clipped"
+ },
+ "hemomancy.ledger.disband.ledger_burned": {
+  "about": "a system message that the player's ancestral ledger burns to ash and vanishes, with the number of ledgers removed filled in",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.disband.member_notice": {
+  "about": "a system message to a bloodline member that a named player dissolved the covenant and the bloodline is disbanded, with the dissolver's name filled in",
+  "tone": "grave notice"
+ },
+ "hemomancy.ledger.disband.missing": {
+  "about": "a system message that the bloodline no longer exists and the ledger is empty",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.disband.no_bloodline": {
+  "about": "a system message that the player has no bloodline to disband",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.disband.not_leader": {
+  "about": "a system message that only the bloodline leader may dissolve the covenant",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.disband.success": {
+  "about": "a system message that the covenant is dissolved, giving the counts of released player members and recruited Harbingers",
+  "tone": "grave notice"
+ },
+ "hemomancy.ledger.recall.no_bloodline": {
+  "about": "a system message that the player has no bloodline and must found one by rite or join a covenant first",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.recall.no_lodge": {
+  "about": "a system message that the bloodline has no Founding Fane and the Rite of the Founding Fane must be completed to establish one",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.recall.not_leader": {
+  "about": "a system message that only the bloodline leader can move the recall point",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.recall.out_of_range": {
+  "about": "a system message telling the player to stand inside their Founding Fane to set the recall point",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.recall.point_set": {
+  "about": "a system message that the Founding Fane recall point moved to where the player stands",
+  "tone": "quiet confirmation"
+ },
+ "hemomancy.ledger.recall.success": {
+  "about": "a system message that the blood pulls the player home to the Founding Fane",
+  "tone": "evocative, brief"
+ },
+ "hemomancy.ledger.summon.already_near": {
+  "about": "a system message that all recruited Harbingers are already nearby",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.summon.no_bloodline": {
+  "about": "a system message that the player has no bloodline and must found one by rite or join a covenant first",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.summon.no_npcs": {
+  "about": "a system message that the bloodline has not recruited any Harbingers yet",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.summon.not_in_lodge": {
+  "about": "a system message telling the player to stand inside their bloodline's Founding Fane to summon recruits",
+  "tone": "plain notice"
+ },
+ "hemomancy.ledger.summon.searching": {
+  "about": "a system message that sworn recruits are being called from their outposts and the player should stay inside the Fane",
+  "tone": "evocative, brief"
+ },
+ "hemomancy.ledger.summon.success": {
+  "about": "a system message giving the count of recruited Harbingers summoned to the player's side",
+  "tone": "quiet confirmation"
+ },
+ "hemomancy.ledger.summon.unavailable": {
+  "about": "a system message that some sworn recruits did not answer, advising the player to check their outposts or try later",
+  "tone": "plain notice"
+ },
+ "hemomancy.purity.absolved": {
+  "about": "the name of the Absolved purity stage of the Unstained path, shown as a stage label",
+  "tone": "plain label"
+ },
+ "hemomancy.purity.cleansing": {
+  "about": "the name of the Cleansing purity stage of the Unstained path, shown as a stage label",
+  "tone": "plain label"
+ },
+ "hemomancy.purity.corrupted": {
+  "about": "the name of the Corrupted purity stage of the Unstained path, shown as a stage label",
+  "tone": "plain label"
+ },
+ "hemomancy.purity.purified": {
+  "about": "the name of the Purified purity stage of the Unstained path, shown as a stage label",
+  "tone": "plain label"
+ },
+ "hemomancy.purity.tainted": {
+  "about": "the name of the Tainted purity stage of the Unstained path, shown as a stage label",
+  "tone": "plain label"
+ },
+ "hemomancy.scout.farewell.line1": {
+  "about": "narration of the Scout whispering \"good\", exhaling, closing her eyes as the hand holding the journal goes still",
+  "tone": "mournful narration"
+ },
+ "hemomancy.scout.observation_hint.line1": {
+  "about": "the dying Unstained Scout, saying the insects act as they do outside, hunting, pushing at walls, circling each other, but never took her for anything: not a threat, not prey, nothing",
+  "tone": "exhausted, haunted"
+ },
+ "hemomancy.scout.observation_hint.line2": {
+  "about": "the dying Unstained Scout, explaining that at the church the Tooth Pecks wouldn't leave Annetta alone because they seek active infection, so every ward failed, and they hunted something she never knew she carried",
+  "tone": "weak, urgent"
+ },
+ "hemomancy.scout.observation_hint.line3": {
+  "about": "the dying Unstained Scout, urging the player to think what that means for Annetta, and to use the notes if they can",
+  "tone": "faint, insistent"
+ },
+ "hemomancy.scout.root.line1": {
+  "about": "narration of an Unstained woman slumped against the bone-speckled geode wall, robes filthy with stone dust, looking up glassy-eyed but focused",
+  "tone": "somber narration"
+ },
+ "hemomancy.scout.root.line2": {
+  "about": "the dying Unstained Scout, weakly greeting the player as someone who found her, saying cold and hunger are finishing her, and begging them to take her notes before she dies",
+  "tone": "faint, desperate"
+ },
+ "hemomancy.scout.root.line3": {
+  "about": "the dying Unstained Scout, pleading that her work not be wasted",
+  "tone": "faint, pleading"
+ },
+ "hemomancy.scout.take_notes.prompt": {
+  "about": "the dying Unstained Scout, telling the player to give their hands and take the journal now while she still can",
+  "tone": "faint, urgent"
+ },
+ "hemomancy.scout.what_happened.line1": {
+  "about": "the dying Unstained Scout, explaining the Church sent scouts to learn what the creatures are, eat and whether they can be reasoned with, she took notes for a day, then the exit collapsed and she never found it again",
+  "tone": "weak, matter-of-fact"
+ },
+ "hemomancy.scout.what_happened.line2": {
+  "about": "the dying Unstained Scout, saying the bugs never touched her in three days, looked right through her, she wrote it all down, doesn't know what it means but knows it matters",
+  "tone": "exhausted, insistent"
+ },
+ "hemomancy.trade.acolyte.bread.line": {
+  "about": "the Acolyte asking for six loaves to feed most of the congregation after service, and offering a little dew set aside in return",
+  "tone": "warm, humble"
+ },
+ "hemomancy.trade.acolyte.bread.title": {
+  "about": "a short title for the Acolyte's bread trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.acolyte.refuse_harbinger": {
+  "about": "the Acolyte apologetically refusing to trade with a Harbinger by their own choice, saying the player knows why and they dislike saying it",
+  "tone": "sad, firm"
+ },
+ "hemomancy.trade.acolyte.stained": {
+  "about": "the Acolyte apologetically declining an item with blood worked into it because they couldn't bring it into the church",
+  "tone": "apologetic, gentle"
+ },
+ "hemomancy.trade.acolyte.thanks": {
+  "about": "the Acolyte sincerely thanking the player, saying small things keep them going",
+  "tone": "warm, sincere"
+ },
+ "hemomancy.trade.acolyte.wool.line": {
+  "about": "the Acolyte asking for four wool for the cold pews and offering garden poppies in return",
+  "tone": "warm, humble"
+ },
+ "hemomancy.trade.acolyte.wool.title": {
+  "about": "a short title for the Acolyte's wool trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.done": {
+  "about": "a short label saying the trade is done",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.done_fine": {
+  "about": "a short label saying the trade is done and the item's quality was noticed",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.grade.fair": {
+  "about": "a short label for the fair quality grade of a traded item",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.grade.fine": {
+  "about": "a short label for the fine quality grade of a traded item",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.grade.poor": {
+  "about": "a short label for the poor quality grade of a traded item",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.guardian.appraise.poor": {
+  "about": "the Guardian dismissing a ruined item and telling the player to keep it",
+  "tone": "curt, flat"
+ },
+ "hemomancy.trade.guardian.arrows.line": {
+  "about": "the Guardian stating a trade for sixteen clean arrows",
+  "tone": "terse, flat"
+ },
+ "hemomancy.trade.guardian.arrows.title": {
+  "about": "a short title for the Guardian's arrows trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.guardian.iron.line": {
+  "about": "the Guardian stating they want six iron, for the hammers",
+  "tone": "terse, flat"
+ },
+ "hemomancy.trade.guardian.iron.title": {
+  "about": "a short title for the Guardian's iron trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.guardian.refuse_harbinger": {
+  "about": "the Guardian flatly refusing to trade with a Harbinger and telling them to walk on",
+  "tone": "cold, blunt"
+ },
+ "hemomancy.trade.guardian.silthmere_glaive.line": {
+  "about": "the Guardian offering a Silthmere Glaive for four pale silver and telling the player not to shame it",
+  "tone": "gruff, solemn"
+ },
+ "hemomancy.trade.guardian.silthmere_glaive.title": {
+  "about": "a short title for the Guardian's Silthmere Glaive trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.guardian.stained": {
+  "about": "the Guardian refusing blood-work and telling the player to take it back",
+  "tone": "cold, blunt"
+ },
+ "hemomancy.trade.guardian.thanks": {
+  "about": "the Guardian curtly accepting a trade and sending the player on",
+  "tone": "curt, flat"
+ },
+ "hemomancy.trade.guardian.thanks_fine": {
+  "about": "the Guardian curtly approving a well-kept item",
+  "tone": "curt, grudging"
+ },
+ "hemomancy.trade.guardian.worn_armour.line": {
+  "about": "the Guardian saying they accept iron or mail armor, worn is fine but not ruined",
+  "tone": "terse, flat"
+ },
+ "hemomancy.trade.guardian.worn_armour.title": {
+  "about": "a short title for the Guardian's worn armor trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.locked.act.spectacle": {
+  "about": "a short locked-trade label stating a requirement to watch a performance through first",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.locked.advancement": {
+  "about": "a short locked-trade label stating a requirement of an advancement not yet earned",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.locked.blood": {
+  "about": "a short locked-trade label stating a requirement of active blood",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.locked.degree": {
+  "about": "a short locked-trade label stating a requirement of a higher degree",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.locked.path": {
+  "about": "a short locked-trade label stating a note that the trade is not on the player's path",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.locked.rapport": {
+  "about": "a short locked-trade label stating a requirement of more rapport",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.locked.stage": {
+  "about": "a short locked-trade label stating a requirement of a later Unstained stage",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.refused.blood": {
+  "about": "a short trade-refusal message saying the player lacks enough blood above their reserve",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.refused.missing": {
+  "about": "a short trade-refusal message saying the player lacks the proper resources to barter",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.refused.no_room": {
+  "about": "a short trade-refusal message saying the player has no room in their pack for the goods",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.refused.not_today": {
+  "about": "a short trade-refusal message saying that want isn't on the board today",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.refused.poor": {
+  "about": "a short trade-refusal message saying the offered item is too poor to accept",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.refused.sold_out": {
+  "about": "a short trade-refusal message saying nothing is left until the restock",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.refused.stained": {
+  "about": "a short trade-refusal message saying the speaker won't take outpost goods",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.refused.unknown": {
+  "about": "a short trade-refusal message saying there is nothing to trade here",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.scout.paper.line": {
+  "about": "the Scout asking for paper because she is still writing, offering her dew since she won't need it",
+  "tone": "faint, weary"
+ },
+ "hemomancy.trade.scout.paper.title": {
+  "about": "a short title for the Scout's paper trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.scout.refuse_harbinger": {
+  "about": "the Scout refusing a Harbinger, saying they carry the stain and she won't, even now",
+  "tone": "faint, firm"
+ },
+ "hemomancy.trade.scout.stained": {
+  "about": "the Scout refusing blood-work in clipped words",
+  "tone": "faint, firm"
+ },
+ "hemomancy.trade.scout.thanks": {
+  "about": "the Scout thanking the player and telling them to go and leave her to her writing",
+  "tone": "faint, tired"
+ },
+ "hemomancy.trade.tier.confidant": {
+  "about": "the name of the confidant rapport tier with a trading NPC",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.tier.known": {
+  "about": "the name of the known rapport tier with a trading NPC",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.tier.stranger": {
+  "about": "the name of the stranger rapport tier with a trading NPC",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.tier.trusted": {
+  "about": "the name of the trusted rapport tier with a trading NPC",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.act.spectacle": {
+  "about": "a label for paying a trade with a performance",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.act.spectacle.hint": {
+  "about": "a hint explaining that a pavilion performance held to the end pays for one trade",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.act_confirm": {
+  "about": "a confirmation that the trade was paid with a performance the player watched through",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.ui.blood": {
+  "about": "a blood price in millibuckets, with the amount filled in",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.blood_confirm": {
+  "about": "a confirmation that the trade was paid from the player's blood above the reserve",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.ui.carried.enough": {
+  "about": "a short status that the player carries enough of the required items",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.carried.some": {
+  "about": "a short status that the player carries some but not enough of the required items",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.custom": {
+  "about": "a label saying the item is their house's custom, given as a gift",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.custom_confirm": {
+  "about": "a confirmation that the item was given from the pack as the custom asks",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.ui.empty": {
+  "about": "a message that there is nothing to trade just now",
+  "tone": "plain notice"
+ },
+ "hemomancy.trade.ui.fine_pays": {
+  "about": "a short label introducing what fine work pays instead",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.give_count": {
+  "about": "a count and item name for an item the player gives, with count and name filled in",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.grade": {
+  "about": "a label showing the quality grade, with the grade name filled in",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.offer": {
+  "about": "a short heading for what the player offers",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.offering": {
+  "about": "a short heading for an offering",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.rapport": {
+  "about": "a label showing the rapport tier, with the tier name filled in",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.restocks_in": {
+  "about": "a label saying the trade restocks in a number of days, with the day count filled in",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.restocks_one": {
+  "about": "a label saying the trade restocks tomorrow",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.today": {
+  "about": "a short label meaning today",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.ui.uses_left": {
+  "about": "a label giving how many uses of the trade are left, with the count filled in",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.zealot.amethyst.line": {
+  "about": "the Zealot asking for three amethyst shards for one Draught of Still Waters, poured only for their own, and asking if the player is theirs yet",
+  "tone": "probing, wary"
+ },
+ "hemomancy.trade.zealot.amethyst.title": {
+  "about": "a short title for the Zealot's amethyst trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.zealot.clean_copper.line": {
+  "about": "the Zealot offering two vials of Lethean Dew for six copper ingots and demanding to know plainly why the player wants dew",
+  "tone": "probing, blunt"
+ },
+ "hemomancy.trade.zealot.clean_copper.title": {
+  "about": "a short title for the Zealot's clean copper trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.zealot.refuse_harbinger": {
+  "about": "the Zealot refusing to trade with someone the blood still feeds and asking why they don't ask for a cure instead",
+  "tone": "firm, challenging"
+ },
+ "hemomancy.trade.zealot.stained": {
+  "about": "the Zealot demanding where the player got a blood-work item and refusing to take it into the church",
+  "tone": "sharp, suspicious"
+ },
+ "hemomancy.trade.zealot.thanks": {
+  "about": "the Zealot accepting a trade and telling the player to use it for healing, not curiosity",
+  "tone": "curt, approving"
+ },
+ "hemomancy.unstained.already_enlightened": {
+  "about": "a system message that the player has already achieved Enlightenment",
+  "tone": "plain notice"
+ },
+ "hemomancy.unstained.clarity_progress": {
+  "about": "a system message showing the player's clarity progress out of 100, with the current value filled in",
+  "tone": "plain, encouraging"
+ },
+ "hemomancy.unstained.enlightened": {
+  "about": "a system message that the player has achieved Enlightenment and is Unstained",
+  "tone": "solemn"
+ },
+ "hemomancy.unstained.manipulation_blocked": {
+  "about": "a system message that the player's purified blood refuses to obey a manipulation",
+  "tone": "cold notice"
+ },
+ "hemomancy.unstained.manipulation_weakened": {
+  "about": "a system message that the player's purifying blood resists the manipulation",
+  "tone": "cold notice"
+ },
+ "hemomancy.votary_wayfarer.clarity.line1": {
+  "about": "the Votary Wayfarer observing that the clear stillness around the player makes their samples settle, and that they don't think they imagine it",
+  "tone": "curious, quiet"
+ },
+ "hemomancy.votary_wayfarer.clarity.line2": {
+  "about": "the Votary Wayfarer admitting the effect is both unnerving and useful and they are still learning to tell the two apart",
+  "tone": "wry, thoughtful"
+ },
+ "hemomancy.voyager.clarity.line1": {
+  "about": "the Harbinger Voyager remarking that the Lady's clarity is a hard lantern in deep water",
+  "tone": "wry, poetic"
+ },
+ "hemomancy.voyager.clarity.line2": {
+  "about": "the Voyager advising a colleague to use clarity kindly because some memories below are wounds, not confessions to pry at",
+  "tone": "warm, cautionary"
+ },
+ "hemomancy.zealot.absolved.line1": {
+  "about": "the Zealot, a patient interrogator, telling an Absolved player that most of the stain has gone quiet and that the silence can feel like grief",
+  "tone": "gentle, grave"
+ },
+ "hemomancy.zealot.absolved.line2": {
+  "about": "the Zealot, a patient interrogator, saying that once fully purified, clarity will ask whether the player wants peace or sight, and asking what they would answer today",
+  "tone": "probing, solemn"
+ },
+ "hemomancy.zealot.already_on_path": {
+  "about": "the Zealot, a patient interrogator, telling a player already on the path of purification to keep working at the podium until the stain lifts, and asking why they came to the Zealot",
+  "tone": "puzzled, pointed"
+ },
+ "hemomancy.zealot.altar_info.line1": {
+  "about": "the Zealot, a patient interrogator, asking what the player will lay on the Altar, and listing that it takes only Tears of Silthmere, Lethean Poppy Wreaths, Silver Chalices, Pallid Icons and Lethean Brew",
+  "tone": "blunt, probing"
+ },
+ "hemomancy.zealot.altar_info.line2": {
+  "about": "the Zealot, a patient interrogator, explaining that tears, wreaths, chalices and icons count once each, while Lethean Brew gives less each time and stops counting after five offerings",
+  "tone": "plain, instructive"
+ },
+ "hemomancy.zealot.annetta_map.line1": {
+  "about": "the Zealot, a patient interrogator, saying Annetta was one of theirs, frightened and trying to be useful before the screaming and the sealed door",
+  "tone": "sorrowful, steady"
+ },
+ "hemomancy.zealot.annetta_map.line2": {
+  "about": "the Zealot, a patient interrogator, giving the player a map to the church where Annetta hid, which still stands, and urging them to carry mercy there with both hands",
+  "tone": "solemn, earnest"
+ },
+ "hemomancy.zealot.bloodline_founded": {
+  "about": "the Zealot, a patient interrogator, flatly refusing a player who founded a bloodline, explaining their blood runs in others so Unstained rites cannot reach it while the covenant stands, and ordering them to leave before Guardians must answer",
+  "tone": "cold, final"
+ },
+ "hemomancy.zealot.clarity_phase.line1": {
+  "about": "the Zealot, a patient interrogator, telling the player their halo has opened behind them and asking if they feel how little the old hunger matters now",
+  "tone": "quiet, probing"
+ },
+ "hemomancy.zealot.clarity_phase.line2": {
+  "about": "the Zealot, a patient interrogator, explaining verdigris is the color copper turns once it has endured, wryly calling it a grand name for weathered metal, and saying following it brings focus",
+  "tone": "wry, calm"
+ },
+ "hemomancy.zealot.clarity_rite_info.line1": {
+  "about": "the Zealot, a patient interrogator, explaining Clarity Ascension is where the player pledges themselves, since being cleansed alone does not make one Unstained, and asking if they are ready to mean it",
+  "tone": "grave, probing"
+ },
+ "hemomancy.zealot.clarity_rite_info.line2": {
+  "about": "the Zealot, a patient interrogator, stating the requirements: first restore the mortal baseline or fulfill all five vows, then offer Consecrated Copper at the Podium and speak the rite",
+  "tone": "plain, instructive"
+ },
+ "hemomancy.zealot.cleansing.line1": {
+  "about": "the Zealot, a patient interrogator, telling a Cleansing player they reached the hard middle where the stain fights hardest once named, and asking whether they have named it or only treated it",
+  "tone": "grave, probing"
+ },
+ "hemomancy.zealot.cleansing.line2": {
+  "about": "the Zealot, a patient interrogator, directing the player to the Altar of Cleansing, saying Our Lady's tears wash a wound rather than flatter it",
+  "tone": "firm, calm"
+ },
+ "hemomancy.zealot.craft_hemolytic.line1": {
+  "about": "the Zealot, a patient interrogator, explaining hemolytic solution starts with Lethean Dew and Ghost Pipe and no crimson catalyst, and asking whether the player wants to make it or only asked",
+  "tone": "plain, probing"
+ },
+ "hemomancy.zealot.craft_hemolytic.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player to take finished solution to the Podium to suppress the infection, with Lethean Baptism coming after when ready",
+  "tone": "plain, instructive"
+ },
+ "hemomancy.zealot.craft_hemolytic.line3": {
+  "about": "the Zealot, a patient interrogator, warning that the first treatment hurts as the old current is cut off, that the pain proves nothing about devotion, and not to wear it like a medal",
+  "tone": "dry, blunt"
+ },
+ "hemomancy.zealot.enlightened.line1": {
+  "about": "the Zealot, a patient interrogator, telling an Enlightened player there is nothing left to teach, and that the still water took their reflection and gave back something clearer",
+  "tone": "solemn, warm"
+ },
+ "hemomancy.zealot.enlightened.line2": {
+  "about": "the Zealot, a patient interrogator, asking if the player remembers why they were given mercy, warning that forgetting it makes mercy cast a shadow, and bidding them go gently",
+  "tone": "solemn, tender"
+ },
+ "hemomancy.zealot.item_hint": {
+  "about": "the Zealot, a patient interrogator, asking what the player is carrying and why, and offering to say what the Church makes of it",
+  "tone": "probing, patient"
+ },
+ "hemomancy.zealot.item_inquiry.altar_of_cleansing.line1": {
+  "about": "the Zealot, a patient interrogator, telling the player they will need the Altar later for blessings and offerings, since it is for those already on the path, and asking if they are on it",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.altar_of_cleansing.line2": {
+  "about": "the Zealot, a patient interrogator, explaining to first suppress the infection at the Podium, Lethean Baptism admits to Purity, and only then do offerings come to the Altar",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.bone_meal.line1": {
+  "about": "the Zealot, a patient interrogator, describing bone meal as ground bones with nothing holy in the sack, yet death turned around to feed things, and Our Lady being patient with that return",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.bone_meal.line2": {
+  "about": "the Zealot, a patient interrogator, saying it is what they think of when thinking of purification, corruption returning to the world as something that can grow, and asking if the player can bear that",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.cleansed_blood_crystal_shard.line1": {
+  "about": "the Zealot, a patient interrogator, explaining a cleansed blood crystal shard has had its sanguine resonance neutralized by Unstained rites, leaving inert crystal to build and craft with",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.cleansed_blood_crystal_shard.line2": {
+  "about": "the Zealot, a patient interrogator, saying the cleansing can't be undone, the shard cannot return to sanguine energy, which is what they want, and asking if the player hoped otherwise",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.consecrated_copper_ingot.line1": {
+  "about": "the Zealot, a patient interrogator, describing Consecrated Copper as copper that came through its change and was readied for deeper Unstained work",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.consecrated_copper_ingot.line2": {
+  "about": "the Zealot, a patient interrogator, asking how full the player's Purity is, and saying once full they bring the copper to the Podium to prepare Clarity before the Rite of Clarity Ascension",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.copper_ingot.line1": {
+  "about": "the Zealot, a patient interrogator, describing raw copper as the starting metal before the blessing, not yet marked by Our Lady, waiting as metal waits",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.copper_ingot.line2": {
+  "about": "the Zealot, a patient interrogator, explaining consecration is Retort work with hemolytic solution as catalyst, simple but not hurried, and asking why the player wants the copper blessed",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.draught_of_still_waters.line1": {
+  "about": "the Zealot, a patient interrogator, explaining the Draught of Still Waters is distilled cold from white humor and Lethean Dew, clears Blood Loss and holds a Silver Ward for three minutes",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.draught_of_still_waters.line2": {
+  "about": "the Zealot, a patient interrogator, saying it is field medicine, not a milestone, proves nothing to Our Lady, and asking if the player is hurt or only thirsty",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.hallowed_residuum.line1": {
+  "about": "the Zealot, a patient interrogator, explaining Hallowed Residuum is a Saint's own blood concentrated, drawn peacefully by a Harbinger of matching tendency while anyone else wakes the Saint to be tested",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.hallowed_residuum.line2": {
+  "about": "the Zealot, a patient interrogator, noting it shows the same danger either way, blood-power outlasting the wisdom behind it, and asking why the player carries it",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.hemolytic_solution.line1": {
+  "about": "the Zealot, a patient interrogator, explaining hemolytic solution at the Unstained Podium suppresses active infection, only preparing the body, while the Rite makes a practitioner Unstained",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.hemolytic_solution.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player that once infection is suppressed they perform the Rite of Lethean Baptism, where Purity starts",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.hemolytic_vial.line1": {
+  "about": "the Zealot, a patient interrogator, explaining that hemolytic solution at the Podium quiets the blood-memory enough for a candidate to survive Baptism",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.hemolytic_vial.line2": {
+  "about": "the Zealot, a patient interrogator, calling it preparation only: treatment begins at Baptism and the pledge waits for Clarity Ascension",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.lethean.line1": {
+  "about": "the Zealot, a patient interrogator, explaining Lethean Dew is the Lethean Poppy distilled at the Pallid Retort, becomes Pale Distillate with a fresh poppy, and distills again into Lethean Brew",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.lethean.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player to use each form where the rite calls for it, letting poetry guide the hand if it helps but following the recipe",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.lethean_poppy.line1": {
+  "about": "the Zealot, a patient interrogator, saying Our Lady marked the Lethean Poppy as her own, it grows where water has gone still and taint recedes, so where one grows purification has begun",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.lethean_poppy.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player to take heads for dew and distillate, that a whole poppy woven into a wreath is an Altar offering, to leave enough standing, and asking how many they left",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.lethean_poppy_wreath.line1": {
+  "about": "the Zealot, a patient interrogator, describing a wreath of Lethean Poppies as patient labor offered without bargaining with blood",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.lethean_poppy_wreath.line2": {
+  "about": "the Zealot, a patient interrogator, saying the Altar takes it as a modest Purity offering and the exact amount is found in the progress record, not prayer",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.liber_immaculatus.line1": {
+  "about": "the Zealot, a patient interrogator, explaining the Liber Immaculatus is the guide they work from, its First Steps laying out the sequence: Podium, Cleansed Stone, then Baptism",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.liber_immaculatus.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player to keep it, since later pages cover Purity, Clarity and the defensive Still Arts, and not to skip to the parts about power",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.lily_of_the_valley.line1": {
+  "about": "the Zealot, a patient interrogator, describing Lily of the Valley as growing in still shady places Our Lady favors, with no formal Altar rite, yet turning up near places of cleansing",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.lily_of_the_valley.line2": {
+  "about": "the Zealot, a patient interrogator, saying older texts call it a sign the ground is recovering, they never made a rite of it and maybe should, or maybe it just likes shade",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.milk_bucket.line1": {
+  "about": "the Zealot, a patient interrogator, describing milk as the old folk remedy for poison, the first reach for cleansing from inside, with some truth in it even though the Altar works another way",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.milk_bucket.line2": {
+  "about": "the Zealot, a patient interrogator, saying the path is that same reaching but deeper, milk draws out the surface while hemolytic solution and the Altar reach the blood-matrix, and asking which the player is after",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.minecraft_ritegoods.line1": {
+  "about": "the Zealot, a patient interrogator, calling the plain material good for patient work, saying purification is built from such things more often than miracles",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.minecraft_ritegoods.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player to use it where the rite asks, asking if they hoped for something grander, and not to think less of a simple offering",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.pale_distillate.line1": {
+  "about": "the Zealot, a patient interrogator, explaining Pale Distillate is Lethean Dew worked with a whole poppy, or Ghost Pipe through the Retort, everything the poppy offers pressed small",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.pale_distillate.line2": {
+  "about": "the Zealot, a patient interrogator, saying distilling it again yields the Lethean Brew the Altar takes, advising the player to plan their harvest, and asking if they mean to",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.pale_humor_flask.line1": {
+  "about": "the Zealot, a patient interrogator, explaining a Pale Humor Flask holds purified White Humor, lymph cleared of hematic corruption, not to be mistaken for holy blood",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.pale_humor_flask.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player to keep it sealed for preservation and cleansing work, and asking what they wanted it for",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.pale_silver_ingot.line1": {
+  "about": "the Zealot, a patient interrogator, explaining Pale Silver is what Consecrated Copper becomes at the next stage, refined in the Pallid Retort with white humor, with no mine yielding any",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.pale_silver_ingot.line2": {
+  "about": "the Zealot, a patient interrogator, observing it earned its stillness the way the Unstained earn theirs",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.pallid_icon.line1": {
+  "about": "the Zealot, a patient interrogator, explaining this is a consecrated copy of the Pallid Icon, the original being the river relic, the copies keeping its faceless still-water gesture with patience underneath",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.pallid_icon.line2": {
+  "about": "the Zealot, a patient interrogator, saying to carry, wear or set it down, that some feel more receptive near the Altar, that Our Lady notices sincerity not display, and asking which this is",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.pallid_infusion.line1": {
+  "about": "the Zealot, a patient interrogator, describing Pallid Infusion as a battlefield restorative distilled from Ghost Pipe and White Humor",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.pallid_infusion.line2": {
+  "about": "the Zealot, a patient interrogator, explaining it clears Blood Loss and gives short regeneration but brings no Clarity, which comes from Consecrated Copper at the Podium and the Rite of Clarity Ascension",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.purification_tools.line1": {
+  "about": "the Zealot, a patient interrogator, identifying the item as Unstained rite equipment, practical vessels and fittings for controlled purification work",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.purification_tools.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player to use it carefully at consecrated stations, since purification takes discipline and fervor burns out, and asking which they brought",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.self_reflection_mirror.line1": {
+  "about": "the Zealot, a patient interrogator, explaining the Self-Reflection Mirror opens the player's Unstained progress record of purity, clarity and place on the path, and every practitioner should keep one",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.self_reflection_mirror.line2": {
+  "about": "the Zealot, a patient interrogator, saying it shows what one is, Our Lady gives the reading plainly, and the deciding is left to the player",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.silver_chalice.line1": {
+  "about": "the Zealot, a patient interrogator, explaining the Silver Chalice is for Clarity work once the second path has opened, and asking if it has",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.silver_chalice.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player to offer it when the rite and progress call for it, the mirror keeping the number and the Church the meaning",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.snow_block.line1": {
+  "about": "the Zealot, a patient interrogator, musing that snow is water that chose to stay where it fell and deep snow holds a little of Our Lady, a cold that asks nothing and waits",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.snow_block.line2": {
+  "about": "the Zealot, a patient interrogator, saying the path leads toward a fullness that can stay still, which deep snow resembles, though it is also just cold, and practice will make it clear",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.sugar.line1": {
+  "about": "the Zealot, a patient interrogator, musing that sugar is what remains after refining, the sweetness left once raw stuff is boiled to its character, and that clarity can feel like that",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.sugar.line2": {
+  "about": "the Zealot, a patient interrogator, admitting the comparison ends there because it is sugar, and that farther along the path things grow simpler and more fully themselves",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.tears_of_silthmere.line1": {
+  "about": "the Zealot, a patient interrogator, describing Tears of Silthmere as a crafted distillation named for Silthmere, one of Our Lady's liturgical titles",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.tears_of_silthmere.line2": {
+  "about": "the Zealot, a patient interrogator, saying their potency comes from disciplined preparation and consecration, asking if the player thought it was grief, and denying mortal grief or wild water matter",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.unknown": {
+  "about": "the Zealot, a patient interrogator, dismissing an unrelated item as having no use on the path and asking why the player thought it would",
+  "tone": "dry, puzzled"
+ },
+ "hemomancy.zealot.item_inquiry.unstained_armor.line1": {
+  "about": "the Zealot, a patient interrogator, explaining Unstained armor is pale silver alloy throughout, resists blood-corruption on contact and can be worn without disturbing purification once well along the path",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.unstained_armor.line2": {
+  "about": "the Zealot, a patient interrogator, saying the full set carries a blessing of Our Lady's protection gathering in her metal, that wearing it declares commitment, and asking if the player has committed",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.item_inquiry.water_bucket.line1": {
+  "about": "the Zealot, a patient interrogator, saying water is Our Lady's element: still water covers the deep, carries off what is shed, remembers what it touches, and she lives in water that waits until it decides to move",
+  "tone": "patient, probing"
+ },
+ "hemomancy.zealot.item_inquiry.water_bucket.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player to carry it with intention, since sincerely brought still water is a gesture the Altar won't count for them, and Our Lady also sees buckets carried for show",
+  "tone": "dry, pointed"
+ },
+ "hemomancy.zealot.no_blood": {
+  "about": "the Zealot, a patient interrogator, telling a player with no mark of the blood arts to explain why they come, and offering that they can take five vows of clean service if they want the Church anyway",
+  "tone": "probing, practical"
+ },
+ "hemomancy.zealot.plea.degree0.line2": {
+  "about": "the Zealot, a patient interrogator, telling a Degree 0 player the infection has only just wounded them, apologizing, and saying it can still be treated",
+  "tone": "sad, gentle"
+ },
+ "hemomancy.zealot.plea.degree1.line2": {
+  "about": "the Zealot, a patient interrogator, telling a Degree 1 player the first rite has marked them, the infection is fresh so give it time before calling it a calling, and asking what made them take the rite",
+  "tone": "careful, probing"
+ },
+ "hemomancy.zealot.plea.degree2.line2": {
+  "about": "the Zealot, a patient interrogator, addressing a Degree 2 Votary, noting they have started calling the stain a covenant, asking who taught them that word, and saying it hasn't claimed all of them",
+  "tone": "wary, pointed"
+ },
+ "hemomancy.zealot.plea.degree3.line2": {
+  "about": "the Zealot, a patient interrogator, addressing a Degree 3 Initiate of the Incarnadine Fane, asking whether they want healing or another power, and saying the Church fears curiosity dressed up as repentance",
+  "tone": "wary, blunt"
+ },
+ "hemomancy.zealot.plea.degree4.line2": {
+  "about": "the Zealot, a patient interrogator, addressing a Degree 4 Adept, noting the blood has given craft, companions and appetite, and demanding to know if they came for a cure or conquest",
+  "tone": "wary, hard"
+ },
+ "hemomancy.zealot.plea.degree5.line2": {
+  "about": "the Zealot, a patient interrogator, addressing a Degree 5 Illuminatus whom the Crimson Lodge has looked back at through their veins, asking why they come now and admitting trust won't come easily",
+  "tone": "guarded, severe"
+ },
+ "hemomancy.zealot.plea.degree6.line2": {
+  "about": "the Zealot, a patient interrogator, telling a deep-Degree player with no bloodline of their own that the cure is open though slow, and asking why they come so late",
+  "tone": "guarded, grave"
+ },
+ "hemomancy.zealot.plea.line1": {
+  "about": "narration of the Zealot regarding the player with silver eyes",
+  "tone": "quiet narration"
+ },
+ "hemomancy.zealot.plea.line3": {
+  "about": "the Zealot, a patient interrogator, telling the player it is not too late and that hemolytic rites can cleanse what the Hematic Order corrupted",
+  "tone": "firm, hopeful"
+ },
+ "hemomancy.zealot.plea.line4": {
+  "about": "the Zealot, a patient interrogator, telling the player to bring hemolytic solution to the podium and begin the Unstained path, leaving the crimson veil behind before it consumes them",
+  "tone": "urgent, earnest"
+ },
+ "hemomancy.zealot.silver_ward_info.line1": {
+  "about": "the Zealot, a patient interrogator, explaining Silver Ward carries further the defense Verdigris began, so that with Clarity a warning from outside becomes a boundary the blood's current has trouble crossing",
+  "tone": "measured, instructive"
+ },
+ "hemomancy.zealot.silver_ward_info.line2": {
+  "about": "the Zealot, a patient interrogator, explaining Verdigris Aura learned to recognize infection in Purity while Clarity teaches Silver Ward to refuse its orders, and asking if the player can tell when it is giving them",
+  "tone": "measured, probing"
+ },
+ "hemomancy.zealot.tainted.line1": {
+  "about": "the Zealot, a patient interrogator, telling a Tainted player the first pallor is in them, asking if the relief they feel is good, and saying it is only the start",
+  "tone": "measured, pointed"
+ },
+ "hemomancy.zealot.tainted.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player their Verdigris Aura will answer more readily as the first boundary their blood learns to respect",
+  "tone": "plain, encouraging"
+ },
+ "hemomancy.zealot.take_vows.prompt": {
+  "about": "the Zealot, a patient interrogator, asking if the player will serve the Church until all five vows are done, and calling them work with no ceremony to hide behind",
+  "tone": "stern, solemn"
+ },
+ "hemomancy.zealot.verdigris_info.line1": {
+  "about": "the Zealot, a patient interrogator, explaining Virid Salis and verdigris are corruption spent and turned into a ward, which they work with but do not decorate with",
+  "tone": "dry, firm"
+ },
+ "hemomancy.zealot.verdigris_info.line2": {
+  "about": "the Zealot, a patient interrogator, telling the player to lay them where blood gathers, since the line won't clear what is already there but lets none pass",
+  "tone": "plain, instructive"
+ },
+ "message.hemomancy.drudge_entity.memory_installed": {
+  "about": "a message that a memory was installed in a Drudge, with the memory's name filled in",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.drudge_entity.memory_retrieved": {
+  "about": "a message that a memory was retrieved from a Drudge",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.drudge_entity.mode_memory_charge_ml": {
+  "about": "a status line showing a Drudge's mode, installed memory and blood charge in millilitres, with each value filled in",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.drudge_entity.no_matching_memory_item_found": {
+  "about": "a message that no matching memory item was found",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.drudge_entity.no_memory_is_installed": {
+  "about": "a message that no memory is installed in the Drudge",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.drudge_entity.none": {
+  "about": "a short label meaning none",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.drudge_entity.rogue_drudge": {
+  "about": "a short name label for a rogue Drudge",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.drudge_entity.the_construct_has_turned_rogue": {
+  "about": "a warning that the construct has turned rogue",
+  "tone": "ominous notice"
+ },
+ "message.hemomancy.drudge_entity.this_construct_answers_to_another_hand": {
+  "about": "a message that this construct belongs to someone else",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.guardian_dialogue_events.the_guardian_requires_two_pale_silver": {
+  "about": "a system message that the Guardian requires two Pale Silver Ingots and one Cleansed Blood Crystal Shard for a replacement dagger",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.guardian_dialogue_events.the_guardian_will_not_replace_a": {
+  "about": "a system message that the Guardian will not replace a dagger the player still carries",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.stack_aware_inquiry.blank_blueprint": {
+  "about": "an item-inquiry note that a blank plan has no rite or blood structure impressed into it",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.stack_aware_inquiry.contained_specimen": {
+  "about": "an item-inquiry line naming the contained specimen, with the specimen's name filled in",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.stack_aware_inquiry.contained_specimen_with_layers": {
+  "about": "an item-inquiry line naming the contained specimen and its recorded layers, with both filled in",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.stack_aware_inquiry.no_scar_route": {
+  "about": "an item-inquiry note that no scar route is written into this motif",
+  "tone": "plain notice"
+ },
+ "message.hemomancy.stack_aware_inquiry.written_routes": {
+  "about": "an item-inquiry line listing the routes written into the item, with the list filled in",
+  "tone": "plain notice"
+ }
+}

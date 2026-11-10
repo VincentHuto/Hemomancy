@@ -8,8 +8,9 @@ import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ResonantForgeBlock;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.CylinderRenderer;
+import com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.StationTierProperty;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity.Operation;
@@ -32,7 +33,7 @@ import org.joml.Matrix4f;
  */
 public class ResonantForgeRenderer implements BlockEntityRenderer<ResonantForgeBlockEntity> {
     public static final String[] PART_MODELS = {"helve", "helve_iron", "head", "head_iron", "crank", "pitman",
-            "treadle", "wheel", "stylus", "carriage", "governor", "heart", "cylinder_wax", "cylinder_ambergris",
+            "treadle", "wheel", "stylus", "carriage", "governor", "heart",
             "spring_pole", "spring_tip"};
 
     private static final float[] HELVE_PIVOT = {-6.5F, 18F, 12F};
@@ -145,7 +146,7 @@ public class ResonantForgeRenderer implements BlockEntityRenderer<ResonantForgeB
         renderModel(mc, "treadle", pose, buffers, light, overlay);
         pose.popPose();
 
-        renderCylinder(mc, forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER), HAMMER_AXIS, crank,
+        renderCylinder(forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER), HAMMER_AXIS, crank,
                 pose, buffers, light, overlay);
 
         // Grinder bay: the stone drives the recording cylinder; the stylus cuts what the grind says.
@@ -156,7 +157,7 @@ public class ResonantForgeRenderer implements BlockEntityRenderer<ResonantForgeB
         renderModel(mc, "wheel", pose, buffers, light, overlay);
         pose.popPose();
 
-        renderCylinder(mc, forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER), RECORD_AXIS,
+        renderCylinder(forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER), RECORD_AXIS,
                 grinding ? time * 12F : 0, pose, buffers, light, overlay);
 
         float chatter = grinding ? (float) Math.sin(time * 2.3F) * .6F + (float) Math.sin(time * 5.1F) * .3F : 0;
@@ -214,14 +215,13 @@ public class ResonantForgeRenderer implements BlockEntityRenderer<ResonantForgeB
         pose.popPose();
     }
 
-    private static void renderCylinder(Minecraft mc, ItemStack stack, float[] axis, float spin, PoseStack pose,
+    private static void renderCylinder(ItemStack stack, float[] axis, float spin, PoseStack pose,
             MultiBufferSource buffers, int light, int overlay) {
-        if (stack.isEmpty()) return;
+        if (!CylinderMedia.supported(stack)) return;
         pose.pushPose();
         px(pose, axis);
         pose.mulPose(Axis.XP.rotationDegrees(spin));
-        renderModel(mc, stack.is(ItemInit.ambergris_cylinder.get()) ? "cylinder_ambergris" : "cylinder_wax",
-                pose, buffers, light, overlay);
+        CylinderRenderer.drawMounted(stack, pose, buffers, light, overlay);
         pose.popPose();
     }
 

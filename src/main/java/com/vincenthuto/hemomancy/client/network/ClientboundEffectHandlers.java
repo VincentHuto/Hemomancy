@@ -29,6 +29,7 @@ import com.vincenthuto.hemomancy.client.player.BloodVialInjectionClientState;
 import com.vincenthuto.hemomancy.client.player.CastingAnimationClientState;
 import com.vincenthuto.hemomancy.client.player.HematicMicroscopeClientState;
 import com.vincenthuto.hemomancy.client.player.LivingStaffMorphClientState;
+import com.vincenthuto.hemomancy.client.player.LivingSyringeDrawClientState;
 import com.vincenthuto.hemomancy.client.player.PlayerAnimationClientState;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandParticleEffects;
 import com.vincenthuto.hemomancy.client.render.world.BlackVeilRenderer;
@@ -55,6 +56,7 @@ import com.vincenthuto.hemomancy.common.network.ClientPayloadHandlers;
 import com.vincenthuto.hemomancy.common.network.ConductionPathPacket;
 import com.vincenthuto.hemomancy.common.network.PacketBloodVialInjection;
 import com.vincenthuto.hemomancy.common.network.PacketHematicMicroscopeViewing;
+import com.vincenthuto.hemomancy.common.network.PacketLivingSyringeDraw;
 import com.vincenthuto.hemomancy.common.network.axonal.AxonalStatePacket;
 import com.vincenthuto.hemomancy.common.network.lidless.LidlessPassageStatePacket;
 import com.vincenthuto.hemomancy.client.data.LidlessPassageClientState;
@@ -119,6 +121,7 @@ public final class ClientboundEffectHandlers {
 		ClientPayloadHandlers.register(PacketBloodCraftRing.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketBloodStructureFeed.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketBloodVialInjection.TYPE, ClientboundEffectHandlers::handle);
+		ClientPayloadHandlers.register(PacketLivingSyringeDraw.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketCardinalRiteStaffPlanting.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketCurvedHornAnimation.TYPE, ClientboundEffectHandlers::handle);
 		ClientPayloadHandlers.register(PacketHematicMicroscopeViewing.TYPE, ClientboundEffectHandlers::handle);
@@ -228,6 +231,10 @@ public final class ClientboundEffectHandlers {
 
 	static void handle(PacketBloodVialInjection packet, IPayloadContext context) {
 		context.enqueueWork(() -> BloodVialInjectionClientState.accept(packet));
+	}
+
+	static void handle(PacketLivingSyringeDraw packet, IPayloadContext context) {
+		context.enqueueWork(() -> LivingSyringeDrawClientState.accept(packet));
 	}
 
 	static void handle(PacketCardinalRiteStaffPlanting packet, IPayloadContext context) {

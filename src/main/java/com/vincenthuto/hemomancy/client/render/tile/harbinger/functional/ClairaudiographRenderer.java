@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.ClairaudiographBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.AmbergrisCylinderRenderer;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.CylinderRenderer;
 import com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -25,7 +25,7 @@ public class ClairaudiographRenderer implements BlockEntityRenderer<Clairaudiogr
         if(!cylinder.isEmpty()){
             pose.pushPose();pose.translate(8*PX,7.25*PX,5.5*PX);
             if(be.playing() || be.progress>0)pose.mulPose(Axis.XP.rotationDegrees(time*9));
-            if(CylinderMedia.supported(cylinder))AmbergrisCylinderRenderer.draw(cylinder,pose,buffers,light,overlay);
+            if(CylinderMedia.supported(cylinder))CylinderRenderer.drawMounted(cylinder,pose,buffers,light,overlay);
             else{pose.scale(.55F,.55F,.55F);mc.getItemRenderer().renderStatic(cylinder,ItemDisplayContext.FIXED,light,overlay,pose,buffers,be.getLevel(),0);}
             pose.popPose();
         }

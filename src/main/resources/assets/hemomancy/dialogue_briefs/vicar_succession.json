@@ -1,0 +1,1458 @@
+{
+ "hemomancy.dialogue.ending.vicar.apotheos": {
+  "about": "the Vicar telling an Apotheos player that the Apotheosis is complete and he can still tend their rites and unfinished obligations",
+  "tone": "reverent, uneasy"
+ },
+ "hemomancy.dialogue.ending.vicar.apotheos_pending": {
+  "about": "the Vicar telling a player who chose the Apotheosis road that he cannot say what waits at its end, only that the rite is unfinished and he will keep the records open",
+  "tone": "solemn, candid"
+ },
+ "hemomancy.dialogue.ending.vicar.silent_absorb": {
+  "about": "the Vicar telling the player that Vesper has fallen but his memory remains, and that they must burn it in a lit Iron Brazier and draw it in with the Living Staff to finish their refusal",
+  "tone": "grave, instructive"
+ },
+ "hemomancy.dialogue.ending.vicar.silent_archon": {
+  "about": "the Vicar acknowledging that Vesper has fallen and the player's Silentium refusal stands, and that the rites remain theirs",
+  "tone": "quiet, respectful"
+ },
+ "hemomancy.dialogue.ending.vicar.silent_pending": {
+  "about": "the Vicar telling a player who refused the call that the refusal was theirs to make but is not yet won, and to return once Vesper is defeated",
+  "tone": "measured, firm"
+ },
+ "hemomancy.dialogue.ending.vicar.undecided": {
+  "about": "the Vicar saying he has no ending to record for the player yet because some of their work is still open",
+  "tone": "dry, patient"
+ },
+ "hemomancy.dialogue.event.vicar_assignment_ledger_granted": {
+  "about": "system narration that the Vicar entrusts the player with the Assignment Ledger where formal work begins, and that a lost copy can be replaced by asking",
+  "tone": "plain narration"
+ },
+ "hemomancy.dialogue.event.vicar_blood_shotting": {
+  "about": "narration of the player's eyes aching as the blood-script begins arranging itself into meaning",
+  "tone": "visceral, ominous"
+ },
+ "hemomancy.dialogue.event.vicar_blood_shotting_known": {
+  "about": "narration that the blood-script is already open to the player",
+  "tone": "faint, muted"
+ },
+ "hemomancy.dialogue.event.vicar_first_bloodcraft_reward_claim_failed": {
+  "about": "a system message saying the promotion could not be completed and the player should ask the Vicar again",
+  "tone": "plain, apologetic"
+ },
+ "hemomancy.dialogue.event.vicar_first_bloodcraft_reward_granted": {
+  "about": "system narration that the Vicar raises the player to the second Degree and gives the Order's first bloodcraft kit unless they already have it",
+  "tone": "formal narration"
+ },
+ "hemomancy.dialogue.event.vicar_first_bloodcraft_reward_known": {
+  "about": "a system message that the Order has already recognized the player's First Bloodcraft service",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.event.vicar_first_bloodcraft_reward_unready": {
+  "about": "a system message that the Vicar is waiting for all four first bloodcraft proofs: absorption, formation, Venous Stone, and one structure craft",
+  "tone": "plain, informative"
+ },
+ "hemomancy.dialogue.event.vicar_gives_scrap": {
+  "about": "narration of the Vicar taking a small weathered scrap of parchment from his vestments and pressing it into the player's hands",
+  "tone": "hushed narration"
+ },
+ "hemomancy.dialogue.event.vicar_hermit_road_known": {
+  "about": "narration of the Vicar tapping the player's ledger, saying this remnant is already entered, and sending them after another",
+  "tone": "dry, curt"
+ },
+ "hemomancy.dialogue.event.vicar_hermit_road_reported": {
+  "about": "narration of the Vicar recording the wild remnant as a side road and giving the player ash for the journey",
+  "tone": "formal narration"
+ },
+ "hemomancy.dialogue.event.vicar_hermit_road_unproven": {
+  "about": "narration of the Vicar waiting for proof from a wild remnant rather than a familiar stone",
+  "tone": "patient, dry"
+ },
+ "hemomancy.dialogue.event.vicar_masons_respite_known": {
+  "about": "a system message that the player already has the route to Masons Respite",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.event.vicar_masons_respite_map": {
+  "about": "narration of the Vicar giving the player a scar-scribed route to Masons Respite",
+  "tone": "formal narration"
+ },
+ "hemomancy.dialogue.event.vicar_masons_respite_unready": {
+  "about": "a system message that the Vicar will not speak of the Vein-Mason before the fourth Degree",
+  "tone": "firm, reserved"
+ },
+ "hemomancy.dialogue.newcomer.acolyte": {
+  "about": "an Acolyte saying vaguely that the blood arts are kept by a group, that a Vicar at one of their outposts could say more, and offering a quiet place to return to afterward",
+  "tone": "gentle, uncertain"
+ },
+ "hemomancy.dialogue.newcomer.artificer": {
+  "about": "the Artificer asking whether the player is new to the outpost and sending them to the Vicar, who explains the Covenant better",
+  "tone": "brisk, friendly"
+ },
+ "hemomancy.dialogue.newcomer.ask_path": {
+  "about": "the player asking where they should begin",
+  "tone": "earnest"
+ },
+ "hemomancy.dialogue.newcomer.ask_vicar": {
+  "about": "the player asking who the Harbingers are",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.newcomer.cicatrix_anchorite": {
+  "about": "the Cicatrix Anchorite telling the player they have no place at his table yet and to find the Vicar and ask what road brought them here",
+  "tone": "blunt, stern"
+ },
+ "hemomancy.dialogue.newcomer.guardian": {
+  "about": "a Guardian tersely saying blood-workers are taught by their Vicars at outposts, not here",
+  "tone": "clipped, gruff"
+ },
+ "hemomancy.dialogue.newcomer.scout": {
+  "about": "a Scout curtly saying the blood-workers' Vicars teach it, that the player should ask one and not the Scout, and not now",
+  "tone": "clipped, wary"
+ },
+ "hemomancy.dialogue.newcomer.vicar_path": {
+  "about": "the Vicar explaining that the Harbingers are keepers of the blood Covenant, that the path begins at a Hermit's Blood Temple not this outpost, and that the player should speak with the Hermit and return afterward",
+  "tone": "formal, guiding"
+ },
+ "hemomancy.dialogue.newcomer.votary_wayfarer": {
+  "about": "a Votary wayfarer, surprised, telling the player to meet the Vicar before setting out because he explains the Covenant better",
+  "tone": "kind, surprised"
+ },
+ "hemomancy.dialogue.newcomer.voyager": {
+  "about": "a Voyager remarking that the player found a ship before an outpost and telling them to ask a Vicar ashore who the Harbingers are and where to start",
+  "tone": "wry, easygoing"
+ },
+ "hemomancy.dialogue.newcomer.zealot": {
+  "about": "the Zealot saying the Harbingers keep the stain and call it a covenant, that Vicars explain it at outposts, and asking why the player wants to know",
+  "tone": "sardonic, probing"
+ },
+ "hemomancy.dialogue.rapport.vicar.doubt": {
+  "about": "the player asking the Vicar whether he ever doubts the Covenant",
+  "tone": "candid, probing"
+ },
+ "hemomancy.dialogue.rapport.vicar.doubt.line1": {
+  "about": "the Vicar answering that a Vicar who never doubts is not paying attention, that he doubts every night and still returns to the evidence on his desk each morning",
+  "tone": "weary, wry"
+ },
+ "hemomancy.dialogue.rapport.vicar.doubt.line2": {
+  "about": "the Vicar admitting there is no warrant for certainty, only the record, which he finds enough on most days",
+  "tone": "quiet, honest"
+ },
+ "hemomancy.dialogue.rapport.vicar.doubt.teaser": {
+  "about": "a teaser that trust comes slowly with the Vicar and his doubts come last of all",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.rapport.vicar.the_record": {
+  "about": "the player asking the Vicar who kept the record before him",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.rapport.vicar.the_record.line1": {
+  "about": "the Vicar describing the line of Vicars back to Erythravane, who held the office first, each copying the last one's hand until the ink belonged to no one",
+  "tone": "reflective, dry"
+ },
+ "hemomancy.dialogue.rapport.vicar.the_record.line2": {
+  "about": "the Vicar confessing he sometimes cannot tell whether he wrote a page and no longer sure the difference matters",
+  "tone": "rueful, quiet"
+ },
+ "hemomancy.dialogue.rapport.vicar.the_record.teaser": {
+  "about": "a teaser that tithing to the Vicar for a while may lead him to say who kept the record before him",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.recruit.already_member": {
+  "about": "a system message that this Harbinger has already pledged their blood to the player's cause",
+  "tone": "plain, informative"
+ },
+ "hemomancy.dialogue.recruit.expel.success": {
+  "about": "a system message that a named Harbinger (their name fills in) has been released from the player's bloodline covenant",
+  "tone": "plain, formal"
+ },
+ "hemomancy.dialogue.recruit.no_bloodline": {
+  "about": "a system message telling the player to found a bloodline with the Degree 5 Bloodline Founding rite before recruiting others",
+  "tone": "plain, instructive"
+ },
+ "hemomancy.dialogue.recruit.not_leader": {
+  "about": "a system message that only the bloodline progenitor may dismiss pledged members",
+  "tone": "plain, firm"
+ },
+ "hemomancy.dialogue.recruit.not_member": {
+  "about": "a system message that this Harbinger is not bound to the player's bloodline",
+  "tone": "plain, informative"
+ },
+ "hemomancy.dialogue.recruit.option.confirm": {
+  "about": "the player formally accepting a Harbinger into the bloodline",
+  "tone": "solemn"
+ },
+ "hemomancy.dialogue.recruit.option.not_yet": {
+  "about": "the player declining for now and leaving the recruitment open for another time",
+  "tone": "polite, noncommittal"
+ },
+ "hemomancy.dialogue.recruit.option.pledge_blood": {
+  "about": "the player asking a Harbinger to pledge their blood to the player's cause",
+  "tone": "commanding, formal"
+ },
+ "hemomancy.dialogue.recruit.option.release_blood": {
+  "about": "the player ending the pact and telling a Harbinger to withdraw from their bloodline",
+  "tone": "cold, formal"
+ },
+ "hemomancy.dialogue.recruit.outpost_already_member": {
+  "about": "a Harbinger saying this outpost has already given the player's bloodline one voice and asking that the rest be left free to carry the cause outward",
+  "tone": "firm, courteous"
+ },
+ "hemomancy.dialogue.recruit.pool_increased": {
+  "about": "a system message giving the new shared blood pool capacity (a number) and the count of recruited Harbingers (a number)",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.recruit.release.prompt": {
+  "about": "a Harbinger warning that ending the pact removes them from the player's bloodline and asking the player to say plainly if that is the decision",
+  "tone": "grave, formal"
+ },
+ "hemomancy.dialogue.recruit.success": {
+  "about": "a system message that a named Harbinger (their name fills in) has pledged their blood to the bloodline, adding vitality to the shared pool, and that if they die the pool loses it and the slot reopens",
+  "tone": "plain, informative"
+ },
+ "hemomancy.dialogue.recruit.type_already_member": {
+  "about": "a system message that a Harbinger of this calling has already pledged to the player's bloodline",
+  "tone": "plain, informative"
+ },
+ "hemomancy.dialogue.recruit.vicar.accept": {
+  "about": "the Vicar agreeing, explaining each outpost gives a covenant one voice so the cause spreads without emptying the lodge, and that if accepted he will be this outpost's voice in the player's line",
+  "tone": "formal, measured"
+ },
+ "hemomancy.dialogue.recruit.vicar.consider": {
+  "about": "the Vicar, asked to bind his blood to the player's, saying that one who has come so far commands respect and, he admits, obedience",
+  "tone": "measured, deferential"
+ },
+ "hemomancy.dialogue.vicar.option.about_the_monolith": {
+  "about": "asking the Vicar whether he has heard of any path beyond the seven degrees",
+  "tone": "hushed, probing"
+ },
+ "hemomancy.dialogue.vicar.option.absorption_hint": {
+  "about": "asking the Vicar how to absorb enough blood",
+  "tone": "earnest"
+ },
+ "hemomancy.dialogue.vicar.option.accept_blood_script": {
+  "about": "accepting the Vicar's eye-rite for the blood-script",
+  "tone": "resolute"
+ },
+ "hemomancy.dialogue.vicar.option.ask_about_annetta": {
+  "about": "asking the Vicar where Annetta is now",
+  "tone": "wary, urgent"
+ },
+ "hemomancy.dialogue.vicar.option.ask_about_blood_crafting": {
+  "about": "asking the Vicar to teach how to shape blood into things",
+  "tone": "eager"
+ },
+ "hemomancy.dialogue.vicar.option.ask_about_court": {
+  "about": "asking the Vicar who else keeps to the sea",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.ask_about_hermit_road": {
+  "about": "asking the Vicar where to look next on the Hermit's road",
+  "tone": "earnest"
+ },
+ "hemomancy.dialogue.vicar.option.ask_about_item": {
+  "about": "telling the Vicar they want to ask about something they found",
+  "tone": "plain, curious"
+ },
+ "hemomancy.dialogue.vicar.option.circus_referral": {
+  "about": "asking the Vicar what the Circus is",
+  "tone": "curious, wary"
+ },
+ "hemomancy.dialogue.vicar.option.claim_first_bloodcraft_reward": {
+  "about": "telling the Vicar the player has completed the first bloodcraft lessons",
+  "tone": "proud, direct"
+ },
+ "hemomancy.dialogue.vicar.option.consecrate_armature": {
+  "about": "asking the Vicar who prepares the Armature for consecration",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.crafting_hint": {
+  "about": "asking the Vicar how blood formations work",
+  "tone": "earnest"
+ },
+ "hemomancy.dialogue.vicar.option.first_bloodcraft_reward_claimed": {
+  "about": "asking the Vicar what followed the player's First Bloodcraft assignment",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.first_bloodcraft_reward_unready": {
+  "about": "asking the Vicar how to finish the first bloodcraft lessons",
+  "tone": "earnest, a little lost"
+ },
+ "hemomancy.dialogue.vicar.option.fungal_survey": {
+  "about": "asking the Vicar where to survey the fungal gardens",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.vicar.option.iron_blueprint": {
+  "about": "asking the Vicar for the Hematic Iron blueprint",
+  "tone": "direct"
+ },
+ "hemomancy.dialogue.vicar.option.leave": {
+  "about": "a bracketed choice to end the conversation and walk away",
+  "tone": "plain label"
+ },
+ "hemomancy.dialogue.vicar.option.liber_blueprint": {
+  "about": "asking the Vicar for the Liber Sanguinium blueprint",
+  "tone": "direct"
+ },
+ "hemomancy.dialogue.vicar.option.not_yet": {
+  "about": "declining for now",
+  "tone": "brief, hesitant"
+ },
+ "hemomancy.dialogue.vicar.option.open_blood_script": {
+  "about": "asking the Vicar to open the player's eyes to the blood-script",
+  "tone": "reverent, eager"
+ },
+ "hemomancy.dialogue.vicar.option.projection_hint": {
+  "about": "asking the Vicar how to condense a formation and make Venous Stone",
+  "tone": "earnest"
+ },
+ "hemomancy.dialogue.vicar.option.purifying.i_chose_this": {
+  "about": "telling the Vicar the player chose the Unstained path freely",
+  "tone": "defiant, calm"
+ },
+ "hemomancy.dialogue.vicar.option.purifying.i_know": {
+  "about": "telling the Vicar the player knows what they are doing",
+  "tone": "stubborn, steady"
+ },
+ "hemomancy.dialogue.vicar.option.report_hermit_road": {
+  "about": "telling the Vicar the player found another stained stone",
+  "tone": "matter-of-fact"
+ },
+ "hemomancy.dialogue.vicar.option.report_voyager_observation": {
+  "about": "telling the Vicar the player has a Voyager observation to report",
+  "tone": "businesslike"
+ },
+ "hemomancy.dialogue.vicar.option.rooted_vein": {
+  "about": "asking the Vicar how to begin a Cardinal rite",
+  "tone": "earnest"
+ },
+ "hemomancy.dialogue.vicar.option.rooted_vein.channel": {
+  "about": "asking the Vicar how to conduct the Cardinal rite once begun",
+  "tone": "earnest"
+ },
+ "hemomancy.dialogue.vicar.option.seek_vein_mason": {
+  "about": "asking the Vicar who teaches the old scarring rites",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.take_stained_map": {
+  "about": "asking the Vicar to hand over the route",
+  "tone": "direct"
+ },
+ "hemomancy.dialogue.vicar.option.take_the_scrap": {
+  "about": "a bracketed action of taking the parchment scrap the Vicar offers",
+  "tone": "hushed"
+ },
+ "hemomancy.dialogue.vicar.option.tell_me_about_brotherhood": {
+  "about": "asking the Vicar to tell about the Sanguine Brotherhood",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.tell_me_about_covenant": {
+  "about": "asking the Vicar to tell about the Hematic Covenant",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge": {
+  "about": "asking the Vicar to tell about the Crimson Lodge",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.tell_me_about_fane": {
+  "about": "asking the Vicar to tell about the Incarnadine Fane",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.tell_me_about_founding_fane": {
+  "about": "asking the Vicar to tell about the Founding Fane",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.tell_me_about_hematic_order": {
+  "about": "asking the Vicar to tell about the Hematic Order",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.tell_me_about_tendencies": {
+  "about": "asking the Vicar to tell about blood tendencies",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.tell_me_about_the_castles": {
+  "about": "asking the Vicar about the ruined castles",
+  "tone": "curious, wary"
+ },
+ "hemomancy.dialogue.vicar.option.tell_me_about_the_saints": {
+  "about": "asking the Vicar what he knows of the Saints",
+  "tone": "curious, hushed"
+ },
+ "hemomancy.dialogue.vicar.option.tell_me_the_final_truth": {
+  "about": "asking the Vicar whether there is something the Order has never said aloud",
+  "tone": "probing, solemn"
+ },
+ "hemomancy.dialogue.vicar.option.voyager_bearing": {
+  "about": "asking the Vicar for a vessel bearing to a Voyager ship",
+  "tone": "practical"
+ },
+ "hemomancy.dialogue.vicar.option.voyager_introduction": {
+  "about": "asking the Vicar where the player can meet a Voyager",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.what_degree_next": {
+  "about": "asking the Vicar what the next degree requires",
+  "tone": "earnest"
+ },
+ "hemomancy.dialogue.vicar.option.what_do_you_make_of_this": {
+  "about": "asking the Vicar what he makes of what the player has become",
+  "tone": "vulnerable, probing"
+ },
+ "hemomancy.dialogue.vicar.option.what_is_outpost": {
+  "about": "asking the Vicar the purpose of this Outpost",
+  "tone": "curious"
+ },
+ "hemomancy.dialogue.vicar.option.who_are_harbingers": {
+  "about": "asking the Vicar who the Harbingers are",
+  "tone": "curious"
+ },
+ "hemomancy.initiation.accept": {
+  "about": "the player choosing to stay and asking to be initiated",
+  "tone": "resolute"
+ },
+ "hemomancy.initiation.ask": {
+  "about": "the player asking to be formally introduced to the Harbingers",
+  "tone": "formal, earnest"
+ },
+ "hemomancy.initiation.ask_blood": {
+  "about": "a short button label for asking the officiant for Concentrated Blood",
+  "tone": "plain label"
+ },
+ "hemomancy.initiation.awakened": {
+  "about": "narration that the concentrated blood has settled into the player's circulation and they wake as an Initiate of the Incarnadine Fane",
+  "tone": "hushed narration"
+ },
+ "hemomancy.initiation.blood_already_carried": {
+  "about": "a system message that the player already carries a vial of Concentrated Blood and should inject it like a blood shot",
+  "tone": "plain, instructive"
+ },
+ "hemomancy.initiation.blood_rest": {
+  "about": "the officiant telling the player to inject the Concentrated Blood like a blood shot and then rest, since a night's sleep helps more than waiting here",
+  "tone": "calm, instructive"
+ },
+ "hemomancy.initiation.bloodline": {
+  "about": "a system message that the player's blood has settled into a named bloodline (name fills in) and they now belong to it",
+  "tone": "solemn, plain"
+ },
+ "hemomancy.initiation.cannot_attach": {
+  "about": "a system message that the heart cannot attach while the player's vascular scar is occupied or they already bear awakened blood",
+  "tone": "plain, clinical"
+ },
+ "hemomancy.initiation.degree": {
+  "about": "a system message announcing the player has attained a named Degree (name fills in)",
+  "tone": "plain, ceremonial"
+ },
+ "hemomancy.initiation.offer": {
+  "about": "the Vicar saying the charm has not settled so the choice is still the player's, and that before receiving them he can still remove it and release them",
+  "tone": "grave, fair"
+ },
+ "hemomancy.initiation.officiant_busy": {
+  "about": "a system message that a named officiant (name fills in) is already receiving someone else and the player should wait and ask again",
+  "tone": "plain, informative"
+ },
+ "hemomancy.initiation.reason": {
+  "about": "the Vicar explaining that an undedicated Harbinger is useless and often worse than an accident, so he would rather free the player now than bind someone unwilling",
+  "tone": "stern, honest"
+ },
+ "hemomancy.initiation.released": {
+  "about": "narration of the Vicar drawing out the unsettled charm so its pulse stops and the player is free",
+  "tone": "quiet narration"
+ },
+ "hemomancy.initiation.remove": {
+  "about": "the player asking the Vicar to remove the charm and set them free",
+  "tone": "anxious, firm"
+ },
+ "hemomancy.initiation.replace": {
+  "about": "the player asking for a vial of Concentrated Blood",
+  "tone": "plain, direct"
+ },
+ "hemomancy.initiation.welcome": {
+  "about": "a welcome naming the player a Neophyte of the Crimson Veil, giving them a Sanguine Conduit, and saying the Vicar has four first bloodcraft proofs the ledger will track in any order",
+  "tone": "ceremonial, welcoming"
+ },
+ "hemomancy.succession.accept_bequest": {
+  "about": "the player formally accepting the freely given Bequest on behalf of their bloodline",
+  "tone": "formal, grateful"
+ },
+ "hemomancy.succession.ask_bequest": {
+  "about": "the player asking a Harbinger to bequeath their profession to the player's bloodline",
+  "tone": "respectful"
+ },
+ "hemomancy.succession.back": {
+  "about": "the player choosing to return to the previous menu",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.bequest_granted": {
+  "about": "a system message that a named Harbinger (name fills in) has granted the bloodline a Mnemonic Bequest",
+  "tone": "plain, ceremonial"
+ },
+ "hemomancy.succession.consent": {
+  "about": "a Harbinger consenting to stay as teacher and witness, pledging their professional blood-memory freely, and noting the awakened person will be new and make their own history",
+  "tone": "solemn, generous"
+ },
+ "hemomancy.succession.dismiss": {
+  "about": "a short button label for dismissing a resident from the bloodline",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.dismiss_confirm": {
+  "about": "a confirmation asking whether to permanently release a named resident (name fills in) from the bloodline, warning their former bloodline can no longer restore them",
+  "tone": "grave, warning"
+ },
+ "hemomancy.succession.donate": {
+  "about": "the player offering to donate a blood sample to their bloodline",
+  "tone": "plain, willing"
+ },
+ "hemomancy.succession.donated": {
+  "about": "a system message that a named donor (name fills in) has donated an identity-bearing blood sample",
+  "tone": "plain, informative"
+ },
+ "hemomancy.succession.empty_vial": {
+  "about": "a system message telling the player to hold an empty blood vial to receive a donation",
+  "tone": "plain, instructive"
+ },
+ "hemomancy.succession.explain": {
+  "about": "the player asking to be taught about Hematic Succession",
+  "tone": "curious"
+ },
+ "hemomancy.succession.failure.body": {
+  "about": "a system failure message telling the player to place a Vacant Effigy on the adjacent Venous Stone plinth",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.succession.failure.cap": {
+  "about": "a system failure message that the server's successor population limit has been reached",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.succession.failure.eligibility": {
+  "about": "a system failure message that a Degree 5 bloodline member must officiate inside their bloodline's fane",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.succession.failure.interrupted": {
+  "about": "a system failure message that the succession rite lost its floor or body and offerings already consumed are gone",
+  "tone": "clipped clinical, grim"
+ },
+ "hemomancy.succession.failure.legacy_sample": {
+  "about": "a system failure message that this sample has no individual identity and a new one must be drawn before beginning",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.succession.failure.offerings": {
+  "about": "a system failure message listing the brazier order: donor blood or remnant first, officiant blood second, then Ambergris for a new incarnation",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.succession.failure.profession": {
+  "about": "a system failure message that the donated sample must carry one of the five professions",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.succession.failure.remnant": {
+  "about": "a system failure message that this remnant is inert, already restored, or belongs to another bloodline",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.succession.failure.reserved": {
+  "about": "a system failure message that another rite has already reserved this body, identity, or workplace",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.succession.failure.workplace": {
+  "about": "a system failure message that there is no loaded, unclaimed workplace for this profession inside the fane",
+  "tone": "clipped clinical"
+ },
+ "hemomancy.succession.fracture.artificer": {
+  "about": "a fractured echo of the Artificer's voice saying the hand does not fit the work",
+  "tone": "eerie, broken"
+ },
+ "hemomancy.succession.fracture.cicatrix_anchorite": {
+  "about": "a fractured echo of the Cicatrix Anchorite's voice about a scar with no wound and a wound wearing the player's face",
+  "tone": "eerie, broken"
+ },
+ "hemomancy.succession.fracture.vicar": {
+  "about": "a fractured echo of the Vicar's voice saying the blood knows whose vow was broken",
+  "tone": "eerie, accusing"
+ },
+ "hemomancy.succession.greeting.0.first": {
+  "about": "a successor with a first-time greeting, inviting the player to sit and admitting knowing a lot but still having much to learn",
+  "tone": "warm, curious"
+ },
+ "hemomancy.succession.greeting.0.return": {
+  "about": "a successor greeting a returning player, remembering their voice and asking where the work was left",
+  "tone": "warm, familiar"
+ },
+ "hemomancy.succession.greeting.1.first": {
+  "about": "a successor greeting a player who found their station and asking what needs doing",
+  "tone": "brisk, businesslike"
+ },
+ "hemomancy.succession.greeting.1.return": {
+  "about": "a successor welcoming a returning player back to work and asking what has changed",
+  "tone": "brisk, familiar"
+ },
+ "hemomancy.succession.greeting.2.first": {
+  "about": "a successor saying they woke carrying old knowledge and want to put it to use",
+  "tone": "earnest, uncertain"
+ },
+ "hemomancy.succession.greeting.2.return": {
+  "about": "a successor saying it is good to see a familiar face among borrowed memories",
+  "tone": "wistful, warm"
+ },
+ "hemomancy.succession.jei.create": {
+  "about": "a recipe-viewer hint listing brazier order for creating a successor: 1 donor blood, 2 the player's blood, 3 Ambergris, in the marked sockets beside the effigy",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.jei.effigy": {
+  "about": "a one-word recipe-viewer label for the effigy",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.jei.form": {
+  "about": "a one-word recipe-viewer label for the form stage",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.jei.life": {
+  "about": "a one-word recipe-viewer label for the life stage",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.jei.requirements": {
+  "about": "a recipe-viewer requirements line: Degree 5, Greater Dominion floor, fane workplace, 60 seconds",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.jei.restore": {
+  "about": "a recipe-viewer hint for restoring a successor: brazier 1 bound remnant, 2 the player's blood, third socket empty",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.no_residents": {
+  "about": "a short empty-list note that no manifested residents exist yet",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.personal_identity": {
+  "about": "a successor saying they carry a teacher's craft but the life they are making is their own",
+  "tone": "quiet, firm"
+ },
+ "hemomancy.succession.phase.0": {
+  "about": "a rite-progress line for the Form phase: the vacant flesh softens",
+  "tone": "hushed label"
+ },
+ "hemomancy.succession.phase.1": {
+  "about": "a rite-progress line for the Identity phase: two bloods find their places",
+  "tone": "hushed label"
+ },
+ "hemomancy.succession.phase.2": {
+  "about": "a rite-progress line for the Life phase: a heart begins to beat",
+  "tone": "hushed label"
+ },
+ "hemomancy.succession.phase.3": {
+  "about": "a rite-progress line for the Memory phase: ambergris enters the vessels",
+  "tone": "hushed label"
+ },
+ "hemomancy.succession.phase.4": {
+  "about": "a rite-progress line for the Recognition phase: the memories examine their host",
+  "tone": "hushed label"
+ },
+ "hemomancy.succession.phase.5": {
+  "about": "a rite-progress line for the Resolution phase: a person wakes",
+  "tone": "hushed label"
+ },
+ "hemomancy.succession.profession.artificer": {
+  "about": "a profession name label for the Artificer",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.profession.cicatrix_anchorite": {
+  "about": "a profession name label for the Cicatrix Anchorite",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.profession.vicar": {
+  "about": "a profession name label for the Vicar",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.recover": {
+  "about": "a short button label for recovering a lost remnant",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.recovery_hint": {
+  "about": "a hint that lost remnants can be recovered at the player's fane bloodwell",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.rejection": {
+  "about": "narration that the memories reject the offered identities and a Misbegotten vessel awakens",
+  "tone": "ominous narration"
+ },
+ "hemomancy.succession.remnant.bound": {
+  "about": "a tooltip that the remnant is bound to its original bloodline and copies become inert after restoration or reissue",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.remnant.generation": {
+  "about": "a tooltip giving a remnant's generation number (the number fills in)",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.residents": {
+  "about": "a section heading for the list of successor residents",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.restoration": {
+  "about": "a title for the Mnemonic Restoration option",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.rite_hint": {
+  "about": "a hint to stay inside the circle during the rite and hold the usual rite-cancel control to stop",
+  "tone": "plain, instructive"
+ },
+ "hemomancy.succession.sample_bound": {
+  "about": "a tooltip that the sample was donated to one bloodline under a Mnemonic Bequest",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.sample_donor": {
+  "about": "a tooltip naming the individual donor of a sample (the donor's name fills in)",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.self_blood_cost": {
+  "about": "a note that drawing the player's own sample costs 100 mL of their blood",
+  "tone": "plain, informative"
+ },
+ "hemomancy.succession.socket.0": {
+  "about": "a brazier socket label: first socket takes donor blood or a remnant",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.socket.1": {
+  "about": "a brazier socket label: second socket takes the officiant's blood",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.socket.2": {
+  "about": "a brazier socket label: third socket takes Mnemonic Ambergris",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.status.dead": {
+  "about": "a resident status label meaning dead",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.status.dismissed": {
+  "about": "a resident status label meaning dismissed",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.status.displaced": {
+  "about": "a resident status label meaning displaced",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.status.dormant": {
+  "about": "a resident status label meaning dormant",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.status.resident": {
+  "about": "a resident status label meaning resident",
+  "tone": "plain label"
+ },
+ "hemomancy.succession.teaching.artificer": {
+  "about": "the Vicar teaching the Artificer successor rite: at Degree 5 build a Vacant Effigy frame by a Cardinal Focus on a Greater Working floor with Venous Stone center, Hematic Iron edges, Conscious Mass corners, a Sanguine Formation, braziers with Armor Stand and Blood Stained Stone, feed 250 mL, then move it to a Venous Stone plinth on a Greater Dominion floor",
+  "tone": "precise, instructive"
+ },
+ "hemomancy.succession.teaching.cicatrix_anchorite": {
+  "about": "the Vicar explaining that a Cicatrix Anchorite successor needs a station in the fane, a Mason's Effigy or Fungal Implantation Pylon, that one station bears one successor, and that losing it leaves their work waiting",
+  "tone": "plain, instructive"
+ },
+ "hemomancy.succession.teaching.vicar": {
+  "about": "the Vicar explaining that the succession rite belongs to the bloodline and any Degree 5 member may officiate, that originals stay at outposts while successors teach locally, and that a false identity yields a Misbegotten vessel",
+  "tone": "plain, instructive"
+ },
+ "hemomancy.succession.unavailable": {
+  "about": "a successor saying their memory is still present but they cannot work here because they need their bloodline and an unclaimed workplace inside its fane",
+  "tone": "regretful, plain"
+ },
+ "hemomancy.trade.vicar.chapel_shards.line": {
+  "about": "the Vicar asking for three blood crystal shards for the chapel in return for a poultice, a request made only from the fourth Degree",
+  "tone": "formal, matter-of-fact"
+ },
+ "hemomancy.trade.vicar.chapel_shards.title": {
+  "about": "a short title for the chapel shards trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.vicar.thanks": {
+  "about": "the Vicar tersely acknowledging a completed trade as entered in the record",
+  "tone": "dry, brief"
+ },
+ "hemomancy.trade.vicar.thanks_fine": {
+  "about": "the Vicar noting that a trade was better than asked and promising to say so in the ledger",
+  "tone": "dry, pleased"
+ },
+ "hemomancy.trade.vicar.thread_blessing.line": {
+  "about": "the Vicar offering to bless a salve in exchange for two lengths of the Mnemonist's memory thread, which bind a ledger",
+  "tone": "formal, gentle"
+ },
+ "hemomancy.trade.vicar.thread_blessing.title": {
+  "about": "a short title for the memory thread blessing trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.trade.vicar.tithe.line": {
+  "about": "the Vicar explaining that the outpost has always asked 500 mL of blood from those it shelters, returning two salves, and asking if the player will give",
+  "tone": "formal, even"
+ },
+ "hemomancy.trade.vicar.tithe.title": {
+  "about": "a short title for the tithe trade card",
+  "tone": "plain label"
+ },
+ "hemomancy.vicar.adept.brotherhood_lore": {
+  "about": "the Vicar telling an Adept how the Sanguine Brotherhood began in the early wars when blood-pooling practitioners survived deadly engagements and that became doctrine, and why blood is sent wherever it is needed",
+  "tone": "measured, reflective"
+ },
+ "hemomancy.vicar.adept.degree_hint": {
+  "about": "the Vicar explaining that the Rite of the Crimson Lodge stands before Illuminatus, that it tests understanding of deeper patterns, and that the player should study the paths between skills in their skill tree",
+  "tone": "patient, guiding"
+ },
+ "hemomancy.vicar.adept.line1": {
+  "about": "narration of the Vicar placing a hand over his heart in a formal salute",
+  "tone": "formal narration"
+ },
+ "hemomancy.vicar.adept.line2": {
+  "about": "the Vicar greeting an Adept of the Sanguine Brotherhood and noting that willingly shared blood is stronger than hoarded blood, a lesson the player has learned",
+  "tone": "warm, formal"
+ },
+ "hemomancy.vicar.adept.masons_respite.followup.line1": {
+  "about": "the Vicar reminding the player, who has the route, that the Cicatrix Anchorite keeps no outpost and owes the Order no congregation",
+  "tone": "dry, cautionary"
+ },
+ "hemomancy.vicar.adept.masons_respite.followup.line2": {
+  "about": "the Vicar telling the player to go to Masons Respite when ready to be taught by wound rather than word",
+  "tone": "quiet, wry"
+ },
+ "hemomancy.vicar.adept.masons_respite.line1": {
+  "about": "the Vicar saying no outpost teaches that work so the player must seek the Vein-Mason out where roads thin and blood is remembered by scars",
+  "tone": "grave, reserved"
+ },
+ "hemomancy.vicar.adept.masons_respite.line2": {
+  "about": "the Vicar saying the road to the hermitage is marked on the map he gives but he cannot walk it for the player",
+  "tone": "dry, brief"
+ },
+ "hemomancy.vicar.annetta_map.line1": {
+  "about": "the Vicar explaining that Annetta's old chapel vanished from route ledgers after the last inquiry, not demolished but erased from the record",
+  "tone": "bitter, hushed"
+ },
+ "hemomancy.vicar.annetta_map.line2": {
+  "about": "the Vicar giving the player a map to follow Annetta's stain, warning that neither fear nor infection will reveal who is guilty",
+  "tone": "grave, cautionary"
+ },
+ "hemomancy.vicar.apotheos.line1": {
+  "about": "narration of the Vicar's breath catching as he cannot hold the player's gaze for more than a moment",
+  "tone": "uneasy narration"
+ },
+ "hemomancy.vicar.apotheos.line2": {
+  "about": "the Vicar telling an Apotheos player that his doctrine stops at Archon and cannot say what they are now, but the Order's records and obligations remain for them",
+  "tone": "awed, candid"
+ },
+ "hemomancy.vicar.apotheos.reflection": {
+  "about": "the Vicar reflecting that the Covenant was always meant to be outlived, a ladder toward what the player has become, and not knowing whether to bow or mourn",
+  "tone": "awed, sorrowful"
+ },
+ "hemomancy.vicar.archon.final_truth": {
+  "about": "the Vicar telling an Archon the Order's oldest saying that there were always eight degrees and the eighth is silence, that two roads beyond Archon, Silentium and Apotheosis, are only legend, and that those who walked them were never again recognizable",
+  "tone": "solemn, hesitant"
+ },
+ "hemomancy.vicar.archon.line1": {
+  "about": "narration of the Vicar lowering his gaze in the deepest gesture of formal reverence",
+  "tone": "reverent narration"
+ },
+ "hemomancy.vicar.archon.line2": {
+  "about": "the Vicar greeting an Archon, saying their rank is settled, no one can say what comes after, and every rite remains open to them",
+  "tone": "reverent, subdued"
+ },
+ "hemomancy.vicar.archon.pome_empowered.line1": {
+  "about": "narration of the Vicar pausing mid-bow as his nose twitches almost imperceptibly",
+  "tone": "uneasy narration"
+ },
+ "hemomancy.vicar.archon.pome_empowered.line2": {
+  "about": "the Vicar remarking that the player smells like deep forest after rain, and not the fresh kind",
+  "tone": "wary, quiet"
+ },
+ "hemomancy.vicar.blood_crafting.absorption": {
+  "about": "the Vicar explaining that Blood Absorption draws blood into the vessel and the ledger counts all absorbed toward 500 mL even if spent between draws, so no hoarding is needed",
+  "tone": "instructive, calm"
+ },
+ "hemomancy.vicar.blood_crafting.projection": {
+  "about": "the Vicar explaining that Blood Projection spends absorbed blood: into an empty cauldron it eventually sets into a Sanguine Formation, into ordinary stone it makes Venous Stone, and other blocks may answer a recipe directly",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.blood_crafting.structure": {
+  "about": "the Vicar explaining that the last proof is a blood-structure formation of a Liber Sanguinium or Hematic Iron Block, asking him for a blueprint, holding its catalyst in the offhand, and projecting into the assembled blocks",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.blood_script.done": {
+  "about": "narration of the blood burning cold, every line in the world briefly growing roots before settling into letters",
+  "tone": "eerie narration"
+ },
+ "hemomancy.vicar.blood_script.line1": {
+  "about": "narration of the Vicar studying the player's eyes and pricking a finger so the drop gathered is too dark to be ordinary blood",
+  "tone": "ominous narration"
+ },
+ "hemomancy.vicar.blood_script.line2": {
+  "about": "the Vicar explaining that Abocipher drops under the lid teach the eyes to accept the blood-script, with understanding coming later",
+  "tone": "measured, ritual"
+ },
+ "hemomancy.vicar.circus_referral.discovered": {
+  "about": "the Vicar acknowledging that the player found the Circus on their own so it counts as the introduction without walking the road again",
+  "tone": "dry, approving"
+ },
+ "hemomancy.vicar.circus_referral.lead": {
+  "about": "the Vicar asking whether the player has heard of the Harbinger company called the Circus, whose pavilion is stranger than a performance hall, and leaving the visit to the player",
+  "tone": "wry, intrigued"
+ },
+ "hemomancy.vicar.condenser.druse.claimed": {
+  "about": "the Vicar saying the player already carries the crystal heart and a second would have to be grown from glass, amethyst and blood crystal",
+  "tone": "plain, matter-of-fact"
+ },
+ "hemomancy.vicar.condenser.druse.prompt": {
+  "about": "a player prompt for asking for the heart that lines a Condenser in crystal",
+  "tone": "plain label"
+ },
+ "hemomancy.vicar.condenser.druse.ready": {
+  "about": "the Vicar approving the player's lattice work, handing over the heart and telling them to take it to the Rite of Druse Crystallization and close three circuits",
+  "tone": "pleased, instructive"
+ },
+ "hemomancy.vicar.condenser.druse.requirements": {
+  "about": "the Vicar stating the requirements for the Druse Heart: drawing a formation from a Latticed Condenser by hand and reaching the fifth Degree, after which nothing set in it slumps away",
+  "tone": "precise, formal"
+ },
+ "hemomancy.vicar.condenser.druse.title": {
+  "about": "a short title for the Druse Heart request",
+  "tone": "plain label"
+ },
+ "hemomancy.vicar.condenser.lattice.claimed": {
+  "about": "the Vicar saying the player already has the lattice and could bind another from scrap and ash",
+  "tone": "plain, matter-of-fact"
+ },
+ "hemomancy.vicar.condenser.lattice.prompt": {
+  "about": "a player prompt for asking for the lattice that teaches a cauldron to hold more",
+  "tone": "plain label"
+ },
+ "hemomancy.vicar.condenser.lattice.ready": {
+  "about": "the Vicar confirming the player fed a cauldron and took out what it set, granting the lattice, and telling them to seat it at the Rite of the First Clotting with five more offerings",
+  "tone": "pleased, instructive"
+ },
+ "hemomancy.vicar.condenser.lattice.requirements": {
+  "about": "the Vicar stating requirements for the lattice: proof of drawing a formation from a cauldron by hand, active blood, and reaching the third Degree",
+  "tone": "precise, formal"
+ },
+ "hemomancy.vicar.condenser.lattice.title": {
+  "about": "a short title for the Clotting Lattice request",
+  "tone": "plain label"
+ },
+ "hemomancy.vicar.covenant.bind_throne": {
+  "about": "the Vicar telling the player to bind a Covenant Throne to their Fane and sit in it so the covenant has a place to hold its people",
+  "tone": "formal, instructive"
+ },
+ "hemomancy.vicar.covenant.chamber_return": {
+  "about": "the Vicar telling the player to begin the Rite of the Chamber of Will on a Grand Threshold floor with an echo shard in the brazier, enter the Chamber and return safely, and explaining earlier guided visits do not count",
+  "tone": "stern, instructive"
+ },
+ "hemomancy.vicar.covenant.complete_vigil": {
+  "about": "the Vicar telling the player to summon a recruited Vicar to the Fane with the ancestral ledger and keep them at a rite station through the whole Covenant Vigil, warning an interrupted vigil earns no proof",
+  "tone": "stern, instructive"
+ },
+ "hemomancy.vicar.covenant.found_bloodline": {
+  "about": "the Vicar telling the player to first found their bloodline by performing the Rite of Bloodline Founding at Lesser Communion with blaze powder in the brazier, which gives the ancestral ledger, noting an unsigned ledger founds nothing",
+  "tone": "formal, instructive"
+ },
+ "hemomancy.vicar.covenant.found_fane": {
+  "about": "the Vicar directing the player to perform the Rite of the Founding Fane at Grand Dominion with Sanguine Quintessence in the Focus, a Nautilus Shell in the brazier, a Bloodwell and Stakes, and to project blood into the Bloodwell personally at the fifth Degree if a Fane exists",
+  "tone": "formal, detailed"
+ },
+ "hemomancy.vicar.covenant.perform_bloodline_rite": {
+  "about": "the Vicar telling the player their bloodline and Fane are ready for the Rite of the Bloodline Covenant to become Sanctified, and that outpost specialists may be invited though the Artificer will keep serving at the outpost",
+  "tone": "formal, encouraging"
+ },
+ "hemomancy.vicar.covenant.perform_hematic_order_rite": {
+  "about": "the Vicar telling the player that returning from the Chamber, binding the Throne and keeping the Vigil proves the Living Covenant, so they may perform the Rite of the Hematic Order",
+  "tone": "grave, approving"
+ },
+ "hemomancy.vicar.covenant_lore": {
+  "about": "the Vicar explaining that the Hematic Covenant is the whole body of rites, customs and learning governing hemomancy since the First Age, and each Degree's rite shows a practitioner what they have become",
+  "tone": "formal, expository"
+ },
+ "hemomancy.vicar.first_bloodcraft_reward.prompt": {
+  "about": "a prompt that the ledger bears all four proofs and the Vicar can grant the Second Degree",
+  "tone": "plain label"
+ },
+ "hemomancy.vicar.fungal_survey.lead": {
+  "about": "the Vicar telling the player the gardens grow in the Overworld's wet country where swamp, jungle or mushroom field would take hold, to survey them on foot, with no need to enter the fungal projection",
+  "tone": "practical, matter-of-fact"
+ },
+ "hemomancy.vicar.fungal_survey.specimens": {
+  "about": "the Vicar telling the player to bring the Alchemist an Infected Fungus and a Puffball Fungus for inspection, and that both specimens remain with the player",
+  "tone": "practical, brisk"
+ },
+ "hemomancy.vicar.fungal_survey.visited": {
+  "about": "the Vicar noting the player already walked the Overworld gardens, that the Alchemist will count the visit, and that no second trip is needed",
+  "tone": "dry, approving"
+ },
+ "hemomancy.vicar.hermit_road.followup.line1": {
+  "about": "the Vicar remarking that another remnant means that road predates the outposts and does not follow their maps",
+  "tone": "musing, dry"
+ },
+ "hemomancy.vicar.hermit_road.followup.line2": {
+  "about": "the Vicar advising the player to keep evidence in the ledger since one stone shows initiative but a pattern of stones points at what lies beneath",
+  "tone": "dry, instructive"
+ },
+ "hemomancy.vicar.hermit_road.intro.line1": {
+  "about": "the Vicar explaining the first invitation was meant for the player alone while others lie in abandoned hermit cells, spoiled displays and stones stained by uncollected rites",
+  "tone": "reflective, quiet"
+ },
+ "hemomancy.vicar.hermit_road.intro.line2": {
+  "about": "the Vicar challenging the player to follow a road unled, find a remnant in the wild, read what the blood kept there and report back, since what a Neophyte finds alone teaches him most",
+  "tone": "challenging, patient"
+ },
+ "hemomancy.vicar.hermit_road.report.line1": {
+  "about": "the Vicar approving that the player found a remnant without his guidance",
+  "tone": "dry, pleased"
+ },
+ "hemomancy.vicar.hermit_road.report.line2": {
+  "about": "the Vicar recording the find as a side road because a Neophyte who reads a trail unled is no longer wandering, and giving ash for the next stretch",
+  "tone": "approving, formal"
+ },
+ "hemomancy.vicar.hermit_road.report.prompt": {
+  "about": "a prompt telling the player they found a remnant unled and the Vicar will enter the evidence in the record",
+  "tone": "plain label"
+ },
+ "hemomancy.vicar.illuminatus.armature_consecration.line1": {
+  "about": "the Vicar telling the player to ask the Artificer for the Armature Consecration Kit, since the frame is the Artificer's to prepare while the consecration rite is the Vicar's to teach",
+  "tone": "instructive, clear"
+ },
+ "hemomancy.vicar.illuminatus.armature_consecration.line2": {
+  "about": "the Vicar instructing the player to seat a base Armature beside a Greater Cardinal Focus on a Working floor, plant the Living Staff, offer the kit and five companion offerings at the lit brazier, and close both blood circuits",
+  "tone": "precise, instructive"
+ },
+ "hemomancy.vicar.illuminatus.degree_hint": {
+  "about": "the Vicar explaining that the Rite of the Bloodline Covenant remains, requiring the player to commit to a bloodline under permanent oaths to become Sanctified, and warning such bonds cannot be dissolved without cost",
+  "tone": "solemn, cautionary"
+ },
+ "hemomancy.vicar.illuminatus.founding_fane_lore": {
+  "about": "the Vicar explaining the Rite of the Founding Fane: Sanguine Quintessence in the Cardinal Focus, a Consecrated Bloodwell as its heart, a flexible envelope boundary drawn outward by Hematic Stakes, and no building needed",
+  "tone": "formal, expository"
+ },
+ "hemomancy.vicar.illuminatus.line1": {
+  "about": "the Vicar greeting an Illuminatus of the Crimson Lodge, noting few hold the title and the parted veil will not close again",
+  "tone": "reverent, solemn"
+ },
+ "hemomancy.vicar.illuminatus.lodge_lore": {
+  "about": "the Vicar explaining that the Crimson Lodge keeps the most guarded knowledge, including the link between hemomancy and the mycelial network and one organism of blood and living earth, which its Archons will not discuss openly",
+  "tone": "hushed, reserved"
+ },
+ "hemomancy.vicar.illuminatus.monolith_rumor.line1": {
+  "about": "narration of discomfort then reverence crossing the Vicar's face as he smooths both away, followed by his saying the Lodge keeps unconfirmed ancient rumors off parchment",
+  "tone": "uneasy, hushed"
+ },
+ "hemomancy.vicar.illuminatus.monolith_rumor.line2": {
+  "about": "the Vicar admitting that ancient Harbingers may have found a way past the taught degrees, that he knows only half a story, and that he gives the player a reliquary fragment in an unfamiliar script their blood may read better",
+  "tone": "candid, hesitant"
+ },
+ "hemomancy.vicar.illuminatus.scrap_given": {
+  "about": "the Vicar handing over the scrap, saying he has carried it long enough and that if it means anything to the player, it was meant to reach them",
+  "tone": "quiet, resigned"
+ },
+ "hemomancy.vicar.initiate.castles_lore": {
+  "about": "the Vicar saying the ruined castles are older than the Order's records, that the Fargone hold them now and guard more than they use, and advising the player to go armed and collect what the stores keep",
+  "tone": "guarded, cautionary"
+ },
+ "hemomancy.vicar.initiate.degree_hint": {
+  "about": "the Vicar explaining the next rite is the Rite of the Sanguine Brotherhood, a rite of shared blood proving hemomancy can serve others, and advising study of the Bloodline system first",
+  "tone": "guiding, patient"
+ },
+ "hemomancy.vicar.initiate.fane_lore": {
+  "about": "the Vicar explaining the Incarnadine Fane was founded in the Second Age by the Archon Erythravane, whose rites broke those leaning on raw force and remade them as instruments of precision",
+  "tone": "formal, expository"
+ },
+ "hemomancy.vicar.initiate.line1": {
+  "about": "the Vicar greeting an Initiate of the Incarnadine Fane, noting the blood now speaks in them and the Fane recognized a quality most never develop",
+  "tone": "formal, approving"
+ },
+ "hemomancy.vicar.initiate.saints_lore": {
+  "about": "the Vicar explaining the Saints were past practitioners sealed away by their own people, that the Order inherited the tombs, that a defeated Saint returns dormant to its sarcophagus, that outer halls are open but a ward guards deeper, and that Hallowed Residuum from the Centrifuge yields Canon Memories",
+  "tone": "grave, expository"
+ },
+ "hemomancy.vicar.item_hint": {
+  "about": "the Vicar asking the player what they have brought and offering to speak only where doctrine or history gives him warrant",
+  "tone": "dry, attentive"
+ },
+ "hemomancy.vicar.item_inquiry.blood_structure.line1": {
+  "about": "the Vicar explaining that a blood-structure plan lays out blocks so that once complete, Blood Projection can persuade the form into work",
+  "tone": "instructive, plain"
+ },
+ "hemomancy.vicar.item_inquiry.blood_structure.line2": {
+  "about": "the Vicar telling the player to build the structure exactly and project at the proper point, which wakes it without a separate blood key",
+  "tone": "instructive, brisk"
+ },
+ "hemomancy.vicar.item_inquiry.book.line1": {
+  "about": "the Vicar remarking that the Order has kept records in books for generations, and a blank one in attentive hands becomes worth reading",
+  "tone": "warm, reflective"
+ },
+ "hemomancy.vicar.item_inquiry.book.line2": {
+  "about": "the Vicar noting that the Order's lasting work came from people who wrote clear instructions for those who followed",
+  "tone": "quiet, wry"
+ },
+ "hemomancy.vicar.item_inquiry.brine_sealed_letter.line1": {
+  "about": "the Vicar identifying a sealed letter of introduction, sealed with Sunburst crust, carried by a crew that drowned trying to reach the Brined Court",
+  "tone": "sombre, informative"
+ },
+ "hemomancy.vicar.item_inquiry.brine_sealed_letter.line2": {
+  "about": "the Vicar calling the drowned envoys Votaries, saying he would not have the player finish their errand blind, and that a Voyager can say where the Court keeps its door",
+  "tone": "grave, guiding"
+ },
+ "hemomancy.vicar.item_inquiry.dendritic_distributor.line1": {
+  "about": "the Vicar describing the Dendritic Distributor as a nervous archive for rehearsed blood-memory patterns that holds a working arrangement but needs a mind to choose it well",
+  "tone": "instructive, measured"
+ },
+ "hemomancy.vicar.item_inquiry.dendritic_distributor.line2": {
+  "about": "the Vicar advising the player to name each pattern carefully since combat, travel, rites and fane work ask different reflexes",
+  "tone": "brisk, practical"
+ },
+ "hemomancy.vicar.item_inquiry.dragon_egg.line1": {
+  "about": "the Vicar noting that some Lodge naturalists treat a Dragon Egg's compressed vitality as evidence for broader theories of living potential",
+  "tone": "dry, skeptical"
+ },
+ "hemomancy.vicar.item_inquiry.dragon_egg.line2": {
+  "about": "the Vicar dismissing those theories as learned speculation with no place in settled Covenant cosmology and no degree rite asking for one",
+  "tone": "dry, dismissive"
+ },
+ "hemomancy.vicar.item_inquiry.earthen_vein.line1": {
+  "about": "the Vicar describing the Earthen Vein as a grown living conduit that, placed in sequence, forms a network carrying blood from source to destination",
+  "tone": "instructive, plain"
+ },
+ "hemomancy.vicar.item_inquiry.earthen_vein.line2": {
+  "about": "the Vicar saying a developed Harbinger workshop runs on veins and, though avoidable early, the player will want what they carry once the Loom is regular work",
+  "tone": "practical, patient"
+ },
+ "hemomancy.vicar.item_inquiry.enchanted_book.line1": {
+  "about": "the Vicar comparing an enchanted book's arcane inscription to a sanguine memory crystal, differing in method but both keeping knowledge in a form another can take up",
+  "tone": "curious, measured"
+ },
+ "hemomancy.vicar.item_inquiry.enchanted_book.line2": {
+  "about": "the Vicar noting arcane inscription and memory weaving attack the same problem from opposite sides, and that higher-Degree practitioners have recorded unfinished links between enchantment schools and tendency affinities",
+  "tone": "scholarly, tentative"
+ },
+ "hemomancy.vicar.item_inquiry.hallowed_residuum.line1": {
+  "about": "the Vicar explaining that Hallowed Residuum is a Saint's concentrated legacy, drawn peacefully if the player's alignment suits the Saint, but a rejecting Saint wakes and must be fought",
+  "tone": "grave, informative"
+ },
+ "hemomancy.vicar.item_inquiry.hallowed_residuum.line2": {
+  "about": "the Vicar explaining that a peaceful sample becomes Residuum in the Vial Centrifuge while a Saint driven back into its tomb gives it up directly, then it goes to the Loom for Canon Memory work beside Gardens memory of that Saint",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.item_inquiry.heart_of_the_sea.line1": {
+  "about": "the Vicar remarking that the Heart of the Sea carries a deep-water resonance some find suggestive",
+  "tone": "musing, reserved"
+ },
+ "hemomancy.vicar.item_inquiry.heart_of_the_sea.line2": {
+  "about": "the Vicar noting some see kinship between water and blood in it, others only liturgical metaphor, and the Heart itself settles nothing",
+  "tone": "musing, noncommittal"
+ },
+ "hemomancy.vicar.item_inquiry.hematic_memory.line1": {
+  "about": "the Vicar explaining that a Hematic Memory carries one deliberate manipulation lesson that becomes part of the player's known practice when used",
+  "tone": "instructive, plain"
+ },
+ "hemomancy.vicar.item_inquiry.hematic_memory.line2": {
+  "about": "the Vicar noting that the Mnemonic Reliquary later arranges active lessons, but neither crystal nor Reliquary can work a personal manipulation into a bloodline",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.item_inquiry.iron_brazier.line1": {
+  "about": "the Vicar explaining that the Iron Brazier holds rite fire feeding a Cardinal Rite, may stand on the floor, wall or ceiling, and any lit Brazier inside the cube rising from a rite's floor answers that rite",
+  "tone": "instructive, detailed"
+ },
+ "hemomancy.vicar.item_inquiry.iron_brazier.line2": {
+  "about": "the Vicar explaining a Living Weapon Graft can burn in the Brazier by holding the Living Staff and drawing with Blood Absorption, and the rite consumes the graft only if the memory takes",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.item_inquiry.minecraft_relic.line1": {
+  "about": "the Vicar saying an old instrument of measure, direction or return is respected without pretending every relic belongs to the Order",
+  "tone": "dry, courteous"
+ },
+ "hemomancy.vicar.item_inquiry.minecraft_relic.line2": {
+  "about": "the Vicar saying a relic's meaning comes from the work done around it, with age the lesser part",
+  "tone": "quiet, wry"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_blueprint.blank": {
+  "about": "the Vicar explaining that a blank mnemonic blueprint takes only a properly learned rite or blood structure",
+  "tone": "dry, plain"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_blueprint.high.line1": {
+  "about": "the Vicar remarking that few practitioners of the player's high Degree need a mnemonic blueprint so it is rare to see one",
+  "tone": "musing, dry"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_blueprint.high.line2": {
+  "about": "the Vicar warning that the upper rites' language is precise for a reason and a missed word may break the rite",
+  "tone": "stern, cautionary"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_blueprint.low.line1": {
+  "about": "the Vicar explaining that a mnemonic blueprint's imprints each describe a rite or blood structure, including what it demands and proves",
+  "tone": "instructive, plain"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_blueprint.low.line2": {
+  "about": "the Vicar urging study of the blueprint since it points to what lies next, as the Order does not advance anyone who has not understood the work",
+  "tone": "stern, encouraging"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_blueprint.mid.line1": {
+  "about": "the Vicar noting a mnemonic blueprint for a middle-Degree structure, where the Order's demands grow less forgiving",
+  "tone": "dry, serious"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_blueprint.mid.line2": {
+  "about": "the Vicar saying the blueprint gives only the outline and the player's blood must supply the rest",
+  "tone": "dry, brief"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_blueprint.rite": {
+  "about": "the Vicar explaining the blueprint holds the spatial memory of a Cardinal Rite and guides building, but the rite's authority comes from the rite itself",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_blueprint.structure": {
+  "about": "the Vicar explaining the blueprint remembers a blood structure and shows its form, but Blood Projection must still make it answer",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_reliquary.line1": {
+  "about": "the Vicar explaining the Mnemonic Reliquary arranges which known bodily and willed memories stand readiest to hand",
+  "tone": "instructive, plain"
+ },
+ "hemomancy.vicar.item_inquiry.mnemonic_reliquary.line2": {
+  "about": "the Vicar clarifying the Reliquary changes only readiness; learning stays in the memory and the covenant stays in the bloodline",
+  "tone": "precise, dry"
+ },
+ "hemomancy.vicar.item_inquiry.monolith.line1": {
+  "about": "the Vicar saying the Sanguine Monolith belongs to the upper Degrees and offers practitioners who have come far enough what is older than doctrine",
+  "tone": "hushed, reverent"
+ },
+ "hemomancy.vicar.item_inquiry.monolith.line2": {
+  "about": "the Vicar admitting that in the higher degrees the Monolith becomes the player's main guide since his counsel runs out around degree five",
+  "tone": "candid, humble"
+ },
+ "hemomancy.vicar.item_inquiry.mortal_display.line1": {
+  "about": "the Vicar explaining a Mortal Display is a Hermit's offered heart sustained at the center of the temple built for their final vigil",
+  "tone": "solemn, informative"
+ },
+ "hemomancy.vicar.item_inquiry.mortal_display.line2": {
+  "about": "the Vicar explaining that claiming the heart is a personal invitation, completing the initiating rite ends the giver's vigil, and it holds no organ echo because it was only meant to be passed on",
+  "tone": "solemn, gentle"
+ },
+ "hemomancy.vicar.item_inquiry.nether_star.line1": {
+  "about": "the Vicar describing a Nether Star as concentrated Wither energy, real in power but without direction or purpose",
+  "tone": "measured, dry"
+ },
+ "hemomancy.vicar.item_inquiry.nether_star.line2": {
+  "about": "the Vicar saying raw power only goes so far uncultivated, the Order grows purpose inside such force, and asking the player to bring something that remembers what it is",
+  "tone": "dry, challenging"
+ },
+ "hemomancy.vicar.item_inquiry.potion.line1": {
+  "about": "the Vicar describing a common alchemical potion as old craft distilling water and herbs into blunt metabolic effects that serve most of the world well enough",
+  "tone": "mild, condescending"
+ },
+ "hemomancy.vicar.item_inquiry.potion.line2": {
+  "about": "the Vicar comparing the potion to a candle beside a fire that knows where it burns, both giving light but only the fire answering intention",
+  "tone": "dry, poetic"
+ },
+ "hemomancy.vicar.item_inquiry.qliphoth.line1": {
+  "about": "the Vicar asking where the player got a Qliphoth Pome, saying it belongs to the Archon's private revelation and not ordinary practice",
+  "tone": "wary, alarmed"
+ },
+ "hemomancy.vicar.item_inquiry.qliphoth.line2": {
+  "about": "the Vicar saying nine Pomes from one Bloom, all eaten, complete Communion and the ninth tears the Fungal Spine free, which no one below that threshold should be taught as ordinary practice",
+  "tone": "grave, cautionary"
+ },
+ "hemomancy.vicar.item_inquiry.qliphoth.sealed": {
+  "about": "the Vicar saying the record of the Qliphoth Pome is sealed above the player's Degree, he will not guess, and the player should not eat it",
+  "tone": "grave, firm"
+ },
+ "hemomancy.vicar.item_inquiry.salt_stained_voyager_log.line1": {
+  "about": "the Vicar reading a nearly illegible voyager log whose order of names (watch lead, alchemist, diver, mnemonist) shows they sailed as a covenant with work to do",
+  "tone": "reflective, observant"
+ },
+ "hemomancy.vicar.item_inquiry.salt_stained_voyager_log.line2": {
+  "about": "the Vicar saying the wreck kept both the crew's failures and their care, and the player should read both",
+  "tone": "quiet, sombre"
+ },
+ "hemomancy.vicar.item_inquiry.sanguine_condenser.line1": {
+  "about": "the Vicar explaining a cauldron that has drunk the player's blood keeps it and slowly sets it into formation, and the lesson counts only for whoever fed it and drew the result by hand",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.item_inquiry.sanguine_condenser.line2": {
+  "about": "the Vicar telling the player that after practice they should take the Condenser to a Working floor, where the Clotting Lattice makes it hold more and set faster and the Druse Heart lines it in crystal",
+  "tone": "instructive, encouraging"
+ },
+ "hemomancy.vicar.item_inquiry.scar_blank.line1": {
+  "about": "the Vicar describing a blank Scar waiting for a route to be carved at the Cerebral Scarring Station",
+  "tone": "instructive, plain"
+ },
+ "hemomancy.vicar.item_inquiry.scar_blank.line2": {
+  "about": "the Vicar explaining that a carved Scar is burned into memory at an Iron Brazier and later arrangements are copied through the Mason's Effigy, never worn from the pack",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.item_inquiry.scar_blank.locked": {
+  "about": "the Vicar telling the player blank scar plates are for the fourth Degree and to attend to the work in front of them until then",
+  "tone": "firm, dry"
+ },
+ "hemomancy.vicar.item_inquiry.scar_pattern.blank": {
+  "about": "the Vicar describing unwritten motif paper that the Vein-Mason would call a promise not yet made",
+  "tone": "wry, quiet"
+ },
+ "hemomancy.vicar.item_inquiry.scar_pattern.loadout": {
+  "about": "the Vicar describing a prepared scar loadout with known routes arranged at the Mason's Effigy and made active at the Iron Brazier",
+  "tone": "instructive, plain"
+ },
+ "hemomancy.vicar.item_inquiry.scar_pattern.template": {
+  "about": "the Vicar describing a scar template as instruction for carving one route before it is burned into memory",
+  "tone": "instructive, plain"
+ },
+ "hemomancy.vicar.item_inquiry.scrying_podium.line1": {
+  "about": "the Vicar explaining the Scrying Podium reads the practitioner's blood and shows the tendency distribution of dominant, latent and current balance",
+  "tone": "instructive, plain"
+ },
+ "hemomancy.vicar.item_inquiry.scrying_podium.line2": {
+  "about": "the Vicar advising use of the Podium early while the path forms and again when a rite or memory weave needs a balance, noting that interpreting the readout is the player's own judgment",
+  "tone": "instructive, measured"
+ },
+ "hemomancy.vicar.item_inquiry.unknown": {
+  "about": "the Vicar saying there is nothing in the record about the item so he will not guess",
+  "tone": "dry, honest"
+ },
+ "hemomancy.vicar.masons_respite.prompt": {
+  "about": "the Vicar saying the player's next instruction cannot be given at this outpost and offering to mark the road to Masons Respite where the Vein-Mason waits",
+  "tone": "grave, offering"
+ },
+ "hemomancy.vicar.neophyte.absorption_hint": {
+  "about": "the Vicar explaining that Blood Absorption toward a living creature or blood reservoir is counted by the ledger, flask or passive blood is not, and 500 mL total is needed",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.neophyte.crafting_hint": {
+  "about": "the Vicar telling a Neophyte to craft Foul Paste from Nether Wart, gunpowder and bone meal, smelt it into Befouling Ash, ask for a Mnemonic Blueprint, build either pattern, hold its catalyst offhand, and project blood into the center",
+  "tone": "instructive, step-by-step"
+ },
+ "hemomancy.vicar.neophyte.degree_hint": {
+  "about": "the Vicar listing the four proofs for the Second Degree, in any order: absorb 500 mL, condense a Sanguine Formation in a cauldron, project Venous Stone, craft a Liber Sanguinium or Hematic Iron Block with a blood formation, then bring him the ledger",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.neophyte.degree_hint.assignment": {
+  "about": "the Vicar adding that after the Second Degree is granted the Alchemist will teach separation and the Ghastly Alembic",
+  "tone": "brisk, informative"
+ },
+ "hemomancy.vicar.neophyte.first_bloodcraft_reward.claimed": {
+  "about": "the Vicar telling the player they already had the Order's provision and should use those materials rather than let them pile up",
+  "tone": "dry, stern"
+ },
+ "hemomancy.vicar.neophyte.first_bloodcraft_reward.granted": {
+  "about": "the Vicar approving the player's answers to the first four lessons, granting the Second Degree, and sending them to the Alchemist for separation and distillation",
+  "tone": "approving, formal"
+ },
+ "hemomancy.vicar.neophyte.first_bloodcraft_reward.unready": {
+  "about": "the Vicar refusing the reward until the ledger shows all four proofs, in any order, and reminding the player that for the cauldron they must project their own blood into it and collect the Sanguine Formation themselves",
+  "tone": "firm, examining"
+ },
+ "hemomancy.vicar.neophyte.line1": {
+  "about": "narration of the Vicar inclining his head in formal acknowledgment",
+  "tone": "formal narration"
+ },
+ "hemomancy.vicar.neophyte.line2": {
+  "about": "the Vicar greeting a Neophyte of the Crimson Veil, saying the first threshold is behind them and the road is long and discipline will be asked before revelation",
+  "tone": "stern, formal"
+ },
+ "hemomancy.vicar.neophyte.projection_hint": {
+  "about": "the Vicar explaining two lessons with two targets: blood poured into an empty cauldron eventually crystallizes into a Sanguine Formation the player must take out, blood poured into ordinary stone stains it to Venous Stone",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.purifying.chosen_path": {
+  "about": "the Vicar, narrated closing his eyes, telling the player who chose the Unstained path that the Order will not mourn them, their blood will find a worthier vessel, and they must leave the Outpost before the path takes them somewhere the Order cannot follow",
+  "tone": "cold, grieved"
+ },
+ "hemomancy.vicar.purifying.line1": {
+  "about": "narration of the Vicar's composure breaking as his face shows grief and contempt together",
+  "tone": "tense narration"
+ },
+ "hemomancy.vicar.purifying.line2": {
+  "about": "the Vicar saying he can feel the Unstained path starving the player's blood and peeling away granted power, and every rite and Degree earned beginning to come apart",
+  "tone": "pained, bitter"
+ },
+ "hemomancy.vicar.purifying.line3": {
+  "about": "the Vicar asking if the player understands what they throw away, warning that blood remembers a recantation, the Covenant's gifts weaken with each step, and the power is already slipping and will not wait",
+  "tone": "urgent, severe"
+ },
+ "hemomancy.vicar.purifying.power_warning": {
+  "about": "the Vicar telling the player who goes on anyway that their hemomantic strength fades daily, manipulations dulling and tendencies quieting, that the Order does not reach out twice, and to return while they still can",
+  "tone": "cold, merciless"
+ },
+ "hemomancy.vicar.sanctified.degree_hint": {
+  "about": "the Vicar explaining one rite remains, the Rite of the Hematic Order, the hardest, asking what the player is willing to give of their blood and warning it has claimed the unprepared",
+  "tone": "grave, cautionary"
+ },
+ "hemomancy.vicar.sanctified.hematic_order_lore": {
+  "about": "the Vicar explaining the Hematic Order tops the Covenant's hierarchy as a state the blood itself must recognize, that the founders believed initiated blood becomes indistinguishable from the world's, and the last rite confirms rather than grants Archon",
+  "tone": "reverent, expository"
+ },
+ "hemomancy.vicar.sanctified.line1": {
+  "about": "the Vicar greeting a Sanctified player, saying the Bloodline Covenant has woven them into the Order's living body as a node in a greater network",
+  "tone": "solemn, approving"
+ },
+ "hemomancy.vicar.uninitiated.harbinger_lore": {
+  "about": "the Vicar explaining that Harbingers seek revelation not violence, hold blood as the first language of existence, and that the Covenant keeps the knowledge letting its speakers rise past ordinary limits",
+  "tone": "calm, persuasive"
+ },
+ "hemomancy.vicar.uninitiated.line1": {
+  "about": "narration of a figure in sweeping ceremonial vestments watching the player with hands folded inside wide sleeves",
+  "tone": "still narration"
+ },
+ "hemomancy.vicar.uninitiated.line2": {
+  "about": "the Vicar introducing himself as the Harbinger Vicar, keeper of the Covenant's doctrine, history and truths, telling an uninitiated wanderer they still deserve to know where they stand",
+  "tone": "formal, welcoming"
+ },
+ "hemomancy.vicar.uninitiated.outpost_lore": {
+  "about": "the Vicar explaining the Outpost is a waystation in the Harbinger network beyond the Blood Temples where practitioners resupply, learn and are guided, with the Alchemist tending machines and himself doctrine",
+  "tone": "formal, expository"
+ },
+ "hemomancy.vicar.votary.degree_hint": {
+  "about": "the Vicar explaining the Alchemist holds the two proofs for this stage, an assigned separation and a Ghastly Alembic distillation, after which the player asks for Concentrated Blood, injects it, sleeps and wakes at the third Degree",
+  "tone": "instructive, formal"
+ },
+ "hemomancy.vicar.votary.line1": {
+  "about": "the Vicar greeting a Votary of the Hematic Covenant, noting their tendencies crystallize and their blood knows what it wants, and asking whether they can tell what it asks for",
+  "tone": "thoughtful, probing"
+ },
+ "hemomancy.vicar.votary.rooted_vein.floor": {
+  "about": "the Vicar explaining the Rite of the Rooted Vein needs a Dominion floor: a Lesser square of deepslate tiles or bricks with eight Chiseled Hematic Iron blocks around a Cardinal Focus, no copper because it is the Unstained metal, with making done on the Working floor",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.votary.rooted_vein.offering": {
+  "about": "the Vicar instructing the player to keep the block above the Focus clear, set one Blood Rock in an Iron Brazier on a floor socket and light it with Blood Projection, leave the Focus's medium slot empty, and noting no helper is needed",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.votary.rooted_vein.recovery": {
+  "about": "the Vicar explaining the Focus becomes Venous Stone with a permanent Earthen Vein on completion, and that cancelling before then needs Blood Absorption held on the planted Staff, with paid blood and consumed offerings lost but untouched offerings remaining",
+  "tone": "instructive, cautionary"
+ },
+ "hemomancy.vicar.votary.rooted_vein.staff": {
+  "about": "the Vicar instructing the player to use the Living Staff on the Focus, feed the four anchors with Blood Projection, project into the daemon to seal the rite, stay inside the boundary, noting the rite answers only by degree and active blood",
+  "tone": "instructive, precise"
+ },
+ "hemomancy.vicar.votary.tendency_lore": {
+  "about": "the Vicar listing the eight blood tendencies (Animus, Flammeus, Ductilis, Lux, Mortem, Congeatio, Ferric, Tenebris) and their common enzyme names (Vivacious, Fervent, Neurotic, Incandescent, Ruinous, Frigid, Ferric, Umbral)",
+  "tone": "scholarly, brisk"
+ },
+ "hemomancy.vicar.voyager_introduction.bearing": {
+  "about": "the Vicar giving the coordinates (two numbers fill in) of a Voyager vessel in the Overworld and telling the player to find the crew and record an observation by asking about their work, as knowing the location alone does not count",
+  "tone": "practical, firm"
+ },
+ "hemomancy.vicar.voyager_introduction.bearing_busy": {
+  "about": "the Vicar saying the vessel charts are in use and asking the player to request the bearing again shortly",
+  "tone": "brief, apologetic"
+ },
+ "hemomancy.vicar.voyager_introduction.bearing_missing": {
+  "about": "the Vicar saying the charts show no Voyager vessel in the waters searched, so the player should ask at another Overworld outpost or find a Voyager at an Erythrocoral Reef",
+  "tone": "plain, regretful"
+ },
+ "hemomancy.vicar.voyager_introduction.bearing_searching": {
+  "about": "the Vicar saying he will search the vessel charts while the player works in the Overworld and send the bearing when a vessel turns up, with the player asking again if they leave first",
+  "tone": "patient, practical"
+ },
+ "hemomancy.vicar.voyager_introduction.bearing_unavailable": {
+  "about": "the Vicar saying the world's charts give no vessel routes, so the player must find a Voyager at an Erythrocoral Reef themselves",
+  "tone": "plain, regretful"
+ },
+ "hemomancy.vicar.voyager_introduction.lead": {
+  "about": "the Vicar telling the player to look for the Erythrocoral Reef in deep warm seas where active Voyager vessels work, to ask for a vessel bearing first, and to speak with a Voyager and bring back one observation of the crew's work",
+  "tone": "instructive, practical"
+ },
+ "hemomancy.vicar.voyager_introduction.observed": {
+  "about": "the Vicar noting the player already spoke with a Voyager in the reef waters, asking what they saw, and saying they need not sail out again",
+  "tone": "curious, approving"
+ },
+ "hemomancy.vicar.voyager_introduction.recorded": {
+  "about": "system narration that the Vicar records the player's Voyager observation and files it with the field reports",
+  "tone": "plain narration"
+ },
+ "hemomancy.vicar.voyager_introduction.report.prompt": {
+  "about": "a prompt for the player to report the reef observation they recorded with the Voyager",
+  "tone": "plain label"
+ },
+ "hemomancy.vicar.voyager_introduction.task": {
+  "about": "the Vicar clarifying that a reef or active vessel suffices and he does not want a whale, ambergris or any trophy",
+  "tone": "dry, plain"
+ }
+}

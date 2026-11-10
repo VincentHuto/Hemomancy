@@ -44,6 +44,7 @@ class PlayerAnimationGuardrailTest {
 			Map.entry("client/event/LivingStaffMorphClientEvents.java", "HIGHEST"),
 			Map.entry("client/event/BloodVialInjectionClientEvents.java", "HIGH"),
 			Map.entry("client/event/HematicMicroscopeClientEvents.java", "HIGH"),
+			Map.entry("client/event/LivingSyringeDrawClientEvents.java", "HIGH"),
 			Map.entry("client/event/LivingTorchClientEvents.java", "NORMAL"),
 			Map.entry("client/event/FungalProjectionClientEvents.java", "NORMAL"),
 			Map.entry("client/event/PossessionClientEvents.java", "NORMAL"),

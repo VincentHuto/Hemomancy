@@ -64,6 +64,9 @@ public final class MaterialsData {
         list.add(new MaterialEntry("ambergris_cylinder", "item.hemomancy.ambergris_cylinder",
                 "material.hemomancy.ambergris_cylinder.desc",
                 "material.hemomancy.category.clinical_tools", () -> new ItemStack(ItemInit.ambergris_cylinder.get())));
+        list.add(new MaterialEntry("corpse_wax_cylinder", "item.hemomancy.corpse_wax_cylinder",
+                "material.hemomancy.corpse_wax_cylinder.desc",
+                "material.hemomancy.category.clinical_tools", () -> new ItemStack(ItemInit.corpse_wax_cylinder.get())));
 
         // ── Functional Blocks ──
         list.add(new MaterialEntry("dendritic_distributor", "block.hemomancy.dendritic_distributor",

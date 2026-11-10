@@ -1,0 +1,2758 @@
+{
+  "meta": {
+    "format_version": "5.0",
+    "model_format": "java_block",
+    "box_uv": false
+  },
+  "name": "living_syringe_vial",
+  "java_block_version": "1.9.0",
+  "ambientocclusion": false,
+  "front_gui_light": true,
+  "resolution": {
+    "width": 16,
+    "height": 16
+  },
+  "elements": [
+    {
+      "name": "pump mantle",
+      "from": [
+        4.25,
+        3.75,
+        7
+      ],
+      "to": [
+        8.25,
+        5.25,
+        10.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "855fe0a0-03d4-5977-b31b-1f57e4623998",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "pump outlet",
+      "from": [
+        5.75,
+        4.25,
+        10.25
+      ],
+      "to": [
+        7.25,
+        5.75,
+        11.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "4b084cd0-73e3-5d52-bd34-d8ecd5a5d06b",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "fixed hinge knuckle",
+      "from": [
+        3.25,
+        4.5,
+        3.75
+      ],
+      "to": [
+        9.75,
+        5.75,
+        4.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "3dddeb3c-1fad-5919-a3ec-1b346428acf2",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "left hinge pin",
+      "from": [
+        2.75,
+        4.75,
+        4
+      ],
+      "to": [
+        3.25,
+        5.5,
+        4.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "0d5c4acf-097e-56e9-b65e-b67bbc8b76f3",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "right hinge pin",
+      "from": [
+        9.75,
+        4.75,
+        4
+      ],
+      "to": [
+        10.25,
+        5.5,
+        4.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "91aa6f97-49f2-5b71-9dbe-9498dc662e97",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "dorsal attachment",
+      "from": [
+        4,
+        2.25,
+        9
+      ],
+      "to": [
+        7.75,
+        5.5,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "9db4c71e-785e-571f-b367-d721ac57d8bd",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "palm attachment",
+      "from": [
+        4,
+        2,
+        4.75
+      ],
+      "to": [
+        7.5,
+        4.5,
+        6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "14814409-e195-5114-aa09-a52bb3c6ef89",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "outer tendon wrap",
+      "from": [
+        2.75,
+        2.25,
+        5.75
+      ],
+      "to": [
+        4,
+        4.75,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "7e9508d7-c355-5051-af2a-92bcf28b00c6",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "inner tendon wrap",
+      "from": [
+        7.5,
+        2.5,
+        5.5
+      ],
+      "to": [
+        8.75,
+        4.25,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "28291f03-9291-568c-9978-875a679356bc",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "outer tendon root",
+      "from": [
+        3.25,
+        0.75,
+        7.75
+      ],
+      "to": [
+        4.25,
+        3.5,
+        9.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "4c41e066-3cc3-5817-97a2-0151e2815c1e",
+      "origin": [
+        3.75,
+        2.75,
+        8.5
+      ],
+      "rotation": [
+        0,
+        0,
+        22.5
+      ]
+    },
+    {
+      "name": "inner tendon root",
+      "from": [
+        7,
+        0.75,
+        8.75
+      ],
+      "to": [
+        8,
+        3.25,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "f079ccbe-89bc-5231-b5cf-63f76a84299f",
+      "origin": [
+        7.5,
+        2.75,
+        9.25
+      ],
+      "rotation": [
+        0,
+        0,
+        -22.5
+      ]
+    },
+    {
+      "name": "palm root tip",
+      "from": [
+        6.25,
+        0.5,
+        5.25
+      ],
+      "to": [
+        7.25,
+        2.5,
+        6.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "7f7c6240-82d4-58c1-a1a6-7735d6577530",
+      "origin": [
+        6.75,
+        2.25,
+        5.5
+      ],
+      "rotation": [
+        0,
+        0,
+        22.5
+      ]
+    },
+    {
+      "name": "dorsal artery",
+      "from": [
+        5,
+        1.75,
+        10.5
+      ],
+      "to": [
+        6,
+        5.5,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "f92605b2-4bec-5d67-8f07-e47100acbcc8",
+      "origin": [
+        5.5,
+        4,
+        10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        22.5
+      ]
+    },
+    {
+      "name": "outer wrist spur",
+      "from": [
+        2.5,
+        3.25,
+        7.25
+      ],
+      "to": [
+        3.25,
+        5.25,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "7edbb186-8d5a-5497-94f5-74b82263b4c4",
+      "origin": [
+        3,
+        4.25,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        -22.5
+      ]
+    },
+    {
+      "name": "axle heel",
+      "from": [
+        5.75,
+        5,
+        4.25
+      ],
+      "to": [
+        7.25,
+        5.5,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "b9bd083b-0a38-583b-a2ba-fc1db6f1fc46",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "axle collar",
+      "from": [
+        6,
+        5.5,
+        7.5
+      ],
+      "to": [
+        7,
+        5.75,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "d0673d66-fb94-5396-a807-a4c8dbb08f94",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "drum axle",
+      "from": [
+        6.25,
+        5.75,
+        7.75
+      ],
+      "to": [
+        6.75,
+        12.5,
+        8.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "6a35dd9e-c643-527f-ad41-cc360fef247c",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "rear pump collar",
+      "from": [
+        5.75,
+        5.25,
+        8.75
+      ],
+      "to": [
+        7.25,
+        5.75,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "0adb3993-b5cd-5ffc-8481-5c1f142e14bc",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "rear inlet bridge",
+      "from": [
+        5.5,
+        5.75,
+        9.5
+      ],
+      "to": [
+        7.5,
+        6.5,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "984bcf1f-8a53-50b8-bafc-dbc5a4ad7829",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "inlet seal",
+      "from": [
+        6,
+        5.5,
+        9.75
+      ],
+      "to": [
+        7,
+        5.75,
+        11.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "24df9ad5-1182-5f68-85e3-5fb69bc8764d",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "front thrust bearing",
+      "from": [
+        5.75,
+        12.25,
+        7.25
+      ],
+      "to": [
+        7.25,
+        12.75,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "7fcbc30c-c1bc-5d0f-86ca-0bd0b87fc6c8",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "fang feed neck",
+      "from": [
+        5.75,
+        12.75,
+        7.75
+      ],
+      "to": [
+        7.25,
+        13.5,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "8d4c7171-fe03-5bf0-a6f8-527822996523",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "fang shoulder",
+      "from": [
+        5,
+        12.75,
+        9.5
+      ],
+      "to": [
+        8,
+        13.5,
+        11.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "42d81791-8e00-5378-91f6-1a59f0497b87",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "left fang socket",
+      "from": [
+        5.25,
+        12.5,
+        9.75
+      ],
+      "to": [
+        5.75,
+        12.75,
+        11.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "50bef225-d07c-5dc0-a0be-a0793a59c3ba",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "right fang socket",
+      "from": [
+        7.25,
+        12.5,
+        9.75
+      ],
+      "to": [
+        7.75,
+        12.75,
+        11.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "00faa13f-f034-5af7-b014-527cc7831cae",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "barrel root",
+      "from": [
+        4.75,
+        13.5,
+        9.25
+      ],
+      "to": [
+        8.25,
+        14.75,
+        11.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "b3367a4e-cab4-55d0-bd11-63fb04c7a626",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "chitin ferrule",
+      "from": [
+        5.25,
+        14.5,
+        9.5
+      ],
+      "to": [
+        7.75,
+        15.25,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "3668f575-aa97-563e-a472-df94d3f6feb5",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hollow fang",
+      "from": [
+        6,
+        15.25,
+        10.0
+      ],
+      "to": [
+        7,
+        17,
+        11.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "e1c33ae4-3319-59c0-926c-07f4af099df6",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "fang tip",
+      "from": [
+        6.25,
+        17,
+        10.25
+      ],
+      "to": [
+        6.75,
+        18.25,
+        10.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "454bd53d-00c8-5684-bd34-0ba96d9035ac",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "single vial seat",
+      "from": [
+        5,
+        6.5,
+        9.25
+      ],
+      "to": [
+        8,
+        7.25,
+        11.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "cb65685b-b3ef-5224-be6f-ee8b8eed9567",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "single vial glass",
+      "from": [
+        5.5,
+        7.25,
+        9.5
+      ],
+      "to": [
+        7.5,
+        11.25,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            4,
+            16,
+            8
+          ],
+          "texture": 1
+        },
+        "east": {
+          "uv": [
+            12,
+            4,
+            16,
+            8
+          ],
+          "texture": 1
+        },
+        "south": {
+          "uv": [
+            12,
+            4,
+            16,
+            8
+          ],
+          "texture": 1
+        },
+        "west": {
+          "uv": [
+            12,
+            4,
+            16,
+            8
+          ],
+          "texture": 1
+        },
+        "up": {
+          "uv": [
+            12,
+            4,
+            16,
+            8
+          ],
+          "texture": 1
+        },
+        "down": {
+          "uv": [
+            12,
+            4,
+            16,
+            8
+          ],
+          "texture": 1
+        }
+      },
+      "type": "cube",
+      "uuid": "14e4d5eb-458c-5927-ac89-cee3e195b612",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "single vial collar",
+      "from": [
+        5,
+        11.25,
+        9.25
+      ],
+      "to": [
+        8,
+        12.25,
+        11.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "12e8d6f9-3d17-5722-9431-ae964e5e60e9",
+      "origin": [
+        8,
+        8,
+        8
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "name": "pump and hinge",
+      "uuid": "2f652bb3-e2df-55c0-8ea2-3cfc7709ad5b",
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "wrist roots",
+      "uuid": "d9c57fd4-d773-5076-b268-765687826761",
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "hinged axle",
+      "uuid": "1c91523f-5ba8-5cef-b1d1-e4131d91e47a",
+      "origin": [
+        6.5,
+        5.25,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "hollow fang",
+      "uuid": "e1c33ae4-3319-59c0-926c-07f4af099df6",
+      "origin": [
+        6.5,
+        5.25,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "inline vial",
+      "uuid": "16bff6ed-6981-565e-a101-51a47efe6328",
+      "origin": [
+        6.5,
+        5.25,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "outliner": [
+    {
+      "uuid": "2f652bb3-e2df-55c0-8ea2-3cfc7709ad5b",
+      "children": [
+        "855fe0a0-03d4-5977-b31b-1f57e4623998",
+        "4b084cd0-73e3-5d52-bd34-d8ecd5a5d06b",
+        "3dddeb3c-1fad-5919-a3ec-1b346428acf2",
+        "0d5c4acf-097e-56e9-b65e-b67bbc8b76f3",
+        "91aa6f97-49f2-5b71-9dbe-9498dc662e97"
+      ]
+    },
+    {
+      "uuid": "d9c57fd4-d773-5076-b268-765687826761",
+      "children": [
+        "9db4c71e-785e-571f-b367-d721ac57d8bd",
+        "14814409-e195-5114-aa09-a52bb3c6ef89",
+        "7e9508d7-c355-5051-af2a-92bcf28b00c6",
+        "28291f03-9291-568c-9978-875a679356bc",
+        "4c41e066-3cc3-5817-97a2-0151e2815c1e",
+        "f079ccbe-89bc-5231-b5cf-63f76a84299f",
+        "7f7c6240-82d4-58c1-a1a6-7735d6577530",
+        "f92605b2-4bec-5d67-8f07-e47100acbcc8",
+        "7edbb186-8d5a-5497-94f5-74b82263b4c4"
+      ]
+    },
+    {
+      "uuid": "1c91523f-5ba8-5cef-b1d1-e4131d91e47a",
+      "children": [
+        "b9bd083b-0a38-583b-a2ba-fc1db6f1fc46",
+        "d0673d66-fb94-5396-a807-a4c8dbb08f94",
+        "6a35dd9e-c643-527f-ad41-cc360fef247c",
+        "0adb3993-b5cd-5ffc-8481-5c1f142e14bc",
+        "984bcf1f-8a53-50b8-bafc-dbc5a4ad7829",
+        "24df9ad5-1182-5f68-85e3-5fb69bc8764d",
+        "7fcbc30c-c1bc-5d0f-86ca-0bd0b87fc6c8",
+        "8d4c7171-fe03-5bf0-a6f8-527822996523",
+        "42d81791-8e00-5378-91f6-1a59f0497b87",
+        "50bef225-d07c-5dc0-a0be-a0793a59c3ba",
+        "00faa13f-f034-5af7-b014-527cc7831cae"
+      ]
+    },
+    {
+      "uuid": "e1c33ae4-3319-59c0-926c-07f4af099df6",
+      "children": [
+        "b3367a4e-cab4-55d0-bd11-63fb04c7a626",
+        "3668f575-aa97-563e-a472-df94d3f6feb5",
+        "e1c33ae4-3319-59c0-926c-07f4af099df6",
+        "454bd53d-00c8-5684-bd34-0ba96d9035ac"
+      ]
+    },
+    {
+      "uuid": "16bff6ed-6981-565e-a101-51a47efe6328",
+      "children": [
+        "cb65685b-b3ef-5224-be6f-ee8b8eed9567",
+        "14e4d5eb-458c-5927-ac89-cee3e195b612",
+        "12e8d6f9-3d17-5722-9431-ae964e5e60e9"
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "living_syringe_materials.png",
+      "relative_path": "../../../textures/item/living_syringe_materials.png",
+      "namespace": "hemomancy",
+      "folder": "item",
+      "id": "0",
+      "uuid": "dc2d2e47-00a5-5d7f-bafb-ce09f45a72ec",
+      "width": 16,
+      "height": 16,
+      "uv_width": 16,
+      "uv_height": 16,
+      "particle": true,
+      "render_mode": "default",
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABCklEQVR42mNormj9D8Ih/jFgvGlWNxz31VX//3h3PRxf2Nz1v97Y+//26CQwBrEZYBotTR3ANEgTMoZphGF/RVOwRhAGsRlgmtENSItNBdPImuc1pMANANFgA2CaVRS1wTRMMwzDNIJwSoDHf00hebghIDbDDm33/x8yMsG4Qtzof4Gi5f/jyWn/59gGgLGdidN/LVVDMAaxUzsn/t994wqYBmEGkCaYISAaWTPIMJBGGUllMAaxYRqVTRxQDQBhmAtAmmEGYTPAJiIZYYAbv+p/mCEgNsxmEHYQUcPqBZABIAw24OaKyv8gvLEqEowZSAXImskyAKaxPNCVfANAmkHYw9CCdANGAQMAGl06ZFM4QQ4AAAAASUVORK5CYII="
+    },
+    {
+      "name": "living_syringe_filled.png",
+      "relative_path": "../../../textures/item/living_syringe_filled.png",
+      "namespace": "hemomancy",
+      "folder": "item",
+      "id": "1",
+      "uuid": "15e36357-73f9-5856-a4b2-3974c457d926",
+      "width": 16,
+      "height": 16,
+      "uv_width": 16,
+      "uv_height": 16,
+      "particle": false,
+      "render_mode": "default",
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABB0lEQVR42mNormj9D8Ih/jFgvGlWNxz31VX//3h3PRxf2Nz1v97Y+//26CQwBrEZYBotTR3ANEgTMoZphGF/RVOwRhAGsRlgmtENSItNBdPImuc1pMANANFgA2CaVRS1wTRMMwzDNIJwSoDHf00hebghIDbDDm33/x8yMsG4Qtzof4Gi5f/jyWn/59gGgLGdidN/LVVDMAaxrzhH/v/f3QCmQZgBpAlmCIhG1gwyDKRRRlIZjEFskGasBoAwzAUgzTCDsBkA0jhVxQFigBu/6n+YISA2zGYQdhBRw+oFkGa4ATdXVP4H4Y1VkWDMQCpA1kyWATCN5YGu5BsA0gzCHoYWpBswChgAXi8896EtR7sAAAAASUVORK5CYII="
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        -74,
+        0,
+        0
+      ],
+      "translation": [
+        1.25,
+        -1,
+        -2.5
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        -74,
+        0,
+        0
+      ],
+      "translation": [
+        1.25,
+        -1,
+        -2.5
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -58,
+        -40,
+        -12
+      ],
+      "translation": [
+        3.25,
+        4.25,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        -58,
+        -40,
+        -12
+      ],
+      "translation": [
+        0.5,
+        4,
+        -0.5
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        -25
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "gui": {
+      "rotation": [
+        13,
+        -36,
+        -24
+      ],
+      "translation": [
+        0.25,
+        -1,
+        0
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        -20
+      ],
+      "translation": [
+        -0.25,
+        0,
+        0
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    }
+  }
+}

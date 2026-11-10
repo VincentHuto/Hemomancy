@@ -88,6 +88,7 @@ public final class ClientSessionEvents {
         BloodBindingTendrilClientState.clear();
         LivingTorchClientEvents.clear();
         com.vincenthuto.hemomancy.client.player.BloodVialInjectionClientState.clear();
+        com.vincenthuto.hemomancy.client.player.LivingSyringeDrawClientState.clear();
         com.vincenthuto.hemomancy.client.player.HematicMicroscopeClientState.clearSession();
         com.vincenthuto.hemomancy.client.player.LivingStaffMorphClientState.clear();
         com.vincenthuto.hemomancy.client.render.item.QliphothSeedTendrilEffects.clear();

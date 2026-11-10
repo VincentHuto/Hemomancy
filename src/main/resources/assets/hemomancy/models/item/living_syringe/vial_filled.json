@@ -1,0 +1,6 @@
+{
+  "parent": "hemomancy:item/living_syringe/vial_empty",
+  "textures": {
+    "sample_1": "#sample_full"
+  }
+}

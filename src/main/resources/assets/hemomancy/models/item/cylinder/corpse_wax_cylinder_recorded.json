@@ -1,0 +1,6 @@
+{
+  "parent": "hemomancy:item/cylinder/corpse_wax_cylinder",
+  "textures": {
+    "skin": "hemomancy:item/corpse_wax_cylinder_recorded"
+  }
+}

@@ -44,6 +44,8 @@ Status (2026-11-01): built and reviewed in a client and in GameTests on 2026-10-
 
 **Voice.** Every NPC line, card title, card line, thanks and refusal is an `en_us.json` key written against the speaker's sheet in `docs/NPC_VOICES.md` (rules, contrast map with per-speaker words-per-sentence, contractions and question targets, confusable-pair rules). Three passes: pass 1 (2026-10-24) de-AI rewrite, 1,792 keys; pass 2 (2026-10-24) per-speaker sheets, 1,080 keys across 16 speakers; pass 3 (2026-10-31) voice and lore accuracy, 606 keys including Court roles, Circus faculty, trade and rapport keys. Annetta, successors, Misbegotten and the Antecedent recordings (audio-bound) were left alone.
 
+**Brief mode (writing aid).** The client option `debug.dialogueBriefMode` (`hemomancy-client.toml`, off by default, takes effect on the next frame) swaps every dialogue line and player response in `DialogueScreen` for its brief: `[Insert message about <about> here, in a <tone> tone.]` or `[Player response: <about>, in a <tone> tone.]`, with the lang key after it in grey. Briefs are `{"<key>": {"about", "tone"}}` files in `assets/hemomancy/dialogue_briefs/`, loaded by `client/screen/dialogue/DialogueBriefs` on resource reload (F3+T after editing). A key with no brief shows `[No brief yet.]` and its key. The first set (2026-11-07, about 3,300 keys in eight speaker-group files) was written from the English of that date; a rewrite that keeps a line's intent keeps its brief, a new key needs one. `@literal:` lines and the hub's topic cards are not swapped.
+
 ## Where it lives
 
 | Piece | Path |
@@ -63,6 +65,7 @@ Status (2026-11-01): built and reviewed in a client and in GameTests on 2026-10-
 | Guardrails | `src/test/java/com/vincenthuto/hemomancy/architecture/DialogueRoutingGuardrailTest.java`, `.../architecture/NpcTradeGuardrailTest.java` |
 | GameTests | `src/gameTest/.../gametest/NpcTradeGameTests` (`npc_trade_validation`, `npcTradeGameTestServer`, 23 tests, in `alphaCheck`); `DialogueRouteCharacterisationGameTests` (`dialogue_route_validation`) |
 | Review client | `npcTradeReviewClient` row in `gradle/review-clients.gradle`, driver `src/gameTest/.../NpcTradeClientReview`, shots in `build/npc-trade-review/screenshots`; the stone: `monolithHubReviewClient`, driver `MonolithHubClientReview`, shots in `build/monolith-hub-review/screenshots` |
+| Brief mode | `client/screen/dialogue/DialogueBriefs`, `HemoClientConfig.DIALOGUE_BRIEF_MODE`, `src/main/resources/assets/hemomancy/dialogue_briefs/*.json` |
 | Voice sheets and tooling | `docs/NPC_VOICES.md`; `tools/i18n/voice_rewrite/` (`pass2/`, `pass3/` with `notes/*.md`) |
 | Reference and wiki | `docs/HEMOMANCY_REFERENCE.md` §5.4a; `wiki/Getting-Started.md` (dialogue), `wiki/Crimson-Troupe.md`, `wiki/Brined-Court.md`, `wiki/Unstained-Path.md` (trade) |
 
@@ -161,3 +164,11 @@ From the pass-3 writers' notes (`tools/i18n/voice_rewrite/pass3/notes/`, "## Ope
 - 2026-10-31: pass 3 voice and lore-accuracy rewrite (606 keys; Court, Circus, trade and rapport keys), route fingerprint golden regenerated; the dialogue review produced the lore rulings above (NPC_VOICES open decisions 2, 4, 5, 9 decided); the Unstained Scout routed through the hub.
 - 2026-11-01: this topic doc written; the track folder archived.
 - 2026-11-05: the Sanguine Monolith joined the hub with a blood-only Trade box, covenant counsel and new lore ([spec](superpowers/specs/2026-11-05-monolith-dialogue-hub-design.md)).
+- 2026-11-07: dialogue brief mode, a client debug option that shows each line's intent and tone in place of its text, with briefs for about 3,300 keys.
+- 2026-11-08: Hermit voice pass 4. His sheet in `docs/NPC_VOICES.md` was rewritten around the man rather than a cadence, and his 48 lines were rewritten against it (contrast pivots, closing aphorisms and title-plus-compliment greetings removed; hints point to the ledger). After an independent review the same day, his factual slips were fixed, his opening and rank greetings were revised and the sheet moved to the v2 format. Old text beside new is in `tools/i18n/voice_rewrite/pass4/hermit.md`; four route fingerprint rows changed with the text. The audit and the rest of the proposals are in `docs/audits/2026-11-08-dialogue-voice/`.
+- 2026-11-08: voice pass 4 applied to the Vicar and the Alchemist (268 lines, sheets in the v2 format, thirteen route fingerprint rows). Old text beside new is in `tools/i18n/voice_rewrite/pass4/vicar/comparison.md` and `alchemist/comparison.md`.
+- 2026-11-08: voice pass 4 applied to the Mnemonist and the Artificer (346 lines, sheets in the v2 format, 21 route fingerprint rows). Old text beside new is in the `mnemonist/` and `artificer/` folders under `tools/i18n/voice_rewrite/pass4/`.
+- 2026-11-08: voice pass 4 applied to the Vein-Mason (70 lines, sheet in the v2 format, no fingerprint rows). Old text beside new is in `tools/i18n/voice_rewrite/pass4/vein_mason/comparison.md`.
+- 2026-11-08: voice pass 4 applied to the Voyager and the Votary Wayfarer (57 lines, sheets in the v2 format, no fingerprint rows). Old text beside new is in `tools/i18n/voice_rewrite/pass4/voyager_wayfarer/comparison.md`.
+- 2026-11-08: voice pass 4 applied to the Circus (80 lines, Ringmaster and faculty sheets in the v2 format, no fingerprint rows). Old text beside new is in `tools/i18n/voice_rewrite/pass4/circus/comparison.md`.
+- 2026-11-08: voice pass 4 applied to the Successors and Misbegotten (14 lines, sheets in the v2 format, no fingerprint rows). Old text beside new is in `tools/i18n/voice_rewrite/pass4/successors_recruits/comparison.md`.

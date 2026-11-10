@@ -1,0 +1,847 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "skin": "hemomancy:item/corpse_wax_cylinder",
+    "particle": "hemomancy:item/corpse_wax_cylinder"
+  },
+  "elements": [
+    {
+      "name": "bound cuff",
+      "from": [
+        2.5,
+        5.5,
+        7.0
+      ],
+      "to": [
+        3.75,
+        6.0,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            5.4,
+            16,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            5.4,
+            16,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#skin",
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": "#skin",
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        }
+      }
+    },
+    {
+      "name": "bound cuff",
+      "from": [
+        2.5,
+        6.0,
+        6.25
+      ],
+      "to": [
+        3.75,
+        7.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            4.2,
+            16,
+            5.4
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            4.2,
+            16,
+            5.4
+          ]
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#skin",
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        },
+        "east": {
+          "texture": "#skin",
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        }
+      }
+    },
+    {
+      "name": "bound cuff",
+      "from": [
+        2.5,
+        7.0,
+        5.5
+      ],
+      "to": [
+        3.75,
+        9.0,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            1.8,
+            16,
+            4.2
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            1.8,
+            16,
+            4.2
+          ]
+        },
+        "up": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#skin",
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
+        },
+        "east": {
+          "texture": "#skin",
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "bound cuff",
+      "from": [
+        2.5,
+        9.0,
+        6.25
+      ],
+      "to": [
+        3.75,
+        10.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0.6,
+            16,
+            1.8
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0.6,
+            16,
+            1.8
+          ]
+        },
+        "up": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#skin",
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        },
+        "east": {
+          "texture": "#skin",
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        }
+      }
+    },
+    {
+      "name": "bound cuff",
+      "from": [
+        2.5,
+        10.0,
+        7.0
+      ],
+      "to": [
+        3.75,
+        10.5,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0.0,
+            16,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0.0,
+            16,
+            0.6
+          ]
+        },
+        "up": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#skin",
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        },
+        "east": {
+          "texture": "#skin",
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        }
+      }
+    },
+    {
+      "name": "adipocere",
+      "from": [
+        3.75,
+        5.75,
+        7.25
+      ],
+      "to": [
+        12.75,
+        6.25,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            5.33,
+            12,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            5.33,
+            12,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            0,
+            12,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "name": "adipocere",
+      "from": [
+        3.75,
+        6.25,
+        6.5
+      ],
+      "to": [
+        12.75,
+        7.25,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            4.0,
+            12,
+            5.33
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            4.0,
+            12,
+            5.33
+          ]
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            0,
+            12,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "name": "adipocere",
+      "from": [
+        3.75,
+        7.25,
+        5.75
+      ],
+      "to": [
+        12.75,
+        8.75,
+        10.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            2.0,
+            12,
+            4.0
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            2.0,
+            12,
+            4.0
+          ]
+        },
+        "up": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            0,
+            12,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            0,
+            12,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "name": "adipocere",
+      "from": [
+        3.75,
+        8.75,
+        6.5
+      ],
+      "to": [
+        12.75,
+        9.75,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            0.67,
+            12,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            0.67,
+            12,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            0,
+            12,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "name": "adipocere",
+      "from": [
+        3.75,
+        9.75,
+        7.25
+      ],
+      "to": [
+        12.75,
+        10.25,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            0.0,
+            12,
+            0.67
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            0.0,
+            12,
+            0.67
+          ]
+        },
+        "up": {
+          "texture": "#skin",
+          "uv": [
+            0,
+            0,
+            12,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "name": "knotted cuff",
+      "from": [
+        12.75,
+        5.5,
+        7.0
+      ],
+      "to": [
+        13.5,
+        6.0,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            5.4,
+            16,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            5.4,
+            16,
+            6.0
+          ]
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#skin",
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": "#skin",
+          "uv": [
+            2.4,
+            15.2,
+            5.6,
+            16.0
+          ]
+        }
+      }
+    },
+    {
+      "name": "knotted cuff",
+      "from": [
+        12.75,
+        6.0,
+        6.25
+      ],
+      "to": [
+        13.5,
+        7.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            4.2,
+            16,
+            5.4
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            4.2,
+            16,
+            5.4
+          ]
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#skin",
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        },
+        "east": {
+          "texture": "#skin",
+          "uv": [
+            1.2,
+            13.6,
+            6.8,
+            15.2
+          ]
+        }
+      }
+    },
+    {
+      "name": "knotted cuff",
+      "from": [
+        12.75,
+        7.0,
+        5.5
+      ],
+      "to": [
+        13.5,
+        9.0,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            1.8,
+            16,
+            4.2
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            1.8,
+            16,
+            4.2
+          ]
+        },
+        "up": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#skin",
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
+        },
+        "east": {
+          "texture": "#skin",
+          "uv": [
+            0.0,
+            10.4,
+            8.0,
+            13.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "knotted cuff",
+      "from": [
+        12.75,
+        9.0,
+        6.25
+      ],
+      "to": [
+        13.5,
+        10.0,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0.6,
+            16,
+            1.8
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0.6,
+            16,
+            1.8
+          ]
+        },
+        "up": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#skin",
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        },
+        "east": {
+          "texture": "#skin",
+          "uv": [
+            1.2,
+            8.8,
+            6.8,
+            10.4
+          ]
+        }
+      }
+    },
+    {
+      "name": "knotted cuff",
+      "from": [
+        12.75,
+        10.0,
+        7.0
+      ],
+      "to": [
+        13.5,
+        10.5,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0.0,
+            16,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0.0,
+            16,
+            0.6
+          ]
+        },
+        "up": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#skin",
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        },
+        "east": {
+          "texture": "#skin",
+          "uv": [
+            2.4,
+            8.0,
+            5.6,
+            8.8
+          ]
+        }
+      }
+    }
+  ]
+}
