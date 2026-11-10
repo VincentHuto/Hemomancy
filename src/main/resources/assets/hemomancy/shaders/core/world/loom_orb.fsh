@@ -38,11 +38,11 @@ void main() {
                     lineBand(wrapC, threadWidth * 0.68) * 0.56));
     float rim = pow(1.0 - clamp(abs(n.z) * 0.18 + abs(n.y) * 0.34, 0.0, 0.92), 1.6);
 
-    vec3 tendency = vertexColor.rgb * ColorModulator.rgb;
-    vec3 darkThread = tendency * 0.18;
-    vec3 litThread = min(tendency * (1.08 + surfaceLift * 1.4), vec3(1.0));
+    vec3 temper = vertexColor.rgb * ColorModulator.rgb;
+    vec3 darkThread = temper * 0.18;
+    vec3 litThread = min(temper * (1.08 + surfaceLift * 1.4), vec3(1.0));
     vec3 color = mix(litThread, darkThread, clamp(threadBand * 0.86, 0.0, 1.0));
-    color += tendency * rim * (GlowLayer > 0.5 ? 0.28 : 0.08);
+    color += temper * rim * (GlowLayer > 0.5 ? 0.28 : 0.08);
 
     float coreAlpha = vertexColor.a * (0.78 + threadBand * 0.08);
     float glowAlpha = vertexColor.a * (0.18 + rim * 0.14 + threadBand * 0.08);

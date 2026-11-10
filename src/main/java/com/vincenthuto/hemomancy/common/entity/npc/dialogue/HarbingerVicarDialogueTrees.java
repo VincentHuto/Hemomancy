@@ -331,20 +331,20 @@ public final class HarbingerVicarDialogueTrees {
 				.build();
 	}
 
-	/** Degree 2 — Votary. The vicar shares lore about blood tendencies and faction history. */
+	/** Degree 2 — Votary. The vicar shares lore about blood tempers and faction history. */
 	public static DialogueTree votary(int entityId) {
 		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.votary.line1"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.rooted_vein", "rooted_vein", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_tendencies", "tendency_lore", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_tempers", "temper_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
-				.addNode(new DialogueNode("tendency_lore", List.of(
-						"hemomancy.vicar.votary.tendency_lore"
+				.addNode(new DialogueNode("temper_lore", List.of(
+						"hemomancy.vicar.votary.temper_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -34,9 +34,9 @@ public class GloamLacerationManip extends BloodManipulation {
 	private static final float AMBUSH_BONUS = 2.5F;
 
 	public GloamLacerationManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override

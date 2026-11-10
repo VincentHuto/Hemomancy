@@ -42,7 +42,7 @@ public final class EngramSigilRenderer {
 	private static final double RIM = 0.24D;
 	private static final int CAP_FRAGMENT = 0, CAP_ACTIVE = 1, CAP_INTRUSION = 2, CAP_HUSK = 3, CAP_SCAR = 4,
 			CAP_VALVE = 5, CAP_PRISM = 6, CAP_AIM = 7, CAP_AIM_REFUSED = 8, CAP_HEAD = 9, CAP_HOME = 10, CAP_GREY = 11;
-	/** The eight tendencies' ichor, in wheel order; the shader's own palette. */
+	/** The eight tempers' ichor, in wheel order; the shader's own palette. */
 	private static final float[][] ICHOR = {
 			{0.86F, 0.06F, 0.08F}, {1.00F, 0.40F, 0.06F}, {1.00F, 0.86F, 0.16F}, {1.00F, 0.97F, 0.86F},
 			{0.22F, 0.62F, 0.16F}, {0.18F, 0.52F, 1.00F}, {0.58F, 0.60F, 0.64F}, {0.52F, 0.12F, 0.86F}};
@@ -51,8 +51,8 @@ public final class EngramSigilRenderer {
 	private EngramSigilRenderer() {
 	}
 
-	public static float[] ichor(int tendency) {
-		return tendency < 0 || tendency >= ICHOR.length ? GREY : ICHOR[tendency];
+	public static float[] ichor(int temper) {
+		return temper < 0 || temper >= ICHOR.length ? GREY : ICHOR[temper];
 	}
 
 	/** How far the skin has spread (0 to 1) this frame. */

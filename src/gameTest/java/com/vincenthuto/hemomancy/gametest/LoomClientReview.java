@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
@@ -223,7 +223,7 @@ public final class LoomClientReview {
     /** The node nearest the lane's head that the held lane could not step to. */
     private static int refusedNear(SomaticLoomBlockEntity te, int fragment, int head) {
         int[] stock = new int[8];
-        for (EnumBloodTendency tend : EnumBloodTendency.values()) stock[tend.ordinal()] = te.getStoredEnzyme(tend);
+        for (EnumBloodTemper tend : EnumBloodTemper.values()) stock[tend.ordinal()] = te.getStoredEnzyme(tend);
         var at = te.nodeWorld(head);
         int best = -1;
         double bestDistance = Double.MAX_VALUE;
@@ -325,7 +325,7 @@ public final class LoomClientReview {
         level.setBlock(centre.offset(4, 1, 3), Blocks.MOSS_CARPET.defaultBlockState(), 2);
     }
 
-    private static String recipeOfRank(ServerLevel level, EnumManipulationRank rank, int tendencies) {
+    private static String recipeOfRank(ServerLevel level, EnumManipulationRank rank, int tempers) {
         String fallback = null;
         for (RecipeHolder<MemoryWeavingRecipe> holder : level.getRecipeManager().getAllRecipesFor(RecipeInit.memory_weaving_type.get())
                 .stream().sorted(Comparator.comparing(h -> h.id().toString())).toList()) {
@@ -333,7 +333,7 @@ public final class LoomClientReview {
             if (!(result instanceof BloodMemoryItem memory) || memory.getManip() == null || memory.getManip().getRank() != rank) continue;
             if (!holder.value().getCatalysts().stream().allMatch(c -> c.getItems().length > 0)) continue;
             if (fallback == null) fallback = holder.id().getPath();
-            if (holder.value().getRequiredTendencyCount() >= tendencies && holder.value().getTotalEnzymeRequirement() >= 2)
+            if (holder.value().getRequiredTemperCount() >= tempers && holder.value().getTotalEnzymeRequirement() >= 2)
                 return holder.id().getPath();
         }
         return fallback;
@@ -355,7 +355,7 @@ public final class LoomClientReview {
         for (var catalyst : weaving.getCatalysts()) te.addItem(null, catalyst.getItems()[0].copyWithCount(1), null);
         CompoundTag tag = te.saveWithoutMetadata(level.registryAccess());
         CompoundTag stock = new CompoundTag();
-        for (EnumBloodTendency tend : EnumBloodTendency.values()) stock.putInt(tend.name(), 120);
+        for (EnumBloodTemper tend : EnumBloodTemper.values()) stock.putInt(tend.name(), 120);
         tag.put("storedEnzymes", stock);
         te.loadWithComponents(tag, level.registryAccess());
         te.selectRecipe(null, Hemomancy.rloc(recipe));
@@ -400,7 +400,7 @@ public final class LoomClientReview {
         for (int i = 0; i < times; i++) {
             EngramBoard board = te.getEngram();
             int[] stock = new int[8];
-            for (EnumBloodTendency tend : EnumBloodTendency.values()) stock[tend.ordinal()] = te.getStoredEnzyme(tend);
+            for (EnumBloodTemper tend : EnumBloodTemper.values()) stock[tend.ordinal()] = te.getStoredEnzyme(tend);
             for (int lie : LoomWeaveTestSupport.intrusions(board)) {
                 int[] path = LoomWeaveTestSupport.homeward(board, lie, stock);
                 if (path == null) continue;

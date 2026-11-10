@@ -31,13 +31,13 @@ public final class WillWeaponController {
 		}
 		LivingEntity target = will.getTarget();
 		if (target == null || !target.isAlive()) return;
-		if (will.getSchool() == com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.DUCTILIS
+		if (will.getSchool() == com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.DUCTILIS
 				&& will.distanceToSqr(target) > 6.0D * 6.0D
 				&& will.distanceToSqr(target) < 28.0D * 28.0D
 				&& will.tickCount % rangedInterval(will) == 0) {
 			fireBloodBolt(will, target);
 		}
-		if (will.getSchool() == com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.FERRIC
+		if (will.getSchool() == com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.FERRIC
 				&& will.getHealth() < will.getMaxHealth() * 0.5F
 				&& will.tickCount % 140 == 0) {
 			will.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 120, 0, false, true));

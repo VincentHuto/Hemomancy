@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -27,7 +27,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Crimson Tithe — Canon Memory of Saint Hemorath.
- * Tendencies: Animus / Ferric
+ * Tempers: Animus / Ferric
  *
  * Issues blood through the shared borrowed reserve. Unspent blood is reclaimed
  * at the deadline; spent blood is collected at twice its value.
@@ -43,9 +43,9 @@ public class CrimsonTitheManip extends BloodManipulation {
 	private static final int REPAYMENT_WINDOW_TICKS = 600; // 30 seconds
 
 	public CrimsonTitheManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override

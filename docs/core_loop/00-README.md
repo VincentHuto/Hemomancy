@@ -24,7 +24,7 @@ Every track serves one of these. A feature that breaks one is out of scope.
    living plant or vein. In an inert container it stays fresh for a short window after the player last fed it, then
    clots. Clotted blood is not fuel; it is Sanguine Formations, a crafting material. There is no blood battery and no
    blood-as-RF.
-3. **Tendency is carried, not just earned.** Permanent alignment stays as identity (gates, affinity, lessons). Beside
+3. **Temper is carried, not just earned.** Temperament, the permanent alignment, stays as identity (gates, affinity, lessons). Beside
    it sits **Temper**: a small spendable pool per school, filled by absorbing from living creatures or dissolving a
    catalyst, burned by Shapings and casts. Running dry is never a refusal; it costs more blood and weakens the effect.
    Scars slow the burn.
@@ -40,7 +40,7 @@ existing things.
 | 1 | Verb framework: targeting, reach, Shaping hooks, payment, verb selection | [01-verb-framework.md](01-verb-framework.md) | 0 |
 | 2 | First conversions: Lignum Mortis, Pyretic Forge and the brazier, Tendon Line, Blood Binding | [02-first-conversions.md](02-first-conversions.md) | 1 |
 | 3 | Living blood: clotting, small buffers, owner draw, Formation economy | [03-living-blood.md](03-living-blood.md) | 0 |
-| 4 | Temper: the spendable side of tendency, catalysts, scars | [04-temper-and-catalysts.md](04-temper-and-catalysts.md) | 1 (charge point), 3 helps |
+| 4 | Temper: the spendable pool beside Temperament, catalysts, scars | [04-temper-and-catalysts.md](04-temper-and-catalysts.md) | 1 (charge point), 3 helps |
 | 5 | Menagerie and research: binding, vats, sampling cost, the Microscope's job | [05-menagerie-and-research.md](05-menagerie-and-research.md) | 2 (Binding), 4 |
 | 6 | Ground network: stains, gouges, living veins, gutters and basins, catalyst feed, Lux and Tenebris | [06-ground-network.md](06-ground-network.md) | 1, 3 |
 | 7 | Farming and water: drip, planting basins, the cloche, crops, chum | [07-farming-and-water.md](07-farming-and-water.md) | 1, 3, 6 (basins) |
@@ -61,7 +61,7 @@ diagrams, not in-game art, and their numbers are this proposal's values.
 
 - **Stage A, the spine:** 0, then 1, then 2. After Stage A the two verbs do four new things and the player can feel
   the idea. This is the point to stop and play before committing to the rest.
-- **Stage B, the economy:** 3, then 4. These change what blood and tendency are worth. They break the most progression
+- **Stage B, the economy:** 3, then 4. These change what blood and temper are worth. They break the most progression
   proofs, so Track 11's gate table is worked in the same sessions.
 - **Stage C, the world:** 6, then 7, with 5 once 4 is in. This is where the mod meets farming, animals and water.
 - **Stage D, tools and spectacle:** 8 and 9, any time after Stage A.
@@ -84,7 +84,7 @@ says they are independent.
   cancellation, `WorkingCraftRites.hintAt`, block endpoints for rites and structures.
 - `ProjectedBloodSink` and `IBloodReservoir` as the way projected blood reaches a block entity.
 - The Suture routing data (`BloodRoutingSavedData`, `DirectBloodLinkData`) and its Degree 3 and Degree 5 steps.
-- Permanent tendency alignment, its gates (`Humilis`, `Mediocritas`, avatar), scars' transient alignment, and the
+- Temperament (permanent alignment), its gates (`Humilis`, `Mediocritas`, avatar), scars' transient alignment, and the
   Brazier offering lifecycle for scar teaching.
 - First Draws, First Separation and every `PendingDelivery` claim in `AGENTS.md`.
 - Hemorath's arena and the Saint complexes' use of gutters and basins (`SaintArena.set/schedule/revert`,
@@ -135,7 +135,7 @@ Asked here once; each track repeats the ones it needs. My recommendation is in b
 | CL-6 | Flask and Jug: clot like any container, or cut? [Clot; they become the way to carry blood to a job or to make Formations] | 3 |
 | CL-7 | A machine whose owner is offline or out of range. [It stalls and its buffer clots; that is the rule working] | 3 |
 | CL-8 | May a player absorb from another player's machines and vats? [Yes outside a bloodline only if a config flag allows it; default owner and bloodline only] | 3, 5 |
-| CL-9 | Name for the spendable tendency pool. [Temper] | 4 |
+| CL-9 | Name for the spendable temper pool. [Temper] | 4 |
 | CL-10 | Does Temper apply to R combat casts or only to Shapings? [Both, one rule: never refused, dry costs more and hits softer; combat multipliers start mild] | 4 |
 | CL-11 | What death does to Temper. [Lose half] | 4 |
 | CL-12 | Is an unexamined creature's blood weaker, or only unlabelled? [Only unlabelled; research is knowledge, not a gate] | 5 |
@@ -154,6 +154,7 @@ Asked here once; each track repeats the ones it needs. My recommendation is in b
 | CL-25 | Movement speed while a strand is out. [Spray 1.0, Lash 0.8, Plant and Brand 0.6, Jet 0.5; a skill lifts them] | 12 |
 | CL-26 | Absorption specialises by the school state on the target (one rider table), not by per-manipulation hooks. [Yes] | 12 |
 | CL-27 | A second strand from the off hand as a late skill. [Defer] | 12 |
+| CL-28 | Rename "tendency". **Ruled 2026-11-09 and carried out:** the eight kinds are **Tempers**, a player's permanent profile is their **Temperament**, and the spendable pool of `CL-9` keeps the name **Temper**. Code, data keys, lang, the Liber chapter and live docs were renamed in one sweep (`EnumBloodTemper`, `BloodTemperament`, `/hemo temper`). Dated records under `docs/archive`, `docs/superpowers` and `docs/audits` keep the old word. | all |
 
 Existing open questions this overhaul answers, makes moot or collides with are listed by id in Track 11.
 

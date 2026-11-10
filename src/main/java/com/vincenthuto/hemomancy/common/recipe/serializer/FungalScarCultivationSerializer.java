@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.*;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,12 +18,12 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
     // ── JSON helpers ──────────────────────────────────────────────────────────
 
     private static FungalScarCultivationRecipe fromJsonObject(ResourceLocation recipeId, JsonObject json, DynamicOps<JsonElement> jsonOps) {
-        String tendencyStr = GsonHelper.getAsString(json, "tendency");
-        EnumBloodTendency tendency;
+        String temperStr = GsonHelper.getAsString(json, "temper");
+        EnumBloodTemper temper;
         try {
-            tendency = EnumBloodTendency.valueOf(tendencyStr.toUpperCase());
+            temper = EnumBloodTemper.valueOf(temperStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new JsonSyntaxException("Unknown tendency: " + tendencyStr);
+            throw new JsonSyntaxException("Unknown temper: " + temperStr);
         }
         float bloodCostPhase1   = GsonHelper.getAsFloat(json,  "blood_cost_phase1",   600f);
         int   phase1Duration    = GsonHelper.getAsInt(json,    "phase1_duration",      600);
@@ -33,7 +33,7 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
                 : RecipeResultStackParser.parseResultStack(json, "result", jsonOps);
         ItemStack immature      = RecipeResultStackParser.parseResultStack(json, "immature_result", jsonOps);
         ItemStack result        = RecipeResultStackParser.parseResultStack(json, "result", jsonOps);
-        return new FungalScarCultivationRecipe(recipeId, tendency, bloodCostPhase1,
+        return new FungalScarCultivationRecipe(recipeId, temper, bloodCostPhase1,
                 phase1Duration, matThreshold, seed, immature, result);
     }
 
@@ -41,11 +41,11 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
 
     private static final MapCodec<FungalScarCultivationRecipe> CODEC = RecipeCodecJson.bridge("FungalScarCultivationRecipe", "fungal_scar/unknown",
     		FungalScarCultivationSerializer::fromJsonObject, FungalScarCultivationSerializer::encode,
-    		"tendency", "blood_cost_phase1", "phase1_duration", "maturation_threshold", "seed", "immature_result", "result", "id");
+    		"temper", "blood_cost_phase1", "phase1_duration", "maturation_threshold", "seed", "immature_result", "result", "id");
 
     private static <T> RecordBuilder<T> encode(FungalScarCultivationRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
         prefix.add("id",                   ops.createString(recipe.getId().toString()));
-        prefix.add("tendency",             ops.createString(recipe.getTendency().name()));
+        prefix.add("temper",             ops.createString(recipe.getTemper().name()));
         prefix.add("blood_cost_phase1",    ops.createFloat(recipe.getBloodCostPhase1()));
         prefix.add("phase1_duration",      ops.createInt(recipe.getPhase1Duration()));
         prefix.add("maturation_threshold", ops.createInt(recipe.getMaturationThreshold()));
@@ -71,20 +71,20 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
 
     private static FungalScarCultivationRecipe fromNetwork(RegistryFriendlyByteBuf buf) {
         ResourceLocation id          = buf.readResourceLocation();
-        EnumBloodTendency tendency   = EnumBloodTendency.valueOf(buf.readUtf());
+        EnumBloodTemper temper   = EnumBloodTemper.valueOf(buf.readUtf());
         float bloodCostPhase1        = buf.readFloat();
         int   phase1Duration         = buf.readVarInt();
         int   matThreshold           = buf.readVarInt();
         ItemStack seed               = ItemStack.STREAM_CODEC.decode(buf);
         ItemStack immature           = ItemStack.STREAM_CODEC.decode(buf);
         ItemStack result             = ItemStack.STREAM_CODEC.decode(buf);
-        return new FungalScarCultivationRecipe(id, tendency, bloodCostPhase1,
+        return new FungalScarCultivationRecipe(id, temper, bloodCostPhase1,
                 phase1Duration, matThreshold, seed, immature, result);
     }
 
     private static void toNetwork(RegistryFriendlyByteBuf buf, FungalScarCultivationRecipe recipe) {
         buf.writeResourceLocation(recipe.getId());
-        buf.writeUtf(recipe.getTendency().name());
+        buf.writeUtf(recipe.getTemper().name());
         buf.writeFloat(recipe.getBloodCostPhase1());
         buf.writeVarInt(recipe.getPhase1Duration());
         buf.writeVarInt(recipe.getMaturationThreshold());

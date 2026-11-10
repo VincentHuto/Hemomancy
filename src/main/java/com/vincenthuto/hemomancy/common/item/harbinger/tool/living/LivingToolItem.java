@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.util.HemoText;
@@ -32,26 +32,26 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 
-public class LivingToolItem extends DiggerItem implements IDispellable, ITendencyAlignedWeapon {
+public class LivingToolItem extends DiggerItem implements IDispellable, ITemperAlignedWeapon {
 	/** Pays whatever is asked, emptying the volume when short; F-15 (pending) would gate and stop that. */
 	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_tool", Category.TOOL, false, false);
 	private static final HashSet<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
 	private final float attackDamage;
 	protected final float speed;
 	@Nullable
-	private final EnumBloodTendency weaponTendency;
+	private final EnumBloodTemper weaponTemper;
 
 	public LivingToolItem(float speedIn, float attackDamageIn, float attackSpeedIn, Tier tier, Properties builderIn) {
 		this(speedIn, attackDamageIn, attackSpeedIn, null, tier, builderIn);
 	}
 
 	public LivingToolItem(float speedIn, float attackDamageIn, float attackSpeedIn,
-			@Nullable EnumBloodTendency weaponTendency, Tier tier, Properties builderIn) {
+			@Nullable EnumBloodTemper weaponTemper, Tier tier, Properties builderIn) {
 		super(tier, BlockTags.WART_BLOCKS,
 				builderIn.attributes(DiggerItem.createAttributes(tier, attackDamageIn, attackSpeedIn)));
 		this.attackDamage = attackDamageIn;
 		this.speed = speedIn;
-		this.weaponTendency = weaponTendency;
+		this.weaponTemper = weaponTemper;
 	}
 
 	protected float getLivingAttackDamage() {
@@ -85,7 +85,7 @@ public class LivingToolItem extends DiggerItem implements IDispellable, ITendenc
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		TendencyWeaponHelper.appendTendencyTooltip(stack, tooltip);
+		TemperWeaponHelper.appendTemperTooltip(stack, tooltip);
 		tooltip.add(HemoText.translatable("tooltip.hemomancy.living_tool.melee_blood_cost_50_chance_of",
 				(int) (getLivingAttackDamage() * 25f)).withStyle(ChatFormatting.DARK_RED));
 		if (this instanceof LivingBladeItem || this instanceof LivingAxeItem) {
@@ -100,8 +100,8 @@ public class LivingToolItem extends DiggerItem implements IDispellable, ITendenc
 
 	@Override
 	@Nullable
-	public EnumBloodTendency hemomancy$getWeaponTendency() {
-		return weaponTendency;
+	public EnumBloodTemper hemomancy$getWeaponTemper() {
+		return weaponTemper;
 	}
 
 	@Override

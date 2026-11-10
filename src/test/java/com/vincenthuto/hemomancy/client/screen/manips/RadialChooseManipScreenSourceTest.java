@@ -84,7 +84,7 @@ class RadialChooseManipScreenSourceTest {
 				"visibleInnerItems");
 		assertContains("generic radial exposes inner add API", menu,
 				"addAllInner");
-		assertContains("reliquary hides fixed mechanics from normal tendency groups", reliquary,
+		assertContains("reliquary hides fixed mechanics from normal temper groups", reliquary,
 				"ManipulationEquipHelper.isFixedMechanicalManip(manip.getName())");
 		assertContains("reliquary normal-slot counter excludes fixed mechanics", reliquary,
 				"equippedManips.size()");

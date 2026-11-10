@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.VeinMinerHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.event.BloodFeedStyle;
@@ -52,15 +52,15 @@ public class LignumMortisManip extends BloodManipulation {
 	private final Mode mode;
 
 	public LignumMortisManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		this(name, cost, alignLevel, xpCost, type, rank, tendency, section, Mode.STANDARD);
+		this(name, cost, alignLevel, xpCost, type, rank, temper, section, Mode.STANDARD);
 	}
 
 	public LignumMortisManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section, Mode mode) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 		this.mode = mode;
 	}
 
@@ -167,8 +167,8 @@ public class LignumMortisManip extends BloodManipulation {
 	private int maxRadius(Player player) {
 		ManipLevel level = HemoCapabilityAccess.getKnownManipulations(player).getManipLevel(this);
 		int mastery = level != null ? level.getCurrentLevel() : 0;
-		double mortem = (double) HemoCapabilityAccess.getBloodTendency(player).getAlignmentByTendency(EnumBloodTendency.MORTEM);
-		double animus = (double) HemoCapabilityAccess.getBloodTendency(player).getAlignmentByTendency(EnumBloodTendency.ANIMUS);
+		double mortem = (double) HemoCapabilityAccess.getBloodTemperament(player).getAlignmentByTemper(EnumBloodTemper.MORTEM);
+		double animus = (double) HemoCapabilityAccess.getBloodTemperament(player).getAlignmentByTemper(EnumBloodTemper.ANIMUS);
 		return LignumMortisRules.maxRadius(mastery, mortem, animus,
 				SkillPointHelper.getSanguineReachMultiplier(player));
 	}
@@ -196,7 +196,7 @@ public class LignumMortisManip extends BloodManipulation {
 				Block.popResource(level, pos, new ItemStack(BlockInit.infested_wood.get()));
 			}
 			if(level.destroyBlock(pos, false, player))
-                com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.accent(level,EnumBloodTendency.MORTEM,
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.accent(level,EnumBloodTemper.MORTEM,
                         Vec3.atCenterOf(pos),new Vec3(0,-.15,0));
 		}
 	}

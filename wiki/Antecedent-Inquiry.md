@@ -1,10 +1,10 @@
 # Antecedent Inquiry
 
-This optional investigation follows sculk, Ancient Cities, and evidence of an earlier incursion. It adds no blood tendency and does not gate the main Harbinger path.
+This optional investigation follows sculk, Ancient Cities, and evidence of an earlier incursion. It adds no blood temper and does not gate the main Harbinger path.
 
 ## Collect and examine
 
-Use a Living Syringe with a loaded Vial Rack on a living Warden or a Sculk Catalyst. Either source gives the separate **Unidentified Dark Sample** item. After a 40-tick Hematic Microscope examination, it identifies as **Ahaematic Colloid**: no hematic content, tendency, or enzyme response, and classification **Incertae**. Catalyst sampling leaves the block in place.
+Use a Living Syringe with a loaded Vial Rack on a living Warden or a Sculk Catalyst. Either source gives the separate **Unidentified Dark Sample** item. After a 40-tick Hematic Microscope examination, it identifies as **Ahaematic Colloid**: no hematic content, temper, or enzyme response, and classification **Incertae**. Catalyst sampling leaves the block in place.
 
 Creative, JEI, and plain command-created Colloid stacks default to a Warden specimen and can be examined immediately. The Warden default is fixed; Catalyst provenance comes from actual Catalyst sampling or explicitly supplied specimen data. The microscope's inclusions and signal marks are editable PNGs (`colloid_inclusion.png`, `colloid_signal.png`, and `colloid_direction.png`) under `assets/hemomancy/textures/gui/microscope/`.
 

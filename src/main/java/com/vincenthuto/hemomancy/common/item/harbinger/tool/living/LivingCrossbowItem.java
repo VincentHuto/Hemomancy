@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.entity.projectile.GoreWoundHarpoonEntity;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -51,10 +51,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public class LivingCrossbowItem extends CrossbowItem implements IDispellable, ITendencyAlignedWeapon {
+public class LivingCrossbowItem extends CrossbowItem implements IDispellable, ITemperAlignedWeapon {
 	/** Pays whatever is asked, emptying the volume when short; F-15 (pending) would gate and stop that. */
 	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_crossbow", Category.TOOL, false, false);
-	private static final EnumBloodTendency WEAPON_TENDENCY = EnumBloodTendency.DUCTILIS;
+	private static final EnumBloodTemper WEAPON_TEMPER = EnumBloodTemper.DUCTILIS;
 
 	private static void addChargedProjectile(ItemStack crossbow, ItemStack projectile, HolderLookup.Provider registryAccess) {
 		CompoundTag CompoundTag = crossbow.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
@@ -375,7 +375,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-		TendencyWeaponHelper.appendTendencyTooltip(stack, tooltip);
+		TemperWeaponHelper.appendTemperTooltip(stack, tooltip);
 		tooltip.add(Component.translatable("tooltip.hemomancy.living_crossbow.blood_bolt_50_chance_of_50").withStyle(ChatFormatting.DARK_RED));
 		List<ItemStack> list = getChargedProjectiles(stack, context.registries());
 		if (isCharged(stack) && !list.isEmpty()) {
@@ -556,7 +556,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 	}
 
 	@Override
-	public EnumBloodTendency hemomancy$getWeaponTendency() {
-		return WEAPON_TENDENCY;
+	public EnumBloodTemper hemomancy$getWeaponTemper() {
+		return WEAPON_TEMPER;
 	}
 }

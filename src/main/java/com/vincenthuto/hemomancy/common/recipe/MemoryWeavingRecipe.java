@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -15,31 +15,31 @@ import java.util.stream.Collectors;
 
 public class MemoryWeavingRecipe extends StationRecipe {
 
-	public static final int MAX_ENZYMES_PER_TENDENCY = 8;
-	private static final double LEGACY_BLOOD_COST_PER_TENDENCY = 50.0;
+	public static final int MAX_ENZYMES_PER_TEMPER = 8;
+	private static final double LEGACY_BLOOD_COST_PER_TEMPER = 50.0;
 
 	private final ResourceLocation id;
 	private final List<Ingredient> catalysts;
-	private final EnumMap<EnumBloodTendency, Integer> enzymeRequirements;
+	private final EnumMap<EnumBloodTemper, Integer> enzymeRequirements;
 	private final double bloodCost;
 	private final ItemStack result;
 
-	public static HashMap<EnumBloodTendency, Float> blank() {
+	public static HashMap<EnumBloodTemper, Float> blank() {
 		return new HashMap<>(Map.of(
-				EnumBloodTendency.ANIMUS, 0f,
-				EnumBloodTendency.MORTEM, 0f,
-				EnumBloodTendency.DUCTILIS, 0f,
-				EnumBloodTendency.FERRIC, 0f,
-				EnumBloodTendency.LUX, 0f,
-				EnumBloodTendency.TENEBRIS, 0f,
-				EnumBloodTendency.FLAMMEUS, 0f,
-				EnumBloodTendency.CONGEATIO, 0f));
+				EnumBloodTemper.ANIMUS, 0f,
+				EnumBloodTemper.MORTEM, 0f,
+				EnumBloodTemper.DUCTILIS, 0f,
+				EnumBloodTemper.FERRIC, 0f,
+				EnumBloodTemper.LUX, 0f,
+				EnumBloodTemper.TENEBRIS, 0f,
+				EnumBloodTemper.FLAMMEUS, 0f,
+				EnumBloodTemper.CONGEATIO, 0f));
 	}
 
-	public static EnumMap<EnumBloodTendency, Integer> blankEnzymeRequirements() {
-		EnumMap<EnumBloodTendency, Integer> blank = new EnumMap<>(EnumBloodTendency.class);
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			blank.put(tendency, 0);
+	public static EnumMap<EnumBloodTemper, Integer> blankEnzymeRequirements() {
+		EnumMap<EnumBloodTemper, Integer> blank = new EnumMap<>(EnumBloodTemper.class);
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			blank.put(temper, 0);
 		}
 		return blank;
 	}
@@ -50,7 +50,7 @@ public class MemoryWeavingRecipe extends StationRecipe {
 	}
 
 	public MemoryWeavingRecipe(ResourceLocation id, List<Ingredient> catalysts,
-			Map<EnumBloodTendency, Integer> enzymeRequirements, double bloodCost, ItemStack result) {
+			Map<EnumBloodTemper, Integer> enzymeRequirements, double bloodCost, ItemStack result) {
 		this.id = id;
 		this.catalysts = sanitizeCatalysts(catalysts);
 		this.enzymeRequirements = sanitizeEnzymes(enzymeRequirements);
@@ -59,13 +59,13 @@ public class MemoryWeavingRecipe extends StationRecipe {
 	}
 
 	public MemoryWeavingRecipe(ResourceLocation id, Ingredient ingredient,
-			Map<EnumBloodTendency, Float> tendencies, ItemStack result) {
-		this(id, legacyCatalysts(ingredient), legacyEnzymes(tendencies),
-				legacyBloodCost(tendencies), result);
+			Map<EnumBloodTemper, Float> tempers, ItemStack result) {
+		this(id, legacyCatalysts(ingredient), legacyEnzymes(tempers),
+				legacyBloodCost(tempers), result);
 	}
 
-	public MemoryWeavingRecipe(ResourceLocation id, Map<EnumBloodTendency, Float> tendencies, ItemStack result) {
-		this(id, Ingredient.EMPTY, tendencies, result);
+	public MemoryWeavingRecipe(ResourceLocation id, Map<EnumBloodTemper, Float> tempers, ItemStack result) {
+		this(id, Ingredient.EMPTY, tempers, result);
 	}
 
 	private static List<Ingredient> sanitizeCatalysts(List<Ingredient> rawCatalysts) {
@@ -81,14 +81,14 @@ public class MemoryWeavingRecipe extends StationRecipe {
 		return List.copyOf(cleaned);
 	}
 
-	private static EnumMap<EnumBloodTendency, Integer> sanitizeEnzymes(Map<EnumBloodTendency, Integer> raw) {
-		EnumMap<EnumBloodTendency, Integer> cleaned = blankEnzymeRequirements();
+	private static EnumMap<EnumBloodTemper, Integer> sanitizeEnzymes(Map<EnumBloodTemper, Integer> raw) {
+		EnumMap<EnumBloodTemper, Integer> cleaned = blankEnzymeRequirements();
 		if (raw == null) {
 			return cleaned;
 		}
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			int amount = Math.max(0, raw.getOrDefault(tendency, 0));
-			cleaned.put(tendency, Math.min(MAX_ENZYMES_PER_TENDENCY, amount));
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			int amount = Math.max(0, raw.getOrDefault(temper, 0));
+			cleaned.put(temper, Math.min(MAX_ENZYMES_PER_TEMPER, amount));
 		}
 		return cleaned;
 	}
@@ -100,27 +100,27 @@ public class MemoryWeavingRecipe extends StationRecipe {
 		return List.of(ingredient);
 	}
 
-	private static EnumMap<EnumBloodTendency, Integer> legacyEnzymes(Map<EnumBloodTendency, Float> tendencies) {
-		EnumMap<EnumBloodTendency, Integer> enzymes = blankEnzymeRequirements();
-		if (tendencies == null) {
+	private static EnumMap<EnumBloodTemper, Integer> legacyEnzymes(Map<EnumBloodTemper, Float> tempers) {
+		EnumMap<EnumBloodTemper, Integer> enzymes = blankEnzymeRequirements();
+		if (tempers == null) {
 			return enzymes;
 		}
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			enzymes.put(tendency, tendencies.getOrDefault(tendency, 0f) > 0f ? 1 : 0);
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			enzymes.put(temper, tempers.getOrDefault(temper, 0f) > 0f ? 1 : 0);
 		}
 		return enzymes;
 	}
 
-	private static double legacyBloodCost(Map<EnumBloodTendency, Float> tendencies) {
+	private static double legacyBloodCost(Map<EnumBloodTemper, Float> tempers) {
 		double count = 0.0D;
-		if (tendencies != null) {
-			for (Float value : tendencies.values()) {
+		if (tempers != null) {
+			for (Float value : tempers.values()) {
 				if (value != null && value > 0f) {
 					count++;
 				}
 			}
 		}
-		return count * LEGACY_BLOOD_COST_PER_TENDENCY;
+		return count * LEGACY_BLOOD_COST_PER_TEMPER;
 	}
 
 	public ResourceLocation getId() {
@@ -172,22 +172,22 @@ public class MemoryWeavingRecipe extends StationRecipe {
 	}
 
 	/**
-	 * Legacy tendency view. Values now mirror integer enzyme requirements.
+	 * Legacy temper view. Values now mirror integer enzyme requirements.
 	 */
-	public Map<EnumBloodTendency, Float> getTendency() {
-		Map<EnumBloodTendency, Float> view = blank();
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			view.put(tendency, (float) getEnzymeRequirement(tendency));
+	public Map<EnumBloodTemper, Float> getTemper() {
+		Map<EnumBloodTemper, Float> view = blank();
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			view.put(temper, (float) getEnzymeRequirement(temper));
 		}
 		return view;
 	}
 
-	public Map<EnumBloodTendency, Integer> getEnzymeRequirements() {
+	public Map<EnumBloodTemper, Integer> getEnzymeRequirements() {
 		return Map.copyOf(enzymeRequirements);
 	}
 
-	public int getEnzymeRequirement(EnumBloodTendency tendency) {
-		return enzymeRequirements.getOrDefault(tendency, 0);
+	public int getEnzymeRequirement(EnumBloodTemper temper) {
+		return enzymeRequirements.getOrDefault(temper, 0);
 	}
 
 	public int getTotalEnzymeRequirement() {
@@ -214,12 +214,12 @@ public class MemoryWeavingRecipe extends StationRecipe {
 				&& catalysts.equals(checkRecipe.catalysts);
 	}
 
-	public void setTendency(Map<EnumBloodTendency, Float> tendency) {
+	public void setTemper(Map<EnumBloodTemper, Float> temper) {
 		enzymeRequirements.clear();
-		enzymeRequirements.putAll(legacyEnzymes(tendency));
+		enzymeRequirements.putAll(legacyEnzymes(temper));
 	}
 
-	public int getRequiredTendencyCount() {
+	public int getRequiredTemperCount() {
 		int count = 0;
 		for (int amount : enzymeRequirements.values()) {
 			if (amount > 0) {
@@ -242,7 +242,7 @@ public class MemoryWeavingRecipe extends StationRecipe {
 	}
 
 	public static int getOrbCountForRequirement(int requirement) {
-		return Mth.clamp(requirement, 0, MAX_ENZYMES_PER_TENDENCY);
+		return Mth.clamp(requirement, 0, MAX_ENZYMES_PER_TEMPER);
 	}
 
 	@Override

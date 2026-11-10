@@ -116,7 +116,7 @@ public final class BloodVialInjectionClientState {
             world.addParticle(HemoParticleData.bloodCell(new ParticleColor(190, 10, 35)),
                     at.x, at.y, at.z, velocity.x, velocity.y, velocity.z);
         }
-        ManipulationAmbientParticles.accept(new ManipulationAccentPacket(animation.packet.tendency(), null,
+        ManipulationAmbientParticles.accept(new ManipulationAccentPacket(animation.packet.temper(), null,
                 at, outward.normalize(), -1, false));
         world.playLocalSound(at.x, at.y, at.z, SoundInit.BLOOD_VIAL_INJECT.get(), SoundSource.PLAYERS, .7F, 1, false);
     }

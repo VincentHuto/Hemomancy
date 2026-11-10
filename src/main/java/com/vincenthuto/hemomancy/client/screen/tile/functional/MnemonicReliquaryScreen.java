@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.client.screen.manips.ManipulationIconResolver;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
@@ -57,7 +57,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	private float currentLayoutScale = 1.0F;
 
 	private final Map<String, ItemStack> manipItemCache = new HashMap<>();
-	private final Map<EnumBloodTendency, List<BloodManipulation>> tendencyGroups = new LinkedHashMap<>();
+	private final Map<EnumBloodTemper, List<BloodManipulation>> temperGroups = new LinkedHashMap<>();
 	private List<BloodManipulation> equippedManips = new ArrayList<>();
 	private List<ThelemicMemory> knownThelemicMemories = new ArrayList<>();
 	private List<ThelemicMemory> preparedThelemicMemories = new ArrayList<>();
@@ -145,10 +145,10 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		equippedThelemicMemories.clear();
 		equippedNames.clear();
 		availableManipNames.clear();
-		tendencyGroups.clear();
+		temperGroups.clear();
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			tendencyGroups.put(tend, new ArrayList<>());
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) {
+			temperGroups.put(tend, new ArrayList<>());
 		}
 
 		var known = HemoCapabilityAccess.getKnownManipulations(player);
@@ -169,9 +169,9 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			BloodManipulation displayManip = availableManipNames.contains(displayId)
 					? ManipulationInit.getByName(displayId) : manip;
 			if (displayManip == null) displayManip = manip;
-			EnumBloodTendency tend = displayManip.getTend();
-			if (tend != null && tendencyGroups.containsKey(tend)) {
-				tendencyGroups.get(tend).add(displayManip);
+			EnumBloodTemper tend = displayManip.getTend();
+			if (tend != null && temperGroups.containsKey(tend)) {
+				temperGroups.get(tend).add(displayManip);
 			}
 		}
 
@@ -190,7 +190,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			}
 		}
 
-		for (List<BloodManipulation> list : tendencyGroups.values()) {
+		for (List<BloodManipulation> list : temperGroups.values()) {
 			list.sort(Comparator.comparingInt(m -> m.getRank().ordinal()));
 		}
 	}
@@ -204,19 +204,19 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		int cy = guiTop + currentGuiHeight / 2;
 		int iconGap = scaled(2);
 
-		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
-		double angleStep = (2.0 * Math.PI) / tendencies.length;
+		EnumBloodTemper[] tempers = EnumBloodTemper.values();
+		double angleStep = (2.0 * Math.PI) / tempers.length;
 		int groupRadius = currentBrainRadius + scaled(42);
 
-		for (int t = 0; t < tendencies.length; t++) {
-			EnumBloodTendency tend = tendencies[t];
+		for (int t = 0; t < tempers.length; t++) {
+			EnumBloodTemper tend = tempers[t];
 			double angle = -Math.PI / 2 + t * angleStep;
 			int groupCx = cx + (int) (groupRadius * Math.cos(angle));
 			int groupCy = cy + (int) (groupRadius * Math.sin(angle));
 
-			List<BloodManipulation> manips = tendencyGroups.getOrDefault(tend, Collections.emptyList());
+			List<BloodManipulation> manips = temperGroups.getOrDefault(tend, Collections.emptyList());
 			List<ThelemicMemory> prepared = preparedThelemicMemories.stream()
-					.filter(memory -> memory.primaryTendency() == tend).toList();
+					.filter(memory -> memory.primaryTemper() == tend).toList();
 			int count = manips.size() + prepared.size();
 			int cols = Math.max(1, Math.min(count, 3));
 			int rows = (count + cols - 1) / cols;
@@ -294,7 +294,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		ScreenDrawUtils.drawBorder(graphics, gx, gy, currentGuiWidth, currentGuiHeight, 0xFF330808, 0xFF220606);
 		drawBrainArea(graphics, partialTicks);
 		drawVascularSectionSlots(graphics);
-		drawTendencyLabels(graphics);
+		drawTemperLabels(graphics);
 		drawKnownManips(graphics, mouseX, mouseY);
 		drawPreparedTinctures(graphics);
 		drawEquippedManips(graphics, mouseX, mouseY);
@@ -484,16 +484,16 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		graphics.drawString(font, text, x, y, 0xFFDD2222);
 	}
 
-	private void drawTendencyLabels(GuiGraphics graphics) {
+	private void drawTemperLabels(GuiGraphics graphics) {
 		int cx = guiLeft + currentGuiWidth / 2;
 		int cy = guiTop + currentGuiHeight / 2;
-		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
-		double angleStep = (2.0 * Math.PI) / tendencies.length;
+		EnumBloodTemper[] tempers = EnumBloodTemper.values();
+		double angleStep = (2.0 * Math.PI) / tempers.length;
 		int labelRadius = currentBrainRadius + scaled(42);
 		int iconGap = scaled(2);
 
-		for (int t = 0; t < tendencies.length; t++) {
-			EnumBloodTendency tend = tendencies[t];
+		for (int t = 0; t < tempers.length; t++) {
+			EnumBloodTemper tend = tempers[t];
 			double angle = -Math.PI / 2 + t * angleStep;
 			int lx = cx + (int) (labelRadius * Math.cos(angle));
 			int ly = cy + (int) (labelRadius * Math.sin(angle));
@@ -503,9 +503,9 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			int b = (int) tend.getColor().getBlue();
 			int color = 0xFF000000 | (r << 16) | (g << 8) | b;
 
-			List<BloodManipulation> manips = tendencyGroups.getOrDefault(tend, Collections.emptyList());
+			List<BloodManipulation> manips = temperGroups.getOrDefault(tend, Collections.emptyList());
 			int count = manips.size() + (int) preparedThelemicMemories.stream()
-					.filter(memory -> memory.primaryTendency() == tend).count();
+					.filter(memory -> memory.primaryTemper() == tend).count();
 			int cols = Math.max(1, Math.min(count, 3));
 			int rows = (count + cols - 1) / cols;
 			int gridH = rows * (currentIconSize + iconGap);
@@ -566,7 +566,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		List<Component> tooltip = new ArrayList<>();
 		tooltip.add(hovered.getDisplayName().withStyle(s -> s.withBold(true)));
 		tooltip.add(Component.translatable("screen.hemomancy.mnemonic_reliquary.noetic_memory"));
-		tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.tendency", HLTextUtils.convertInitToLang(hovered.getTend().name())));
+		tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.temper", HLTextUtils.convertInitToLang(hovered.getTend().name())));
 		tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.rank", HLTextUtils.convertInitToLang(hovered.getRank().name())));
 		tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.type", HLTextUtils.convertInitToLang(hovered.getType().name())));
 		tooltip.add(HemoText.translatable("screen.hemomancy.mnemonic_reliquary.cost", String.format("%.1f", hovered.getCost())));
@@ -863,7 +863,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 	protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
 	}
 
-	private record ManipIcon(BloodManipulation manip, int x, int y, EnumBloodTendency tendency) {
+	private record ManipIcon(BloodManipulation manip, int x, int y, EnumBloodTemper temper) {
 	}
 
 	private record PreparedThelemicIcon(ThelemicMemory memory, int x, int y) {

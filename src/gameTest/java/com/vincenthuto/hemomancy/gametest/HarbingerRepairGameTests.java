@@ -1126,7 +1126,7 @@ public final class HarbingerRepairGameTests {
         var blood = HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true); blood.setBloodVolume(1000);
         helper.assertTrue(loom.tryChargeRitualBlood(player, 50, true), "Selected weave must accept its authored blood charge");
-        var animus = com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS;
+        var animus = com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.ANIMUS;
         // Each enzyme dissolves into thread spans, and paying blood spends none of them: spans are only
         // committed by weaving the engram, and only spent when it completes.
         int stockedBefore = loom.getStoredEnzyme(animus);

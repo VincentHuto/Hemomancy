@@ -55,8 +55,8 @@ public final class DuctilisGameTests {
             var ward=ManipulationInit.sanguine_ward.get();
             var blood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player);
             blood.setActive(true);blood.setBloodVolume(2000);
-            for (var tendency:com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.values())
-                com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tendency,100);
+            for (var temper:com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.values())
+                com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(temper,100);
             known.getKnownManips().put(ward,new com.vincenthuto.hemomancy.common.manipulation.ManipLevel(4,185));
             known.setEquippedManipNames(java.util.List.of(ward.getName()));known.setSelectedManip(ward);
             com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.start(player);
@@ -274,8 +274,8 @@ public final class DuctilisGameTests {
         var ward=ManipulationInit.sanguine_ward.get();
         var blood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true); blood.setBloodVolume(2000);
-        for (var tendency:com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.values())
-            com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tendency,100);
+        for (var temper:com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.values())
+            com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(temper,100);
         var known=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getKnownManipulations(player);
         known.getKnownManips().put(ward,new com.vincenthuto.hemomancy.common.manipulation.ManipLevel(4,185));
         known.setEquippedManipNames(java.util.List.of(ward.getName())); known.setSelectedManip(ward);
@@ -360,7 +360,7 @@ public final class DuctilisGameTests {
             h.assertTrue(!ConductionManager.claimHit(caster,first,new Discharge()),"Separate relay multiplied a direct hit");
             com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper.markConductive(first,80);
             h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper.tryTriggerConductiveArc(caster,first,
-                    com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.DUCTILIS,null,3,discharge),"Mark did not arc");
+                    com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.DUCTILIS,null,3,discharge),"Mark did not arc");
             h.assertTrue(second.getHealth()<second.getMaxHealth(),"Marked arc had no damage");
             h.assertTrue(!ConductionManager.claimHit(caster,second,new Discharge()),"Environment could hit the marked-arc victim twice");
             h.succeed();

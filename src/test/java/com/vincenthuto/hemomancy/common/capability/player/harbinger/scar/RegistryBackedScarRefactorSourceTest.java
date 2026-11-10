@@ -40,7 +40,7 @@ class RegistryBackedScarRefactorSourceTest {
 		assertContains("item scar exposes definition", itemScar, "getScarDefinition()");
 		assertNotContains("item scar no local modifier builder", itemScar, "ItemScar withModifier");
 		assertNotContains("item scar no local effect builder", itemScar, "ItemScar withEffect");
-		assertNotContains("item init no constructor-built scar effects", itemInit, "new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency");
+		assertNotContains("item init no constructor-built scar effects", itemInit, "new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTemper");
 		assertContains("item init uses scar registry", itemInit, "ScarInit.scar_heart");
 	}
 

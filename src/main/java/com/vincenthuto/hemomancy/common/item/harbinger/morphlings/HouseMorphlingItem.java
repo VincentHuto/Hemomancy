@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * A Brined Court house strain. Identity (tendencies, Latin, passive effect) comes from its
+ * A Brined Court house strain. Identity (tempers, Latin, passive effect) comes from its
  * {@link MorphlingStrain} row; each strain's class adds its power ladder (Brined Court Track 2).
  */
 public abstract class HouseMorphlingItem extends MorphlingItem {
@@ -16,12 +16,12 @@ public abstract class HouseMorphlingItem extends MorphlingItem {
 	public abstract MorphlingStrain strain();
 
 	@Override
-	public EnumBloodTendency getPreferredTendency() {
+	public EnumBloodTemper getPreferredTemper() {
 		return strain().preferred();
 	}
 
 	@Override
-	public EnumBloodTendency getSecondaryTendency() {
+	public EnumBloodTemper getSecondaryTemper() {
 		return strain().secondary();
 	}
 

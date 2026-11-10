@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyDamageCarrier;
+import com.vincenthuto.hemomancy.common.manipulation.TemperDamageCarrier;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.UUID;
 
-public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrierProjectile, TendencyDamageCarrier {
+public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrierProjectile, TemperDamageCarrier {
     private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> VISUAL_FORM =
             net.minecraft.network.syncher.SynchedEntityData.defineId(BloodShotEntity.class,
                     net.minecraft.network.syncher.EntityDataSerializers.INT);
@@ -73,9 +73,9 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
     public int visualForm(){return entityData.get(VISUAL_FORM);}
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
 	@Nullable
-	private EnumBloodTendency damageTendency;
+	private EnumBloodTemper damageTemper;
 	@Nullable
-	private EnumBloodTendency secondaryDamageTendency;
+	private EnumBloodTemper secondaryDamageTemper;
 	@Nullable
 	private UUID homingTargetId;
 	private int homingTicks;
@@ -105,7 +105,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	}
 
 	/**
-	 * A shot shed by a manipulation. The held item still lends its tendency through {@link #getCombatWeaponItem()},
+	 * A shot shed by a manipulation. The held item still lends its temper through {@link #getCombatWeaponItem()},
 	 * but vanilla arrow hooks never see it: no Sharpness, Piercing or post-attack enchantments ride the blood.
 	 */
 	public static BloodShotEntity fromManipulation(Level worldIn, LivingEntity shooter, @Nullable ItemStack heldItem) {
@@ -119,9 +119,9 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		super.addAdditionalSaveData(compound);
         compound.putInt("VisualForm",visualForm());
 		CombatWeaponCarrierProjectile.save(compound, this.combatWeaponItem, this.registryAccess());
-		if (damageTendency != null) compound.putString("DamageTendency", damageTendency.name());
-		if (secondaryDamageTendency != null) {
-			compound.putString("SecondaryDamageTendency", secondaryDamageTendency.name());
+		if (damageTemper != null) compound.putString("DamageTemper", damageTemper.name());
+		if (secondaryDamageTemper != null) {
+			compound.putString("SecondaryDamageTemper", secondaryDamageTemper.name());
 		}
 		if (homingTargetId != null) compound.putUUID("HomingTarget", homingTargetId);
 		compound.putInt("HomingTicks", homingTicks);
@@ -138,22 +138,22 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 
 	@Override
 	@Nullable
-	public EnumBloodTendency getDamageTendency() {
-		return damageTendency;
+	public EnumBloodTemper getDamageTemper() {
+		return damageTemper;
 	}
 
-	public void setDamageTendency(@Nullable EnumBloodTendency damageTendency) {
-		this.damageTendency = damageTendency;
+	public void setDamageTemper(@Nullable EnumBloodTemper damageTemper) {
+		this.damageTemper = damageTemper;
 	}
 
 	@Override
 	@Nullable
-	public EnumBloodTendency getSecondaryDamageTendency() {
-		return secondaryDamageTendency;
+	public EnumBloodTemper getSecondaryDamageTemper() {
+		return secondaryDamageTemper;
 	}
 
-	public void setSecondaryDamageTendency(@Nullable EnumBloodTendency secondaryDamageTendency) {
-		this.secondaryDamageTendency = secondaryDamageTendency;
+	public void setSecondaryDamageTemper(@Nullable EnumBloodTemper secondaryDamageTemper) {
+		this.secondaryDamageTemper = secondaryDamageTemper;
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
         if (com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this) == null)
             living.addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
 		com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.impact(
-				living, damageTendency, secondaryDamageTendency, getDeltaMovement());
+				living, damageTemper, secondaryDamageTemper, getDeltaMovement());
 
 	}
 
@@ -209,8 +209,8 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		super.readAdditionalSaveData(compound);
         entityData.set(VISUAL_FORM,compound.getInt("VisualForm"));
 		this.combatWeaponItem = CombatWeaponCarrierProjectile.load(compound, this.registryAccess());
-		this.damageTendency = readDamageTendency(compound);
-		this.secondaryDamageTendency = readTendency(compound, "SecondaryDamageTendency");
+		this.damageTemper = readDamageTemper(compound);
+		this.secondaryDamageTemper = readTemper(compound, "SecondaryDamageTemper");
 		this.homingTargetId = compound.hasUUID("HomingTarget") ? compound.getUUID("HomingTarget") : null;
 		this.homingTicks = compound.getInt("HomingTicks");
 		this.mortar = compound.getBoolean("Mortar");
@@ -335,11 +335,11 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 			var context = com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this);
             if (context == null) context = com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(
                     com.vincenthuto.hemomancy.Hemomancy.rloc("hematic_mortar"),
-                    damageTendency == null ? EnumBloodTendency.ANIMUS : damageTendency, secondaryDamageTendency, owner);
+                    damageTemper == null ? EnumBloodTemper.ANIMUS : damageTemper, secondaryDamageTemper, owner);
             if (target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(
                     server.damageSources().indirectMagic(this, owner), context, owner), Math.max(3.0F, damage)))
 				com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.impact(
-						target, damageTendency, secondaryDamageTendency, target.position().subtract(position()));
+						target, damageTemper, secondaryDamageTemper, target.position().subtract(position()));
 		}
 		// Count 3 is the splash's mortar variant: an upward burst with a shock ring.
 		Vec3 heading = getDeltaMovement().lengthSqr() > 1.0E-6D ? getDeltaMovement().normalize() : new Vec3(0, -1, 0);
@@ -350,14 +350,14 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	}
 
 	@Nullable
-	private static EnumBloodTendency readDamageTendency(CompoundTag compound) {
-		return readTendency(compound, "DamageTendency");
+	private static EnumBloodTemper readDamageTemper(CompoundTag compound) {
+		return readTemper(compound, "DamageTemper");
 	}
 
 	@Nullable
-	private static EnumBloodTendency readTendency(CompoundTag compound, String key) {
+	private static EnumBloodTemper readTemper(CompoundTag compound, String key) {
 		try {
-			return compound.contains(key) ? EnumBloodTendency.valueOf(compound.getString(key)) : null;
+			return compound.contains(key) ? EnumBloodTemper.valueOf(compound.getString(key)) : null;
 		} catch (IllegalArgumentException ignored) {
 			return null;
 		}

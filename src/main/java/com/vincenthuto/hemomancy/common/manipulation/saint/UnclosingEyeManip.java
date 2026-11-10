@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.saint;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * Unclosing Eye — Canon Memory of Saint Seraphae.
- * Tendencies: Lux / Ductilis
+ * Tempers: Lux / Ductilis
  *
  * <p>Seraphae's gaze strips concealment from every living thing within range —
  * concealment is suppressed, all entities glow, and the caster is revealed too.
@@ -41,9 +41,9 @@ public class UnclosingEyeManip extends BloodManipulation {
 	private static final double SCAN_RADIUS = 32.0;
 
 	public UnclosingEyeManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class UnclosingEyeManip extends BloodManipulation {
 		world.playSound(null, player.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0f, 1.5f);
 
 		if (world instanceof ServerLevel sLevel) {
-			ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, player.position().add(0, 2.5, 0), net.minecraft.world.phys.Vec3.ZERO);
+			ManipulationParticles.accent(sLevel, EnumBloodTemper.LUX, player.position().add(0, 2.5, 0), net.minecraft.world.phys.Vec3.ZERO);
 		}
 	        }
     }

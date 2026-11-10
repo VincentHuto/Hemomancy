@@ -73,7 +73,7 @@ Whenever code, resources, gameplay behavior, balancing, progression, recipes, co
 - `wiki/Getting-Started.md`: onboarding, installation, early-game guidance, first rituals, UI, controls, troubleshooting.
 - `wiki/Harbinger-Path.md`: Harbinger degrees, Cardinal Rites, bloodlines, recruitment, Somatic Loom, Drudges, Morphlings, Puppeteering, Harbinger armor, Qliphoth, Fungal Whispers, Mycophant/Vesper endings.
 - `wiki/Unstained-Path.md`: purification stages, Hemolytic Solution, White Humor, copper equipment, Lethean mechanics, guardian style, Pale Lady and Still Waters content.
-- `wiki/Blood-Systems.md`: Blood Volume, tendencies, manipulations, vascular systems, skill tree, status effects, blood routing, learning and cooldown rules.
+- `wiki/Blood-Systems.md`: Blood Volume, tempers, manipulations, vascular systems, skill tree, status effects, blood routing, learning and cooldown rules.
 - `wiki/Lore-and-Story.md`: factions, cosmology, characters, structures, endings, moral framing, Fungal Entity, Pale Lady, Unstained and Harbinger worldview.
 - `wiki/Mod-Compatibility.md`: dependencies, JEI, TerraBlender, GeckoLib, HutosLib, dormant MnA/Curios notes, tags, configs, modpack advice.
 - `wiki/Developer-Reference.md`: APIs, architecture, build/test commands, datagen, resources, contribution guidance, technical status.
@@ -86,7 +86,7 @@ Whenever code, resources, gameplay behavior, balancing, progression, recipes, co
 - The Unstained began as former Harbingers. They are not simple heroes and treat blood magic as infection that can be painfully shed.
 - The Fungal Entity and Pale Lady are amoral forces of nature, not Satan/God analogues.
 - Common society should see hemomancy as eerie and taboo, not as a simple apocalypse cult.
-- Preserve existing vocabulary. Internal tendencies are `ANIMUS`, `FLAMMEUS`, `DUCTILIS`, `LUX`, `MORTEM`, `CONGEATIO`, `FERRIC`, `TENEBRIS`; enzyme item names intentionally use different terms.
+- Preserve existing vocabulary. Internal tempers are `ANIMUS`, `FLAMMEUS`, `DUCTILIS`, `LUX`, `MORTEM`, `CONGEATIO`, `FERRIC`, `TENEBRIS`; enzyme item names intentionally use different terms.
 
 ## Resources And Data Expectations
 

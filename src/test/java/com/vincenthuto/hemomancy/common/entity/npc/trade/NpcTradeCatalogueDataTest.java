@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class NpcTradeCatalogueDataTest {
 	private static final Set<String> GRADERS_THAT_REFUSE = Set.of(NpcTradeAppraisals.DURABILITY,
-			NpcTradeAppraisals.TENDENCY, NpcTradeAppraisals.SPECIMEN);
+			NpcTradeAppraisals.TEMPER, NpcTradeAppraisals.SPECIMEN);
 
 	private static final NpcTradeLoader.Environment ENV = new NpcTradeLoader.Environment() {
 		private final Set<String> hemomancyItems = frozenItems();

@@ -18,9 +18,9 @@ class EngramWeaveRulesTest {
 		return stock;
 	}
 
-	private static int[] counts(int tendency, int n) {
+	private static int[] counts(int temper, int n) {
 		int[] counts = new int[8];
-		counts[tendency] = n;
+		counts[temper] = n;
 		return counts;
 	}
 
@@ -112,7 +112,7 @@ class EngramWeaveRulesTest {
 	}
 
 	@Test
-	void keyedFacesTakeOnlyTheirTendency() {
+	void keyedFacesTakeOnlyTheirTemper() {
 		int face = face(LINE[2]);
 		EngramBoard wrong = EngramBoard.blank(true, Math.floorMod(face + 1, 8));
 		int a = wrong.addFragment(0, ANIMUS, ANIMUS, false, "");
@@ -125,8 +125,8 @@ class EngramWeaveRulesTest {
 		EngramWeaveRules.extend(right, b, LINE[1], plenty());
 		EngramWeaveRules.extend(right, b, LINE[2], plenty());
 		assertEquals(Step.OK, EngramWeaveRules.extend(right, b, VESSEL, plenty()));
-		assertEquals(ANIMUS, EngramWeaveRules.faceTendency(right, face));
-		assertEquals(FLAMMEUS, EngramWeaveRules.faceTendency(right, face + 1), "the wheel runs clockwise in enum order");
+		assertEquals(ANIMUS, EngramWeaveRules.faceTemper(right, face));
+		assertEquals(FLAMMEUS, EngramWeaveRules.faceTemper(right, face + 1), "the wheel runs clockwise in enum order");
 	}
 
 	@Test

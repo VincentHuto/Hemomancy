@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.*;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWeavingRecipe> {
 	private static MemoryWeavingRecipe fromJsonObject(ResourceLocation recipeId, JsonObject json, DynamicOps<JsonElement> jsonOps) {
 		List<Ingredient> catalysts = parseCatalysts(json, jsonOps);
-		EnumMap<EnumBloodTendency, Integer> enzymes = parseEnzymes(json);
+		EnumMap<EnumBloodTemper, Integer> enzymes = parseEnzymes(json);
 		double blood = json.has("blood")
 				? Math.max(0.0D, GsonHelper.getAsDouble(json, "blood"))
 				: legacyBloodCost(enzymes);
@@ -67,44 +67,44 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 				.getOrThrow(err -> new JsonSyntaxException("Invalid ingredient: " + err));
 	}
 
-	private static EnumMap<EnumBloodTendency, Integer> parseEnzymes(JsonObject json) {
-		EnumMap<EnumBloodTendency, Integer> enzymes = MemoryWeavingRecipe.blankEnzymeRequirements();
+	private static EnumMap<EnumBloodTemper, Integer> parseEnzymes(JsonObject json) {
+		EnumMap<EnumBloodTemper, Integer> enzymes = MemoryWeavingRecipe.blankEnzymeRequirements();
 		if (json.has("enzymes")) {
 			JsonObject enzymeJson = GsonHelper.getAsJsonObject(json, "enzymes");
-			for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-				String key = tendency.toString().toLowerCase();
+			for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+				String key = temper.toString().toLowerCase();
 				int amount = enzymeJson.has(key) ? GsonHelper.getAsInt(enzymeJson, key) : 0;
 				validateEnzymeAmount(key, amount);
-				enzymes.put(tendency, amount);
+				enzymes.put(temper, amount);
 			}
 			return enzymes;
 		}
 
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			String key = tendency.toString().toLowerCase();
-			enzymes.put(tendency, json.has(key) && GsonHelper.getAsBoolean(json, key) ? 1 : 0);
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			String key = temper.toString().toLowerCase();
+			enzymes.put(temper, json.has(key) && GsonHelper.getAsBoolean(json, key) ? 1 : 0);
 		}
 		return enzymes;
 	}
 
 	private static void validateEnzymeAmount(String key, int amount) {
-		if (amount < 0 || amount > MemoryWeavingRecipe.MAX_ENZYMES_PER_TENDENCY) {
+		if (amount < 0 || amount > MemoryWeavingRecipe.MAX_ENZYMES_PER_TEMPER) {
 			throw new JsonSyntaxException("Memory weaving enzyme '" + key + "' must be between 0 and "
-					+ MemoryWeavingRecipe.MAX_ENZYMES_PER_TENDENCY + ", got " + amount);
+					+ MemoryWeavingRecipe.MAX_ENZYMES_PER_TEMPER + ", got " + amount);
 		}
 	}
 
-	private static double legacyBloodCost(Map<EnumBloodTendency, Integer> enzymes) {
-		int requiredTendencies = 0;
+	private static double legacyBloodCost(Map<EnumBloodTemper, Integer> enzymes) {
+		int requiredTempers = 0;
 		for (int amount : enzymes.values()) {
 			if (amount > 0) {
-				requiredTendencies++;
+				requiredTempers++;
 			}
 		}
-		return requiredTendencies * 50.0D;
+		return requiredTempers * 50.0D;
 	}
 
-	private static final String[] KEYS = Stream.concat( Stream.of("id", "catalysts", "ingredient", "enzymes", "blood", "result", "count"), Stream.of(EnumBloodTendency.values()).map(e -> e.toString().toLowerCase())).toArray(String[]::new);
+	private static final String[] KEYS = Stream.concat( Stream.of("id", "catalysts", "ingredient", "enzymes", "blood", "result", "count"), Stream.of(EnumBloodTemper.values()).map(e -> e.toString().toLowerCase())).toArray(String[]::new);
 
 	private static final MapCodec<MemoryWeavingRecipe> CODEC = RecipeCodecJson.bridge("MemoryWeavingRecipe", "memory_weaving/unknown",
 			MemoryWeavingRecipeSerializer::fromJsonObject, MemoryWeavingRecipeSerializer::encode,
@@ -115,8 +115,8 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		prefix.add("catalysts", Ingredient.CODEC_NONEMPTY.listOf().encodeStart(ops, recipe.getCatalysts()));
 	
 		JsonObject enzymes = new JsonObject();
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			enzymes.addProperty(tendency.toString().toLowerCase(), recipe.getEnzymeRequirement(tendency));
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			enzymes.addProperty(temper.toString().toLowerCase(), recipe.getEnzymeRequirement(temper));
 		}
 		prefix.add("enzymes", JsonOps.INSTANCE.convertTo(ops, enzymes));
 		prefix.add("blood", ops.createDouble(recipe.getBloodCost()));
@@ -145,9 +145,9 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		for (int i = 0; i < catalystCount; i++) {
 			catalysts.add(Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
 		}
-		EnumMap<EnumBloodTendency, Integer> enzymes = MemoryWeavingRecipe.blankEnzymeRequirements();
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			enzymes.put(tendency, buffer.readVarInt());
+		EnumMap<EnumBloodTemper, Integer> enzymes = MemoryWeavingRecipe.blankEnzymeRequirements();
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			enzymes.put(temper, buffer.readVarInt());
 		}
 		double blood = buffer.readDouble();
 		ItemStack output = ItemStack.STREAM_CODEC.decode(buffer);
@@ -161,8 +161,8 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		for (Ingredient catalyst : recipe.getCatalysts()) {
 			Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, catalyst);
 		}
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			buffer.writeVarInt(recipe.getEnzymeRequirement(tendency));
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			buffer.writeVarInt(recipe.getEnzymeRequirement(temper));
 		}
 		buffer.writeDouble(recipe.getBloodCost());
 		ItemStack result = recipe.getResultItem(null);

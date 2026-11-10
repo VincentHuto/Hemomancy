@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -32,9 +32,9 @@ public class VitricCombustionManip extends BloodManipulation {
 	private static final double KNOCKBACK_STRENGTH = 1.2;
 
 	public VitricCombustionManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override

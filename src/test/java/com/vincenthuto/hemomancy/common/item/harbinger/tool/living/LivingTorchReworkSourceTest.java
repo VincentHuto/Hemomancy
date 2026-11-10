@@ -13,7 +13,7 @@ final class LivingTorchReworkSourceTest {
 	@Test
 	void meleeStatsAndCrimsonIgnitionRemainIntact() throws IOException {
 		String item = read("common/item/harbinger/tool/living/LivingTorchItem.java");
-		assertContains(item, "super(speedIn, attackDamageIn, -2.1f, EnumBloodTendency.FLAMMEUS");
+		assertContains(item, "super(speedIn, attackDamageIn, -2.1f, EnumBloodTemper.FLAMMEUS");
 		assertFalse(item.contains("igniteCrimson"), "Searing must replace the vanilla burn stream");
 	}
 

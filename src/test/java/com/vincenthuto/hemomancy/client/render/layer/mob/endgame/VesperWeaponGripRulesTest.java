@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.layer.mob.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -11,16 +11,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 final class VesperWeaponGripRulesTest {
 	@Test
 	void pairedLivingClawsUseMirroredHandedYaw() throws Exception {
-		Method yaw = rules().getMethod("yawDegrees", EnumBloodTendency.class, boolean.class);
-		assertEquals(180.0F, (float) yaw.invoke(null, EnumBloodTendency.TENEBRIS, false), 0.001F);
-		assertEquals(0.0F, (float) yaw.invoke(null, EnumBloodTendency.TENEBRIS, true), 0.001F);
+		Method yaw = rules().getMethod("yawDegrees", EnumBloodTemper.class, boolean.class);
+		assertEquals(180.0F, (float) yaw.invoke(null, EnumBloodTemper.TENEBRIS, false), 0.001F);
+		assertEquals(0.0F, (float) yaw.invoke(null, EnumBloodTemper.TENEBRIS, true), 0.001F);
 	}
 
 	@Test
 	void singleWeaponFormsKeepTheirExistingHandedYaw() throws Exception {
-		Method yaw = rules().getMethod("yawDegrees", EnumBloodTendency.class, boolean.class);
-		assertEquals(180.0F, (float) yaw.invoke(null, EnumBloodTendency.ANIMUS, false), 0.001F);
-		assertEquals(0.0F, (float) yaw.invoke(null, EnumBloodTendency.ANIMUS, true), 0.001F);
+		Method yaw = rules().getMethod("yawDegrees", EnumBloodTemper.class, boolean.class);
+		assertEquals(180.0F, (float) yaw.invoke(null, EnumBloodTemper.ANIMUS, false), 0.001F);
+		assertEquals(0.0F, (float) yaw.invoke(null, EnumBloodTemper.ANIMUS, true), 0.001F);
 	}
 
 	private static Class<?> rules() {

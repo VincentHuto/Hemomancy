@@ -1,20 +1,20 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 
 /** Stable specimen layout; presentation limits never alter the shared profile. */
-public record MicroscopeComposition(long seed, List<EnumBloodTendency> tendencies, List<ResourceLocation> properties) {
+public record MicroscopeComposition(long seed, List<EnumBloodTemper> tempers, List<ResourceLocation> properties) {
     public enum Motif { AQUATIC, FLYING, VENOMOUS, ARTHROPOD, COLD_NATIVE, NETHER_NATIVE, ENDER, UNDEAD, FUNGAL, EXPLOSIVE, BURROWING, NEUTRAL }
 
     public static MicroscopeComposition of(BloodSampleData.Profile profile) {
         StringBuilder key = new StringBuilder(String.valueOf(profile.sourceEntityId()));
-        profile.tendencies().forEach(t -> key.append('|').append(t.name()));
+        profile.tempers().forEach(t -> key.append('|').append(t.name()));
         profile.properties().forEach(p -> key.append('|').append(p));
         long seed = 0xcbf29ce484222325L;
         for (int i = 0; i < key.length(); i++) seed = (seed ^ key.charAt(i)) * 0x100000001b3L;
-        return new MicroscopeComposition(seed, profile.tendencies().stream().limit(3).toList(), profile.properties().stream().limit(2).toList());
+        return new MicroscopeComposition(seed, profile.tempers().stream().limit(3).toList(), profile.properties().stream().limit(2).toList());
     }
 
     public static Motif motif(ResourceLocation property) {

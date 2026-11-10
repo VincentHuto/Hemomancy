@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodConstructEntity;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.damage.*;
@@ -32,9 +32,9 @@ public class CloudEntityBlood extends BloodConstructEntity {
 	@Nullable
 	private UUID creatorId;
 	@Nullable
-	private EnumBloodTendency damageTendency;
+	private EnumBloodTemper damageTemper;
 	@Nullable
-	private EnumBloodTendency secondaryDamageTendency;
+	private EnumBloodTemper secondaryDamageTemper;
 	private int durationTicks = 100;
 	private Mode mode = Mode.STATIC;
 	static final String DAMAGE_MULTIPLIER_TAG = "DamageMultiplier";
@@ -54,10 +54,10 @@ public class CloudEntityBlood extends BloodConstructEntity {
 		this.creatorId = creator != null ? creator.getUUID() : null;
 	}
 
-	public void setDamageTendencies(@Nullable EnumBloodTendency damageTendency,
-			@Nullable EnumBloodTendency secondaryDamageTendency) {
-		this.damageTendency = damageTendency;
-		this.secondaryDamageTendency = secondaryDamageTendency;
+	public void setDamageTempers(@Nullable EnumBloodTemper damageTemper,
+			@Nullable EnumBloodTemper secondaryDamageTemper) {
+		this.damageTemper = damageTemper;
+		this.secondaryDamageTemper = secondaryDamageTemper;
 	}
 
 	public void setDamageMultiplier(float multiplier) {
@@ -89,9 +89,9 @@ public class CloudEntityBlood extends BloodConstructEntity {
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 		if (creatorId != null) tag.putUUID("Creator", creatorId);
-		if (damageTendency != null) tag.putString("DamageTendency", damageTendency.name());
-		if (secondaryDamageTendency != null) {
-			tag.putString("SecondaryDamageTendency", secondaryDamageTendency.name());
+		if (damageTemper != null) tag.putString("DamageTemper", damageTemper.name());
+		if (secondaryDamageTemper != null) {
+			tag.putString("SecondaryDamageTemper", secondaryDamageTemper.name());
 		}
 		tag.putDouble("EffectRadius", effectRadius());
 		tag.putInt("DurationTicks", durationTicks);
@@ -103,8 +103,8 @@ public class CloudEntityBlood extends BloodConstructEntity {
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 		creatorId = tag.hasUUID("Creator") ? tag.getUUID("Creator") : null;
-		damageTendency = readTendency(tag, "DamageTendency");
-		secondaryDamageTendency = readTendency(tag, "SecondaryDamageTendency");
+		damageTemper = readTemper(tag, "DamageTemper");
+		secondaryDamageTemper = readTemper(tag, "SecondaryDamageTemper");
 		if (tag.contains("EffectRadius")) entityData.set(EFFECT_RADIUS,
 				(float) Math.max(0.5D, tag.getDouble("EffectRadius")));
 		if (tag.contains("DurationTicks")) durationTicks = tag.getInt("DurationTicks");
@@ -121,9 +121,9 @@ public class CloudEntityBlood extends BloodConstructEntity {
     private net.minecraft.world.damagesource.DamageSource cloudDamage(net.minecraft.world.damagesource.DamageSource nativeSource,
             boolean firstContact) {
         SchoolHitContext hit = SchoolDamage.projectileContext(this);
-        if (hit == null && damageTendency != null) {
+        if (hit == null && damageTemper != null) {
             hit = SchoolHitContext.direct(com.vincenthuto.hemomancy.Hemomancy.rloc("blood_cloud"),
-                    damageTendency, secondaryDamageTendency, creator);
+                    damageTemper, secondaryDamageTemper, creator);
             SchoolDamage.capture(this, hit);
         }
         if (hit == null) return nativeSource;
@@ -175,9 +175,9 @@ public class CloudEntityBlood extends BloodConstructEntity {
 	}
 
 	@Nullable
-	private static EnumBloodTendency readTendency(CompoundTag tag, String key) {
+	private static EnumBloodTemper readTemper(CompoundTag tag, String key) {
 		try {
-			return tag.contains(key) ? EnumBloodTendency.valueOf(tag.getString(key)) : null;
+			return tag.contains(key) ? EnumBloodTemper.valueOf(tag.getString(key)) : null;
 		} catch (IllegalArgumentException ignored) {
 			return null;
 		}

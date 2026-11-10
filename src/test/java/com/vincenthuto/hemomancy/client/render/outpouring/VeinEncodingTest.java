@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.outpouring;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import org.junit.jupiter.api.Test;
@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class VeinEncodingTest {
     @Test void roundTrip() {
-        for (var school : EnumBloodTendency.values()) for (var section : EnumVeinSections.values())
+        for (var school : EnumBloodTemper.values()) for (var section : EnumVeinSections.values())
             for (var rank : EnumManipulationRank.values()) {
-                var secondary = EnumBloodTendency.values()[(school.ordinal() + 3) % 8];
+                var secondary = EnumBloodTemper.values()[(school.ordinal() + 3) % 8];
                 var packed = VeinEncoding.pack(school, secondary, section, rank, .62f, .37f, .81f, true, true, 1234);
                 float[] out = VeinEncoding.unpack(packed);
                 assertEquals(school.ordinal(), out[VeinEncoding.SCHOOL]);
@@ -28,7 +28,7 @@ class VeinEncodingTest {
     }
 
     @Test void noSecondaryIsEight() {
-        var packed = VeinEncoding.pack(EnumBloodTendency.LUX, null, EnumVeinSections.HEAD, EnumManipulationRank.HUMILIS,
+        var packed = VeinEncoding.pack(EnumBloodTemper.LUX, null, EnumVeinSections.HEAD, EnumManipulationRank.HUMILIS,
                 1, 0, 1, false, false, 0);
         assertEquals(8, VeinEncoding.unpack(packed)[VeinEncoding.SECONDARY]);
         assertEquals(0, VeinEncoding.unpack(packed)[VeinEncoding.OFF_HAND]);

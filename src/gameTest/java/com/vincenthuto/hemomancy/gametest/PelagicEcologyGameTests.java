@@ -538,11 +538,11 @@ public final class PelagicEcologyGameTests {
 
     @GameTest(template = "pool", timeoutTicks = 40)
     public static void everyBiologicalBloodProfileLoadsWithoutEnvironmentalReassignment(GameTestHelper h) {
-        var tendencies = new String[]{"FERRIC", "ANIMUS", "DUCTILIS", "DUCTILIS", "TENEBRIS", "MORTEM"};
+        var tempers = new String[]{"FERRIC", "ANIMUS", "DUCTILIS", "DUCTILIS", "TENEBRIS", "MORTEM"};
         for (int i = 0; i < CREATURES.length; i++) {
             var type = BuiltInRegistries.ENTITY_TYPE.get(Hemomancy.rloc(CREATURES[i]));
             var profile = com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData.profile(type, false);
-            h.assertTrue(profile.tendencies().size() == 1 && profile.tendencies().getFirst().name().equals(tendencies[i]), "Wrong blood tendency " + CREATURES[i]);
+            h.assertTrue(profile.tempers().size() == 1 && profile.tempers().getFirst().name().equals(tempers[i]), "Wrong blood temper " + CREATURES[i]);
             h.assertTrue(profile.requiresLivingSyringe() == (i == 0), "Wrong syringe gate " + CREATURES[i]);
         }
         h.succeed();

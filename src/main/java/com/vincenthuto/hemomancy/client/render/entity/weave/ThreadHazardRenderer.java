@@ -26,7 +26,7 @@ public class ThreadHazardRenderer extends EntityRenderer<ThreadHazardEntity> {
 	@Override
 	public void render(ThreadHazardEntity hazard, float yaw, float partialTicks, PoseStack stack, MultiBufferSource buffer, int light) {
 		float time = AnimationTime.age(hazard, partialTicks);
-		float[] c = ThreadKnotGeometry.vivid(hazard.tendency().getColor());
+		float[] c = ThreadKnotGeometry.vivid(hazard.temper().getColor());
 		float r = hazard.radius();
 		float pulse = 0.25f + 0.15f * Mth.sin(time * 0.2f);
 		VertexConsumer vc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);

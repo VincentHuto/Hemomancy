@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 public final class MemoryWeavingRecipeResourceShapeTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final Path RECIPE_DIR = ROOT.resolve("src/main/resources/data/hemomancy/recipe/memory_weaving");
-	private static final String[] LEGACY_TENDENCY_KEYS = {
+	private static final String[] LEGACY_TEMPER_KEYS = {
 			"\"animus\": true", "\"flammeus\": true", "\"ductilis\": true", "\"lux\": true",
 			"\"mortem\": true", "\"congeatio\": true", "\"ferric\": true", "\"tenebris\": true"
 	};
@@ -32,7 +32,7 @@ public final class MemoryWeavingRecipeResourceShapeTest {
 				assertContains(path, json, "\"enzymes\"");
 				assertContains(path, json, "\"blood\"");
 				assertDoesNotContain(path, json, "\"ingredient\"");
-				for (String legacy : LEGACY_TENDENCY_KEYS) {
+				for (String legacy : LEGACY_TEMPER_KEYS) {
 					assertDoesNotContain(path, json, legacy);
 				}
 			}

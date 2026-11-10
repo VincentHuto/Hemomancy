@@ -20,7 +20,7 @@ Counts in this file come from read-only audits on 2026-11-08 and 2026-11-09. Re-
 | D2 | Rooted / Earthen Vein lesson | Collides with living veins | The Earthen Vein is tier 3 of the ground network; rewrite the lesson to say so | 6 |
 | D3 → D4 | Loom and anchors | Retune | The Loom loses its unused tank; anchors count as living during a rite | 3 |
 | D3 → D4 | Pallid Vessel (blood in a White Gourd) | Safe | Gourds are living | 3 |
-| D4 → D5 | Scar pattern by strongest tendency | Retune | Alignment is unchanged; scars gain the Temper role | 4 |
+| D4 → D5 | Scar pattern by strongest temper | Retune | Alignment is unchanged; scars gain the Temper role | 4 |
 | D5 | Strain from casts | Breaks if casts become verbs | Shaping pulses add strain at a per-second rate set to match | 1 |
 | D4 → D5 | First Culture (Lantern enzyme) | Breaks if the Lantern is replaced | Re-house, keep the id (`CL-15`) | 7 |
 | D5 → D6 | Quintessence, Bloodwell | Retune | Check each against clotting and owner draw | 3 |
@@ -49,7 +49,7 @@ Each needs a line in its track's acceptance, and a GameTest that the old behavio
 | Circus (Crossbar, Spindle) | Use the channel | Check after Track 1 |
 | Chamber visits | `ChamberVisitService` snapshots inventory | Snapshot Temper and the verb toggle too, or leave them out on purpose and say so |
 | Unstained | No blood magic | Stains, gouges and vats need an Unstained answer (cleansing); note it, build it with their ritual system later |
-| Thelemic Memories | Tendency shift | Exempt from Temper |
+| Thelemic Memories | Temperament shift | Exempt from Temper |
 | Heartwood, Bloodwood | Feeding core | A living vessel candidate; check with Track 7 |
 | Blood Moon | Track 10 | |
 | Combat casts (Track 12) | A strand hit opens a `SchoolDamage.cast` scope, as an R cast does | It stops a Marionette channel, counts toward the D5 strain gate at a per-second rate, and falls under the D8 power lock |
@@ -59,10 +59,10 @@ Each needs a line in its track's acceptance, and a GameTest that the old behavio
 
 | Surface | Size | What changes |
 | --- | --- | --- |
-| `en_us.json` | about 177 lines name projection or absorption; 79 name tendency | Verb toggle, Shaping, Temper, fresh and clotted |
+| `en_us.json` | about 177 lines name projection or absorption; 79 name temper | Verb toggle, Shaping, Temper, fresh and clotted |
 | NPC lessons | Vicar, Alchemist, Mnemonist, Anchorite, Artificer | One speaker at a time, to the sheet in `docs/NPC_VOICES.md` |
 | Dialogue inquiry files | 379 | Items that retire (Tendon Line, Memory Thread) and items that change (Flask, Jug, Lantern, Microscope) |
-| Liber | 114 pages; 15 on the verbs, 19 on tendency, none on the Lantern | A "Shaping" line on every converted manipulation; new pages for Temper, living blood, the ground network |
+| Liber | 114 pages; 15 on the verbs, 19 on temper, none on the Lantern | A "Shaping" line on every converted manipulation; new pages for Temper, living blood, the ground network |
 | Advancements | 192; about 19 affected | Rewrite triggers, keep ids where the meaning holds |
 | Skills | 13 absorption and projection skills | Reach, rate and efficiency skills gain value; check each still does something. Track 12 adds a projection combat line and makes `crimson_mastery` reach the verbs |
 | Wiki | 23 pages | With the references |
@@ -81,7 +81,7 @@ New player-facing words need keys and a ruling: **Shaping** (`CL-3`), **Temper**
 | Absorption and projection | 24 | 1 |
 | Folded items | 9 | 2, 6 |
 | Containers and routing | 29 | 3 |
-| Tendency and scars | 30 | 4 |
+| Temper and scars | 30 | 4 |
 | Sampling | 29 | 5 |
 | Ground, farm, brazier | 33 | 2, 6, 7 |
 | Staff | 29 | 8 |

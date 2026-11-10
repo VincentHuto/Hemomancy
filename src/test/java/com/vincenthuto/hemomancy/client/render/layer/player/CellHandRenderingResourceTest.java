@@ -97,8 +97,8 @@ public final class CellHandRenderingResourceTest {
 		assertContains("faltering Will absorption uses black glow color", particleEffects,
 				"WILL_ABSORPTION_GLOW = ParticleColor.BLACK");
 		assertContains("Will absorption adds a school-colored spiral layer", particleEffects,
-				"spawnWillAbsorptionTendencySpiralParticle");
-		assertContains("Will absorption spiral uses the aligned tendency color", particleEffects,
+				"spawnWillAbsorptionTemperSpiralParticle");
+		assertContains("Will absorption spiral uses the aligned temper color", particleEffects,
 				"will.getSchool().getColor()");
 		assertContains("Will absorption spiral reuses the Will glow particle path", particleEffects,
 				"HemoParticleData.willAbsorptionGlow(will.getSchool().getColor())");

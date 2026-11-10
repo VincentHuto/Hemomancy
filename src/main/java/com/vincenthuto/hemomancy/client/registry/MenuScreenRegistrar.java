@@ -39,7 +39,7 @@ public final class MenuScreenRegistrar {
         event.register(ContainerInit.scar_station.get(), ScarStationScreen::new);
         event.register(ContainerInit.mnemonic_folio.get(), MnemonicFolioScreen::new);
         event.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
-        event.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
+        event.register(ContainerInit.temperament_view.get(), TemperamentViewScreen::new);
         event.register(ContainerInit.scrying_diagnostics.get(), ScryingDiagnosticsScreen::new);
         event.register(ContainerInit.morphling_incubator.get(), MorphlingIncubatorScreen::new);
         event.register(ContainerInit.mycelial_crucible.get(), MycelialCrucibleScreen::new);

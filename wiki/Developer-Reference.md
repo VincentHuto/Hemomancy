@@ -159,7 +159,7 @@ Hemomancy uses NeoForge's attachment system for player state:
 
 **Core Capabilities:**
 - `IBloodVolume`: Blood amount and regeneration
-- `IBloodTendency`: Eight tendency alignment levels
+- `IBloodTemperament`: Eight temper alignment levels
 - `IVascularSystem`: Vein sections and health
 - `IKnownManipulations`: Learned manipulations
 - `IInitiatoryDegree`: Harbinger progression
@@ -211,22 +211,22 @@ public record MyPacket(int data) implements CustomPacketPayload {
 ### Blood Manipulation System
 
 **Registry:** `ManipulationInit` (DeferredRegister)
-**Implementation:** `common/manipulation/<tendency>/` packages
+**Implementation:** `common/manipulation/<temper>/` packages
 **Base Class:** `BloodManipulation`
 
 **Each Manipulation Defines:**
 - Cost (blood amount)
-- Align level (tendency requirement)
+- Align level (temper requirement)
 - XP cost
 - Type (QUICK/CHARGED/PASSIVE/CONTINUOUS)
 - Rank (HUMILIS/MEDIOCRITAS/SUMMA/PERFECTUS)
-- Tendency
+- Temper
 - Vein section
 - Cooldown
 - Action lambda (what it does)
 - Optional post-alpha WIP: Drudge action
 
-**Tendencies (Internal):**
+**Tempers (Internal):**
 - `ANIMUS`, `FLAMMEUS`, `DUCTILIS`, `LUX`
 - `MORTEM`, `CONGEATIO`, `FERRIC`, `TENEBRIS`
 
@@ -345,7 +345,7 @@ When adding content:
 - **Preserve moral ambiguity**: no simple good/evil
 - **Harbinger content** uses Latinate/ecclesiastical language
 - **Unstained content** uses sacramental/Anglo-Saxon language
-- **Internal tendency names** stay as-is (don't change ANIMUS to VIVACIOUS)
+- **Internal temper names** stay as-is (don't change ANIMUS to VIVACIOUS)
 
 ### Pull Request Process
 
@@ -353,7 +353,7 @@ When adding content:
 2. **Make changes** following style guidelines
 3. **Test thoroughly** (build, runClient, verify changes)
 4. **Update documentation** if adding/changing systems
-5. **Commit with clear messages:** `git commit -m "Add: new manipulation for Animus tendency"`
+5. **Commit with clear messages:** `git commit -m "Add: new manipulation for Animus temper"`
 6. **Push to your fork:** `git push origin feature/your-feature-name`
 7. **Open Pull Request** on main repository
 8. **Respond to review feedback**

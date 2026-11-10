@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -9,7 +9,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
 public record PacketBloodVialInjection(int entityId, long startedAt, Phase phase, InteractionHand hand,
-        boolean right, ItemStack vial, EnumBloodTendency tendency) implements CustomPacketPayload {
+        boolean right, ItemStack vial, EnumBloodTemper temper) implements CustomPacketPayload {
     public enum Phase { START, IMPACT, CANCEL }
 
     public static final Type<PacketBloodVialInjection> TYPE = new Type<>(Hemomancy.rloc("blood_vial_injection"));
@@ -21,10 +21,10 @@ public record PacketBloodVialInjection(int entityId, long startedAt, Phase phase
                 buf.writeEnum(packet.hand);
                 buf.writeBoolean(packet.right);
                 ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, packet.vial);
-                buf.writeEnum(packet.tendency);
+                buf.writeEnum(packet.temper);
             }, buf -> new PacketBloodVialInjection(buf.readVarInt(), buf.readLong(), buf.readEnum(Phase.class),
                     buf.readEnum(InteractionHand.class), buf.readBoolean(), ItemStack.OPTIONAL_STREAM_CODEC.decode(buf),
-                    buf.readEnum(EnumBloodTendency.class)));
+                    buf.readEnum(EnumBloodTemper.class)));
 
     public PacketBloodVialInjection { vial = vial.copy(); }
 

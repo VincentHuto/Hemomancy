@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * A projectile that remembers the weapon that fired it, so its hit is attributed to that weapon's school and
- * tendency. O-2: the copy and the saved {@code "CombatWeapon"} stack go through the helpers here.
+ * temper. O-2: the copy and the saved {@code "CombatWeapon"} stack go through the helpers here.
  */
 public interface CombatWeaponCarrierProjectile {
 	String NBT_KEY = "CombatWeapon";

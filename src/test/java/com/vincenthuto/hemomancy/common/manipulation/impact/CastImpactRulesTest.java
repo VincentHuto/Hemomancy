@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.impact;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastPurpose;
 import com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.Delivery;
 import org.junit.jupiter.api.Test;
@@ -29,8 +29,8 @@ class CastImpactRulesTest {
     }
 
     @Test void countRoundTripsEverySchoolDeliveryAndWeight() {
-        for (var primary : EnumBloodTendency.values())
-            for (var secondary : new EnumBloodTendency[]{null, EnumBloodTendency.LUX, EnumBloodTendency.TENEBRIS})
+        for (var primary : EnumBloodTemper.values())
+            for (var secondary : new EnumBloodTemper[]{null, EnumBloodTemper.LUX, EnumBloodTemper.TENEBRIS})
                 for (var delivery : Delivery.values())
                     for (int weight = 0; weight < 3; weight++) {
                         int count = CastImpactRules.encode(primary, secondary, delivery, weight);

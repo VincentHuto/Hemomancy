@@ -193,7 +193,7 @@ them green.
 | gameTest `HemoCommandCharacterisationGameTests` (suite `hemo_command_validation`) | 11 | every executable `/hemo` path (133; `qliphoth tree` excluded as a world edit) run on a fresh player with arguments taken from the tree: return code, feedback, saved-data change and spawned entities against `src/gameTest/resources/command/hemo-command-fingerprints.txt` |
 | gameTest `EntityCastCharacterisationGameTests` (suite `entity_cast_validation`) | 11 | L-1: each of the 34 entity casts (and one manipulation without) cast by a Husk at a Cow: went off, Will-castable, both mobs' health, effects, data keys and movement, spawned types, changed blocks, against `src/gameTest/resources/entitycast/entity-cast-fingerprints.txt`; over the live registry, exactly the 34 casts are attached, Wills may cast exactly the old 32, every Vesper CASTABLE entry has one |
 | `architecture/EntityCastGuardrailTest` | 11 | L-1: `EntityManipulationEffects` has no name switch and names no manipulation; each `EntityCasts` method is attached once, to the manipulation it is named for; only the entry point reads `getEntityCast()` |
-| gameTest `ScriptoriumOperationCharacterisationGameTests` (suite `scriptorium_operation_validation`) | 11 | L-9: every Scriptorium button driven through the real menu with fixed seeds (enzyme selection, the three modes and their gates, inscription in each row, targeted inscriptions across all eight tendencies with their curse rolls, refusals, denaturing and its gates, the rite lock, a stranger's click): accepted, item components, tank, lapis, enzymes, xp, practice and saved-data change against `src/gameTest/resources/scriptorium/operation-fingerprints.txt` |
+| gameTest `ScriptoriumOperationCharacterisationGameTests` (suite `scriptorium_operation_validation`) | 11 | L-9: every Scriptorium button driven through the real menu with fixed seeds (enzyme selection, the three modes and their gates, inscription in each row, targeted inscriptions across all eight tempers with their curse rolls, refusals, denaturing and its gates, the rite lock, a stranger's click): accepted, item components, tank, lapis, enzymes, xp, practice and saved-data change against `src/gameTest/resources/scriptorium/operation-fingerprints.txt` |
 | `architecture/StationMenuGuardrailTest` | 11 | L-9: no menu under `common/menu` drains blood, records station practice or enchants an item; the Scriptorium menu's button handler calls `station.inscribe` and `station.denature` |
 | `architecture/PlayerDataMigrationGuardrailTest` | 12 | S-9 / F-21: each migration entry point is run only from the `PlayerDataMigrations` table; no tick handler runs the fungal scar sweep; only the migration, `/hemo qliphoth` and the constant name the Archon choice key, and only Armature gates (resolved by path) name it in data |
 | `architecture/PersistentDataAllowListTest` | 12 | S-1: exact per-file `getPersistentData()` counts in `src/main/java` against `src/test/resources/architecture/persistent-data-allow-list.txt`, each with a reason; lower a count when you remove calls |
@@ -534,7 +534,7 @@ them green.
     - bloodline pool, ledger, vascular status;
     - Harbinger and Unstained progress;
     - synaptic loadout, mnemonic reliquary, morphling jar, Puppeteer's spindle;
-    - scrying diagnostics, tendency view, vascular view;
+    - scrying diagnostics, Temperament view, vascular view;
     - the blood volume and Unstained gauge overlays.
   - The manipulation and Still Art radials opened and drew their opening frames, then closed because the driver cannot hold a physical key.
   - The server and both client logs had 0 ERROR lines.
@@ -940,7 +940,7 @@ them green.
     scales) with an optional deep palette for the progress screen's fade, and `Speckles` (`Scattered`, re-rolled each
     frame; `Fixed`, rolled once; `Deepening`, the progress screen's). `render` keeps its own 0.016-per-call clock;
     `draw` takes a screen's clock. Named styles: `PROGRESS` (the default, unchanged), `CRIMSON`, `MACHINE`.
-  - **Migrated (14 vein copies):** Bloodline Pool, Ledger, Tendency View, Vascular Status, Vascular View, Scrying
+  - **Migrated (14 vein copies):** Bloodline Pool, Ledger, Temperament View, Vascular Status, Vascular View, Scrying
     Diagnostics, Visceral Mirror (its fog stays local, drawn after the veins), Mnemonic Reliquary, Harbinger Equipment,
     Mason's Effigy, Vial Centrifuge, Scar Station, Ghastly Alembic, Morphling Incubator. Each keeps its own clock
     (frame count, partial-tick, game time or wall time) and passes it in.
@@ -965,7 +965,7 @@ them green.
     `chrome-afterP{1,2,3}-<screen>.png` (this item), 30 screens each, 1280×720 at GUI scale 2.
     - 25 of 30 are byte-identical before and after.
     - The other five differ only where the same code also differs between two runs: the progress screen's centre node,
-      the Tendency wheel, the Vascular Status and Mason's Effigy player models (wall-clock animation), and Scrying's
+      the Temper wheel, the Vascular Status and Mason's Effigy player models (wall-clock animation), and Scrying's
       veins, which it draws twice per frame (its own `renderBackground` plus the container's) on a wall-clock delta.
       The unmigrated Scrying screen differed from its own baseline by 144 pixels (up to 20 levels); the migrated one by
       32 pixels (1 level).
@@ -1360,11 +1360,11 @@ them green.
     GameTest (every executable path, fingerprinted; three identical recordings). No branch had a behaviour test before.
   - `HemoCommand` (1,979 lines) is now the root alone (one `requires(hasPermission(2))`) wiring 16 classes in
     `common/command`: `BloodSubcommand`, `BloodlineSubcommand`, `DegreeSubcommand`, `MorphlingSubcommand`,
-    `QliphothSubcommand`, `SkillsSubcommand`, `UnstainedSubcommand`, `OrgansSubcommand`, `TendencySubcommand`,
+    `QliphothSubcommand`, `SkillsSubcommand`, `UnstainedSubcommand`, `OrgansSubcommand`, `TemperSubcommand`,
     `BloodMoonSubcommand`, `FaneSubcommand`, `ChamberSubcommand`, `WillSubcommand`, `SummonsSubcommand`,
     `ManipulationsSubcommand`, `SlotsSubcommand` (2,382 lines with headers; the largest 263). Each `build()` returns its
-    branch verbatim; each class holds the handlers its branch reaches. The Will branch calls the tendency parsers in
-    `TendencySubcommand`. The root's stale command index became a pointer to the classes.
+    branch verbatim; each class holds the handlers its branch reaches. The Will branch calls the temper parsers in
+    `TemperSubcommand`. The root's stale command index became a pointer to the classes.
   - Eight source-text tests now read their subcommand's file; `FanePreviewCommandSourceTest`'s exact-indentation
     check compares without whitespace.
   - Final review: the tree and all 89 members verified identical by machine; fixed its finding (`resetUnstained`
@@ -1791,7 +1791,7 @@ Owner request: convert the English the first follow-up left (the "Still English"
   section code inside an argument does not style the text after it, so they had lost their colour (the Vascularium
   Charm and Unstained book tooltips, the scar binder and station hints, the Living Grasp warning, the blood-volume
   greeting). They now use `withStyle`.
-- **Visible text changes, all from raw ids:** upper-case tendencies ("FERRIC") and flows ("RAGING") read as their names;
+- **Visible text changes, all from raw ids:** upper-case tempers ("FERRIC") and flows ("RAGING") read as their names;
   the scrying category `THELEMIC_MEMORY` reads "Thelemic Memory" (the player-facing term); max-blood scar rows show the
   scar's item name ("Scar of the Heart", was "Scar Heart"); the rite overlay title and Mnemonic Blueprints show the rite
   name; the skill toggle message shows the skill name; "greater Working floor" reads "Greater Working floor".

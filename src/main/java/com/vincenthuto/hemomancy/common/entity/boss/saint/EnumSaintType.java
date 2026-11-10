@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -8,40 +8,40 @@ import java.util.Locale;
 
 public enum EnumSaintType {
 
-	HEMORATH(EnumBloodTendency.ANIMUS, EnumBloodTendency.FERRIC),
+	HEMORATH(EnumBloodTemper.ANIMUS, EnumBloodTemper.FERRIC),
 
-	SERAPHAE(EnumBloodTendency.LUX, EnumBloodTendency.DUCTILIS),
+	SERAPHAE(EnumBloodTemper.LUX, EnumBloodTemper.DUCTILIS),
 
-	PUTRICIEL(EnumBloodTendency.MORTEM, EnumBloodTendency.FLAMMEUS),
+	PUTRICIEL(EnumBloodTemper.MORTEM, EnumBloodTemper.FLAMMEUS),
 
-	VELORUM(EnumBloodTendency.CONGEATIO, EnumBloodTendency.TENEBRIS);
+	VELORUM(EnumBloodTemper.CONGEATIO, EnumBloodTemper.TENEBRIS);
 
-	private final EnumBloodTendency primaryTendency;
-	private final EnumBloodTendency secondaryTendency;
+	private final EnumBloodTemper primaryTemper;
+	private final EnumBloodTemper secondaryTemper;
 
-	EnumSaintType(EnumBloodTendency primaryTendency, EnumBloodTendency secondaryTendency) {
-		this.primaryTendency = primaryTendency;
-		this.secondaryTendency = secondaryTendency;
+	EnumSaintType(EnumBloodTemper primaryTemper, EnumBloodTemper secondaryTemper) {
+		this.primaryTemper = primaryTemper;
+		this.secondaryTemper = secondaryTemper;
 	}
 
 	public MutableComponent getDisplayName() {
 		return Component.translatable("saint.hemomancy." + name().toLowerCase(Locale.ROOT));
 	}
 
-	public EnumBloodTendency getPrimaryTendency() {
-		return primaryTendency;
+	public EnumBloodTemper getPrimaryTemper() {
+		return primaryTemper;
 	}
 
-	public EnumBloodTendency getSecondaryTendency() {
-		return secondaryTendency;
+	public EnumBloodTemper getSecondaryTemper() {
+		return secondaryTemper;
 	}
 
 	/**
-	 * Returns true if the given tendency is aligned (same as primary or secondary)
+	 * Returns true if the given temper is aligned (same as primary or secondary)
 	 * with this saint.
 	 */
-	public boolean isAligned(EnumBloodTendency tendency) {
-		return tendency == primaryTendency || tendency == secondaryTendency;
+	public boolean isAligned(EnumBloodTemper temper) {
+		return temper == primaryTemper || temper == secondaryTemper;
 	}
 
 }

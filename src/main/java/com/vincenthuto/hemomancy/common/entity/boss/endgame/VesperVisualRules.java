@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 import java.util.List;
 import java.util.Map;
@@ -43,8 +43,8 @@ public final class VesperVisualRules {
 		};
 	}
 
-	public static int tendencyColorRgb(EnumBloodTendency tendency) {
-		return switch (tendency) {
+	public static int temperColorRgb(EnumBloodTemper temper) {
+		return switch (temper) {
 			case ANIMUS -> 0xE00018;
 			case FLAMMEUS -> 0xFF6508;
 			case DUCTILIS -> 0xF2E85C;

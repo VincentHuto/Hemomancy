@@ -40,13 +40,13 @@ a correct pattern.
 - **Gourd and shears.** `GourdBlock.useItemOn` with shears makes a vanilla carved pumpkin.
 - **Dead tool code.** `isCorrectToolForDrops(BlockState)` overrides on the living tools never run in 1.21. Replace with
   the `Tool` data component or tags; delete the overrides.
-- **`BloodTendency.setTendency(Map.of(...))`** installs an immutable map; the next write throws. Copy into a mutable
+- **`BloodTemperament.setTemper(Map.of(...))`** installs an immutable map; the next write throws. Copy into a mutable
   map.
-- **`getPercentByTendency`** can divide by zero.
-- **Will tendency shifts are never synced** (+3 on absorption, -3 on banish).
+- **`getPercentByTemper`** can divide by zero.
+- **Will Temperament shifts are never synced** (+3 on absorption, -3 on banish).
 - **Kill shift and absorption can double count** the same creature.
-- **Opposing schools are defined twice** (`BloodTendency.getOpposingTendency`, `TendencyWeaponHelper`). Keep one.
-- **Strongest-tendency ties resolve by enum order.** Decide a rule (last gained wins) or document it.
+- **Opposing schools are defined twice** (`BloodTemperament.getOpposingTemper`, `TemperWeaponHelper`). Keep one.
+- **Strongest-temper ties resolve by enum order.** Decide a rule (last gained wins) or document it.
 - **`TemporaryIceManager`** keeps Glacial ice in memory; a restart leaves it in the world. Persist or sweep on load.
 - **`HematicCommandManager`** keeps impressed mobs in static UUID maps that are lost on unload. Track 5 needs this on
   an entity attachment; do the move here.
@@ -116,7 +116,7 @@ These get jobs in later tracks; listing them here keeps them from being deleted 
 
 - New: `PlayerBlockEditsTest` cases for the three helpers; `SpecimenCaptureRulesTest`.
 - Changed: `PlayerBlockEditGuardrailTest` scan roots and allow-list; `BloodAccountingGuardrailTest` counts if the
-  Thrall path moves; `BloodTendencyTransientAlignmentTest` for the map fix; `LignumMortisWiringTest` untouched.
+  Thrall path moves; `BloodTemperamentTransientAlignmentTest` for the map fix; `LignumMortisWiringTest` untouched.
 - Regenerate `docs/architecture/evidence/source-text-impact-map.csv` after source-text tests move.
 
 ## Acceptance

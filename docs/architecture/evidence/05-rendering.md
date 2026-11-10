@@ -172,7 +172,7 @@ Many hashes are seed-parameterised variants, for example `+PoolSeed*0.013` and `
 - `ManipulationMaterials` enum (`client/render/world/ManipulationMaterials.java`): 8 textures on the vanilla `position_tex_color` shader. It decides form→school, and other code reads that decision (`AnimusMortemGeometry:27`, `ManipulationMotes:49`, `ManipulationBloodFormation:40`, `ManipulationVisualRenderer:488,534`, `PuppeteerThreadRenderer:77`).
 - `LuxUmbraBatch.Material` (9 shader materials) and `OutpouringBrushes.Mat` (a mirror of it).
 
-`ManipulationAmbientParticles:83` maps between them with `EnumBloodTendency.valueOf(material.name())`.
+`ManipulationAmbientParticles:83` maps between them with `EnumBloodTemper.valueOf(material.name())`.
 
 **Canonical approach:** keep both render paths, because the textured fallback and the shader materials look different. Move the form→school mapping out to `ManipulationVisuals.Form` (common) and make both enums derive from it. **Difficulty:** Low. **Risk:** none.
 

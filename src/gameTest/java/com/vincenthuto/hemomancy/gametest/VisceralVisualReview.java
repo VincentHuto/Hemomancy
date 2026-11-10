@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationAccentPacket;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
@@ -19,9 +19,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class VisceralVisualReview {
     private static final Form[] FORMS={Form.CROWN,Form.BELL,Form.THREAD,Form.CHOIR,Form.GLASS,Form.STILLNESS,Form.VERDICT,Form.WELL};
-    private static final EnumBloodTendency[] SCHOOLS={EnumBloodTendency.ANIMUS,EnumBloodTendency.MORTEM,
-            EnumBloodTendency.DUCTILIS,EnumBloodTendency.FERRIC,EnumBloodTendency.FLAMMEUS,
-            EnumBloodTendency.CONGEATIO,EnumBloodTendency.LUX,EnumBloodTendency.TENEBRIS};
+    private static final EnumBloodTemper[] SCHOOLS={EnumBloodTemper.ANIMUS,EnumBloodTemper.MORTEM,
+            EnumBloodTemper.DUCTILIS,EnumBloodTemper.FERRIC,EnumBloodTemper.FLAMMEUS,
+            EnumBloodTemper.CONGEATIO,EnumBloodTemper.LUX,EnumBloodTemper.TENEBRIS};
     private static int ticks;
     private static volatile int rosterSource=-1;
     private static String waitingScreen="";

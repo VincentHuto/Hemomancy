@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.CellHandFormHelper;
@@ -27,8 +27,8 @@ public class ConjurationManip extends BloodManipulation {
 	DeferredHolder<Item, Item> item;
 
 	public ConjurationManip(String name,DeferredHolder<Item, Item> item, double cost, double alignLevel, double xpCost,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, EnumManipulationType.QUICK, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignLevel, xpCost, EnumManipulationType.QUICK, rank, temper, section);
 		this.item = item;
 	}
 

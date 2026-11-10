@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
@@ -14,7 +14,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules;
 import com.vincenthuto.hemomancy.common.manipulation.lux.RadiantWakeManip;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.gametest.framework.GameTest;
@@ -79,10 +79,10 @@ public final class ManipulationBalancePassGameTests {
     private static void movedFamiliesUseTheirNewSchoolsBody(GameTestHelper h) {
         for (var m : List.of(ManipulationInit.blood_needle.get(), ManipulationInit.blood_needle_fan.get(),
                 ManipulationInit.blood_needle_lance.get()))
-            h.assertTrue(m.getTend() == EnumBloodTendency.FERRIC && m.getSecondaryTend() == EnumBloodTendency.ANIMUS,
+            h.assertTrue(m.getTend() == EnumBloodTemper.FERRIC && m.getSecondaryTend() == EnumBloodTemper.ANIMUS,
                     m.getName() + " is not Ferric / Animus");
         for (var m : List.of(ManipulationInit.hematic_rebuke.get(), ManipulationInit.hematic_impressment.get()))
-            h.assertTrue(m.getTend() == EnumBloodTendency.DUCTILIS && m.getSecondaryTend() == EnumBloodTendency.ANIMUS,
+            h.assertTrue(m.getTend() == EnumBloodTemper.DUCTILIS && m.getSecondaryTend() == EnumBloodTemper.ANIMUS,
                     m.getName() + " is not Ductilis / Animus");
         h.succeed();
     }
@@ -93,13 +93,13 @@ public final class ManipulationBalancePassGameTests {
         try {
             // An old save learned Blood Needle as Animus / Ferric with the old price.
             var stale = BloodManipulation.deserialize(ManipulationInit.blood_needle.get().serialize());
-            stale.setTend(EnumBloodTendency.ANIMUS);
-            stale.setSecondaryTend(EnumBloodTendency.FERRIC);
+            stale.setTend(EnumBloodTemper.ANIMUS);
+            stale.setSecondaryTend(EnumBloodTemper.FERRIC);
             stale.setCost(999);
             var known = HemoCapabilityAccess.getKnownManipulations(p);
             known.getKnownManips().put(stale, new ManipLevel(1, 0));
             com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep.sanitizeKnownManipulations(known);
-            h.assertTrue(stale.getTend() == EnumBloodTendency.FERRIC && stale.getSecondaryTend() == EnumBloodTendency.ANIMUS,
+            h.assertTrue(stale.getTend() == EnumBloodTemper.FERRIC && stale.getSecondaryTend() == EnumBloodTemper.ANIMUS,
                     "Saved copy kept its old school");
             near(h, ManipulationInit.blood_needle.get().getCost(), stale.getCost(), "Saved copy kept its old price");
             h.succeed();
@@ -122,7 +122,7 @@ public final class ManipulationBalancePassGameTests {
             near(h, 2000, blood(p), "Rejected Rend spent blood");
             SchoolStates.apply(p, cow, SchoolState.OBSCURED, 100);
             h.assertTrue(rend.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Rend rejected an Obscured target");
-            near(h, TendencyAffinityRules.adjustManipulationDamage(p, cow, rend, 5) + 4, 100 - cow.getHealth(), "Rend damage plus Obscured payoff");
+            near(h, TemperAffinityRules.adjustManipulationDamage(p, cow, rend, 5) + 4, 100 - cow.getHealth(), "Rend damage plus Obscured payoff");
             h.assertTrue(!SchoolStates.has(cow, SchoolState.OBSCURED), "Rend did not consume Obscured");
             h.assertTrue(cow.hasEffect(EffectInit.blood_loss), "Rend did not open a wound");
             h.succeed();
@@ -144,7 +144,7 @@ public final class ManipulationBalancePassGameTests {
             SchoolStates.apply(p, cow, SchoolState.LODESTONE, 100);
             h.assertTrue(collapse.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(),
                     collapse.getRequiredChargeTicks()), "Full Collapse rejected");
-            near(h, TendencyAffinityRules.adjustManipulationDamage(p, cow, collapse, 10) + 4, 100 - cow.getHealth(), "Collapse damage plus Lodestone payoff");
+            near(h, TemperAffinityRules.adjustManipulationDamage(p, cow, collapse, 10) + 4, 100 - cow.getHealth(), "Collapse damage plus Lodestone payoff");
             h.assertTrue(!SchoolStates.has(cow, SchoolState.LODESTONE), "Collapse did not consume Lodestone");
             h.assertTrue(cow.hasEffect(MobEffects.MOVEMENT_SLOWDOWN), "Full Collapse did not pin");
             h.succeed();
@@ -163,7 +163,7 @@ public final class ManipulationBalancePassGameTests {
             var lash = ManipulationInit.searing_lash.get();
             select(p, lash);
             h.assertTrue(lash.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Lash rejected an aimed target");
-            near(h, TendencyAffinityRules.adjustManipulationDamage(p, cow, lash, 4), 100 - cow.getHealth(), "Lash damage");
+            near(h, TemperAffinityRules.adjustManipulationDamage(p, cow, lash, 4), 100 - cow.getHealth(), "Lash damage");
             h.assertTrue(SchoolStates.has(cow, SchoolState.SEARING), "Lash did not lay Searing");
             h.assertTrue(cow.getEffect(EffectInit.searing).getDuration() >= 100, "Lash Searing is too short to prime Vitric fully");
             h.succeed();
@@ -205,7 +205,7 @@ public final class ManipulationBalancePassGameTests {
             cow.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0));
             cow.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
             h.assertTrue(bell.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 80), "Full Bell rejected");
-            near(h, TendencyAffinityRules.adjustManipulationDamage(p, cow, bell, 7 + 2 * 2), 100 - cow.getHealth(), "Bell toll with two afflictions");
+            near(h, TemperAffinityRules.adjustManipulationDamage(p, cow, bell, 7 + 2 * 2), 100 - cow.getHealth(), "Bell toll with two afflictions");
             h.assertTrue(!cow.hasEffect(MobEffects.WITHER) && !cow.hasEffect(MobEffects.POISON), "Bell did not spend the afflictions");
             h.succeed();
         } finally { cow.discard(); p.discard(); }
@@ -238,7 +238,7 @@ public final class ManipulationBalancePassGameTests {
         try {
             var grasp = ManipulationInit.glacial_grasp.get();
             grasp.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-            near(h, TendencyAffinityRules.adjustManipulationDamage(p, cow, grasp, 2), 100 - cow.getHealth(), "Dry Grasp damage");
+            near(h, TemperAffinityRules.adjustManipulationDamage(p, cow, grasp, 2), 100 - cow.getHealth(), "Dry Grasp damage");
             h.assertTrue(SchoolStates.levels(cow, SchoolState.RIME) == 1, "Dry Grasp did not add one Rime level");
             h.succeed();
         } finally { cow.discard(); p.discard(); }
@@ -277,7 +277,7 @@ public final class ManipulationBalancePassGameTests {
             var javelin = ManipulationInit.cruor_javelin.get();
             select(p, javelin);
             h.assertTrue(javelin.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Javelin rejected an aimed target");
-            near(h, TendencyAffinityRules.adjustManipulationDamage(p, cow, javelin, 4), 100 - cow.getHealth(), "Javelin damage");
+            near(h, TemperAffinityRules.adjustManipulationDamage(p, cow, javelin, 4), 100 - cow.getHealth(), "Javelin damage");
             h.assertTrue(SchoolStates.levels(cow, SchoolState.RIME) == 2, "Javelin did not drive two Rime levels");
             h.succeed();
         } finally { cow.discard(); p.discard(); }
@@ -301,7 +301,7 @@ public final class ManipulationBalancePassGameTests {
             near(h, 2000, blood(p), "Rejected Contagion spent blood");
             SchoolStates.apply(p, carrier, SchoolState.NECROSIS, 160);
             h.assertTrue(contagion.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Contagion rejected a carrier");
-            near(h, TendencyAffinityRules.adjustManipulationDamage(p, carrier, contagion, 3), 100 - carrier.getHealth(), "Carrier damage");
+            near(h, TemperAffinityRules.adjustManipulationDamage(p, carrier, contagion, 3), 100 - carrier.getHealth(), "Carrier damage");
             h.assertTrue(carrier.hasEffect(MobEffects.WITHER), "Carrier was not withered");
             h.assertTrue(SchoolStates.has(neighbour, SchoolState.NECROSIS), "Rot did not spread to the neighbour");
             h.succeed();
@@ -416,8 +416,8 @@ public final class ManipulationBalancePassGameTests {
         var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
+        for (var temper : EnumBloodTemper.values())
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper, 100);
         return p;
     }
 }

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.util.RandomSource;
 
 import java.util.ArrayList;
@@ -31,27 +31,27 @@ public final class VesperChainGraph {
 	}
 
 	private static final Map<VesperWeaponAction, Node> NODES = new EnumMap<>(VesperWeaponAction.class);
-	private static final Map<EnumBloodTendency, List<VesperWeaponAction>> MOVESETS = new EnumMap<>(EnumBloodTendency.class);
+	private static final Map<EnumBloodTemper, List<VesperWeaponAction>> MOVESETS = new EnumMap<>(EnumBloodTemper.class);
 
 	static {
 		// Weapons that share a mid-string pose can hand a string to each other in the Open act:
 		// blade <-> torch (high guard), axe <-> flail (low guard), spear <-> claws (airborne),
 		// crossbow <-> staff (extended).
-		weapon(EnumBloodTendency.ANIMUS, Pose.EXTENDED, Pose.HIGH_GUARD,
+		weapon(EnumBloodTemper.ANIMUS, Pose.EXTENDED, Pose.HIGH_GUARD,
 				List.of(ICHIMONJI), List.of(), CROSSCUT, BLADE_RISING_CUT, BLADE_DRAWING_STEP);
-		weapon(EnumBloodTendency.FLAMMEUS, Pose.EXTENDED, Pose.HIGH_GUARD,
+		weapon(EnumBloodTemper.FLAMMEUS, Pose.EXTENDED, Pose.HIGH_GUARD,
 				List.of(BRANDING_THRUSTS), List.of(), TORCH_CINDER_SWEEP, UPDRAFT_IMPALEMENT, FLAMMEUS_CONCENTRATION);
-		weapon(EnumBloodTendency.MORTEM, Pose.HIGH_GUARD, Pose.LOW_GUARD,
+		weapon(EnumBloodTemper.MORTEM, Pose.HIGH_GUARD, Pose.LOW_GUARD,
 				List.of(AXE_HAFT_SHOVE), List.of(LEAPING_CLEAVE), REAPER_SWEEP, null, AXE_GRAVE_SPLITTER);
-		weapon(EnumBloodTendency.CONGEATIO, Pose.SPINNING, Pose.LOW_GUARD,
+		weapon(EnumBloodTemper.CONGEATIO, Pose.SPINNING, Pose.LOW_GUARD,
 				List.of(CHAIN_SWEEP), List.of(), HOOK_AND_CRUSH, FLAIL_ORBIT, FLAIL_SHATTER_SLAM);
-		weapon(EnumBloodTendency.LUX, Pose.EXTENDED, Pose.AIRBORNE,
+		weapon(EnumBloodTemper.LUX, Pose.EXTENDED, Pose.AIRBORNE,
 				List.of(), List.of(SKY_LANCE), LANCE_FLURRY, SPEAR_VAULT_KICK, SPEAR_PINNING_THRUST);
-		weapon(EnumBloodTendency.TENEBRIS, Pose.LOW_GUARD, Pose.AIRBORNE,
+		weapon(EnumBloodTemper.TENEBRIS, Pose.LOW_GUARD, Pose.AIRBORNE,
 				List.of(CLAW_SHADOW_FEINT), List.of(PREDATOR_POUNCE), TWIN_REND, null, CLAW_EVISCERATE);
-		weapon(EnumBloodTendency.DUCTILIS, Pose.EXTENDED, Pose.EXTENDED,
+		weapon(EnumBloodTemper.DUCTILIS, Pose.EXTENDED, Pose.EXTENDED,
 				List.of(CROSSBOW_SNAP_SHOT), List.of(), CONDUCTIVE_VOLLEY, CROSSBOW_BOLT_RAIN, STORM_LOCK);
-		weapon(EnumBloodTendency.FERRIC, Pose.LOW_GUARD, Pose.EXTENDED,
+		weapon(EnumBloodTemper.FERRIC, Pose.LOW_GUARD, Pose.EXTENDED,
 				List.of(MAGNETIC_AXIS), List.of(), STAFF_LODESTONE_SWEEP, STAFF_PILLAR_VAULT, IRON_RETORT);
 	}
 
@@ -59,7 +59,7 @@ public final class VesperChainGraph {
 	}
 
 	/** opener exit = openerPose; follow-ups run openerPose -> stringPose -> stringPose; finisher stringPose -> neutral. */
-	private static void weapon(EnumBloodTendency tendency, Pose openerPose, Pose stringPose,
+	private static void weapon(EnumBloodTemper temper, Pose openerPose, Pose stringPose,
 			List<VesperWeaponAction> closeOpeners, List<VesperWeaponAction> gapClosers, VesperWeaponAction first,
 			VesperWeaponAction second, VesperWeaponAction finisher) {
 		List<VesperWeaponAction> moves = new ArrayList<>();
@@ -79,11 +79,11 @@ public final class VesperChainGraph {
 		}
 		NODES.put(finisher, new Node(Role.FINISHER, stringPose, Pose.NEUTRAL, false));
 		moves.add(finisher);
-		MOVESETS.put(tendency, List.copyOf(moves));
+		MOVESETS.put(temper, List.copyOf(moves));
 	}
 
-	public static List<VesperWeaponAction> moveset(EnumBloodTendency tendency) {
-		return MOVESETS.get(tendency);
+	public static List<VesperWeaponAction> moveset(EnumBloodTemper temper) {
+		return MOVESETS.get(temper);
 	}
 
 	public static boolean inGraph(VesperWeaponAction action) {
@@ -106,17 +106,17 @@ public final class VesperChainGraph {
 	}
 
 	/** The next move of the string, or an opener when the string ends. */
-	public static VesperWeaponAction next(VesperWeaponAction previous, EnumBloodTendency tendency,
+	public static VesperWeaponAction next(VesperWeaponAction previous, EnumBloodTemper temper,
 			VesperEveningStarAct act, Context ctx) {
 		boolean ends = previous == NONE || !inGraph(previous) || role(previous) == Role.FINISHER
 				|| (ctx.chainLength() >= MAX_CHAIN && role(previous) != Role.OPENER);
 		// A whiffed opener at range gives up on the string and closes the gap again.
 		if (!ends && !ctx.lastHitLanded() && ctx.distance() > 9.0D && role(previous) == Role.OPENER) ends = true;
-		if (ends) return opener(tendency, previous, ctx);
+		if (ends) return opener(temper, previous, ctx);
 		List<VesperWeaponAction> candidates = new ArrayList<>();
 		List<Integer> weights = new ArrayList<>();
-		for (Map.Entry<EnumBloodTendency, List<VesperWeaponAction>> set : MOVESETS.entrySet()) {
-			boolean sameSchool = set.getKey() == tendency;
+		for (Map.Entry<EnumBloodTemper, List<VesperWeaponAction>> set : MOVESETS.entrySet()) {
+			boolean sameSchool = set.getKey() == temper;
 			if (!sameSchool && !act.castsAnySchool()) continue;
 			for (VesperWeaponAction move : set.getValue()) {
 				if (move == previous || role(move) == Role.OPENER || entry(move) != exit(previous)) continue;
@@ -129,7 +129,7 @@ public final class VesperChainGraph {
 				weights.add(weight);
 			}
 		}
-		if (candidates.isEmpty()) return opener(tendency, previous, ctx);
+		if (candidates.isEmpty()) return opener(temper, previous, ctx);
 		int total = weights.stream().mapToInt(Integer::intValue).sum();
 		int roll = ctx.random().nextInt(total);
 		for (int i = 0; i < candidates.size(); i++) {
@@ -139,14 +139,14 @@ public final class VesperChainGraph {
 		return candidates.getLast();
 	}
 
-	private static VesperWeaponAction opener(EnumBloodTendency tendency, VesperWeaponAction previous, Context ctx) {
-		List<VesperWeaponAction> openers = moveset(tendency).stream().filter(move -> role(move) == Role.OPENER).toList();
+	private static VesperWeaponAction opener(EnumBloodTemper temper, VesperWeaponAction previous, Context ctx) {
+		List<VesperWeaponAction> openers = moveset(temper).stream().filter(move -> role(move) == Role.OPENER).toList();
 		boolean far = ctx.distance() > 8.0D;
 		VesperWeaponAction pick = openers.stream().filter(move -> NODES.get(move).gapCloser() == far).findFirst()
 				.orElse(openers.getFirst());
 		if (pick != previous) return pick;
 		// Never the same opener twice running: take the other opener, or flow straight into the first follow-up.
 		for (VesperWeaponAction other : openers) if (other != previous) return other;
-		return moveset(tendency).stream().filter(move -> role(move) == Role.FOLLOW_UP).findFirst().orElse(pick);
+		return moveset(temper).stream().filter(move -> role(move) == Role.FOLLOW_UP).findFirst().orElse(pick);
 	}
 }

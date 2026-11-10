@@ -23,14 +23,14 @@ class ModelFirstTileRendererResourceTest {
 		for (String part : new String[]{"warp_thread", "heddle", "reed_dent", "fell", "ganglion", "warp_roll",
 				"cloth_roll", "treadle", "pirn_spindle", "upright_vein"})
 			assertContains("somatic loom should keep its " + part, loomModel, "\"name\": \"" + part + "\"");
-		for (String tendency : new String[]{"animus", "flammeus", "ductilis", "lux", "mortem", "congeatio", "ferric",
+		for (String temper : new String[]{"animus", "flammeus", "ductilis", "lux", "mortem", "congeatio", "ferric",
 				"tenebris"}) {
-			assertContains("somatic loom should wind a dyed " + tendency + " cop by stored enzyme",
-					read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/somatic_loom_cop_" + tendency + ".json")),
-					"\"name\": \"cop_" + tendency + "\"");
-			assertContains("somatic loom item should show the " + tendency + " pirn wound",
+			assertContains("somatic loom should wind a dyed " + temper + " cop by stored enzyme",
+					read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/somatic_loom_cop_" + temper + ".json")),
+					"\"name\": \"cop_" + temper + "\"");
+			assertContains("somatic loom item should show the " + temper + " pirn wound",
 					read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/somatic_loom.json")),
-					"\"name\": \"cop_" + tendency + "\"");
+					"\"name\": \"cop_" + temper + "\"");
 		}
 		assertContains("somatic loom vials bake into a translucent glass layer",
 				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/somatic_loom_glass.json")),
@@ -50,11 +50,11 @@ class ModelFirstTileRendererResourceTest {
 				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/somatic_loom_ganglionic.json")), "\"name\": \"feeler\"");
 		assertContains("cortical looms wear a cortex crown",
 				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/somatic_loom_cortical.json")), "\"name\": \"cortex_lobe\"");
-		for (String tendency : new String[]{"animus", "flammeus", "ductilis", "lux", "mortem", "congeatio", "ferric",
+		for (String temper : new String[]{"animus", "flammeus", "ductilis", "lux", "mortem", "congeatio", "ferric",
 				"tenebris"})
-			assertContains("somatic loom vial liquid part for " + tendency,
-					read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/somatic_loom_vial_" + tendency + ".json")),
-					"\"name\": \"vial_" + tendency + "\"");
+			assertContains("somatic loom vial liquid part for " + temper,
+					read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/somatic_loom_vial_" + temper + ".json")),
+					"\"name\": \"vial_" + temper + "\"");
 		assertContains("somatic loom anchors live where the server can read them",
 				read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/block/harbinger/crafting/SomaticLoomGeometry.java")),
 				"ECHO_Z");

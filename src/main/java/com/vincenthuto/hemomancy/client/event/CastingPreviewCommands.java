@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.player.CastingAnimationClientState;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -52,7 +52,7 @@ public final class CastingPreviewCommands {
                 .then(Commands.argument("ending",StringArgumentType.word()).suggests(names(StillArtEnding.values()))
                 .then(Commands.argument("phase",StringArgumentType.word()).suggests(names(CastPhase.values()))
                     .executes(CastingPreviewCommands::still)))))
-            .then(Commands.argument("school",StringArgumentType.word()).suggests(names(EnumBloodTendency.values()))
+            .then(Commands.argument("school",StringArgumentType.word()).suggests(names(EnumBloodTemper.values()))
             .then(Commands.argument("rank",StringArgumentType.word()).suggests(names(EnumManipulationRank.values()))
             .then(Commands.argument("purpose",StringArgumentType.word()).suggests(names(CastPurpose.values()))
             .then(options(Commands.argument("phase",StringArgumentType.word()).suggests(names(CastPhase.values())),
@@ -83,7 +83,7 @@ public final class CastingPreviewCommands {
         var mc=Minecraft.getInstance();
         if(mc.player==null || mc.level==null)return 0;
         try {
-            var school=parse(EnumBloodTendency.class,StringArgumentType.getString(c,"school"));
+            var school=parse(EnumBloodTemper.class,StringArgumentType.getString(c,"school"));
             var rank=parse(EnumManipulationRank.class,StringArgumentType.getString(c,"rank"));
             var purpose=parse(CastPurpose.class,StringArgumentType.getString(c,"purpose"));
             var phase=parse(CastPhase.class,StringArgumentType.getString(c,"phase"));

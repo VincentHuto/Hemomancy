@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * One engram as laid out around a loom: what lies on each node of the star, the fragments recalled at its tips and
  * the lane threaded from each, the wheel's rotation, fungal pressure, and the generator's reference solution with its
- * span cost. Colours are {@code EnumBloodTendency} ordinals; a grey fragment's colour is -1 until a prism dyes its lane.
+ * span cost. Colours are {@code EnumBloodTemper} ordinals; a grey fragment's colour is -1 until a prism dyes its lane.
  * Plain data: the rules live in {@link EngramWeaveRules}.
  */
 public final class EngramBoard {
@@ -46,7 +46,7 @@ public final class EngramBoard {
 		Arrays.fill(tints, -1);
 	}
 
-	/** An empty star. Keyed faces take only their tendency; `rotation` is the face Animus is keyed to. */
+	/** An empty star. Keyed faces take only their temper; `rotation` is the face Animus is keyed to. */
 	public static EngramBoard blank(boolean keyed, int rotation) {
 		return new EngramBoard(keyed, rotation);
 	}

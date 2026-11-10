@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumAffinities;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumBalance;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
@@ -54,11 +54,11 @@ public final class EnzymaticScriptoriumMenu extends HemoContainerMenu {
         this.data = new SimpleContainerData(47);
         this.packages = (List<EnchantmentInstance>[]) new List<?>[3];
         for (int i = 0; i < 8; i++) {
-            final int tendency = i;
+            final int temper = i;
             addSlot(new Slot(station, i, 12 + (i % 4) * 23, 28 + (i / 4) * 25) {
                 @Override public boolean mayPlace(ItemStack stack) {
                     return !station.isRiteLocked() && stack.getItem() instanceof EnzymeItem enzyme
-                            && enzyme.getTend() == EnumBloodTendency.values()[tendency];
+                            && enzyme.getTend() == EnumBloodTemper.values()[temper];
                 }
                 @Override public boolean mayPickup(Player player) { return !station.isRiteLocked(); }
                 @Override public int getMaxStackSize() { return 64; }
@@ -94,7 +94,7 @@ public final class EnzymaticScriptoriumMenu extends HemoContainerMenu {
     public int clueLevel(int tier) { return data.get(19 + tier); }
     public int playerDegree() { return data.get(22); }
 
-    public int enzymeCost(int offer, int tendency) { return data.get(23 + offer * 8 + tendency); }
+    public int enzymeCost(int offer, int temper) { return data.get(23 + offer * 8 + temper); }
 
     public boolean hasOfferEnzymes(int offer) {
         for (int i = 0; i < 8; i++)
@@ -252,9 +252,9 @@ public final class EnzymaticScriptoriumMenu extends HemoContainerMenu {
         if (affinity == null) return entry.enchantment.value().getWeight();
         int primary = 0, secondary = 0;
         for (int i = 0; i < 8; i++) {
-            EnumBloodTendency tendency = EnumBloodTendency.values()[i];
-            if (tendency == affinity.primary()) primary += station.selected(i);
-            if (tendency == affinity.secondary()) secondary += station.selected(i);
+            EnumBloodTemper temper = EnumBloodTemper.values()[i];
+            if (temper == affinity.primary()) primary += station.selected(i);
+            if (temper == affinity.secondary()) secondary += station.selected(i);
         }
         return ScriptoriumBalance.weight(entry.enchantment.value().getWeight(), primary, secondary);
     }

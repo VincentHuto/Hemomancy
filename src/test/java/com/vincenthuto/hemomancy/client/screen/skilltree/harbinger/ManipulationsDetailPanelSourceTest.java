@@ -36,16 +36,16 @@ public final class ManipulationsDetailPanelSourceTest {
 				controller, "MANIP_TOOLTIP_Z");
 		assertContains("hover tooltip should raise the pose before drawing",
 				controller, "pose.translate(0, 0, MANIP_TOOLTIP_Z)");
-		assertContains("detail panel should display secondary tendency when present",
-				controller, "secondaryTendencyText(manip)");
-		assertContains("detail panel should split mixed tendencies across compact lines",
-				controller, "drawMixedTendencyValue(gfx, ctx");
-		assertContains("detail panel should know which stat cell is the tendency cell",
-				controller, "cell.mixedTendency()");
-		assertContains("detail panel should color the secondary tendency independently",
+		assertContains("detail panel should display secondary temper when present",
+				controller, "secondaryTemperText(manip)");
+		assertContains("detail panel should split mixed tempers across compact lines",
+				controller, "drawMixedTemperValue(gfx, ctx");
+		assertContains("detail panel should know which stat cell is the temper cell",
+				controller, "cell.mixedTemper()");
+		assertContains("detail panel should color the secondary temper independently",
 				controller, "cell.secondaryValueColor()");
-		assertContains("detail panel should compute the secondary tendency color",
-				controller, "tendencyColor(secondaryTend)");
+		assertContains("detail panel should compute the secondary temper color",
+				controller, "temperColor(secondaryTend)");
 		assertContains("detail panel should reserve less dead space below compact recipes",
 				controller, "recipeH + 4");
 		assertContains("detail panel should use a compact final bottom pad",
@@ -54,9 +54,9 @@ public final class ManipulationsDetailPanelSourceTest {
 				controller, "MANIP_PANEL_TOP_CLEARANCE = 24");
 		assertContains("detail panel should use the tab-aware top clearance as its minimum y",
 				controller, "int minPanelY = ctx.guiTop() + MANIP_PANEL_TOP_CLEARANCE");
-		assertContains("manipulations should serialize secondary tendency when present",
+		assertContains("manipulations should serialize secondary temper when present",
 				read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/BloodManipulation.java"),
-				"secondary_tendency");
+				"secondary_temper");
 		assertContains("detail panel should use translatable manipulation descriptions",
 				controller, "Component.translatable(manipDescriptionKey(manip))");
 		assertDoesNotContain("detail panel should not hard-cap descriptions to two lines",
@@ -73,7 +73,7 @@ public final class ManipulationsDetailPanelSourceTest {
 				controller, "y + MANIP_DESCRIPTION_TOP_PAD");
 		assertDoesNotContain("detail panel should not squeeze descriptions into one clipped line",
 				controller, "manipDescriptionLines(ctx, manip, maxW - 8, 1)");
-		assertContains("detail panel stat cells should fit stacked mixed-tendency text",
+		assertContains("detail panel stat cells should fit stacked mixed-temper text",
 				controller, "MANIP_STAT_CELL_H = 28");
 		assertContains("detail panel should compute a bottom limit from the GUI frame",
 				controller, "int panelBottomLimit = ctx.guiTop() + ctx.guiHeight() - INFO_PANEL_MARGIN");

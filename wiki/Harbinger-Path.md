@@ -14,7 +14,7 @@ The Harbinger Path follows the **Hematic Order**, a secret society that treats b
 
 **Key Features:**
 - Progressive degree system with clear milestones
-- Hundreds of blood manipulations across eight tendencies
+- Hundreds of blood manipulations across eight tempers
 - Bloodline creation and follower recruitment
 - Morphling incubation and puppeteering; Drudge creation is post-alpha WIP
 - Cardinal rites for advancement and utility
@@ -32,7 +32,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 
 - **Rite:** Formal Vicar initiation
 - **Theme:** Crimson Veil; blood becomes a deliberate living resource
-- **Core progression:** Blood Absorption, Blood Projection, first structures, early tendency awareness
+- **Core progression:** Blood Absorption, Blood Projection, first structures, early temper awareness
 - The Vicar asks for four proofs in any order: absorb 500 ml with Blood Absorption, fill an empty cauldron with Blood Projection and collect the Sanguine Formation it condenses, project Venous Stone into ordinary stone, and craft either a Liber Sanguinium or Hematic Iron Block using a blood formation. Ask for hints and recipe blueprints while the work is active.
 - The first Vicar contacted grants or replaces the Assignment Ledger. Return after the four First Bloodcraft proofs for Degree 2. **The Hermit Road** remains an optional Side assignment.
 
@@ -40,7 +40,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 
 - **Promotion:** Vicar return after First Bloodcraft
 - **Theme:** Hematic Covenant; choosing to remain infected
-- **Core progression:** the seven blood tendencies and deeper vascular practice
+- **Core progression:** the seven blood tempers and deeper vascular practice
 - The Alchemist assigns **First Separation** and the first Ghastly Alembic distillation at Degree 2. Report the assigned enzyme spin, then personally collect a completed Alembic result. Both proofs are needed before the Alchemist supplies Concentrated Blood. Microscopy and injection lessons are also available; see [Clinical Blood Tools](Clinical-Blood-Tools.md). Red Taxonomy, Living Bestiary, and enzyme mastery remain optional catalogues.
 - A Fungal Podium may be encountered, but it cannot open the Fungal Gardens without the Degree-7 ninth-pome Spine.
 
@@ -114,7 +114,7 @@ Mausoleum outer halls stay open to every Harbinger from about Degree 3–4; only
 - **Requirements:** Degree 7, Qliphoth Communion, the ninth-pome Spine, completed revelation, and the Apotheos response
 - **Theme:** transcendence and fungal fruiting
 - **Core progression:** Apotheos-scale Chamber state, Primal Morphlings, and the Mycophant consequence
-- **The Apotheos body:** you no longer eat. Hunger holds at 17, so you can sprint but never regenerate naturally. Spore load gathers in the Fungal Gardens and replaces the food bar: burn 25 of it with the Burn Spores key (U) for an instant heal, or crouch still on fungal ground inside the Gardens to regrow. Inside the Gardens potions and milk are refused too; the Morphic Tonic, made by throwing a Bloody Jug into a morphic nectar pool, is the one remedy. Only an Apotheos can drink it, and only in the Gardens: it purges harmful effects and mends health and blood together. At your heart-node you can also **molt**: shed a tenth of your tendency and place the rest across the eight tendencies as you like, once a day, for a full spore load.
+- **The Apotheos body:** you no longer eat. Hunger holds at 17, so you can sprint but never regenerate naturally. Spore load gathers in the Fungal Gardens and replaces the food bar: burn 25 of it with the Burn Spores key (U) for an instant heal, or crouch still on fungal ground inside the Gardens to regrow. Inside the Gardens potions and milk are refused too; the Morphic Tonic, made by throwing a Bloody Jug into a morphic nectar pool, is the one remedy. Only an Apotheos can drink it, and only in the Gardens: it purges harmful effects and mends health and blood together. At your heart-node you can also **molt**: shed a tenth of your temper and place the rest across the eight tempers as you like, once a day, for a full spore load.
 - **First Mycophant reward:** The unique Tendril waits for inventory space if your pack is full. Its pending claim survives death and retries on login or after you free a slot; later victories give repeat rewards instead.
 
 #### Silentium
@@ -286,7 +286,7 @@ The Somatic Loom is where you craft **Hematic Memories** to learn new manipulati
 **Process:**
 1. Craft or obtain **Blank Hematic Memories**
 2. Gather required **Enzymes** (Vivacious, Fervent, Neurotic, etc.)
-3. Collect **Catalysts** (tendency-specific materials)
+3. Collect **Catalysts** (temper-specific materials)
 4. Insert one blank and the recipe's catalysts, then empty-hand use the Loom to select an output and check its cost and learning requirements
 5. Project the displayed blood cost into the Loom; payment locks that recipe and its catalysts
 6. The **engram** unfurls on the ground around the Loom: an eight-pointed star with the memory's fragments (one per enzyme) at its points, and the dim echo of a past Harbinger above the warp
@@ -296,7 +296,7 @@ The Somatic Loom is where you craft **Hematic Memories** to learn new manipulati
 
 **Result:** Place the full Memory item in an Iron Brazier, light it with Blood Projection, and hold Blood Absorption on it to learn the manipulation. In Survival, direct item use learns crude starter shards, not full woven memories.
 
-Each enzyme becomes three spans of thread in its vial, and every step of a lane holds one span; spans are spent only when the memory crystallizes, so cutting back or cancelling returns them. The Loom checks your own engram's cost before taking blood, so a paid weave can always be finished. From Summa the Loom's faces are keyed to the tendency wheel (the progress screen's star order); valves pass only their colour; from Magister grey fragments must pass their prism. A false fragment threaded home snaps and costs you: spans at Mediocritas, fungal pressure that scars the engram at Summa and Magister, a bite from a failed Harbinger's memory at Perfectus. No weave can kill: at worst you black out and the weave pauses. Dying, leaving the area or logging out only pauses the weave; its lanes and your blood are kept. Once payment finishes, continuing to hold Projection does not pay again or repeat the Staff instructions; empty-hand use still shows that help.
+Each enzyme becomes three spans of thread in its vial, and every step of a lane holds one span; spans are spent only when the memory crystallizes, so cutting back or cancelling returns them. The Loom checks your own engram's cost before taking blood, so a paid weave can always be finished. From Summa the Loom's faces are keyed to the temper wheel (the progress screen's star order); valves pass only their colour; from Magister grey fragments must pass their prism. A false fragment threaded home snaps and costs you: spans at Mediocritas, fungal pressure that scars the engram at Summa and Magister, a bite from a failed Harbinger's memory at Perfectus. No weave can kill: at worst you black out and the weave pauses. Dying, leaving the area or logging out only pauses the weave; its lanes and your blood are kept. Once payment finishes, continuing to hold Projection does not pay again or repeat the Staff instructions; empty-hand use still shows that help.
 
 **Loom tiers.** A base Loom weaves memories up to Summa. At Degree 5, after you have woven a memory yourself, the Mnemonist offers a Ganglionic Harness; install it at the Rite of the Ganglionic Weave to weave Magister memories. The grown ganglion's feelers let you hear any fragment on the engram from where you stand, your staff threads from further away, and the engram spreads wider. At Degree 6, after weaving a Magister memory on a Ganglionic Loom, the Cortical Crown (Rite of the Cortical Weave) opens Perfectus memories and lets the echo stand at full stature; while it weaves, the world around the loom gives way to your own Chamber of Will sky. Crafted harnesses and crowns work too, but never replace your own practice.
 
@@ -392,7 +392,7 @@ A faltering Broken Will may also be **Commandeered** with an owner-attuned Cross
 ### Scars and Spores
 Cerebral scars are learned routes with an active loadout. Cultivated fungal scars occupy a separate physical slot; neither is a Harbinger equipment slot.
 
-At **Degree 4**, ask the Vicar who teaches the old scarring rites. Use his map to find **Masons Respite** and its remote **Vein-Mason**, rather than an outpost vendor. Accept the first lesson for a pattern matching your strongest tendency, a blank scar, its catalyst, and a Hematic Iron Knapper if needed.
+At **Degree 4**, ask the Vicar who teaches the old scarring rites. Use his map to find **Masons Respite** and its remote **Vein-Mason**, rather than an outpost vendor. Accept the first lesson for a pattern matching your strongest temper, a blank scar, its catalyst, and a Hematic Iron Knapper if needed.
 
 1. At the **Cerebral Scarring Station**, insert the kit and load the purple stencil. Trace its cells in red, then carve. The nearby teacher supervises first-scar access until you learn it; later work needs your own crafted station.
 2. Place the carved Scar in an empty **Iron Brazier** with ordinary use. **Blood Projection** lights it for 50 mL if needed: hold it until the bowl fills with blood and the fire takes. Hold **Blood Absorption** on the lit offering until it dissolves; learning costs 100 mL. Sneaking retrieves an offering instead.
@@ -462,7 +462,7 @@ In Creative mode, right-click the Ghastly Alembic, Resonant Forge, Hematic Armat
 **Blood-Infused Weapons**
 - Craft normal weapons with blood components
 - Gain lifesteal properties
-- Scale with blood tendency
+- Scale with blood temper
 - Various types available
 
 ### Tools and Utilities
@@ -470,7 +470,7 @@ In Creative mode, right-click the Ghastly Alembic, Resonant Forge, Hematic Armat
 **Charm of Vascularium** (Curios integration dormant)
 - Hemomancy bloodline/equipment item; dedicated Curios slot support is dormant on the NeoForge 1.21.1 branch
 - Permanent blood regeneration buff
-- Enhanced tendency alignment
+- Enhanced temper alignment
 - Protects against blood loss
 
 **Visceral Recaller**
@@ -597,13 +597,13 @@ As you ascend, you'll hear **Fungal Whispers**: messages from the Erythrocytic M
 
 ## Tips for Harbingers
 
-1. **Specialize Early**: Focus on 2-3 tendencies for faster progression
+1. **Specialize Early**: Focus on 2-3 tempers for faster progression
 
 2. **Build Your Fane**: Once you reach Illuminatus, found a bloodline and establish its Flexible Envelope when you are ready to support the territory.
 
 3. **Recruit Wisely**: You have limited NPC recruitment slots. Choose callings that match your playstyle.
 
-4. **Memory Weaving is Complex**: Study patterns at the Somatic Loom. Each tendency behaves differently.
+4. **Memory Weaving is Complex**: Study patterns at the Somatic Loom. Each temper behaves differently.
 
 5. **Scars are Worth It**: The pain is temporary, the bonuses are permanent.
 
@@ -643,7 +643,7 @@ A: No. They're people who've embraced a taboo art. Some are kind, some are dange
 
 ## Next Steps
 
-- **[[Blood Systems]]**: Manipulations and tendencies
+- **[[Blood Systems]]**: Manipulations and tempers
 - **[[Advanced Mechanics]]**: Master morphlings and puppeteering; review post-alpha Drudge WIP notes
 - **[[Lore and Story]]**: Read the cosmic truth behind the Order
 - **[[World Content]]**: Find structures, resources, and encounters
@@ -683,7 +683,7 @@ The Condenser lesson also opens refinement and compounding instructions; the Ath
 
 Both rites use Greater working floors, with the machine facing the rite two blocks behind the Focus. Steady Separation uses the Governor Kit, Iron Ingot, Chain, Sanguine Glass, Ferric Binder, and Neurotic Enzyme; four anchors plus two 50 mL circuits cost 300 mL. Second Fraction uses the Rotor Kit, Amethyst Shard, Ghast Tear, Hematic Iron Block, Chromatic Sublimate, and Enzyme Primer; eight anchors plus three circuits cost 550 mL. Finish the procession after sealing and closing circuits. Cancellation returns exact offerings and Staff, not spent blood.
 
-Keep opposing vials balanced. The second fraction comes only from that specimen's existing profile; a single-fraction vial cannot invent another tendency. Sacred syringes still give one residuum. Clear space for primary output, second fractions, and powder. Blocked completion retains the samples and rolled batch for retry, including after reload. The installed stage survives breaking and replacing the station. Upgraded placed-model artwork remains a later asset task.
+Keep opposing vials balanced. The second fraction comes only from that specimen's existing profile; a single-fraction vial cannot invent another temper. Sacred syringes still give one residuum. Clear space for primary output, second fractions, and powder. Blocked completion retains the samples and rolled batch for retry, including after reload. The installed stage survives breaking and replacing the station. Upgraded placed-model artwork remains a later asset task.
 
 The Calibrated centrifuge is recognizable by its broad front governor dial, four bearing braces, and low iron footing. The Fractionating tier keeps that equipment and adds two glass receivers beneath a raised split manifold. Both leave the spinning specimens visible, and the installed appearance stays with the machine when moved.
 

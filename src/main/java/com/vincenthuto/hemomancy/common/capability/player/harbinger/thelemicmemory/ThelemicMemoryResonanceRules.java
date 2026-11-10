@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 public final class ThelemicMemoryResonanceRules {
     public enum Tier { NONE, SECONDARY, PREFERRED }
@@ -12,14 +12,14 @@ public final class ThelemicMemoryResonanceRules {
     private ThelemicMemoryResonanceRules() {
     }
 
-    public static Resonance resolve(ThelemicMemory memory, EnumBloodTendency preferred,
-            EnumBloodTendency secondary, boolean signature) {
-        if (preferred == memory.primaryTendency()) {
+    public static Resonance resolve(ThelemicMemory memory, EnumBloodTemper preferred,
+            EnumBloodTemper secondary, boolean signature) {
+        if (preferred == memory.primaryTemper()) {
             return new Resonance(Tier.PREFERRED, 2.0 / 3.0, 2.0 / 3.0, signature);
         }
-        boolean crossMatch = preferred == memory.secondaryTendency()
-                || secondary == memory.primaryTendency()
-                || secondary == memory.secondaryTendency();
+        boolean crossMatch = preferred == memory.secondaryTemper()
+                || secondary == memory.primaryTemper()
+                || secondary == memory.secondaryTemper();
         return crossMatch
                 ? new Resonance(Tier.SECONDARY, 0.8, 0.8, signature)
                 : new Resonance(Tier.NONE, 1.0, 1.0, signature);

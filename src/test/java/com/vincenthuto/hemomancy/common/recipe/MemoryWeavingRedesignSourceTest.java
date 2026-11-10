@@ -28,11 +28,11 @@ class MemoryWeavingRedesignSourceTest {
 
 		assertContains("recipe exposes required catalyst list", recipe, "getCatalysts()");
 		assertContains("recipe exposes integer enzyme requirements", recipe, "getEnzymeRequirements()");
-		assertContains("recipe validates max eight enzymes per tendency", recipe, "MAX_ENZYMES_PER_TENDENCY = 8");
+		assertContains("recipe validates max eight enzymes per temper", recipe, "MAX_ENZYMES_PER_TEMPER = 8");
 		assertContains("recipe stores explicit blood cost", recipe, "bloodCost");
 		assertContains("recipe computes orb count from enzyme amount", recipe, "getOrbCountForRequirement");
 		assertContains("recipe creates one orb per required enzyme", recipe,
-				"return Mth.clamp(requirement, 0, MAX_ENZYMES_PER_TENDENCY);");
+				"return Mth.clamp(requirement, 0, MAX_ENZYMES_PER_TEMPER);");
 
 		assertContains("serializer reads new catalysts field", serializer, "\"catalysts\"");
 		assertContains("serializer reads new enzymes field", serializer, "\"enzymes\"");
@@ -40,7 +40,7 @@ class MemoryWeavingRedesignSourceTest {
 		assertContains("serializer keeps legacy ingredient fallback", serializer, "has(\"ingredient\")");
 
 		String rules = SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/engram/EngramWeaveRules.java");
-		assertContains("loom stores sixty-four enzymes' thread per tendency", loom, "ENZYME_CAPACITY = EngramWeaveRules.SPAN_CAPACITY");
+		assertContains("loom stores sixty-four enzymes' thread per temper", loom, "ENZYME_CAPACITY = EngramWeaveRules.SPAN_CAPACITY");
 		assertContains("a vial holds sixty-four enzymes of three spans", rules, "SPAN_CAPACITY = 64 * SPANS_PER_ENZYME");
 		assertContains("loom has awaiting blood phase", loom, "PHASE_AWAITING_BLOOD");
 		assertContains("loom has a weaving phase", loom, "PHASE_WEAVING");
@@ -66,7 +66,7 @@ class MemoryWeavingRedesignSourceTest {
 				"weaving ? te.getWeaveRecipe() : te.getPreviewRecipe()");
 		assertContains("payment unfurls the payer's own engram", loom, "engram.start(board)");
 		assertContains("payment is gated by the payer's engram reference, not the recipe", loom,
-				"EngramWeaveRules.shortTendency(storedSpans(), board.reference())");
+				"EngramWeaveRules.shortTemper(storedSpans(), board.reference())");
 		assertContains("the engram completes by the rules", loom, "EngramWeaveRules.complete(engram.board(), enzymeCounts(curRecipe))");
 		assertContains("pausing lets go of the held lane", loom, "if (paused) engram.release();");
 		assertContains("loom migrates pre-witnessed orb saves", loom, "TAG_LEGACY_RITUAL_ORBS");
@@ -133,7 +133,7 @@ class MemoryWeavingRedesignSourceTest {
 		assertContains("loom orb fragment shader keeps yarn stripes narrow", loomOrbFragmentShader, "threadWidth");
 		assertNotContains("loom orb fragment shader does not use broad filled region masks",
 				loomOrbFragmentShader, "smoothstep(0.60, 0.96, abs(");
-		assertContains("loom orb fragment shader preserves tendency color", loomOrbFragmentShader, "vertexColor.rgb");
+		assertContains("loom orb fragment shader preserves temper color", loomOrbFragmentShader, "vertexColor.rgb");
 		assertNotContains("loom orb fragment shader does not paint sponge-like dark knots",
 				loomOrbFragmentShader, "knotShadow");
 		assertContains("input edits reset partial awaiting-blood progress", loom, "resetEditableRitualProgress()");

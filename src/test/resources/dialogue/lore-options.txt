@@ -72,7 +72,7 @@ guardian hemomancy.dialogue.rapport.guardian.the_line
 hermit hemomancy.dialogue.hermit.option.how_do_scars_work
 hermit hemomancy.dialogue.hermit.option.tell_me_about_manipulations
 hermit hemomancy.dialogue.hermit.option.tell_me_about_scars
-hermit hemomancy.dialogue.hermit.option.tell_me_about_tendencies
+hermit hemomancy.dialogue.hermit.option.tell_me_about_tempers
 hermit hemomancy.dialogue.hermit.option.what_heart
 hermit hemomancy.dialogue.hermit.option.what_is_this_place
 hermit hemomancy.dialogue.hermit.option.what_remains_for_you
@@ -120,7 +120,7 @@ vicar hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge
 vicar hemomancy.dialogue.vicar.option.tell_me_about_fane
 vicar hemomancy.dialogue.vicar.option.tell_me_about_founding_fane
 vicar hemomancy.dialogue.vicar.option.tell_me_about_hematic_order
-vicar hemomancy.dialogue.vicar.option.tell_me_about_tendencies
+vicar hemomancy.dialogue.vicar.option.tell_me_about_tempers
 vicar hemomancy.dialogue.vicar.option.tell_me_about_the_castles
 vicar hemomancy.dialogue.vicar.option.tell_me_about_the_saints
 vicar hemomancy.dialogue.vicar.option.tell_me_the_final_truth

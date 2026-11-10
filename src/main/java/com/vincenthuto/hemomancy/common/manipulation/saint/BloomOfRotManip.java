@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.saint;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
@@ -24,7 +24,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Bloom of Rot — Canon Memory of Saint Putriciel.
- * Tendencies: Mortem / Flammeus
+ * Tempers: Mortem / Flammeus
  *
  * Spreads hematic fungus in a radius: every body the caster may harm takes
  * a direct hit and Necrosis (10 s). The rot spares no one, so the caster
@@ -41,9 +41,9 @@ public class BloomOfRotManip extends BloodManipulation {
 	public static final float BLOOM_DAMAGE = 3.0F;
 
 	public BloomOfRotManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override

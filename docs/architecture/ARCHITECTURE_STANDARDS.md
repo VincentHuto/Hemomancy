@@ -113,7 +113,7 @@ because of one, it says so.
 | `/hemo` branches | one `<Name>Subcommand` class wired by `HemoCommand` |
 | An entity casting a manipulation | `setEntityCast(EntityCasts::x)` in `ManipulationInit` |
 | Station operations | in the station's block entity; its menu only offers and dispatches |
-| Per-strain Morphling data (tendencies, passive, Cradle, Last Rite, polyp family, HUD art, order) | one row of `MorphlingStrains`; code reads the row, never a `morphling_<strain>` id |
+| Per-strain Morphling data (tempers, passive, Cradle, Last Rite, polyp family, HUD art, order) | one row of `MorphlingStrains`; code reads the row, never a `morphling_<strain>` id |
 
 Damage stages (G-1) and wider `Reach` presets (G-2b, F-16) wait on decisions; until then damage listeners keep their
 priorities and each site keeps its named preset.

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
@@ -24,13 +24,13 @@ public class BloodShotManip extends BloodManipulation {
 	private final Mode mode;
 
 	public BloodShotManip(String name, double cost, double alignLevel,double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		this(name, cost, alignLevel, xpCost, type, rank, tendency, section, Mode.BASELINE);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		this(name, cost, alignLevel, xpCost, type, rank, temper, section, Mode.BASELINE);
 	}
 
 	public BloodShotManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section, Mode mode) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section, Mode mode) {
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 		this.mode = mode;
 	}
 
@@ -96,8 +96,8 @@ public class BloodShotManip extends BloodManipulation {
 	private BloodShotEntity shot(Level world, Player player, ItemStack heldItemMainhand) {
 		BloodShotEntity shot = BloodShotEntity.fromManipulation(world, player, heldItemMainhand);
 		shot.setBaseDamage(SHOT_BASE_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
-		shot.setDamageTendency(getTend());
-		shot.setSecondaryDamageTendency(getSecondaryTend());
+		shot.setDamageTemper(getTend());
+		shot.setSecondaryDamageTemper(getSecondaryTend());
 		return shot;
 	}
 

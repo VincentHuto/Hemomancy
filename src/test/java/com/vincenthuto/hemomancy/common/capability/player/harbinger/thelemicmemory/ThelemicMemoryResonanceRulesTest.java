@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,7 +10,7 @@ class ThelemicMemoryResonanceRulesTest {
     @Test
     void preferredPrimaryAffinityUsesStrongestEfficiency() {
         var result = ThelemicMemoryResonanceRules.resolve(ThelemicMemory.LABORING_ARMS,
-                EnumBloodTendency.FERRIC, EnumBloodTendency.MORTEM, false);
+                EnumBloodTemper.FERRIC, EnumBloodTemper.MORTEM, false);
 
         assertEquals(ThelemicMemoryResonanceRules.Tier.PREFERRED, result.tier());
         assertEquals(2.0 / 3.0, result.costMultiplier(), 0.0001);
@@ -20,7 +20,7 @@ class ThelemicMemoryResonanceRulesTest {
     @Test
     void crossAffinityUsesSecondaryEfficiencyAndDoesNotStack() {
         var result = ThelemicMemoryResonanceRules.resolve(ThelemicMemory.COURSING_LEGS,
-                EnumBloodTendency.FLAMMEUS, EnumBloodTendency.DUCTILIS, true);
+                EnumBloodTemper.FLAMMEUS, EnumBloodTemper.DUCTILIS, true);
 
         assertEquals(ThelemicMemoryResonanceRules.Tier.SECONDARY, result.tier());
         assertEquals(0.8, result.costMultiplier(), 0.0001);
@@ -30,7 +30,7 @@ class ThelemicMemoryResonanceRulesTest {
     @Test
     void unrelatedMorphlingProvidesNoEfficiency() {
         var result = ThelemicMemoryResonanceRules.resolve(ThelemicMemory.PREDATORY_EYES,
-                EnumBloodTendency.FERRIC, EnumBloodTendency.CONGEATIO, false);
+                EnumBloodTemper.FERRIC, EnumBloodTemper.CONGEATIO, false);
 
         assertEquals(ThelemicMemoryResonanceRules.Tier.NONE, result.tier());
         assertEquals(1.0, result.costMultiplier());

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
@@ -22,10 +22,10 @@ public final class ScarsTabController implements IProgressTab {
 	private static final int KNOWLEDGE_REFRESH_TICKS = 60;
 
 	private final ScarsTabState state = new ScarsTabState();
-	private final CyclingFamilyFilter<EnumBloodTendency> familyFilter =
-			new CyclingFamilyFilter<>(List.of(EnumBloodTendency.values()));
+	private final CyclingFamilyFilter<EnumBloodTemper> familyFilter =
+			new CyclingFamilyFilter<>(List.of(EnumBloodTemper.values()));
 	private final PanZoomState panZoom = new PanZoomState();
-	private final TendencyTraceLayerCache traceCache = new TendencyTraceLayerCache();
+	private final TemperTraceLayerCache traceCache = new TemperTraceLayerCache();
 	private int playerDegree;
 	private int knowledgeRefreshCooldown;
 
@@ -50,15 +50,15 @@ public final class ScarsTabController implements IProgressTab {
 				ItemStack result = recipe.getResultItem();
 				if (!(result.getItem() instanceof ItemScar scarItem)) continue;
 				ScarDefinition definition = scarItem.getScarDefinition();
-				if (definition.getScarType() != ScarType.CEREBRAL || definition.getAssignedTendency() == null) continue;
+				if (definition.getScarType() != ScarType.CEREBRAL || definition.getAssignedTemper() == null) continue;
 				ResourceLocation id = ScarInit.SCARS_TYPE_REGISTRY.getKey(definition);
 				if (id == null) continue;
 				entries.add(new ScarTreeEntry(recipe, id, definition, result,
-						definition.getAssignedTendency(), definition.getTier(),
+						definition.getAssignedTemper(), definition.getTier(),
 						"scar_blood_honed".equals(id.getPath())));
 			}
 		}
-		entries.sort(Comparator.comparingInt((ScarTreeEntry entry) -> entry.tendency().ordinal())
+		entries.sort(Comparator.comparingInt((ScarTreeEntry entry) -> entry.temper().ordinal())
 				.thenComparingInt(ScarTreeEntry::tier)
 				.thenComparing(entry -> entry.id().toString()));
 		return entries;
@@ -92,22 +92,22 @@ public final class ScarsTabController implements IProgressTab {
 		traceCache.rebuildIfNeeded(traceNodes(), getContentW(), getContentH(),
 				ScarTreeLayout.CENTER_X, ScarTreeLayout.CENTER_Y);
 		traceCache.render(gfx, ctx, panZoom);
-		TendencyStarRenderer.draw(gfx, ctx, panZoom, ScarTreeLayout.CENTER_X, ScarTreeLayout.CENTER_Y);
+		TemperStarRenderer.draw(gfx, ctx, panZoom, ScarTreeLayout.CENTER_X, ScarTreeLayout.CENTER_Y);
 		ScarsTabView.drawNodes(gfx, ctx, state, panZoom, playerDegree, familyFilter.selected());
 		FamilyFilterControlView.draw(gfx, ctx, familyLabel(), 0xFF44AACC, mouseX, mouseY);
 	}
 
-	private List<TendencyTraceNode> traceNodes() {
+	private List<TemperTraceNode> traceNodes() {
 		Map<String, List<String>> parents = new HashMap<>();
 		for (ScarTreeLayout.Edge edge : state.edges) {
 			parents.computeIfAbsent(edge.toId(), ignored -> new ArrayList<>()).add(edge.fromId());
 		}
-		List<TendencyTraceNode> nodes = new ArrayList<>();
+		List<TemperTraceNode> nodes = new ArrayList<>();
 		for (ScarTreeEntry entry : state.entries) {
-			if (!familyFilter.includes(entry.tendency())) continue;
+			if (!familyFilter.includes(entry.temper())) continue;
 			ScarTreeLayout.Point point = state.positions.get(entry.id().toString());
 			if (point == null) continue;
-			nodes.add(new TendencyTraceNode(entry.id().toString(), entry.tendency(), point.x(), point.y(),
+			nodes.add(new TemperTraceNode(entry.id().toString(), entry.temper(), point.x(), point.y(),
 					parents.getOrDefault(entry.id().toString(), List.of()),
 					state.knownScarIds.contains(entry.id()), isTierLocked(entry.tier(), playerDegree)));
 		}
@@ -131,7 +131,7 @@ public final class ScarsTabController implements IProgressTab {
 		if (FamilyFilterControlView.bounds(ctx).contains(mouseX, mouseY)) {
 			familyFilter.cycle(button == 1 ? -1 : 1);
 			ScarTreeEntry selected = state.selectedEntry();
-			if (selected != null && !familyFilter.includes(selected.tendency())) state.closeDetails();
+			if (selected != null && !familyFilter.includes(selected.temper())) state.closeDetails();
 			return true;
 		}
 		if (button != 0) return false;
@@ -156,9 +156,9 @@ public final class ScarsTabController implements IProgressTab {
 	}
 
 	private String familyLabel() {
-		EnumBloodTendency selected = familyFilter.selected();
+		EnumBloodTemper selected = familyFilter.selected();
 		return FamilyFilterLabels.display(selected == null ? null
-				: BloodManipulation.tendencyName(selected).getString());
+				: BloodManipulation.temperName(selected).getString());
 	}
 
 	public ScarsTabState getState() { return state; }

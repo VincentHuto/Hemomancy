@@ -10,7 +10,7 @@ Edit these PNG files directly. The game loads them as textures; the Python gener
 | `screen_dimming.png` | 16 x 16 | Background overlay, stretched across the screen. Reduce its alpha or erase it to show more of the world. |
 | `progress_track.png` | 148 x 3 | Empty progress bar. |
 | `progress_fill.png` | 148 x 3 | Filled progress bar, revealed from left to right without stretching. |
-| `tendencies/*.png` | 32 x 32 each | Eight individually editable tendency cell sprites. |
+| `tempers/*.png` | 32 x 32 each | Eight individually editable temper cell sprites. |
 | `properties/*.png` | 32 x 32 each | Twelve individually editable biological motifs. |
 | `ductilis_link.png` | 32 x 32 | Connections between branching Ductilis cells. |
 
@@ -28,15 +28,15 @@ rotates, fades, and clips these PNGs; it does not paint their shapes with GUI fi
 | `special/putriciel_ember.png`, `special/putriciel_spore.png` | 16 x 16 | Putriciel's flammeus and mortem inclusions. |
 | `special/velorum_crystal.png`, `special/velorum_shadow.png` | 16 x 16 | Velorum's congeatio and tenebris inclusions. |
 
-Tendency files: `animus.png`, `flammeus.png`, `ductilis.png`, `lux.png`, `mortem.png`, `congeatio.png`, `ferric.png`, and `tenebris.png`.
+Temper files: `animus.png`, `flammeus.png`, `ductilis.png`, `lux.png`, `mortem.png`, `congeatio.png`, `ferric.png`, and `tenebris.png`.
 
 Property files: `aquatic.png`, `flying.png`, `venomous.png`, `arthropod.png`, `cold_native.png`, `nether_native.png`, `ender.png`, `undead.png`, `fungal.png`, `explosive.png`, `burrowing.png`, and `neutral.png` (the fallback for unknown properties).
 
-Edit the individual files in these subfolders. The original `tendencies.png` and `properties.png` atlases are retained as references but are no longer loaded by the microscope renderer. All extracted icons preserve their original pixels and transparency.
+Edit the individual files in these subfolders. The original `tempers.png` and `properties.png` atlases are retained as references but are no longer loaded by the microscope renderer. All extracted icons preserve their original pixels and transparency.
 
 The ordinary blood-cell sprite is `../../particle/particle_blood_cell.png`; it is shared with other blood effects.
 
-Keep the listed canvas sizes and filenames. Static screen sprites render with white tint, preserving the painted colors and alpha. Tendency sprites use the existing tendency palette as a tint, so use light neutral shading for those. Property sprites also receive a pale tint. Cell placement, drift, pulses, lens-edge fading, text, and examination progress remain dynamic Java behavior. Changing the overall layout or circular cell bounds still requires adjusting the renderer's coordinates.
+Keep the listed canvas sizes and filenames. Static screen sprites render with white tint, preserving the painted colors and alpha. Temper sprites use the existing temper palette as a tint, so use light neutral shading for those. Property sprites also receive a pale tint. Cell placement, drift, pulses, lens-edge fading, text, and examination progress remain dynamic Java behavior. Changing the overall layout or circular cell bounds still requires adjusting the renderer's coordinates.
 
 The logical screen canvas is 448 x 276, scaled uniformly to fit the window:
 

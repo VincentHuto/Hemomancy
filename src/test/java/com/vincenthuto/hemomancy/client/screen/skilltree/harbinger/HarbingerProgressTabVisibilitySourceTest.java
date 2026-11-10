@@ -21,9 +21,9 @@ public final class HarbingerProgressTabVisibilitySourceTest {
 		assertEnglish("screen.hemomancy.harbinger_progress.tab.rites", "Rites & Crafts");
 		assertNotContains("crafting no longer occupies a separate top-level tab",
 				progressScreen, "CRAFTING(\"");
-		assertContains("tendencies tab is hidden until degree 3",
-				progressScreen, "TENDENCIES(\"screen.hemomancy.harbinger_progress.tab.tendencies\", 0xFFCC8833, 3, false)");
-		assertEnglish("screen.hemomancy.harbinger_progress.tab.tendencies", "Tendencies");
+		assertContains("tempers tab is hidden until degree 3",
+				progressScreen, "TEMPERS(\"screen.hemomancy.harbinger_progress.tab.tempers\", 0xFFCC8833, 3, false)");
+		assertEnglish("screen.hemomancy.harbinger_progress.tab.tempers", "Tempers");
 		assertNotContains("scars no longer occupy a separate top-level tab",
 				progressScreen, "SCARS(\"");
 		assertContains("tab descriptors are built from visible tabs",

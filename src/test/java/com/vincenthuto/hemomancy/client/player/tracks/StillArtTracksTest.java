@@ -218,7 +218,7 @@ class StillArtTracksTest {
             assertSame(StillArtEndings.get(ending),CastingTracks.ending(packet),ending+" layer");
         }
         var harbinger=CastingAnimationPacket.harbinger(1,id,"blood_shot",1,
-                com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS,null,
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.ANIMUS,null,
                 com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank.HUMILIS,null,
                 com.vincenthuto.hemomancy.common.manipulation.animation.CastStyle.SCHOOL,CastPhase.RELEASE,0,0,0,0,InteractionHand.MAIN_HAND);
         assertNull(CastingTracks.ending(harbinger));

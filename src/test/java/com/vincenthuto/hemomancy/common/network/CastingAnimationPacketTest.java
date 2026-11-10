@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.network;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.animation.*;
@@ -41,14 +41,14 @@ class CastingAnimationPacketTest {
     }
     @Test void harbingerPacketStillRoundTrips() {
         var id=UUID.randomUUID();
-        for(var school:EnumBloodTendency.values())for(var rank:EnumManipulationRank.values())for(var phase:CastPhase.values()) {
-            var packet=CastingAnimationPacket.harbinger(42,id,"blood_shot",73,school,EnumBloodTendency.MORTEM,rank,
+        for(var school:EnumBloodTemper.values())for(var rank:EnumManipulationRank.values())for(var phase:CastPhase.values()) {
+            var packet=CastingAnimationPacket.harbinger(42,id,"blood_shot",73,school,EnumBloodTemper.MORTEM,rank,
                     CastPurpose.AREA,CastStyle.SCHOOL,phase,12345,12350,5,40,InteractionHand.OFF_HAND);
             var decoded=roundTrip(packet);
             assertEquals(packet,decoded);
             assertEquals(CastLane.HARBINGER,decoded.lane());
             assertEquals(school,decoded.school());
-            assertEquals(EnumBloodTendency.MORTEM,decoded.secondary());
+            assertEquals(EnumBloodTemper.MORTEM,decoded.secondary());
             assertEquals(rank,decoded.rank());
             assertEquals(CastPurpose.AREA,decoded.purpose());
             assertEquals(phase,decoded.phase());

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.trade;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -197,28 +197,28 @@ class NpcTradeLoaderTest {
 	}
 
 	@Test
-	void tendencyAndSpecimenGrades() {
-		EnumBloodTendency ferric = EnumBloodTendency.FERRIC;
-		EnumBloodTendency lux = EnumBloodTendency.LUX;
-		assertEquals(NpcTradeAppraisals.Grade.POOR, NpcTradeAppraisals.tendencyGrade(List.of(lux), true, ferric));
-		assertEquals(NpcTradeAppraisals.Grade.FAIR, NpcTradeAppraisals.tendencyGrade(List.of(lux, ferric), false, ferric));
-		assertEquals(NpcTradeAppraisals.Grade.FINE, NpcTradeAppraisals.tendencyGrade(List.of(ferric), true, ferric));
-		assertEquals(Optional.of(ferric), NpcTradeAppraisals.tendencyNamed("Ferric"));
+	void temperAndSpecimenGrades() {
+		EnumBloodTemper ferric = EnumBloodTemper.FERRIC;
+		EnumBloodTemper lux = EnumBloodTemper.LUX;
+		assertEquals(NpcTradeAppraisals.Grade.POOR, NpcTradeAppraisals.temperGrade(List.of(lux), true, ferric));
+		assertEquals(NpcTradeAppraisals.Grade.FAIR, NpcTradeAppraisals.temperGrade(List.of(lux, ferric), false, ferric));
+		assertEquals(NpcTradeAppraisals.Grade.FINE, NpcTradeAppraisals.temperGrade(List.of(ferric), true, ferric));
+		assertEquals(Optional.of(ferric), NpcTradeAppraisals.temperNamed("Ferric"));
 		assertEquals(NpcTradeAppraisals.Grade.POOR, NpcTradeAppraisals.specimenGrade(""));
 		assertEquals(NpcTradeAppraisals.Grade.FAIR, NpcTradeAppraisals.specimenGrade("minecraft:cow"));
 		assertEquals(NpcTradeAppraisals.Grade.FINE, NpcTradeAppraisals.specimenGrade("hemomancy:leech"));
 	}
 
 	@Test
-	void aTendencyAppraisalNeedsAKnownTendency() {
+	void aTemperAppraisalNeedsAKnownTemper() {
 		String base = "{\"kind\": \"items\", \"ingredient\": {\"item\": \"hemomancy:ferric_enzyme\"}, \"count\": 1, "
-				+ "\"appraisal\": \"tendency\"";
+				+ "\"appraisal\": \"temper\"";
 		NpcTradeWant.Items want = assertInstanceOf(NpcTradeWant.Items.class,
-				parse("alchemist/draw", card(base + ", \"appraisal_tendency\": \"ferric\"}")).want());
-		assertEquals(Optional.of("ferric"), want.appraisal().param(NpcTradeAppraisals.TENDENCY_PARAM));
+				parse("alchemist/draw", card(base + ", \"appraisal_temper\": \"ferric\"}")).want());
+		assertEquals(Optional.of("ferric"), want.appraisal().param(NpcTradeAppraisals.TEMPER_PARAM));
 		assertThrows(JsonSyntaxException.class, () -> parse("alchemist/draw", card(base + "}")));
 		assertThrows(JsonSyntaxException.class,
-				() -> parse("alchemist/draw", card(base + ", \"appraisal_tendency\": \"sanguine\"}")));
+				() -> parse("alchemist/draw", card(base + ", \"appraisal_temper\": \"sanguine\"}")));
 	}
 
 	// helpers

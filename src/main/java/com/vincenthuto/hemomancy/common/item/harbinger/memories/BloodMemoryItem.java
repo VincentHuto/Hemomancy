@@ -49,7 +49,7 @@ public class BloodMemoryItem extends Item {
 			tooltip.add(HemoText.translatable("tooltip.hemomancy.blood_memory.learn_at_degree_cast_at_alignment",
 					com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates.minDegreeForRank(getManip().getRank()),
 					(int) getManip().getAlignLevel(),
-					BloodManipulation.tendencyName(getManip().getTend())).withStyle(ChatFormatting.GRAY));
+					BloodManipulation.temperName(getManip().getTend())).withStyle(ChatFormatting.GRAY));
 			tooltip.add(getManip().getBaseCostLine()
 					.withStyle(ChatFormatting.DARK_RED));
 			ManipulationFamilyRegistry.form(getManip().getName()).ifPresent(form ->

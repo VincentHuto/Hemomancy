@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.effect.MindBrokenRules;
@@ -46,7 +46,7 @@ public final class ManipulationCostLedger {
 		List<ManipulationCostContribution> contributions = new ArrayList<>();
 		addIfNotNeutral(contributions, "efficiency", "message.hemomancy.manipulation_cost_ledger.efficiency", Category.SKILL,
 				SkillPointHelper.getEfficiencyMultiplier(player));
-		addIfNotNeutral(contributions, "purity", "message.hemomancy.manipulation_cost_ledger.purity", Category.TENDENCY, purityCostMultiplier,
+		addIfNotNeutral(contributions, "purity", "message.hemomancy.manipulation_cost_ledger.purity", Category.TEMPER, purityCostMultiplier,
 				purityCostMultiplier <= 0.0D ? "message.hemomancy.manipulation_cost_ledger.manipulation_blocked" : "");
 
 		ManipLevel manipLevel = HemoCapabilityAccess.getKnownManipulations(player).getManipLevel(manipulation);
@@ -54,7 +54,7 @@ public final class ManipulationCostLedger {
 		addIfNotNeutral(contributions, "manipulation_mastery", "message.hemomancy.manipulation_cost_ledger.manipulation_mastery", Category.MASTERY,
 				levelCostMultiplier);
 
-		if (matchesStrongestTendency(player, manipulation.getTend())) {
+		if (matchesStrongestTemper(player, manipulation.getTend())) {
 			double dynamicUse = SkillPointHelper.getDynamicUseMultiplier(player);
 			if (dynamicUse > 0.0D) {
 				addIfNotNeutral(contributions, "dynamic_use", "message.hemomancy.manipulation_cost_ledger.dynamic_use", Category.SKILL,
@@ -129,21 +129,21 @@ public final class ManipulationCostLedger {
 		return 1.0D;
 	}
 
-	private static boolean matchesStrongestTendency(Player player, EnumBloodTendency manipulationTendency) {
-		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player);
-		if (tendency == null || manipulationTendency == null) {
+	private static boolean matchesStrongestTemper(Player player, EnumBloodTemper manipulationTemper) {
+		IBloodTemperament temper = HemoCapabilityAccess.getBloodTemperament(player);
+		if (temper == null || manipulationTemper == null) {
 			return false;
 		}
-		EnumBloodTendency strongest = null;
+		EnumBloodTemper strongest = null;
 		float highestVal = 0.0F;
-		for (EnumBloodTendency candidate : EnumBloodTendency.values()) {
-			float val = tendency.getAlignmentByTendency(candidate);
+		for (EnumBloodTemper candidate : EnumBloodTemper.values()) {
+			float val = temper.getAlignmentByTemper(candidate);
 			if (val > highestVal) {
 				highestVal = val;
 				strongest = candidate;
 			}
 		}
-		return strongest == manipulationTendency;
+		return strongest == manipulationTemper;
 	}
 
 	private static void addIfNotNeutral(List<ManipulationCostContribution> contributions, String sourceId,

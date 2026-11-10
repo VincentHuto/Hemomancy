@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -20,7 +20,7 @@ final class VesperEveningStarGallery {
 	private static final int SETTLE = 36;
 	private static final int GAP = 6;
 
-	private record Entry(EnumBloodTendency tendency, boolean raging, VesperWeaponAction action, int start) {
+	private record Entry(EnumBloodTemper temper, boolean raging, VesperWeaponAction action, int start) {
 		int moveStart() {
 			return start + SETTLE;
 		}
@@ -39,37 +39,37 @@ final class VesperEveningStarGallery {
 
 	static {
 		Object[][] plan = {
-				{ EnumBloodTendency.ANIMUS, false, VesperWeaponAction.ICHIMONJI },
-				{ EnumBloodTendency.ANIMUS, false, VesperWeaponAction.CROSSCUT },
-				{ EnumBloodTendency.MORTEM, false, VesperWeaponAction.REAPER_SWEEP },
-				{ EnumBloodTendency.MORTEM, false, VesperWeaponAction.AXE_GRAVE_SPLITTER },
-				{ EnumBloodTendency.LUX, false, VesperWeaponAction.LANCE_FLURRY },
-				{ EnumBloodTendency.LUX, false, VesperWeaponAction.SPEAR_PINNING_THRUST },
-				{ EnumBloodTendency.TENEBRIS, false, VesperWeaponAction.TWIN_REND },
-				{ EnumBloodTendency.TENEBRIS, false, VesperWeaponAction.CLAW_EVISCERATE },
-				{ EnumBloodTendency.DUCTILIS, false, VesperWeaponAction.STORM_LOCK },
-				{ EnumBloodTendency.FLAMMEUS, false, VesperWeaponAction.TORCH_CINDER_SWEEP },
-				{ EnumBloodTendency.CONGEATIO, false, VesperWeaponAction.CHAIN_SWEEP },
-				{ EnumBloodTendency.CONGEATIO, false, VesperWeaponAction.FLAIL_SHATTER_SLAM },
-				{ EnumBloodTendency.FERRIC, false, VesperWeaponAction.STAFF_LODESTONE_SWEEP },
-				{ EnumBloodTendency.FERRIC, false, VesperWeaponAction.MAGNETIC_AXIS },
-				{ EnumBloodTendency.FERRIC, true, VesperWeaponAction.SICKLE_REAP_R },
-				{ EnumBloodTendency.FERRIC, true, VesperWeaponAction.SICKLE_CROSS_REND },
-				{ EnumBloodTendency.FERRIC, true, VesperWeaponAction.SICKLE_CYCLONE },
-				{ EnumBloodTendency.FERRIC, true, VesperWeaponAction.SICKLE_CRESCENT_STAGGER },
-				{ EnumBloodTendency.FERRIC, true, VesperWeaponAction.SICKLE_HOOK_REEL },
+				{ EnumBloodTemper.ANIMUS, false, VesperWeaponAction.ICHIMONJI },
+				{ EnumBloodTemper.ANIMUS, false, VesperWeaponAction.CROSSCUT },
+				{ EnumBloodTemper.MORTEM, false, VesperWeaponAction.REAPER_SWEEP },
+				{ EnumBloodTemper.MORTEM, false, VesperWeaponAction.AXE_GRAVE_SPLITTER },
+				{ EnumBloodTemper.LUX, false, VesperWeaponAction.LANCE_FLURRY },
+				{ EnumBloodTemper.LUX, false, VesperWeaponAction.SPEAR_PINNING_THRUST },
+				{ EnumBloodTemper.TENEBRIS, false, VesperWeaponAction.TWIN_REND },
+				{ EnumBloodTemper.TENEBRIS, false, VesperWeaponAction.CLAW_EVISCERATE },
+				{ EnumBloodTemper.DUCTILIS, false, VesperWeaponAction.STORM_LOCK },
+				{ EnumBloodTemper.FLAMMEUS, false, VesperWeaponAction.TORCH_CINDER_SWEEP },
+				{ EnumBloodTemper.CONGEATIO, false, VesperWeaponAction.CHAIN_SWEEP },
+				{ EnumBloodTemper.CONGEATIO, false, VesperWeaponAction.FLAIL_SHATTER_SLAM },
+				{ EnumBloodTemper.FERRIC, false, VesperWeaponAction.STAFF_LODESTONE_SWEEP },
+				{ EnumBloodTemper.FERRIC, false, VesperWeaponAction.MAGNETIC_AXIS },
+				{ EnumBloodTemper.FERRIC, true, VesperWeaponAction.SICKLE_REAP_R },
+				{ EnumBloodTemper.FERRIC, true, VesperWeaponAction.SICKLE_CROSS_REND },
+				{ EnumBloodTemper.FERRIC, true, VesperWeaponAction.SICKLE_CYCLONE },
+				{ EnumBloodTemper.FERRIC, true, VesperWeaponAction.SICKLE_CRESCENT_STAGGER },
+				{ EnumBloodTemper.FERRIC, true, VesperWeaponAction.SICKLE_HOOK_REEL },
 		};
 		int at = 2;
-		EnumBloodTendency lastTendency = null;
+		EnumBloodTemper lastTemper = null;
 		boolean lastRaging = false;
 		for (Object[] row : plan) {
-			Entry entry = new Entry((EnumBloodTendency) row[0], (Boolean) row[1], (VesperWeaponAction) row[2], at);
+			Entry entry = new Entry((EnumBloodTemper) row[0], (Boolean) row[1], (VesperWeaponAction) row[2], at);
 			ENTRIES.add(entry);
-			if (entry.tendency() != lastTendency || entry.raging() != lastRaging) {
+			if (entry.temper() != lastTemper || entry.raging() != lastRaging) {
 				SHOTS.add(new Shot(entry.moveStart() - 2, "stance-" + (entry.raging() ? "sickles"
-						: entry.tendency().name().toLowerCase())));
+						: entry.temper().name().toLowerCase())));
 			}
-			lastTendency = entry.tendency();
+			lastTemper = entry.temper();
 			lastRaging = entry.raging();
 			VesperWeaponAction action = entry.action();
 			String name = action.name().toLowerCase();
@@ -101,10 +101,10 @@ final class VesperEveningStarGallery {
 	static void drive(VesperTheEveningStarEntity vesper, int tick) {
 		for (Entry entry : ENTRIES) {
 			if (tick < entry.start() || tick >= entry.end()) continue;
-			set(vesper, "DATA_TENDENCY", entry.tendency().ordinal());
+			set(vesper, "DATA_TEMPER", entry.temper().ordinal());
 			set(vesper, "DATA_RAGING", entry.raging());
 			// A fresh stance only for the first move on a weapon, so its flourish is seen once and then settles.
-			int stanceStart = ENTRIES.stream().filter(e -> e.tendency() == entry.tendency()
+			int stanceStart = ENTRIES.stream().filter(e -> e.temper() == entry.temper()
 					&& e.raging() == entry.raging()).findFirst().orElse(entry).start();
 			set(vesper, "DATA_STANCE_TICK", tick - stanceStart);
 			int moveTick = tick - entry.moveStart();

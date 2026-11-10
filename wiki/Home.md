@@ -35,7 +35,7 @@ Players choose between two mutually exclusive paths:
 - **[[Public Alpha Readiness]]** - Current alpha status, known limitations, and tester path
 - **[[Harbinger Path]]**: Blood magic progression, degrees, and manipulations
 - **[[Unstained Path]]**: Purification mechanics and guardian powers
-- **[[Blood Systems]]**: Understanding manipulations, tendencies, and the vascular system
+- **[[Blood Systems]]**: Understanding manipulations, tempers, and the vascular system
 - **[[World Content]]**: Biomes, structures, mobs, and items to discover
 - **[[Advanced Mechanics]]**: Morphlings, puppeteering, cardinal rites, and post-alpha Drudge WIP notes
 
@@ -58,7 +58,7 @@ Players choose between two mutually exclusive paths:
 ## Key Features
 
 ### Blood Manipulation System
-Manipulations are organized into **eight tendencies** (blood qualities). Each tendency has its own set of powers:
+Manipulations are organized into **eight tempers** (blood qualities). Each temper has its own set of powers:
 - **Animus** (Life): Healing, regeneration, vitality
 - **Flammeus** (Fire): Combustion and heat
 - **Ductilis** (Lightning/Nerves): speed, nervous energy, and electrical impulse

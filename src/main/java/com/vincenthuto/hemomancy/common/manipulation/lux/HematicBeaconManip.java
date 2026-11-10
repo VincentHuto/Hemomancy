@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation.lux;
 
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -28,9 +28,9 @@ public class HematicBeaconManip extends BloodManipulation {
 	private static final int DURATION = 160;
 
 	public HematicBeaconManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class HematicBeaconManip extends BloodManipulation {
 
 		world.playSound(null, BlockPos.containing(center), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.7F, 1.5F);
         HemomancyTendrilEffects.luxRelease(player, center.add(0, 1.35, 0));
-		ManipulationParticles.accent(sLevel, EnumBloodTendency.LUX, center.add(0, 1.35, 0), net.minecraft.world.phys.Vec3.ZERO);
+		ManipulationParticles.accent(sLevel, EnumBloodTemper.LUX, center.add(0, 1.35, 0), net.minecraft.world.phys.Vec3.ZERO);
 	        }
     }
 }

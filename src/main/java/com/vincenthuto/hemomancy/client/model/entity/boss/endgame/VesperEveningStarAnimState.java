@@ -101,7 +101,7 @@ public final class VesperEveningStarAnimState {
 		actionTime = actionClock.sample(action.ordinal() * 4 + (entity.getActionVariant() & 3),
 				entity.getActionTick(), tick, partial, 1);
 		if (action != VesperWeaponAction.NONE) actionTime = Math.min(actionTime, action.durationTicks());
-		stanceTime = stanceClock.sample(entity.getActiveTendency().ordinal(), entity.getStanceTick(), tick, partial, 1);
+		stanceTime = stanceClock.sample(entity.getActiveTemper().ordinal(), entity.getStanceTick(), tick, partial, 1);
 		downedTime = downedClock.sample(entity.isAwaitingAbsorption() ? 1 : 0, entity.getDownedTicks(), tick, partial, 1);
 		// -1 until the hood comes off; the replay never runs past the end of the removal
 		int hood = entity.getHoodRemovalTick();
@@ -228,7 +228,7 @@ public final class VesperEveningStarAnimState {
 		int hash = action.ordinal();
 		hash = hash * 31 + (entity.getActionVariant() & 1);
 		hash = hash * 31 + VesperEveningStarPose.segment(action, actionTime);
-		hash = hash * 31 + entity.getActiveTendency().ordinal();
+		hash = hash * 31 + entity.getActiveTemper().ordinal();
 		hash = hash * 31 + (entity.isRaging() ? 1 : 0);
 		hash = hash * 31 + (entity.isHoodRemovalActive() ? 1 : 0);
 		hash = hash * 31 + (entity.isAwaitingAbsorption() ? 1 : 0);

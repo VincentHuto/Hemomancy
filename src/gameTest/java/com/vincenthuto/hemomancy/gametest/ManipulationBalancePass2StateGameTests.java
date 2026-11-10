@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.damage.SchoolCombatEvents;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
@@ -15,7 +15,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules;
 import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -131,7 +131,7 @@ public final class ManipulationBalancePass2StateGameTests {
             h.assertTrue(SchoolStates.apply(p, p, SchoolState.VEILED, 100), "Caster was not Veiled");
             var gloam = ManipulationInit.gloam_laceration.get();
             gloam.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-            near(h, TendencyAffinityRules.adjustManipulationDamage(p, cow, gloam,
+            near(h, TemperAffinityRules.adjustManipulationDamage(p, cow, gloam,
                     (float) (6 * SkillPointHelper.getCrimsonMasteryMultiplier(p))), 100 - cow.getHealth(), "Veiled Gloam damage");
             h.assertTrue(cow.hasEffect(EffectInit.blood_loss), "Gloam did not open a wound");
             // Illumination strips the Veil: the same caster in the same light no longer ambushes.
@@ -141,7 +141,7 @@ public final class ManipulationBalancePass2StateGameTests {
                 h.assertTrue(SchoolStates.apply(p, p, SchoolState.VEILED, 100), "Caster was not re-Veiled");
                 h.assertTrue(SchoolStates.apply(p, p, SchoolState.ILLUMINATED, 100), "Caster was not Illuminated");
                 gloam.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-                near(h, TendencyAffinityRules.adjustManipulationDamage(p, revealed, gloam,
+                near(h, TemperAffinityRules.adjustManipulationDamage(p, revealed, gloam,
                         (float) (3.5 * SkillPointHelper.getCrimsonMasteryMultiplier(p))), 100 - revealed.getHealth(),
                         "An Illuminated Veil still ambushed");
             } finally { revealed.discard(); }
@@ -283,7 +283,7 @@ public final class ManipulationBalancePass2StateGameTests {
             h.assertTrue(SchoolStates.apply(p, cow, SchoolState.NECROSIS, 160), "Necrosis was not applied");
             SchoolStates.data(cow).get(SchoolState.NECROSIS).stored = 6;
             bell.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), bell.getRequiredChargeTicks() / 2f);
-            near(h, TendencyAffinityRules.adjustManipulationDamage(p, cow, bell, 7 * 0.5f) + 3, 100 - cow.getHealth(),
+            near(h, TemperAffinityRules.adjustManipulationDamage(p, cow, bell, 7 * 0.5f) + 3, 100 - cow.getHealth(),
                     "Half Bell toll plus half the debt");
             var debt = SchoolStates.data(cow).get(SchoolState.NECROSIS);
             h.assertTrue(debt != null && SchoolStates.has(cow, SchoolState.NECROSIS), "Half Bell erased the unpaid debt");
@@ -307,7 +307,7 @@ public final class ManipulationBalancePass2StateGameTests {
             h.assertTrue(carrion.canContinueChannel(p, h.getLevel()), "Carrion ignored an Insatiable Hunger target");
             var bell = ManipulationInit.funeral_bell.get();
             bell.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), bell.getRequiredChargeTicks());
-            near(h, TendencyAffinityRules.adjustManipulationDamage(p, cow, bell, 9), 100 - cow.getHealth(),
+            near(h, TemperAffinityRules.adjustManipulationDamage(p, cow, bell, 9), 100 - cow.getHealth(),
                     "Full Bell toll with Insatiable Hunger");
             h.assertTrue(!cow.hasEffect(EffectInit.insatiable_hunger), "Bell did not spend Insatiable Hunger");
             h.succeed();
@@ -361,8 +361,8 @@ public final class ManipulationBalancePass2StateGameTests {
         var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
+        for (var temper : EnumBloodTemper.values())
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper, 100);
         return p;
     }
 }

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintKit;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintOpening;
 
@@ -68,7 +68,7 @@ public final class SeraphaeIntegrityRules {
 	}
 
 	/** The integrity a counted opening hit adds, weighted by the hit's school and rounded to the nearest half. */
-	public static float hitGain(int openingId, SaintOpening.Delivery delivery, @Nullable EnumBloodTendency school) {
+	public static float hitGain(int openingId, SaintOpening.Delivery delivery, @Nullable EnumBloodTemper school) {
 		boolean cast = delivery == SaintOpening.Delivery.SCHOOL_CAST;
 		float base = restraintWindow(openingId) ? (cast ? RESTRAINT_CAST : RESTRAINT_HIT)
 				: (cast ? GATHERED_CAST : GATHERED_HIT);
@@ -76,7 +76,7 @@ public final class SeraphaeIntegrityRules {
 	}
 
 	/** The stilling schools (circulation, sensation, decay) count more; her own count less. */
-	public static float schoolFactor(@Nullable EnumBloodTendency school) {
+	public static float schoolFactor(@Nullable EnumBloodTemper school) {
 		if (school == null) return 1.0F;
 		return switch (school) {
 			case CONGEATIO, TENEBRIS, MORTEM -> STILLING_FACTOR;
@@ -86,8 +86,8 @@ public final class SeraphaeIntegrityRules {
 	}
 
 	/** A cast that breaks a hold: one of the stilling schools of circulation or sensation. */
-	public static boolean breaksHold(@Nullable EnumBloodTendency school) {
-		return school == EnumBloodTendency.CONGEATIO || school == EnumBloodTendency.TENEBRIS;
+	public static boolean breaksHold(@Nullable EnumBloodTemper school) {
+		return school == EnumBloodTemper.CONGEATIO || school == EnumBloodTemper.TENEBRIS;
 	}
 
 	public static float roundHalf(float value) {

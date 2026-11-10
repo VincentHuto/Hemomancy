@@ -382,7 +382,7 @@ def picto(name, u, v, u0, v0):
 
 
 def sanguine_circle(u, v, fw, fh):
-    """A blood-memory circle: a ring of eight tendency nodes round a centre, the Liber's teaching diagram."""
+    """A blood-memory circle: a ring of eight temper nodes round a centre, the Liber's teaching diagram."""
     cx, cy, R = (fw - 1) / 2, 6.0, min(4.0, (fw - 3) / 2)
     dx, dy = u - cx, v - cy
     r = math.hypot(dx, dy)

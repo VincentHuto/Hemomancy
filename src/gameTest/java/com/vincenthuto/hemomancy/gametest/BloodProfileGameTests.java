@@ -209,8 +209,8 @@ public final class BloodProfileGameTests {
             target.discard();
         }
         var golem = EntityType.IRON_GOLEM.create(h.getLevel());
-        h.assertTrue(TendencyWeaponHelper.isOpposingTarget(golem,
-                com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.DUCTILIS), "Ferric target lost affinity");
+        h.assertTrue(TemperWeaponHelper.isOpposingTarget(golem,
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.DUCTILIS), "Ferric target lost affinity");
         h.assertTrue(machine.getResultFromVial(EntityType.WARDEN).isEmpty(), "Warden gained ordinary enzymes");
         golem.discard();
         h.succeed();
@@ -433,8 +433,8 @@ public final class BloodProfileGameTests {
             var path = root.resolve("pack" + i);
             var file = path.resolve("data/minecraft/blood_profiles/pig.json");
             Files.createDirectories(file.getParent());
-            Files.writeString(file, i == 0 ? "{\"tendencies\":[\"animus\"],\"properties\":[\"hemomancy:fungal\"]}"
-                    : "{\"tendencies\":[\"ferric\"],\"requires_living_syringe\":true}");
+            Files.writeString(file, i == 0 ? "{\"tempers\":[\"animus\"],\"properties\":[\"hemomancy:fungal\"]}"
+                    : "{\"tempers\":[\"ferric\"],\"requires_living_syringe\":true}");
             if (i == 1) {
                 var dormant = path.resolve("data/absent_mod/blood_profiles/dormant.json");
                 Files.createDirectories(dormant.getParent());
@@ -456,7 +456,7 @@ public final class BloodProfileGameTests {
                     && replacement.get(ResourceLocation.parse("absent_mod:malformed")).equals(EntityBloodProfile.EMPTY), "Malformed/dormant definitions handled incorrectly");
             var definition = replacement.get(id);
             h.assertTrue(definition.requiresLivingSyringe() && definition.properties().isEmpty()
-                    && definition.tendencies().equals(List.of(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.FERRIC)),
+                    && definition.tempers().equals(List.of(com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.FERRIC)),
                     "Higher priority pack did not replace entire definition");
             apply.invoke(loader, replacement, manager, InactiveProfiler.INSTANCE);
             var vial = new ItemStack(ItemInit.bloody_vial.get());
@@ -478,7 +478,7 @@ public final class BloodProfileGameTests {
             Files.delete(root.resolve("pack1/data/minecraft/blood_profiles/pig.json"));
             var removed = prepareMalformedFixture(h, loader, prepare, manager);
             apply.invoke(loader, removed, manager, InactiveProfiler.INSTANCE);
-            h.assertTrue(BloodSampleData.profile(vial, false).tendencies().isEmpty() && BloodSampleData.identified(vial), "Reload retained stale traits or erased identification");
+            h.assertTrue(BloodSampleData.profile(vial, false).tempers().isEmpty() && BloodSampleData.identified(vial), "Reload retained stale traits or erased identification");
         } finally {
             apply.invoke(loader, original, null, InactiveProfiler.INSTANCE);
             BloodProfileData.receive(originalClient.json());

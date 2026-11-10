@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.player.tracks;
 
 import com.vincenthuto.hemomancy.client.player.AimLayer;
 import com.vincenthuto.hemomancy.client.player.CastingTrack;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastLane;
@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.network.CastingAnimationPacket;
 /** Lookup of authored tracks: school/rank bases, bespoke styles and Still Art stages. Bespoke tracks are complete and take no aim layer. */
 public final class CastingTracks {
     private CastingTracks() {}
-    public static CastingTrack base(EnumBloodTendency school,EnumManipulationRank rank) {
+    public static CastingTrack base(EnumBloodTemper school,EnumManipulationRank rank) {
         return switch(school) {
             case ANIMUS -> AnimusTracks.get(rank);
             case FLAMMEUS -> FlammeusTracks.get(rank);

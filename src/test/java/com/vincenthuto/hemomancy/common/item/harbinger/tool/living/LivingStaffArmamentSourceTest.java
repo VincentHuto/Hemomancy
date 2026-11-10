@@ -31,10 +31,10 @@ class LivingStaffArmamentSourceTest {
 		assertContains("flail manipulation registration", manipInit, "MANIPS.register(\"conjure_flail\"");
 		assertContains("torch is flammeus", manipInit,
 				"new StaffWeaponFormManip(\"conjure_torch\", ItemInit.living_torch, 0, 0,\n"
-						+ "\t\t\t\t\tEnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FLAMMEUS");
+						+ "\t\t\t\t\tEnumManipulationRank.MEDIOCRITAS, EnumBloodTemper.FLAMMEUS");
 		assertContains("flail is congeatio", manipInit,
 				"new StaffWeaponFormManip(\"conjure_flail\", ItemInit.living_flail, 0, 0,\n"
-						+ "\t\t\t\t\tEnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.CONGEATIO");
+						+ "\t\t\t\t\tEnumManipulationRank.MEDIOCRITAS, EnumBloodTemper.CONGEATIO");
 
 		assertContains("torch rule constant", rules, "CONJURE_TORCH = \"conjure_torch\"");
 		assertContains("flail rule constant", rules, "CONJURE_FLAIL = \"conjure_flail\"");

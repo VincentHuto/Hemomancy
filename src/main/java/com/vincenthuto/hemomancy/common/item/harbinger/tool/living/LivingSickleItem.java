@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingSickleHookEntity;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -37,7 +37,7 @@ public class LivingSickleItem extends LivingToolItem {
 
 	public LivingSickleItem(float speedIn, float attackDamageIn, Tier tier, Properties properties) {
 		super(speedIn, attackDamageIn, LivingSickleCombatRules.attackSpeed(LivingSickleMode.defaultMode()),
-				EnumBloodTendency.MORTEM, tier, properties);
+				EnumBloodTemper.MORTEM, tier, properties);
 	}
 
 	@Override

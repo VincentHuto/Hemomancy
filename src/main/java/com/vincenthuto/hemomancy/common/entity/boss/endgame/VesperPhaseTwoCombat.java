@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingSickleHookEntity;
@@ -64,7 +64,7 @@ public final class VesperPhaseTwoCombat {
 		if (!(boss.level() instanceof ServerLevel server)) return;
 		AABB arena = boss.getBoundingBox().inflate(32.0D, 12.0D, 32.0D);
 		TemporaryIceManager.clearEncounterOwned(server, arena, boss.getUUID(),
-				boss.getOrdealOwner() != null && boss.getActiveTendency() == EnumBloodTendency.CONGEATIO);
+				boss.getOrdealOwner() != null && boss.getActiveTemper() == EnumBloodTemper.CONGEATIO);
 		server.getEntitiesOfClass(EntityIronPillar.class, arena,
 				pillar -> isOwnedIron(pillar.getCreator(), pillar.getPersistentData(), boss))
 				.forEach(EntityIronPillar::discard);
@@ -221,7 +221,7 @@ public final class VesperPhaseTwoCombat {
 		stopHorizontal(boss);
 		if (tick == 1 && boss.distanceTo(target) <= 4.0F) {
 			pushAway(boss, target, 0.9D);
-			pulse(boss, EnumBloodTendency.DUCTILIS, 18);
+			pulse(boss, EnumBloodTemper.DUCTILIS, 18);
 		}
 		if (tick == 18) cast(boss, target, "conductive_mark", 0.7D);
 		if (tick == 28 || tick == 36 || tick == 44) {
@@ -929,13 +929,13 @@ public final class VesperPhaseTwoCombat {
 	}
 
 	static void positionForWeapon(VesperTheEveningStarEntity boss, LivingEntity target,
-			EnumBloodTendency tendency, int side) {
-		VesperWeaponCombatRules.RangeBand band = VesperWeaponCombatRules.rangeBand(tendency);
+			EnumBloodTemper temper, int side) {
+		VesperWeaponCombatRules.RangeBand band = VesperWeaponCombatRules.rangeBand(temper);
 		double distance = boss.distanceTo(target);
 		double haste = boss.getHealth() <= boss.getMaxHealth() * 0.25F ? 1.2D : 1.0D;
 		boss.getLookControl().setLookAt(target, 35.0F, 35.0F);
 		if (distance > band.maximum()) {
-			boss.getNavigation().moveTo(target, (tendency == EnumBloodTendency.MORTEM ? 0.9D : 1.18D) * haste);
+			boss.getNavigation().moveTo(target, (temper == EnumBloodTemper.MORTEM ? 0.9D : 1.18D) * haste);
 			return;
 		}
 		boss.getNavigation().stop();
@@ -943,12 +943,12 @@ public final class VesperPhaseTwoCombat {
 		if (away.lengthSqr() < 0.01D) away = new Vec3(1.0D, 0.0D, 0.0D);
 		away = away.normalize();
 		if (distance < band.minimum()) {
-			double retreat = tendency == EnumBloodTendency.DUCTILIS ? 0.38D
-					: tendency == EnumBloodTendency.FERRIC ? 0.28D : 0.22D;
+			double retreat = temper == EnumBloodTemper.DUCTILIS ? 0.38D
+					: temper == EnumBloodTemper.FERRIC ? 0.28D : 0.22D;
 			steer(boss, away.scale(retreat * haste));
 		} else {
 			double direction = side;
-			double orbitSpeed = switch (tendency) {
+			double orbitSpeed = switch (temper) {
 				case TENEBRIS -> 0.32D;
 				case LUX, DUCTILIS -> 0.22D;
 				case ANIMUS, FLAMMEUS -> 0.19D;
@@ -957,13 +957,13 @@ public final class VesperPhaseTwoCombat {
 				case MORTEM -> 0.08D;
 			};
 			Vec3 orbit = new Vec3(-away.z, 0.0D, away.x).scale(direction * orbitSpeed * haste);
-			if (tendency == EnumBloodTendency.FLAMMEUS) orbit = orbit.add(away.scale(-0.08D * direction));
+			if (temper == EnumBloodTemper.FLAMMEUS) orbit = orbit.add(away.scale(-0.08D * direction));
 			steer(boss, orbit);
 		}
 	}
 
-	static boolean readyToCommit(EnumBloodTendency tendency, double distance, VesperWeaponAction action) {
-		VesperWeaponCombatRules.RangeBand band = VesperWeaponCombatRules.rangeBand(tendency);
+	static boolean readyToCommit(EnumBloodTemper temper, double distance, VesperWeaponAction action) {
+		VesperWeaponCombatRules.RangeBand band = VesperWeaponCombatRules.rangeBand(temper);
 		if (distance >= band.minimum() && distance <= band.maximum()) return true;
 		return (action == VesperWeaponAction.STORM_LOCK && distance <= 4.0D)
 				|| (action == VesperWeaponAction.IRON_RETORT && distance <= 5.0D);
@@ -1312,12 +1312,12 @@ public final class VesperPhaseTwoCombat {
 		boss.setDeltaMovement(0.0D, boss.getDeltaMovement().y, 0.0D);
 	}
 
-	private static void pulse(VesperTheEveningStarEntity boss, EnumBloodTendency tendency, int count) {
+	private static void pulse(VesperTheEveningStarEntity boss, EnumBloodTemper temper, int count) {
 		if (!(boss.level() instanceof ServerLevel server)) return;
-		ParticleColor color = VesperVisualEffects.tendencyColor(tendency);
+		ParticleColor color = VesperVisualEffects.temperColor(temper);
 		Vec3 center = boss.position().add(0.0D, 2.0D, 0.0D);
 		VesperVisualEffects.glow(server, center, color, count, 1.15D, 1.6D, 1.15D, 0.025D);
-		VesperVisualEffects.darkGlow(server, center, tendency == EnumBloodTendency.TENEBRIS
+		VesperVisualEffects.darkGlow(server, center, temper == EnumBloodTemper.TENEBRIS
 				? VesperVisualEffects.BLACK : color, Math.max(4, count / 2), 1.25D, 1.7D, 1.25D, 0.018D);
 		VesperVisualEffects.bloodCells(server, center, color, Math.max(3, count / 3),
 				0.95D, 1.35D, 0.95D, 0.035D);

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 import javax.annotation.Nullable;
 
@@ -33,14 +33,14 @@ public final class ManipulationStatusRules {
 	private ManipulationStatusRules() {
 	}
 
-	public static boolean isConductiveSchool(@Nullable EnumBloodTendency primary,
-			@Nullable EnumBloodTendency secondary) {
+	public static boolean isConductiveSchool(@Nullable EnumBloodTemper primary,
+			@Nullable EnumBloodTemper secondary) {
 		return isConductiveSchoolName(primary == null ? null : primary.name(),
 				secondary == null ? null : secondary.name());
 	}
 
 	public static boolean isConductiveSchoolName(@Nullable String primary, @Nullable String secondary) {
-		return isConductiveTendencyName(primary) || isConductiveTendencyName(secondary);
+		return isConductiveTemperName(primary) || isConductiveTemperName(secondary);
 	}
 
 	public static boolean canTriggerConductiveArc(long gameTime, long lastArcTick) {
@@ -56,9 +56,9 @@ public final class ManipulationStatusRules {
 		return hostile && !allied && !owner;
 	}
 
-	private static boolean isConductiveTendencyName(@Nullable String tendency) {
-		return "DUCTILIS".equals(tendency)
-				|| "LUX".equals(tendency)
-				|| "FERRIC".equals(tendency);
+	private static boolean isConductiveTemperName(@Nullable String temper) {
+		return "DUCTILIS".equals(temper)
+				|| "LUX".equals(temper)
+				|| "FERRIC".equals(temper);
 	}
 }

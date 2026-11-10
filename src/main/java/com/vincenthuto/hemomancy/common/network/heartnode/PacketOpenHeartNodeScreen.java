@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.heartnode;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.MoltingRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.MoltingRules;
 import com.vincenthuto.hemomancy.common.world.HeartNodeSettings;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.core.BlockPos;
@@ -41,14 +41,14 @@ public record PacketOpenHeartNodeScreen(BlockPos pos, UUID owner, String ownerNa
 	}
 
 	/**
-	 * The owner's grown alignment per tendency (in {@code EnumBloodTendency} order, scars left out), their spore load
+	 * The owner's grown alignment per temper (in {@code EnumBloodTemper} order, scars left out), their spore load
 	 * and how long their skin stays soft from the last molt.
 	 */
 	public record Molt(List<Float> base, float spores, long softTicks) {
 		public static final Molt NONE = new Molt(List.of(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f), 0f, 0L);
 
 		public Molt {
-			if (base.size() != MoltingRules.TENDENCIES) throw new IllegalArgumentException("one value per tendency");
+			if (base.size() != MoltingRules.TEMPERS) throw new IllegalArgumentException("one value per temper");
 			base = List.copyOf(base);
 		}
 
@@ -95,7 +95,7 @@ public record PacketOpenHeartNodeScreen(BlockPos pos, UUID owner, String ownerNa
 		boolean respawnHere = buf.readBoolean();
 		List<BlockPos> caches = BlockPos.STREAM_CODEC.apply(ByteBufCodecs.list(MAX_LIST)).decode(buf);
 		boolean readOnly = buf.readBoolean();
-		Float[] base = new Float[MoltingRules.TENDENCIES];
+		Float[] base = new Float[MoltingRules.TEMPERS];
 		for (int i = 0; i < base.length; i++) base[i] = buf.readFloat();
 		Molt molt = new Molt(List.of(base), buf.readFloat(), buf.readVarLong());
 		return new PacketOpenHeartNodeScreen(pos, owner, name, List.of(synapses), settings, plantedAt, respawnHere,

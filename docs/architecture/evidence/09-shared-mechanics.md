@@ -21,7 +21,7 @@ Read-only audit. Paths are relative to `src/main/java/com/vincenthuto/hemomancy/
 
 Most "shared mechanism" recommendations below just mean "use what's already here more widely":
 
-- **`damage/SchoolDamage` + `mixin/core/MixinSchoolDamage` + `damage/SchoolCombatEvents.prepare`.** The mixin wraps every `hurt()` source made inside a `SchoolDamage.Scope` (`SchoolDamage.java:143-159`). At HIGH priority, `prepare` then cancels school hits the owning player may not harm (`SchoolCombatEvents.java:74-79`), applies `TendencyAffinityRules`, state payoffs and boss caps. Manipulations, morphlings (`MorphlingCombat.scope`, used in all 13 morphling items) and some living weapons already run through it. Armor, scars, Still Arts and most living-weapon melee code do not.
+- **`damage/SchoolDamage` + `mixin/core/MixinSchoolDamage` + `damage/SchoolCombatEvents.prepare`.** The mixin wraps every `hurt()` source made inside a `SchoolDamage.Scope` (`SchoolDamage.java:143-159`). At HIGH priority, `prepare` then cancels school hits the owning player may not harm (`SchoolCombatEvents.java:74-79`), applies `TemperAffinityRules`, state payoffs and boss caps. Manipulations, morphlings (`MorphlingCombat.scope`, used in all 13 morphling items) and some living weapons already run through it. Armor, scars, Still Arts and most living-weapon melee code do not.
 - **`manipulation/ManipulationCombatHelper`** (`allied`/`canHarm`/`isHostileTarget`/`hostileTargets`/`aimedTarget`, lines 21-97). This is the most complete ally, owner, impressed, PvP and creative check in the mod. It has 80 call sites, about 95% of them in manipulations.
 - **`damage/SchoolStates.canApply`** (`SchoolStates.java:38-46`) runs the same `canHarm` gate on status application.
 - **`BloodFlowLedger.applyDrain`** (`bloodvolume/BloodFlowLedger.java:99-138`) handles the dormant check, Sanguine-Reserve protection for ARMOR/MORPHLING/SCAR/TOOL/… categories (`:140-144`), records the drain for the flow UI and syncs. Siblings: `MaxBloodLedger`, `ManipulationCostLedger`.
@@ -148,7 +148,7 @@ Add one entry point next to `BloodFlowLedger.applyDrain`, for example `BloodFlow
 | `brewing/AdvancedBrewEffects.java:109` | presence only |
 | `scar/ScarsEntityEventHandler.java:138-155` | **permanent**, remove + re-add every 20 ticks |
 
-- Modifier ids: all unique as far as I can tell. Scar ids come from per-scar names (`ScarInit.java:41-85`), synergy ids are per-tendency, and Veinwing ids are per-entity UUID. No collisions found.
+- Modifier ids: all unique as far as I can tell. Scar ids come from per-scar names (`ScarInit.java:41-85`), synergy ids are per-temper, and Veinwing ids are per-entity UUID. No collisions found.
 - Cleanup is symmetric for equip/unequip (`ScarDefinition.onUnequipped:107-125`, `MorphlingItem.clearMorphlingPassiveEffects:534`, `AvatarManifestationManager.dismiss`). Transient modifiers recompute after login and respawn through equipment-change and tick handlers.
 
 **Recommendation:** add `AttributeModifierSync.ensure(AttributeInstance, id, amount, op)` (remove when 0, otherwise replace if different) and swap the 9 copies over. Low difficulty, low risk. The one subtle case is Avatar's unconditional re-add, which costs an extra dirty-sync but is otherwise equivalent. Worthwhile: modest. It also gives a single place to apply `TriadAttributeCaps` later.

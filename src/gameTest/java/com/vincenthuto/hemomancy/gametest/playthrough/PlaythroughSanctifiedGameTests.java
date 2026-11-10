@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeProgression;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
@@ -1469,7 +1469,7 @@ public final class PlaythroughSanctifiedGameTests {
 	}
 
 	/**
-	 * A cast of the manipulation that matches the first active cerebral scar's tendency, through the cast key's
+	 * A cast of the manipulation that matches the first active cerebral scar's temper, through the cast key's
 	 * payload, aimed at {@code target}. ARRANGE: the manipulation is known and equipped (it is learnt elsewhere), the
 	 * pool is full and the cooldown has passed. The selection itself is pressed through the cycle key.
 	 */
@@ -1479,7 +1479,7 @@ public final class PlaythroughSanctifiedGameTests {
 		ResourceLocation active = scars.getActiveCerebralScars().iterator().next();
 		var definition = ScarInit.getByName(active.toString());
 		p.helper().assertTrue(definition != null, "the active scar " + active + " is registered");
-		BloodManipulation manipulation = matchingManipulation(definition.getAssignedTendency());
+		BloodManipulation manipulation = matchingManipulation(definition.getAssignedTemper());
 		var known = HemoCapabilityAccess.getKnownManipulations(p.player());
 		known.getKnownManips().putIfAbsent(manipulation, new ManipLevel(0, 0)); // ARRANGE
 		known.setEquippedManipNames(List.of(manipulation.getName())); // ARRANGE
@@ -1491,13 +1491,13 @@ public final class PlaythroughSanctifiedGameTests {
 		p.aim(target.getBoundingBox().getCenter());
 		Outcome cast = p.castSelected();
 		PlaythroughLog.note(p.helper(), "noetic cast of " + manipulation.getName() + " for scar " + active + " ("
-				+ definition.getAssignedTendency() + ")");
+				+ definition.getAssignedTemper() + ")");
 		return cast;
 	}
 
-	/** The manipulation per tendency the journey fixtures cast for the Noetic route. */
-	private static BloodManipulation matchingManipulation(EnumBloodTendency tendency) {
-		return switch (tendency) {
+	/** The manipulation per temper the journey fixtures cast for the Noetic route. */
+	private static BloodManipulation matchingManipulation(EnumBloodTemper temper) {
+		return switch (temper) {
 			case DUCTILIS -> ManipulationInit.deadly_gaze.get();
 			case FERRIC -> ManipulationInit.sanguine_mending.get();
 			case FLAMMEUS -> ManipulationInit.crimson_flame_conjuration.get();

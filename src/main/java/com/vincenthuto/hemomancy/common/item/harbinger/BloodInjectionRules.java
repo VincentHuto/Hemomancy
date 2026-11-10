@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.google.gson.*;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.resources.ResourceLocation;
 import java.util.*;
 import java.util.function.Predicate;
@@ -19,9 +19,9 @@ public final class BloodInjectionRules {
     public record Contribution(Benefit benefit, List<Benefit> drawbacks) {
         public Contribution { drawbacks = List.copyOf(drawbacks); }
     }
-    public record Response(EnumBloodTendency tendency, ResourceLocation property, List<Contribution> contributions) {
+    public record Response(EnumBloodTemper temper, ResourceLocation property, List<Contribution> contributions) {
         public Response { contributions = List.copyOf(contributions); }
-        public String origin() { return tendency == null ? property.toString() : tendency.name(); }
+        public String origin() { return temper == null ? property.toString() : temper.name(); }
     }
     public record Result(List<Benefit> benefits, List<Benefit> drawbacks) {
         public Result { benefits = List.copyOf(benefits); drawbacks = List.copyOf(drawbacks); }
@@ -30,9 +30,9 @@ public final class BloodInjectionRules {
 
     public static Response parse(JsonObject root, Predicate<ResourceLocation> knownEffect) {
         try {
-            if (root.has("tendency") == root.has("property"))
-                throw new IllegalArgumentException("Exactly one tendency or property is required");
-            var tendency = root.has("tendency") ? EnumBloodTendency.valueOf(root.get("tendency").getAsString()) : null;
+            if (root.has("temper") == root.has("property"))
+                throw new IllegalArgumentException("Exactly one temper or property is required");
+            var temper = root.has("temper") ? EnumBloodTemper.valueOf(root.get("temper").getAsString()) : null;
             var property = root.has("property") ? id(root.get("property").getAsString()) : null;
             var shared = parseDrawbacks(root, knownEffect);
             var contributions = new ArrayList<Contribution>();
@@ -48,7 +48,7 @@ public final class BloodInjectionRules {
             for (var c : contributions) for (var d : c.drawbacks())
                 if (positives.contains(d.identity())) throw new IllegalArgumentException("Contradictory benefit/drawback");
             if (contributions.isEmpty() && !shared.isEmpty()) throw new IllegalArgumentException("Drawback without benefit");
-            return new Response(tendency, property, contributions);
+            return new Response(temper, property, contributions);
         } catch (RuntimeException exception) {
             throw new IllegalArgumentException("Invalid blood response: " + exception.getMessage(), exception);
         }
@@ -86,7 +86,7 @@ public final class BloodInjectionRules {
         return root.has(key) ? root.get(key).getAsBigDecimal().intValueExact() : fallback;
     }
 
-    /** Input is already ordered by tendency, then by property ID. Deduplicate before allocating three slots. */
+    /** Input is already ordered by temper, then by property ID. Deduplicate before allocating three slots. */
     public static Result select(List<Response> ordered) {
         var merged = new LinkedHashMap<String, Benefit>();
         for (var response : ordered) for (var c : response.contributions())

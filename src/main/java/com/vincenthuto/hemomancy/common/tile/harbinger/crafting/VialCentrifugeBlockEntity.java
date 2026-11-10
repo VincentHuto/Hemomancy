@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.item.harbinger.EntityBloodProfile;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -374,8 +374,8 @@ public class VialCentrifugeBlockEntity extends HemoContainerBlockEntity
 		List<ItemStack> outputs = new ArrayList<>();
 		if (profile.properties().contains(EntityBloodProfile.FUNGAL))
 			outputs.add(new ItemStack(BlockInit.infected_fungus.get()));
-		for (var tendency : profile.tendencies())
-			outputs.add(new ItemStack(EnumBloodTendency.getRepEnzyme(tendency)));
+		for (var temper : profile.tempers())
+			outputs.add(new ItemStack(EnumBloodTemper.getRepEnzyme(temper)));
 		// Keep the existing health-based base yield, using the server's random source.
 		for (var output : outputs) {
 			int amount = (int) ((living.getMaxHealth() / 10) * level.random.nextInt(4) + 1);

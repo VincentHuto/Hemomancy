@@ -29,7 +29,7 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation HISTORICAL_RECORD = entry("the_hematic_order/pages/historical_record");
 	public static final ResourceLocation ABOCIPHER_LITERACY = entry("the_hematic_order/pages/abocipher_literacy");
 	public static final ResourceLocation SCAR_PRACTICE = entry("the_hematic_order/pages/scar_practice");
-	public static final ResourceLocation SCRIPTORIUM = entry("tendency/pages/enzymatic_scriptorium");
+	public static final ResourceLocation SCRIPTORIUM = entry("temperament/pages/enzymatic_scriptorium");
 	public static final ResourceLocation BLOOD_MEMORIES = entry("the_infection/pages/blood_memories");
 	public static final ResourceLocation MNEMONIC_AMBERGRIS = entry("the_infection/pages/mnemonic_ambergris");
 	public static final ResourceLocation HYPHAE = entry("the_infection/pages/hyphae");
@@ -93,8 +93,8 @@ public final class LiberEntryDefinitions {
 		registerUpgradeLesson("cardinal_rite/second_fraction", "centrifuge/pages/second_fraction");
 		registerUpgradeLesson("cardinal_rite/true_groove", "resonant_forge/pages/upgrades");
 		registerRite("cardinal_rite/enduring_pattern", entry("resonant_forge/pages/upgrades"));
-		registerUpgradeLesson("cardinal_rite/eightfold_script", "tendency/pages/eightfold_script");
-		registerUpgradeLesson("cardinal_rite/palimpsest", "tendency/pages/palimpsest");
+		registerUpgradeLesson("cardinal_rite/eightfold_script", "temperament/pages/eightfold_script");
+		registerUpgradeLesson("cardinal_rite/palimpsest", "temperament/pages/palimpsest");
 		registerUpgradeLesson("cardinal_rite/ganglionic_weave", "manipulations/pages/ganglionic_weave");
 		registerUpgradeLesson("cardinal_rite/cortical_weave", "manipulations/pages/cortical_weave");
 		registerUpgradeLesson("cardinal_rite/first_clotting", "the_hematic_order/pages/first_clotting");

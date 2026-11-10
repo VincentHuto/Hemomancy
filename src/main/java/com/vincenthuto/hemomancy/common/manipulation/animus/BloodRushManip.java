@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
@@ -20,8 +20,8 @@ public class BloodRushManip extends BloodManipulation {
 	public static final int EFFECT_AMPLIFIER = 0;
 
 	public BloodRushManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override

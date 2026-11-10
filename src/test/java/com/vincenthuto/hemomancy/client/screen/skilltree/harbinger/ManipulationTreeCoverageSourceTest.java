@@ -18,15 +18,15 @@ public final class ManipulationTreeCoverageSourceTest {
 	private static final Pattern TREE_REGISTER_LINE =
 			Pattern.compile("\\bregister\\(\"([^\"]+)\",\\s*([^,]+),\\s*([^,\\)]+)"
 					+ "(?:,\\s*((?:\"[^\"]+\"\\s*,?\\s*)*))?\\)(.*?);", Pattern.DOTALL);
-	private static final Pattern LAYOUT_TENDENCY_CALL =
-			Pattern.compile("\\.setLayoutTendency\\(([^)]+)\\)");
+	private static final Pattern LAYOUT_TEMPER_CALL =
+			Pattern.compile("\\.setLayoutTemper\\(([^)]+)\\)");
 	private static final Pattern SOFT_PARENTS_CALL =
 			Pattern.compile("\\.setSoftParents\\((.*?)\\)");
-	private static final Pattern STAFF_FORM_TENDENCY =
-			Pattern.compile("new StaffWeaponFormManip\\(\"([^\"]+)\".*?EnumBloodTendency\\.([A-Z]+)",
+	private static final Pattern STAFF_FORM_TEMPER =
+			Pattern.compile("new StaffWeaponFormManip\\(\"([^\"]+)\".*?EnumBloodTemper\\.([A-Z]+)",
 					Pattern.DOTALL);
 	private static final Pattern QUOTED_TEXT = Pattern.compile("\"([^\"]+)\"");
-	private static final Map<String, String> LIVING_WEAPON_TENDENCIES = Map.of(
+	private static final Map<String, String> LIVING_WEAPON_TEMPERS = Map.of(
 			"conjure_blade", "ANIMUS",
 			"conjure_axe", "FERRIC",
 			"conjure_spear", "LUX",
@@ -91,7 +91,7 @@ public final class ManipulationTreeCoverageSourceTest {
 
 		Map<String, TreeNode> nodes = treeNodesByName(treeInit);
 		assertLivingWeaponFormsBranchFromStaff(nodes);
-		assertLivingWeaponFormsHaveDistinctTendencies(manipInit);
+		assertLivingWeaponFormsHaveDistinctTempers(manipInit);
 	}
 
 	private static String read(String path) throws IOException {
@@ -128,10 +128,10 @@ public final class ManipulationTreeCoverageSourceTest {
 			String y = matcher.group(3).trim();
 			String parentsText = matcher.group(4);
 			String chainText = matcher.group(5);
-			String layoutTendency = captureFirst(LAYOUT_TENDENCY_CALL, chainText);
+			String layoutTemper = captureFirst(LAYOUT_TEMPER_CALL, chainText);
 			List<String> parents = quotedValues(parentsText);
 			List<String> softParents = quotedValues(captureFirst(SOFT_PARENTS_CALL, chainText));
-			nodes.put(name, new TreeNode(y, parents, softParents, layoutTendency));
+			nodes.put(name, new TreeNode(y, parents, softParents, layoutTemper));
 		}
 		return nodes;
 	}
@@ -168,7 +168,7 @@ public final class ManipulationTreeCoverageSourceTest {
 			TreeNode node = require(nodes, form);
 			List<String> expectedTreeParents = LIVING_WEAPON_TREE_PARENTS.get(form);
 			if (!node.parents().equals(expectedTreeParents)) {
-				throw new AssertionError(form + " should branch in its own tendency tree from "
+				throw new AssertionError(form + " should branch in its own temper tree from "
 						+ expectedTreeParents + ", found " + node.parents());
 			}
 			if (node.parents().contains("conjure_staff")) {
@@ -178,27 +178,27 @@ public final class ManipulationTreeCoverageSourceTest {
 				throw new AssertionError(form + " should use conjure_staff as a soft parent, found "
 						+ node.softParents());
 			}
-			if (node.layoutTendency() != null) {
-				throw new AssertionError(form + " should use its gameplay tendency for tree placement");
+			if (node.layoutTemper() != null) {
+				throw new AssertionError(form + " should use its gameplay temper for tree placement");
 			}
 		}
 	}
 
-	private static void assertLivingWeaponFormsHaveDistinctTendencies(String manipInit) {
+	private static void assertLivingWeaponFormsHaveDistinctTempers(String manipInit) {
 		Map<String, String> actual = new java.util.LinkedHashMap<>();
-		Matcher matcher = STAFF_FORM_TENDENCY.matcher(manipInit);
+		Matcher matcher = STAFF_FORM_TEMPER.matcher(manipInit);
 		while (matcher.find()) {
 			actual.put(matcher.group(1), matcher.group(2));
 		}
-		for (Map.Entry<String, String> expected : LIVING_WEAPON_TENDENCIES.entrySet()) {
-			String actualTendency = actual.get(expected.getKey());
-			if (!expected.getValue().equals(actualTendency)) {
+		for (Map.Entry<String, String> expected : LIVING_WEAPON_TEMPERS.entrySet()) {
+			String actualTemper = actual.get(expected.getKey());
+			if (!expected.getValue().equals(actualTemper)) {
 				throw new AssertionError(expected.getKey() + " should be " + expected.getValue()
-						+ ", found " + actualTendency);
+						+ ", found " + actualTemper);
 			}
 		}
-		if (new LinkedHashSet<>(actual.values()).size() != LIVING_WEAPON_TENDENCIES.size()) {
-			throw new AssertionError("Living weapon forms should each use a different tendency, found " + actual);
+		if (new LinkedHashSet<>(actual.values()).size() != LIVING_WEAPON_TEMPERS.size()) {
+			throw new AssertionError("Living weapon forms should each use a different temper, found " + actual);
 		}
 	}
 
@@ -210,6 +210,6 @@ public final class ManipulationTreeCoverageSourceTest {
 		return node;
 	}
 
-	private record TreeNode(String y, List<String> parents, List<String> softParents, String layoutTendency) {
+	private record TreeNode(String y, List<String> parents, List<String> softParents, String layoutTemper) {
 	}
 }

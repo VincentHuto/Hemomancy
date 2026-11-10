@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-/** Uses the specimen's authored tendencies, never the staff or the currently held weapon. */
+/** Uses the specimen's authored tempers, never the staff or the currently held weapon. */
 public final class MorphlingCombat {
     private MorphlingCombat() {}
 
@@ -17,7 +17,7 @@ public final class MorphlingCombat {
         if (active != null && active.ability().equals(BuiltInRegistries.ITEM.getKey(stack.getItem()))
                 && player.getUUID().equals(active.owner())) return SchoolDamage.scope(active, player);
         SchoolHitContext hit = SchoolHitContext.direct(BuiltInRegistries.ITEM.getKey(stack.getItem()),
-                morphling.getPreferredTendency(), morphling.getSecondaryTendency(), player);
+                morphling.getPreferredTemper(), morphling.getSecondaryTemper(), player);
         if (trigger != null) {
             var parent = trigger instanceof SchoolDamageSource school ? school.context() : SchoolDamage.current();
             if (parent != null) hit = new SchoolHitContext(hit.ability(), hit.primary(), hit.secondary(), hit.owner(),

@@ -3,11 +3,11 @@ package com.vincenthuto.hemomancy.common.entity.projectile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.google.common.collect.Sets;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TemperWeaponHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowChainRules;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
@@ -217,8 +217,8 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 				|| !(this.combatWeaponItem.getItem() instanceof LivingCrossbowItem)) return;
 		hasChained = true;
 		SchoolHitContext chainHit = SchoolHitContext.direct(Hemomancy.rloc("living_crossbow_chain"),
-				EnumBloodTendency.DUCTILIS,
-				TendencyWeaponHelper.getWeaponSecondaryTendency(this.combatWeaponItem).orElse(null), owner)
+				EnumBloodTemper.DUCTILIS,
+				TemperWeaponHelper.getWeaponSecondaryTemper(this.combatWeaponItem).orElse(null), owner)
 				.withApplication(10, 1);
 		try (var scope = SchoolDamage.scope(chainHit, owner)) {
 			Discharge discharge = new Discharge();
@@ -390,8 +390,8 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 	}
 
 	private static boolean isDuctilisWeapon(@Nullable ItemStack weaponStack) {
-		return weaponStack != null && TendencyWeaponHelper.getWeaponTendency(weaponStack)
-				.filter(EnumBloodTendency.DUCTILIS::equals)
+		return weaponStack != null && TemperWeaponHelper.getWeaponTemper(weaponStack)
+				.filter(EnumBloodTemper.DUCTILIS::equals)
 				.isPresent();
 	}
 

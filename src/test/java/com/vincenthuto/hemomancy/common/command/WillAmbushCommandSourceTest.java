@@ -28,9 +28,9 @@ public final class WillAmbushCommandSourceTest {
 		assertContains("anchor command accepts sent flag", command, "Commands.argument(\"sent_present\", BoolArgumentType.bool())");
 		assertContains("immediate command accepts origin", command, "Commands.argument(\"origin\", StringArgumentType.word())");
 		assertContains("immediate command accepts count", command, "Commands.argument(\"count\", IntegerArgumentType.integer(1, 8))");
-		assertContains("command suggests tendencies", command, "suggestBloodTendencies");
+		assertContains("command suggests tempers", command, "suggestBloodTempers");
 		assertContains("command suggests will origins", command, "suggestWillOrigins");
-		assertContains("command parses tendencies", command, "parseBloodTendency");
+		assertContains("command parses tempers", command, "parseBloodTemper");
 		assertContains("command parses origins", command, "parseWillOrigin");
 		assertContains("anchor command spawns the real anchor visual", command, "EntityInit.will_anchor.get().create(level)");
 		assertContains("anchor command configures composition", command,

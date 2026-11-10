@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.client.particle.BloodCellParticle;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationAccentPacket;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
@@ -79,8 +79,8 @@ public final class ManipulationAmbientParticles {
         }
     }
 
-    private static EnumBloodTendency school(ManipulationVisualPacket packet) {
-        return EnumBloodTendency.valueOf(ManipulationMaterials.forForm(packet.form()).name());
+    private static EnumBloodTemper school(ManipulationVisualPacket packet) {
+        return EnumBloodTemper.valueOf(ManipulationMaterials.forForm(packet.form()).name());
     }
 
     private static boolean ready(ClientLevel level,Vec3 at) {
@@ -89,22 +89,22 @@ public final class ManipulationAmbientParticles {
                 && Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().distanceToSqr(at)<=48*48;
     }
 
-    private static void emit(Vec3 at,Vec3 direction,EnumBloodTendency primary,EnumBloodTendency secondary,
+    private static void emit(Vec3 at,Vec3 direction,EnumBloodTemper primary,EnumBloodTemper secondary,
             int requested,double spread,boolean impact,boolean soft) {
         var mc=Minecraft.getInstance();
         int setting=switch(mc.options.particles().get()){case ALL->0;case DECREASED->1;case MINIMAL->2;};
         int count=BUDGET.take(world.getGameTime(),requested,setting);
-        if(primary==EnumBloodTendency.FLAMMEUS || primary==EnumBloodTendency.CONGEATIO) {
-            ThermalParticles.emit(at,direction,primary==EnumBloodTendency.CONGEATIO,count,soft);
+        if(primary==EnumBloodTemper.FLAMMEUS || primary==EnumBloodTemper.CONGEATIO) {
+            ThermalParticles.emit(at,direction,primary==EnumBloodTemper.CONGEATIO,count,soft);
             return;
         }
-        if (primary == EnumBloodTendency.TENEBRIS) {
+        if (primary == EnumBloodTemper.TENEBRIS) {
             if (count > 0) LuxUmbraEffects.mist(at, direction.normalize().scale(soft ? .008 : .025),
                     true, soft ? .18f : impact ? .38f : .3f, soft ? 20 : 26);
             return;
         }
-        if(primary==EnumBloodTendency.ANIMUS || primary==EnumBloodTendency.MORTEM) {
-            BloodEffectParticles.emit(at,direction,primary==EnumBloodTendency.MORTEM,count,soft,false);
+        if(primary==EnumBloodTemper.ANIMUS || primary==EnumBloodTemper.MORTEM) {
+            BloodEffectParticles.emit(at,direction,primary==EnumBloodTemper.MORTEM,count,soft,false);
             return;
         }
         for(int i=0;i<count;i++) {
@@ -113,9 +113,9 @@ public final class ManipulationAmbientParticles {
             Vec3 point=at.add(offset);
             Vec3 velocity=soft?direction.scale(.4).add(offset.scale(-.02))
                     :offset.scale(impact?.15:.07).add(direction.normalize().scale(impact?.025:.009)).add(0,.006,0);
-            boolean cell=primary != EnumBloodTendency.LUX && i%3==0;
-            EnumBloodTendency tint=primary != EnumBloodTendency.LUX && secondary!=null && i%4==3?secondary:primary;
-            int rgb=cell?(primary==EnumBloodTendency.MORTEM?0x782039:0xBF2540):glowColor(tint);
+            boolean cell=primary != EnumBloodTemper.LUX && i%3==0;
+            EnumBloodTemper tint=primary != EnumBloodTemper.LUX && secondary!=null && i%4==3?secondary:primary;
+            int rgb=cell?(primary==EnumBloodTemper.MORTEM?0x782039:0xBF2540):glowColor(tint);
             var color=new ParticleColor((rgb>>16)&255,(rgb>>8)&255,rgb&255);
             var options=cell?HemoParticleData.bloodCell(color):GlowParticleFactory.createData(color);
             // Both authored particle classes double constructor velocity.
@@ -130,7 +130,7 @@ public final class ManipulationAmbientParticles {
         }
     }
 
-    private static int glowColor(EnumBloodTendency school) {
+    private static int glowColor(EnumBloodTemper school) {
         return switch(school) {
             case ANIMUS -> 0xE1455C;
             case MORTEM -> 0x86915B;

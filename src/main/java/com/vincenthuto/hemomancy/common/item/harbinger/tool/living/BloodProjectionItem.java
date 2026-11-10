@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.event.BloodInfusionManager;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
@@ -152,7 +152,7 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(playerIn)
 				;
-		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(playerIn)
+		IBloodTemperament temper = HemoCapabilityAccess.getBloodTemperament(playerIn)
 				;
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 				;

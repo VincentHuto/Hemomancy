@@ -34,7 +34,7 @@ class BloodProfileMigrationTest {
             var path = Path.of("src/main/resources/data", id[0], "blood_profiles", id[1] + ".json");
             assertTrue(Files.exists(path), "Missing profile for " + entity.getKey());
             var actual = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
-            for (String field : new String[]{"tendencies", "properties"}) {
+            for (String field : new String[]{"tempers", "properties"}) {
                 var expectedValues = new TreeSet<String>();
                 entity.getValue().getAsJsonObject().getAsJsonArray(field).forEach(v -> expectedValues.add(v.getAsString()));
                 var actualValues = new TreeSet<String>();

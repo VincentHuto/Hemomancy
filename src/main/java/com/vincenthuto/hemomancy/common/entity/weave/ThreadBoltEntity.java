@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.weave;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -13,28 +13,28 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
-/** A knot of a thread's tendency flung at the weaver; its hit applies that tendency's harm. */
+/** A knot of a thread's temper flung at the weaver; its hit applies that temper's harm. */
 public class ThreadBoltEntity extends ThrowableProjectile {
-	private static final EntityDataAccessor<Byte> TENDENCY = SynchedEntityData.defineId(ThreadBoltEntity.class, EntityDataSerializers.BYTE);
+	private static final EntityDataAccessor<Byte> TEMPER = SynchedEntityData.defineId(ThreadBoltEntity.class, EntityDataSerializers.BYTE);
 	private float power = 1.0F;
 
 	public ThreadBoltEntity(EntityType<? extends ThreadBoltEntity> type, Level level) {
 		super(type, level);
 	}
 
-	public ThreadBoltEntity(Level level, FrayedThreadEntity owner, EnumBloodTendency tendency, float power) {
+	public ThreadBoltEntity(Level level, FrayedThreadEntity owner, EnumBloodTemper temper, float power) {
 		super(EntityInit.thread_bolt.get(), owner, level);
-		this.entityData.set(TENDENCY, (byte) tendency.ordinal());
+		this.entityData.set(TEMPER, (byte) temper.ordinal());
 		this.power = power;
 	}
 
-	public EnumBloodTendency tendency() {
-		return EnumBloodTendency.values()[entityData.get(TENDENCY)];
+	public EnumBloodTemper temper() {
+		return EnumBloodTemper.values()[entityData.get(TEMPER)];
 	}
 
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		builder.define(TENDENCY, (byte) 0);
+		builder.define(TEMPER, (byte) 0);
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class ThreadBoltEntity extends ThrowableProjectile {
 	public void tick() {
 		super.tick();
 		if (level().isClientSide)
-			level().addParticle(HemoParticleData.glow(tendency().getColor()), getX(), getY(), getZ(), 0, 0, 0);
+			level().addParticle(HemoParticleData.glow(temper().getColor()), getX(), getY(), getZ(), 0, 0, 0);
 		else if (tickCount > 60) discard();
 	}
 
@@ -64,16 +64,16 @@ public class ThreadBoltEntity extends ThrowableProjectile {
 	protected void onHitEntity(EntityHitResult hit) {
 		if (!level().isClientSide && hit.getEntity() instanceof LivingEntity target && getOwner() instanceof FrayedThreadEntity thread
 				&& !(target instanceof FrayedThreadEntity))
-			ThreadAttacks.onBoltHit(tendency(), thread, target, power);
+			ThreadAttacks.onBoltHit(temper(), thread, target, power);
 		discard();
 	}
 
 	@Override
 	protected void onHitBlock(BlockHitResult hit) {
 		super.onHitBlock(hit);
-		if (!level().isClientSide && tendency() == EnumBloodTendency.FLAMMEUS && getOwner() instanceof FrayedThreadEntity thread
+		if (!level().isClientSide && temper() == EnumBloodTemper.FLAMMEUS && getOwner() instanceof FrayedThreadEntity thread
 				&& level() instanceof net.minecraft.server.level.ServerLevel server)
-			ThreadHazardEntity.spawn(server, thread, hit.getLocation(), EnumBloodTendency.FLAMMEUS, 1.5F, 60, power);
+			ThreadHazardEntity.spawn(server, thread, hit.getLocation(), EnumBloodTemper.FLAMMEUS, 1.5F, 60, power);
 		discard();
 	}
 }

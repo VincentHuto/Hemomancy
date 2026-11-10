@@ -270,7 +270,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 		}
 
 		if (te.isWeaving()) {
-			te.provideTendencyFeedback(player);
+			te.provideTemperFeedback(player);
 			return InteractionResult.SUCCESS;
 		}
 

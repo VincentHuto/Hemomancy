@@ -26,9 +26,9 @@ public final class WillCombatRulesTest {
 		String source = Files.readString(Path.of(RULES));
 		brokenStatsAreFixedByTier(source);
 		sentStatsScaleFromTargetSnapshot(source);
-		schoolKitsCoverEveryTendency(source);
+		schoolKitsCoverEveryTemper(source);
 		luxAndTenebrisKitsCarryParityOffense(source);
-		counterSchoolCoversEveryTendency(source);
+		counterSchoolCoversEveryTemper(source);
 		falterAndCadenceConstantsAreStable(source);
 	}
 
@@ -46,9 +46,9 @@ public final class WillCombatRulesTest {
 		assertContains("sent damage scales by degree", source, "Math.max(0, degree - 6) * 1.25D");
 	}
 
-	private static void schoolKitsCoverEveryTendency(String source) {
+	private static void schoolKitsCoverEveryTemper(String source) {
 		for (String school : SCHOOLS) {
-			assertContains("kit covers " + school, source, "EnumBloodTendency." + school);
+			assertContains("kit covers " + school, source, "EnumBloodTemper." + school);
 		}
 		for (String id : REQUIRED_KIT_IDS) {
 			assertContains("kit id " + id + " is authored", source, "\"" + id + "\"");
@@ -58,18 +58,18 @@ public final class WillCombatRulesTest {
 
 	private static void luxAndTenebrisKitsCarryParityOffense(String source) {
 		assertContains("lux kit starts with a Humilis attack", source,
-				"EnumBloodTendency.LUX, ids(\"hematic_flare\", \"prismatic_reproof\", \"hematic_beacon\", \"unclosing_eye\")");
+				"EnumBloodTemper.LUX, ids(\"hematic_flare\", \"prismatic_reproof\", \"hematic_beacon\", \"unclosing_eye\")");
 		assertContains("tenebris kit keeps stealth but gains an ambush slash", source,
-				"EnumBloodTendency.TENEBRIS, ids(\"void_shroud\", \"gloam_laceration\", \"umbral_step\", \"blood_eclipse\")");
+				"EnumBloodTemper.TENEBRIS, ids(\"void_shroud\", \"gloam_laceration\", \"umbral_step\", \"blood_eclipse\")");
 	}
 
-	private static void counterSchoolCoversEveryTendency(String source) {
+	private static void counterSchoolCoversEveryTemper(String source) {
 		for (String school : SCHOOLS) {
-			int occurrences = count(source, "EnumBloodTendency." + school);
+			int occurrences = count(source, "EnumBloodTemper." + school);
 			assertTrue("counter and kit mention " + school, occurrences >= 2);
 		}
 		assertContains("counter fallback remains stable", source,
-				"COUNTERS.getOrDefault(school, EnumBloodTendency.MORTEM)");
+				"COUNTERS.getOrDefault(school, EnumBloodTemper.MORTEM)");
 	}
 
 	private static void falterAndCadenceConstantsAreStable(String source) {

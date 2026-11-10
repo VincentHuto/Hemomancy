@@ -76,7 +76,7 @@ public final class CellHandParticleEffects {
 					WillEntity will = willTarget.get();
 					spawnWillAbsorptionGlowParticle(mc, living.getId(), origin,
 							will.position().add(0.0D, will.getBbHeight() * 0.55D, 0.0D), rand, Optional.empty());
-					spawnWillAbsorptionTendencySpiralParticle(mc, living.getId(), origin, will, rand, Optional.empty());
+					spawnWillAbsorptionTemperSpiralParticle(mc, living.getId(), origin, will, rand, Optional.empty());
 				} else {
 					for (LivingEntity livingTarget : getAbsorptionParticleTargets(living, activeStack)) {
 						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
@@ -145,7 +145,7 @@ public final class CellHandParticleEffects {
 					WillEntity will = willTarget.get();
 					spawnWillAbsorptionGlowParticle(mc, player.getId(), origin,
 							will.position().add(0.0D, will.getBbHeight() * 0.55D, 0.0D), rand, Optional.of(anchor));
-					spawnWillAbsorptionTendencySpiralParticle(mc, player.getId(), origin, will, rand, Optional.of(anchor));
+					spawnWillAbsorptionTemperSpiralParticle(mc, player.getId(), origin, will, rand, Optional.of(anchor));
 				} else {
 					for (LivingEntity livingTarget : getAbsorptionParticleTargets(player, stack)) {
 						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
@@ -314,7 +314,7 @@ public final class CellHandParticleEffects {
 				.orElse(ParticleColor.BLOOD);
 	}
 
-	private static void spawnWillAbsorptionTendencySpiralParticle(Minecraft mc, int casterId, Vec3 origin, WillEntity will,
+	private static void spawnWillAbsorptionTemperSpiralParticle(Minecraft mc, int casterId, Vec3 origin, WillEntity will,
 			Random rand, Optional<Vec3> firstPersonTargetAnchor) {
 		double age = AnimationTime.age(will, HLClientUtils.getPartialTicks());
 		double spiralAngle = age * 0.42D + rand.nextDouble() * Math.PI * 0.45D;

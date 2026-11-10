@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.ItemFungalScar;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  *
  * <p>Each recipe describes a single fungal scar cultivation run:
  * <ul>
- *   <li>{@code tendency}               — the scar's alignment; only aligned enzymes count.</li>
+ *   <li>{@code temper}               — the scar's alignment; only aligned enzymes count.</li>
  *   <li>{@code bloodCostPhase1}        — flat blood drained when Phase 1 begins.</li>
  *   <li>{@code phase1Duration}         — crafting ticks for Phase 1 implantation.</li>
  *   <li>{@code maturationThreshold}    — total enzyme-power needed in Phase 2.</li>
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class FungalScarCultivationRecipe extends StationRecipe {
 
     private final ResourceLocation id;
-    private final EnumBloodTendency tendency;
+    private final EnumBloodTemper temper;
     private final float bloodCostPhase1;
     private final int phase1Duration;
     private final int maturationThreshold;
@@ -39,7 +39,7 @@ public class FungalScarCultivationRecipe extends StationRecipe {
     private final ItemStack result;
 
     public FungalScarCultivationRecipe(ResourceLocation id,
-            EnumBloodTendency tendency,
+            EnumBloodTemper temper,
             float bloodCostPhase1,
             int phase1Duration,
             int maturationThreshold,
@@ -47,7 +47,7 @@ public class FungalScarCultivationRecipe extends StationRecipe {
             ItemStack immatureResult,
             ItemStack result) {
         this.id = id;
-        this.tendency = tendency;
+        this.temper = temper;
         this.bloodCostPhase1 = bloodCostPhase1;
         this.phase1Duration = phase1Duration;
         this.maturationThreshold = maturationThreshold;
@@ -59,7 +59,7 @@ public class FungalScarCultivationRecipe extends StationRecipe {
     // ── Accessors ─────────────────────────────────────────────────────────────
 
     public ResourceLocation getId()               { return id; }
-    public EnumBloodTendency getTendency()        { return tendency; }
+    public EnumBloodTemper getTemper()        { return temper; }
     public float getBloodCostPhase1()             { return bloodCostPhase1; }
     public int getPhase1Duration()                { return phase1Duration; }
     public int getMaturationThreshold()           { return maturationThreshold; }

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumBalance;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumCurseRules;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumProvenance;
@@ -201,7 +201,7 @@ public class EnzymaticScriptoriumBlockEntity extends HemoContainerBlockEntity
         if (riteLocked) return;
         if (slot < 8) {
             if (!stack.isEmpty() && (!(stack.getItem() instanceof EnzymeItem enzyme)
-                    || enzyme.getTend() != EnumBloodTendency.values()[slot])) return;
+                    || enzyme.getTend() != EnumBloodTemper.values()[slot])) return;
             if (stack.getCount() > 64) stack.setCount(64);
             selected[slot] = Math.min(selected[slot], stack.getCount());
         }

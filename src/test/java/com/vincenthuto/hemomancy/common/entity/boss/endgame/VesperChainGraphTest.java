@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.util.RandomSource;
 import org.junit.jupiter.api.Test;
 
@@ -18,25 +18,25 @@ final class VesperChainGraphTest {
 
 	@Test
 	void everyWeaponHasOpenerFollowUpAndFinisherAndThreeToFourMoves() {
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			List<VesperWeaponAction> moves = VesperChainGraph.moveset(tendency);
-			assertTrue(moves.size() >= 3 && moves.size() <= 4, tendency + " has " + moves.size());
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			List<VesperWeaponAction> moves = VesperChainGraph.moveset(temper);
+			assertTrue(moves.size() >= 3 && moves.size() <= 4, temper + " has " + moves.size());
 			Set<VesperChainGraph.Role> roles = EnumSet.noneOf(VesperChainGraph.Role.class);
 			for (VesperWeaponAction move : moves) {
-				assertEquals(tendency, move.tendency());
+				assertEquals(temper, move.temper());
 				roles.add(move.role());
 			}
-			assertEquals(EnumSet.allOf(VesperChainGraph.Role.class), roles, tendency.name());
+			assertEquals(EnumSet.allOf(VesperChainGraph.Role.class), roles, temper.name());
 		}
 	}
 
 	@Test
 	void nextStartsFromThePreviousExitPose() {
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			for (VesperWeaponAction previous : VesperChainGraph.moveset(tendency)) {
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			for (VesperWeaponAction previous : VesperChainGraph.moveset(temper)) {
 				if (previous.role() == VesperChainGraph.Role.FINISHER) continue;
 				for (long seed = 0; seed < 20; seed++) {
-					VesperWeaponAction next = VesperChainGraph.next(previous, tendency, VesperEveningStarAct.LOCKED,
+					VesperWeaponAction next = VesperChainGraph.next(previous, temper, VesperEveningStarAct.LOCKED,
 							ctx(4.0D, true, false, 1, seed));
 					assertNotEquals(VesperWeaponAction.NONE, next);
 					if (next.role() != VesperChainGraph.Role.OPENER) assertEquals(previous.exit(), next.entry(),
@@ -48,12 +48,12 @@ final class VesperChainGraphTest {
 
 	@Test
 	void lockedActStaysInTheStanceWeapon() {
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
 			VesperWeaponAction previous = VesperWeaponAction.NONE;
 			for (int step = 0; step < 12; step++) {
-				VesperWeaponAction next = VesperChainGraph.next(previous, tendency, VesperEveningStarAct.LOCKED,
+				VesperWeaponAction next = VesperChainGraph.next(previous, temper, VesperEveningStarAct.LOCKED,
 						ctx(5.0D, step % 2 == 0, false, step % 5, step));
-				assertEquals(tendency, next.tendency());
+				assertEquals(temper, next.temper());
 				previous = next;
 			}
 		}
@@ -63,10 +63,10 @@ final class VesperChainGraphTest {
 	void openActCrossesSchoolsAtBlendPoints() {
 		boolean crossed = false;
 		for (long seed = 0; seed < 200 && !crossed; seed++) {
-			VesperWeaponAction previous = VesperChainGraph.moveset(EnumBloodTendency.ANIMUS).getFirst();
-			VesperWeaponAction next = VesperChainGraph.next(previous, EnumBloodTendency.ANIMUS,
+			VesperWeaponAction previous = VesperChainGraph.moveset(EnumBloodTemper.ANIMUS).getFirst();
+			VesperWeaponAction next = VesperChainGraph.next(previous, EnumBloodTemper.ANIMUS,
 					VesperEveningStarAct.OPEN, ctx(4.0D, true, false, 1, seed));
-			if (next.tendency() != EnumBloodTendency.ANIMUS) {
+			if (next.temper() != EnumBloodTemper.ANIMUS) {
 				crossed = true;
 				assertEquals(previous.exit(), next.entry(), "a cross-school swap still blends pose to pose");
 			}
@@ -76,25 +76,25 @@ final class VesperChainGraphTest {
 
 	@Test
 	void finisherOrChainCapEndsTheString() {
-		EnumBloodTendency tendency = EnumBloodTendency.MORTEM;
-		VesperWeaponAction finisher = VesperChainGraph.moveset(tendency).stream()
+		EnumBloodTemper temper = EnumBloodTemper.MORTEM;
+		VesperWeaponAction finisher = VesperChainGraph.moveset(temper).stream()
 				.filter(move -> move.role() == VesperChainGraph.Role.FINISHER).findFirst().orElseThrow();
-		assertEquals(VesperChainGraph.Role.OPENER, VesperChainGraph.next(finisher, tendency,
+		assertEquals(VesperChainGraph.Role.OPENER, VesperChainGraph.next(finisher, temper,
 				VesperEveningStarAct.LOCKED, ctx(4.0D, true, false, 2, 1L)).role());
-		VesperWeaponAction followUp = VesperChainGraph.moveset(tendency).stream()
+		VesperWeaponAction followUp = VesperChainGraph.moveset(temper).stream()
 				.filter(move -> move.role() == VesperChainGraph.Role.FOLLOW_UP).findFirst().orElseThrow();
-		assertEquals(VesperChainGraph.Role.OPENER, VesperChainGraph.next(followUp, tendency,
+		assertEquals(VesperChainGraph.Role.OPENER, VesperChainGraph.next(followUp, temper,
 				VesperEveningStarAct.LOCKED, ctx(4.0D, true, false, VesperChainGraph.MAX_CHAIN, 1L)).role());
 	}
 
 	@Test
 	void noImmediateRepeat() {
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
 			VesperWeaponAction previous = VesperWeaponAction.NONE;
 			for (int step = 0; step < 30; step++) {
-				VesperWeaponAction next = VesperChainGraph.next(previous, tendency, VesperEveningStarAct.LOCKED,
+				VesperWeaponAction next = VesperChainGraph.next(previous, temper, VesperEveningStarAct.LOCKED,
 						ctx(step % 3 == 0 ? 12.0D : 3.5D, step % 2 == 0, step % 4 == 0, step % 6, step));
-				assertNotEquals(previous, next, tendency + " repeated " + next);
+				assertNotEquals(previous, next, temper + " repeated " + next);
 				previous = next;
 			}
 		}
@@ -102,8 +102,8 @@ final class VesperChainGraphTest {
 
 	@Test
 	void farTargetsGetAGapCloserOpener() {
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			VesperWeaponAction opener = VesperChainGraph.next(VesperWeaponAction.NONE, tendency,
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			VesperWeaponAction opener = VesperChainGraph.next(VesperWeaponAction.NONE, temper,
 					VesperEveningStarAct.LOCKED, ctx(14.0D, false, false, 0, 3L));
 			assertEquals(VesperChainGraph.Role.OPENER, opener.role());
 		}

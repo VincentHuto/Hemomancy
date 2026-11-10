@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -180,7 +180,7 @@ public final class AnimusMortemVisualReview {
             level.addFreshEntity(caster);npcId=caster.getId();player.teleportTo(level,x+6,100,-2,30,12);
         }
         var blood=HemoCapabilityAccess.getBloodVolume(player);blood.setActive(true);blood.setBloodVolume(10000);
-        for(var tendency:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tendency,100);
+        for(var temper:EnumBloodTemper.values())HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(temper,100);
         var spell=ManipulationInit.getByName(name);var known=HemoCapabilityAccess.getKnownManipulations(player);
         if(!known.getKnownManips().containsKey(spell))known.getKnownManips().put(spell,new ManipLevel(4,185));known.setSelectedManip(spell);known.setEquippedManipNames(List.of(name));
         if(name.startsWith("conjure_"))player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,new ItemStack(ItemInit.living_staff.get()));

@@ -21,7 +21,7 @@ public final class ScarsTabState {
 		List<ScarTreeLayout.Node> layoutNodes = new ArrayList<>();
 		for (ScarTreeEntry entry : entries) {
 			entriesById.put(entry.id().toString(), entry);
-			layoutNodes.add(new ScarTreeLayout.Node(entry.id().toString(), entry.tendency(), entry.tier(), entry.sideBranch()));
+			layoutNodes.add(new ScarTreeLayout.Node(entry.id().toString(), entry.temper(), entry.tier(), entry.sideBranch()));
 		}
 		ScarTreeLayout.Result layout = ScarTreeLayout.arrange(layoutNodes);
 		positions.clear();

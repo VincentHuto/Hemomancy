@@ -51,7 +51,7 @@ public final class LivingWeaponGraftRiteSourceTest {
 		assertContains("the offering stream follows whichever player channels it", cellHandParticles,
 				"mc.level.getEntity(casterId) instanceof Player player");
 		assertContains("absorption particles read graft form data when present", cellHandParticles, "LivingWeaponGraftData.fromStack(offeringStack)");
-		assertContains("graft particles use manipulation tendency color", cellHandParticles, "form.manipulationHolder().get().getTend().getColor()");
+		assertContains("graft particles use manipulation temper color", cellHandParticles, "form.manipulationHolder().get().getTend().getColor()");
 		assertContains("absorption particles add hutoslib glow", cellHandParticles, "GlowParticleFactory.createData(absorptionItemColor)");
 		assertContains("generic client absorption entry point", cellHandParticles, "spawnBrazierItemAbsorptionParticles");
 		assertContains("graft rite requires a lit brazier", rite, "if (!channel.lit())");

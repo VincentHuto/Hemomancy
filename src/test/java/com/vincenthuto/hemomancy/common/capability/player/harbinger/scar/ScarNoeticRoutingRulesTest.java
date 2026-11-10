@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.HematicFortificationRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import org.junit.jupiter.api.Test;
@@ -12,16 +12,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class ScarNoeticRoutingRulesTest {
 
 	@Test
-	void bestMatchingTierDoesNotStackSameTendencyScars() {
+	void bestMatchingTierDoesNotStackSameTemperScars() {
 		List<ScarDefinition> scars = List.of(
-				new ScarDefinition(ScarType.CEREBRAL, EnumBloodTendency.LUX, 1F, 1),
-				new ScarDefinition(ScarType.CEREBRAL, EnumBloodTendency.LUX, 3F, 3),
-				new ScarDefinition(ScarType.CEREBRAL, EnumBloodTendency.FERRIC, 2F, 2),
-				new ScarDefinition(ScarType.FUNGAL, EnumBloodTendency.LUX, 1F, 3));
+				new ScarDefinition(ScarType.CEREBRAL, EnumBloodTemper.LUX, 1F, 1),
+				new ScarDefinition(ScarType.CEREBRAL, EnumBloodTemper.LUX, 3F, 3),
+				new ScarDefinition(ScarType.CEREBRAL, EnumBloodTemper.FERRIC, 2F, 2),
+				new ScarDefinition(ScarType.FUNGAL, EnumBloodTemper.LUX, 1F, 3));
 
-		assertEquals(3, ScarNoeticRoutingRules.bestMatchingTier(EnumBloodTendency.LUX, scars));
-		assertEquals(2, ScarNoeticRoutingRules.bestMatchingTier(EnumBloodTendency.FERRIC, scars));
-		assertEquals(0, ScarNoeticRoutingRules.bestMatchingTier(EnumBloodTendency.MORTEM, scars));
+		assertEquals(3, ScarNoeticRoutingRules.bestMatchingTier(EnumBloodTemper.LUX, scars));
+		assertEquals(2, ScarNoeticRoutingRules.bestMatchingTier(EnumBloodTemper.FERRIC, scars));
+		assertEquals(0, ScarNoeticRoutingRules.bestMatchingTier(EnumBloodTemper.MORTEM, scars));
 	}
 
 	@Test

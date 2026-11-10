@@ -96,7 +96,7 @@ public final class HemoDamageTypes {
 	public static DamageSource livingTorchBreath(Level level, Entity caster) {
         SchoolHitContext hit = SchoolDamage.current();
         if (hit == null) hit = SchoolHitContext.direct(Hemomancy.rloc("living_torch_breath"),
-                com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.FLAMMEUS, null, caster);
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.FLAMMEUS, null, caster);
         return attributed(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                 .getHolderOrThrow(LIVING_TORCH_BREATH), caster, caster), hit, caster);
     }
@@ -104,7 +104,7 @@ public final class HemoDamageTypes {
 	public static DamageSource livingFlailFreeze(Level level, Entity projectile, Entity owner) {
         SchoolHitContext hit = SchoolDamage.projectileContext(projectile);
         if (hit == null) hit = SchoolHitContext.direct(Hemomancy.rloc("living_flail"),
-                com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.CONGEATIO, null, owner);
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.CONGEATIO, null, owner);
         return attributed(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                 .getHolderOrThrow(LIVING_FLAIL_FREEZE), projectile, owner), hit, owner);
     }

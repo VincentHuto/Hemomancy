@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.decoration.RotPyreBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.decoration.SporeShelfBlock;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.boss.BossBands;
 import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import com.vincenthuto.hemomancy.common.entity.boss.BossFootprint;
@@ -90,7 +90,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Putriciel, The Befouled Saint (they; he in life), on the Saint combat kit: <i>Putriciel purified</i>. Tendencies
+ * Putriciel, The Befouled Saint (they; he in life), on the Saint combat kit: <i>Putriciel purified</i>. Tempers
  * MORTEM + FLAMMEUS. They cannot be beaten down, only absolved, and only while the purifier is awake in them
  * ({@code docs/superpowers/specs/2026-11-05-saint-putriciel-overhaul-design.md}).
  * <p>
@@ -301,9 +301,9 @@ public class PutricielEntity extends SaintTrialEntity {
 	protected void onHitTaken(SaintHit hit, float applied, SaintOpening.Admit admit) {
 		if (ending()) return;
 		Player attacker = hit.attacker() != null && isChallenger(hit.attacker()) ? hit.attacker() : null;
-		boolean flammeus = hit.fire() || hit.school() == EnumBloodTendency.FLAMMEUS;
+		boolean flammeus = hit.fire() || hit.school() == EnumBloodTemper.FLAMMEUS;
 		stoke(hit.amount(), flammeus, attacker);
-		if (attacker != null && hit.school() == EnumBloodTendency.FLAMMEUS) {
+		if (attacker != null && hit.school() == EnumBloodTemper.FLAMMEUS) {
 			colonise(attacker, -PutricielColonisationRules.FLAMMEUS_CAUTERY);
 		}
 		if (isOfferingOpen() && admit == SaintOpening.Admit.COUNTED && attacker != null

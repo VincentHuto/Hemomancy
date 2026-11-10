@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.animation.*;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 /** Harbinger packets carry school/rank/purpose; Unstained (Still Art) packets carry stage/ending and leave those null. */
 public record CastingAnimationPacket(int entityId, UUID playerId, String manipulation, long sequence,
-        EnumBloodTendency school, EnumBloodTendency secondary, EnumManipulationRank rank,
+        EnumBloodTemper school, EnumBloodTemper secondary, EnumManipulationRank rank,
         CastPurpose purpose, CastStyle style, CastPhase phase, long started, long updated,
         int held, int required, InteractionHand hand,
         CastLane lane, EnumClarityStage stage, StillArtEnding ending) implements CustomPacketPayload {
@@ -24,7 +24,7 @@ public record CastingAnimationPacket(int entityId, UUID playerId, String manipul
     public static final StreamCodec<FriendlyByteBuf,CastingAnimationPacket> STREAM_CODEC =
             StreamCodec.of(CastingAnimationPacket::encode,CastingAnimationPacket::decode);
     public static CastingAnimationPacket harbinger(int entityId,UUID playerId,String manipulation,long sequence,
-            EnumBloodTendency school,EnumBloodTendency secondary,EnumManipulationRank rank,CastPurpose purpose,CastStyle style,
+            EnumBloodTemper school,EnumBloodTemper secondary,EnumManipulationRank rank,CastPurpose purpose,CastStyle style,
             CastPhase phase,long started,long updated,int held,int required,InteractionHand hand) {
         return new CastingAnimationPacket(entityId,playerId,manipulation,sequence,school,secondary,rank,purpose,style,
                 phase,started,updated,held,required,hand,CastLane.HARBINGER,null,null);
@@ -51,7 +51,7 @@ public record CastingAnimationPacket(int entityId, UUID playerId, String manipul
     private static CastingAnimationPacket decode(FriendlyByteBuf b) {
         int entityId=b.readVarInt(); UUID playerId=b.readUUID(); String manipulation=b.readUtf(128); long sequence=b.readVarLong();
         CastLane lane=b.readEnum(CastLane.class);
-        var school=readNullable(b,EnumBloodTendency.class); var secondary=readNullable(b,EnumBloodTendency.class);
+        var school=readNullable(b,EnumBloodTemper.class); var secondary=readNullable(b,EnumBloodTemper.class);
         var rank=readNullable(b,EnumManipulationRank.class); var purpose=readNullable(b,CastPurpose.class);
         var stage=readNullable(b,EnumClarityStage.class); var ending=readNullable(b,StillArtEnding.class);
         return new CastingAnimationPacket(entityId,playerId,manipulation,sequence,school,secondary,rank,purpose,

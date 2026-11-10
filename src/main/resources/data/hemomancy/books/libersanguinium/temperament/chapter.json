@@ -1,0 +1,11 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 6,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.2,0,0",
+  "title": "Blood Temperament",
+  "subtitle": "The elemental nature of blood",
+  "icon": "hemomancy:blood_stained_stone",
+  "tabColor": "#3A0606",
+  "rowLimit": 7
+}

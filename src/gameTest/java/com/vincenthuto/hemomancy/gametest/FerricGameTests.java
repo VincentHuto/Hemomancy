@@ -86,8 +86,8 @@ public final class FerricGameTests {
     public static void unsupportedPlacementRejectsBeforeBloodAndCooldown(GameTestHelper h) {
         var player=player(h);var spell=ManipulationInit.ferric_rampart.get();
         var blood=HemoCapabilityAccess.getBloodVolume(player);blood.setActive(true);blood.setBloodVolume(4000);
-        for(var tendency:com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tendency,100);
+        for(var temper:com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.values())
+            HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(temper,100);
         var known=HemoCapabilityAccess.getKnownManipulations(player);
         known.getKnownManips().put(ManipulationInit.sanguine_magnetism.get(),new ManipLevel(4,185));
         known.getKnownManips().put(spell,new ManipLevel(0,0));

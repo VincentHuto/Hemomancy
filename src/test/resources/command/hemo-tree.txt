@@ -126,14 +126,14 @@ hemo permission2
     remove permission0
       <summon:string(SINGLE_WORD)> suggests executes permission0
         <player:entity(single=true, playersOnly=true)> executes permission0
-  tendency permission0
+  temper permission0
     get executes permission0
       <player:entity(single=true, playersOnly=true)> executes permission0
     max executes permission0
       <player:entity(single=true, playersOnly=true)> executes permission0
     reset executes permission0
       <player:entity(single=true, playersOnly=true)> executes permission0
-    <tendency:string(SINGLE_WORD)> suggests permission0
+    <temper:string(SINGLE_WORD)> suggests permission0
       <value:float(0.0)> executes permission0
         <player:entity(single=true, playersOnly=true)> executes permission0
   unstained permission0

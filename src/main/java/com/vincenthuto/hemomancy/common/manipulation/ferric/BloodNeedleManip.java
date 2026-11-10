@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
@@ -26,13 +26,13 @@ public class BloodNeedleManip extends BloodManipulation {
 	private final Mode mode;
 
 	public BloodNeedleManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		this(name, cost, alignLevel, xpCost, type, rank, tendency, section, Mode.BASELINE);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		this(name, cost, alignLevel, xpCost, type, rank, temper, section, Mode.BASELINE);
 	}
 
 	public BloodNeedleManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section, Mode mode) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section, Mode mode) {
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 		this.mode = mode;
 	}
 
@@ -71,8 +71,8 @@ public class BloodNeedleManip extends BloodManipulation {
 			BloodNeedleEntity needle = BloodNeedleEntity.fromManipulation(world, player, heldItemMainhand);
 			needle.setBaseDamage(baseDamage);
 			needle.setForged(true);
-			needle.setDamageTendency(getTend());
-			needle.setSecondaryDamageTendency(getSecondaryTend());
+			needle.setDamageTemper(getTend());
+			needle.setSecondaryDamageTemper(getSecondaryTend());
 			if (mode == Mode.LANCE) {
 				needle.configurePiercing((byte) 3);
 				needle.shoot(vector3f.x, vector3f.y, vector3f.z, 8.0F, 0.25F);

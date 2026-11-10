@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -122,7 +122,7 @@ public class KnownManipulationEvents {
 	 * to apply cross-system consequences when a manipulation is used:
 	 * <ul>
 	 *   <li>Strain the manipulation's associated vein section</li>
-	 *   <li>Shift tendency alignment toward the manipulation's tendency</li>
+	 *   <li>Shift temper alignment toward the manipulation's temper</li>
 	 *   <li>Grant XP to the manipulation's level</li>
 	 *   <li>Grant skill-point currency (higher-rank manips give more)</li>
 	 *   <li>Check for milestone rewards (first use, tiered totals)</li>
@@ -143,8 +143,8 @@ public class KnownManipulationEvents {
 		// 1. Vascular strain on the manip's associated vein section
 		VascularSystemEvents.applyManipStrain(player, manip);
 
-		// 2. Tendency shift toward the manip's tendency
-		BloodTendencyEvents.shiftTendencyFromManipUse(player, manip.getTend(), manip.getSecondaryTend(), rewardScale);
+		// 2. Temper shift toward the manip's temper
+		BloodTemperamentEvents.shiftTemperFromManipUse(player, manip.getTend(), manip.getSecondaryTend(), rewardScale);
 
 		// 3. Skill: Vital Link chance to heal when using a manipulation
 		double vitalLinkChance = SkillPointHelper.getVitalLinkChance(player);

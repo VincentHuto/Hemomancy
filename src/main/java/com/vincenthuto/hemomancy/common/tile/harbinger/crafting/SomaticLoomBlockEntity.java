@@ -24,9 +24,9 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 
@@ -202,7 +202,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	public static final int PHASE_CLIMAX = 3;
 
-	/** Spans of thread each tendency's vial holds: sixty-four enzymes, three spans each. */
+	/** Spans of thread each temper's vial holds: sixty-four enzymes, three spans each. */
 
 	public static final int ENZYME_CAPACITY = EngramWeaveRules.SPAN_CAPACITY;
 
@@ -218,9 +218,9 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(this).orElseThrow(IllegalStateException::new);
 
-	IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(this).orElseThrow(IllegalStateException::new);
+	IBloodTemperament temper = HemoCapabilityAccess.getBloodTemperament(this).orElseThrow(IllegalStateException::new);
 
-	private final EnumMap<EnumBloodTendency, Integer> storedEnzymes =
+	private final EnumMap<EnumBloodTemper, Integer> storedEnzymes =
 
 			MemoryWeavingRecipe.blankEnzymeRequirements();
 
@@ -260,9 +260,9 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	/** Client-smoothed thread on the pirns and vial stock, in spans, so threading visibly draws liquid up into thread. */
 
-	private final float[] shownSpun = new float[EnumBloodTendency.values().length];
+	private final float[] shownSpun = new float[EnumBloodTemper.values().length];
 
-	private final float[] shownStock = new float[EnumBloodTendency.values().length];
+	private final float[] shownStock = new float[EnumBloodTemper.values().length];
 
 	private boolean echoClimaxFired;
 
@@ -298,7 +298,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		self.trackEngram();
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) {
 
 			int i = tend.ordinal();
 
@@ -470,7 +470,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	private void depositEnzyme(@Nullable Player player, ItemStack stack, EnzymeItem enzyme, boolean bulk) {
 
-		EnumBloodTendency tend = enzyme.getTend();
+		EnumBloodTemper tend = enzyme.getTend();
 
 		int current = storedEnzymes.getOrDefault(tend, 0);
 
@@ -480,7 +480,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		if (room <= 0) {
 
-			msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.enzyme_reservoir_is_full", BloodManipulation.tendencyName(tend)), ChatFormatting.DARK_RED, true);
+			msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.enzyme_reservoir_is_full", BloodManipulation.temperName(tend)), ChatFormatting.DARK_RED, true);
 
 			return;
 
@@ -492,7 +492,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		stack.shrink(amount);
 
-		msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.thread_spans", BloodManipulation.tendencyName(tend), storedEnzymes.get(tend), ENZYME_CAPACITY),
+		msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.thread_spans", BloodManipulation.temperName(tend), storedEnzymes.get(tend), ENZYME_CAPACITY),
 
 				ChatFormatting.DARK_PURPLE, true);
 
@@ -646,7 +646,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		if (ritualBloodCharged > 0 || isWeaving()) {
 
-			provideTendencyFeedback(player);
+			provideTemperFeedback(player);
 
 			return;
 
@@ -654,7 +654,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		var choices = recipeChoices();
 
-		if (choices.isEmpty()) { provideTendencyFeedback(player); return; }
+		if (choices.isEmpty()) { provideTemperFeedback(player); return; }
 
 		int current = -1;
 
@@ -712,7 +712,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		refreshRecipe();
 
-		provideTendencyFeedback(player);
+		provideTemperFeedback(player);
 
 		BlockEntitySync.markAndSync(this);
 
@@ -728,7 +728,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		tag.putDouble("blood", recipe.getBloodCost());
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) tag.putInt(tend.name(), recipe.getEnzymeRequirement(tend));
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) tag.putInt(tend.name(), recipe.getEnzymeRequirement(tend));
 
 		return tag;
 
@@ -782,7 +782,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	private boolean hasStoredEnzymesFor(MemoryWeavingRecipe recipe) {
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) {
 
 			if (storedEnzymes.getOrDefault(tend, 0) < minimumSpans(recipe, tend)) {
 
@@ -796,7 +796,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	}
 
-	private static int minimumSpans(MemoryWeavingRecipe recipe, EnumBloodTendency tend) {
+	private static int minimumSpans(MemoryWeavingRecipe recipe, EnumBloodTemper tend) {
 
 		return recipe.getEnzymeRequirement(tend) * EngramWeaveRules.SPANS_PER_ENZYME;
 
@@ -882,11 +882,11 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	}
 
-	public Map<EnumBloodTendency, Float> getTendency() {
+	public Map<EnumBloodTemper, Float> getTemper() {
 
-		Map<EnumBloodTendency, Float> view = MemoryWeavingRecipe.blank();
+		Map<EnumBloodTemper, Float> view = MemoryWeavingRecipe.blank();
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) {
 
 			view.put(tend, (float) storedEnzymes.getOrDefault(tend, 0));
 
@@ -896,9 +896,9 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	}
 
-	public int getStoredEnzyme(EnumBloodTendency tendency) {
+	public int getStoredEnzyme(EnumBloodTemper temper) {
 
-		return storedEnzymes.getOrDefault(tendency, 0);
+		return storedEnzymes.getOrDefault(temper, 0);
 
 	}
 
@@ -956,7 +956,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		if (curRecipe == null || recoveryRequired || craftingPhase != PHASE_AWAITING_BLOOD) {
 
-			provideTendencyFeedback(player);
+			provideTemperFeedback(player);
 
 			return false;
 
@@ -978,11 +978,11 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 			EngramBoard board = engramFor(player);
 
-			int lacking = EngramWeaveRules.shortTendency(storedSpans(), board.reference());
+			int lacking = EngramWeaveRules.shortTemper(storedSpans(), board.reference());
 
 			if (lacking >= 0) {
 
-				EnumBloodTendency tend = EnumBloodTendency.values()[lacking];
+				EnumBloodTemper tend = EnumBloodTemper.values()[lacking];
 
 				int missing = board.reference()[lacking] - storedEnzymes.getOrDefault(tend, 0);
 
@@ -990,7 +990,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 						missing,
 
-						EnumBloodTendency.getRepEnzyme(tend).getDescription()), ChatFormatting.YELLOW, true);
+						EnumBloodTemper.getRepEnzyme(tend).getDescription()), ChatFormatting.YELLOW, true);
 
 				return false;
 
@@ -1164,7 +1164,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		int[] reference = board.reference();
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values())
+		for (EnumBloodTemper tend : EnumBloodTemper.values())
 
 			storedEnzymes.put(tend, Math.min(ENZYME_CAPACITY, Math.max(storedEnzymes.getOrDefault(tend, 0), reference[tend.ordinal()])));
 
@@ -1226,11 +1226,11 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	private static int[] enzymeCounts(MemoryWeavingRecipe recipe) {
 
-		int[] counts = new int[EnumBloodTendency.values().length];
+		int[] counts = new int[EnumBloodTemper.values().length];
 
 		if (recipe == null) return counts;
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) counts[tend.ordinal()] = recipe.getEnzymeRequirement(tend);
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) counts[tend.ordinal()] = recipe.getEnzymeRequirement(tend);
 
 		return counts;
 
@@ -1238,15 +1238,15 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	private int[] storedSpans() {
 
-		int[] stock = new int[EnumBloodTendency.values().length];
+		int[] stock = new int[EnumBloodTemper.values().length];
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) stock[tend.ordinal()] = storedEnzymes.getOrDefault(tend, 0);
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) stock[tend.ordinal()] = storedEnzymes.getOrDefault(tend, 0);
 
 		return stock;
 
 	}
 
-	/** False fragments replay another memory of their tendency; a bloodline that already wove this one marks them. */
+	/** False fragments replay another memory of their temper; a bloodline that already wove this one marks them. */
 
 	private void dressIntrusions(EngramBoard board, UUID weaverId) {
 
@@ -1326,7 +1326,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 			msg(player, Component.translatable("message.hemomancy.somatic_loom_block_entity.the_vial_is_out_of_thread",
 
-					EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[Math.max(0, colour)]).getDescription()), ChatFormatting.YELLOW, true);
+					EnumBloodTemper.getRepEnzyme(EnumBloodTemper.values()[Math.max(0, colour)]).getDescription()), ChatFormatting.YELLOW, true);
 
 		}
 
@@ -1368,7 +1368,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 			if (beat.serial() > since && beat.event() == EngramWeaveSession.Event.LAND) playWeaveFeedback(
 
-					EnumBloodTendency.values()[Math.max(0, EngramWeaveRules.payColour(engram.board(), beat.fragment()))]);
+					EnumBloodTemper.values()[Math.max(0, EngramWeaveRules.payColour(engram.board(), beat.fragment()))]);
 
 	}
 
@@ -1382,7 +1382,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 			EngramBoard.Fragment lie = board.fragment(fragment);
 
-			EnumBloodTendency tend = EnumBloodTendency.values()[Math.max(0, lie.colour())];
+			EnumBloodTemper tend = EnumBloodTemper.values()[Math.max(0, lie.colour())];
 
 			int spans = engram.snap(fragment);
 
@@ -1418,7 +1418,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	/** A Mediocritas mistake burns the false lane's spans from what the vials hold beyond the reserve; blood pays the rest. */
 
-	private void burnSpans(Player player, EnumBloodTendency tend, int spans) {
+	private void burnSpans(Player player, EnumBloodTemper tend, int spans) {
 
 		EngramBoard board = engram.board();
 
@@ -1444,7 +1444,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		}
 
-		msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.the_false_memory_burns_spans_of", spans, BloodManipulation.tendencyName(tend), (unpaid > 0 ? Component.translatable("message.hemomancy.somatic_loom_block_entity.and_takes_the_rest_from_your_blood")
+		msg(player, HemoText.translatable("message.hemomancy.somatic_loom_block_entity.the_false_memory_burns_spans_of", spans, BloodManipulation.temperName(tend), (unpaid > 0 ? Component.translatable("message.hemomancy.somatic_loom_block_entity.and_takes_the_rest_from_your_blood")
 
 				: Component.literal("."))), ChatFormatting.RED, true);
 
@@ -1504,13 +1504,13 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		EngramBoard board = engram.board();
 
-		int[] spent = new int[EnumBloodTendency.values().length];
+		int[] spent = new int[EnumBloodTemper.values().length];
 
 		for (int i = 0; i < board.fragmentCount(); i++)
 
 			if (!board.fragment(i).intrusion()) spent[EngramWeaveRules.payColour(board, i)] += EngramWeaveRules.laneSpans(board, i);
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values())
+		for (EnumBloodTemper tend : EnumBloodTemper.values())
 
 			storedEnzymes.put(tend, Math.max(0, storedEnzymes.getOrDefault(tend, 0) - spent[tend.ordinal()]));
 
@@ -1746,23 +1746,23 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	public int getClimaxTicks() { return climaxTicks; }
 
-	/** Spans of a tendency's thread the engram's lanes hold: wound on its pirn until the weave completes or is cut back. */
+	/** Spans of a temper's thread the engram's lanes hold: wound on its pirn until the weave completes or is cut back. */
 
-	public int getSpun(EnumBloodTendency tendency) {
+	public int getSpun(EnumBloodTemper temper) {
 
-		return engram.live() ? EngramWeaveRules.committed(engram.board(), tendency.ordinal()) : 0;
+		return engram.live() ? EngramWeaveRules.committed(engram.board(), temper.ordinal()) : 0;
 
 	}
 
-	public float displayedSpun(EnumBloodTendency tendency) { return shownSpun[tendency.ordinal()]; }
+	public float displayedSpun(EnumBloodTemper temper) { return shownSpun[temper.ordinal()]; }
 
-	public float displayedStock(EnumBloodTendency tendency) { return shownStock[tendency.ordinal()]; }
+	public float displayedStock(EnumBloodTemper temper) { return shownStock[temper.ordinal()]; }
 
 	public boolean echoClimaxFired() { return echoClimaxFired; }
 
 	public void markEchoClimaxFired() { echoClimaxFired = true; }
 
-	private void playWeaveFeedback(EnumBloodTendency tendency) {
+	private void playWeaveFeedback(EnumBloodTemper temper) {
 
 		if (level == null) {
 
@@ -1786,11 +1786,11 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 					12, 0.18D, 0.18D, 0.18D, 0.045D);
 
-			serverLevel.sendParticles(HemoParticleData.ember(tendency.getColor(), 0.1F, 0.8F, 24),
+			serverLevel.sendParticles(HemoParticleData.ember(temper.getColor(), 0.1F, 0.8F, 24),
 
 					pos.x, pos.y, pos.z, 18, 0.28D, 0.28D, 0.28D, 0.06D);
 
-			serverLevel.sendParticles(HemoParticleData.glow(tendency.getColor()), pos.x, pos.y, pos.z,
+			serverLevel.sendParticles(HemoParticleData.glow(temper.getColor()), pos.x, pos.y, pos.z,
 
 					28, 0.24D, 0.24D, 0.24D, 0.035D);
 
@@ -1942,7 +1942,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 	}
 
-	public void provideTendencyFeedback(@Nullable Player player) {
+	public void provideTemperFeedback(@Nullable Player player) {
 
 		if (recoveryRequired) {
 
@@ -1990,7 +1990,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		int[] reference = player != null && !level.isClientSide ? engramFor(player).reference() : null;
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) {
 
 			int needed = curRecipe.getEnzymeRequirement(tend);
 
@@ -2008,7 +2008,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 					needed,
 
-					EnumBloodTendency.getRepEnzyme(tend).getDescription(),
+					EnumBloodTemper.getRepEnzyme(tend).getDescription(),
 
 					spans,
 
@@ -2058,7 +2058,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		int[] reference = player != null && level != null && !level.isClientSide ? engramFor(player).reference() : null;
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) {
 
 			int spans = reference != null ? reference[tend.ordinal()] : minimumSpans(recipe, tend);
 
@@ -2068,7 +2068,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 			if (storedEnzymes.getOrDefault(tend, 0) < spans) {
 
-				msg(player, missingEnzymeMessage(EnumBloodTendency.getRepEnzyme(tend).getDescription(), stored, needed),
+				msg(player, missingEnzymeMessage(EnumBloodTemper.getRepEnzyme(tend).getDescription(), stored, needed),
 
 						ChatFormatting.YELLOW, true);
 
@@ -2354,7 +2354,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		CompoundTag enzymeTag = new CompoundTag();
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) {
 
 			enzymeTag.putInt(tend.name(), storedEnzymes.getOrDefault(tend, 0));
 
@@ -2418,7 +2418,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 		CompoundTag enzymeTag = tag.getCompound(TAG_STORED_ENZYMES);
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) {
 
 			storedEnzymes.put(tend, Mth.clamp(enzymeTag.getInt(tend.name()) * scale, 0, ENZYME_CAPACITY));
 
@@ -2432,13 +2432,13 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 			// vials; the weave recalls a fresh engram for its weaver, its blood already paid.
 
-			int[] returned = new int[EnumBloodTendency.values().length];
+			int[] returned = new int[EnumBloodTemper.values().length];
 
 			if (tag.contains(TAG_LEGACY_WEAVE_THREADS)) {
 
 				CompoundTag spunTag = tag.getCompound(TAG_LEGACY_SPUN);
 
-				for (EnumBloodTendency tend : EnumBloodTendency.values()) returned[tend.ordinal()] = spunTag.getInt(tend.name());
+				for (EnumBloodTemper tend : EnumBloodTemper.values()) returned[tend.ordinal()] = spunTag.getInt(tend.name());
 
 			} else if (tag.contains(TAG_LEGACY_RITUAL_ORBS)) {
 
@@ -2452,7 +2452,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 						try {
 
-							returned[EnumBloodTendency.valueOf(orb.getString("tendency")).ordinal()]++;
+							returned[EnumBloodTemper.valueOf(orb.getString("temper")).ordinal()]++;
 
 						} catch (IllegalArgumentException ignored) {
 
@@ -2464,7 +2464,7 @@ public class SomaticLoomBlockEntity extends HemoBlockEntity implements IBloodRes
 
 			}
 
-			for (EnumBloodTendency tend : EnumBloodTendency.values())
+			for (EnumBloodTemper tend : EnumBloodTemper.values())
 
 				storedEnzymes.put(tend, Math.min(ENZYME_CAPACITY,
 

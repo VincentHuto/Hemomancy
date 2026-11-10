@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ThelemicMemoryStateTest {
     @Test
-    void catalogueDefinesOnePrimaryMemoryForEveryTendency() {
-        Set<EnumBloodTendency> primaries = Arrays.stream(ThelemicMemory.values())
-                .map(ThelemicMemory::primaryTendency).collect(Collectors.toSet());
+    void catalogueDefinesOnePrimaryMemoryForEveryTemper() {
+        Set<EnumBloodTemper> primaries = Arrays.stream(ThelemicMemory.values())
+                .map(ThelemicMemory::primaryTemper).collect(Collectors.toSet());
         assertEquals(8, ThelemicMemory.values().length);
-        assertEquals(Set.of(EnumBloodTendency.values()), primaries);
+        assertEquals(Set.of(EnumBloodTemper.values()), primaries);
     }
 
     @Test

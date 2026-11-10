@@ -19,7 +19,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemo
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarStateSyncEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
@@ -31,7 +31,7 @@ import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge
 import com.vincenthuto.hemomancy.common.network.PacketAntecedentResearch;
 import com.vincenthuto.hemomancy.common.network.PacketSyncClinicalBlood;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTendencyServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTemperamentServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.LivingStaffProgressServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncManipulationHearts;
@@ -78,8 +78,8 @@ public final class PlayerStateSync {
 	private static final Set<Lifecycle> ALWAYS = EnumSet.allOf(Lifecycle.class);
 
 	public enum Entry {
-		TENDENCY(HemoAttachmentTypes.BLOOD_TENDENCY, BloodTendencyServerPacket.class, ALWAYS,
-				player -> BloodTendencyEvents.syncTendency(player, HemoCapabilityAccess.getBloodTendency(player))),
+		TEMPER(HemoAttachmentTypes.BLOOD_TEMPERAMENT, BloodTemperamentServerPacket.class, ALWAYS,
+				player -> BloodTemperamentEvents.syncTemperament(player, HemoCapabilityAccess.getBloodTemperament(player))),
 		VASCULAR(HemoAttachmentTypes.VASCULAR_SYSTEM, VascularSystemServerPacket.class, ALWAYS,
 				player -> VascularSystemEvents.syncVascular(player, HemoCapabilityAccess.getVascularSystem(player))),
 		BLOOD_VOLUME(HemoAttachmentTypes.BLOOD_VOLUME, BloodVolumeServerPacket.class, ALWAYS,

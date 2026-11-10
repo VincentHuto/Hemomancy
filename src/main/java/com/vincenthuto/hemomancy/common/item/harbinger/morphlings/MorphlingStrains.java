@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.Optional;
 
-import static com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.*;
+import static com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.*;
 import static com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingStrain.NO_LAST_RITE;
 
 /**

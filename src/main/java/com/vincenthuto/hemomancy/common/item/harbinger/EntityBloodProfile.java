@@ -3,29 +3,29 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.resources.ResourceLocation;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public record EntityBloodProfile(List<EnumBloodTendency> tendencies, List<ResourceLocation> properties,
+public record EntityBloodProfile(List<EnumBloodTemper> tempers, List<ResourceLocation> properties,
                                  boolean requiresLivingSyringe) {
     public static final EntityBloodProfile EMPTY = new EntityBloodProfile(List.of(), List.of(), false);
     public static final ResourceLocation FUNGAL = Hemomancy.rloc("fungal");
 
     public EntityBloodProfile {
-        tendencies = tendencies.stream().distinct().sorted().toList();
+        tempers = tempers.stream().distinct().sorted().toList();
         properties = properties.stream().distinct().sorted(Comparator.comparing(ResourceLocation::toString)).toList();
     }
 
     public static EntityBloodProfile parse(JsonObject json) {
-        var tendencies = new ArrayList<EnumBloodTendency>();
-        for (String name : strings(json, "tendencies")) {
+        var tempers = new ArrayList<EnumBloodTemper>();
+        for (String name : strings(json, "tempers")) {
             if (!name.equals(name.toLowerCase(Locale.ROOT)))
-                throw new IllegalArgumentException("Tendency must be lowercase: " + name);
-            tendencies.add(EnumBloodTendency.valueOf(name.toUpperCase(Locale.ROOT)));
+                throw new IllegalArgumentException("Temper must be lowercase: " + name);
+            tempers.add(EnumBloodTemper.valueOf(name.toUpperCase(Locale.ROOT)));
         }
         var properties = new ArrayList<ResourceLocation>();
         for (String id : strings(json, "properties")) {
@@ -39,7 +39,7 @@ public record EntityBloodProfile(List<EnumBloodTendency> tendencies, List<Resour
                 throw new IllegalArgumentException("requires_living_syringe must be a boolean");
             requires = value.getAsBoolean();
         }
-        return new EntityBloodProfile(tendencies, properties, requires);
+        return new EntityBloodProfile(tempers, properties, requires);
     }
 
     private static List<String> strings(JsonObject json, String field) {

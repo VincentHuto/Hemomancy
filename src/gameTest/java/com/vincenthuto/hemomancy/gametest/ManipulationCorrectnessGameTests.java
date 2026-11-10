@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -196,7 +196,7 @@ public final class ManipulationCorrectnessGameTests {
                         var bloom = ManipulationInit.osseous_bloom.get();
                         bloom.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
                         float raw = health * .25F * (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(p);
-                        float adjusted = TendencyAffinityRules.adjustManipulationDamage(p, boss, bloom, raw);
+                        float adjusted = TemperAffinityRules.adjustManipulationDamage(p, boss, bloom, raw);
                         near(h, Math.min(12, adjusted), health - boss.getHealth(), "Final boss damage, health=" + health
                                 + ", trained=" + trained + ", alive=" + boss.isAlive()
                                 + ", indexed=" + (h.getLevel().getEntity(boss.getUUID()) == boss)
@@ -262,7 +262,7 @@ public final class ManipulationCorrectnessGameTests {
                     h.assertTrue(bell.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), ticks), "Bell release rejected");
                     near(h, 2000 - cost * ticks / 80, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Bell charge payment");
                     float raw = 7F * ticks / 80;
-                    near(h, TendencyAffinityRules.adjustManipulationDamage(p, target, bell, raw) + count * ticks / 80F, 100 - target.getHealth(), "Bell damage at " + ticks + " ticks, statuses=" + count);
+                    near(h, TemperAffinityRules.adjustManipulationDamage(p, target, bell, raw) + count * ticks / 80F, 100 - target.getHealth(), "Bell damage at " + ticks + " ticks, statuses=" + count);
                     // A partial toll cashes in only its share; the rest of the bank stays owed until expiry.
                     float owed = count * (1 - ticks / 80F);
                     var bank = com.vincenthuto.hemomancy.common.damage.SchoolStates.data(target).get(
@@ -361,7 +361,7 @@ public final class ManipulationCorrectnessGameTests {
                 try {
                     var bloom = ManipulationInit.osseous_bloom.get();
                     bloom.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-                    near(h, TendencyAffinityRules.adjustManipulationDamage(p, target, bloom, health * .25F), health - target.getHealth(), "Ordinary HP scaling at " + health);
+                    near(h, TemperAffinityRules.adjustManipulationDamage(p, target, bloom, health * .25F), health - target.getHealth(), "Ordinary HP scaling at " + health);
                 } finally { target.discard(); }
             }
             h.succeed();
@@ -489,8 +489,8 @@ public final class ManipulationCorrectnessGameTests {
         var blood=HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        for (var tendency:EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency,100);
+        for (var temper:EnumBloodTemper.values())
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper,100);
         return p;
     }
 }

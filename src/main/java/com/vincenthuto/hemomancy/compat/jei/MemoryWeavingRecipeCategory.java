@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * JEI recipe category for the Somatic Loom. The engram is drawn as the loom's octagram: each required tendency is a
- * lit spoke ending in a real enzyme slot (count = fragments), unused tendencies stay as dim pips. The right column
+ * JEI recipe category for the Somatic Loom. The engram is drawn as the loom's octagram: each required temper is a
+ * lit spoke ending in a real enzyme slot (count = fragments), unused tempers stay as dim pips. The right column
  * names the woven result's rank and the loom stage that can hold it.
  */
 public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavingRecipe> {
@@ -88,12 +88,12 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 			catalystIndex++;
 		}
 
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) {
 			int amount = recipe.getEnzymeRequirement(tend);
 			if (amount <= 0) continue;
 			int[] at = spokeEnd(tend, WHEEL_RADIUS);
 			builder.addSlot(RecipeIngredientRole.INPUT, at[0] - 8, at[1] - 8)
-					.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(EnumBloodTendency.getRepEnzyme(tend), amount))
+					.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(EnumBloodTemper.getRepEnzyme(tend), amount))
 					.addRichTooltipCallback((view, tooltip) -> tooltip.add(Component.translatable(
 							"hemomancy.jei.memory_weaving.fragments_of", amount).withStyle(ChatFormatting.GRAY)));
 		}
@@ -171,9 +171,9 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 		JeiPanel.footerTooltip(tooltip, Minecraft.getInstance().font, footer(recipe), W, FOOTER_Y, H, mouseX, mouseY);
 	}
 
-	/** The octagram: a faint ring through all eight tendencies, lit spokes and moving motes for the required ones. */
+	/** The octagram: a faint ring through all eight tempers, lit spokes and moving motes for the required ones. */
 	private void drawEngram(GuiGraphics gfx, MemoryWeavingRecipe recipe, float time) {
-		EnumBloodTendency[] tends = EnumBloodTendency.values();
+		EnumBloodTemper[] tends = EnumBloodTemper.values();
 
 		// Faint outer octagon + inner star (skip-two chords), the loom's own figure
 		for (int i = 0; i < tends.length; i++) {
@@ -185,7 +185,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 			JeiPanel.line(gfx, d[0], d[1], c[0], c[1], 0xFF240709);
 		}
 
-		for (EnumBloodTendency tend : tends) {
+		for (EnumBloodTemper tend : tends) {
 			boolean required = recipe.getEnzymeRequirement(tend) > 0;
 			int color = JeiPanel.brighten(tend.getColor().getColor());
 			int[] inner = spokeEnd(tend, HUB_RADIUS);
@@ -256,8 +256,8 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 
 	// ── Geometry ──
 
-	/** Spoke endpoint for a tendency; ANIMUS points straight up and the rest follow clockwise in 45° steps. */
-	private static int[] spokeEnd(EnumBloodTendency tend, int radius) {
+	/** Spoke endpoint for a temper; ANIMUS points straight up and the rest follow clockwise in 45° steps. */
+	private static int[] spokeEnd(EnumBloodTemper tend, int radius) {
 		double rad = Math.toRadians(-90 + tend.ordinal() * 45);
 		return new int[] { WHEEL_X + (int) Math.round(Math.cos(rad) * radius), WHEEL_Y + (int) Math.round(Math.sin(rad) * radius) };
 	}

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.client.CameraType;
@@ -147,7 +147,7 @@ public final class FerricDuctilisReview {
                     target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(200);target.setHealth(200);level.addFreshEntity(target);TARGETS.add(target.getId());
                 }
                 var blood=HemoCapabilityAccess.getBloodVolume(player);blood.setActive(true);blood.setBloodVolume(10000);
-                for(var tend:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tend,100);
+                for(var tend:EnumBloodTemper.values())HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(tend,100);
                 var spell=ManipulationInit.getByName(name);var known=HemoCapabilityAccess.getKnownManipulations(player);
                 var baseline=ManipulationInit.getByName(com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry.baselineId(name));
                 known.getKnownManips().put(baseline,new ManipLevel(4,185));

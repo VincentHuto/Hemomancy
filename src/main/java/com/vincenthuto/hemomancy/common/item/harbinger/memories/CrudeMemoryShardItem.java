@@ -66,7 +66,7 @@ public class CrudeMemoryShardItem extends Item {
 					ManipulationRankGates.minDegreeForRank(getManip().getRank())).withStyle(ChatFormatting.GRAY));
 			tooltip.add(HemoText.translatable("tooltip.hemomancy.crude_memory_shard.casting_requires_alignment",
 					(int) getManip().getAlignLevel(),
-					BloodManipulation.tendencyName(getManip().getTend()),
+					BloodManipulation.temperName(getManip().getTend()),
 					getManip().getBaseCostLabel(),
 					getManip().getBaseCostText()).withStyle(ChatFormatting.GRAY));
 		}

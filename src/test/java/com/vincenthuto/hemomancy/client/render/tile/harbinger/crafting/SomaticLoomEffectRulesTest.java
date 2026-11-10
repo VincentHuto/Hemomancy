@@ -12,40 +12,40 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SomaticLoomEffectRulesTest {
 	@Test
 	void warpStaysBareWithoutARecipe() {
-		int[] threads = SomaticLoomEffectRules.threadTendencies(new int[8], 15);
+		int[] threads = SomaticLoomEffectRules.threadTempers(new int[8], 15);
 		assertTrue(Arrays.stream(threads).allMatch(t -> t == -1));
 	}
 
 	@Test
-	void singleTendencyTakesTheWholeWarp() {
+	void singleTemperTakesTheWholeWarp() {
 		int[] req = new int[8];
 		req[2] = 4;
-		int[] threads = SomaticLoomEffectRules.threadTendencies(req, 15);
+		int[] threads = SomaticLoomEffectRules.threadTempers(req, 15);
 		assertTrue(Arrays.stream(threads).allMatch(t -> t == 2));
 	}
 
 	@Test
-	void sharesAreProportionalContiguousAndInTendencyOrder() {
+	void sharesAreProportionalContiguousAndInTemperOrder() {
 		int[] req = new int[8];
 		req[1] = 4;
 		req[5] = 12;
-		int[] threads = SomaticLoomEffectRules.threadTendencies(req, 15);
+		int[] threads = SomaticLoomEffectRules.threadTempers(req, 15);
 		assertEquals(4, count(threads, 1));
 		assertEquals(11, count(threads, 5));
 		assertArrayEquals(new int[]{1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, threads);
 	}
 
 	@Test
-	void everyRequiredTendencyGetsAThreadWhileThreadsLast() {
+	void everyRequiredTemperGetsAThreadWhileThreadsLast() {
 		int[] req = new int[8];
 		req[0] = 1;
 		req[7] = 60;
-		int[] threads = SomaticLoomEffectRules.threadTendencies(req, 15);
+		int[] threads = SomaticLoomEffectRules.threadTempers(req, 15);
 		assertEquals(1, count(threads, 0));
 		assertEquals(14, count(threads, 7));
 
 		int[] many = {1, 1, 1, 1, 1, 0, 0, 0};
-		assertArrayEquals(new int[]{0, 1, 2}, SomaticLoomEffectRules.threadTendencies(many, 3));
+		assertArrayEquals(new int[]{0, 1, 2}, SomaticLoomEffectRules.threadTempers(many, 3));
 	}
 
 	@Test
@@ -134,8 +134,8 @@ class SomaticLoomEffectRulesTest {
 		return peaks;
 	}
 
-	private static int count(int[] threads, int tendency) {
-		return (int) Arrays.stream(threads).filter(t -> t == tendency).count();
+	private static int count(int[] threads, int temper) {
+		return (int) Arrays.stream(threads).filter(t -> t == temper).count();
 	}
 
 	@Test

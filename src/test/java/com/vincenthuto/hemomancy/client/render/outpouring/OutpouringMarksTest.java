@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.outpouring;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringMarks.Mark;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.Detail;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.Mode;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OutpouringMarksTest {
     private static Mark mark(int x, long born, int life) {
-        return new Mark(x, 63, 0, 1, .5, .5, EnumBloodTendency.ANIMUS, .5f, born, life, 7, false, false);
+        return new Mark(x, 63, 0, 1, .5, .5, EnumBloodTemper.ANIMUS, .5f, born, life, 7, false, false);
     }
 
     @Test void capEvictsOldest() {
@@ -42,7 +42,7 @@ class OutpouringMarksTest {
     }
 
     @Test void quadStaysOnFace() {
-        var m = new Mark(0, 63, 0, 1, .98, .5, EnumBloodTendency.MORTEM, .5f, 0, 100, 3, false, false);
+        var m = new Mark(0, 63, 0, 1, .98, .5, EnumBloodTemper.MORTEM, .5f, 0, 100, 3, false, false);
         double[] q = OutpouringMarks.quad(m, 10, 0);
         for (int i = 0; i < 4; i++) {
             double x = q[i * 5], y = q[i * 5 + 1], z = q[i * 5 + 2];
@@ -50,7 +50,7 @@ class OutpouringMarksTest {
             assertEquals(64.004, y, 1e-9);
         }
         for (int face = 0; face < 6; face++) {
-            var side = new Mark(5, 70, -3, face, .5, .5, EnumBloodTendency.FERRIC, .4f, 0, 100, 1, false, false);
+            var side = new Mark(5, 70, -3, face, .5, .5, EnumBloodTemper.FERRIC, .4f, 0, 100, 1, false, false);
             double[] s = OutpouringMarks.quad(side, 10, 0);
             var n = OutpouringGeometry.faceNormal(face);
             double plane = n.x != 0 ? s[0] : n.y != 0 ? s[1] : s[2];
@@ -77,19 +77,19 @@ class OutpouringMarksTest {
 
     @Test void nearbyPoolsMergeIntoOneGrowingPool() {
         var marks = new OutpouringMarks();
-        marks.add(new Mark(0, 63, 0, 1, .5, .5, EnumBloodTendency.ANIMUS, .4f, 0, 100, 1, true, false));
-        marks.add(new Mark(0, 63, 0, 1, .7, .55, EnumBloodTendency.ANIMUS, .4f, 5, 100, 2, true, false));
-        marks.add(new Mark(1, 63, 0, 1, .1, .5, EnumBloodTendency.ANIMUS, .4f, 6, 100, 3, true, false));
+        marks.add(new Mark(0, 63, 0, 1, .5, .5, EnumBloodTemper.ANIMUS, .4f, 0, 100, 1, true, false));
+        marks.add(new Mark(0, 63, 0, 1, .7, .55, EnumBloodTemper.ANIMUS, .4f, 5, 100, 2, true, false));
+        marks.add(new Mark(1, 63, 0, 1, .1, .5, EnumBloodTemper.ANIMUS, .4f, 6, 100, 3, true, false));
         assertEquals(1, marks.live().size(), "blood landing in a pool feeds that pool");
         var pool = marks.live().getFirst();
         assertTrue(pool.size() > .4f, "and the pool grows");
         assertTrue(pool.born() + pool.life() >= 106, "and lasts from the latest drop");
-        marks.add(new Mark(5, 63, 0, 1, .5, .5, EnumBloodTendency.ANIMUS, .4f, 7, 100, 4, true, false));
+        marks.add(new Mark(5, 63, 0, 1, .5, .5, EnumBloodTemper.ANIMUS, .4f, 7, 100, 4, true, false));
         assertEquals(2, marks.live().size(), "a far pool stays separate");
     }
 
     @Test void poolCentreIsUnclamped() {
-        var pool = new Mark(0, 63, 0, 1, .95, .5, EnumBloodTendency.ANIMUS, .4f, 0, 100, 0, true, false);
+        var pool = new Mark(0, 63, 0, 1, .95, .5, EnumBloodTemper.ANIMUS, .4f, 0, 100, 0, true, false);
         double[] c = OutpouringMarks.poolCentre(pool, 0, 0);
         assertEquals(64, c[1], 1e-9);
         assertTrue(c[0] > .8 && c[0] < 1.1);
@@ -104,7 +104,7 @@ class OutpouringMarksTest {
     }
 
     @Test void poolsOnlyDriftWhereTheyFit() {
-        var pool = new Mark(0, 63, 0, 1, .5, .5, EnumBloodTendency.ANIMUS, .8f, 0, 400, 0, true, false);
+        var pool = new Mark(0, 63, 0, 1, .5, .5, EnumBloodTemper.ANIMUS, .8f, 0, 400, 0, true, false);
         OutpouringMarks.Floor onlyHome = (x, z) -> x == 0 && z == 0;
         for (long t = 0; t < 200; t += 7) {
             double[] c = OutpouringMarks.poolCentre(pool, t, 0, onlyHome);
@@ -115,7 +115,7 @@ class OutpouringMarksTest {
     }
 
     @Test void poolsStayWhereTheyLanded() {
-        var pool = new Mark(0, 63, 0, 1, .5, .5, EnumBloodTendency.ANIMUS, .4f, 0, 200, 9, true, false);
+        var pool = new Mark(0, 63, 0, 1, .5, .5, EnumBloodTemper.ANIMUS, .4f, 0, 200, 9, true, false);
         assertArrayEquals(OutpouringMarks.poolCentre(pool, 0, 0), OutpouringMarks.poolCentre(pool, 120, .5f), 1e-9);
     }
 }

@@ -439,8 +439,8 @@
     "about": "Player response: asking the Hermit to tell them about Scars",
     "tone": "curious, attentive"
   },
-  "hemomancy.dialogue.hermit.option.tell_me_about_tendencies": {
-    "about": "Player response: asking the Hermit to tell them about blood tendencies",
+  "hemomancy.dialogue.hermit.option.tell_me_about_tempers": {
+    "about": "Player response: asking the Hermit to tell them about blood tempers",
     "tone": "curious"
   },
   "hemomancy.dialogue.hermit.option.what_heart": {
@@ -608,7 +608,7 @@
     "tone": "dry approval"
   },
   "hemomancy.hermit.adept.scar_crafting": {
-    "about": "the Hermit giving the scar steps: knapper at the Cerebral Scarring Station, carve a blank scar, bring materials of its tendency, then take it to the Vein-Mason's Brazier lesson where it opens",
+    "about": "the Hermit giving the scar steps: knapper at the Cerebral Scarring Station, carve a blank scar, bring materials of its temper, then take it to the Vein-Mason's Brazier lesson where it opens",
     "tone": "practical"
   },
   "hemomancy.hermit.adept.scar_intro": {
@@ -616,7 +616,7 @@
     "tone": "plain"
   },
   "hemomancy.hermit.adept.scar_lore": {
-    "about": "the Hermit explaining straight lines become veins and curves nerves, the mind knits along them like a wound along stitches, and sealed ideas and tendencies can surface and stay",
+    "about": "the Hermit explaining straight lines become veins and curves nerves, the mind knits along them like a wound along stitches, and sealed ideas and tempers can surface and stay",
     "tone": "frank, a little grim"
   },
   "hemomancy.hermit.apotheos.final_words": {
@@ -711,8 +711,8 @@
     "about": "the Hermit describing his slowly built temple, noting each Hermit builds one, that the Focus in the floor watches the heart while he sleeps and hosts no rites, and that initiation is the Vicar's business",
     "tone": "dry, self-deprecating"
   },
-  "hemomancy.hermit.tendency_lore": {
-    "about": "the Hermit explaining each manipulation pulls blood toward a primary tendency and many toward a secondary one, and mastery makes blood lean that way and toward the tendencies beside it",
+  "hemomancy.hermit.temper_lore": {
+    "about": "the Hermit explaining each manipulation pulls blood toward a primary temper and many toward a secondary one, and mastery makes blood lean that way and toward the tempers beside it",
     "tone": "reflective"
   },
   "hemomancy.hermit.uninitiated.farewell.line1": {

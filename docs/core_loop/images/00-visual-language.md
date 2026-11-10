@@ -22,7 +22,7 @@ The plates read as pages from a field manual kept by someone who studies blood. 
 
 The world is drawn in pixel blocks at 16 texels per block, so a scene reads as Minecraft without copying any texture. Blocks, creatures and items stay flat and quiet. The blood is the only thing that glows.
 
-Colour carries meaning. Plain blood is one red. A school's colour appears only where that school is acting, and the eight colours match `EnumBloodTendency`. There is no copper, brass, bronze or silver on anything blood-side. Blood machines are hematic iron, bone and lacquer.
+Colour carries meaning. Plain blood is one red. A school's colour appears only where that school is acting, and the eight colours match `EnumBloodTemper`. There is no copper, brass, bronze or silver on anything blood-side. Blood machines are hematic iron, bone and lacquer.
 
 Focal strands are bold: a soft glow, a body and a bright core. Marks on the ground are thin and partly clear, so a stain or a gouge never turns into a tangle of lines.
 

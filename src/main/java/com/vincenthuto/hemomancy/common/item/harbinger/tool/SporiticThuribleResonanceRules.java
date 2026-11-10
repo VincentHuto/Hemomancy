@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 public final class SporiticThuribleResonanceRules {
 	public static final double MATCHING_COST_MULTIPLIER = 0.85;
@@ -9,15 +9,15 @@ public final class SporiticThuribleResonanceRules {
 	private SporiticThuribleResonanceRules() {
 	}
 
-	public static double costMultiplier(EnumBloodTendency resonanceTendency, EnumBloodTendency manipulationTendency) {
-		return matches(resonanceTendency, manipulationTendency) ? MATCHING_COST_MULTIPLIER : 1.0;
+	public static double costMultiplier(EnumBloodTemper resonanceTemper, EnumBloodTemper manipulationTemper) {
+		return matches(resonanceTemper, manipulationTemper) ? MATCHING_COST_MULTIPLIER : 1.0;
 	}
 
-	public static double cooldownMultiplier(EnumBloodTendency resonanceTendency, EnumBloodTendency manipulationTendency) {
-		return matches(resonanceTendency, manipulationTendency) ? MATCHING_COOLDOWN_MULTIPLIER : 1.0;
+	public static double cooldownMultiplier(EnumBloodTemper resonanceTemper, EnumBloodTemper manipulationTemper) {
+		return matches(resonanceTemper, manipulationTemper) ? MATCHING_COOLDOWN_MULTIPLIER : 1.0;
 	}
 
-	private static boolean matches(EnumBloodTendency resonanceTendency, EnumBloodTendency manipulationTendency) {
-		return resonanceTendency != null && resonanceTendency == manipulationTendency;
+	private static boolean matches(EnumBloodTemper resonanceTemper, EnumBloodTemper manipulationTemper) {
+		return resonanceTemper != null && resonanceTemper == manipulationTemper;
 	}
 }

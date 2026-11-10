@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -9,16 +9,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class ScarTreeLayoutTest {
 	@Test
-	void tendencySectorsMatchTheManipulationClockwiseOrder() {
+	void temperSectorsMatchTheManipulationClockwiseOrder() {
 		List<ScarTreeLayout.Node> nodes = List.of(
-				node("animus", EnumBloodTendency.ANIMUS, 1),
-				node("flammeus", EnumBloodTendency.FLAMMEUS, 1),
-				node("ductilis", EnumBloodTendency.DUCTILIS, 1),
-				node("lux", EnumBloodTendency.LUX, 1),
-				node("mortem", EnumBloodTendency.MORTEM, 1),
-				node("congeatio", EnumBloodTendency.CONGEATIO, 1),
-				node("ferric", EnumBloodTendency.FERRIC, 1),
-				node("tenebris", EnumBloodTendency.TENEBRIS, 1));
+				node("animus", EnumBloodTemper.ANIMUS, 1),
+				node("flammeus", EnumBloodTemper.FLAMMEUS, 1),
+				node("ductilis", EnumBloodTemper.DUCTILIS, 1),
+				node("lux", EnumBloodTemper.LUX, 1),
+				node("mortem", EnumBloodTemper.MORTEM, 1),
+				node("congeatio", EnumBloodTemper.CONGEATIO, 1),
+				node("ferric", EnumBloodTemper.FERRIC, 1),
+				node("tenebris", EnumBloodTemper.TENEBRIS, 1));
 
 		ScarTreeLayout.Result result = ScarTreeLayout.arrange(nodes);
 
@@ -35,9 +35,9 @@ final class ScarTreeLayoutTest {
 	@Test
 	void tiersProgressOutwardWithinAFamily() {
 		ScarTreeLayout.Result result = ScarTreeLayout.arrange(List.of(
-				node("heart", EnumBloodTendency.ANIMUS, 1),
-				node("marrow", EnumBloodTendency.ANIMUS, 2),
-				node("phoenix", EnumBloodTendency.ANIMUS, 3)));
+				node("heart", EnumBloodTemper.ANIMUS, 1),
+				node("marrow", EnumBloodTemper.ANIMUS, 2),
+				node("phoenix", EnumBloodTemper.ANIMUS, 3)));
 
 		assertEquals(new ScarTreeLayout.Point(480, 280), result.pointFor("heart"));
 		assertEquals(new ScarTreeLayout.Point(480, 215), result.pointFor("marrow"));
@@ -47,13 +47,13 @@ final class ScarTreeLayoutTest {
 	@Test
 	void builtInAuthoredBranchesUseTheTierRings() {
 		ScarTreeLayout.Result result = ScarTreeLayout.arrange(List.of(
-				node("hemomancy:scar_pyre", EnumBloodTendency.FLAMMEUS, 1),
-				node("hemomancy:scar_sol", EnumBloodTendency.FLAMMEUS, 2),
-				node("hemomancy:scar_corona", EnumBloodTendency.FLAMMEUS, 3),
-				node("hemomancy:scar_thorn", EnumBloodTendency.FERRIC, 1),
-				node("hemomancy:scar_anvil", EnumBloodTendency.FERRIC, 2),
-				new ScarTreeLayout.Node("hemomancy:scar_blood_honed", EnumBloodTendency.FERRIC, 2, true),
-				node("hemomancy:scar_crucible", EnumBloodTendency.FERRIC, 3)));
+				node("hemomancy:scar_pyre", EnumBloodTemper.FLAMMEUS, 1),
+				node("hemomancy:scar_sol", EnumBloodTemper.FLAMMEUS, 2),
+				node("hemomancy:scar_corona", EnumBloodTemper.FLAMMEUS, 3),
+				node("hemomancy:scar_thorn", EnumBloodTemper.FERRIC, 1),
+				node("hemomancy:scar_anvil", EnumBloodTemper.FERRIC, 2),
+				new ScarTreeLayout.Node("hemomancy:scar_blood_honed", EnumBloodTemper.FERRIC, 2, true),
+				node("hemomancy:scar_crucible", EnumBloodTemper.FERRIC, 3)));
 
 		assertEquals(new ScarTreeLayout.Point(621, 339), result.pointFor("hemomancy:scar_pyre"));
 		assertEquals(new ScarTreeLayout.Point(667, 293), result.pointFor("hemomancy:scar_sol"));
@@ -70,11 +70,11 @@ final class ScarTreeLayoutTest {
 				{"heart", "marrow", "phoenix"}, {"pyre", "sol", "corona"}, {"feral", "flux", "chimera"},
 				{"halo", "veil", "transcendence"}, {"blight", "wither", "oblivion"},
 				{"rime", "glacier", "descendence"}, {"thorn", "anvil", "crucible"}, {"shade", "moon", "eye"}};
-		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
+		EnumBloodTemper[] tempers = EnumBloodTemper.values();
 		List<ScarTreeLayout.Node> nodes = new java.util.ArrayList<>();
 		for (int family = 0; family < chains.length; family++) {
 			for (int tier = 1; tier <= 3; tier++) {
-				nodes.add(node("hemomancy:scar_" + chains[family][tier - 1], tendencies[family], tier));
+				nodes.add(node("hemomancy:scar_" + chains[family][tier - 1], tempers[family], tier));
 			}
 		}
 
@@ -85,20 +85,20 @@ final class ScarTreeLayoutTest {
 			ScarTreeLayout.Point point = result.pointFor(node.id());
 			double radius = Math.hypot(point.x() - ScarTreeLayout.CENTER_X, point.y() - ScarTreeLayout.CENTER_Y);
 			assertEquals(tierRadii[node.tier() - 1], radius, 1.0, node.id());
-			double axis = Math.toRadians(-90.0 + node.tendency().ordinal() * 45.0);
+			double axis = Math.toRadians(-90.0 + node.temper().ordinal() * 45.0);
 			double offAxis = Math.abs(-(point.x() - ScarTreeLayout.CENTER_X) * Math.sin(axis)
 					+ (point.y() - ScarTreeLayout.CENTER_Y) * Math.cos(axis));
-			assertTrue(offAxis <= 1.0, node.id() + " sits on its tendency axis");
+			assertTrue(offAxis <= 1.0, node.id() + " sits on its temper axis");
 		}
 	}
 
 	@Test
 	void bloodHonedIsATierTwoSideBranchFromThorn() {
 		ScarTreeLayout.Result result = ScarTreeLayout.arrange(List.of(
-				node("scar_thorn", EnumBloodTendency.FERRIC, 1),
-				node("scar_anvil", EnumBloodTendency.FERRIC, 2),
-				new ScarTreeLayout.Node("scar_blood_honed", EnumBloodTendency.FERRIC, 2, true),
-				node("scar_crucible", EnumBloodTendency.FERRIC, 3)));
+				node("scar_thorn", EnumBloodTemper.FERRIC, 1),
+				node("scar_anvil", EnumBloodTemper.FERRIC, 2),
+				new ScarTreeLayout.Node("scar_blood_honed", EnumBloodTemper.FERRIC, 2, true),
+				node("scar_crucible", EnumBloodTemper.FERRIC, 3)));
 
 		assertNotEquals(result.pointFor("scar_anvil"), result.pointFor("scar_blood_honed"));
 		assertTrue(result.edges().contains(new ScarTreeLayout.Edge("scar_thorn", "scar_anvil")));
@@ -110,8 +110,8 @@ final class ScarTreeLayoutTest {
 	@Test
 	void authoredEditorPositionsAndParentsOverrideTheGeneratedFallback() {
 		List<ScarTreeLayout.Node> nodes = List.of(
-				node("heart", EnumBloodTendency.ANIMUS, 1),
-				node("marrow", EnumBloodTendency.ANIMUS, 2));
+				node("heart", EnumBloodTemper.ANIMUS, 1),
+				node("marrow", EnumBloodTemper.ANIMUS, 2));
 		List<ScarTreeLayout.AuthoredNode> authored = List.of(
 				new ScarTreeLayout.AuthoredNode("heart", 410, 205, List.of()),
 				new ScarTreeLayout.AuthoredNode("marrow", 455, 135, List.of("heart")));
@@ -123,7 +123,7 @@ final class ScarTreeLayoutTest {
 		assertEquals(List.of(new ScarTreeLayout.Edge("heart", "marrow")), result.edges());
 	}
 
-	private static ScarTreeLayout.Node node(String id, EnumBloodTendency tendency, int tier) {
-		return new ScarTreeLayout.Node(id, tendency, tier, false);
+	private static ScarTreeLayout.Node node(String id, EnumBloodTemper temper, int tier) {
+		return new ScarTreeLayout.Node(id, temper, tier, false);
 	}
 }

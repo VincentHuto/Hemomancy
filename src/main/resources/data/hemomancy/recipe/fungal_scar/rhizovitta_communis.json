@@ -1,6 +1,6 @@
 {
   "type": "hemomancy:fungal_scar_cultivation",
-  "tendency": "ANIMUS",
+  "temper": "ANIMUS",
   "blood_cost_phase1": 2400,
   "phase1_duration": 2400,
   "maturation_threshold": 3000,

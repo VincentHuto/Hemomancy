@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.*;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import net.minecraft.client.animation.AnimationDefinition;
@@ -380,7 +380,7 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
 
 		// The guard his weapon is carried in, then whatever move is under way keyed over it on the move's own clock.
 		VesperWeaponAction action = entity.getWeaponAction();
-		float[] pose = VesperEveningStarMoves.stance(entity.getActiveTendency(), entity.isRaging(), frame,
+		float[] pose = VesperEveningStarMoves.stance(entity.getActiveTemper(), entity.isRaging(), frame,
 				state.stanceTime());
 		VesperEveningStarMoves.act(action, entity.getActionVariant(), state.actionTime(), pose);
 		VesperEveningStarMoves.apply(this.rig, pose);

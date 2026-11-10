@@ -892,7 +892,7 @@ public final class ClinicalBloodProgressionGameTests {
         var blood = HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(noetic.getTend(), 100);
+        HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(noetic.getTend(), 100);
     }
 
     private static void cleanupSharedSelection(ServerPlayer player) {
@@ -3827,7 +3827,7 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(feedback.isEmpty(), "Holding Projection after payment must not repeat Staff instructions every tick");
             h.assertTrue(blood.getBloodVolume() == 50 && loom.getRitualBloodCharged() == 50,
                     "Continued Projection must preserve the single payment");
-            loom.provideTendencyFeedback(p);
+            loom.provideTemperFeedback(p);
             h.assertTrue(feedback.size() == 1 && feedback.getFirst().getString().contains("rest your gaze on a fragment to hear its memory"),
                     "Explicit empty-hand feedback must still explain threading the engram");
 
@@ -3849,7 +3849,7 @@ public final class ClinicalBloodProgressionGameTests {
         var mnemonist = EntityInit.harbinger_mnemonist.get().create(h.getLevel());
         mnemonist.setPos(p.position());
         h.getLevel().addFreshEntity(mnemonist);
-        var entry = Hemomancy.rloc("libersanguinium/tendency/pages/enzymatic_scriptorium");
+        var entry = Hemomancy.rloc("libersanguinium/temperament/pages/enzymatic_scriptorium");
         var choice = mnemonist.progressionDialogue(p).nodes().values().stream()
                 .flatMap(node -> node.options().stream())
                 .filter(option -> "scriptorium".equals(option.nextNodeId())).findFirst().orElseThrow();
@@ -3878,7 +3878,7 @@ public final class ClinicalBloodProgressionGameTests {
         var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
         alchemist.setPos(p.position());
         h.getLevel().addFreshEntity(alchemist);
-        var entry = Hemomancy.rloc("libersanguinium/tendency/pages/enzymatic_scriptorium");
+        var entry = Hemomancy.rloc("libersanguinium/temperament/pages/enzymatic_scriptorium");
         String lesson = HarbingerMnemonistDialogueTrees.EVENT_SCRIPTORIUM_LESSON;
         DialogueOptionPacket.dispatch(p, lesson, mnemonist.getId());
         h.assertTrue(!LiberKnowledgeHelper.hasEntry(p, entry), "D2 forged a D3 operation lesson");

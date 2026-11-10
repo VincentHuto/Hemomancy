@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BloodCrystalBlock;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.AlembicVesselRules;

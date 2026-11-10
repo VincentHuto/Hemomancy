@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
@@ -15,8 +15,8 @@ import java.util.UUID;
 public final class SanguineMarionetteManip extends BloodManipulation {
     public SanguineMarionetteManip() {
         super("sanguine_marionette", SanguineMarionetteRules.PULSE_COST, 0, 0, EnumManipulationType.CONTINUOUS,
-                EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.LEGS);
-        setSecondaryTend(EnumBloodTendency.ANIMUS);
+                EnumManipulationRank.HUMILIS, EnumBloodTemper.DUCTILIS, EnumVeinSections.LEGS);
+        setSecondaryTend(EnumBloodTemper.ANIMUS);
         setCooldownTicks(SanguineMarionetteRules.COOLDOWN);
         setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.sanguine_marionette.drudge"));
     }

@@ -28,7 +28,7 @@ Black Veil and Eclipse Well share the synthetic-darkness query used by shadow mo
 
 ## Damage contract
 
-`SchoolHitContext` captures the ability, primary/secondary tendencies, owner, direct entity, root attack, direct/periodic/reaction kind, application/payoff role, charge, and authored application parameters. Projectiles and summons save their captured context. A summoned body starts a new attack identity on a later swing.
+`SchoolHitContext` captures the ability, primary/secondary tempers, owner, direct entity, root attack, direct/periodic/reaction kind, application/payoff role, charge, and authored application parameters. Projectiles and summons save their captured context. A summoned body starts a new attack identity on a later swing.
 
 `SchoolDamageSource` preserves the original damage type, source position, attacker and direct projectile. Armor, shields, damage immunity, encounter defenses, and affinity weighting stay in their existing pipelines. Only confirmed health or absorption damage commits a state or consumption. A shielded, canceled, or immune hit cannot build or spend a state. Non-damaging applications use a separate eligibility/effect-immunity path.
 
@@ -204,7 +204,7 @@ Non-damaging exceptions retain their specific jobs: Binding forms bind; Marionet
 | Wills | Use the Will's authored school for melee and weapon-controller actions. Ductilis ordinary weapon hits mark; other ordinary school hits apply their primary state. |
 | Hemorath | Registered manipulation dispatch retains the chosen ability's authored primary/secondary schools. Unaligned encounter mechanics remain unchanged. |
 
-Vesper actions use their existing `VesperWeaponAction.tendency()`, captured at action start:
+Vesper actions use their existing `VesperWeaponAction.temper()`, captured at action start:
 
 | School | Actions | Role |
 | --- | --- | --- |
@@ -219,7 +219,7 @@ Vesper actions use their existing `VesperWeaponAction.tendency()`, captured at a
 
 The null-assigned sickle actions and Sanguine Crescents remain untyped. Other boss/fauna/armor attacks without an authored school assignment were not classified from colors, themes, or enzyme drops.
 
-The eight registered Morphlings (the Brined Court house strains) take their school from their own authored tendencies, never from the staff or the held weapon (`MorphlingCombat`). Their hits and reactions carry the preferred tendency's school; `MorphlingCombat.afflict` applies that school's state, though none of the eight strains calls it yet:
+The eight registered Morphlings (the Brined Court house strains) take their school from their own authored tempers, never from the staff or the held weapon (`MorphlingCombat`). Their hits and reactions carry the preferred temper's school; `MorphlingCombat.afflict` applies that school's state, though none of the eight strains calls it yet:
 
 | Morphling | Primary / secondary | Preferred school's state |
 | --- | --- | --- |

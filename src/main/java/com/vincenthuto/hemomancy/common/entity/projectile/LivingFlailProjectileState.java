@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 
@@ -8,16 +8,16 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 public record LivingFlailProjectileState(UUID deploymentId, UUID ownerId, float charge,
-		InteractionHand originalHand, EnumBloodTendency primaryTendency,
-		@Nullable EnumBloodTendency secondaryTendency, boolean impacted,
+		InteractionHand originalHand, EnumBloodTemper primaryTemper,
+		@Nullable EnumBloodTemper secondaryTemper, boolean impacted,
 		double lastSafeX, double lastSafeY, double lastSafeZ) {
 	public CompoundTag write(CompoundTag tag) {
 		tag.putUUID("DeploymentId", deploymentId);
 		tag.putUUID("FlailOwner", ownerId);
 		tag.putFloat("FlailCharge", charge);
 		tag.putString("OriginalHand", originalHand.name());
-		tag.putString("Tendency", primaryTendency.name());
-		tag.putString("SecondaryTendency", secondaryTendency == null ? "" : secondaryTendency.name());
+		tag.putString("Temper", primaryTemper.name());
+		tag.putString("SecondaryTemper", secondaryTemper == null ? "" : secondaryTemper.name());
 		tag.putBoolean("Impacted", impacted);
 		tag.putDouble("LastSafeX", lastSafeX);
 		tag.putDouble("LastSafeY", lastSafeY);
@@ -34,17 +34,17 @@ public record LivingFlailProjectileState(UUID deploymentId, UUID ownerId, float 
 		} catch (IllegalArgumentException ignored) {
 			hand = InteractionHand.MAIN_HAND;
 		}
-		EnumBloodTendency primary = parse(tag.getString("Tendency"), EnumBloodTendency.CONGEATIO);
-		EnumBloodTendency secondary = parse(tag.getString("SecondaryTendency"), null);
+		EnumBloodTemper primary = parse(tag.getString("Temper"), EnumBloodTemper.CONGEATIO);
+		EnumBloodTemper secondary = parse(tag.getString("SecondaryTemper"), null);
 		return new LivingFlailProjectileState(deployment, owner, tag.getFloat("FlailCharge"), hand,
 				primary, secondary, tag.getBoolean("Impacted"), tag.getDouble("LastSafeX"),
 				tag.getDouble("LastSafeY"), tag.getDouble("LastSafeZ"));
 	}
 
 	@Nullable
-	private static EnumBloodTendency parse(String name, @Nullable EnumBloodTendency fallback) {
+	private static EnumBloodTemper parse(String name, @Nullable EnumBloodTemper fallback) {
 		try {
-			return EnumBloodTendency.valueOf(name);
+			return EnumBloodTemper.valueOf(name);
 		} catch (IllegalArgumentException ignored) {
 			return fallback;
 		}

@@ -3,11 +3,11 @@ package com.vincenthuto.hemomancy.common.damage;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.SyncSchoolCombatS2CPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
@@ -120,7 +120,7 @@ public final class SchoolCombatEvents {
                     payoff = true;
                 }
                 payoff |= consumed != null;
-                if (!payoff && hit.primary() == EnumBloodTendency.FERRIC
+                if (!payoff && hit.primary() == EnumBloodTemper.FERRIC
                         && SchoolStates.levels(target, SchoolState.RIME) == 3) {
                     bonus = 4;
                     consumed = SchoolState.RIME;
@@ -133,7 +133,7 @@ public final class SchoolCombatEvents {
                     || hit.kind() == SchoolHitContext.Kind.REACTION
                         && (hit.ability().getPath().equals("conductive_arc") || hit.ability().getPath().equals("grave_debt"));
             if (!fixedPayoff && owner instanceof Player player) {
-                damage *= TendencyAffinityRules.damageMultiplier(player, target, hit.primary(), hit.secondary());
+                damage *= TemperAffinityRules.damageMultiplier(player, target, hit.primary(), hit.secondary());
             }
             damage += stateBonus;
             if (hit.ability().getPath().equals("osseous_bloom")
@@ -209,7 +209,7 @@ public final class SchoolCombatEvents {
                 data.recordApplication(hit.rootAttack(), SchoolStates.primaryState(hit.primary()), now);
             }
         }
-        if (prepared.hadLodestone && hit.primary() == EnumBloodTendency.FERRIC)
+        if (prepared.hadLodestone && hit.primary() == EnumBloodTemper.FERRIC)
             MAGNETIC_IMPACTS.put(target, new Impact(now, hit));
         if (caster != null && prepared.hadConductor && !data.hasPaid(hit.rootAttack())) {
             Runnable arc = () -> {

@@ -64,7 +64,7 @@
   "tone": "careful, skeptical"
  },
  "hemomancy.antecedent.dialogue.comparison.2": {
-  "about": "a scholar explaining that the sculk sample has no blood and answers none of the eight tendencies, so no enzyme can be drawn from it, and that Erythromycelium is something else",
+  "about": "a scholar explaining that the sculk sample has no blood and answers none of the eight tempers, so no enzyme can be drawn from it, and that Erythromycelium is something else",
   "tone": "clinical, firm"
  },
  "hemomancy.antecedent.dialogue.comparison.3": {
@@ -116,7 +116,7 @@
   "tone": "intrigued, clinical"
  },
  "hemomancy.antecedent.dialogue.initial_alchemist.2": {
-  "about": "the Alchemist asking the player to tap the glass and watch it pull back, and admitting all eight tendencies were tested and none fit",
+  "about": "the Alchemist asking the player to tap the glass and watch it pull back, and admitting all eight tempers were tested and none fit",
   "tone": "puzzled, candid"
  },
  "hemomancy.antecedent.dialogue.initial_alchemist.3": {
@@ -332,7 +332,7 @@
   "tone": "clipped, imperative"
  },
  "hemomancy.antecedent.sample.identified": {
-  "about": "an item tooltip stating the sample is alive but not blood, shows no tendency response, reacts to vibration, and is unsuitable for injection or enzyme separation",
+  "about": "an item tooltip stating the sample is alive but not blood, shows no temper response, reacts to vibration, and is unsuitable for injection or enzyme separation",
   "tone": "clipped clinical"
  },
  "hemomancy.antecedent.sample.unknown": {
@@ -584,11 +584,11 @@
   "tone": "measured, formal"
  },
  "hemomancy.mnemonist.anchorite_counsel.line1": {
-  "about": "the Mnemonist offering to explain what an instruction means and which tendency leads it, while leaving the carrying tissue to the Anchorite",
+  "about": "the Mnemonist offering to explain what an instruction means and which temper leads it, while leaving the carrying tissue to the Anchorite",
   "tone": "formal, precise"
  },
  "hemomancy.mnemonist.anchorite_counsel.line2": {
-  "about": "the Mnemonist instructing the player to match an active cerebral scar to the Noetic Memory's primary tendency, then change the arrangement and prove the new route still bears the instruction",
+  "about": "the Mnemonist instructing the player to match an active cerebral scar to the Noetic Memory's primary temper, then change the arrangement and prove the new route still bears the instruction",
   "tone": "clipped instructional"
  },
  "hemomancy.mnemonist.anchorite_counsel.prompt": {
@@ -1140,7 +1140,7 @@
   "tone": "clear, factual"
  },
  "hemomancy.mnemonist.item_inquiry.scar_pattern_general.line1": {
-  "about": "the Mnemonist identifying a scar pattern schema as instruction for flesh, tendency and threshold",
+  "about": "the Mnemonist identifying a scar pattern schema as instruction for flesh, temper and threshold",
   "tone": "quiet, appraising"
  },
  "hemomancy.mnemonist.item_inquiry.scar_pattern_general.line2": {
@@ -1148,7 +1148,7 @@
   "tone": "reflective, dry"
  },
  "hemomancy.mnemonist.item_inquiry.somatic_loom.line1": {
-  "about": "the Mnemonist explaining the Somatic Loom takes tendency inputs, blood and a pattern and returns a blood memory woven on purpose",
+  "about": "the Mnemonist explaining the Somatic Loom takes temper inputs, blood and a pattern and returns a blood memory woven on purpose",
   "tone": "clear, factual"
  },
  "hemomancy.mnemonist.item_inquiry.somatic_loom.line2": {

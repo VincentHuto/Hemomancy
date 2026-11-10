@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.damage.*;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
@@ -28,9 +28,9 @@ public class UmbralReversalManip extends BloodManipulation {
 	private static final int MAX_LIGHT_LEVEL = 7;
 
 	public UmbralReversalManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class UmbralReversalManip extends BloodManipulation {
 				e -> ManipulationCombatHelper.canHarm(player, e))) {
 			SchoolStates.apply(player, target, SchoolState.OBSCURED, 80);
 		}
-		ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, Vec3.atCenterOf(origin), net.minecraft.world.phys.Vec3.ZERO);
+		ManipulationParticles.accent(sLevel, EnumBloodTemper.TENEBRIS, Vec3.atCenterOf(origin), net.minecraft.world.phys.Vec3.ZERO);
 		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.TELEPORT, player.position(), player.position(), 1, 18);
         ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.UMBRA_ARRIVAL, Vec3.atBottomCenterOf(destination), Vec3.atBottomCenterOf(destination), 1, 22);
         player.teleportTo(destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5);

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.echo;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.mortem.FruitingContagionRules;
 import com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket;
@@ -45,7 +45,7 @@ final class MortemEchoCasts {
 			Vec3 point = base.add(ctx.side().scale(ctx.scaled(1.2 * t)));
 			EchoScheduler.later(i * 3, () -> {
 				EchoFx.blood(BloodFlowPacket.Style.LIGNUM, ctx.hands(), point, 10);
-				EchoFx.accent(EnumBloodTendency.MORTEM, null, point, new Vec3(0, -0.15, 0), false);
+				EchoFx.accent(EnumBloodTemper.MORTEM, null, point, new Vec3(0, -0.15, 0), false);
 			});
 		}
 	}

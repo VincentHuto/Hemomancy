@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
@@ -45,7 +45,7 @@ final class VesperManipulationCoverageTest {
 
 	@Test
 	void everySchoolHasSeveralFightManipulations() {
-		for (EnumBloodTendency school : EnumBloodTendency.values()) {
+		for (EnumBloodTemper school : EnumBloodTemper.values()) {
 			assertTrue(VesperManipulationCoverage.usable(school).size() >= 3, school + " has too few");
 		}
 	}

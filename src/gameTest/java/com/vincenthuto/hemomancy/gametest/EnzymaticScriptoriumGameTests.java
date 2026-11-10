@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
@@ -55,12 +55,12 @@ public final class EnzymaticScriptoriumGameTests {
         helper.getLevel().setBlockAndUpdate(pos, BlockInit.enzymatic_scriptorium.get().defaultBlockState());
         var station = (EnzymaticScriptoriumBlockEntity) helper.getLevel().getBlockEntity(pos);
         station.receiveBlood(1000);
-        station.setItem(EnumBloodTendency.ANIMUS.ordinal(),
-                new ItemStack(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.ANIMUS), 64));
+        station.setItem(EnumBloodTemper.ANIMUS.ordinal(),
+                new ItemStack(EnumBloodTemper.getRepEnzyme(EnumBloodTemper.ANIMUS), 64));
         station.setItem(EnzymaticScriptoriumBlockEntity.ITEM, new ItemStack(Items.DIAMOND_SWORD));
         station.setItem(EnzymaticScriptoriumBlockEntity.LAPIS, new ItemStack(Items.LAPIS_LAZULI, 3));
         var menu = new EnzymaticScriptoriumMenu(1, player.getInventory(), station);
-        for (int i = 0; i < 3; i++) menu.clickMenuButton(player, EnumBloodTendency.ANIMUS.ordinal());
+        for (int i = 0; i < 3; i++) menu.clickMenuButton(player, EnumBloodTemper.ANIMUS.ordinal());
         helper.assertTrue(menu.offerCost(0) == 0, "Enzymes replaced missing enchanting power");
         for (BlockPos offset : net.minecraft.world.level.block.EnchantingTableBlock.BOOKSHELF_OFFSETS)
             helper.getLevel().setBlockAndUpdate(pos.offset(offset), Blocks.BOOKSHELF.defaultBlockState());
@@ -99,22 +99,22 @@ public final class EnzymaticScriptoriumGameTests {
             helper.getLevel().setBlockAndUpdate(pos.offset(offset), Blocks.BOOKSHELF.defaultBlockState());
         var station = (EnzymaticScriptoriumBlockEntity) helper.getLevel().getBlockEntity(pos);
         station.receiveBlood(1000);
-        for (var tendency : new EnumBloodTendency[]{EnumBloodTendency.DUCTILIS, EnumBloodTendency.FERRIC}) {
+        for (var temper : new EnumBloodTemper[]{EnumBloodTemper.DUCTILIS, EnumBloodTemper.FERRIC}) {
             for (int i = 0; i < 8; i++) station.setItem(i, ItemStack.EMPTY);
-            station.setItem(tendency.ordinal(), new ItemStack(EnumBloodTendency.getRepEnzyme(tendency), 64));
+            station.setItem(temper.ordinal(), new ItemStack(EnumBloodTemper.getRepEnzyme(temper), 64));
             station.setItem(8, new ItemStack(Items.DIAMOND_PICKAXE));
             station.setItem(9, new ItemStack(Items.LAPIS_LAZULI, 3));
             var menu = new EnzymaticScriptoriumMenu(1, player.getInventory(), station);
-            helper.assertTrue(station.getItem(tendency.ordinal()).getCount() == 64, "Reservoir truncated full stack");
-            for (int i = 0; i < 3; i++) menu.clickMenuButton(player, tendency.ordinal());
+            helper.assertTrue(station.getItem(temper.ordinal()).getCount() == 64, "Reservoir truncated full stack");
+            for (int i = 0; i < 3; i++) menu.clickMenuButton(player, temper.ordinal());
             int offer = -1;
             for (int i = 0; i < 3; i++) if (menu.offerCost(i) > 0) { offer = i; break; }
             helper.assertTrue(offer >= 0 && menu.clickMenuButton(player, offer + 8), "Loaded enzyme produced no usable offer");
-            helper.assertTrue(station.getItem(tendency.ordinal()).getCount() == 61, "Selected three doses did not leave 61 stored");
-            var expected = tendency == EnumBloodTendency.DUCTILIS ? Enchantments.EFFICIENCY : Enchantments.UNBREAKING;
+            helper.assertTrue(station.getItem(temper.ordinal()).getCount() == 61, "Selected three doses did not leave 61 stored");
+            var expected = temper == EnumBloodTemper.DUCTILIS ? Enchantments.EFFICIENCY : Enchantments.UNBREAKING;
             helper.assertTrue(!station.getItem(8).getEnchantments().isEmpty(), "No enchantment applied");
             for (var enchantment : station.getItem(8).getEnchantments().keySet())
-                helper.assertTrue(enchantment.is(expected), "Loaded tendency allowed an unrelated enchantment");
+                helper.assertTrue(enchantment.is(expected), "Loaded temper allowed an unrelated enchantment");
         }
         helper.succeed();
     }
@@ -162,11 +162,11 @@ public final class EnzymaticScriptoriumGameTests {
         var station = (EnzymaticScriptoriumBlockEntity) helper.getLevel().getBlockEntity(position);
         station.receiveBlood(1000);
         for (int i = 0; i < 8; i++)
-            station.setItem(i, new ItemStack(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[i]), 3));
+            station.setItem(i, new ItemStack(EnumBloodTemper.getRepEnzyme(EnumBloodTemper.values()[i]), 3));
         station.setItem(EnzymaticScriptoriumBlockEntity.ITEM, new ItemStack(Items.DIAMOND_PICKAXE));
         station.setItem(EnzymaticScriptoriumBlockEntity.LAPIS, new ItemStack(Items.LAPIS_LAZULI, 3));
         EnzymaticScriptoriumMenu menu = new EnzymaticScriptoriumMenu(1, player.getInventory(), station);
-        for (int i = 0; i < 3; i++) menu.clickMenuButton(player, EnumBloodTendency.DUCTILIS.ordinal());
+        for (int i = 0; i < 3; i++) menu.clickMenuButton(player, EnumBloodTemper.DUCTILIS.ordinal());
 
         int offer = -1;
         for (int i = 0; i < 3; i++) if (menu.offerCost(i) > 0) { offer = i; break; }
@@ -182,8 +182,8 @@ public final class EnzymaticScriptoriumGameTests {
         helper.assertTrue(!menu.clickMenuButton(player, 8 + offer), "Missing matching enzyme was accepted");
         helper.assertTrue(blood.getBloodVolume() == 1000 && station.getItem(9).getCount() == 3,
                 "Rejected offer consumed blood or lapis");
-        for (int i = 0; i < 8; i++) station.setItem(i, new ItemStack(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[i]), 3));
-        for (int i = 0; i < 3; i++) menu.clickMenuButton(player, EnumBloodTendency.DUCTILIS.ordinal());
+        for (int i = 0; i < 8; i++) station.setItem(i, new ItemStack(EnumBloodTemper.getRepEnzyme(EnumBloodTemper.values()[i]), 3));
+        for (int i = 0; i < 3; i++) menu.clickMenuButton(player, EnumBloodTemper.DUCTILIS.ordinal());
         menu.broadcastChanges();
         for (int i = 0; i < 8; i++) required[i] = menu.enzymeCost(offer, i);
         int beforeXp = player.experienceLevel;

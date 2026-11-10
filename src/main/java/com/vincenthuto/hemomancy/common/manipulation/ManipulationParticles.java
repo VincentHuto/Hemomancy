@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationAccentPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -43,14 +43,14 @@ public final class ManipulationParticles {
                 source, hit, com.vincenthuto.hemomancy.common.damage.SchoolDamage.owner(target, hit)), amount);
     }
 
-    public static void impact(LivingEntity target,EnumBloodTendency primary,EnumBloodTendency secondary,Vec3 direction) {
+    public static void impact(LivingEntity target,EnumBloodTemper primary,EnumBloodTemper secondary,Vec3 direction) {
         if(!(target.level() instanceof ServerLevel level))return;
         Vec3 at=target.position().add(0,target.getBbHeight()*.55,0);
-        send(level,new ManipulationAccentPacket(primary==null?EnumBloodTendency.ANIMUS:primary,secondary,
+        send(level,new ManipulationAccentPacket(primary==null?EnumBloodTemper.ANIMUS:primary,secondary,
                 at,direction.normalize(),target.getId(),true));
     }
 
-    public static void accent(ServerLevel level, EnumBloodTendency school, Vec3 at, Vec3 direction) {
+    public static void accent(ServerLevel level, EnumBloodTemper school, Vec3 at, Vec3 direction) {
         send(level, new ManipulationAccentPacket(school, null, at, direction, -1, false));
     }
 

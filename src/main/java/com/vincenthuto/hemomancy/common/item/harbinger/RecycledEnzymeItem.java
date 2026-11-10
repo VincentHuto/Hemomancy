@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -24,8 +24,8 @@ public class RecycledEnzymeItem extends Item {
 		return identity(stack).potency();
 	}
 
-	public EnumBloodTendency getTend(ItemStack stack) {
-		return EnumBloodTendency.values()[identity(stack).tendencyIndex()];
+	public EnumBloodTemper getTend(ItemStack stack) {
+		return EnumBloodTemper.values()[identity(stack).temperIndex()];
 	}
 
 	@Override
@@ -44,8 +44,8 @@ public class RecycledEnzymeItem extends Item {
 			return;
 		}
 		RecycledEnzymeIdentity identity = RecycledEnzymeIdentity.fromSeed(tag.getLong("RecycledEnzymeSeed"));
-		String tendency = EnumBloodTendency.values()[identity.tendencyIndex()].name().toLowerCase();
-		tooltip.add(Component.translatable("tooltip.hemomancy.recycled_enzyme.recovered_tendency_s", tendency).withStyle(ChatFormatting.GRAY));
+		String temper = EnumBloodTemper.values()[identity.temperIndex()].name().toLowerCase();
+		tooltip.add(Component.translatable("tooltip.hemomancy.recycled_enzyme.recovered_temper_s", temper).withStyle(ChatFormatting.GRAY));
 		tooltip.add(Component.translatable("tooltip.hemomancy.recycled_enzyme.low_grade_potency_s", identity.potency()).withStyle(ChatFormatting.DARK_RED));
 	}
 

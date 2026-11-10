@@ -32,7 +32,7 @@
     "tone": "measured, instructive"
   },
   "hemomancy.alchemist.adept.scar_station_lore": {
-    "about": "the Alchemist describing the Cerebral Scarring Station as a surgical instrument that looks like a bench, where a knapper carves a pattern into a blank scar, noting learning happens at an Iron Brazier (the Vein-Mason's lesson) and that a learned route changes sustainable manipulations and tendency strength",
+    "about": "the Alchemist describing the Cerebral Scarring Station as a surgical instrument that looks like a bench, where a knapper carves a pattern into a blank scar, noting learning happens at an Iron Brazier (the Vein-Mason's lesson) and that a learned route changes sustainable manipulations and temper strength",
     "tone": "precise, lecturing"
   },
   "hemomancy.alchemist.apotheos.line1": {
@@ -104,7 +104,7 @@
     "tone": "grim, cautionary"
   },
   "hemomancy.alchemist.body_answers.line1": {
-    "about": "the Alchemist telling a player who has separated blood by tendency to stop treating those answers as mere ingredients",
+    "about": "the Alchemist telling a player who has separated blood by temper to stop treating those answers as mere ingredients",
     "tone": "pointed, lecturing"
   },
   "hemomancy.alchemist.body_answers.line2": {
@@ -392,7 +392,7 @@
     "tone": "dry, mildly condescending"
   },
   "hemomancy.alchemist.item_inquiry.brewing_stand.line2": {
-    "about": "the Alchemist contrasting the stand's threshold effects with the Alembic's precise tendency concentrates, warning that stand skill does not teach what the Alembic does",
+    "about": "the Alchemist contrasting the stand's threshold effects with the Alembic's precise temper concentrates, warning that stand skill does not teach what the Alembic does",
     "tone": "dry, pointed"
   },
   "hemomancy.alchemist.item_inquiry.brine_sealed_letter.line1": {
@@ -444,7 +444,7 @@
     "tone": "matter-of-fact, informative"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_ferric.line1": {
-    "about": "the Alchemist describing Ferric Enzyme as the iron tendency, blood that conducts, reinforces and binds structure, used by Ferric manipulations to harden the body and channel energy precisely",
+    "about": "the Alchemist describing Ferric Enzyme as the iron temper, blood that conducts, reinforces and binds structure, used by Ferric manipulations to harden the body and channel energy precisely",
     "tone": "clinical, informative"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_ferric.line2": {
@@ -452,7 +452,7 @@
     "tone": "clinical, matter-of-fact"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_fervent.line1": {
-    "about": "the Alchemist describing Fervent Enzyme as the Flammeus tendency of combustion, heat, ignition and volatile pressure, with manipulations channeling blood-heat outward",
+    "about": "the Alchemist describing Fervent Enzyme as the Flammeus temper of combustion, heat, ignition and volatile pressure, with manipulations channeling blood-heat outward",
     "tone": "clinical, informative"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_fervent.line2": {
@@ -460,7 +460,7 @@
     "tone": "terse, procedural"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_frigid.line1": {
-    "about": "the Alchemist describing Frigid Enzyme as the Congeatio tendency of stasis, blood gone cold, slow and crystalline, whose manipulations immobilize, preserve and hold things still",
+    "about": "the Alchemist describing Frigid Enzyme as the Congeatio temper of stasis, blood gone cold, slow and crystalline, whose manipulations immobilize, preserve and hold things still",
     "tone": "clinical, informative"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_frigid.line2": {
@@ -468,7 +468,7 @@
     "tone": "terse, procedural"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_incandescent.line1": {
-    "about": "the Alchemist describing Incandescent Enzyme as the Lux tendency of radiance, blood carrying light, illusory force and distorted perception, bending what can be seen",
+    "about": "the Alchemist describing Incandescent Enzyme as the Lux temper of radiance, blood carrying light, illusory force and distorted perception, bending what can be seen",
     "tone": "clinical, informative"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_incandescent.line2": {
@@ -476,7 +476,7 @@
     "tone": "terse, procedural"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_neurotic.line1": {
-    "about": "the Alchemist describing Neurotic Enzyme as the Ductilis tendency of nerve impulse, acceleration, transmission and motion in a form chemistry can read",
+    "about": "the Alchemist describing Neurotic Enzyme as the Ductilis temper of nerve impulse, acceleration, transmission and motion in a form chemistry can read",
     "tone": "clinical, informative"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_neurotic.line2": {
@@ -484,7 +484,7 @@
     "tone": "terse, practical"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_ruinous.line1": {
-    "about": "the Alchemist describing Ruinous Enzyme as the Mortem tendency of entropy, blood that breaks down, dissolves and ends things, speeding decay and sapping vitality",
+    "about": "the Alchemist describing Ruinous Enzyme as the Mortem temper of entropy, blood that breaks down, dissolves and ends things, speeding decay and sapping vitality",
     "tone": "clinical, grim"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_ruinous.line2": {
@@ -492,7 +492,7 @@
     "tone": "dry, ominous"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_umbral.line1": {
-    "about": "the Alchemist describing Umbral Enzyme as the Tenebris tendency of shadow, blood pulled into concealment, with manipulations suppressing visibility and dulling perception",
+    "about": "the Alchemist describing Umbral Enzyme as the Tenebris temper of shadow, blood pulled into concealment, with manipulations suppressing visibility and dulling perception",
     "tone": "clinical, informative"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_umbral.line2": {
@@ -500,7 +500,7 @@
     "tone": "terse, procedural"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_vivacious.line1": {
-    "about": "the Alchemist describing Vivacious Enzyme as the Animus tendency of life-force and vitality, whose manipulations speed healing, quicken the body and sustain it under strain",
+    "about": "the Alchemist describing Vivacious Enzyme as the Animus temper of life-force and vitality, whose manipulations speed healing, quicken the body and sustain it under strain",
     "tone": "clinical, warm"
   },
   "hemomancy.alchemist.item_inquiry.enzyme_vivacious.line2": {
@@ -540,7 +540,7 @@
     "tone": "dry, dismissive"
   },
   "hemomancy.alchemist.item_inquiry.glass_bottle.line2": {
-    "about": "the Alchemist saying to use bottles for unstabilized material and to keep blood distillation, processing and tendency work in the proper vessel",
+    "about": "the Alchemist saying to use bottles for unstabilized material and to keep blood distillation, processing and temper work in the proper vessel",
     "tone": "curt, practical"
   },
   "hemomancy.alchemist.item_inquiry.glowstone_dust.line1": {
@@ -1088,7 +1088,7 @@
     "tone": "solemn, approving"
   },
   "hemomancy.alchemist.thelemic_memory_catalogue.line1": {
-    "about": "the Alchemist saying seven preparations remain, each needing Sanguine Formation, blood stored in the Alembic and an empty clay flask or jug, with the catalyst matched to the tendency the body should remember",
+    "about": "the Alchemist saying seven preparations remain, each needing Sanguine Formation, blood stored in the Alembic and an empty clay flask or jug, with the catalyst matched to the temper the body should remember",
     "tone": "instructive, brisk"
   },
   "hemomancy.alchemist.thelemic_memory_catalogue.line2": {
@@ -1128,7 +1128,7 @@
     "tone": "firm, practical"
   },
   "hemomancy.alchemist.votary.line1": {
-    "about": "the Alchemist greeting a Votary, noting their blood tendency is taking shape and that the Vial Centrifuge will show why that matters",
+    "about": "the Alchemist greeting a Votary, noting their blood temper is taking shape and that the Vial Centrifuge will show why that matters",
     "tone": "dry, encouraging"
   },
   "hemomancy.anchorite.opinion.alchemist.line1": {

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 import java.util.*;
 
@@ -14,7 +14,7 @@ final class ScarTreeLayout {
 	private static final int[] TIER_RADII = {200, 265, 330};
 	/** Clears the main chain's labels when a side branch sits beside its tier. */
 	private static final int SIDE_BRANCH_OFFSET = 68;
-	/** Every family's tier-1 scar sits on the 200 px ring so TendencyScarLayout gives each the same clearance. */
+	/** Every family's tier-1 scar sits on the 200 px ring so TemperScarLayout gives each the same clearance. */
 	private static final List<AuthoredNode> AUTHORED_NODES = List.of(
 			authored("hemomancy:scar_heart", 480, 280),
 			authored("hemomancy:scar_marrow", 480, 215, "hemomancy:scar_heart"),
@@ -52,7 +52,7 @@ final class ScarTreeLayout {
 	static Result arrange(List<Node> nodes, List<AuthoredNode> authoredNodes) {
 		Map<String, Point> points = new LinkedHashMap<>();
 		for (Node node : nodes) {
-			double angle = Math.toRadians(-90.0 + node.tendency().ordinal() * 45.0);
+			double angle = Math.toRadians(-90.0 + node.temper().ordinal() * 45.0);
 			int radius = TIER_RADII[Math.max(0, Math.min(TIER_RADII.length - 1, node.tier() - 1))];
 			int x = CENTER_X + (int) Math.round(Math.cos(angle) * radius);
 			int y = CENTER_Y + (int) Math.round(Math.sin(angle) * radius);
@@ -64,9 +64,9 @@ final class ScarTreeLayout {
 		}
 
 		List<Edge> edges = new ArrayList<>();
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
 			List<Node> family = nodes.stream()
-					.filter(node -> node.tendency() == tendency && !node.sideBranch())
+					.filter(node -> node.temper() == temper && !node.sideBranch())
 					.sorted(Comparator.comparingInt(Node::tier).thenComparing(Node::id))
 					.toList();
 			for (int i = 1; i < family.size(); i++) {
@@ -77,7 +77,7 @@ final class ScarTreeLayout {
 			Node root = family.stream().filter(node -> node.tier() == 1).findFirst().orElse(null);
 			if (root != null) {
 				nodes.stream()
-						.filter(node -> node.tendency() == tendency && node.sideBranch())
+						.filter(node -> node.temper() == temper && node.sideBranch())
 						.sorted(Comparator.comparing(Node::id))
 						.forEach(node -> edges.add(new Edge(root.id(), node.id())));
 			}
@@ -102,7 +102,7 @@ final class ScarTreeLayout {
 		return new AuthoredNode(id, x, y, List.of(parentIds));
 	}
 
-	record Node(String id, EnumBloodTendency tendency, int tier, boolean sideBranch) {}
+	record Node(String id, EnumBloodTemper temper, int tier, boolean sideBranch) {}
 	record AuthoredNode(String id, int x, int y, List<String> parentIds) {
 		AuthoredNode {
 			parentIds = List.copyOf(parentIds);

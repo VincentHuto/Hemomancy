@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
 import com.google.gson.JsonParser;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.item.harbinger.EntityBloodProfile;
 import com.vincenthuto.hemomancy.support.ResourceReader;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class PhlegethonticBombardierResourceTest {
                 java.util.Base64.getDecoder().decode(texture.get("source").getAsString().split(",", 2)[1]));
         var profile = EntityBloodProfile.parse(JsonParser.parseString(Files.readString(ROOT.resolve(
                 "data/hemomancy/blood_profiles/phlegethontic_bombardier.json"))).getAsJsonObject());
-        assertEquals(java.util.List.of(EnumBloodTendency.FLAMMEUS), profile.tendencies());
+        assertEquals(java.util.List.of(EnumBloodTemper.FLAMMEUS), profile.tempers());
         assertTrue(profile.requiresLivingSyringe());
         assertTrue(JsonParser.parseString(Files.readString(ROOT.resolve(
                 "assets/hemomancy/lang/en_us.json"))).getAsJsonObject()

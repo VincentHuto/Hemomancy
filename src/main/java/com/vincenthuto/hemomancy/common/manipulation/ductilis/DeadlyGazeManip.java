@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
@@ -58,8 +58,8 @@ public class DeadlyGazeManip extends BloodManipulation {
 	}
 
 	public DeadlyGazeManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override

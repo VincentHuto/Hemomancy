@@ -14,8 +14,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnown
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostSnapshot;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotSnapshot;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -137,7 +137,7 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		switch (activeTab) {
 			case BLOOD -> drawBloodTab(graphics, player, x + 16, y + CONTENT_TOP);
 			case MANIPULATIONS -> drawManipulationsTab(graphics, player, x + 16, y + CONTENT_TOP);
-			case TENDENCY -> drawTendencyTab(graphics, player, x + 16, y + CONTENT_TOP);
+			case TEMPER -> drawTemperTab(graphics, player, x + 16, y + CONTENT_TOP);
 		}
 	}
 
@@ -161,9 +161,9 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		drawKnownMemories(graphics, player, x, y);
 	}
 
-	private void drawTendencyTab(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawTendency(graphics, player, x, y);
-		drawTendencyProfile(graphics, player, x, y + 48);
+	private void drawTemperTab(GuiGraphics graphics, LocalPlayer player, int x, int y) {
+		drawTemper(graphics, player, x, y);
+		drawTemperamentProfile(graphics, player, x, y + 48);
 		drawRiteReadiness(graphics, player, x, y + 122);
 	}
 
@@ -190,15 +190,15 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		}
 	}
 
-	private void drawTendency(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.dominant_tendency"), x, y);
-		var tendency = HemoCapabilityAccess.getBloodTendency(player);
-		EnumBloodTendency dominant = strongest(tendency);
-		EnumBloodTendency latent = weakest(tendency);
+	private void drawTemper(GuiGraphics graphics, LocalPlayer player, int x, int y) {
+		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.dominant_temper"), x, y);
+		var temper = HemoCapabilityAccess.getBloodTemperament(player);
+		EnumBloodTemper dominant = strongest(temper);
+		EnumBloodTemper latent = weakest(temper);
 		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.dominant"),
-				tendencyLabel(tendency, dominant), x, y + 13, tendencyColor(dominant));
+				temperLabel(temper, dominant), x, y + 13, temperColor(dominant));
 		drawValue(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.latent"),
-				tendencyLabel(tendency, latent), x, y + 25, MUTED);
+				temperLabel(temper, latent), x, y + 25, MUTED);
 	}
 
 	private void drawKnownMemories(GuiGraphics graphics, LocalPlayer player, int x, int y) {
@@ -229,19 +229,19 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		manipulationCostModsRegion = new HoverRegion(x, y + 49, 220, 10);
 	}
 
-	private void drawTendencyProfile(GuiGraphics graphics, LocalPlayer player, int x, int y) {
-		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.tendency_profile"), x, y);
-		var tendency = HemoCapabilityAccess.getBloodTendency(player);
-		EnumBloodTendency[] values = EnumBloodTendency.values();
+	private void drawTemperamentProfile(GuiGraphics graphics, LocalPlayer player, int x, int y) {
+		drawSection(graphics, Component.translatable("screen.hemomancy.scrying_diagnostics.temperament_profile"), x, y);
+		var temper = HemoCapabilityAccess.getBloodTemperament(player);
+		EnumBloodTemper[] values = EnumBloodTemper.values();
 		for (int i = 0; i < values.length; i++) {
-			EnumBloodTendency value = values[i];
+			EnumBloodTemper value = values[i];
 			int col = i / 4;
 			int row = i % 4;
 			int rowX = x + col * 150;
 			int rowY = y + 14 + row * 14;
-			String label = trimToWidth(BloodManipulation.tendencyName(value).getString(), 70);
-			String amount = String.format(Locale.ROOT, "%.2f", tendency.getAlignmentByTendency(value));
-			graphics.drawString(this.font, label, rowX, rowY, tendencyColor(value));
+			String label = trimToWidth(BloodManipulation.temperName(value).getString(), 70);
+			String amount = String.format(Locale.ROOT, "%.2f", temper.getAlignmentByTemper(value));
+			graphics.drawString(this.font, label, rowX, rowY, temperColor(value));
 			graphics.drawString(this.font, amount, rowX + 78, rowY, TEXT);
 		}
 	}
@@ -425,34 +425,34 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		return BAD;
 	}
 
-	private static EnumBloodTendency strongest(IBloodTendency tendency) {
-		EnumBloodTendency best = EnumBloodTendency.ANIMUS;
-		for (EnumBloodTendency candidate : EnumBloodTendency.values()) {
-			if (tendency.getAlignmentByTendency(candidate) > tendency.getAlignmentByTendency(best)) {
+	private static EnumBloodTemper strongest(IBloodTemperament temper) {
+		EnumBloodTemper best = EnumBloodTemper.ANIMUS;
+		for (EnumBloodTemper candidate : EnumBloodTemper.values()) {
+			if (temper.getAlignmentByTemper(candidate) > temper.getAlignmentByTemper(best)) {
 				best = candidate;
 			}
 		}
 		return best;
 	}
 
-	private static EnumBloodTendency weakest(IBloodTendency tendency) {
-		EnumBloodTendency weakest = EnumBloodTendency.ANIMUS;
-		for (EnumBloodTendency candidate : EnumBloodTendency.values()) {
-			if (tendency.getAlignmentByTendency(candidate) < tendency.getAlignmentByTendency(weakest)) {
+	private static EnumBloodTemper weakest(IBloodTemperament temper) {
+		EnumBloodTemper weakest = EnumBloodTemper.ANIMUS;
+		for (EnumBloodTemper candidate : EnumBloodTemper.values()) {
+			if (temper.getAlignmentByTemper(candidate) < temper.getAlignmentByTemper(weakest)) {
 				weakest = candidate;
 			}
 		}
 		return weakest;
 	}
 
-	private static Component tendencyLabel(IBloodTendency tendency, EnumBloodTendency value) {
-		return Component.translatable("screen.hemomancy.scrying_diagnostics.tendency_alignment",
-				BloodManipulation.tendencyName(value),
-				String.format(Locale.ROOT, "%.2f", tendency.getAlignmentByTendency(value)));
+	private static Component temperLabel(IBloodTemperament temper, EnumBloodTemper value) {
+		return Component.translatable("screen.hemomancy.scrying_diagnostics.temper_alignment",
+				BloodManipulation.temperName(value),
+				String.format(Locale.ROOT, "%.2f", temper.getAlignmentByTemper(value)));
 	}
 
-	private static int tendencyColor(EnumBloodTendency tendency) {
-		return 0xFF000000 | tendency.getColor().getColor();
+	private static int temperColor(EnumBloodTemper temper) {
+		return 0xFF000000 | temper.getColor().getColor();
 	}
 
 	private static float averageHealth(IVascularSystem vascular) {

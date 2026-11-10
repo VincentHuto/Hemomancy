@@ -24,7 +24,7 @@ class WeaponConjureRulesTest {
         assertEquals(WeaponConjureRules.STAFF, WeaponConjureRules.weapon(null));
     }
 
-    @Test void schoolsFollowEachWeaponsTendency() {
+    @Test void schoolsFollowEachWeaponsTemper() {
         assertEquals(WeaponConjureRules.School.ANIMUS, WeaponConjureRules.school(WeaponConjureRules.BLADE));
         assertEquals(WeaponConjureRules.School.FERRIC, WeaponConjureRules.school(WeaponConjureRules.AXE));
         assertEquals(WeaponConjureRules.School.LUX, WeaponConjureRules.school(WeaponConjureRules.SPEAR));

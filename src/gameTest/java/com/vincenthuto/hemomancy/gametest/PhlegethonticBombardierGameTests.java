@@ -31,9 +31,9 @@ public final class PhlegethonticBombardierGameTests {
     public static void loadedBloodProfilePreservesFlammeusAndRestrictedSampling(GameTestHelper helper) {
         var profile = com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData.profile(
                 EntityInit.phlegethontic_bombardier.get(), false);
-        helper.assertTrue(profile.tendencies().equals(java.util.List.of(
-                        com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.FLAMMEUS)),
-                "Loaded Bombardier blood must retain its Flammeus tendency");
+        helper.assertTrue(profile.tempers().equals(java.util.List.of(
+                        com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.FLAMMEUS)),
+                "Loaded Bombardier blood must retain its Flammeus temper");
         helper.assertTrue(profile.requiresLivingSyringe(), "Loaded Bombardier blood must require a Living Syringe");
         helper.succeed();
     }

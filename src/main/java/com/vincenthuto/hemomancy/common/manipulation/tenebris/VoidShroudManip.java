@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.damage.*;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -38,9 +38,9 @@ public class VoidShroudManip extends BloodManipulation {
 	private static final int DURATION_TICKS = 100; // 5 seconds
 
 	public VoidShroudManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class VoidShroudManip extends BloodManipulation {
 				SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 1.8f);
 
         ManipulationVisuals.attached(player, ManipulationVisuals.Form.VEIL, 1, 18, 1);
-		ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, player.position().add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
+		ManipulationParticles.accent(sLevel, EnumBloodTemper.TENEBRIS, player.position().add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
 	        }
     }
 }

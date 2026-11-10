@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheEveni
 import com.vincenthuto.hemomancy.client.model.item.LivingFlailModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingFlailRenderHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction;
@@ -49,7 +49,7 @@ public final class VesperLivingWeaponLayer
 		float morph = entity.isRaging() ? 1.0F : Math.min(1.0F, state.stanceTime() / 30.0F);
 		float scale = 0.9F + morph * 0.65F;
 		renderWeapon(poseStack, buffer, packedLight, entity, weapon, scale, false, dissolve);
-		if (entity.isRaging() || entity.getActiveTendency() == EnumBloodTendency.TENEBRIS) {
+		if (entity.isRaging() || entity.getActiveTemper() == EnumBloodTemper.TENEBRIS) {
 			renderWeapon(poseStack, buffer, packedLight, entity, weapon, scale, true, dissolve);
 		}
 	}
@@ -66,7 +66,7 @@ public final class VesperLivingWeaponLayer
 			return;
 		}
 		if (entity.isRaging()) applySickleGrip(poseStack, leftHand);
-		else applyWeaponGrip(poseStack, entity.getActiveTendency(), leftHand);
+		else applyWeaponGrip(poseStack, entity.getActiveTemper(), leftHand);
 		poseStack.scale(scale, scale, scale);
 		MultiBufferSource weaponBuffer = dissolve > 0.0F
 				? ignored -> buffer.getBuffer(HemoRenderTypes.hermitFarewellDissolve(
@@ -123,8 +123,8 @@ public final class VesperLivingWeaponLayer
 		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
 	}
 
-	private static void applyWeaponGrip(PoseStack poseStack, EnumBloodTendency tendency, boolean leftHand) {
-		poseStack.mulPose(Axis.XP.rotationDegrees(switch (tendency) {
+	private static void applyWeaponGrip(PoseStack poseStack, EnumBloodTemper temper, boolean leftHand) {
+		poseStack.mulPose(Axis.XP.rotationDegrees(switch (temper) {
 			// The spear and the crossbow lie along the forearm, so a thrust or a shot points where the arm points.
 			case DUCTILIS -> -90.0F + ALONG_FOREARM;
 			case LUX -> -98.0F + ALONG_FOREARM;
@@ -132,8 +132,8 @@ public final class VesperLivingWeaponLayer
 			case FLAMMEUS -> -98.0F;
 			default -> -90.0F;
 		}));
-		poseStack.mulPose(Axis.YP.rotationDegrees(VesperWeaponGripRules.yawDegrees(tendency, leftHand)));
-		if (tendency == EnumBloodTendency.CONGEATIO) poseStack.translate(0.0D, 0.05D, -0.12D);
+		poseStack.mulPose(Axis.YP.rotationDegrees(VesperWeaponGripRules.yawDegrees(temper, leftHand)));
+		if (temper == EnumBloodTemper.CONGEATIO) poseStack.translate(0.0D, 0.05D, -0.12D);
 	}
 
 }

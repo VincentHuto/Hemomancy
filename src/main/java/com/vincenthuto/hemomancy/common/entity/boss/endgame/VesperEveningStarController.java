@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
@@ -59,22 +59,22 @@ public final class VesperEveningStarController {
 		}
 		boss.ensureStance();
 		int stanceTick = boss.advanceStanceTick();
-		EnumBloodTendency tendency = boss.getActiveTendency();
-		tickSpells(act, tendency, target);
+		EnumBloodTemper temper = boss.getActiveTemper();
+		tickSpells(act, temper, target);
 		if (boss.getWeaponAction() == VesperWeaponAction.NONE) {
-			VesperPhaseTwoCombat.positionForWeapon(boss, target, tendency, strafeSide);
+			VesperPhaseTwoCombat.positionForWeapon(boss, target, temper, strafeSide);
 			if (boss.getActionCooldown() > 0) {
 				boss.setActionCooldown(boss.getActionCooldown() - 1);
 			} else {
 				VesperWeaponAction previousAction = boss.getLastWeaponAction();
-				boolean stringOver = previousAction.tendency() == null
+				boolean stringOver = previousAction.temper() == null
 						|| previousAction.role() == VesperChainGraph.Role.FINISHER;
 				if (stringOver && tryBorrowed(act, target)) return;
-				VesperWeaponAction action = next(act, tendency, target);
+				VesperWeaponAction action = next(act, temper, target);
 				// Mid-string links commit at once; only openers wait for their range band.
 				boolean link = action.role() != VesperChainGraph.Role.OPENER;
 				if (action != VesperWeaponAction.NONE && (link || VesperPhaseTwoCombat.readyToCommit(
-						action.tendency() == null ? tendency : action.tendency(), boss.distanceTo(target), action))) {
+						action.temper() == null ? temper : action.temper(), boss.distanceTo(target), action))) {
 					boss.beginWeaponAction(action, VesperPhaseTwoCombat.predictedAim(target, action));
 					boss.getNavigation().stop();
 					chainLength++;
@@ -94,7 +94,7 @@ public final class VesperEveningStarController {
 	 * Spells between the beats of a string. Locked: one of the stance school's own fight manipulations. Open: an
 	 * authored cross-school synergy chain, the second cast landing a beat after the first.
 	 */
-	private void tickSpells(VesperEveningStarAct act, EnumBloodTendency tendency, LivingEntity target) {
+	private void tickSpells(VesperEveningStarAct act, EnumBloodTemper temper, LivingEntity target) {
 		if (pendingSecond != null && --pendingTicks <= 0) {
 			VesperManipulationCaster.cast(boss, pendingSecond, target);
 			pendingSecond = null;
@@ -106,7 +106,7 @@ public final class VesperEveningStarController {
 		boolean betweenBeats = boss.getWeaponAction() == VesperWeaponAction.NONE && boss.getActionCooldown() > 0;
 		if (!betweenBeats || boss.getRandom().nextFloat() > 0.35F) return;
 		if (act == VesperEveningStarAct.LOCKED) {
-			java.util.List<String> school = VesperManipulationCoverage.usable(tendency);
+			java.util.List<String> school = VesperManipulationCoverage.usable(temper);
 			if (school.isEmpty()) return;
 			if (VesperManipulationCaster.cast(boss, school.get(boss.getRandom().nextInt(school.size())), target)) {
 				castCooldown = 100;
@@ -122,14 +122,14 @@ public final class VesperEveningStarController {
 		}
 	}
 
-	private VesperWeaponAction next(VesperEveningStarAct act, EnumBloodTendency tendency, LivingEntity target) {
+	private VesperWeaponAction next(VesperEveningStarAct act, EnumBloodTemper temper, LivingEntity target) {
 		VesperWeaponAction previous = boss.getLastWeaponAction();
-		if (previous.tendency() == null || previous.role() == VesperChainGraph.Role.FINISHER) chainLength = 0;
+		if (previous.temper() == null || previous.role() == VesperChainGraph.Role.FINISHER) chainLength = 0;
 		VesperChainGraph.Context context = new VesperChainGraph.Context(boss.distanceTo(target),
 				boss.lastActionLanded(), target.isBlocking(), chainLength, boss.getRandom());
-		VesperWeaponAction next = VesperChainGraph.next(previous, tendency, act, context);
+		VesperWeaponAction next = VesperChainGraph.next(previous, temper, act, context);
 		if (next.role() == VesperChainGraph.Role.OPENER) chainLength = 0;
-		if (act.castsAnySchool() && next.tendency() != null && next.tendency() != tendency) boss.morphTo(next.tendency());
+		if (act.castsAnySchool() && next.temper() != null && next.temper() != temper) boss.morphTo(next.temper());
 		return next;
 	}
 

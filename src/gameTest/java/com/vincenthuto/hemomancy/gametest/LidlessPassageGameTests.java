@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.block.shared.LidlessDoorBlock;
 import com.vincenthuto.hemomancy.common.block.shared.LidlessPassageService;
 import com.vincenthuto.hemomancy.common.block.shared.LidlessPortal;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -402,7 +402,7 @@ public final class LidlessPassageGameTests {
             HemoCapabilityAccess.getInitiatoryDegree(f.player).setDegreeNumber(6);
             HemoCapabilityAccess.getBloodVolume(f.player).setActive(true);
             HemoCapabilityAccess.getBloodVolume(f.player).setBloodVolume(10000);
-            HemoCapabilityAccess.getBloodTendency(f.player).setTendencyAlignment(EnumBloodTendency.DUCTILIS, 100);
+            HemoCapabilityAccess.getBloodTemperament(f.player).setTemperAlignment(EnumBloodTemper.DUCTILIS, 100);
             var known = HemoCapabilityAccess.getKnownManipulations(f.player);
             known.getKnownManips().put(ManipulationInit.axonal_transduction.get(), new ManipLevel(0, 0));
             known.setEquippedManipNames(java.util.List.of("axonal_transduction"));

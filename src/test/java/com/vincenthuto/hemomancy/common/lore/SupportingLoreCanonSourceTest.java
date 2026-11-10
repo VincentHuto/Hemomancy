@@ -18,8 +18,8 @@ public final class SupportingLoreCanonSourceTest {
 		String zealot = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/ZealotDialogueTrees.java");
 		String unstainedSyncHandler = read("src/main/java/com/vincenthuto/hemomancy/client/network/ClientboundStateHandlers.java");
 		String degreePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketSyncDegree.java");
-		assertContains(saints, "HEMORATH(EnumBloodTendency.ANIMUS, EnumBloodTendency.FERRIC)");
-		assertContains(saints, "SERAPHAE(EnumBloodTendency.LUX, EnumBloodTendency.DUCTILIS)");
+		assertContains(saints, "HEMORATH(EnumBloodTemper.ANIMUS, EnumBloodTemper.FERRIC)");
+		assertContains(saints, "SERAPHAE(EnumBloodTemper.LUX, EnumBloodTemper.DUCTILIS)");
 		assertContains(hemorath, "\"animus\":  1");
 		assertContains(hemorath, "\"ferric\":  1");
 		assertContains(seraphae, "\"lux\":  1");

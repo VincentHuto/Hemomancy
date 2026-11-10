@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -173,11 +173,11 @@ public final class ManipulationTargetingGameTests {
         try {
             select(p, ManipulationInit.blackhearted.get());
             HemoCapabilityAccess.getKnownManipulations(p).togglePassive("blackhearted");
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.MORTEM, 0);
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(EnumBloodTemper.MORTEM, 0);
             var damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().wither(), 4));
             ManipulationReactiveEvents.onHeartDamage(damage);
             near(h, 4, damage.getAmount(), "Blackhearted ignored alignment");
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.MORTEM, 100);
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(EnumBloodTemper.MORTEM, 100);
             HemoCapabilityAccess.getBloodVolume(p).setActive(false);
             damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().wither(), 4));
             ManipulationReactiveEvents.onHeartDamage(damage);
@@ -192,10 +192,10 @@ public final class ManipulationTargetingGameTests {
         try {
             var phoenix = ManipulationInit.phoenix_debt.get(); select(p, phoenix);
             HemoCapabilityAccess.getKnownManipulations(p).togglePassive("phoenix_debt");
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.FLAMMEUS, 0);
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(EnumBloodTemper.FLAMMEUS, 0);
             ManipulationReactiveEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
             h.assertTrue(!com.vincenthuto.hemomancy.common.event.LastRiteHelper.hasArmedSource(p), "Under-aligned Phoenix armed");
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.FLAMMEUS, 100);
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(EnumBloodTemper.FLAMMEUS, 100);
             ManipulationReactiveEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
             double cost = ManipulationCostLedger.collect(p, phoenix, 1).effectiveCost();
             HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(cost);
@@ -399,8 +399,8 @@ public final class ManipulationTargetingGameTests {
         var blood=HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        for (var tendency:EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency,100);
+        for (var temper:EnumBloodTemper.values())
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper,100);
         return p;
     }
 }

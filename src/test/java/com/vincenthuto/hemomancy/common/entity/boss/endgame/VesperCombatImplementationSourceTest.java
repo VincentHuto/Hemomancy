@@ -77,17 +77,17 @@ final class VesperCombatImplementationSourceTest {
 	}
 
 	@Test
-	void eveningStarRendersEightTendenciesAndRealLivingWeapons() throws Exception {
+	void eveningStarRendersEightTempersAndRealLivingWeapons() throws Exception {
 		String evening = read("common/entity/boss/endgame/VesperTheEveningStarEntity.java");
 		String renderer = read("client/render/entity/boss/endgame/VesperTheEveningStarRenderer.java");
-		String sigils = read("client/render/layer/mob/endgame/VesperTendencySigilLayer.java");
-		assertTrue(evening.contains("VesperCombatRules.tendencyAt"));
+		String sigils = read("client/render/layer/mob/endgame/VesperTemperSigilLayer.java");
+		assertTrue(evening.contains("VesperCombatRules.temperAt"));
 		assertTrue(evening.contains("ItemInit.living_staff"));
 		assertTrue(evening.contains("ItemInit.living_flail"));
 		assertTrue(evening.contains("living_sickle"));
-		assertTrue(renderer.contains("new VesperTendencySigilLayer(this)"));
+		assertTrue(renderer.contains("new VesperTemperSigilLayer(this)"));
 		assertTrue(renderer.contains("new VesperLivingWeaponLayer(this)"));
-		assertTrue(sigils.contains("EnumBloodTendency.values().length"));
+		assertTrue(sigils.contains("EnumBloodTemper.values().length"));
 	}
 
 	@Test
@@ -114,7 +114,7 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(weapon.contains("translateToLeftWeapon"));
 		assertTrue(weapon.contains("LivingFlailRenderHelper.renderHeld"));
 		assertTrue(weapon.contains("case DUCTILIS -> -90.0F"));
-		assertFalse(weapon.contains("tendency == EnumBloodTendency.DUCTILIS) poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F)"));
+		assertFalse(weapon.contains("temper == EnumBloodTemper.DUCTILIS) poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F)"));
 	}
 
 	@Test
@@ -223,7 +223,7 @@ final class VesperCombatImplementationSourceTest {
 		String crowned = read("common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java");
 		String evening = read("common/entity/boss/endgame/VesperTheEveningStarEntity.java");
 		String renderer = read("client/render/entity/boss/endgame/VesperTheEveningStarRenderer.java");
-		String sigils = read("client/render/layer/mob/endgame/VesperTendencySigilLayer.java");
+		String sigils = read("client/render/layer/mob/endgame/VesperTemperSigilLayer.java");
 		Path glowPath = SOURCE.resolve("client/render/layer/mob/endgame/VesperAwakeningGlowLayer.java");
 
 		assertFalse(crowned.contains("eveningStar.beginAwakening()"));
@@ -302,7 +302,7 @@ final class VesperCombatImplementationSourceTest {
 		String absorption = read("common/item/harbinger/tool/living/BloodAbsorptionItem.java");
 		String staff = read("common/item/harbinger/tool/living/LivingStaffItem.java");
 		String model = read("client/model/entity/boss/endgame/VesperTheEveningStarModel.java");
-		String sigils = read("client/render/layer/mob/endgame/VesperTendencySigilLayer.java");
+		String sigils = read("client/render/layer/mob/endgame/VesperTemperSigilLayer.java");
 		String weapon = read("client/render/layer/mob/endgame/VesperLivingWeaponLayer.java");
 
 		assertTrue(evening.contains("enterAwaitingAbsorption"));

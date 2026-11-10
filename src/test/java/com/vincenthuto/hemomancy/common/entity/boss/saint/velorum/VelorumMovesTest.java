@@ -315,7 +315,7 @@ class VelorumMovesTest {
 	}
 
 	@Test
-	void theThreeNewStringsMixTheTendencies() {
+	void theThreeNewStringsMixTheTempers() {
 		// E: the Shadow Step into the Release from where he rose, else Gloam Cuts
 		assertEquals(VelorumMove.CRUOR_RELEASE, VelorumMove.UMBRAL_STEP.followUps(2).get(0).next());
 		assertEquals(VelorumMove.GLOAM_CUTS, VelorumMove.UMBRAL_STEP.followUps(2).get(1).next());

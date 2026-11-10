@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -41,9 +41,9 @@ public class UmbralStepManip extends BloodManipulation {
 	private static final int MAX_LIGHT_LEVEL = 7;
 
 	public UmbralStepManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class UmbralStepManip extends BloodManipulation {
 			Vec3 oldPos = player.position();
             ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.TELEPORT, oldPos, oldPos, 1, 18);
             ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.UMBRA_ARRIVAL, Vec3.atBottomCenterOf(landingPos), Vec3.atBottomCenterOf(landingPos), 1, 22);
-			ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, oldPos.add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
+			ManipulationParticles.accent(sLevel, EnumBloodTemper.TENEBRIS, oldPos.add(0, 1, 0), net.minecraft.world.phys.Vec3.ZERO);
 		}
 
 		// Teleport the player
@@ -106,7 +106,7 @@ public class UmbralStepManip extends BloodManipulation {
 		world.playSound(null, landingPos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8f, 1.2f);
 
 		if (world instanceof ServerLevel sLevel) {
-			ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, new Vec3(destX, destY + 1, destZ), net.minecraft.world.phys.Vec3.ZERO);
+			ManipulationParticles.accent(sLevel, EnumBloodTemper.TENEBRIS, new Vec3(destX, destY + 1, destZ), net.minecraft.world.phys.Vec3.ZERO);
 		}
 	        }
     }

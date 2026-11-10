@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.outpouring;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.Mode;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.Pulse;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.Stage;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -37,7 +37,7 @@ final class OutpouringTracker {
         final int entityId;
         final String id;
         final long sequence;
-        final EnumBloodTendency school, secondary;
+        final EnumBloodTemper school, secondary;
         final EnumManipulationRank rank;
         final EnumVeinSections section;
         final EnumManipulationType type;

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailDeployment;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailRules;
@@ -27,9 +27,9 @@ import java.util.UUID;
 public final class LivingFlailHeadProjectileEntity extends ThrowableProjectile {
 	private static final EntityDataAccessor<Float> CHARGE = SynchedEntityData.defineId(
 			LivingFlailHeadProjectileEntity.class, EntityDataSerializers.FLOAT);
-	private static final EntityDataAccessor<String> PRIMARY_TENDENCY = SynchedEntityData.defineId(
+	private static final EntityDataAccessor<String> PRIMARY_TEMPER = SynchedEntityData.defineId(
 			LivingFlailHeadProjectileEntity.class, EntityDataSerializers.STRING);
-	private static final EntityDataAccessor<String> SECONDARY_TENDENCY = SynchedEntityData.defineId(
+	private static final EntityDataAccessor<String> SECONDARY_TEMPER = SynchedEntityData.defineId(
 			LivingFlailHeadProjectileEntity.class, EntityDataSerializers.STRING);
 	private UUID deploymentId;
 	private UUID ownerId;
@@ -51,20 +51,20 @@ public final class LivingFlailHeadProjectileEntity extends ThrowableProjectile {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		builder.define(CHARGE, 0.0F);
-		builder.define(PRIMARY_TENDENCY, EnumBloodTendency.CONGEATIO.name());
-		builder.define(SECONDARY_TENDENCY, "");
+		builder.define(PRIMARY_TEMPER, EnumBloodTemper.CONGEATIO.name());
+		builder.define(SECONDARY_TEMPER, "");
 	}
 
-	public void configure(float charge, InteractionHand hand, EnumBloodTendency primary,
-			@Nullable EnumBloodTendency secondary) {
+	public void configure(float charge, InteractionHand hand, EnumBloodTemper primary,
+			@Nullable EnumBloodTemper secondary) {
 		entityData.set(CHARGE, Mth.clamp(charge, 0.0F, 1.0F));
 		originalHand = hand;
-		entityData.set(PRIMARY_TENDENCY, (primary == null ? EnumBloodTendency.CONGEATIO : primary).name());
-		entityData.set(SECONDARY_TENDENCY, secondary == null ? "" : secondary.name());
+		entityData.set(PRIMARY_TEMPER, (primary == null ? EnumBloodTemper.CONGEATIO : primary).name());
+		entityData.set(SECONDARY_TEMPER, secondary == null ? "" : secondary.name());
         com.vincenthuto.hemomancy.common.damage.SchoolDamage.capture(this,
                 com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(
                         com.vincenthuto.hemomancy.Hemomancy.rloc("living_flail"),
-                        primary == null ? EnumBloodTendency.CONGEATIO : primary, secondary, getOwner())
+                        primary == null ? EnumBloodTemper.CONGEATIO : primary, secondary, getOwner())
                         .withCharge(charge).withApplication(LivingFlailRules.slownessTicks(charge), 1));
 	}
 
@@ -82,13 +82,13 @@ public final class LivingFlailHeadProjectileEntity extends ThrowableProjectile {
 		return owner != null ? owner.getUUID() : ownerId;
 	}
 
-	public EnumBloodTendency getPrimaryTendency() {
-		return parseTendency(entityData.get(PRIMARY_TENDENCY), EnumBloodTendency.CONGEATIO);
+	public EnumBloodTemper getPrimaryTemper() {
+		return parseTemper(entityData.get(PRIMARY_TEMPER), EnumBloodTemper.CONGEATIO);
 	}
 
 	@Nullable
-	public EnumBloodTendency getSecondaryTendency() {
-		return parseTendency(entityData.get(SECONDARY_TENDENCY), null);
+	public EnumBloodTemper getSecondaryTemper() {
+		return parseTemper(entityData.get(SECONDARY_TEMPER), null);
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public final class LivingFlailHeadProjectileEntity extends ThrowableProjectile {
 		super.addAdditionalSaveData(tag);
 		UUID savedOwner = getOwnerUuid();
 		if (savedOwner != null) new LivingFlailProjectileState(getDeploymentId(), savedOwner, getCharge(),
-				originalHand, getPrimaryTendency(), getSecondaryTendency(), impacted,
+				originalHand, getPrimaryTemper(), getSecondaryTemper(), impacted,
 				lastSafePosition.x, lastSafePosition.y, lastSafePosition.z).write(tag);
 	}
 
@@ -166,17 +166,17 @@ public final class LivingFlailHeadProjectileEntity extends ThrowableProjectile {
 		ownerId = tag.hasUUID("FlailOwner") ? state.ownerId() : null;
 		entityData.set(CHARGE, Mth.clamp(state.charge(), 0.0F, 1.0F));
 		originalHand = state.originalHand();
-		entityData.set(PRIMARY_TENDENCY, state.primaryTendency().name());
-		entityData.set(SECONDARY_TENDENCY,
-				state.secondaryTendency() == null ? "" : state.secondaryTendency().name());
+		entityData.set(PRIMARY_TEMPER, state.primaryTemper().name());
+		entityData.set(SECONDARY_TEMPER,
+				state.secondaryTemper() == null ? "" : state.secondaryTemper().name());
 		impacted = state.impacted();
 		lastSafePosition = new Vec3(state.lastSafeX(), state.lastSafeY(), state.lastSafeZ());
 	}
 
 	@Nullable
-	private static EnumBloodTendency parseTendency(String name, @Nullable EnumBloodTendency fallback) {
+	private static EnumBloodTemper parseTemper(String name, @Nullable EnumBloodTemper fallback) {
 		try {
-			return EnumBloodTendency.valueOf(name);
+			return EnumBloodTemper.valueOf(name);
 		} catch (IllegalArgumentException ignored) {
 			return fallback;
 		}

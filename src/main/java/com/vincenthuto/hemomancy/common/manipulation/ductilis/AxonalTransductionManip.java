@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 public final class AxonalTransductionManip extends BloodManipulation {
     public AxonalTransductionManip() {
         super("axonal_transduction", 150, 65, 0, EnumManipulationType.PASSIVE,
-                EnumManipulationRank.PERFECTUS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD);
+                EnumManipulationRank.PERFECTUS, EnumBloodTemper.DUCTILIS, EnumVeinSections.HEAD);
         setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, Component.translatable("manipulation.hemomancy.drudge_unsupported"));
     }
     @Override protected boolean canPerformAction(Player player, ItemStack item, float ticks) {

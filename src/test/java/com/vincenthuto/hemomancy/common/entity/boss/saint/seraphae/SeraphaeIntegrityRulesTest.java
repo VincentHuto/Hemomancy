@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintOpening;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintOpenings;
 import org.junit.jupiter.api.Test;
@@ -27,12 +27,12 @@ class SeraphaeIntegrityRulesTest {
         int recoil = SeraphaeOpenings.RECOIL_ID, lapse = SeraphaeOpenings.LAPSE_ID;
         assertEquals(2.0F, SeraphaeIntegrityRules.hitGain(recoil, SaintOpening.Delivery.MELEE, null));
         assertEquals(2.0F, SeraphaeIntegrityRules.hitGain(recoil, SaintOpening.Delivery.PROJECTILE, null));
-        assertEquals(3.0F, SeraphaeIntegrityRules.hitGain(recoil, SaintOpening.Delivery.SCHOOL_CAST, EnumBloodTendency.ANIMUS));
-        assertEquals(4.5F, SeraphaeIntegrityRules.hitGain(recoil, SaintOpening.Delivery.SCHOOL_CAST, EnumBloodTendency.CONGEATIO));
-        assertEquals(1.5F, SeraphaeIntegrityRules.hitGain(recoil, SaintOpening.Delivery.SCHOOL_CAST, EnumBloodTendency.LUX));
+        assertEquals(3.0F, SeraphaeIntegrityRules.hitGain(recoil, SaintOpening.Delivery.SCHOOL_CAST, EnumBloodTemper.ANIMUS));
+        assertEquals(4.5F, SeraphaeIntegrityRules.hitGain(recoil, SaintOpening.Delivery.SCHOOL_CAST, EnumBloodTemper.CONGEATIO));
+        assertEquals(1.5F, SeraphaeIntegrityRules.hitGain(recoil, SaintOpening.Delivery.SCHOOL_CAST, EnumBloodTemper.LUX));
         assertEquals(3.0F, SeraphaeIntegrityRules.hitGain(lapse, SaintOpening.Delivery.MELEE, null));
-        assertEquals(6.0F, SeraphaeIntegrityRules.hitGain(lapse, SaintOpening.Delivery.SCHOOL_CAST, EnumBloodTendency.MORTEM));
-        assertEquals(2.0F, SeraphaeIntegrityRules.hitGain(lapse, SaintOpening.Delivery.SCHOOL_CAST, EnumBloodTendency.DUCTILIS));
+        assertEquals(6.0F, SeraphaeIntegrityRules.hitGain(lapse, SaintOpening.Delivery.SCHOOL_CAST, EnumBloodTemper.MORTEM));
+        assertEquals(2.0F, SeraphaeIntegrityRules.hitGain(lapse, SaintOpening.Delivery.SCHOOL_CAST, EnumBloodTemper.DUCTILIS));
         assertEquals(3.0F, SeraphaeIntegrityRules.hitGain(SeraphaeOpenings.SEIZED_ID, SaintOpening.Delivery.SCHOOL_CAST, null));
     }
 
@@ -76,9 +76,9 @@ class SeraphaeIntegrityRulesTest {
     }
 
     @Test void onlyCirculationAndSensationCastsBreakAHold() {
-        assertTrue(SeraphaeIntegrityRules.breaksHold(EnumBloodTendency.CONGEATIO));
-        assertTrue(SeraphaeIntegrityRules.breaksHold(EnumBloodTendency.TENEBRIS));
-        assertFalse(SeraphaeIntegrityRules.breaksHold(EnumBloodTendency.MORTEM));
+        assertTrue(SeraphaeIntegrityRules.breaksHold(EnumBloodTemper.CONGEATIO));
+        assertTrue(SeraphaeIntegrityRules.breaksHold(EnumBloodTemper.TENEBRIS));
+        assertFalse(SeraphaeIntegrityRules.breaksHold(EnumBloodTemper.MORTEM));
         assertFalse(SeraphaeIntegrityRules.breaksHold(null));
     }
 }

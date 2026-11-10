@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
@@ -24,7 +24,7 @@ public final class FerricBarrierManip extends BloodManipulation {
 
     private final Kind kind;
     public FerricBarrierManip(String name, Kind kind) {
-        super(name, kind == Kind.WALL ? RAMPART_COST : SPIKES_COST, 20, 0, EnumManipulationType.QUICK, EnumManipulationRank.SUMMA, EnumBloodTendency.FERRIC, EnumVeinSections.BODY);
+        super(name, kind == Kind.WALL ? RAMPART_COST : SPIKES_COST, 20, 0, EnumManipulationType.QUICK, EnumManipulationRank.SUMMA, EnumBloodTemper.FERRIC, EnumVeinSections.BODY);
         this.kind = kind;
     }
 

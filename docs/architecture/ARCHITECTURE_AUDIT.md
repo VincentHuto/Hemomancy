@@ -417,7 +417,7 @@ report lists the exact searches.
 |---|---|---|
 | 54 unused clips in `VesperTheEveningStarAnimations` (~2,750 lines) | Only IDLE, DEFEAT, HIT and REMOVE_HOOD are referenced. `VesperCombatImplementationSourceTest:137-146` checks HIT only. **V** | Keep the 4 used clips. |
 | `RenderBloodLaser` + `RenderBloodLaserEvent` | `renderLaser` has an empty body and the draw helpers have no callers. The handler is still subscribed. **V** | Removes a per-frame loop. |
-| `TerraBiomeInit`, `WhiteHumorVolumeEvents`, `RecipeSacrificialBloodCrafting`, `TendencyWeaponCombatEvents` | Empty classes. **V** | |
+| `TerraBiomeInit`, `WhiteHumorVolumeEvents`, `RecipeSacrificialBloodCrafting`, `TemperWeaponCombatEvents` | Empty classes. **V** | |
 | `HitGlowParticle`, `RenderChitiniteLayer`, `BloodArmorLayer`, `CellHandBakedModel`, `IRadialMenuItem`, `RadialTextLines`, `compat/jei/ScreenArea`, `GuideBookTooltipHelper`, `EnumRejectionEvent` | Unreferenced. **V** | Removed in consolidation step 3. |
 | `Hemomancy.instance`, `Hemomancy.forcesLoaded` | Written, never read. **V** | The `forcesofreality` check is only a write. |
 | `AttributeInit.canFly`, `ScarInit.getAllEntries`, `VillagerInit.HEMOPOTHECARY_PROCESSOR_LIST_KEY`, `BaseFeatureInit.setup()`, `EffectInit.setupPotionRecipes`, `EntityInit.commonSetup` (empty subscribed handlers) | No callers, or empty bodies. **V** | |

@@ -18,7 +18,7 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.menu.ScryingDiagnosticsMenuProvider;
-import com.vincenthuto.hemomancy.common.menu.TendencyViewMenuProvider;
+import com.vincenthuto.hemomancy.common.menu.TemperamentViewMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstDrawsAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
@@ -254,7 +254,7 @@ public final class MultiplayerVerification {
 		ServerPlayer player = source.getPlayerOrException();
 		switch (name) {
 			case "scrying" -> player.openMenu(new ScryingDiagnosticsMenuProvider());
-			case "tendency" -> player.openMenu(new TendencyViewMenuProvider());
+			case "temper" -> player.openMenu(new TemperamentViewMenuProvider());
 			case "vascular" -> player.openMenu(new VascularViewMenuProvider());
 			default -> {
 				return say(source, "MENU unknown " + name);

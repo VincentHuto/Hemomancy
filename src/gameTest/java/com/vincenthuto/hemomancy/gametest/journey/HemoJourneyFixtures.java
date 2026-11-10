@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumA
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.CrimsonDoeEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
@@ -1367,7 +1367,7 @@ public final class HemoJourneyFixtures {
 		ResourceLocation active = scars.getActiveCerebralScars().iterator().next();
 		var definition = ScarInit.getByName(active.toString());
 		if (definition == null) throw new IllegalStateException("Active cerebral scar is unavailable: " + active);
-		BloodManipulation manipulation = matchingManipulation(definition.getAssignedTendency());
+		BloodManipulation manipulation = matchingManipulation(definition.getAssignedTemper());
 		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		known.getKnownManips().putIfAbsent(manipulation, new ManipLevel(0, 0));
 		known.setEquippedManipNames(List.of(manipulation.getName()));
@@ -1384,8 +1384,8 @@ public final class HemoJourneyFixtures {
 		if (!level.addFreshEntity(target)) throw new IllegalStateException("Noetic routing target could not be spawned");
 	}
 
-	private static BloodManipulation matchingManipulation(EnumBloodTendency tendency) {
-		return switch (tendency) {
+	private static BloodManipulation matchingManipulation(EnumBloodTemper temper) {
+		return switch (temper) {
 			case ANIMUS -> ManipulationInit.blood_shot.get();
 			case DUCTILIS -> ManipulationInit.deadly_gaze.get();
 			case FERRIC -> ManipulationInit.sanguine_mending.get();

@@ -19,7 +19,7 @@ public class HarbingerProgressScreen extends Screen {
     // ── Tabs ──
     private enum Tab {
         SKILLS("screen.hemomancy.harbinger_progress.tab.skills", 0xFFCC3333, 0, false),
-        TENDENCIES("screen.hemomancy.harbinger_progress.tab.tendencies", 0xFFCC8833, 3, false),
+        TEMPERS("screen.hemomancy.harbinger_progress.tab.tempers", 0xFFCC8833, 3, false),
         RITES("screen.hemomancy.harbinger_progress.tab.rites", 0xFF8844CC, 0, false),
         MATERIALS("screen.hemomancy.harbinger_progress.tab.materials", 0xFFCC6644, 0, false),
         SUMMONS("screen.hemomancy.harbinger_progress.tab.summons", 0xFFBB3355, 2, true),
@@ -100,7 +100,7 @@ public class HarbingerProgressScreen extends Screen {
 	private IProgressTab createController(Tab tab) {
         return switch (tab) {
 			case SKILLS -> new SkillsTabController();
-			case TENDENCIES -> new ManipulationsTabController();
+			case TEMPERS -> new ManipulationsTabController();
 			case RITES -> new RitesAndCraftsTabController();
 			case SUMMONS -> new SummonsTabController();
 			case MATERIALS -> new MaterialsTabController();

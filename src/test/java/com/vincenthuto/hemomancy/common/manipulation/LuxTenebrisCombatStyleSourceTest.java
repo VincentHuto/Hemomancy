@@ -22,15 +22,15 @@ public final class LuxTenebrisCombatStyleSourceTest {
 		assertContains("hematic flare registered", manipInit, "MANIPS.register(\"hematic_flare\"");
 		assertContains("hematic flare class", manipInit, "new HematicFlareManip(\"hematic_flare\", 125");
 		assertContains("hematic flare is Humilis Lux", manipInit,
-				"EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.HEAD");
-		assertContains("hematic flare secondary", manipInit, ".setSecondaryTend(EnumBloodTendency.FLAMMEUS)");
+				"EnumManipulationRank.HUMILIS, EnumBloodTemper.LUX, EnumVeinSections.HEAD");
+		assertContains("hematic flare secondary", manipInit, ".setSecondaryTend(EnumBloodTemper.FLAMMEUS)");
 		assertContains("hematic flare cooldown", manipInit, ".setCooldownTicks(30)");
 
 		assertContains("gloam laceration registered", manipInit, "MANIPS.register(\"gloam_laceration\"");
 		assertContains("gloam laceration class", manipInit, "new GloamLacerationManip(\"gloam_laceration\", 175");
 		assertContains("gloam laceration is Humilis Tenebris", manipInit,
-				"EnumManipulationRank.HUMILIS, EnumBloodTendency.TENEBRIS, EnumVeinSections.ARMS");
-		assertContains("gloam laceration secondary", manipInit, ".setSecondaryTend(EnumBloodTendency.MORTEM)");
+				"EnumManipulationRank.HUMILIS, EnumBloodTemper.TENEBRIS, EnumVeinSections.ARMS");
+		assertContains("gloam laceration secondary", manipInit, ".setSecondaryTend(EnumBloodTemper.MORTEM)");
 		assertContains("gloam laceration cooldown", manipInit, ".setCooldownTicks(35)");
 	}
 

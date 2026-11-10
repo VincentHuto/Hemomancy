@@ -14,8 +14,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownM
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.CrawlingChoirHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.RootedStateHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
@@ -53,25 +53,25 @@ public class BloodManipulation implements EntityCastableManipulation {
         return com.vincenthuto.hemomancy.common.manipulation.animation.CastPresentation.forId(getName());
     }
 	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
-			EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD);
+			EnumManipulationRank.HUMILIS, EnumBloodTemper.ANIMUS, EnumVeinSections.HEAD);
 	/*
 	 * Reads a NBT tag and converts it to a manipulation
 	 */
 	public static BloodManipulation deserialize(CompoundTag nbt) {
 		if (nbt != null && !nbt.isEmpty()) {
 			if (nbt.contains("name") && nbt.contains("cost") && nbt.contains("level") && nbt.contains("type")
-					&& nbt.contains("tendency") && nbt.contains("rank") && nbt.contains("section")) {
+					&& nbt.contains("temper") && nbt.contains("rank") && nbt.contains("section")) {
 				BloodManipulation manip = new BloodManipulation(nbt.getString("name"), nbt.getDouble("cost"),
 						nbt.getDouble("level"), nbt.getDouble("xpcost"),
 						EnumManipulationType.valueOf(nbt.getString("type")),
 						EnumManipulationRank.valueOf(nbt.getString("rank")),
-						EnumBloodTendency.valueOf(nbt.getString("tendency")),
+						EnumBloodTemper.valueOf(nbt.getString("temper")),
 						EnumVeinSections.valueOf(nbt.getString("section")));
 				if (nbt.contains("cooldown")) {
 					manip.cooldownTicks = nbt.getInt("cooldown");
 				}
-				if (nbt.contains("secondary_tendency")) {
-					manip.secondaryTend = EnumBloodTendency.valueOf(nbt.getString("secondary_tendency"));
+				if (nbt.contains("secondary_temper")) {
+					manip.secondaryTend = EnumBloodTemper.valueOf(nbt.getString("secondary_temper"));
 				}
 
 				return manip;
@@ -81,9 +81,9 @@ public class BloodManipulation implements EntityCastableManipulation {
 	}
 	String name;
 	double cost, alignLevel, xpCost;
-	EnumBloodTendency tend;
+	EnumBloodTemper tend;
 	@Nullable
-	EnumBloodTendency secondaryTend;
+	EnumBloodTemper secondaryTend;
 	EnumManipulationRank rank;
 	EnumVeinSections section;
 
@@ -112,12 +112,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 	private transient EntityCast entityCast = null;
 
 	public BloodManipulation(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
 		this.name = name;
 		this.cost = cost;
 		this.alignLevel = alignLevel;
 		this.type = type;
-		this.tend = tendency;
+		this.tend = temper;
 		this.rank = rank;
 		this.section = section;
 		this.cooldownTicks = 0;
@@ -208,8 +208,8 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return Component.translatable("manipulation_rank.hemomancy." + rank.name().toLowerCase(java.util.Locale.ROOT));
 	}
 
-	public static Component tendencyName(EnumBloodTendency tendency) {
-		return Component.translatable("blood_tendency.hemomancy." + tendency.name().toLowerCase(java.util.Locale.ROOT));
+	public static Component temperName(EnumBloodTemper temper) {
+		return Component.translatable("blood_temper.hemomancy." + temper.name().toLowerCase(java.util.Locale.ROOT));
 	}
 
 	public static Component sectionName(EnumVeinSections section) {
@@ -220,12 +220,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return section;
 	}
 
-	public EnumBloodTendency getTend() {
+	public EnumBloodTemper getTend() {
 		return tend;
 	}
 
 	@Nullable
-	public EnumBloodTendency getSecondaryTend() {
+	public EnumBloodTemper getSecondaryTend() {
 		return secondaryTend;
 	}
 
@@ -246,7 +246,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return this;
 	}
 
-	public BloodManipulation setSecondaryTend(@Nullable EnumBloodTendency secondaryTend) {
+	public BloodManipulation setSecondaryTend(@Nullable EnumBloodTemper secondaryTend) {
 		this.secondaryTend = secondaryTend != tend ? secondaryTend : null;
 		return this;
 	}
@@ -409,20 +409,20 @@ public class BloodManipulation implements EntityCastableManipulation {
 	/**
 	 * The equipped-cast gate shared by the charge visual and the casting animation: this manipulation is equipped and
 	 * absorbed, the player's blood is active, Unstained progress does not lock blood powers, and the player is aligned
-	 * enough with its tendency. Callers add their own selection, paralysis, cooldown and life checks.
+	 * enough with its temper. Callers add their own selection, paralysis, cooldown and life checks.
 	 */
 	public boolean isEquippedCastReady(ServerPlayer player, IKnownManipulations known) {
 		return known.isManipEquipped(this) && known.isManipulationAvailable(this)
 				&& HemoCapabilityAccess.getBloodVolume(player).isActive()
 				&& !com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player))
-				&& (HemoCapabilityAccess.getBloodTendency(player).getAlignmentByTendency(tend) >= alignLevel);
+				&& (HemoCapabilityAccess.getBloodTemperament(player).getAlignmentByTemper(tend) >= alignLevel);
 	}
 
 	public boolean isPassiveReady(ServerPlayer player) {
 		return type == EnumManipulationType.PASSIVE && player.isAlive()
 				&& HemoCapabilityAccess.getBloodVolume(player).isActive()
 				&& HemoCapabilityAccess.getKnownManipulations(player).isPassiveActive(name)
-				&& (HemoCapabilityAccess.getBloodTendency(player).getAlignmentByTendency(tend) >= alignLevel)
+				&& (HemoCapabilityAccess.getBloodTemperament(player).getAlignmentByTemper(tend) >= alignLevel)
 				&& !com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player));
 	}
 
@@ -470,7 +470,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 		if (type != EnumManipulationType.PASSIVE && com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)) return false;
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 				;
-		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
+		IBloodTemperament temper = HemoCapabilityAccess.getBloodTemperament(player)
 				;
 
 		if (!player.level().isClientSide) {
@@ -529,12 +529,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 					effectiveCost = charged.getAsDouble();
 				}
 
-				boolean hasRequiredAlignment = tendency.getAlignmentByTendency(tend) >= alignLevel;
+				boolean hasRequiredAlignment = temper.getAlignmentByTemper(tend) >= alignLevel;
 				if (!hasRequiredAlignment) {
 					player.displayClientMessage(HemoText.translatable("message.hemomancy.blood_manipulation.requires_alignment_current",
 							(int) alignLevel,
 							tend.name(),
-							(int) tendency.getAlignmentByTendency(tend)).withStyle(ChatFormatting.RED), true);
+							(int) temper.getAlignmentByTemper(tend)).withStyle(ChatFormatting.RED), true);
 					return false;
 				}
 
@@ -567,7 +567,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 					// Crawling Choir: chance to echo-cast at no additional blood cost
 					CrawlingChoirHandler.tryEchoCast(player, world, heldItemMainhand, position, this, chargeTicks);
 
-					// Apply cross-system consequences: vascular strain, tendency shift, XP
+					// Apply cross-system consequences: vascular strain, temper shift, XP
 					if (creditUse) recordSuccessfulUse((ServerPlayer) player,
 							ManipulationCastingRules.rewardScale(type, chargeTicks, getRequiredChargeTicks()));
 					if (type == EnumManipulationType.CHARGED) ManipulationChargeClock.release(player);
@@ -618,9 +618,9 @@ public class BloodManipulation implements EntityCastableManipulation {
 		nbt.putDouble("xpcost", xpCost);
 		nbt.putString("type", type.name());
 		nbt.putString("rank", rank.name());
-		nbt.putString("tendency", tend.name());
+		nbt.putString("temper", tend.name());
 		if (secondaryTend != null) {
-			nbt.putString("secondary_tendency", secondaryTend.name());
+			nbt.putString("secondary_temper", secondaryTend.name());
 		}
 		nbt.putString("section", section.name());
 		nbt.putInt("cooldown", cooldownTicks);
@@ -639,7 +639,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 		this.section = section;
 	}
 
-	public void setTend(EnumBloodTendency tend) {
+	public void setTend(EnumBloodTemper tend) {
 		this.tend = tend;
 		if (secondaryTend == tend) {
 			secondaryTend = null;

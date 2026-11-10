@@ -94,8 +94,8 @@ public final class HeartManipulationGameTests {
 			known.setEquippedManipNames(List.of("blackhearted"));
 			known.togglePassive("blackhearted");
 			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(
-					com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.MORTEM, 35);
+			HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(
+					com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.MORTEM, 35);
 			player.setHealth(10.0F);
 			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().wither(), 4.0F);
 			ManipulationReactiveEvents.onHeartDamage(event);

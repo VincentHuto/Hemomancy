@@ -93,7 +93,7 @@ The planned MnA integration includes:
 #### Combo Effects
 
 **Arcane Resonance**
-- When casting MnA spell that aligns with your blood tendency
+- When casting MnA spell that aligns with your blood temper
 - Spell gets power boost
 - Mana cost slightly reduced
 - Synergy between magical paths
@@ -131,7 +131,7 @@ Curios source is preserved as a future compatibility target, but it is not compi
 
 **Effects:**
 - Passive blood regeneration boost
-- Enhanced tendency alignment rate
+- Enhanced temper alignment rate
 - Reduced blood loss from damage
 - Quality-of-life for blood mages
 
@@ -192,7 +192,7 @@ Hemomancy's JEI integration covers the custom crafting systems. This branch load
 - Press `R` on item to see recipes using it
 - Press `U` on item to see how to craft it
 - Bookmark frequently-used recipes
-- JEI search supports tendency names and manipulation names
+- JEI search supports temper names and manipulation names
 
 ---
 
@@ -202,7 +202,7 @@ Hemomancy's JEI integration covers the custom crafting systems. This branch load
 
 #### Balance Considerations
 - Blood volume is a limited resource; avoid mods that trivialize regeneration
-- Tendencies are meant to specialize; avoid mods that grant all tendencies easily
+- Tempers are meant to specialize; avoid mods that grant all tempers easily
 - Degree progression should feel earned; don't add shortcuts
 - Fungal biomes are intentionally limited; respect worldgen balance
 
@@ -227,7 +227,7 @@ Hemomancy supports recipe modification via datapacks:
 - Morphlings can integrate with pet/companion mods
 
 **With Magic Mods:**
-- Blood tendency system parallels elemental magic systems
+- Blood Temperament system parallels elemental magic systems
 - Resource management (blood) complements mana systems
 - Ritual systems pair well with other ritual magic mods
 
@@ -275,7 +275,7 @@ These are being considered for future updates:
 
 ### Ars Nouveau
 - Blood-based spell crafting
-- Tendency-spell alignments
+- Temper-spell alignments
 - Glyph system integration
 
 **Status:** Concept stage

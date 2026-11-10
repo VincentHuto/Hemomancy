@@ -269,8 +269,8 @@ public final class StationUpgradeGameTests {
                 new Lesson(UpgradeStation.CENTRIFUGE, 1, "centrifuge/pages/steady_separation"),
                 new Lesson(UpgradeStation.CENTRIFUGE, 2, "centrifuge/pages/second_fraction"),
                 new Lesson(UpgradeStation.RESONANT_FORGE, 1, "resonant_forge/pages/upgrades"),
-                new Lesson(UpgradeStation.SCRIPTORIUM, 1, "tendency/pages/eightfold_script"),
-                new Lesson(UpgradeStation.SCRIPTORIUM, 2, "tendency/pages/palimpsest"),
+                new Lesson(UpgradeStation.SCRIPTORIUM, 1, "temperament/pages/eightfold_script"),
+                new Lesson(UpgradeStation.SCRIPTORIUM, 2, "temperament/pages/palimpsest"),
                 new Lesson(UpgradeStation.LOOM, 1, "manipulations/pages/ganglionic_weave"),
                 new Lesson(UpgradeStation.LOOM, 2, "manipulations/pages/cortical_weave"))) {
             UpgradeStation station = lesson.station();

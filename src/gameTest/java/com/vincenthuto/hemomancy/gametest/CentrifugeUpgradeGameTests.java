@@ -209,7 +209,7 @@ public final class CentrifugeUpgradeGameTests {
         helper.assertTrue(machine.attemptStartup(null) == VialCentrifugeStartupResult.SUCCESS, "single fraction spin refused");
         finish(helper, machine);
         helper.assertTrue(machine.getOutputSlots().stream().filter(stack -> !stack.isEmpty()).count() == 1,
-                "single tendency invented a second fraction");
+                "single temper invented a second fraction");
         helper.succeed();
     }
 

@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
@@ -20,8 +20,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/** Bakes shared tendency-tree connections into a texture for inexpensive pan/zoom rendering. */
-final class TendencyTraceLayerCache {
+/** Bakes shared temper-tree connections into a texture for inexpensive pan/zoom rendering. */
+final class TemperTraceLayerCache {
 	private static final AtomicInteger NEXT_ID = new AtomicInteger();
 
 	private static final int TRACE_NODE_TRIM_RADIUS = 11;
@@ -29,7 +29,7 @@ final class TendencyTraceLayerCache {
 	private static final double TRACE_ORGANIC_SWAY_FACTOR = 0.08;
 
 	private final int textureId = NEXT_ID.incrementAndGet();
-	private final ResourceLocation textureLocation = Hemomancy.rloc("dynamic/tendency_trace_layer_" + textureId);
+	private final ResourceLocation textureLocation = Hemomancy.rloc("dynamic/temper_trace_layer_" + textureId);
 
 	private DynamicTexture texture;
 	private String signature = "";
@@ -45,12 +45,12 @@ final class TendencyTraceLayerCache {
 			int contentH,
 			int centerX,
 			int centerY) {
-		List<TendencyTraceNode> nodes = new ArrayList<>();
+		List<TemperTraceNode> nodes = new ArrayList<>();
 		for (ManipulationTreeEntry entry : sortedEntries(entries)) {
 			int[] pos = nodePositions.get(entry);
 			if (pos == null) continue;
 			BloodManipulation manipulation = entry.resolve();
-			nodes.add(new TendencyTraceNode(entry.getManipName(),
+			nodes.add(new TemperTraceNode(entry.getManipName(),
 					manipulation != null ? manipulation.getTend() : null,
 					pos[0], pos[1], entry.getConnectionParentNames(),
 					knownManipNames.contains(entry.getManipName()), isRankLocked(manipulation, playerDegree)));
@@ -58,7 +58,7 @@ final class TendencyTraceLayerCache {
 		rebuildIfNeeded(nodes, contentW, contentH, centerX, centerY);
 	}
 
-	void rebuildIfNeeded(List<TendencyTraceNode> nodes, int contentW, int contentH, int centerX, int centerY) {
+	void rebuildIfNeeded(List<TemperTraceNode> nodes, int contentW, int contentH, int centerX, int centerY) {
 		String nextSignature = buildSignature(nodes, contentW, contentH, centerX, centerY);
 		if (nextSignature.equals(signature) && texture != null) {
 			return;
@@ -70,20 +70,20 @@ final class TendencyTraceLayerCache {
 		NativeImage image = new NativeImage(textureW, textureH, false);
 		clearImage(image);
 
-		Map<String, TendencyTraceNode> byId = new java.util.HashMap<>();
-		for (TendencyTraceNode node : nodes) byId.put(node.id(), node);
-		List<TendencyTraceNode> sorted = new ArrayList<>(nodes);
-		sorted.sort(Comparator.comparing(TendencyTraceNode::id));
-		for (TendencyTraceNode child : sorted) {
-			int traceColorBase = tendencyColor(child.tendency());
+		Map<String, TemperTraceNode> byId = new java.util.HashMap<>();
+		for (TemperTraceNode node : nodes) byId.put(node.id(), node);
+		List<TemperTraceNode> sorted = new ArrayList<>(nodes);
+		sorted.sort(Comparator.comparing(TemperTraceNode::id));
+		for (TemperTraceNode child : sorted) {
+			int traceColorBase = temperColor(child.temper());
 			for (String parentId : child.parentIds()) {
-				TendencyTraceNode parent = byId.get(parentId);
+				TemperTraceNode parent = byId.get(parentId);
 				if (parent == null) continue;
-				TendencyTraceStyle style = TendencyTraceStyle.resolve(
+				TemperTraceStyle style = TemperTraceStyle.resolve(
 						parent.known(), parent.locked(), child.known(), child.locked());
-				int color = style == TendencyTraceStyle.KNOWN ? traceColorBase : dimTraceColor(traceColorBase);
-				int alpha = style == TendencyTraceStyle.LOCKED ? 78
-						: style == TendencyTraceStyle.KNOWN ? 148 : 112;
+				int color = style == TemperTraceStyle.KNOWN ? traceColorBase : dimTraceColor(traceColorBase);
+				int alpha = style == TemperTraceStyle.LOCKED ? 78
+						: style == TemperTraceStyle.KNOWN ? 148 : 112;
 				bakeConnection(image, parent.x(), parent.y(), child.x(), child.y(),
 						withAlpha(color, alpha), centerX, centerY);
 			}
@@ -147,19 +147,19 @@ final class TendencyTraceLayerCache {
 		return list;
 	}
 
-	private static String buildSignature(List<TendencyTraceNode> nodes, int contentW, int contentH,
+	private static String buildSignature(List<TemperTraceNode> nodes, int contentW, int contentH,
 	                                     int centerX, int centerY) {
 		StringBuilder out = new StringBuilder();
 		out.append(contentW).append('x').append(contentH)
 				.append(':').append(centerX).append(',').append(centerY);
-		List<TendencyTraceNode> sorted = new ArrayList<>(nodes);
-		sorted.sort(Comparator.comparing(TendencyTraceNode::id));
-		for (TendencyTraceNode node : sorted) {
+		List<TemperTraceNode> sorted = new ArrayList<>(nodes);
+		sorted.sort(Comparator.comparing(TemperTraceNode::id));
+		for (TemperTraceNode node : sorted) {
 			out.append('|').append(node.id())
 					.append('@').append(node.x()).append(',').append(node.y())
 					.append(node.known() ? ":K" : ":U")
 					.append(node.locked() ? ":L" : ":O")
-					.append(":t=").append(node.tendency() != null ? node.tendency().name() : "null");
+					.append(":t=").append(node.temper() != null ? node.temper().name() : "null");
 			for (String parent : node.parentIds()) {
 				out.append(">").append(parent);
 			}
@@ -172,9 +172,9 @@ final class TendencyTraceLayerCache {
 		return !ManipulationRankGates.playerMeetsRank(playerDegree, manip.getRank());
 	}
 
-	private static int tendencyColor(EnumBloodTendency tendency) {
-		if (tendency == null) return 0xFFAA6600;
-		ParticleColor pc = tendency.getColor();
+	private static int temperColor(EnumBloodTemper temper) {
+		if (temper == null) return 0xFFAA6600;
+		ParticleColor pc = temper.getColor();
 		int r = (int) pc.getRed();
 		int g = (int) pc.getGreen();
 		int b = (int) pc.getBlue();

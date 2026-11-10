@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.ListeningScarItem;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryPrimingRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoBookFilter;
 import com.vincenthuto.hemomancy.common.data.book.HemomancyBookPresentation;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
@@ -328,21 +328,21 @@ public class ItemInit {
 
     // Enzymes
     public static final DeferredHolder<Item, Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
-            () -> new EnzymeItem(EnumBloodTendency.ANIMUS, 10));
+            () -> new EnzymeItem(EnumBloodTemper.ANIMUS, 10));
     public static final DeferredHolder<Item, Item> ruinous_enzyme = BASEITEMS.register("ruinous_enzyme",
-            () -> new EnzymeItem(EnumBloodTendency.MORTEM, 10));
+            () -> new EnzymeItem(EnumBloodTemper.MORTEM, 10));
     public static final DeferredHolder<Item, Item> neurotic_enzyme = BASEITEMS.register("neurotic_enzyme",
-            () -> new EnzymeItem(EnumBloodTendency.DUCTILIS, 10));
+            () -> new EnzymeItem(EnumBloodTemper.DUCTILIS, 10));
     public static final DeferredHolder<Item, Item> ferric_enzyme = BASEITEMS.register("ferric_enzyme",
-            () -> new EnzymeItem(EnumBloodTendency.FERRIC, 10));
+            () -> new EnzymeItem(EnumBloodTemper.FERRIC, 10));
     public static final DeferredHolder<Item, Item> fervent_enzyme = BASEITEMS.register("fervent_enzyme",
-            () -> new EnzymeItem(EnumBloodTendency.FLAMMEUS, 10));
+            () -> new EnzymeItem(EnumBloodTemper.FLAMMEUS, 10));
     public static final DeferredHolder<Item, Item> frigid_enzyme = BASEITEMS.register("frigid_enzyme",
-            () -> new EnzymeItem(EnumBloodTendency.CONGEATIO, 10));
+            () -> new EnzymeItem(EnumBloodTemper.CONGEATIO, 10));
     public static final DeferredHolder<Item, Item> incandescent_enzyme = BASEITEMS.register("incandescent_enzyme",
-            () -> new EnzymeItem(EnumBloodTendency.LUX, 10));
+            () -> new EnzymeItem(EnumBloodTemper.LUX, 10));
     public static final DeferredHolder<Item, Item> umbral_enzyme = BASEITEMS.register("umbral_enzyme",
-            () -> new EnzymeItem(EnumBloodTendency.TENEBRIS, 10));
+            () -> new EnzymeItem(EnumBloodTemper.TENEBRIS, 10));
     public static final DeferredHolder<Item, Item> recycled_enzyme = BASEITEMS.register("recycled_enzyme",
             () -> new RecycledEnzymeItem());
     // Hallowed Residuum  Saint-Enzymes (hybridized, extracted from Preserved Corpus)
@@ -384,7 +384,7 @@ public class ItemInit {
     // Consecrated Syringe  extraction tool for Saint Sarcophagus
     public static final DeferredHolder<Item, Item> consecrated_syringe = SPECIALITEMS.register("consecrated_syringe",
             () -> new ConsecratedSyringeItem(new Item.Properties().stacksTo(1)));
-    // Blood Tendency Gauge -- now part of sanguine conduit
+    // Blood Temperament Gauge -- now part of sanguine conduit
     // Vascular Status Gauge
     public static final DeferredHolder<Item, Item> vascular_status_gauge = BASEITEMS.register("vascular_status_gauge",
             () -> new VascularStatusGaugeItem(new Item.Properties().stacksTo(1)));
@@ -484,7 +484,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> memory_cruor_javelin = registerBloodMemoryItem("memory_cruor_javelin", ManipulationInit.cruor_javelin);
     public static final DeferredHolder<Item, Item> memory_fruiting_contagion = registerBloodMemoryItem("memory_fruiting_contagion", ManipulationInit.fruiting_contagion);
     public static final DeferredHolder<Item, Item> memory_hematic_impressment = registerBloodMemoryItem("memory_hematic_impressment", ManipulationInit.hematic_impressment);
-    //  Expanded tendency memories 
+    //  Expanded temper memories 
     public static final DeferredHolder<Item, Item> memory_cryogenic_pulse = registerBloodMemoryItem("memory_cryogenic_pulse", ManipulationInit.cryogenic_pulse);
     public static final DeferredHolder<Item, Item> memory_glacial_rampart = registerBloodMemoryItem("memory_glacial_rampart", ManipulationInit.glacial_rampart);
     public static final DeferredHolder<Item, Item> memory_osseous_bloom = registerBloodMemoryItem("memory_osseous_bloom", ManipulationInit.osseous_bloom);
@@ -848,7 +848,7 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
 
     // ── Immature fungal scar — produced by Phase 1 of the Mycelial Crucible ──
-    // A single item; tendency, threshold, and target-scar identity are stored
+    // A single item; temper, threshold, and target-scar identity are stored
     // as custom NBT data so each cultivation run carries its own metadata.
     public static final DeferredHolder<Item, Item> immature_fungal_scar = BASEITEMS.register("immature_fungal_scar",
             () -> new ItemImmatureFungalScar(new Item.Properties().stacksTo(1)));
@@ -871,7 +871,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> umbral_spores = BASEITEMS.register("umbral_spores",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16)));
 
-    // ── Regular Scars (8 tendencies × 3 tiers = 24 scars) ──
+    // ── Regular Scars (8 tempers × 3 tiers = 24 scars) ──
     // Each scar has focused upsides and real downsides; magnitude escalates with tier.
 
     // ── ANIMUS — Vitality / Healing ──
@@ -906,7 +906,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
             () -> new ItemSanguineConduit(BlockInit.sanguine_conduit.get(), new Item.Properties()));
     public static final DeferredHolder<Item, Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
-            () -> new VasculariumCharmItem(new Item.Properties(), EnumBloodTendency.ANIMUS, 0));
+            () -> new VasculariumCharmItem(new Item.Properties(), EnumBloodTemper.ANIMUS, 0));
     public static final DeferredHolder<Item, Item> mycophant_tendril = BASEITEMS.register("mycophant_tendril",
             () -> new MycophantTendrilItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     // Qliphoth Reagent

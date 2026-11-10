@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.CloudEntityBlood;
@@ -18,13 +18,13 @@ public class BloodCloudManip extends BloodManipulation {
 	private final Mode mode;
 
 	public BloodCloudManip(String name, double cost, double alignLevel,double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		this(name, cost, alignLevel, xpCost, type, rank, tendency, section, Mode.BASELINE);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		this(name, cost, alignLevel, xpCost, type, rank, temper, section, Mode.BASELINE);
 	}
 
 	public BloodCloudManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section, Mode mode) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section, Mode mode) {
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 		this.mode = mode;
 	}
 
@@ -39,7 +39,7 @@ public class BloodCloudManip extends BloodManipulation {
 		if (looking != null) {
 
 			BloodCloudCarrierEntity fireballentity = new BloodCloudCarrierEntity(world, player, 0, 1, 0);
-			fireballentity.setDamageTendencies(getTend(), getSecondaryTend());
+			fireballentity.setDamageTempers(getTend(), getSecondaryTend());
 			fireballentity.setDamageMultiplier((float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper
 					.getCrimsonMasteryMultiplier(player));
 			switch (mode) {

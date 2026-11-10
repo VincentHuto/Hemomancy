@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.RecipeLookup.FoundRecipe;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.RecipeLookup.RecipeKind;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.recipe.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -235,16 +235,16 @@ public final class MiniRecipeRenderer {
 			cx += SLOT_SIZE + 2;
 		}
 
-		// Tendency pips (compact colored squares, 2 rows of 4)
-		Map<EnumBloodTendency, Float> tendencies = recipe.getTendency();
+		// Temper pips (compact colored squares, 2 rows of 4)
+		Map<EnumBloodTemper, Float> tempers = recipe.getTemper();
 		int pipX = cx + 2;
 		int pipY = y + 2;
 		int pipSize = 5;
 		int pipGap = 1;
 		int pipsPerRow = 4;
 		int pipIdx = 0;
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			float val = tendencies.getOrDefault(tend, 0f);
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) {
+			float val = tempers.getOrDefault(tend, 0f);
 			if (val > 0.01f) {
 				int color = tend.getColor().getColor() | 0xFF000000;
 				int row = pipIdx / pipsPerRow;

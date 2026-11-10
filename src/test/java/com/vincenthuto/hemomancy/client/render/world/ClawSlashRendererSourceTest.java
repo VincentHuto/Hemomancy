@@ -81,7 +81,7 @@ public final class ClawSlashRendererSourceTest {
 
 	private static void livingBaghnakhUsesClawSlashVisuals() throws IOException {
 		String baghnakh = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingBaghnakhItem.java");
-		assertContains("baghnakh keeps Tenebris tendency", baghnakh, "EnumBloodTendency.TENEBRIS");
+		assertContains("baghnakh keeps Tenebris temper", baghnakh, "EnumBloodTemper.TENEBRIS");
 		assertContains("baghnakh overrides hit hook", baghnakh, "public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker)");
 		assertContains("baghnakh preserves base living weapon behavior", baghnakh, "boolean hit = super.hurtEnemy(stack, target, attacker);");
 		assertContains("baghnakh respects restored staff guard", baghnakh, "LivingStaffWeaponFormHelper.wasRestoredOutOfHand(stack, attacker)");

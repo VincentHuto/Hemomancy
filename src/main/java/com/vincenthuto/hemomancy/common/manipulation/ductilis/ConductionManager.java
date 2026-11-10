@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.entity.summon.FerricConstructEntity;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.network.ConductionPathPacket;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.core.BlockPos;
@@ -214,7 +214,7 @@ public final class ConductionManager {
         try (var scope = com.vincenthuto.hemomancy.common.damage.SchoolDamage.scope(hit, owner)) {
             if (!victim.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(
                     level.damageSources().indirectMagic(owner, owner), hit, owner), 2)) return false;
-            SchoolHitHelper.tryTriggerConductiveArc(owner, victim, EnumBloodTendency.DUCTILIS, null, 2, discharge);
+            SchoolHitHelper.tryTriggerConductiveArc(owner, victim, EnumBloodTemper.DUCTILIS, null, 2, discharge);
             return true;
         }
     }

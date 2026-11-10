@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBloodAbsorptionInteractions;
@@ -332,7 +332,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(playerIn)
 				;
-		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(playerIn)
+		IBloodTemperament temper = HemoCapabilityAccess.getBloodTemperament(playerIn)
 				;
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
 				;

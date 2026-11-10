@@ -67,7 +67,7 @@ public class PacketHandler {
      *   ({@code sync_manipulation_hearts}).</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "40";
+    public static final String PROTOCOL_VERSION = "41";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -184,9 +184,9 @@ public class PacketHandler {
         net.playToClient(LivingStaffProgressServerPacket.TYPE,
                 LivingStaffProgressServerPacket.STREAM_CODEC, LivingStaffProgressServerPacket::handle);
 
-        // ── Blood Tendency capability ─────────────────────────────────────────
-        net.playToClient(BloodTendencyServerPacket.TYPE,
-                BloodTendencyServerPacket.STREAM_CODEC, BloodTendencyServerPacket::handle);
+        // ── Blood Temperament capability ─────────────────────────────────────────
+        net.playToClient(BloodTemperamentServerPacket.TYPE,
+                BloodTemperamentServerPacket.STREAM_CODEC, BloodTemperamentServerPacket::handle);
 
         // ── Vascular System capability ────────────────────────────────────────
         net.playToClient(VascularSystemServerPacket.TYPE,
@@ -234,7 +234,7 @@ public class PacketHandler {
         net.playToServer(StartCentrifugeButtonPacket.TYPE, StartCentrifugeButtonPacket.STREAM_CODEC, StartCentrifugeButtonPacket::handle);
         net.playToServer(EquipManipulationPacket.TYPE, EquipManipulationPacket.STREAM_CODEC, EquipManipulationPacket::handle);
         net.playToServer(SynapticLoadoutActionPacket.TYPE, SynapticLoadoutActionPacket.STREAM_CODEC, SynapticLoadoutActionPacket::handle);
-        net.playToServer(PacketOpenTendencyView.TYPE, PacketOpenTendencyView.STREAM_CODEC, PacketOpenTendencyView::handle);
+        net.playToServer(PacketOpenTemperamentView.TYPE, PacketOpenTemperamentView.STREAM_CODEC, PacketOpenTemperamentView::handle);
         net.playToServer(PacketOpenScryingDiagnostics.TYPE, PacketOpenScryingDiagnostics.STREAM_CODEC, PacketOpenScryingDiagnostics::handle);
 
         // Still Arts

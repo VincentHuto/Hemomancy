@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.client.screen.util.AbocipherText;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationTreeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
@@ -59,12 +59,12 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int KNOWN_MANIP_REFRESH_TICKS = 60; // ~1s at ~60 FPS
     private static final int SCAR_KNOWLEDGE_REFRESH_TICKS = 60;
 
-    private final TendencyTraceLayerCache traceCache = new TendencyTraceLayerCache();
-    private final TendencyTraceLayerCache scarTraceCache = new TendencyTraceLayerCache();
+    private final TemperTraceLayerCache traceCache = new TemperTraceLayerCache();
+    private final TemperTraceLayerCache scarTraceCache = new TemperTraceLayerCache();
     private final ScarsTabState scarState = new ScarsTabState();
     private final PanZoomState panZoom = new PanZoomState();
-    private final CyclingFamilyFilter<EnumBloodTendency> familyFilter =
-            new CyclingFamilyFilter<>(List.of(EnumBloodTendency.values()));
+    private final CyclingFamilyFilter<EnumBloodTemper> familyFilter =
+            new CyclingFamilyFilter<>(List.of(EnumBloodTemper.values()));
     private int manipRingCenterX, manipRingCenterY;
     private final Map<ManipulationTreeEntry, int[]> manipPositions = new HashMap<>();
     private final Set<String> knownManipNames = new HashSet<>();
@@ -121,29 +121,29 @@ public class ManipulationsTabController implements IProgressTab {
         if (ManipulationTreeInit.ENTRIES.isEmpty()) return;
 
         final int padding = 40;
-        Map<EnumBloodTendency, List<ManipulationTreeEntry>> byTendency = new java.util.EnumMap<>(EnumBloodTendency.class);
+        Map<EnumBloodTemper, List<ManipulationTreeEntry>> byTemper = new java.util.EnumMap<>(EnumBloodTemper.class);
         List<ManipulationTreeEntry> fallbackEntries = new ArrayList<>();
 
         for (ManipulationTreeEntry entry : ManipulationTreeInit.ENTRIES) {
             BloodManipulation manip = entry.resolve();
-            EnumBloodTendency tendency = manip != null ? manip.getTend() : null;
-            if (tendency == null) {
+            EnumBloodTemper temper = manip != null ? manip.getTend() : null;
+            if (temper == null) {
                 fallbackEntries.add(entry);
                 continue;
             }
-            byTendency.computeIfAbsent(tendency, k -> new ArrayList<>()).add(entry);
+            byTemper.computeIfAbsent(temper, k -> new ArrayList<>()).add(entry);
         }
 
         Map<ManipulationTreeEntry, int[]> rawPositions = new HashMap<>();
         int maxClusterW = 0;
         int maxClusterH = 0;
-        int tendencyCount = 0;
-        Map<EnumBloodTendency, int[]> boundsByTendency = new java.util.EnumMap<>(EnumBloodTendency.class);
+        int temperCount = 0;
+        Map<EnumBloodTemper, int[]> boundsByTemper = new java.util.EnumMap<>(EnumBloodTemper.class);
 
-        for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-            List<ManipulationTreeEntry> group = byTendency.getOrDefault(tend, List.of());
+        for (EnumBloodTemper tend : EnumBloodTemper.values()) {
+            List<ManipulationTreeEntry> group = byTemper.getOrDefault(tend, List.of());
             if (group.isEmpty()) continue;
-            tendencyCount++;
+            temperCount++;
             int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
             int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
             for (ManipulationTreeEntry entry : group) {
@@ -152,12 +152,12 @@ public class ManipulationsTabController implements IProgressTab {
                 maxX = Math.max(maxX, entry.getX());
                 maxY = Math.max(maxY, entry.getY());
             }
-            boundsByTendency.put(tend, new int[]{minX, maxX, minY, maxY});
+            boundsByTemper.put(tend, new int[]{minX, maxX, minY, maxY});
             maxClusterW = Math.max(maxClusterW, maxX - minX + NODE_SIZE);
             maxClusterH = Math.max(maxClusterH, maxY - minY + NODE_SIZE);
         }
 
-        if (tendencyCount == 0) {
+        if (temperCount == 0) {
             for (ManipulationTreeEntry entry : ManipulationTreeInit.ENTRIES) {
                 int x = entry.getX();
                 int y = entry.getY();
@@ -169,13 +169,13 @@ public class ManipulationsTabController implements IProgressTab {
         }
 
         List<Double> localRadialOffsets = new ArrayList<>();
-        for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-            List<ManipulationTreeEntry> group = byTendency.getOrDefault(tendency, List.of());
+        for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+            List<ManipulationTreeEntry> group = byTemper.getOrDefault(temper, List.of());
             if (group.isEmpty()) continue;
-            int[] bounds = boundsByTendency.get(tendency);
+            int[] bounds = boundsByTemper.get(temper);
             float clusterCenterX = (bounds[0] + bounds[1]) * 0.5f;
             float clusterCenterY = (bounds[2] + bounds[3]) * 0.5f;
-            double angle = Math.toRadians(-90f + tendency.ordinal() * 45f);
+            double angle = Math.toRadians(-90f + temper.ordinal() * 45f);
             double directionX = Math.cos(angle);
             double directionY = Math.sin(angle);
             for (ManipulationTreeEntry entry : group) {
@@ -188,10 +188,10 @@ public class ManipulationsTabController implements IProgressTab {
         float centerX = padding + clusterHalf + radius;
         float centerY = padding + clusterHalf + radius;
 
-        for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-            List<ManipulationTreeEntry> group = byTendency.getOrDefault(tend, List.of());
+        for (EnumBloodTemper tend : EnumBloodTemper.values()) {
+            List<ManipulationTreeEntry> group = byTemper.getOrDefault(tend, List.of());
             if (group.isEmpty()) continue;
-            int[] b = boundsByTendency.get(tend);
+            int[] b = boundsByTemper.get(tend);
             float clusterCenterX = (b[0] + b[1]) * 0.5f;
             float clusterCenterY = (b[2] + b[3]) * 0.5f;
             double angle = Math.toRadians(-90f + tend.ordinal() * 45f);
@@ -212,33 +212,33 @@ public class ManipulationsTabController implements IProgressTab {
             }
         }
 
-        Map<EnumBloodTendency, Integer> outerRadiusByTendency = new EnumMap<>(EnumBloodTendency.class);
-        for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-            double angle = Math.toRadians(-90f + tendency.ordinal() * 45f);
+        Map<EnumBloodTemper, Integer> outerRadiusByTemper = new EnumMap<>(EnumBloodTemper.class);
+        for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+            double angle = Math.toRadians(-90f + temper.ordinal() * 45f);
             double directionX = Math.cos(angle);
             double directionY = Math.sin(angle);
             int outerRadius = radius;
-            for (ManipulationTreeEntry entry : byTendency.getOrDefault(tendency, List.of())) {
+            for (ManipulationTreeEntry entry : byTemper.getOrDefault(temper, List.of())) {
                 int[] pos = rawPositions.get(entry);
                 if (pos == null) continue;
                 int projection = (int) Math.ceil((pos[0] - centerX) * directionX
                         + (pos[1] - centerY) * directionY) + NODE_SIZE / 2;
                 outerRadius = Math.max(outerRadius, projection);
             }
-            outerRadiusByTendency.put(tendency, outerRadius);
+            outerRadiusByTemper.put(temper, outerRadius);
         }
 
-        List<TendencyScarLayout.Node> scarNodes = scarState.entries.stream()
+        List<TemperScarLayout.Node> scarNodes = scarState.entries.stream()
                 .map(entry -> {
                     ScarTreeLayout.Point authored = scarState.positions.get(entry.id().toString());
-                    return new TendencyScarLayout.Node(entry.id().toString(), entry.tendency(),
+                    return new TemperScarLayout.Node(entry.id().toString(), entry.temper(),
                             entry.tier(), entry.sideBranch(),
                             authored != null ? authored.x() : null,
                             authored != null ? authored.y() : null);
                 })
                 .toList();
-        Map<String, TendencyScarLayout.Point> rawScarPositions = TendencyScarLayout.arrange(
-                Math.round(centerX), Math.round(centerY), outerRadiusByTendency, scarNodes);
+        Map<String, TemperScarLayout.Point> rawScarPositions = TemperScarLayout.arrange(
+                Math.round(centerX), Math.round(centerY), outerRadiusByTemper, scarNodes);
 
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
@@ -248,7 +248,7 @@ public class ManipulationsTabController implements IProgressTab {
             maxX = Math.max(maxX, pos[0]);
             maxY = Math.max(maxY, pos[1]);
         }
-        for (TendencyScarLayout.Point point : rawScarPositions.values()) {
+        for (TemperScarLayout.Point point : rawScarPositions.values()) {
             minX = Math.min(minX, point.x());
             minY = Math.min(minY, point.y());
             maxX = Math.max(maxX, point.x());
@@ -262,7 +262,7 @@ public class ManipulationsTabController implements IProgressTab {
         }
         scarState.positions.clear();
         for (var entry : rawScarPositions.entrySet()) {
-            TendencyScarLayout.Point point = entry.getValue();
+            TemperScarLayout.Point point = entry.getValue();
             scarState.positions.put(entry.getKey(),
                     new ScarTreeLayout.Point(point.x() + offsetX, point.y() + offsetY));
         }
@@ -334,7 +334,7 @@ public class ManipulationsTabController implements IProgressTab {
         scarTraceCache.rebuildIfNeeded(visibleScarTraceNodes(), contentW, contentH,
                 manipRingCenterX, manipRingCenterY);
         scarTraceCache.render(gfx, ctx, panZoom);
-        drawManipTendencyStar(gfx, ctx);
+        drawManipTemperStar(gfx, ctx);
 		drawManipNodes(gfx, ctx, mouseX, mouseY);
         ScarsTabView.drawNodes(gfx, ctx, scarState, panZoom, playerDegree, familyFilter.selected());
         FamilyFilterControlView.draw(gfx, ctx, familyLabel(), 0xFFCC8833, mouseX, mouseY);
@@ -380,17 +380,17 @@ public class ManipulationsTabController implements IProgressTab {
         refreshScarKnowledge();
     }
 
-    private List<TendencyTraceNode> visibleScarTraceNodes() {
+    private List<TemperTraceNode> visibleScarTraceNodes() {
         Map<String, List<String>> parents = new HashMap<>();
         for (ScarTreeLayout.Edge edge : scarState.edges) {
             parents.computeIfAbsent(edge.toId(), ignored -> new ArrayList<>()).add(edge.fromId());
         }
-        List<TendencyTraceNode> nodes = new ArrayList<>();
+        List<TemperTraceNode> nodes = new ArrayList<>();
         for (ScarTreeEntry entry : scarState.entries) {
-            if (!familyFilter.includes(entry.tendency())) continue;
+            if (!familyFilter.includes(entry.temper())) continue;
             ScarTreeLayout.Point point = scarState.positions.get(entry.id().toString());
             if (point == null) continue;
-            nodes.add(new TendencyTraceNode(entry.id().toString(), entry.tendency(), point.x(), point.y(),
+            nodes.add(new TemperTraceNode(entry.id().toString(), entry.temper(), point.x(), point.y(),
                     parents.getOrDefault(entry.id().toString(), List.of()),
                     scarState.knownScarIds.contains(entry.id()),
                     ScarsTabController.isTierLocked(entry.tier(), playerDegree)));
@@ -398,8 +398,8 @@ public class ManipulationsTabController implements IProgressTab {
         return nodes;
     }
 
-    private void drawManipTendencyStar(GuiGraphics gfx, ProgressScreenContext ctx) {
-        TendencyStarRenderer.draw(gfx, ctx, panZoom, manipRingCenterX, manipRingCenterY);
+    private void drawManipTemperStar(GuiGraphics gfx, ProgressScreenContext ctx) {
+        TemperStarRenderer.draw(gfx, ctx, panZoom, manipRingCenterX, manipRingCenterY);
     }
 	private float animTime = 0f;
 
@@ -429,7 +429,7 @@ public class ManipulationsTabController implements IProgressTab {
                 tendB = (int)pc.getBlue();
             }
 
-            int tendencyColor = 0xFF000000 | (tendR << 16) | (tendG << 8) | tendB;
+            int temperColor = 0xFF000000 | (tendR << 16) | (tendG << 8) | tendB;
             int borderColor = manipulationBorderColor(entry, manip);
             if (known && !rankLocked) {
                 float pulse = 0.5f + 0.5f * Mth.sin(time * 2f + entry.getManipName().hashCode() * 0.1f);
@@ -479,7 +479,7 @@ public class ManipulationsTabController implements IProgressTab {
                 }
 
 				if (known) drawMasteryPips(gfx, nx, ny, hn, masteryLevel(entry.getManipName()),
-						borderColor != 0 ? borderColor : tendencyColor);
+						borderColor != 0 ? borderColor : temperColor);
             }
         }
 		updateHoveredFamily(ctx, mouseX, mouseY);
@@ -752,18 +752,18 @@ public class ManipulationsTabController implements IProgressTab {
                     		manip.getRankName()).withStyle(s -> s.withColor(0x888888)));
                     ParticleColor pc = manip.getTend().getColor();
                     int tendCol = (int)pc.getRed() << 16 | (int)pc.getGreen() << 8 | (int)pc.getBlue();
-                    Component tendTipName = BloodManipulation.tendencyName(manip.getTend());
+                    Component tendTipName = BloodManipulation.temperName(manip.getTend());
                     double alignReq = manip.getAlignLevel();
                     MutableComponent tendTipText = alignReq > 0
                             ? Component.translatable("screen.hemomancy.manipulations_tab_controller.casting_alignment", tendTipName, (int)alignReq)
-                            : Component.translatable("screen.hemomancy.manipulations_tab_controller.tendency", tendTipName);
+                            : Component.translatable("screen.hemomancy.manipulations_tab_controller.temper", tendTipName);
                     tip.add(tendTipText.withStyle(s -> s.withColor(tendCol)));
-                    EnumBloodTendency secondaryTend = manip.getSecondaryTend();
+                    EnumBloodTemper secondaryTend = manip.getSecondaryTend();
                     if (secondaryTend != null) {
                         ParticleColor secPc = secondaryTend.getColor();
                         int secCol = (int)secPc.getRed() << 16 | (int)secPc.getGreen() << 8 | (int)secPc.getBlue();
                         tip.add(Component.translatable("screen.hemomancy.manipulations_tab_controller.secondary",
-                        		BloodManipulation.tendencyName(secondaryTend)).withStyle(s -> s.withColor(secCol)));
+                        		BloodManipulation.temperName(secondaryTend)).withStyle(s -> s.withColor(secCol)));
                     }
                 }
 
@@ -962,28 +962,28 @@ public class ManipulationsTabController implements IProgressTab {
     }
 
     private List<ManipStatCell> manipStatCells(BloodManipulation manip, int tendCol) {
-        String tendName = BloodManipulation.tendencyName(manip.getTend()).getString();
+        String tendName = BloodManipulation.temperName(manip.getTend()).getString();
         double alignReq = manip.getAlignLevel();
         String tendText = alignReq > 0 ? tendName + " (" + (int)alignReq + ")" : tendName;
-        tendText += secondaryTendencyText(manip);
-        EnumBloodTendency secondaryTend = manip.getSecondaryTend();
-        int secondaryColor = secondaryTend != null ? tendencyColor(secondaryTend) : tendCol;
+        tendText += secondaryTemperText(manip);
+        EnumBloodTemper secondaryTend = manip.getSecondaryTend();
+        int secondaryColor = secondaryTend != null ? temperColor(secondaryTend) : tendCol;
         return List.of(
                 new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_type"), manip.getTypeName().getString(), 0xFFCCCCCC, 0xFFCCCCCC, false),
                 new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_rank"), manip.getRankName().getString(), 0xFFCCCCCC, 0xFFCCCCCC, false),
-                new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_tendency"), tendText, tendCol, secondaryColor, secondaryTend != null),
+                new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_temper"), tendText, tendCol, secondaryColor, secondaryTend != null),
                 new ManipStatCell(manip.getBaseCostLabel(), manip.getBaseCostText().getString(), 0xFFAA4444, 0xFFAA4444, false),
                 new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_section"), BloodManipulation.sectionName(manip.getSection()).getString(), 0xFFAAAAAA, 0xFFAAAAAA, false),
                 new ManipStatCell(Component.translatable("screen.hemomancy.manipulations_tab_controller.stat_base_cooldown"), cooldownText(manip.getCooldownTicks()), 0xFFAAAA88, 0xFFAAAA88, false)
         );
     }
 
-    private static String secondaryTendencyText(BloodManipulation manip) {
-        EnumBloodTendency secondaryTend = manip.getSecondaryTend();
+    private static String secondaryTemperText(BloodManipulation manip) {
+        EnumBloodTemper secondaryTend = manip.getSecondaryTend();
         if (secondaryTend == null) {
             return "";
         }
-        return " / " + BloodManipulation.tendencyName(secondaryTend).getString();
+        return " / " + BloodManipulation.temperName(secondaryTend).getString();
     }
 
     private void drawManipStatCell(GuiGraphics gfx, ProgressScreenContext ctx, ManipStatCell cell,
@@ -993,15 +993,15 @@ public class ManipulationsTabController implements IProgressTab {
 		HarbingerChromeRenderer.drawFrame(gfx, x, y, width, MANIP_STAT_CELL_H, 0xFF884444,
 				HarbingerChromeRenderer.State.IDLE);
         gfx.drawString(ctx.font(), cell.label(), x + 4, y + 2, 0xFF888888, false);
-        if (cell.mixedTendency()) {
-            drawMixedTendencyValue(gfx, ctx, cell.value(), x + 4, y + 10, width - 8, cell.valueColor(), cell.secondaryValueColor());
+        if (cell.mixedTemper()) {
+            drawMixedTemperValue(gfx, ctx, cell.value(), x + 4, y + 10, width - 8, cell.valueColor(), cell.secondaryValueColor());
             return;
         }
         String value = ScreenDrawUtils.truncateText(ctx.font(), cell.value(), width - 8);
         gfx.drawString(ctx.font(), value, x + 4, y + 10, cell.valueColor(), false);
     }
 
-    private void drawMixedTendencyValue(GuiGraphics gfx, ProgressScreenContext ctx, String value,
+    private void drawMixedTemperValue(GuiGraphics gfx, ProgressScreenContext ctx, String value,
                                         int x, int y, int width, int color, int secondaryColor) {
         String[] parts = value.split(" / ", 2);
         String primary = ScreenDrawUtils.truncateText(ctx.font(), parts[0], width);
@@ -1012,8 +1012,8 @@ public class ManipulationsTabController implements IProgressTab {
         }
     }
 
-    private static int tendencyColor(EnumBloodTendency tendency) {
-        ParticleColor pc = tendency.getColor();
+    private static int temperColor(EnumBloodTemper temper) {
+        ParticleColor pc = temper.getColor();
         return 0xFF000000 | ((int) pc.getRed() << 16) | ((int) pc.getGreen() << 8) | (int) pc.getBlue();
     }
 
@@ -1025,7 +1025,7 @@ public class ManipulationsTabController implements IProgressTab {
                 String.format(Locale.ROOT, "%.1f", cooldownTicks / 20.0F)).getString();
     }
 
-    private record ManipStatCell(Component label, String value, int valueColor, int secondaryValueColor, boolean mixedTendency) {
+    private record ManipStatCell(Component label, String value, int valueColor, int secondaryValueColor, boolean mixedTemper) {
     }
 
     private ManipulationTreeEntry manipNodeUnder(ProgressScreenContext ctx, double mx, double my) {
@@ -1052,7 +1052,7 @@ public class ManipulationsTabController implements IProgressTab {
 				selectedFormName = "";
 			}
             ScarTreeEntry selectedScar = scarState.selectedEntry();
-            if (selectedScar != null && !familyFilter.includes(selectedScar.tendency())) scarState.closeDetails();
+            if (selectedScar != null && !familyFilter.includes(selectedScar.temper())) scarState.closeDetails();
             return true;
         }
         if (btn != 0) return false;
@@ -1116,8 +1116,8 @@ public class ManipulationsTabController implements IProgressTab {
     }
 
     private String familyLabel() {
-        EnumBloodTendency selected = familyFilter.selected();
+        EnumBloodTemper selected = familyFilter.selected();
         return FamilyFilterLabels.display(selected == null ? null
-                : BloodManipulation.tendencyName(selected).getString());
+                : BloodManipulation.temperName(selected).getString());
     }
 }

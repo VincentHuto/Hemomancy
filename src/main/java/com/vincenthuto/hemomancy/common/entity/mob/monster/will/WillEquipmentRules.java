@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -9,7 +9,7 @@ public final class WillEquipmentRules {
 	private WillEquipmentRules() {
 	}
 
-	public static String weaponId(WillOrigin origin, EnumBloodTendency school, int tier) {
+	public static String weaponId(WillOrigin origin, EnumBloodTemper school, int tier) {
 		if (origin == WillOrigin.BROKEN && tier <= 1) {
 			return "living_staff";
 		}
@@ -25,11 +25,11 @@ public final class WillEquipmentRules {
 		};
 	}
 
-	public static ItemStack createWeaponStack(WillOrigin origin, EnumBloodTendency school, int tier) {
+	public static ItemStack createWeaponStack(WillOrigin origin, EnumBloodTemper school, int tier) {
 		return new ItemStack(weaponItem(origin, school, tier));
 	}
 
-	public static Item weaponItem(WillOrigin origin, EnumBloodTendency school, int tier) {
+	public static Item weaponItem(WillOrigin origin, EnumBloodTemper school, int tier) {
 		return switch (weaponId(origin, school, tier)) {
 		case "living_blade" -> ItemInit.living_blade.get();
 		case "living_torch" -> ItemInit.living_torch.get();

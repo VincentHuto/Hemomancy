@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.HematicFortificationRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
@@ -77,10 +77,10 @@ public final class ThelemicMemoryActivationService {
             VeinMasonAssignments.onThelemicStrain(player, before,
                     vascular.getBloodFlowBySection(memory.section()));
         }
-        var tendency = HemoCapabilityAccess.getBloodTendency(player);
-        tendency.addTendencyAlignment(memory.primaryTendency(), .075F);
-        tendency.addTendencyAlignment(memory.secondaryTendency(), .025F);
-        BloodTendencyEvents.syncTendency(player, tendency);
+        var temper = HemoCapabilityAccess.getBloodTemperament(player);
+        temper.addTemperAlignment(memory.primaryTemper(), .075F);
+        temper.addTemperAlignment(memory.secondaryTemper(), .025F);
+        BloodTemperamentEvents.syncTemperament(player, temper);
         state.setCooldownUntil(memory, now + memory.cooldownTicks());
         int activeTicks = payment.overexerted() ? overexertedActiveTicks : normalActiveTicks;
         if (activeTicks > 0) state.setActiveUntil(memory, now + activeTicks);
@@ -98,7 +98,7 @@ public final class ThelemicMemoryActivationService {
     private static ThelemicMemoryResonanceRules.Resonance resonance(ServerPlayer player, ThelemicMemory memory) {
         ItemStack stack = HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
         if (stack.getItem() instanceof IMorphling morphling) {
-            return ThelemicMemoryResonanceRules.resolve(memory, morphling.getPreferredTendency(), morphling.getSecondaryTendency(), isSignature(memory, stack));
+            return ThelemicMemoryResonanceRules.resolve(memory, morphling.getPreferredTemper(), morphling.getSecondaryTemper(), isSignature(memory, stack));
         }
         return ThelemicMemoryResonanceRules.Resonance.NONE;
     }

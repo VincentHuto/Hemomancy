@@ -363,8 +363,8 @@
   "about": "asking the Vicar to tell about the Hematic Order",
   "tone": "curious"
  },
- "hemomancy.dialogue.vicar.option.tell_me_about_tendencies": {
-  "about": "asking the Vicar to tell about blood tendencies",
+ "hemomancy.dialogue.vicar.option.tell_me_about_tempers": {
+  "about": "asking the Vicar to tell about blood tempers",
   "tone": "curious"
  },
  "hemomancy.dialogue.vicar.option.tell_me_about_the_castles": {
@@ -1112,7 +1112,7 @@
   "tone": "curious, measured"
  },
  "hemomancy.vicar.item_inquiry.enchanted_book.line2": {
-  "about": "the Vicar noting arcane inscription and memory weaving attack the same problem from opposite sides, and that higher-Degree practitioners have recorded unfinished links between enchantment schools and tendency affinities",
+  "about": "the Vicar noting arcane inscription and memory weaving attack the same problem from opposite sides, and that higher-Degree practitioners have recorded unfinished links between enchantment schools and temper affinities",
   "tone": "scholarly, tentative"
  },
  "hemomancy.vicar.item_inquiry.hallowed_residuum.line1": {
@@ -1284,7 +1284,7 @@
   "tone": "instructive, plain"
  },
  "hemomancy.vicar.item_inquiry.scrying_podium.line1": {
-  "about": "the Vicar explaining the Scrying Podium reads the practitioner's blood and shows the tendency distribution of dominant, latent and current balance",
+  "about": "the Vicar explaining the Scrying Podium reads the practitioner's blood and shows the temperament of dominant, latent and current balance",
   "tone": "instructive, plain"
  },
  "hemomancy.vicar.item_inquiry.scrying_podium.line2": {
@@ -1356,7 +1356,7 @@
   "tone": "urgent, severe"
  },
  "hemomancy.vicar.purifying.power_warning": {
-  "about": "the Vicar telling the player who goes on anyway that their hemomantic strength fades daily, manipulations dulling and tendencies quieting, that the Order does not reach out twice, and to return while they still can",
+  "about": "the Vicar telling the player who goes on anyway that their hemomantic strength fades daily, manipulations dulling and tempers quieting, that the Order does not reach out twice, and to return while they still can",
   "tone": "cold, merciless"
  },
  "hemomancy.vicar.sanctified.degree_hint": {
@@ -1392,7 +1392,7 @@
   "tone": "instructive, formal"
  },
  "hemomancy.vicar.votary.line1": {
-  "about": "the Vicar greeting a Votary of the Hematic Covenant, noting their tendencies crystallize and their blood knows what it wants, and asking whether they can tell what it asks for",
+  "about": "the Vicar greeting a Votary of the Hematic Covenant, noting their tempers crystallize and their blood knows what it wants, and asking whether they can tell what it asks for",
   "tone": "thoughtful, probing"
  },
  "hemomancy.vicar.votary.rooted_vein.floor": {
@@ -1411,8 +1411,8 @@
   "about": "the Vicar instructing the player to use the Living Staff on the Focus, feed the four anchors with Blood Projection, project into the daemon to seal the rite, stay inside the boundary, noting the rite answers only by degree and active blood",
   "tone": "instructive, precise"
  },
- "hemomancy.vicar.votary.tendency_lore": {
-  "about": "the Vicar listing the eight blood tendencies (Animus, Flammeus, Ductilis, Lux, Mortem, Congeatio, Ferric, Tenebris) and their common enzyme names (Vivacious, Fervent, Neurotic, Incandescent, Ruinous, Frigid, Ferric, Umbral)",
+ "hemomancy.vicar.votary.temper_lore": {
+  "about": "the Vicar listing the eight blood tempers (Animus, Flammeus, Ductilis, Lux, Mortem, Congeatio, Ferric, Tenebris) and their common enzyme names (Vivacious, Fervent, Neurotic, Incandescent, Ruinous, Frigid, Ferric, Umbral)",
   "tone": "scholarly, brisk"
  },
  "hemomancy.vicar.voyager_introduction.bearing": {

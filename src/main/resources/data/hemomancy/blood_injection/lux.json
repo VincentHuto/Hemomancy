@@ -1,5 +1,5 @@
 {
-  "tendency": "LUX",
+  "temper": "LUX",
   "benefits": [
     {
       "effect": "minecraft:night_vision"

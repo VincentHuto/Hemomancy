@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.player.tracks;
 
 import com.vincenthuto.hemomancy.client.player.*;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastPhase;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastStyle;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CastingTracksTest {
     @Test void everySchoolAndRankResolvesBothViews() {
-        for(var school:EnumBloodTendency.values())for(var rank:EnumManipulationRank.values()) {
+        for(var school:EnumBloodTemper.values())for(var rank:EnumManipulationRank.values()) {
             var t=CastingTracks.base(school,rank);
             assertNotNull(t,school+" "+rank);
             assertNotEquals(CastingPose.ZERO,sample(t,CastPhase.HOLD,8,0,false),school+" "+rank);
@@ -25,7 +25,7 @@ class CastingTracksTest {
         }
     }
     @Test void everyTrackIsContinuousAndReturnsToRest() {
-        for(var school:EnumBloodTendency.values())for(var rank:EnumManipulationRank.values()) {
+        for(var school:EnumBloodTemper.values())for(var rank:EnumManipulationRank.values()) {
             var t=CastingTracks.base(school,rank); String id=school+" "+rank;
             int opening=phaseDuration(t,CastPhase.OPENING,false),release=phaseDuration(t,CastPhase.RELEASE,false);
             assertEquals(sample(t,CastPhase.OPENING,opening,0,false),sample(t,CastPhase.HOLD,0,0,false),id+" opening->hold");
@@ -46,7 +46,7 @@ class CastingTracksTest {
         }
     }
     @Test void mirroringExchangesLimbsAndReversesTwist() {
-        var pose=sample(CastingTracks.base(EnumBloodTendency.TENEBRIS,EnumManipulationRank.SUMMA),CastPhase.RELEASE,2,0,false);
+        var pose=sample(CastingTracks.base(EnumBloodTemper.TENEBRIS,EnumManipulationRank.SUMMA),CastPhase.RELEASE,2,0,false);
         assertEquals(pose,pose.mirror().mirror());
         assertEquals(-pose.body().y(),pose.mirror().body().y());
         assertEquals(pose.rightArm().x(),pose.mirror().leftArm().x());
@@ -54,7 +54,7 @@ class CastingTracksTest {
 
     private static final CastPhase[] PHASES={CastPhase.OPENING,CastPhase.HOLD,CastPhase.RELEASE,CastPhase.RECOVERY,CastPhase.CANCEL};
     @Test void humilisMovesOnlyTheMainArmAndKeepsTorsoStill() {
-        for(var school:EnumBloodTendency.values()) {
+        for(var school:EnumBloodTemper.values()) {
             var t=CastingTracks.base(school,EnumManipulationRank.HUMILIS);
             for(var phase:PHASES)for(float tick=0;tick<=40;tick+=.5F) {
                 var p=sample(t,phase,tick,1,false); String id=school+" "+phase+" "+tick;
@@ -65,7 +65,7 @@ class CastingTracksTest {
         }
     }
     @Test void perfectusHoldsAreStillFor240Ticks() {
-        for(var school:EnumBloodTendency.values()) {
+        for(var school:EnumBloodTemper.values()) {
             var t=CastingTracks.base(school,EnumManipulationRank.PERFECTUS);
             var still=sample(t,CastPhase.HOLD,0,1,false); var stillFirst=sampleFirst(t,CastPhase.HOLD,0,1,false);
             for(int tick=0;tick<=240;tick++) {
@@ -75,7 +75,7 @@ class CastingTracksTest {
         }
     }
     @Test void everyBaseRespectsRotationPitchAndHandBounds() {
-        for(var school:EnumBloodTendency.values())for(var rank:EnumManipulationRank.values()) {
+        for(var school:EnumBloodTemper.values())for(var rank:EnumManipulationRank.values()) {
             var t=CastingTracks.base(school,rank);
             for(var phase:PHASES)for(float tick=0;tick<=40;tick+=.5F)for(float c:new float[]{0,.5F,1}) {
                 var p=sample(t,phase,tick,c,false); String id=school+" "+rank+" "+phase+" "+tick;
@@ -91,7 +91,7 @@ class CastingTracksTest {
         }
     }
     @Test void holdHandsStayOutOfTheCrosshairZoneInEveryBase() {
-        for(var school:EnumBloodTendency.values())for(var rank:EnumManipulationRank.values()) {
+        for(var school:EnumBloodTemper.values())for(var rank:EnumManipulationRank.values()) {
             var t=CastingTracks.base(school,rank);
             for(int tick=0;tick<=96;tick++) {
                 var h=sampleFirst(t,CastPhase.HOLD,tick,1,false);
@@ -116,7 +116,7 @@ class CastingTracksTest {
         }
     }
     @Test void holdHandsStayOnScreenInEveryBase() {
-        for(var school:EnumBloodTendency.values())for(var rank:EnumManipulationRank.values())assertHoldHandsOnScreen(CastingTracks.base(school,rank),school+" "+rank,96);
+        for(var school:EnumBloodTemper.values())for(var rank:EnumManipulationRank.values())assertHoldHandsOnScreen(CastingTracks.base(school,rank),school+" "+rank,96);
     }
     @Test void holdHandsStayOnScreenInEveryBespokeStyle() {
         for(var style:CastStyle.values())if(style!=CastStyle.SCHOOL)assertHoldHandsOnScreen(CastingTracks.style(style),style.name(),96);
@@ -137,11 +137,11 @@ class CastingTracksTest {
     }
     @Test void presentationChangesOnEveryTrackOrAimInputButNotOnPlaybackFields() {
         var id=UUID.randomUUID();
-        var base=CastingAnimationPacket.harbinger(1,id,"review",5,EnumBloodTendency.LUX,null,
+        var base=CastingAnimationPacket.harbinger(1,id,"review",5,EnumBloodTemper.LUX,null,
                 EnumManipulationRank.SUMMA,CastPurpose.AREA,CastStyle.SCHOOL,
                 CastPhase.OPENING,0,0,0,0,InteractionHand.MAIN_HAND);
         // The 2026-10-19 fixture reused one id across schools: only the manipulation was compared, so the track went stale.
-        assertTrue(CastingTracks.presentationChanged(base,with(base,"review",EnumBloodTendency.ANIMUS,base.rank(),base.purpose(),base.style())),"school");
+        assertTrue(CastingTracks.presentationChanged(base,with(base,"review",EnumBloodTemper.ANIMUS,base.rank(),base.purpose(),base.style())),"school");
         assertTrue(CastingTracks.presentationChanged(base,with(base,"review",base.school(),EnumManipulationRank.PERFECTUS,base.purpose(),base.style())),"rank");
         assertTrue(CastingTracks.presentationChanged(base,with(base,"review",base.school(),base.rank(),base.purpose(),CastStyle.WHITE_VERDICT)),"style");
         assertTrue(CastingTracks.presentationChanged(base,with(base,"review",base.school(),base.rank(),
@@ -160,13 +160,13 @@ class CastingTracksTest {
                 StillArtEnding.values()[1],CastPhase.RELEASE,0,0,InteractionHand.MAIN_HAND);
         assertTrue(CastingTracks.presentationChanged(still,ending),"ending");
         // Phase, sequence, clock and charge updates keep the resolved track.
-        var later=CastingAnimationPacket.harbinger(1,id,"review",6,EnumBloodTendency.LUX,null,
+        var later=CastingAnimationPacket.harbinger(1,id,"review",6,EnumBloodTemper.LUX,null,
                 EnumManipulationRank.SUMMA,base.purpose(),CastStyle.SCHOOL,CastPhase.HOLD,4,9,20,40,InteractionHand.OFF_HAND);
         assertFalse(CastingTracks.presentationChanged(base,later),"playback fields only");
         assertFalse(CastingTracks.presentationChanged(base,base),"same packet");
     }
     private static CastingAnimationPacket with(CastingAnimationPacket p,
-            String manipulation,EnumBloodTendency school,EnumManipulationRank rank,com.vincenthuto.hemomancy.common.manipulation.animation.CastPurpose purpose,CastStyle style) {
+            String manipulation,EnumBloodTemper school,EnumManipulationRank rank,com.vincenthuto.hemomancy.common.manipulation.animation.CastPurpose purpose,CastStyle style) {
         return CastingAnimationPacket.harbinger(p.entityId(),p.playerId(),manipulation,p.sequence(),school,p.secondary(),
                 rank,purpose,style,p.phase(),p.started(),p.updated(),p.held(),p.required(),p.hand());
     }

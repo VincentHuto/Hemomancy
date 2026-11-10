@@ -27,7 +27,7 @@ public class VesperTheEveningStarRenderer
 		this.addLayer(new VesperAwakeningGlowLayer(this));
         this.addLayer(new VesperEveningStarLinesLayer(this));
 		this.addLayer(new VesperShamedDissolutionLayer(this));
-		this.addLayer(new VesperTendencySigilLayer(this));
+		this.addLayer(new VesperTemperSigilLayer(this));
 		this.addLayer(new VesperLivingWeaponLayer(this));
     }
 

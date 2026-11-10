@@ -15,7 +15,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemo
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummons;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperament;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
@@ -89,9 +89,9 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("will_ambush_state",
                     () -> AttachmentType.serializable(WillAmbushState::new).copyOnDeath().build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodTendency>> BLOOD_TENDENCY =
-            ATTACHMENT_TYPES.register("blood_tendency",
-                    () -> AttachmentType.serializable(BloodTendency::new).copyOnDeath().build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodTemperament>> BLOOD_TEMPERAMENT =
+            ATTACHMENT_TYPES.register("blood_temperament",
+                    () -> AttachmentType.serializable(BloodTemperament::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<VascularSystem>> VASCULAR_SYSTEM =
             ATTACHMENT_TYPES.register("vascular_system",
@@ -202,9 +202,9 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("block_blood_volume",
                     () -> AttachmentType.serializable(BloodVolume::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodTendency>> BLOCK_BLOOD_TENDENCY =
-            ATTACHMENT_TYPES.register("block_blood_tendency",
-                    () -> AttachmentType.serializable(BloodTendency::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodTemperament>> BLOCK_BLOOD_TEMPERAMENT =
+            ATTACHMENT_TYPES.register("block_blood_temperament",
+                    () -> AttachmentType.serializable(BloodTemperament::new).build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<WhiteHumorVolume>> BLOCK_WHITE_HUMOR_VOLUME =
             ATTACHMENT_TYPES.register("block_white_humor_volume",

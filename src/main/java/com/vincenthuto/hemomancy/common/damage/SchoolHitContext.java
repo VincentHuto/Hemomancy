@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.damage;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -8,8 +8,8 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 /** A launch-time identity, independent of the weapon subsequently held by the owner. */
-public record SchoolHitContext(ResourceLocation ability, EnumBloodTendency primary,
-        @Nullable EnumBloodTendency secondary, @Nullable UUID owner, @Nullable UUID direct,
+public record SchoolHitContext(ResourceLocation ability, EnumBloodTemper primary,
+        @Nullable EnumBloodTemper secondary, @Nullable UUID owner, @Nullable UUID direct,
         UUID rootAttack, Kind kind, Role role, float charge, int duration, int levels) {
     public enum Kind { DIRECT, PERIODIC, REACTION }
     public enum Role { APPLY_STATE, EXPLOIT_STATE, DAMAGE_ONLY }
@@ -22,8 +22,8 @@ public record SchoolHitContext(ResourceLocation ability, EnumBloodTendency prima
         levels = Math.clamp(levels, 1, 3);
     }
 
-    public static SchoolHitContext direct(ResourceLocation ability, EnumBloodTendency primary,
-            @Nullable EnumBloodTendency secondary, @Nullable Entity owner) {
+    public static SchoolHitContext direct(ResourceLocation ability, EnumBloodTemper primary,
+            @Nullable EnumBloodTemper secondary, @Nullable Entity owner) {
         Role role = switch (ability.getPath()) {
             case "blood_aneurysm", "funeral_bell", "vitric_combustion",
                  "prismatic_reproof", "white_verdict" -> Role.EXPLOIT_STATE;
@@ -81,8 +81,8 @@ public record SchoolHitContext(ResourceLocation ability, EnumBloodTendency prima
     public static SchoolHitContext load(CompoundTag tag) {
         try {
             return new SchoolHitContext(ResourceLocation.parse(tag.getString("ability")),
-                    EnumBloodTendency.valueOf(tag.getString("primary")),
-                    tag.contains("secondary") ? EnumBloodTendency.valueOf(tag.getString("secondary")) : null,
+                    EnumBloodTemper.valueOf(tag.getString("primary")),
+                    tag.contains("secondary") ? EnumBloodTemper.valueOf(tag.getString("secondary")) : null,
                     tag.hasUUID("owner") ? tag.getUUID("owner") : null,
                     tag.hasUUID("direct") ? tag.getUUID("direct") : null,
                     tag.getUUID("root"), Kind.valueOf(tag.getString("kind")), Role.valueOf(tag.getString("role")),

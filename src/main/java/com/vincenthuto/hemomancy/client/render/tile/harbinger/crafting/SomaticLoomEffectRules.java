@@ -4,17 +4,17 @@ import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /**
  * Pure timing and allocation maths for the Somatic Loom's ritual effects: which warp threads carry which
- * tendency, how full the pirns and veins stand, and how the ganglion beats. No Minecraft types.
+ * temper, how full the pirns and veins stand, and how the ganglion beats. No Minecraft types.
  */
 public final class SomaticLoomEffectRules {
     private SomaticLoomEffectRules() {
     }
 
     /**
-     * Tendency index per warp thread, or -1 for a bare thread. Required tendencies take contiguous bands in
-     * tendency order, sized by requirement (largest remainder); each keeps at least one thread while threads last.
+     * Temper index per warp thread, or -1 for a bare thread. Required tempers take contiguous bands in
+     * temper order, sized by requirement (largest remainder); each keeps at least one thread while threads last.
      */
-    public static int[] threadTendencies(int[] requirements, int threads) {
+    public static int[] threadTempers(int[] requirements, int threads) {
         int[] out = new int[threads];
         java.util.Arrays.fill(out, -1);
         int total = 0, required = 0;
@@ -113,7 +113,7 @@ public final class SomaticLoomEffectRules {
     }
 
     /**
-     * Glow alpha of a warp thread: faint while its tendency is only asked for, brightening as that tendency's
+     * Glow alpha of a warp thread: faint while its temper is only asked for, brightening as that temper's
      * strands are woven home, guttering below the faint level when the loom holds too little of its enzyme.
      */
     public static float threadGlow(float completed, boolean shortStock, float time, int thread) {

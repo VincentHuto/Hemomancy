@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
-/** O-3: a menu with no slots that only opens a screen (tendency, vascular, scrying, reliquary, structure views). */
+/** O-3: a menu with no slots that only opens a screen (temper, vascular, scrying, reliquary, structure views). */
 public abstract class ViewOnlyMenu extends HemoContainerMenu {
 	protected ViewOnlyMenu(@Nullable MenuType<?> type, int containerId) {
 		super(type, containerId);

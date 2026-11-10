@@ -9,8 +9,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.HarbingerSaintEncounterHooks;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -564,8 +564,8 @@ Component.translatable("message.hemomancy.saint_sarcophagus.state_s", state.getD
 .withStyle(ChatFormatting.GRAY),
 false);
 player.displayClientMessage(
-Component.translatable("message.hemomancy.saint_sarcophagus.aligned_tendencies",
-saint.getPrimaryTendency().name(), saint.getSecondaryTendency().name())
+Component.translatable("message.hemomancy.saint_sarcophagus.aligned_tempers",
+saint.getPrimaryTemper().name(), saint.getSecondaryTemper().name())
 .withStyle(ChatFormatting.DARK_PURPLE),
 false);
 
@@ -674,14 +674,14 @@ public static boolean restoreDormant(Level level, BlockPos pos, BlockState tomb,
 }
 
 private static boolean isPlayerAlignedWithSaint(Player player, EnumSaintType saint) {
-	IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player);
-	if (tendency == null) {
+	IBloodTemperament temper = HemoCapabilityAccess.getBloodTemperament(player);
+	if (temper == null) {
 		return false;
 	}
-	EnumBloodTendency dominant = null;
+	EnumBloodTemper dominant = null;
 	float dominantValue = 0.0F;
-	for (EnumBloodTendency candidate : EnumBloodTendency.values()) {
-		float value = tendency.getAlignmentByTendency(candidate);
+	for (EnumBloodTemper candidate : EnumBloodTemper.values()) {
+		float value = temper.getAlignmentByTemper(candidate);
 		if (value > dominantValue) {
 			dominant = candidate;
 			dominantValue = value;

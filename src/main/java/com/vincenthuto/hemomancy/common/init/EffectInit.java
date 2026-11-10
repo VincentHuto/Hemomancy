@@ -156,7 +156,7 @@ public class EffectInit {
     public static final DeferredHolder<MobEffect, MobEffect> sporitic_resonance = EFFECTS.register("sporitic_resonance",
             () -> new SporiticResonanceEffect(MobEffectCategory.BENEFICIAL, 0x8F3A54));
 
-    // Neurotic Tendency Effect
+    // Neurotic Temper Effect
     public static final DeferredHolder<MobEffect, MobEffect> neural_overload = EFFECTS.register("neural_overload",
             () -> new NeuralOverloadEffect(MobEffectCategory.HARMFUL, 0x7DF9FF)
                     .addAttributeModifier(Attributes.MOVEMENT_SPEED, Hemomancy.rloc("neural_overload_movement_speed"),

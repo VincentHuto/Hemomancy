@@ -5,7 +5,7 @@ import java.util.Optional;
 
 /**
  * Which {@link NpcTradeAppraisals} grader reads a want's stacks, and the {@code appraisal_*} fields it was given
- * (keyed without the prefix: {@code appraisal_tendency} is {@code tendency}).
+ * (keyed without the prefix: {@code appraisal_temper} is {@code temper}).
  */
 public record NpcTradeAppraisal(String grader, Map<String, String> params) {
 	public static final NpcTradeAppraisal NONE = new NpcTradeAppraisal(NpcTradeAppraisals.NONE, Map.of());

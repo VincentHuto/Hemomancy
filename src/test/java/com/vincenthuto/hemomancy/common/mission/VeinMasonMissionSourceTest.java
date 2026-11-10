@@ -16,7 +16,7 @@ class VeinMasonMissionSourceTest {
 	@Test
 	void veinMasonMissionIsWired() throws IOException {
 		anchoriteEntityAndClientWiringExists();
-		anchoriteLessonUsesHighestTendencyPattern();
+		anchoriteLessonUsesHighestTemperPattern();
 		vicarDirectsAdeptPlayersToMasonsRespite();
 		masonsRespiteWorldgenTemplateExists();
 		ledgerTracksVeinMasonAssignment();
@@ -45,7 +45,7 @@ class VeinMasonMissionSourceTest {
 				"\"entity.hemomancy.harbinger_cicatrix_anchorite\": \"Cicatrix Anchorite\"");
 	}
 
-	private static void anchoriteLessonUsesHighestTendencyPattern() throws IOException {
+	private static void anchoriteLessonUsesHighestTemperPattern() throws IOException {
 		String lesson = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/VeinMasonScarLesson.java"));
 		String trees = read(SOURCE_ROOT.resolve(
@@ -55,23 +55,23 @@ class VeinMasonMissionSourceTest {
 				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
 
-		assertContains("lesson maps ANIMUS", lesson, "EnumBloodTendency.ANIMUS, Items.GOLDEN_APPLE, Items.BONE");
-		assertContains("lesson maps FLAMMEUS", lesson, "EnumBloodTendency.FLAMMEUS, Items.BLAZE_POWDER, Items.GLOWSTONE_DUST");
-		assertContains("lesson maps DUCTILIS", lesson, "EnumBloodTendency.DUCTILIS, Items.LEATHER, Items.SLIME_BALL");
-		assertContains("lesson maps LUX", lesson, "EnumBloodTendency.LUX, Items.END_ROD, Items.ENDER_PEARL");
-		assertContains("lesson maps MORTEM", lesson, "EnumBloodTendency.MORTEM, Items.FERMENTED_SPIDER_EYE, Items.WITHER_ROSE");
-		assertContains("lesson maps CONGEATIO", lesson, "EnumBloodTendency.CONGEATIO, Items.PACKED_ICE, Items.BLUE_ICE");
-		assertContains("lesson maps FERRIC", lesson, "EnumBloodTendency.FERRIC, Items.IRON_INGOT, Items.IRON_BLOCK");
-		assertContains("lesson maps TENEBRIS", lesson, "EnumBloodTendency.TENEBRIS, Items.COAL, Items.SMOOTH_QUARTZ");
+		assertContains("lesson maps ANIMUS", lesson, "EnumBloodTemper.ANIMUS, Items.GOLDEN_APPLE, Items.BONE");
+		assertContains("lesson maps FLAMMEUS", lesson, "EnumBloodTemper.FLAMMEUS, Items.BLAZE_POWDER, Items.GLOWSTONE_DUST");
+		assertContains("lesson maps DUCTILIS", lesson, "EnumBloodTemper.DUCTILIS, Items.LEATHER, Items.SLIME_BALL");
+		assertContains("lesson maps LUX", lesson, "EnumBloodTemper.LUX, Items.END_ROD, Items.ENDER_PEARL");
+		assertContains("lesson maps MORTEM", lesson, "EnumBloodTemper.MORTEM, Items.FERMENTED_SPIDER_EYE, Items.WITHER_ROSE");
+		assertContains("lesson maps CONGEATIO", lesson, "EnumBloodTemper.CONGEATIO, Items.PACKED_ICE, Items.BLUE_ICE");
+		assertContains("lesson maps FERRIC", lesson, "EnumBloodTemper.FERRIC, Items.IRON_INGOT, Items.IRON_BLOCK");
+		assertContains("lesson maps TENEBRIS", lesson, "EnumBloodTemper.TENEBRIS, Items.COAL, Items.SMOOTH_QUARTZ");
 		assertContains("lesson creates dynamic pattern stack", lesson, "ItemScarPattern.createTemplatePattern(patternScarId)");
 		assertContains("event handler grants blank scar", eventHandler, "ItemInit.scar_blank.get()");
 		assertContains("event handler grants dynamic scar pattern", eventHandler, "lesson.patternStack()");
 		assertContains("event handler grants knapper when missing", eventHandler, "ItemInit.hematic_iron_knapper.get()");
 		assertContains("event handler grants continuation reward", eventHandler, "handleVeinMasonContinuationReward");
-		assertContains("reward grants second strongest tendency pattern", lesson, "continuationForPlayer");
+		assertContains("reward grants second strongest temper pattern", lesson, "continuationForPlayer");
 		assertContains("reward grants motif paper stack", eventHandler, "ItemInit.runic_motif_paper.get(), 4");
-		assertContains("lesson chooses highest tendency", lesson, "getAlignmentByTendency(candidate)");
-		assertContains("lesson falls back to enum order for ties", lesson, "EnumBloodTendency.values()");
+		assertContains("lesson chooses highest temper", lesson, "getAlignmentByTemper(candidate)");
+		assertContains("lesson falls back to enum order for ties", lesson, "EnumBloodTemper.values()");
 		assertContains("anchorite first lesson event exists", trees, "EVENT_FIRST_LESSON");
 		assertContains("anchorite reward event exists", trees, "EVENT_CONTINUATION_REWARD");
 		assertContains("anchorite checks first lesson advancement", trees, "progress.firstLesson()");

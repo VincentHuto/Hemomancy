@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
@@ -16,7 +16,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
+import com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.EclipseWellManip;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
@@ -430,7 +430,7 @@ public final class ManipulationBalancePass2SchoolBGameTests {
     }
 
     private static float affinity(ServerPlayer p, LivingEntity target, BloodManipulation m) {
-        return TendencyAffinityRules.damageMultiplier(p, target, m.getTend(), m.getSecondaryTend());
+        return TemperAffinityRules.damageMultiplier(p, target, m.getTend(), m.getSecondaryTend());
     }
 
     /** Fixture entities added before their chunk section loads are invisible to area queries; start once it has. */
@@ -473,8 +473,8 @@ public final class ManipulationBalancePass2SchoolBGameTests {
         var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
+        for (var temper : EnumBloodTemper.values())
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper, 100);
         return p;
     }
 }

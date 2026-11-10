@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.projectile;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSickleCombatRules;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TemperWeaponHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
@@ -69,7 +69,7 @@ public final class LivingSickleHookEntity extends ThrowableProjectile {
 				&& !target.isAlliedTo(owner) && owner.canAttack(target)
                 && com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarmFor(owner, target)) {
                 target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileSource(
-                        TendencyWeaponHelper.createWeaponDamageSource(target, owner), this, owner), entityData.get(ATTACK_DAMAGE));
+                        TemperWeaponHelper.createWeaponDamageSource(target, owner), this, owner), entityData.get(ATTACK_DAMAGE));
 			pullTowardOwner(target, owner);
 			if (owner instanceof com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity vesper) {
 				vesper.onSickleHookCaught(target);

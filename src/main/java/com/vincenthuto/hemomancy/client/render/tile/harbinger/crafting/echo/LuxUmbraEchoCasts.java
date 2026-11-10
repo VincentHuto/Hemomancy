@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.echo;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.lux.RadiantWakeRules;
@@ -73,7 +73,7 @@ final class LuxUmbraEchoCasts {
 		Vec3 crown = centre.add(0, ctx.scaled(1.35), 0);
 		EchoFx.luxRelease(ctx.hands(), crown);
 		EchoFx.keyed(Form.BEACON, centre, centre, ctx.scaled(2.2), 60, 1);
-		EchoFx.accent(EnumBloodTendency.LUX, null, crown, Vec3.ZERO, false);
+		EchoFx.accent(EnumBloodTemper.LUX, null, crown, Vec3.ZERO, false);
 	}
 
 	/** A suture of light stitched from the echo into an ally, mending them. */
@@ -84,7 +84,7 @@ final class LuxUmbraEchoCasts {
 				HemomancyTendrilEffects.sutureConfig(ctx.scaled(1.4) + 4, EchoFx.nextSeed()));
 		EchoScheduler.later(6, () -> {
 			EchoFx.burst(Form.LUX_MENDING, ally, ctx.scaled(0.5), 28);
-			EchoFx.accent(EnumBloodTendency.LUX, null, ally.add(0, ctx.scaled(1.0), 0), Vec3.ZERO, false);
+			EchoFx.accent(EnumBloodTemper.LUX, null, ally.add(0, ctx.scaled(1.0), 0), Vec3.ZERO, false);
 		});
 	}
 
@@ -111,7 +111,7 @@ final class LuxUmbraEchoCasts {
 	private static void unclosingEye(EchoCast.EchoContext ctx) {
 		EchoFx.activate(ctx);
 		EchoFx.cue(Form.EYE, ctx.feet(), ctx.feet(), ctx.scaled(1.0), 60, 1);
-		EchoFx.accent(EnumBloodTendency.LUX, null, ctx.feet().add(0, ctx.scaled(2.5), 0), Vec3.ZERO, false);
+		EchoFx.accent(EnumBloodTemper.LUX, null, ctx.feet().add(0, ctx.scaled(2.5), 0), Vec3.ZERO, false);
 	}
 
 	//  Tenebris
@@ -120,17 +120,17 @@ final class LuxUmbraEchoCasts {
 	private static void step(EchoCast.EchoContext ctx, int direction) {
 		Vec3 from = ctx.feet(), to = from.add(ctx.side().scale(ctx.scaled(1.8) * direction));
 		EchoFx.burst(Form.TELEPORT, from, ctx.scaled(1.0), 18);
-		EchoFx.accent(EnumBloodTendency.TENEBRIS, null, from.add(0, ctx.scaled(1.0), 0), Vec3.ZERO, false);
+		EchoFx.accent(EnumBloodTemper.TENEBRIS, null, from.add(0, ctx.scaled(1.0), 0), Vec3.ZERO, false);
 		EchoScheduler.later(4, () -> {
 			EchoFx.burst(Form.UMBRA_ARRIVAL, to, ctx.scaled(1.0), 22);
-			EchoFx.accent(EnumBloodTendency.TENEBRIS, null, to.add(0, ctx.scaled(1.0), 0), Vec3.ZERO, false);
+			EchoFx.accent(EnumBloodTemper.TENEBRIS, null, to.add(0, ctx.scaled(1.0), 0), Vec3.ZERO, false);
 		});
 	}
 
 	private static void veil(EchoCast.EchoContext ctx, int ticks) {
 		EchoFx.activate(ctx);
 		EchoFx.cue(Form.VEIL, ctx.feet(), ctx.feet(), ctx.scaled(1.0), ticks, 1);
-		EchoFx.accent(EnumBloodTendency.TENEBRIS, null, ctx.chest(), Vec3.ZERO, false);
+		EchoFx.accent(EnumBloodTemper.TENEBRIS, null, ctx.chest(), Vec3.ZERO, false);
 	}
 
 	private static void laceration(EchoCast.EchoContext ctx) {
@@ -162,7 +162,7 @@ final class LuxUmbraEchoCasts {
 		EchoFx.veil(centre, radius, 60);
 		for (Vec3 rim : EchoMoves.ring(ctx, centre, 2.0, 4, 0.4))
 			EchoFx.flow(true, centre, rim, HemomancyTendrilEffects.voidSurfaceConfig(radius + 4, EchoFx.nextSeed()));
-		EchoFx.accent(EnumBloodTendency.TENEBRIS, null, centre.add(0, 0.4, 0), Vec3.ZERO, false);
+		EchoFx.accent(EnumBloodTemper.TENEBRIS, null, centre.add(0, 0.4, 0), Vec3.ZERO, false);
 	}
 
 	private static void eclipseWell(EchoCast.EchoContext ctx) {

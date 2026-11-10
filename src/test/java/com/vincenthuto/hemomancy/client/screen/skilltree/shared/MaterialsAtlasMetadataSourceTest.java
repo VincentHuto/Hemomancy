@@ -29,7 +29,7 @@ public final class MaterialsAtlasMetadataSourceTest {
 				"Venous Stone, one Sanguine Formation, and redstone");
 		SourceAssertions.assertShowsEnglish("atlas teaches accessible Neurotic collection", data,
 				"Chicken blood can yield this enzyme in a Vial Centrifuge");
-		SourceAssertions.assertShowsEnglish("atlas warns that chicken spins may yield the other tendency", data,
+		SourceAssertions.assertShowsEnglish("atlas warns that chicken spins may yield the other temper", data,
 				"some spins yield Vivacious instead");
 		SourceAssertions.assertNotShowsEnglish("Ductilis is impulse and motion, not generic mental manipulation", data,
 				"Ductilis-aligned enzyme. Sharpens mental manipulation.");

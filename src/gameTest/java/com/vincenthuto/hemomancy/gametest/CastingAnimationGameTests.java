@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.manipulation.animation.*;
@@ -126,8 +126,8 @@ public final class CastingAnimationGameTests {
     }
     @GameTest(template="empty") public static void allSchoolRankPhasePacketsRoundTrip(GameTestHelper h) {
         var id=UUID.randomUUID();
-        for(var school:EnumBloodTendency.values())for(var rank:EnumManipulationRank.values())for(var phase:CastPhase.values()) {
-            var packet=CastingAnimationPacket.harbinger(42,id,"blood_shot",73,school,EnumBloodTendency.MORTEM,rank,
+        for(var school:EnumBloodTemper.values())for(var rank:EnumManipulationRank.values())for(var phase:CastPhase.values()) {
+            var packet=CastingAnimationPacket.harbinger(42,id,"blood_shot",73,school,EnumBloodTemper.MORTEM,rank,
                     CastPurpose.AREA,CastStyle.SCHOOL,phase,12345,12350,5,40,net.minecraft.world.InteractionHand.OFF_HAND);
             var buffer=new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
             try {
@@ -139,7 +139,7 @@ public final class CastingAnimationGameTests {
     }
     private static void prepare(ServerPlayer p,BloodManipulation m) {
         var volume=HemoCapabilityAccess.getBloodVolume(p);volume.setActive(true);volume.fill(100000);
-        HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(m.getTend(),100);
+        HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(m.getTend(),100);
         var known=HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(m,new ManipLevel(0,0));known.setSelectedManip(m);known.setEquippedManipNames(List.of(m.getName()));
     }

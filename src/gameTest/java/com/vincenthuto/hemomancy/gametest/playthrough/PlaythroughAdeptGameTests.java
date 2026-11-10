@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryActivationService;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularDiagnosisRules;
@@ -423,7 +423,7 @@ public final class PlaythroughAdeptGameTests {
 	}
 
 	/**
-	 * The first lesson: the kit drops at the Anchorite (pattern for the strongest tendency, a blank, its catalyst and a
+	 * The first lesson: the kit drops at the Anchorite (pattern for the strongest temper, a blank, its catalyst and a
 	 * knapper), the lesson advancement and the Scar Practice Liber page. Asking again says known and gives nothing.
 	 */
 	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH)
@@ -443,7 +443,7 @@ public final class PlaythroughAdeptGameTests {
 					kit.gave(ItemInit.scar_pattern.get(), 1).gave(ItemInit.scar_blank.get(), 1)
 							.gave(lesson.catalyst(), 1).gave(ItemInit.hematic_iron_knapper.get(), 1);
 					helper.assertTrue(carries(p, pattern(lesson.patternScarId())),
-							"the pattern is for the strongest tendency's scar " + lesson.patternScarId());
+							"the pattern is for the strongest temper's scar " + lesson.patternScarId());
 				})
 				.idle(2)
 				.then(() -> {
@@ -673,20 +673,20 @@ public final class PlaythroughAdeptGameTests {
 				.run();
 	}
 
-	// DECISION: D-14 the Vein-Mason lesson is recomputed from live tendency (refused carve, free extra patterns).
+	// DECISION: D-14 the Vein-Mason lesson is recomputed from live temper (refused carve, free extra patterns).
 	@GameTest(template = EMPTY, timeoutTicks = 100, batch = BATCH, required = false)
-	public static void tendencyDriftDuplicatesPatterns(GameTestHelper helper) {
+	public static void temperDriftDuplicatesPatterns(GameTestHelper helper) {
 		PlaythroughSites.MasonsRespite respite = respite(helper);
 		PlaythroughPlayer p = adept(helper, yard(helper));
 		VeinMasonScarLesson.Lesson given = takeFirstLesson(p, respite);
 		// ARRANGE: the player's blood drifts after the lesson (manipulation casts move alignment in play).
-		EnumBloodTendency drift = VeinMasonScarLesson.forPlayer(p.player()).patternScarId().getPath().equals("scar_blight")
-				? EnumBloodTendency.TENEBRIS : EnumBloodTendency.MORTEM;
-		var tendency = HemoCapabilityAccess.getBloodTendency(p.player());
-		tendency.addTendencyAlignment(drift, 5.0F);
-		BloodTendencyEvents.syncTendency(p.player(), tendency);
+		EnumBloodTemper drift = VeinMasonScarLesson.forPlayer(p.player()).patternScarId().getPath().equals("scar_blight")
+				? EnumBloodTemper.TENEBRIS : EnumBloodTemper.MORTEM;
+		var temper = HemoCapabilityAccess.getBloodTemperament(p.player());
+		temper.addTemperAlignment(drift, 5.0F);
+		BloodTemperamentEvents.syncTemperament(p.player(), temper);
 		VeinMasonScarLesson.Lesson now = VeinMasonScarLesson.forPlayer(p.player());
-		helper.assertTrue(!now.patternScarId().equals(given.patternScarId()), "the drift changes the strongest tendency");
+		helper.assertTrue(!now.patternScarId().equals(given.patternScarId()), "the drift changes the strongest temper");
 		Outcome carve = carve(p, respite.station(), given);
 		boolean carved = station(p, respite.station()).getItem(2).is(given.scar().get());
 		p.closeMenu();
@@ -865,7 +865,7 @@ public final class PlaythroughAdeptGameTests {
 				.gave(ItemInit.scar_pattern.get(), 1).gave(ItemInit.scar_blank.get(), 1).gave(next.catalyst(), 1)
 				.gave(ItemInit.runic_motif_paper.get(), 4);
 		helper.assertTrue(carries(p, pattern(next.patternScarId())),
-				"the continuation pattern is the second tendency's " + next.patternScarId());
+				"the continuation pattern is the second temper's " + next.patternScarId());
 		DialogueView after = p.talkTo(mason);
 		helper.assertFalse(after.offers(HarbingerCicatrixAnchoriteDialogueTrees.EVENT_CONTINUATION_REWARD),
 				"the kit is offered once: " + after);

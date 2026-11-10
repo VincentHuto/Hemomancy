@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyDamageCarrier;
+import com.vincenthuto.hemomancy.common.manipulation.TemperDamageCarrier;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -18,7 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarrierProjectile, TendencyDamageCarrier {
+public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarrierProjectile, TemperDamageCarrier {
     private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> CORONATION_SWORD =
             net.minecraft.network.syncher.SynchedEntityData.defineId(BloodNeedleEntity.class,
                     net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
@@ -84,9 +84,9 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	private boolean bloodburstNeedle = false;
 	private byte configuredPierceLevel;
 	@Nullable
-	private EnumBloodTendency damageTendency;
+	private EnumBloodTemper damageTemper;
 	@Nullable
-	private EnumBloodTendency secondaryDamageTendency;
+	private EnumBloodTemper secondaryDamageTemper;
 
 	public BloodNeedleEntity(EntityType<? extends BloodNeedleEntity> type, Level worldIn) {
 		super(type, worldIn);
@@ -106,7 +106,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	}
 
 	/**
-	 * A needle shed by a manipulation. The held item still lends its tendency through {@link #getCombatWeaponItem()},
+	 * A needle shed by a manipulation. The held item still lends its temper through {@link #getCombatWeaponItem()},
 	 * but vanilla arrow hooks never see it: no Sharpness, Piercing or post-attack enchantments ride the blood.
 	 */
 	public static BloodNeedleEntity fromManipulation(Level worldIn, LivingEntity shooter, @Nullable ItemStack heldItem) {
@@ -131,9 +131,9 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		CombatWeaponCarrierProjectile.save(compound, this.combatWeaponItem, this.registryAccess());
 		compound.putBoolean("BloodburstNeedle", this.bloodburstNeedle);
 		compound.putByte("ConfiguredPierceLevel", configuredPierceLevel);
-		if (damageTendency != null) compound.putString("DamageTendency", damageTendency.name());
-		if (secondaryDamageTendency != null) {
-			compound.putString("SecondaryDamageTendency", secondaryDamageTendency.name());
+		if (damageTemper != null) compound.putString("DamageTemper", damageTemper.name());
+		if (secondaryDamageTemper != null) {
+			compound.putString("SecondaryDamageTemper", secondaryDamageTemper.name());
 		}
 
 	}
@@ -145,22 +145,22 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 
 	@Override
 	@Nullable
-	public EnumBloodTendency getDamageTendency() {
-		return damageTendency;
+	public EnumBloodTemper getDamageTemper() {
+		return damageTemper;
 	}
 
-	public void setDamageTendency(@Nullable EnumBloodTendency damageTendency) {
-		this.damageTendency = damageTendency;
+	public void setDamageTemper(@Nullable EnumBloodTemper damageTemper) {
+		this.damageTemper = damageTemper;
 	}
 
 	@Override
 	@Nullable
-	public EnumBloodTendency getSecondaryDamageTendency() {
-		return secondaryDamageTendency;
+	public EnumBloodTemper getSecondaryDamageTemper() {
+		return secondaryDamageTemper;
 	}
 
-	public void setSecondaryDamageTendency(@Nullable EnumBloodTendency secondaryDamageTendency) {
-		this.secondaryDamageTendency = secondaryDamageTendency;
+	public void setSecondaryDamageTemper(@Nullable EnumBloodTemper secondaryDamageTemper) {
+		this.secondaryDamageTemper = secondaryDamageTemper;
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
         if (com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this) == null)
             living.addEffect(new MobEffectInstance(EffectInit.blood_loss, 1000, 2));
 		com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.impact(
-				living, damageTendency, secondaryDamageTendency, getDeltaMovement());
+				living, damageTemper, secondaryDamageTemper, getDeltaMovement());
 		Entity entity = living;
 		if (entity instanceof LivingEntity) {
 			applyBloodburstEffects((LivingEntity) entity);
@@ -199,8 +199,8 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		this.combatWeaponItem = CombatWeaponCarrierProjectile.load(compound, this.registryAccess());
 		this.bloodburstNeedle = compound.getBoolean("BloodburstNeedle");
 		configurePiercing(compound.getByte("ConfiguredPierceLevel"));
-		this.damageTendency = readDamageTendency(compound);
-		this.secondaryDamageTendency = readTendency(compound, "SecondaryDamageTendency");
+		this.damageTemper = readDamageTemper(compound);
+		this.secondaryDamageTemper = readTemper(compound, "SecondaryDamageTemper");
 	}
 
 	public void setBloodburstNeedle(boolean bloodburstNeedle) {
@@ -228,14 +228,14 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	}
 
 	@Nullable
-	private static EnumBloodTendency readDamageTendency(CompoundTag compound) {
-		return readTendency(compound, "DamageTendency");
+	private static EnumBloodTemper readDamageTemper(CompoundTag compound) {
+		return readTemper(compound, "DamageTemper");
 	}
 
 	@Nullable
-	private static EnumBloodTendency readTendency(CompoundTag compound, String key) {
+	private static EnumBloodTemper readTemper(CompoundTag compound, String key) {
 		try {
-			return compound.contains(key) ? EnumBloodTendency.valueOf(compound.getString(key)) : null;
+			return compound.contains(key) ? EnumBloodTemper.valueOf(compound.getString(key)) : null;
 		} catch (IllegalArgumentException ignored) {
 			return null;
 		}

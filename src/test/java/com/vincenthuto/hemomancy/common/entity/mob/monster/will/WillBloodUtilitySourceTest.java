@@ -32,7 +32,7 @@ public final class WillBloodUtilitySourceTest {
 		assertContains("Will absorption rage targets the absorber", will, "setTarget(player)");
 		assertContains("Will absorption clamps lethal absorbing damage", will,
 				"if (getPhase() == WillPhase.ABSORBING)");
-		assertContains("Will absorption grants tendency", will, "addTendencyAlignment(getSchool(), 3.0F)");
+		assertContains("Will absorption grants temper", will, "addTemperAlignment(getSchool(), 3.0F)");
 		assertContains("Will absorption completes immediately at the end of the channel", will,
 				"completeAbsorption(player)");
 		assertContains("Will absorption completion drops rewards immediately", will,
@@ -64,7 +64,7 @@ public final class WillBloodUtilitySourceTest {
 				"getPhase() == WillPhase.ABSORBING");
 		assertContains("Will absorption completion pulse uses the Will glow particle", will,
 				"HemoParticleData.willAbsorptionGlowPulse(ParticleColor.BLACK)");
-		assertContains("Will projection subtracts tendency", will, "addTendencyAlignment(getSchool(), -3.0F)");
+		assertContains("Will projection subtracts temper", will, "addTemperAlignment(getSchool(), -3.0F)");
 		assertContains("Will projection banishes without dissolve loot", will, "projectBanishWithBlood");
 		assertContains("Will projection creates a burst cloud", will, "spawnProjectedBanishmentBurst");
 		assertContains("Will utility helper finds faltering absorption targets", helper, "tryAbsorbFalteringWill");

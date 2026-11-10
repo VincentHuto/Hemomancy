@@ -130,7 +130,7 @@ public class SporiticThuribleEvents {
 			}
 			nearby.addEffect(new MobEffectInstance(EffectInit.sporitic_resonance,
 					SporiticThuribleRules.RESONANCE_DURATION_TICKS, 0, true, true, true));
-			SporiticThuribleResonanceState.grant(nearby, spore.tendency(), expires);
+			SporiticThuribleResonanceState.grant(nearby, spore.temper(), expires);
 		}
 
 		for (Monster mob : level.getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(owner, candidate, Reach.MONSTER_FILTER))) {

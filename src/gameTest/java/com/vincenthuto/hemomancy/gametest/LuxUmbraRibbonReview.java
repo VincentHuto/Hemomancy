@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
@@ -110,7 +110,7 @@ public final class LuxUmbraRibbonReview {
             var blood = HemoCapabilityAccess.getBloodVolume(player);
             blood.setActive(true);
             blood.setBloodVolume(2000);
-            HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(EnumBloodTendency.TENEBRIS, 100);
+            HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(EnumBloodTemper.TENEBRIS, 100);
             HemoCapabilityAccess.getKnownManipulations(player).getKnownManips().put(manipulation, new ManipLevel(4, 185));
             Vec3 origin = player.position();
             boolean cast = manipulation.tryPerformAction(player, player.serverLevel(), ItemStack.EMPTY, player.blockPosition(), 0);

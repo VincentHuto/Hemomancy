@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -22,8 +22,8 @@ import java.util.List;
 public class CarrionCommunionManip extends BloodManipulation {
 
 	public CarrionCommunionManip(String name, double cost, double alignment, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignment, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignment, xpCost, type, rank, temper, section);
 	}
 
 	@Override public boolean canContinueChannel(Player player, Level world) { return !eligibleTargets(player, world).isEmpty(); }

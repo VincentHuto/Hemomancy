@@ -6,7 +6,7 @@ Status (2026-11-01): all 11 tracks built, uncommitted, in the working tree since
 
 The Brined Court is the sea offshoot of the Harbinger tradition: eight houses down the ocean's depth layers, each keeping one hereditary Morphling strain, between Marimo at the sunlit top and Hydra at the vents. It practises a feeding, bodily form of hemomancy in which Morphlings are symbiotic partners, the counterpart to the Circus's mental work. Membership does not require devotion to either pole; the Court exists so the houses can stay in contact across the layers (`archive/tracks/brined_court/design/BRINED_COURT_HOUSES_WORKING_DESIGN.md`).
 
-| House | Tendency | Strain | Water | Presence |
+| House | Temper | Strain | Water | Presence |
 | --- | --- | --- | --- | --- |
 | The Giving Light | Lux | Sunburst | Erythrocoral Reef and the coast beside it | Seat: Lighthouse Garden |
 | The Holding Stone | Ferric | Holdfast | Rockpool Shore | outpost: Tide Refuge |
@@ -54,7 +54,7 @@ From the user, 2026-10-20 to 2026-10-31 (`archive/tracks/brined_court/00-README.
 - **Court NPCs use the jointed Hemomancy rig**, never a vanilla humanoid. They are protected for now.
 - **No copper, brass or bronze on anything blood-side.** Bronze-age Sea Peoples imagery stays in cloth, bone, stone and lacquer. No modern diving tech. The Court's light is biological.
 - **Gift economy, not prices.** NPCs give food, rest, cultivation help, gifts, inquiries and directions. The later NPC trade system keeps this: Court cards are customs that earn standing, gifts unlock by standing, never a price (`archive/tracks/npc_trade/00-README.md`, Q-1).
-- **Strains:** one table; ids `morphling_sunburst`, `_holdfast`, `_mermaids_purse`, `_dead_mans_rope`, `_ink_cap`, `_hushbell`, `_marrowplume`, `_kinbud`; Mermaid's Purse keeps the red egg-case icon and grows a sailfish-and-purse hybrid; secondary tendencies follow the gradient; eight wild polyp families named for the partner organism; a strain's house line shows only once the Court is known; build at first-pass numbers and tune in play inside the bands.
+- **Strains:** one table; ids `morphling_sunburst`, `_holdfast`, `_mermaids_purse`, `_dead_mans_rope`, `_ink_cap`, `_hushbell`, `_marrowplume`, `_kinbud`; Mermaid's Purse keeps the red egg-case icon and grows a sailfish-and-purse hybrid; secondary tempers follow the gradient; eight wild polyp families named for the partner organism; a strain's house line shows only once the Court is known; build at first-pass numbers and tune in play inside the bands.
 - **World:** no Court structures when Pelagic worldgen is off; outposts 28/10, Seats 64/24, one faction landmark per 96 blocks as starting values; the tube coliseum is the Garden's undercroft with Marimo at the bottom; Court sites may be visited before D5, residents feed and talk but do not teach; the names are Relay Chart and Brine-Sealed Letter, and Votaries are drowned would-be envoys.
 - **People:** Shared Wake schools also spawn naturally, rarely, capped, never near a Seat.
 - **Followers:** every listed act wakes the Bloom Warden (breaking Garden growth, taking from the undercroft, harm at residents or in the undercroft, a second gift or others' food); amends are an offering held in hand, and offerings to the Giving Light are foods; the Champion title gives recognition only for now, elders challenging the player comes later; losing either fight is death with a later retry.

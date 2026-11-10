@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.common.damage.*;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
@@ -477,7 +477,7 @@ public final class EntityCasts {
 		context.level().playSound(null, context.origin(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 0.5F, 1.8F);
 		if (context.level() instanceof ServerLevel level) {
             ManipulationVisuals.attached(context.caster(), ManipulationVisuals.Form.VEIL, 1, 18, 1);
-            ManipulationParticles.accent(level, EnumBloodTendency.TENEBRIS, context.caster().position().add(0, 1, 0), Vec3.ZERO);
+            ManipulationParticles.accent(level, EnumBloodTemper.TENEBRIS, context.caster().position().add(0, 1, 0), Vec3.ZERO);
         }
 		return true;
 	}

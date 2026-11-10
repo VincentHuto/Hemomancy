@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation.family;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -157,6 +157,6 @@ class ManipulationFamilyRegistryTest {
 
 	private static BloodManipulation manipulation(String name) {
 		return new BloodManipulation(name, 10, 0, 0, EnumManipulationType.QUICK,
-				EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD);
+				EnumManipulationRank.HUMILIS, EnumBloodTemper.ANIMUS, EnumVeinSections.HEAD);
 	}
 }

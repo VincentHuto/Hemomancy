@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.heartnode;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.MoltingRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.MoltingService;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.MoltingRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.MoltingService;
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HeartNodeBlockEntity;
 import com.vincenthuto.hemomancy.common.util.ServerboundRateLimiter;
@@ -17,7 +17,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Client to server: the owner of the heart-node at {@code pos} molts into {@code allocation}, one whole number per
- * tendency in {@code EnumBloodTendency} order. The node must be in reach and the sender's; {@link MoltingService}
+ * temper in {@code EnumBloodTemper} order. The node must be in reach and the sender's; {@link MoltingService}
  * checks everything else again.
  */
 public record MoltRequestPacket(BlockPos pos, int[] allocation) implements CustomPacketPayload {
@@ -40,7 +40,7 @@ public record MoltRequestPacket(BlockPos pos, int[] allocation) implements Custo
 	private static MoltRequestPacket decode(RegistryFriendlyByteBuf buf) {
 		BlockPos pos = BlockPos.STREAM_CODEC.decode(buf);
 		int count = buf.readVarInt();
-		if (count != MoltingRules.TENDENCIES) throw new DecoderException("Molt needs one value per tendency: " + count);
+		if (count != MoltingRules.TEMPERS) throw new DecoderException("Molt needs one value per temper: " + count);
 		int[] allocation = new int[count];
 		for (int i = 0; i < count; i++) allocation[i] = buf.readVarInt();
 		return new MoltRequestPacket(pos, allocation);

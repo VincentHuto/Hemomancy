@@ -92,8 +92,8 @@ public class BloodVialItem extends Item {
         } else {
             var data = BloodInjectionData.snapshot(context.level() == null || context.level().isClientSide);
             var profile = BloodSampleData.profile(stack, context.level() == null || context.level().isClientSide);
-            for (var tendency : profile.tendencies()) tooltip.add(Component.translatable(
-                    "item.hemomancy.bloody_vial.tendency", Component.translatable("blood_tendency.hemomancy." + tendency.name().toLowerCase(java.util.Locale.ROOT)))
+            for (var temper : profile.tempers()) tooltip.add(Component.translatable(
+                    "item.hemomancy.bloody_vial.temper", Component.translatable("blood_temper.hemomancy." + temper.name().toLowerCase(java.util.Locale.ROOT)))
                     .withStyle(ChatFormatting.DARK_GRAY));
             for (var property : profile.properties()) tooltip.add(Component.translatable("item.hemomancy.bloody_vial.property",
                     Component.translatableWithFallback("blood_property." + property.getNamespace() + "." + property.getPath().replace('/', '.'), property.toString()))

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * home within the vials' capacity. Prints how often an engram asks for more enzymes than its recipe lists.
  */
 class EngramRecipeSweepTest {
-	private static final String[] TENDENCIES = {"animus", "flammeus", "ductilis", "lux", "mortem", "congeatio", "ferric", "tenebris"};
+	private static final String[] TEMPERS = {"animus", "flammeus", "ductilis", "lux", "mortem", "congeatio", "ferric", "tenebris"};
 	private static final int WEAVES = Integer.getInteger("engramSweep.weaves", 200);
 
 	@Test
@@ -32,7 +32,7 @@ class EngramRecipeSweepTest {
 			for (Path file : files.filter(p -> p.toString().endsWith(".json")).sorted().toList()) {
 				JsonObject enzymes = JsonParser.parseString(Files.readString(file)).getAsJsonObject().getAsJsonObject("enzymes");
 				int[] c = new int[8];
-				for (int t = 0; t < 8; t++) c[t] = enzymes.has(TENDENCIES[t]) ? enzymes.get(TENDENCIES[t]).getAsInt() : 0;
+				for (int t = 0; t < 8; t++) c[t] = enzymes.has(TEMPERS[t]) ? enzymes.get(TEMPERS[t]).getAsInt() : 0;
 				ids.add("hemomancy:memory_weaving/" + file.getFileName().toString().replace(".json", ""));
 				counts.add(c);
 			}

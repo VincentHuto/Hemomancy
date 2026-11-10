@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -8,12 +8,12 @@ import java.util.Map;
 import static com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction.*;
 
 public final class VesperWeaponCombatRules {
-	private static final Map<EnumBloodTendency, RangeBand> RANGES = createRanges();
+	private static final Map<EnumBloodTemper, RangeBand> RANGES = createRanges();
 
 	private VesperWeaponCombatRules() { }
 
-	public static VesperWeaponAction coreAction(EnumBloodTendency tendency) {
-		return switch (tendency) {
+	public static VesperWeaponAction coreAction(EnumBloodTemper temper) {
+		return switch (temper) {
 			case ANIMUS -> ICHIMONJI;
 			case MORTEM -> LEAPING_CLEAVE;
 			case LUX -> SKY_LANCE;
@@ -25,8 +25,8 @@ public final class VesperWeaponCombatRules {
 		};
 	}
 
-	public static VesperWeaponAction advancedAction(EnumBloodTendency tendency) {
-		return switch (tendency) {
+	public static VesperWeaponAction advancedAction(EnumBloodTemper temper) {
+		return switch (temper) {
 			case ANIMUS -> CROSSCUT;
 			case MORTEM -> REAPER_SWEEP;
 			case LUX -> LANCE_FLURRY;
@@ -38,30 +38,30 @@ public final class VesperWeaponCombatRules {
 		};
 	}
 
-	public static VesperWeaponAction selectAction(EnumBloodTendency tendency, boolean advancedUnlocked,
+	public static VesperWeaponAction selectAction(EnumBloodTemper temper, boolean advancedUnlocked,
 			VesperWeaponAction previous, double distance) {
-		return selectAction(tendency, advancedUnlocked, previous, distance, 0.0D, 0.0D, true);
+		return selectAction(temper, advancedUnlocked, previous, distance, 0.0D, 0.0D, true);
 	}
 
-	public static VesperWeaponAction selectAction(EnumBloodTendency tendency, boolean advancedUnlocked,
+	public static VesperWeaponAction selectAction(EnumBloodTemper temper, boolean advancedUnlocked,
 			VesperWeaponAction previous, double distance, double attackAngle, double elevation,
 			boolean hasLineOfSight) {
 		if (!hasLineOfSight) return NONE;
-		VesperWeaponAction core = coreAction(tendency);
+		VesperWeaponAction core = coreAction(temper);
 		if (!advancedUnlocked) return core;
-		VesperWeaponAction advanced = advancedAction(tendency);
+		VesperWeaponAction advanced = advancedAction(temper);
 		if (previous == core) return advanced;
 		if (previous == advanced) return core;
-		RangeBand band = rangeBand(tendency);
+		RangeBand band = rangeBand(temper);
 		VesperWeaponAction selected;
-		if (tendency == EnumBloodTendency.LUX && Math.abs(elevation) >= 2.5D) selected = core;
-		else if (tendency == EnumBloodTendency.TENEBRIS && attackAngle >= 70.0D) selected = core;
+		if (temper == EnumBloodTemper.LUX && Math.abs(elevation) >= 2.5D) selected = core;
+		else if (temper == EnumBloodTemper.TENEBRIS && attackAngle >= 70.0D) selected = core;
 		else selected = distance < band.minimum() || distance <= (band.minimum() + band.maximum()) * 0.5D
 					? advanced : core;
 		return selected == previous ? (selected == core ? advanced : core) : selected;
 	}
 
-	public static RangeBand rangeBand(EnumBloodTendency tendency) { return RANGES.get(tendency); }
+	public static RangeBand rangeBand(EnumBloodTemper temper) { return RANGES.get(temper); }
 
 	public static int recoveryTicks(int normalTicks, float healthFraction) {
 		return healthFraction <= 0.25F ? Math.max(1, Math.round(normalTicks * 0.8F)) : normalTicks;
@@ -87,16 +87,16 @@ public final class VesperWeaponCombatRules {
 		return distance <= range && angleDegrees <= arcDegrees * 0.5D;
 	}
 
-	private static Map<EnumBloodTendency, RangeBand> createRanges() {
-		EnumMap<EnumBloodTendency, RangeBand> ranges = new EnumMap<>(EnumBloodTendency.class);
-		ranges.put(EnumBloodTendency.ANIMUS, new RangeBand(3.0D, 6.0D));
-		ranges.put(EnumBloodTendency.MORTEM, new RangeBand(3.0D, 7.0D));
-		ranges.put(EnumBloodTendency.LUX, new RangeBand(7.0D, 14.0D));
-		ranges.put(EnumBloodTendency.TENEBRIS, new RangeBand(2.0D, 5.0D));
-		ranges.put(EnumBloodTendency.DUCTILIS, new RangeBand(12.0D, 20.0D));
-		ranges.put(EnumBloodTendency.FLAMMEUS, new RangeBand(2.0D, 5.0D));
-		ranges.put(EnumBloodTendency.CONGEATIO, new RangeBand(5.0D, 9.0D));
-		ranges.put(EnumBloodTendency.FERRIC, new RangeBand(8.0D, 14.0D));
+	private static Map<EnumBloodTemper, RangeBand> createRanges() {
+		EnumMap<EnumBloodTemper, RangeBand> ranges = new EnumMap<>(EnumBloodTemper.class);
+		ranges.put(EnumBloodTemper.ANIMUS, new RangeBand(3.0D, 6.0D));
+		ranges.put(EnumBloodTemper.MORTEM, new RangeBand(3.0D, 7.0D));
+		ranges.put(EnumBloodTemper.LUX, new RangeBand(7.0D, 14.0D));
+		ranges.put(EnumBloodTemper.TENEBRIS, new RangeBand(2.0D, 5.0D));
+		ranges.put(EnumBloodTemper.DUCTILIS, new RangeBand(12.0D, 20.0D));
+		ranges.put(EnumBloodTemper.FLAMMEUS, new RangeBand(2.0D, 5.0D));
+		ranges.put(EnumBloodTemper.CONGEATIO, new RangeBand(5.0D, 9.0D));
+		ranges.put(EnumBloodTemper.FERRIC, new RangeBand(8.0D, 14.0D));
 		return Map.copyOf(ranges);
 	}
 

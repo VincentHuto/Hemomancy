@@ -12,11 +12,11 @@ class BloodInjectionRulesTest {
 
     @Test void deduplicatesBeforeCapAndMergesStrongestContributions() {
         var a = response("""
-            {"tendency":"ANIMUS","benefits":[{"effect":"minecraft:regeneration"},
+            {"temper":"ANIMUS","benefits":[{"effect":"minecraft:regeneration"},
               {"effect":"minecraft:fire_resistance"},{"effect":"minecraft:haste"}]}
             """);
         var b = response("""
-            {"tendency":"FLAMMEUS","benefits":[{"effect":"minecraft:fire_resistance","duration":400,"amplifier":1},
+            {"temper":"FLAMMEUS","benefits":[{"effect":"minecraft:fire_resistance","duration":400,"amplifier":1},
               {"effect":"minecraft:strength","drawbacks":[{"effect":"minecraft:slowness"}]}]}
             """);
         var result = BloodInjectionRules.select(List.of(a,b));
@@ -28,14 +28,14 @@ class BloodInjectionRulesTest {
 
     @Test void revealConsumesASlotAndCannotBringAnOmittedDrawback() {
         var a = response("""
-            {"tendency":"LUX","benefits":[{"effect":"minecraft:regeneration"},
+            {"temper":"LUX","benefits":[{"effect":"minecraft:regeneration"},
               {"effect":"minecraft:haste"},{"effect":"minecraft:night_vision"},
               {"operation":"reveal","duration":40,"radius":8,"drawbacks":[{"effect":"minecraft:weakness"}]}]}
             """);
         assertEquals(3, BloodInjectionRules.select(List.of(a)).benefits().size());
         assertTrue(BloodInjectionRules.select(List.of(a)).drawbacks().isEmpty());
         var lux = response("""
-            {"tendency":"LUX","benefits":[{"effect":"minecraft:night_vision"},
+            {"temper":"LUX","benefits":[{"effect":"minecraft:night_vision"},
               {"operation":"reveal","duration":40,"radius":8}]}
             """);
         assertEquals(2, BloodInjectionRules.select(List.of(lux)).benefits().size());
@@ -43,7 +43,7 @@ class BloodInjectionRulesTest {
 
     @Test void duplicateSelectedBenefitRetainsAssociatedDrawback() {
         var a = response("""
-            {"tendency":"CONGEATIO","benefits":[{"effect":"hemomancy:cryoprotection",
+            {"temper":"CONGEATIO","benefits":[{"effect":"hemomancy:cryoprotection",
               "drawbacks":[{"effect":"minecraft:slowness"}]}]}
             """);
         var b = response("""
@@ -56,15 +56,15 @@ class BloodInjectionRulesTest {
 
     @Test void rejectsInvalidAndContradictoryDefinitions() {
         for (String json : List.of(
-            "{\"tendency\":\"NINTH\",\"benefits\":[]}",
+            "{\"temper\":\"NINTH\",\"benefits\":[]}",
             "{\"property\":\"INVALID TAG\",\"benefits\":[]}",
-            "{\"tendency\":\"LUX\",\"benefits\":[{\"operation\":\"script\"}]}",
-            "{\"tendency\":\"ANIMUS\",\"benefits\":[{\"effect\":\"minecraft:regeneration\",\"duration\":0}]}",
-            "{\"tendency\":\"ANIMUS\",\"benefits\":[{\"effect\":\"minecraft:regeneration\",\"amplifier\":256}]}",
-            "{\"tendency\":\"ANIMUS\",\"benefits\":[{\"effect\":\"minecraft:regeneration\"}],\"drawbacks\":[{\"effect\":\"minecraft:regeneration\"}]}")) {
+            "{\"temper\":\"LUX\",\"benefits\":[{\"operation\":\"script\"}]}",
+            "{\"temper\":\"ANIMUS\",\"benefits\":[{\"effect\":\"minecraft:regeneration\",\"duration\":0}]}",
+            "{\"temper\":\"ANIMUS\",\"benefits\":[{\"effect\":\"minecraft:regeneration\",\"amplifier\":256}]}",
+            "{\"temper\":\"ANIMUS\",\"benefits\":[{\"effect\":\"minecraft:regeneration\"}],\"drawbacks\":[{\"effect\":\"minecraft:regeneration\"}]}")) {
             assertThrows(IllegalArgumentException.class, () -> response(json));
         }
         assertThrows(IllegalArgumentException.class, () -> BloodInjectionRules.parse(
-            JsonParser.parseString("{\"tendency\":\"ANIMUS\",\"benefits\":[{\"effect\":\"missing:effect\"}]}").getAsJsonObject(), id -> false));
+            JsonParser.parseString("{\"temper\":\"ANIMUS\",\"benefits\":[{\"effect\":\"missing:effect\"}]}").getAsJsonObject(), id -> false));
     }
 }

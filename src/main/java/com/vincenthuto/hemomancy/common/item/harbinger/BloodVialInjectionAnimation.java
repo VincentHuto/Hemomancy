@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.network.PacketBloodVialInjection;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -27,7 +27,7 @@ public final class BloodVialInjectionAnimation {
         var profile = BloodSampleData.profile(vial, false);
         var session = new Session(player.level(), player.level().getGameTime(), hand,
                 (hand == InteractionHand.MAIN_HAND) == (player.getMainArm() == HumanoidArm.RIGHT), vial,
-                profile.tendencies().isEmpty() ? EnumBloodTendency.ANIMUS : profile.tendencies().getFirst(),
+                profile.tempers().isEmpty() ? EnumBloodTemper.ANIMUS : profile.tempers().getFirst(),
                 player.getInventory().selected, -1);
         ACTIVE.put(player.getUUID(), session);
         send(player, session, PacketBloodVialInjection.Phase.START, vial);
@@ -37,7 +37,7 @@ public final class BloodVialInjectionAnimation {
         Session session = ACTIVE.get(player.getUUID());
         if (session == null || session.finishedAt >= 0) return;
         ACTIVE.put(player.getUUID(), new Session(session.level, session.startedAt, session.hand, session.right,
-                result, session.tendency, session.selectedSlot, player.level().getGameTime()));
+                result, session.temper, session.selectedSlot, player.level().getGameTime()));
         send(player, session, PacketBloodVialInjection.Phase.IMPACT, result);
     }
 
@@ -49,7 +49,7 @@ public final class BloodVialInjectionAnimation {
 
     private static void send(Player player, Session session, PacketBloodVialInjection.Phase phase, ItemStack vial) {
         PacketHandler.sendTracking(player, new PacketBloodVialInjection(player.getId(),
-                session.startedAt, phase, session.hand, session.right, vial, session.tendency));
+                session.startedAt, phase, session.hand, session.right, vial, session.temper));
     }
 
     @SubscribeEvent public static void tick(PlayerTickEvent.Post event) {
@@ -75,5 +75,5 @@ public final class BloodVialInjectionAnimation {
     public static void clearSessionState() { ACTIVE.clear(); }
 
     private record Session(Level level, long startedAt, InteractionHand hand, boolean right,
-                           ItemStack vial, EnumBloodTendency tendency, int selectedSlot, long finishedAt) { }
+                           ItemStack vial, EnumBloodTemper temper, int selectedSlot, long finishedAt) { }
 }

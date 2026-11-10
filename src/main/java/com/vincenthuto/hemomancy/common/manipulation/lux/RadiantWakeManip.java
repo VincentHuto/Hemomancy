@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.lux;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
@@ -39,8 +39,8 @@ public class RadiantWakeManip extends BloodManipulation {
 	private static final double MAX_GLIDE_SPEED = 0.85D;
 
 	public RadiantWakeManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override

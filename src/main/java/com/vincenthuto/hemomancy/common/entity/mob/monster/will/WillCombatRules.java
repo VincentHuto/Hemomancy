@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -15,26 +15,26 @@ public final class WillCombatRules {
 	private static final int FALTER_BURST_WINDOW_TICKS = 80;
 	private static final int FALTER_WINDOW_TICKS = 100;
 
-	private static final Map<EnumBloodTendency, List<ResourceLocation>> SCHOOL_KITS = Map.of(
-			EnumBloodTendency.ANIMUS, ids("blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud"),
-			EnumBloodTendency.FLAMMEUS,
+	private static final Map<EnumBloodTemper, List<ResourceLocation>> SCHOOL_KITS = Map.of(
+			EnumBloodTemper.ANIMUS, ids("blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud"),
+			EnumBloodTemper.FLAMMEUS,
 			ids("crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion"),
-			EnumBloodTendency.DUCTILIS, ids("deadly_gaze", "hemolymphal_pulse", "activation_potential"),
-			EnumBloodTendency.LUX, ids("hematic_flare", "prismatic_reproof", "hematic_beacon", "unclosing_eye"),
-			EnumBloodTendency.MORTEM, ids("hemorrhage", "exsanguinate", "bloom_of_rot"),
-			EnumBloodTendency.CONGEATIO, ids("cryogenic_pulse", "glacial_grasp", "glacial_rampart"),
-			EnumBloodTendency.FERRIC, ids("blood_needle", "prismatic_reproof", "iron_retort", "pyretic_forge"),
-			EnumBloodTendency.TENEBRIS, ids("void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse"));
+			EnumBloodTemper.DUCTILIS, ids("deadly_gaze", "hemolymphal_pulse", "activation_potential"),
+			EnumBloodTemper.LUX, ids("hematic_flare", "prismatic_reproof", "hematic_beacon", "unclosing_eye"),
+			EnumBloodTemper.MORTEM, ids("hemorrhage", "exsanguinate", "bloom_of_rot"),
+			EnumBloodTemper.CONGEATIO, ids("cryogenic_pulse", "glacial_grasp", "glacial_rampart"),
+			EnumBloodTemper.FERRIC, ids("blood_needle", "prismatic_reproof", "iron_retort", "pyretic_forge"),
+			EnumBloodTemper.TENEBRIS, ids("void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse"));
 
-	private static final Map<EnumBloodTendency, EnumBloodTendency> COUNTERS = Map.of(
-			EnumBloodTendency.ANIMUS, EnumBloodTendency.MORTEM,
-			EnumBloodTendency.MORTEM, EnumBloodTendency.LUX,
-			EnumBloodTendency.DUCTILIS, EnumBloodTendency.FERRIC,
-			EnumBloodTendency.FERRIC, EnumBloodTendency.FLAMMEUS,
-			EnumBloodTendency.LUX, EnumBloodTendency.TENEBRIS,
-			EnumBloodTendency.TENEBRIS, EnumBloodTendency.DUCTILIS,
-			EnumBloodTendency.FLAMMEUS, EnumBloodTendency.CONGEATIO,
-			EnumBloodTendency.CONGEATIO, EnumBloodTendency.ANIMUS);
+	private static final Map<EnumBloodTemper, EnumBloodTemper> COUNTERS = Map.of(
+			EnumBloodTemper.ANIMUS, EnumBloodTemper.MORTEM,
+			EnumBloodTemper.MORTEM, EnumBloodTemper.LUX,
+			EnumBloodTemper.DUCTILIS, EnumBloodTemper.FERRIC,
+			EnumBloodTemper.FERRIC, EnumBloodTemper.FLAMMEUS,
+			EnumBloodTemper.LUX, EnumBloodTemper.TENEBRIS,
+			EnumBloodTemper.TENEBRIS, EnumBloodTemper.DUCTILIS,
+			EnumBloodTemper.FLAMMEUS, EnumBloodTemper.CONGEATIO,
+			EnumBloodTemper.CONGEATIO, EnumBloodTemper.ANIMUS);
 
 	private WillCombatRules() {
 	}
@@ -52,14 +52,14 @@ public final class WillCombatRules {
 		return new Stats(health, damage, speed);
 	}
 
-	public static List<ResourceLocation> schoolKit(EnumBloodTendency school, int tier) {
-		List<ResourceLocation> kit = SCHOOL_KITS.getOrDefault(school, SCHOOL_KITS.get(EnumBloodTendency.ANIMUS));
+	public static List<ResourceLocation> schoolKit(EnumBloodTemper school, int tier) {
+		List<ResourceLocation> kit = SCHOOL_KITS.getOrDefault(school, SCHOOL_KITS.get(EnumBloodTemper.ANIMUS));
 		int count = Math.min(kit.size(), Math.max(1, clampTier(tier)));
 		return List.copyOf(kit.subList(0, count));
 	}
 
-	public static EnumBloodTendency counterSchool(EnumBloodTendency school) {
-		return COUNTERS.getOrDefault(school, EnumBloodTendency.MORTEM);
+	public static EnumBloodTemper counterSchool(EnumBloodTemper school) {
+		return COUNTERS.getOrDefault(school, EnumBloodTemper.MORTEM);
 	}
 
 	public static double falterBurstFraction() {
@@ -83,7 +83,7 @@ public final class WillCombatRules {
 		};
 	}
 
-	public static LootProfile lootFor(EnumBloodTendency school, int tier, WillOrigin origin) {
+	public static LootProfile lootFor(EnumBloodTemper school, int tier, WillOrigin origin) {
 		return new LootProfile(school, Math.max(1, clampTier(tier)), origin == WillOrigin.BROKEN);
 	}
 
@@ -98,6 +98,6 @@ public final class WillCombatRules {
 	public record Stats(double maxHealth, double attackDamage, double movementSpeed) {
 	}
 
-	public record LootProfile(EnumBloodTendency school, int rolls, boolean canDropFadedMemory) {
+	public record LootProfile(EnumBloodTemper school, int rolls, boolean canDropFadedMemory) {
 	}
 }

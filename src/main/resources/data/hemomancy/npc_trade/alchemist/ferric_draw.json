@@ -12,8 +12,8 @@
       "item": "hemomancy:bloody_vial"
     },
     "count": 2,
-    "appraisal": "tendency",
-    "appraisal_tendency": "ferric"
+    "appraisal": "temper",
+    "appraisal_temper": "ferric"
   },
   "give": [
     {

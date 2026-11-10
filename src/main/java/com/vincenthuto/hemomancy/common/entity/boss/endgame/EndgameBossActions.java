@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.VesperScuteProjectileEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
@@ -352,10 +352,10 @@ final class EndgameBossActions {
 			}
 			return;
 		}
-		EnumBloodTendency tendency = boss instanceof VesperTheEveningStarEntity evening
-				? evening.getActiveTendency() : EnumBloodTendency.ANIMUS;
+		EnumBloodTemper temper = boss instanceof VesperTheEveningStarEntity evening
+				? evening.getActiveTemper() : EnumBloodTemper.ANIMUS;
 		VesperVisualEffects.ambient(boss.level(), boss.position(), boss.getBbWidth(), boss.getBbHeight(),
-				boss instanceof VesperTheCrownedRefusalEntity, tendency);
+				boss instanceof VesperTheCrownedRefusalEntity, temper);
 	}
 
 	static void tickVesperDeathParticles(Monster boss, int deathTicks) {

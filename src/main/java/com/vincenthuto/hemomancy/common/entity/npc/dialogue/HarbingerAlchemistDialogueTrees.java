@@ -620,7 +620,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				.build();
 	}
 
-	/** Degree 2 — Votary. Explains the Vial Centrifuge and blood tendency separation. */
+	/** Degree 2 — Votary. Explains the Vial Centrifuge and blood temper separation. */
 	public static DialogueTree votary(int entityId) {
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(

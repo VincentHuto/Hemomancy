@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.weave;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +23,7 @@ import java.util.UUID;
 
 /** A lingering patch a thread leaves on the ground: Flammeus embers burn, Mortem miasma sickens. */
 public class ThreadHazardEntity extends Entity {
-	private static final EntityDataAccessor<Byte> TENDENCY = SynchedEntityData.defineId(ThreadHazardEntity.class, EntityDataSerializers.BYTE);
+	private static final EntityDataAccessor<Byte> TEMPER = SynchedEntityData.defineId(ThreadHazardEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Float> RADIUS = SynchedEntityData.defineId(ThreadHazardEntity.class, EntityDataSerializers.FLOAT);
 	private int life;
 	private float power = 1.0F;
@@ -34,10 +34,10 @@ public class ThreadHazardEntity extends Entity {
 		noPhysics = true;
 	}
 
-	public static ThreadHazardEntity spawn(ServerLevel level, FrayedThreadEntity owner, Vec3 at, EnumBloodTendency tendency,
+	public static ThreadHazardEntity spawn(ServerLevel level, FrayedThreadEntity owner, Vec3 at, EnumBloodTemper temper,
 			float radius, int ticks, float power) {
 		ThreadHazardEntity hazard = new ThreadHazardEntity(EntityInit.thread_hazard.get(), level);
-		hazard.entityData.set(TENDENCY, (byte) tendency.ordinal());
+		hazard.entityData.set(TEMPER, (byte) temper.ordinal());
 		hazard.entityData.set(RADIUS, radius);
 		hazard.life = ticks;
 		hazard.power = power;
@@ -47,12 +47,12 @@ public class ThreadHazardEntity extends Entity {
 		return hazard;
 	}
 
-	public EnumBloodTendency tendency() { return EnumBloodTendency.values()[entityData.get(TENDENCY)]; }
+	public EnumBloodTemper temper() { return EnumBloodTemper.values()[entityData.get(TEMPER)]; }
 	public float radius() { return entityData.get(RADIUS); }
 
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		builder.define(TENDENCY, (byte) 0);
+		builder.define(TEMPER, (byte) 0);
 		builder.define(RADIUS, 1.5F);
 	}
 
@@ -63,8 +63,8 @@ public class ThreadHazardEntity extends Entity {
 		if (level().isClientSide) {
 			for (int i = 0; i < 2; i++) {
 				double a = random.nextDouble() * Math.PI * 2, d = random.nextDouble() * r;
-				level().addParticle(tendency() == EnumBloodTendency.MORTEM ? HemoParticleData.darkGlow(tendency().getColor())
-								: HemoParticleData.ember(tendency().getColor(), 0.08F, 0.8F, 18),
+				level().addParticle(temper() == EnumBloodTemper.MORTEM ? HemoParticleData.darkGlow(temper().getColor())
+								: HemoParticleData.ember(temper().getColor(), 0.08F, 0.8F, 18),
 						getX() + Math.cos(a) * d, getY() + 0.1, getZ() + Math.sin(a) * d, 0, 0.03, 0);
 			}
 			return;
@@ -80,7 +80,7 @@ public class ThreadHazardEntity extends Entity {
 		for (LivingEntity victim : server.getEntitiesOfClass(LivingEntity.class, new AABB(blockPosition()).inflate(r, 1.0, r),
 				e -> e.isAlive() && thread.hunts(e) && e.distanceToSqr(this) <= r * r + 1)) {
 			ThreadAttacks.markWeaveHarm(victim, thread);
-			if (tendency() == EnumBloodTendency.MORTEM) {
+			if (temper() == EnumBloodTemper.MORTEM) {
 				victim.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
 				victim.addEffect(new MobEffectInstance(MobEffects.POISON, 60, power >= 2.0F ? 1 : 0));
 			} else {

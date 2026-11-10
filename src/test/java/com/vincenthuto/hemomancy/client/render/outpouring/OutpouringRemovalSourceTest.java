@@ -29,6 +29,6 @@ class OutpouringRemovalSourceTest {
 
     @Test void layerNoLongerPivotsForLux() throws IOException {
         String layer = Files.readString(CLIENT.resolve("render/layer/player/CastingAnimationLayer.java"));
-        assertFalse(layer.contains("EnumBloodTendency.LUX"));
+        assertFalse(layer.contains("EnumBloodTemper.LUX"));
     }
 }

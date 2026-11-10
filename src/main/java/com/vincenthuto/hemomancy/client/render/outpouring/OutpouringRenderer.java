@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringSim.Mote;
 import com.vincenthuto.hemomancy.client.render.world.MaterialQuads;
 import com.vincenthuto.hemomancy.client.render.world.OutpouringBrushes;
 import com.vincenthuto.hemomancy.client.render.world.OutpouringBrushes.Mat;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.player.Player;
@@ -106,7 +106,7 @@ public final class OutpouringRenderer {
                 }
                 case LUX -> OutpouringBrushes.card(view.p, OutpouringBrushes.flow(Mat.LUX), at, view.right, view.up,
                         .06 + .015 * rank, .06 + .015 * rank, OutpouringBrushes.FOCUS, seed, WHITE, strength);
-                case ANIMUS, MORTEM -> OutpouringBrushes.card(view.p, OutpouringBrushes.flow(cast.school == EnumBloodTendency.ANIMUS
+                case ANIMUS, MORTEM -> OutpouringBrushes.card(view.p, OutpouringBrushes.flow(cast.school == EnumBloodTemper.ANIMUS
                         ? Mat.ANIMUS : Mat.MORTEM), at, view.right, view.up, .045, .045, OutpouringBrushes.FOCUS, seed, 0xFFFFFF,
                         strength * .9f);
                 case TENEBRIS -> OutpouringBrushes.card(view.p, OutpouringBrushes.flow(Mat.UMBRA), at, view.right, view.up,
@@ -116,12 +116,12 @@ public final class OutpouringRenderer {
         }
     }
 
-    private static void mote(View view, EnumBloodTendency school, Mote m, Vec3 at, float age, float alpha) {
+    private static void mote(View view, EnumBloodTemper school, Mote m, Vec3 at, float age, float alpha) {
         var p = view.p;
         switch (m.kind) {
             case DROP -> {
                 List<Vec3> path = trail(view, m, at);
-                if (school == EnumBloodTendency.CONGEATIO) {
+                if (school == EnumBloodTemper.CONGEATIO) {
                     // Blood freezing as it flies: a frost-shelled clot trailing a frozen strand.
                     if (path.size() > 1) OutpouringBrushes.ribbonPath(p, OutpouringBrushes.flow(Mat.CRUOR), path, m.size * .5, m.size * .1,
                             OutpouringBrushes.FROST_STRAND, m.seed, 0xFFFFFF, alpha * .8f);

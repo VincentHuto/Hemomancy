@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 public final class WillEquipmentRulesTest {
 	private WillEquipmentRulesTest() {
@@ -13,7 +13,7 @@ public final class WillEquipmentRulesTest {
 	}
 
 	private static void tierOneBrokenWillsUseLivingStaff() {
-		for (EnumBloodTendency school : EnumBloodTendency.values()) {
+		for (EnumBloodTemper school : EnumBloodTemper.values()) {
 			assertEquals("living_staff", WillEquipmentRules.weaponId(WillOrigin.BROKEN, school, 1),
 					"tier one broken " + school + " weapon");
 		}
@@ -30,21 +30,21 @@ public final class WillEquipmentRulesTest {
 	}
 
 	private static void assertSchoolWeapons(WillOrigin origin, int tier) {
-		assertEquals("living_blade", WillEquipmentRules.weaponId(origin, EnumBloodTendency.ANIMUS, tier),
+		assertEquals("living_blade", WillEquipmentRules.weaponId(origin, EnumBloodTemper.ANIMUS, tier),
 				origin + " animus");
-		assertEquals("living_torch", WillEquipmentRules.weaponId(origin, EnumBloodTendency.FLAMMEUS, tier),
+		assertEquals("living_torch", WillEquipmentRules.weaponId(origin, EnumBloodTemper.FLAMMEUS, tier),
 				origin + " flammeus");
-		assertEquals("living_crossbow", WillEquipmentRules.weaponId(origin, EnumBloodTendency.DUCTILIS, tier),
+		assertEquals("living_crossbow", WillEquipmentRules.weaponId(origin, EnumBloodTemper.DUCTILIS, tier),
 				origin + " ductilis");
-		assertEquals("living_spear", WillEquipmentRules.weaponId(origin, EnumBloodTendency.LUX, tier),
+		assertEquals("living_spear", WillEquipmentRules.weaponId(origin, EnumBloodTemper.LUX, tier),
 				origin + " lux");
-		assertEquals("living_sickle", WillEquipmentRules.weaponId(origin, EnumBloodTendency.MORTEM, tier),
+		assertEquals("living_sickle", WillEquipmentRules.weaponId(origin, EnumBloodTemper.MORTEM, tier),
 				origin + " mortem");
-		assertEquals("living_flail", WillEquipmentRules.weaponId(origin, EnumBloodTendency.CONGEATIO, tier),
+		assertEquals("living_flail", WillEquipmentRules.weaponId(origin, EnumBloodTemper.CONGEATIO, tier),
 				origin + " congeatio");
-		assertEquals("living_axe", WillEquipmentRules.weaponId(origin, EnumBloodTendency.FERRIC, tier),
+		assertEquals("living_axe", WillEquipmentRules.weaponId(origin, EnumBloodTemper.FERRIC, tier),
 				origin + " ferric");
-		assertEquals("living_baghnakh", WillEquipmentRules.weaponId(origin, EnumBloodTendency.TENEBRIS, tier),
+		assertEquals("living_baghnakh", WillEquipmentRules.weaponId(origin, EnumBloodTemper.TENEBRIS, tier),
 				origin + " tenebris");
 	}
 

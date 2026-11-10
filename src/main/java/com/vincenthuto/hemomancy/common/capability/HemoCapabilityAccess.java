@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummons;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperament;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
@@ -28,7 +28,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.Ichoria
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarItem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnownSummons;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
@@ -177,18 +177,18 @@ public static WillAmbushState getWillAmbushState(Player player) {
     return player.getData(HemoAttachmentTypes.WILL_AMBUSH_STATE);
 }
 
-// ── Blood Tendency ────────────────────────────────────────────────────────
+// ── Blood Temperament ────────────────────────────────────────────────────────
 
-public static BloodTendency getBloodTendency(Player player) {
-    return player.getData(HemoAttachmentTypes.BLOOD_TENDENCY);
+public static BloodTemperament getBloodTemperament(Player player) {
+    return player.getData(HemoAttachmentTypes.BLOOD_TEMPERAMENT);
 }
 
-public static Optional<IBloodTendency> getBloodTendency(Entity entity) {
-    return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.BLOOD_TENDENCY));
+public static Optional<IBloodTemperament> getBloodTemperament(Entity entity) {
+    return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.BLOOD_TEMPERAMENT));
 }
 
-public static Optional<IBloodTendency> getBloodTendency(BlockEntity be) {
-    return Optional.of(be.getData(HemoAttachmentTypes.BLOCK_BLOOD_TENDENCY));
+public static Optional<IBloodTemperament> getBloodTemperament(BlockEntity be) {
+    return Optional.of(be.getData(HemoAttachmentTypes.BLOCK_BLOOD_TEMPERAMENT));
 }
 
 // ── Vascular System ───────────────────────────────────────────────────────

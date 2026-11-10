@@ -7,7 +7,7 @@ public final class RecycledEnzymeIdentityTest {
 	public static void main(String[] args) {
 		var first = RecycledEnzymeIdentity.fromSeed(918273645L);
 		var again = RecycledEnzymeIdentity.fromSeed(918273645L);
-		assertEquals("same seed keeps tendency", first.tendencyIndex(), again.tendencyIndex());
+		assertEquals("same seed keeps temper", first.temperIndex(), again.temperIndex());
 		assertEquals("same seed keeps potency", first.potency(), again.potency());
 		if (first.potency() < 3F || first.potency() > 7F) {
 			throw new AssertionError("recycled potency must stay in the low-grade 3-7 range: " + first.potency());

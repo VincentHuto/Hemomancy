@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 import java.util.*;
@@ -17,7 +17,7 @@ public final class VesperCombatRules {
 	public static final float ANCHOR_HITBOX_HEIGHT = 2.2F;
 	public static final int ANCHOR_HIT_FLASH_TICKS = 4;
 	private static final float[] ANCHOR_THRESHOLDS = { 0.72F, 0.42F, 0.12F };
-	private static final Map<EnumBloodTendency, StanceProfile> STANCES = createStances();
+	private static final Map<EnumBloodTemper, StanceProfile> STANCES = createStances();
 
 	private VesperCombatRules() {
 	}
@@ -42,14 +42,14 @@ public final class VesperCombatRules {
 		return 0.0F;
 	}
 
-	public static List<EnumBloodTendency> tendencyTour(long seed) {
-		List<EnumBloodTendency> result = new ArrayList<>(List.of(EnumBloodTendency.values()));
+	public static List<EnumBloodTemper> temperTour(long seed) {
+		List<EnumBloodTemper> result = new ArrayList<>(List.of(EnumBloodTemper.values()));
 		Collections.shuffle(result, new Random(seed));
 		return List.copyOf(result);
 	}
 
-	public static EnumBloodTendency tendencyAt(long seed, int stanceIndex) {
-		List<EnumBloodTendency> tour = tendencyTour(seed);
+	public static EnumBloodTemper temperAt(long seed, int stanceIndex) {
+		List<EnumBloodTemper> tour = temperTour(seed);
 		return tour.get(Math.floorMod(stanceIndex, tour.size()));
 	}
 
@@ -57,8 +57,8 @@ public final class VesperCombatRules {
 
 	public static int secondaryAttackTick() { return 118; }
 
-	public static StanceProfile profile(EnumBloodTendency tendency) {
-		return STANCES.get(tendency);
+	public static StanceProfile profile(EnumBloodTemper temper) {
+		return STANCES.get(temper);
 	}
 
 	public static int stanceDuration(float health, float maxHealth) {
@@ -122,16 +122,16 @@ public final class VesperCombatRules {
 		return anchorIndex == activeAnchorIndex ? 1.0F : 0.0F;
 	}
 
-	private static Map<EnumBloodTendency, StanceProfile> createStances() {
-		EnumMap<EnumBloodTendency, StanceProfile> result = new EnumMap<>(EnumBloodTendency.class);
-		result.put(EnumBloodTendency.ANIMUS, new StanceProfile("blade", "blood_rush", "blood_aneurysm"));
-		result.put(EnumBloodTendency.MORTEM, new StanceProfile("axe", "exsanguinate", "grave_debt"));
-		result.put(EnumBloodTendency.LUX, new StanceProfile("spear", "prismatic_reproof", "hematic_flare"));
-		result.put(EnumBloodTendency.TENEBRIS, new StanceProfile("claws", "umbral_step", "gloam_laceration"));
-		result.put(EnumBloodTendency.DUCTILIS, new StanceProfile("crossbow", "conductive_mark", "synaptic_jolt"));
-		result.put(EnumBloodTendency.FLAMMEUS, new StanceProfile("torch", "sanguine_ignition", "scalding_updraft"));
-		result.put(EnumBloodTendency.CONGEATIO, new StanceProfile("flail", "glacial_grasp", "glacial_rampart"));
-		result.put(EnumBloodTendency.FERRIC, new StanceProfile("staff", "sanguine_magnetism", "iron_retort"));
+	private static Map<EnumBloodTemper, StanceProfile> createStances() {
+		EnumMap<EnumBloodTemper, StanceProfile> result = new EnumMap<>(EnumBloodTemper.class);
+		result.put(EnumBloodTemper.ANIMUS, new StanceProfile("blade", "blood_rush", "blood_aneurysm"));
+		result.put(EnumBloodTemper.MORTEM, new StanceProfile("axe", "exsanguinate", "grave_debt"));
+		result.put(EnumBloodTemper.LUX, new StanceProfile("spear", "prismatic_reproof", "hematic_flare"));
+		result.put(EnumBloodTemper.TENEBRIS, new StanceProfile("claws", "umbral_step", "gloam_laceration"));
+		result.put(EnumBloodTemper.DUCTILIS, new StanceProfile("crossbow", "conductive_mark", "synaptic_jolt"));
+		result.put(EnumBloodTemper.FLAMMEUS, new StanceProfile("torch", "sanguine_ignition", "scalding_updraft"));
+		result.put(EnumBloodTemper.CONGEATIO, new StanceProfile("flail", "glacial_grasp", "glacial_rampart"));
+		result.put(EnumBloodTemper.FERRIC, new StanceProfile("staff", "sanguine_magnetism", "iron_retort"));
 		return Map.copyOf(result);
 	}
 

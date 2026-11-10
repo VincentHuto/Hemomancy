@@ -14,7 +14,7 @@ import static com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.En
  * How a lane may be threaded through the engram, what it costs, when the engram is complete, and what a mistake
  * costs by rank. A lane moves node to node along the star's lines. A node holds one colour: a lane may end on a lane
  * of its own colour (it is plied in and carried home by it), never cross another. The Vessel is entered by a spoke,
- * through a face that, on keyed boards, takes only its tendency. Every edge spins one span of the lane's colour from
+ * through a face that, on keyed boards, takes only its temper. Every edge spins one span of the lane's colour from
  * the loom's stock; nothing is spent until the engram completes.
  */
 public final class EngramWeaveRules {
@@ -70,13 +70,13 @@ public final class EngramWeaveRules {
 		};
 	}
 
-	/** The tendency a face takes on a keyed board: the wheel runs clockwise in enum order from the Animus face. */
-	public static int faceTendency(EngramBoard board, int face) {
+	/** The temper a face takes on a keyed board: the wheel runs clockwise in enum order from the Animus face. */
+	public static int faceTemper(EngramBoard board, int face) {
 		return Math.floorMod(face - board.rotation(), FACES);
 	}
 
 	public static boolean faceAllowed(EngramBoard board, int face, int colour) {
-		return colour >= 0 && (!board.keyed() || faceTendency(board, face) == colour);
+		return colour >= 0 && (!board.keyed() || faceTemper(board, face) == colour);
 	}
 
 	/** A lane's colour: its fragment's, or for a grey fragment the true colour once a matching prism has dyed it. */
@@ -98,10 +98,10 @@ public final class EngramWeaveRules {
 		return board.lane(fragment).length - 1;
 	}
 
-	/** Spans the board's lanes hold of one tendency. */
-	public static int committed(EngramBoard board, int tendency) {
+	/** Spans the board's lanes hold of one temper. */
+	public static int committed(EngramBoard board, int temper) {
 		int total = 0;
-		for (int i = 0; i < board.fragmentCount(); i++) if (payColour(board, i) == tendency) total += laneSpans(board, i);
+		for (int i = 0; i < board.fragmentCount(); i++) if (payColour(board, i) == temper) total += laneSpans(board, i);
 		return total;
 	}
 
@@ -258,8 +258,8 @@ public final class EngramWeaveRules {
 		return -1;
 	}
 
-	/** The first tendency whose stock does not cover its reserved spans, or -1 when every colour is covered. */
-	public static int shortTendency(int[] stock, int[] reserved) {
+	/** The first temper whose stock does not cover its reserved spans, or -1 when every colour is covered. */
+	public static int shortTemper(int[] stock, int[] reserved) {
 		for (int t = 0; t < 8; t++) if ((t < stock.length ? stock[t] : 0) < (t < reserved.length ? reserved[t] : 0)) return t;
 		return -1;
 	}

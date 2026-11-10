@@ -52,8 +52,8 @@ public class ItemScar extends Item implements IScarItem {
 		return getScarDefinition().getDeepenAmount();
 	}
 
-	public com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency getAssignedTendency() {
-		return getScarDefinition().getAssignedTendency();
+	public com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper getAssignedTemper() {
+		return getScarDefinition().getAssignedTemper();
 	}
 
 	public int getTier() {

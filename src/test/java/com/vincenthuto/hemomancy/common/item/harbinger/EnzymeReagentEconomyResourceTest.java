@@ -18,7 +18,7 @@ public final class EnzymeReagentEconomyResourceTest {
 		coreSupportRecipesExist();
 		earlyBiologicalRecipesUseEnzymePrimer();
 		harbingerInfrastructureUsesFerricBinderOrPowder();
-		tendencyRecipesDoNotDuplicateEnzymes();
+		temperRecipesDoNotDuplicateEnzymes();
 		modelsExistForSupportItems();
 	}
 
@@ -64,11 +64,11 @@ public final class EnzymeReagentEconomyResourceTest {
 				read(RECIPES.resolve("blood_structure/vial_centrifuge.json")), "\"heldItem\": \"hemomancy:ferric_binder\"");
 	}
 
-	private static void tendencyRecipesDoNotDuplicateEnzymes() throws IOException {
+	private static void temperRecipesDoNotDuplicateEnzymes() throws IOException {
 		String vivaciousSpores = read(RECIPES.resolve("vivacious_spores_from_enzyme_primer.json"));
-		assertContains("tendency recipe consumes vivacious enzyme", vivaciousSpores, "hemomancy:vivacious_enzyme");
-		assertContains("tendency recipe outputs spores", vivaciousSpores, "hemomancy:vivacious_spores");
-		assertDoesNotContain("tendency recipe should not output enzyme", vivaciousSpores, "\"id\": \"hemomancy:vivacious_enzyme\"");
+		assertContains("temper recipe consumes vivacious enzyme", vivaciousSpores, "hemomancy:vivacious_enzyme");
+		assertContains("temper recipe outputs spores", vivaciousSpores, "hemomancy:vivacious_spores");
+		assertDoesNotContain("temper recipe should not output enzyme", vivaciousSpores, "\"id\": \"hemomancy:vivacious_enzyme\"");
 	}
 
 	private static void modelsExistForSupportItems() throws IOException {

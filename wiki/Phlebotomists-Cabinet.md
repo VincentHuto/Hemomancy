@@ -4,7 +4,7 @@ A Bloodwood specimen cabinet with nine pigeonholes. Each holds **64 exactly matc
 
 ## Store and retrieve
 
-Right-click to open the cabinet. Each cell shows one specimen, its quantity and source. Hover for the full vial tooltip and capacity. Unknown specimens show a question mark and “Properties Unknown”; identified specimens show their tendency colors and full properties in the tooltip.
+Right-click to open the cabinet. Each cell shows one specimen, its quantity and source. Hover for the full vial tooltip and capacity. Unknown specimens show a question mark and “Properties Unknown”; identified specimens show their temper colors and full properties in the tooltip.
 
 - Click a held full vial into an empty or matching cell to deposit it.
 - Either mouse button withdraws one vial onto an empty cursor.

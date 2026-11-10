@@ -8,7 +8,7 @@ import net.minecraft.commands.Commands;
  * The {@code /hemo} operator command (permission 2): debug and test controls for player progression and world
  * events. Each branch is its own class, in this package, whose {@code build()} returns the branch:
  * {@code /hemo blood}, {@code bloodline}, {@code degree}, {@code morphling}, {@code qliphoth}, {@code skills},
- * {@code unstained}, {@code organs}, {@code tendency}, {@code bloodmoon}, {@code fane}, {@code chamber}, {@code will},
+ * {@code unstained}, {@code organs}, {@code temper}, {@code bloodmoon}, {@code fane}, {@code chamber}, {@code will},
  * {@code summons}, {@code manipulations}, {@code slots}, {@code mycophant} and {@code vesper}. Most paths take an optional trailing player and act on
  * the executor without one. The syntax is pinned node by node by {@code HemoCommandTreeTest}.
  */
@@ -27,7 +27,7 @@ public final class HemoCommand {
 				.then(QliphothSubcommand.build())
 				.then(SkillsSubcommand.build())
 				.then(UnstainedSubcommand.build())
-				.then(TendencySubcommand.build())
+				.then(TemperSubcommand.build())
 				.then(BloodMoonSubcommand.build())
 				.then(FaneSubcommand.build())
 				.then(ChamberSubcommand.build())

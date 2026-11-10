@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -44,13 +44,13 @@ public class WillAnchorEntity extends Entity {
 
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		builder.define(DATA_SCHOOL, EnumBloodTendency.ANIMUS.ordinal());
+		builder.define(DATA_SCHOOL, EnumBloodTemper.ANIMUS.ordinal());
 		builder.define(DATA_TIER, 1);
 		builder.define(DATA_BROKEN_COUNT, 1);
 		builder.define(DATA_SENT_PRESENT, false);
 	}
 
-	public void configure(EnumBloodTendency school, WillCompositionRules.Composition composition, @Nullable Player target) {
+	public void configure(EnumBloodTemper school, WillCompositionRules.Composition composition, @Nullable Player target) {
 		entityData.set(DATA_SCHOOL, school.ordinal());
 		entityData.set(DATA_TIER, composition.tier());
 		entityData.set(DATA_BROKEN_COUNT, composition.brokenCount());
@@ -59,8 +59,8 @@ public class WillAnchorEntity extends Entity {
 		lifetimeTicks = anchorLifetime();
 	}
 
-	public EnumBloodTendency getSchool() {
-		return EnumBloodTendency.values()[Math.max(0, Math.min(EnumBloodTendency.values().length - 1, entityData.get(DATA_SCHOOL)))];
+	public EnumBloodTemper getSchool() {
+		return EnumBloodTemper.values()[Math.max(0, Math.min(EnumBloodTemper.values().length - 1, entityData.get(DATA_SCHOOL)))];
 	}
 
 	public int getTier() {
@@ -96,7 +96,7 @@ public class WillAnchorEntity extends Entity {
 		}
 	}
 
-	private void spawnWill(ServerLevel server, WillOrigin origin, EnumBloodTendency school, int tier,
+	private void spawnWill(ServerLevel server, WillOrigin origin, EnumBloodTemper school, int tier,
 			@Nullable Player target, boolean drifting, int index) {
 		WillEntity will = EntityInit.will.get().create(server);
 		if (will == null) return;

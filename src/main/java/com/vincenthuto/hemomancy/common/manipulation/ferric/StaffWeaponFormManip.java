@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -17,8 +17,8 @@ public class StaffWeaponFormManip extends BloodManipulation {
 	private final DeferredHolder<Item, Item> formItem;
 
 	public StaffWeaponFormManip(String name, DeferredHolder<Item, Item> formItem, double alignLevel,
-			double xpCost, EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, 0, alignLevel, xpCost, EnumManipulationType.QUICK, rank, tendency, section);
+			double xpCost, EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, 0, alignLevel, xpCost, EnumManipulationType.QUICK, rank, temper, section);
 		this.formItem = formItem;
 	}
 

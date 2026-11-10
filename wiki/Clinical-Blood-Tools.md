@@ -15,7 +15,7 @@ The Alchemist teaches blood as specimen: collection, observation, injection, and
 | 2 | The Laboratory Abroad | Craft a Cabinet, personally deposit and withdraw a full vial, obtain Hematic Iron Scraps, and meet the Artificer. Return to the Alchemist for the referral, then ask the Artificer for the Field Case lesson. |
 | 2–3 | What Blood Remembers Saying | After three personal sample identifications, obtain the Alchemist's echo referral at D2 or later. Meet the Mnemonist and learn the Clairaudiograph and cylinder recipes at D3. |
 
-First Separation and the first ordinary Ghastly Alembic distillation begin at Degree 2. Both are required before the Alchemist issues Concentrated Blood for the direct injection and sleep that grant Degree 3. Broader tendency work and Body Answers remain Degree 2 side work; the clinical lessons add no separate rank gate.
+First Separation and the first ordinary Ghastly Alembic distillation begin at Degree 2. Both are required before the Alchemist issues Concentrated Blood for the direct injection and sleep that grant Degree 3. Broader temper work and Body Answers remain Degree 2 side work; the clinical lessons add no separate rank gate.
 
 ## Observation and injection
 

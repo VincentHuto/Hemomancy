@@ -1,5 +1,5 @@
 {
-  "tendency": "FERRIC",
+  "temper": "FERRIC",
   "benefits": [
     {
       "effect": "hemomancy:ferric_transfusion"

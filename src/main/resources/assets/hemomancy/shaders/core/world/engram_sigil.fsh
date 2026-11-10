@@ -3,11 +3,11 @@
 #moj_import <fog.glsl>
 
 // The engram a Somatic Loom unfurls around itself while it weaves: an {8/3} star of empty vessels sunk into a skin of
-// living flesh, threaded with tendency-coloured ichor as the weaver draws each fragment home. texCoord0 is the point in
+// living flesh, threaded with temper-coloured ichor as the weaver draws each fragment home. texCoord0 is the point in
 // the engram's own frame, in blocks from the loom (the loom's front toward -y), so the star stays continuous across
 // blocks, steps and drapes. One program, three layers chosen by SigilLayer:
 //   0  the skin and its empty star (vertex red: 1 on the ground, falling down a drape)
-//   1  a lane of ichor (UV0 x along the lane in blocks, y across it -1..1; colour the tendency; alpha > 0.75 home)
+//   1  a lane of ichor (UV0 x along the lane in blocks, y across it -1..1; colour the temper; alpha > 0.75 home)
 //   2  a node's cap (UV0 across it -1..1; colour its tint; alpha carries which cap, in sixteenths)
 
 uniform vec4 ColorModulator;
@@ -138,8 +138,8 @@ float bearing(vec2 p) {
     return a < 0.0 ? a + TAU : a;
 }
 
-// The eight tendencies in wheel order, as the vessels carry them.
-vec3 tendencyColor(int t) {
+// The eight tempers in wheel order, as the vessels carry them.
+vec3 temperColor(int t) {
     if (t == 0) return vec3(0.86, 0.06, 0.08);
     if (t == 1) return vec3(1.00, 0.40, 0.06);
     if (t == 2) return vec3(1.00, 0.86, 0.16);
@@ -218,12 +218,12 @@ vec4 skin() {
     vec4 channel = groove(channelDistance, 0.085);
     // Memory runs in toward the loom along the empty channels: pale pulses, dormant, waiting for ichor.
     float inward = pow(0.5 + 0.5 * sin(length(sunk) * SigilRadius * 2.2 + HemoTime * 0.16 + bearing(p) * 2.0), 6.0);
-    // The faces each spoke enters: on a keyed engram the spoke itself carries its tendency's colour out from the loom.
+    // The faces each spoke enters: on a keyed engram the spoke itself carries its temper's colour out from the loom.
     float spokeFace = mod(floor(bearing(p) / (TAU / 8.0) + 0.5), 8.0);
     vec3 memoryLight = vec3(0.78, 0.36, 0.56);
     if (Keyed > 0.5 && onSpoke) {
         int t = int(mod(spokeFace - Rotation + 8.0, 8.0) + 0.5);
-        memoryLight = tendencyColor(t);
+        memoryLight = temperColor(t);
     }
     vec3 dormant = vec3(0.03, 0.005, 0.014) + memoryLight * (0.10 + 0.55 * inward) * (0.55 + 0.45 * Beat)
             * (onSpoke && Keyed > 0.5 ? 1.6 : 1.0);
@@ -257,13 +257,13 @@ vec4 skin() {
     color = mix(color, vec3(0.025, 0.003, 0.01), socket * 0.85);
     color += vec3(0.75, 0.10, 0.12) * ember * (0.25 + 0.35 * Beat);
     color += vec3(0.62, 0.26, 0.28) * rim * (0.28 + 0.2 * Beat);
-    // On a keyed engram each inner socket opens onto its face of the loom: its rim burns in that face's tendency,
+    // On a keyed engram each inner socket opens onto its face of the loom: its rim burns in that face's temper,
     // and the Animus face's rim carries a second, pale ring the wheel is read from.
     float faceRing = 0.0;
     if (Keyed > 0.5) {
         int t = int(mod(innerFace - Rotation + 8.0, 8.0) + 0.5);
         faceRing = exp(-sq((innerDistance - 0.3) / 0.05)) + 0.6 * exp(-sq((innerDistance - 0.39) / 0.035));
-        color = mix(color, tendencyColor(t) * (0.8 + 0.4 * Beat), clamp(faceRing, 0.0, 1.0) * 0.9);
+        color = mix(color, temperColor(t) * (0.8 + 0.4 * Beat), clamp(faceRing, 0.0, 1.0) * 0.9);
         if (abs(innerFace - Rotation) < 0.5) {
             float pale = exp(-sq((innerDistance - 0.5) / 0.035));
             color += vec3(1.0, 0.93, 0.85) * pale * (0.75 + 0.25 * Beat);
@@ -283,7 +283,7 @@ vec4 skin() {
     float marked = 0.0;
     if (Keyed > 0.5) {
         int t = int(mod(faceIndex - Rotation + 8.0, 8.0) + 0.5);
-        faceColor = tendencyColor(t);
+        faceColor = temperColor(t);
         marked = abs(faceIndex - Rotation) < 0.5 ? 1.0 : 0.0;
     }
     color = mix(color, faceColor * (0.5 + 0.35 * Beat + 0.6 * marked), rimBand * onFace * 0.85);
@@ -389,7 +389,7 @@ vec4 cap() {
         alpha = max(clot, bruise * 0.45);
         glow = 0.1;
     } else if (kind == 5) {
-        // A valve: a sphincter of its tendency's flesh that opens only for its own ichor.
+        // A valve: a sphincter of its temper's flesh that opens only for its own ichor.
         float folds = 0.5 + 0.5 * sin(a * 9.0 + d * 10.0 - HemoTime * 0.03);
         float ring = smoothstep(0.18, 0.3, d) * (1.0 - smoothstep(0.78, 0.86, d));
         float mouth = 1.0 - smoothstep(0.12, 0.2, d);

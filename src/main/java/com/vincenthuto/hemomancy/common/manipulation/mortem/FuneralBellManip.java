@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
@@ -20,8 +20,8 @@ public class FuneralBellManip extends BloodManipulation {
 	private static final float AFFLICTION_BONUS = 2.0F;
 
 	public FuneralBellManip(String name, double cost, double alignment, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignment, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignment, xpCost, type, rank, temper, section);
 	}
 
 	@Override public int getRequiredChargeTicks() { return CHARGE_TICKS; }

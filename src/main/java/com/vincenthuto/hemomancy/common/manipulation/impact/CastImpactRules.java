@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.impact;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastPurpose;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import javax.annotation.Nullable;
@@ -11,10 +11,10 @@ import javax.annotation.Nullable;
  */
 public final class CastImpactRules {
     public enum Delivery { MELEE, PROJECTILE, AREA, TETHER }
-    public record Decoded(EnumBloodTendency primary, @Nullable EnumBloodTendency secondary, Delivery delivery, int weight) {}
+    public record Decoded(EnumBloodTemper primary, @Nullable EnumBloodTemper secondary, Delivery delivery, int weight) {}
 
     public static final int FLASH_END = 2, BURST_END = 6, LIFE = 10, THROTTLE = 5;
-    private static final EnumBloodTendency[] SCHOOLS = EnumBloodTendency.values();
+    private static final EnumBloodTemper[] SCHOOLS = EnumBloodTemper.values();
 
     private CastImpactRules() {}
 
@@ -32,7 +32,7 @@ public final class CastImpactRules {
     }
 
     /** Bits 0-3 primary, 4-7 secondary + 1 (0 for none), 8-9 delivery, 10-11 weight; bit 12 keeps it positive and non-zero. */
-    public static int encode(EnumBloodTendency primary, @Nullable EnumBloodTendency secondary, Delivery delivery, int weight) {
+    public static int encode(EnumBloodTemper primary, @Nullable EnumBloodTemper secondary, Delivery delivery, int weight) {
         return 1 << 12 | Math.clamp(weight, 0, 2) << 10 | delivery.ordinal() << 8
                 | (secondary == null ? 0 : secondary.ordinal() + 1) << 4 | primary.ordinal();
     }

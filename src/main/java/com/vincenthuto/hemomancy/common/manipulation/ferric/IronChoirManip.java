@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -31,8 +31,8 @@ public class IronChoirManip extends BloodManipulation {
 	public static final double NEEDLE_BASE_DAMAGE = 0.4D;
 	private static final float NEEDLE_SPEED = 7.5F;
 	public IronChoirManip(String name, double cost, double alignment, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignment, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignment, xpCost, type, rank, temper, section);
 	}
 
 	@Override
@@ -59,8 +59,8 @@ public class IronChoirManip extends BloodManipulation {
 		needle.setBaseDamage(NEEDLE_BASE_DAMAGE
 				* com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player));
 		needle.setForged(true);
-		needle.setDamageTendency(getTend());
-		needle.setSecondaryDamageTendency(getSecondaryTend());
+		needle.setDamageTemper(getTend());
+		needle.setSecondaryDamageTemper(getSecondaryTend());
 		Vec3 aim = target.getEyePosition().subtract(needle.position());
 		needle.shoot(aim.x, aim.y, aim.z, NEEDLE_SPEED, 0.0F);
 		level.addFreshEntity(needle);

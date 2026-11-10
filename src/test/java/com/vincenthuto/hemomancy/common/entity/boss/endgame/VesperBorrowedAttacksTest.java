@@ -16,7 +16,7 @@ final class VesperBorrowedAttacksTest {
 		for (String shape : VesperPuppetRoster.SHAPES) {
 			VesperWeaponAction attack = VesperBorrowedAttacks.forShape(shape).orElseThrow(() -> new AssertionError(shape));
 			assertTrue(seen.add(attack), shape + " shares an attack");
-			assertNull(attack.tendency(), "borrowed attacks belong to no school");
+			assertNull(attack.temper(), "borrowed attacks belong to no school");
 			assertTrue(attack.impactTick() >= 10, attack.name());
 			int recovery = attack.durationTicks() - attack.lastImpactTick();
 			assertTrue(recovery >= 8 && recovery <= 14, attack.name());

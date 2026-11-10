@@ -31,7 +31,7 @@ public final class ScryingDiagnosticsTabs {
 	public enum Tab {
 		BLOOD("screen.hemomancy.scrying_diagnostics_tabs.blood", 0xFFE15A5A),
 		MANIPULATIONS("screen.hemomancy.scrying_diagnostics_tabs.manipulations", 0xFFE6C65C),
-		TENDENCY("screen.hemomancy.scrying_diagnostics_tabs.tendency", 0xFF86D986);
+		TEMPER("screen.hemomancy.scrying_diagnostics_tabs.temper", 0xFF86D986);
 
 		private final String labelKey;
 		private final int color;

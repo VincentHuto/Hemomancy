@@ -386,7 +386,7 @@ public final class BloodInjectionGameTests {
                         var decoded = codec.decode(buf);
                         h.assertTrue(decoded.entityId() == player.getId() && decoded.startedAt() == start.startedAt()
                                 && decoded.phase() == packet.phase() && decoded.hand() == hand
-                                && decoded.right() == start.right() && decoded.tendency() == packet.tendency()
+                                && decoded.right() == start.right() && decoded.temper() == packet.temper()
                                 && ItemStack.matches(decoded.vial(), packet.vial()), "Animation packet lost presentation data");
                     } finally { buf.release(); }
                 }
@@ -507,9 +507,9 @@ public final class BloodInjectionGameTests {
         var snapshot = BloodInjectionData.snapshot(false);
         var pig = BloodSampleData.profile(a,false);
         var bear = BloodSampleData.profile(vial("minecraft:polar_bear"),false);
-        h.assertTrue(pig.tendencies().contains(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS), "Pig lost Animus");
-        h.assertTrue(!bear.tendencies().contains(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS), "Polar bear gained Animus");
-        h.assertTrue(bear.tendencies().contains(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.CONGEATIO), "Bear lost Congeatio");
+        h.assertTrue(pig.tempers().contains(com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.ANIMUS), "Pig lost Animus");
+        h.assertTrue(!bear.tempers().contains(com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.ANIMUS), "Polar bear gained Animus");
+        h.assertTrue(bear.tempers().contains(com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.CONGEATIO), "Bear lost Congeatio");
         h.assertTrue(snapshot.resolve(bear).drawbacks().size() == 1, "Cold property lost Congeatio drawback");
         h.succeed();
     }
@@ -658,12 +658,12 @@ public final class BloodInjectionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void twoTendencyFixtureKeepsBothResponsesAndDrawback(GameTestHelper h) {
+    public static void twoTemperFixtureKeepsBothResponsesAndDrawback(GameTestHelper h) {
         var profile=new BloodSampleData.Profile(net.minecraft.resources.ResourceLocation.parse("minecraft:pig"),java.util.List.of(
-            com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.CONGEATIO,
-            com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS),java.util.List.of(),true);
+            com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.CONGEATIO,
+            com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.ANIMUS),java.util.List.of(),true);
         var result=BloodInjectionData.snapshot(false).resolve(profile);
-        h.assertTrue(result.benefits().size()==2 && result.benefits().getFirst().effect().toString().equals("minecraft:regeneration"),"Two-tendency order or response lost");
+        h.assertTrue(result.benefits().size()==2 && result.benefits().getFirst().effect().toString().equals("minecraft:regeneration"),"Two-temper order or response lost");
         h.assertTrue(result.drawbacks().size()==1 && result.drawbacks().getFirst().effect().toString().equals("minecraft:slowness"),"Congeatio drawback lost");
         h.succeed();
     }
@@ -674,7 +674,7 @@ public final class BloodInjectionGameTests {
         for(int i=0;i<2;i++) {
             var path=root.resolve("pack"+i);var file=path.resolve("data/example/blood_injection/animus.json");
             java.nio.file.Files.createDirectories(file.getParent());
-            java.nio.file.Files.writeString(file,"{\"tendency\":\"ANIMUS\",\"benefits\":[{\"effect\":\"minecraft:regeneration\",\"duration\":"+(i==0?200:400)+"}]}");
+            java.nio.file.Files.writeString(file,"{\"temper\":\"ANIMUS\",\"benefits\":[{\"effect\":\"minecraft:regeneration\",\"duration\":"+(i==0?200:400)+"}]}");
             packs.add(new net.minecraft.server.packs.PathPackResources(new net.minecraft.server.packs.PackLocationInfo("fixture"+i,
                 net.minecraft.network.chat.Component.literal("fixture"),net.minecraft.server.packs.repository.PackSource.DEFAULT,java.util.Optional.empty()),path));
         }

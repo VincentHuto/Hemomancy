@@ -28,7 +28,7 @@ public final class Discharge {
     public com.vincenthuto.hemomancy.common.damage.SchoolHitContext pulseContext(net.minecraft.world.entity.LivingEntity owner) {
         var hit = origin == null ? com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(
                 com.vincenthuto.hemomancy.Hemomancy.rloc("conductor_pulse"),
-                com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.DUCTILIS, null, owner) : origin;
+                com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.DUCTILIS, null, owner) : origin;
         if (pulseTick != owner.level().getGameTime()) {
             pulseTick = owner.level().getGameTime();
             pulseHit = hit.newAttack().child(com.vincenthuto.hemomancy.common.damage.SchoolHitContext.Kind.PERIODIC);

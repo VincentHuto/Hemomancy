@@ -258,8 +258,8 @@ public final class EngramGlyphs {
 				.withFixedSeed(true, seed);
 	}
 
-	static ParticleColor particleColour(int tendency) {
-		float[] c = EngramSigilRenderer.ichor(tendency);
+	static ParticleColor particleColour(int temper) {
+		float[] c = EngramSigilRenderer.ichor(temper);
 		return new ParticleColor(Math.round(c[0] * 255), Math.round(c[1] * 255), Math.round(c[2] * 255));
 	}
 

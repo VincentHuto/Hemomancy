@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -47,7 +47,7 @@ public final class AxonalTransductionGameTests {
             HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
             HemoCapabilityAccess.getBloodVolume(player).setActive(true);
             HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(10000);
-            HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(EnumBloodTendency.DUCTILIS,100);
+            HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(EnumBloodTemper.DUCTILIS,100);
             var known = HemoCapabilityAccess.getKnownManipulations(player);
             known.getKnownManips().put(ManipulationInit.axonal_transduction.get(),new ManipLevel(0,0));
             known.setEquippedManipNames(java.util.List.of("axonal_transduction"));
@@ -83,9 +83,9 @@ public final class AxonalTransductionGameTests {
             f.player.setShiftKeyDown(false); HemoCapabilityAccess.getInitiatoryDegree(f.player).setDegreeNumber(5); f.enter();
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"D5 bypassed PERFECTUS eligibility");
             HemoCapabilityAccess.getInitiatoryDegree(f.player).setDegreeNumber(6);
-            HemoCapabilityAccess.getBloodTendency(f.player).setTendencyAlignment(EnumBloodTendency.DUCTILIS,64); f.enter();
+            HemoCapabilityAccess.getBloodTemperament(f.player).setTemperAlignment(EnumBloodTemper.DUCTILIS,64); f.enter();
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"Insufficient alignment entered the network");
-            HemoCapabilityAccess.getBloodTendency(f.player).setTendencyAlignment(EnumBloodTendency.DUCTILIS,100);
+            HemoCapabilityAccess.getBloodTemperament(f.player).setTemperAlignment(EnumBloodTemper.DUCTILIS,100);
             h.getLevel().setBlock(f.source.offset(1,0,0),Blocks.AIR.defaultBlockState(),3); f.enter();
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"Isolated node entered a nonexistent route");
             h.assertTrue(HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume()==blood,"Refused entry spent blood");

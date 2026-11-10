@@ -23,12 +23,12 @@ public class HemoServerConfig {
 	public static ModConfigSpec.DoubleValue BLOOD_GAIN_PER_KILL;
 	public static ModConfigSpec.DoubleValue BLOOD_GAIN_BOSS_MULTIPLIER;
 
-	// ===== Blood Tendency =====
-	public static ModConfigSpec.BooleanValue TENDENCY_SHIFT_ON_KILL_ENABLED;
-	public static ModConfigSpec.BooleanValue TENDENCY_SHIFT_ON_CAST_ENABLED;
-	public static ModConfigSpec.DoubleValue TENDENCY_SHIFT_AMOUNT;
-	public static ModConfigSpec.DoubleValue TENDENCY_SHIFT_ON_MANIP_USE;
-	public static ModConfigSpec.DoubleValue TENDENCY_BOSS_MULTIPLIER;
+	// ===== Blood Temperament =====
+	public static ModConfigSpec.BooleanValue TEMPER_SHIFT_ON_KILL_ENABLED;
+	public static ModConfigSpec.BooleanValue TEMPER_SHIFT_ON_CAST_ENABLED;
+	public static ModConfigSpec.DoubleValue TEMPER_SHIFT_AMOUNT;
+	public static ModConfigSpec.DoubleValue TEMPER_SHIFT_ON_MANIP_USE;
+	public static ModConfigSpec.DoubleValue TEMPER_BOSS_MULTIPLIER;
 
 	// ===== Hematic Salvage =====
 	public static ModConfigSpec.BooleanValue HEMATIC_SALVAGE_ENABLED;
@@ -175,28 +175,28 @@ public class HemoServerConfig {
 
 		builder.pop();
 
-		// ───── Blood Tendency ─────
-		builder.comment("Blood Tendency Settings").push("blood_tendency");
+		// ───── Blood Temperament ─────
+		builder.comment("Blood Temperament Settings").push("blood_temperament");
 
-		TENDENCY_SHIFT_ON_KILL_ENABLED = builder
-				.comment("Whether killing entities shifts the player's blood tendency.")
-				.define("tendencyShiftOnKillEnabled", true);
+		TEMPER_SHIFT_ON_KILL_ENABLED = builder
+				.comment("Whether killing entities shifts the player's blood temper.")
+				.define("temperShiftOnKillEnabled", true);
 
-		TENDENCY_SHIFT_ON_CAST_ENABLED = builder
-				.comment("Whether casting a manipulation shifts the player's blood tendency toward its schools.")
-				.define("tendencyShiftOnCastEnabled", true);
+		TEMPER_SHIFT_ON_CAST_ENABLED = builder
+				.comment("Whether casting a manipulation shifts the player's blood temper toward its schools.")
+				.define("temperShiftOnCastEnabled", true);
 
-		TENDENCY_SHIFT_AMOUNT = builder
-				.comment("How much tendency alignment is gained per relevant kill.")
-				.defineInRange("tendencyShiftAmount", 1.0, 0.1, 100.0);
+		TEMPER_SHIFT_AMOUNT = builder
+				.comment("How much temper alignment is gained per relevant kill.")
+				.defineInRange("temperShiftAmount", 1.0, 0.1, 100.0);
 
-		TENDENCY_SHIFT_ON_MANIP_USE = builder
-				.comment("How much tendency alignment is gained when using a manipulation of that tendency.")
-				.defineInRange("tendencyShiftOnManipUse", 0.5, 0.0, 50.0);
+		TEMPER_SHIFT_ON_MANIP_USE = builder
+				.comment("How much temper alignment is gained when using a manipulation of that temper.")
+				.defineInRange("temperShiftOnManipUse", 0.5, 0.0, 50.0);
 
-		TENDENCY_BOSS_MULTIPLIER = builder
-				.comment("Multiplier applied to tendency shift when killing a boss entity (Ender Dragon, Wither, Elder Guardian, Warden). Default 10x the base shift amount.")
-				.defineInRange("tendencyBossMultiplier", 10.0, 1.0, 100.0);
+		TEMPER_BOSS_MULTIPLIER = builder
+				.comment("Multiplier applied to temper shift when killing a boss entity (Ender Dragon, Wither, Elder Guardian, Warden). Default 10x the base shift amount.")
+				.defineInRange("temperBossMultiplier", 10.0, 1.0, 100.0);
 
 		builder.pop();
 

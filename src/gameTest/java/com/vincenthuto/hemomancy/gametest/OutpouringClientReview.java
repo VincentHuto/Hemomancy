@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.player.CastingAnimationClientState;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringClientState;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastPhase;
@@ -36,10 +36,10 @@ import java.util.List;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class OutpouringClientReview {
-    private record Scene(String name, EnumBloodTendency school, EnumManipulationRank rank, EnumVeinSections section,
+    private record Scene(String name, EnumBloodTemper school, EnumManipulationRank rank, EnumVeinSections section,
                          boolean build, boolean after, boolean night, boolean firstPerson, boolean armour, boolean minimal,
                          boolean corner) {
-        Scene(String name, EnumBloodTendency school, EnumManipulationRank rank, EnumVeinSections section, boolean build,
+        Scene(String name, EnumBloodTemper school, EnumManipulationRank rank, EnumVeinSections section, boolean build,
               boolean after, boolean night, boolean firstPerson, boolean armour, boolean minimal) {
             this(name, school, rank, section, build, after, night, firstPerson, armour, minimal, false);
         }
@@ -53,30 +53,30 @@ public final class OutpouringClientReview {
     private static List<Scene> scenes() {
         List<Scene> all = new ArrayList<>();
         EnumManipulationRank[] ranks = {EnumManipulationRank.HUMILIS, EnumManipulationRank.SUMMA, EnumManipulationRank.PERFECTUS};
-        for (var school : EnumBloodTendency.values()) for (int r = 0; r < ranks.length; r++) {
+        for (var school : EnumBloodTemper.values()) for (int r = 0; r < ranks.length; r++) {
             var section = EnumVeinSections.values()[(school.ordinal() + r) % 5];
             all.add(new Scene(name(school, ranks[r], section), school, ranks[r], section, true, true, false, false, false, false));
         }
         for (var section : EnumVeinSections.values())
-            all.add(new Scene("sweep-" + name(EnumBloodTendency.ANIMUS, EnumManipulationRank.SUMMA, section),
-                    EnumBloodTendency.ANIMUS, EnumManipulationRank.SUMMA, section, false, false, false, false, false, false));
-        all.add(new Scene("night-lux", EnumBloodTendency.LUX, EnumManipulationRank.PERFECTUS, EnumVeinSections.HEART, false, true, true, false, false, false));
-        all.add(new Scene("night-tenebris", EnumBloodTendency.TENEBRIS, EnumManipulationRank.PERFECTUS, EnumVeinSections.BODY, false, true, true, false, false, false));
-        all.add(new Scene("fp-lux", EnumBloodTendency.LUX, EnumManipulationRank.PERFECTUS, EnumVeinSections.ARMS, false, false, false, true, false, false));
-        all.add(new Scene("fp-tenebris", EnumBloodTendency.TENEBRIS, EnumManipulationRank.PERFECTUS, EnumVeinSections.BODY, false, false, false, true, false, false));
-        all.add(new Scene("fp-flammeus", EnumBloodTendency.FLAMMEUS, EnumManipulationRank.MAGISTER, EnumVeinSections.ARMS, false, false, false, true, false, false));
-        all.add(new Scene("armour-congeatio", EnumBloodTendency.CONGEATIO, EnumManipulationRank.SUMMA, EnumVeinSections.BODY, false, true, false, false, true, false));
+            all.add(new Scene("sweep-" + name(EnumBloodTemper.ANIMUS, EnumManipulationRank.SUMMA, section),
+                    EnumBloodTemper.ANIMUS, EnumManipulationRank.SUMMA, section, false, false, false, false, false, false));
+        all.add(new Scene("night-lux", EnumBloodTemper.LUX, EnumManipulationRank.PERFECTUS, EnumVeinSections.HEART, false, true, true, false, false, false));
+        all.add(new Scene("night-tenebris", EnumBloodTemper.TENEBRIS, EnumManipulationRank.PERFECTUS, EnumVeinSections.BODY, false, true, true, false, false, false));
+        all.add(new Scene("fp-lux", EnumBloodTemper.LUX, EnumManipulationRank.PERFECTUS, EnumVeinSections.ARMS, false, false, false, true, false, false));
+        all.add(new Scene("fp-tenebris", EnumBloodTemper.TENEBRIS, EnumManipulationRank.PERFECTUS, EnumVeinSections.BODY, false, false, false, true, false, false));
+        all.add(new Scene("fp-flammeus", EnumBloodTemper.FLAMMEUS, EnumManipulationRank.MAGISTER, EnumVeinSections.ARMS, false, false, false, true, false, false));
+        all.add(new Scene("armour-congeatio", EnumBloodTemper.CONGEATIO, EnumManipulationRank.SUMMA, EnumVeinSections.BODY, false, true, false, false, true, false));
         // Standing in the corner of the two walls, so pooled blood is pushed against both.
-        all.add(new Scene("corner-animus", EnumBloodTendency.ANIMUS, EnumManipulationRank.PERFECTUS, EnumVeinSections.LEGS, false, true, false, false, false, false, true));
-        all.add(new Scene("minimal-ferric", EnumBloodTendency.FERRIC, EnumManipulationRank.PERFECTUS, EnumVeinSections.LEGS, false, false, false, false, false, true));
+        all.add(new Scene("corner-animus", EnumBloodTemper.ANIMUS, EnumManipulationRank.PERFECTUS, EnumVeinSections.LEGS, false, true, false, false, false, false, true));
+        all.add(new Scene("minimal-ferric", EnumBloodTemper.FERRIC, EnumManipulationRank.PERFECTUS, EnumVeinSections.LEGS, false, false, false, false, false, true));
         // Hematic Riposte's arm, the visual standard, armed on the reviewer itself (riposte-sweep, -strike, -dissolve)
-        all.add(new Scene("riposte", EnumBloodTendency.ANIMUS, EnumManipulationRank.SUMMA, EnumVeinSections.ARMS, false, false, false, false, false, false));
-        all.add(new Scene("riposte-night", EnumBloodTendency.ANIMUS, EnumManipulationRank.SUMMA, EnumVeinSections.ARMS, false, false, true, false, false, false));
+        all.add(new Scene("riposte", EnumBloodTemper.ANIMUS, EnumManipulationRank.SUMMA, EnumVeinSections.ARMS, false, false, false, false, false, false));
+        all.add(new Scene("riposte-night", EnumBloodTemper.ANIMUS, EnumManipulationRank.SUMMA, EnumVeinSections.ARMS, false, false, true, false, false, false));
         String only = System.getProperty("hemomancy.outpouringReview.only", "");
         return only.isEmpty() ? all : all.stream().filter(s -> java.util.Arrays.stream(only.split(",")).anyMatch(s.name::contains)).toList();
     }
 
-    private static String name(EnumBloodTendency school, EnumManipulationRank rank, EnumVeinSections section) {
+    private static String name(EnumBloodTemper school, EnumManipulationRank rank, EnumVeinSections section) {
         return (school + "-" + rank + "-" + section).toLowerCase();
     }
 

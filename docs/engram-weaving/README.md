@@ -12,7 +12,7 @@ Every image below is from the game: the screenshots come from the loom review cl
 
 | | Step | What to do |
 |---|---|---|
-| 1 | **Choose and load** | Choose the memory at the loom and feed it enzymes. Each enzyme becomes **3 spans** of thread of its tendency, and a vial holds up to 192 spans. Before taking blood, the loom tells you how many spans *your* engram needs of each colour. |
+| 1 | **Choose and load** | Choose the memory at the loom and feed it enzymes. Each enzyme becomes **3 spans** of thread of its temper, and a vial holds up to 192 spans. Before taking blood, the loom tells you how many spans *your* engram needs of each colour. |
 | 2 | **Pay the blood** | The engram unfurls over the ground: living skin with an eight-pointed star sunk into it, and the loom at its heart. One **fragment** rises for every enzyme the recipe lists. |
 | 3 | **Listen** | Hold a Living Staff and rest your gaze on a fragment for half a second. The echo floating above the loom replays that memory. A **false** fragment replays the wrong memory. |
 | 4 | **Take a lane** | Use the staff on a fragment. Its pool grows a ring of beads: you are holding its lane. |
@@ -77,13 +77,13 @@ Each close-up below centres on one marking.
 
 | Close-up | Marking | Meaning |
 |---|---|---|
-| <img src="img/shots/close-fragment.jpg" width="320"> | **Fragment** | A piece of the memory: a glowing pool in its tendency's colour with its glyph floating above. **Thread it home.** |
+| <img src="img/shots/close-fragment.jpg" width="320"> | **Fragment** | A piece of the memory: a glowing pool in its temper's colour with its glyph floating above. **Thread it home.** |
 | <img src="img/shots/close-held.jpg" width="320"> | **Held lane** | The fragment whose lane you hold has **beads circling its pool**. A **hot bead** marks where the lane ends. The **pale ring of ticks** is the node your staff points at: that step will be taken. |
 | <img src="img/shots/close-refused.jpg" width="320"> | **Refused step** | The ring turns **red** and the staff's dots scatter red when the step can't be taken: a crossing, a scar, a valve or prism of the wrong colour, the wrong face, a node out of line, or no thread left. |
 | <img src="img/shots/cursor.jpg" width="320"> | **Staff point** | Fine dots settle on the exact pixel of the block face your staff touches. They linger, so a sweep leaves a dotted trail. They're pale with nothing held and take the lane's colour while you draw. |
 | <img src="img/shots/close-home.jpg" width="320"> | **Home** | A lane that reaches the loom. The fragment's pool **drains and dims** and its glyph sinks. |
 | <img src="img/shots/close-scar.jpg" width="320"> | **Scar** | A crust of dead, black clot over a socket, cracked to its rim, with a bruise around it. **Nothing passes through.** |
-| <img src="img/shots/close-valve.jpg" width="320"> | **Valve** (Summa+) | A ring of folded flesh in one tendency's colour around a dark mouth. **Only that colour's lane may pass.** |
+| <img src="img/shots/close-valve.jpg" width="320"> | **Valve** (Summa+) | A ring of folded flesh in one temper's colour around a dark mouth. **Only that colour's lane may pass.** |
 | <img src="img/shots/close-prism.jpg" width="320"> | **Prism** (Magister+) | A faceted, sparkling crystal iris. A **grey lane passing through it is dyed** the prism's colour. |
 | <img src="img/shots/close-grey.jpg" width="320"> | **Grey fragment** (Magister+) | A pearly, shimmering grey pool: its colour is hidden. Its lane runs grey until it **passes the prism of its true colour**. |
 | <img src="img/shots/close-false.jpg" width="320"> | **False fragment** (Mediocritas+) | An *intrusion*: a failed Harbinger's memory dressed as a real one, in a colour the recipe uses. Its pool and glyph **brighten between the loom's heartbeats**, and listening to it replays the wrong memory. **Leave it alone.** |
@@ -130,11 +130,11 @@ Each fragment shows one of these 36 letters (0–9, a–z). **The letter has no 
 
 ## The wheel
 
-Each fragment's colour is its blood tendency:
+Each fragment's colour is its blood temper:
 
-![One glyph in each tendency's colour](img/glyphs/colours.png)
+![One glyph in each temper's colour](img/glyphs/colours.png)
 
-| | Tendency | | Tendency |
+| | Temper | | Temper |
 |---|---|---|---|
 | <img src="img/glyphs/chip-animus.png"> | **Animus** | <img src="img/glyphs/chip-mortem.png"> | **Mortem** |
 | <img src="img/glyphs/chip-flammeus.png"> | **Flammeus** | <img src="img/glyphs/chip-congeatio.png"> | **Congeatio** |

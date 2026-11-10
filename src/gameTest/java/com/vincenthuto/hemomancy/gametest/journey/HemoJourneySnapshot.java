@@ -14,8 +14,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.Known
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.thelemicmemory.ThelemicMemoryState;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperament;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
@@ -84,7 +84,7 @@ public final class HemoJourneySnapshot {
 	private static final String BLOOD_MAX = "blood_max";
 	private static final String DEGREE = "degree";
 	private static final String DEGREE_STATE = "degree_state";
-	private static final String BLOOD_TENDENCY = "blood_tendency";
+	private static final String BLOOD_TEMPERAMENT = "blood_temperament";
 	private static final String INVENTORY = "inventory";
 	private static final String ADVANCEMENTS = "advancements";
 	private static final String ORIGIN_DIMENSION = "origin_dimension";
@@ -285,7 +285,7 @@ public final class HemoJourneySnapshot {
 		snapshot.putInt(DEGREE, HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber());
 		snapshot.put(DEGREE_STATE, HemoCapabilityAccess.getInitiatoryDegree(player)
 				.serializeNBT(player.registryAccess()));
-		snapshot.put(BLOOD_TENDENCY, HemoCapabilityAccess.getBloodTendency(player)
+		snapshot.put(BLOOD_TEMPERAMENT, HemoCapabilityAccess.getBloodTemperament(player)
 				.serializeNBT(player.registryAccess()));
 		snapshot.put(SKILL_PROGRESS,
 				HemoCapabilityAccess.getSkillProgress(player).serializeNBT(player.registryAccess()));
@@ -387,12 +387,12 @@ public final class HemoJourneySnapshot {
 		var emptyLivingStaffProgress = new LivingStaffProgress();
 		var emptyVascularSystem = new VascularSystem();
 		var emptyDegree = new InitiatoryDegree();
-		var emptyTendency = new BloodTendency();
+		var emptyTemper = new BloodTemperament();
 		var emptyRecipeBook = new ServerRecipeBook();
 		var emptyBestiary = new SpecimenBestiaryProgress();
 		var emptyBrewing = new com.vincenthuto.hemomancy.common.capability.player.harbinger.station.StationUpgradeProgress();
 		ParsedState reset = new ParsedState(false, 0.0D, 5000.0D, 0,
-				emptyDegree.serializeNBT(player.registryAccess()), emptyTendency.serializeNBT(player.registryAccess()), emptyInventory,
+				emptyDegree.serializeNBT(player.registryAccess()), emptyTemper.serializeNBT(player.registryAccess()), emptyInventory,
 				resetAdvancements, emptySkills.serializeNBT(player.registryAccess()),
 				emptyKnowledge.serializeNBT(player.registryAccess()),
 				HemoJourneyManipulationState.capture(emptyManipulations, player.registryAccess()),
@@ -455,7 +455,7 @@ public final class HemoJourneySnapshot {
 		if (!snapshot.contains(BLOOD_ACTIVE, Tag.TAG_BYTE) || !snapshot.contains(BLOOD_CURRENT, Tag.TAG_ANY_NUMERIC)
 				|| !snapshot.contains(BLOOD_MAX, Tag.TAG_ANY_NUMERIC) || !snapshot.contains(DEGREE, Tag.TAG_ANY_NUMERIC)
 				|| !snapshot.contains(DEGREE_STATE, Tag.TAG_COMPOUND)
-				|| !snapshot.contains(BLOOD_TENDENCY, Tag.TAG_COMPOUND)
+				|| !snapshot.contains(BLOOD_TEMPERAMENT, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(SKILL_PROGRESS, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(LIBER_KNOWLEDGE, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(KNOWN_MANIPULATIONS, Tag.TAG_LIST)
@@ -538,7 +538,7 @@ public final class HemoJourneySnapshot {
 		if (target == null) return PreflightResult.fail("Origin restore failed: invalid dimension, position, or rotation.");
 		if (!snapshot.contains(CURRENT_STAGE, Tag.TAG_STRING) || !isKnownStage(snapshot.getString(CURRENT_STAGE))) return PreflightResult.fail("Stage restore failed: saved stage is missing or invalid.");
 		return PreflightResult.ok(new ParsedState(snapshot.getBoolean(BLOOD_ACTIVE), current, max, degree,
-				snapshot.getCompound(DEGREE_STATE).copy(), snapshot.getCompound(BLOOD_TENDENCY).copy(),
+				snapshot.getCompound(DEGREE_STATE).copy(), snapshot.getCompound(BLOOD_TEMPERAMENT).copy(),
 				inventory, advancements, skillTag.copy(), knowledgeTag.copy(), manipulationTag.copy(), summonsTag.copy(), scarTag.copy(),
 				unstainedTag.copy(), stillArtsTag.copy(), thelemicMemoryTag.copy(), livingStaffTag.copy(), vascularTag.copy(), recipeBookTag.copy(), bestiaryTag.copy(),
 				brewingTag.copy(), persistentDataTag.copy(), vasc, target,
@@ -565,7 +565,7 @@ public final class HemoJourneySnapshot {
 		return new ParsedState(blood.isActive(), blood.getBloodVolume(), blood.getMaxBloodVolume(),
 				HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber(),
 				HemoCapabilityAccess.getInitiatoryDegree(player).serializeNBT(player.registryAccess()),
-				HemoCapabilityAccess.getBloodTendency(player).serializeNBT(player.registryAccess()), inventory, advancements,
+				HemoCapabilityAccess.getBloodTemperament(player).serializeNBT(player.registryAccess()), inventory, advancements,
 				HemoCapabilityAccess.getSkillProgress(player).serializeNBT(player.registryAccess()),
 				knowledge.serializeNBT(player.registryAccess()), HemoJourneyManipulationState.capture(manipulations, player.registryAccess()),
 				summons.serializeNBT(player.registryAccess()),
@@ -597,8 +597,8 @@ public final class HemoJourneySnapshot {
 		blood.setActive(target.bloodActive());
 		HemoCapabilityAccess.getInitiatoryDegree(player).deserializeNBT(
 				player.registryAccess(), target.degreeStateTag().copy());
-		HemoCapabilityAccess.getBloodTendency(player).deserializeNBT(
-				player.registryAccess(), target.bloodTendencyTag().copy());
+		HemoCapabilityAccess.getBloodTemperament(player).deserializeNBT(
+				player.registryAccess(), target.bloodTemperamentTag().copy());
 		for (int slot = 0; slot < target.inventory().size(); slot++) player.getInventory().setItem(slot, target.inventory().get(slot).copy());
 		for (Map.Entry<ResourceLocation, Boolean> entry : target.advancements().entrySet()) {
 			String failure = setAdvancementState(player, entry.getKey(), entry.getValue());
@@ -650,7 +650,7 @@ public final class HemoJourneySnapshot {
 		LivingStaffBondHelper.syncProgress(player);
 		VascularSystemEvents.syncVascular(player, HemoCapabilityAccess.getVascularSystem(player));
 		InitiatoryDegreeEvents.syncDegree(player, HemoCapabilityAccess.getInitiatoryDegree(player));
-		BloodTendencyEvents.syncTendency(player, HemoCapabilityAccess.getBloodTendency(player));
+		BloodTemperamentEvents.syncTemperament(player, HemoCapabilityAccess.getBloodTemperament(player));
 		SpecimenBestiaryEvents.sync(player, bestiary);
 		ServerRecipeBook recipeBook = new ServerRecipeBook();
 		recipeBook.fromNbt(target.recipeBookTag().copy(), player.server.getRecipeManager());
@@ -678,8 +678,8 @@ public final class HemoJourneySnapshot {
 				|| HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() != target.degree()) return ApplyResult.fail("blood or degree postcondition mismatch");
 		if (!HemoCapabilityAccess.getInitiatoryDegree(player).serializeNBT(player.registryAccess())
 				.equals(target.degreeStateTag())) return ApplyResult.fail("Initiatory Degree postcondition mismatch");
-		if (!HemoCapabilityAccess.getBloodTendency(player).serializeNBT(player.registryAccess())
-				.equals(target.bloodTendencyTag())) return ApplyResult.fail("Blood Tendency postcondition mismatch");
+		if (!HemoCapabilityAccess.getBloodTemperament(player).serializeNBT(player.registryAccess())
+				.equals(target.bloodTemperamentTag())) return ApplyResult.fail("Blood Temperament postcondition mismatch");
 		for (int slot = 0; slot < target.inventory().size(); slot++) if (!sameStack(player.getInventory().getItem(slot), target.inventory().get(slot))) return ApplyResult.fail("inventory postcondition mismatch at slot " + slot);
 		if (!sameStack(HemoCapabilityAccess.getEquipment(player).getStackInSlot(VASC_SLOT), target.vasc())) return ApplyResult.fail("VASC equipment postcondition mismatch");
 		for (Map.Entry<ResourceLocation, Boolean> entry : target.advancements().entrySet()) if (HarbingerAdvancementGranter.hasAdvancement(player, entry.getKey()) != entry.getValue()) return ApplyResult.fail("advancement postcondition mismatch for " + entry.getKey());
@@ -996,7 +996,7 @@ public final class HemoJourneySnapshot {
 	}
 
 	private record ParsedState(boolean bloodActive, double bloodCurrent, double bloodMax, int degree,
-			CompoundTag degreeStateTag, CompoundTag bloodTendencyTag,
+			CompoundTag degreeStateTag, CompoundTag bloodTemperamentTag,
 			List<ItemStack> inventory, Map<ResourceLocation, Boolean> advancements, CompoundTag skillTag,
 			CompoundTag knowledgeTag, ListTag manipulationTag, CompoundTag summonsTag, CompoundTag scarTag, CompoundTag unstainedTag,
 			CompoundTag stillArtsTag,

@@ -143,10 +143,10 @@ public final class SchoolCombatClientAcceptance {
             for (var player : server.getPlayerList().getPlayers()) message(player, "SCHOOL_SHOT " + scene + "-" + phase + " " + target.getId());
         if (phase == 110 && scene < 5) {
             String ability = switch (scene) { case 0 -> "blood_aneurysm"; case 1 -> "funeral_bell"; case 3 -> "vitric_combustion"; default -> "ferric_strike"; };
-            var tendency = scene == 0 ? SchoolStates.school(SchoolState.PRESSURE) : scene == 1 ? SchoolStates.school(SchoolState.NECROSIS)
+            var temper = scene == 0 ? SchoolStates.school(SchoolState.PRESSURE) : scene == 1 ? SchoolStates.school(SchoolState.NECROSIS)
                     : scene == 3 ? SchoolStates.school(SchoolState.SEARING) : SchoolStates.school(SchoolState.LODESTONE);
             target.invulnerableTime = 0;
-            target.hurt(SchoolDamage.attributed(target.damageSources().magic(), SchoolHitContext.direct(Hemomancy.rloc(ability), tendency, null, caster), caster), 2);
+            target.hurt(SchoolDamage.attributed(target.damageSources().magic(), SchoolHitContext.direct(Hemomancy.rloc(ability), temper, null, caster), caster), 2);
         }
         if (phase == 114) for (var player : server.getPlayerList().getPlayers()) message(player, "SCHOOL_SHOT payoff-" + scene + " " + target.getId());
     }

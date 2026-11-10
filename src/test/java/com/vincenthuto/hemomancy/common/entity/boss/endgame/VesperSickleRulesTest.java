@@ -123,7 +123,7 @@ final class VesperSickleRulesTest {
 	@Test
 	void everySickleMoveKeepsAReadableWindup() {
 		for (VesperWeaponAction action : VesperSickleRules.ALL_MOVES) {
-			assertNull(action.tendency(), action + " is a sickle move");
+			assertNull(action.temper(), action + " is a sickle move");
 			assertTrue(action.impactTick() >= 10, action.name());
 		}
 	}

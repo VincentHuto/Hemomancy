@@ -30,8 +30,8 @@ public final class BloodBindingManipulationSourceTest {
 		String manipulations = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java");
 		assertContains(manipulations, "MANIPS.register(\"blood_binding\"");
 		assertContains(manipulations, "new BloodBindingManip(\"blood_binding\", 125, 0, 0, EnumManipulationType.QUICK");
-		assertContains(manipulations, "EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.LEGS");
-		assertContains(manipulations, ".setSecondaryTend(EnumBloodTendency.DUCTILIS)");
+		assertContains(manipulations, "EnumManipulationRank.HUMILIS, EnumBloodTemper.ANIMUS, EnumVeinSections.LEGS");
+		assertContains(manipulations, ".setSecondaryTend(EnumBloodTemper.DUCTILIS)");
 		assertContains(manipulations, ".setCooldownTicks(60)");
 		assertContains(read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/animus/BloodBindingManip.java"),
 				"PacketHandler.sendBloodBindingTendril");

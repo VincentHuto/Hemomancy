@@ -149,9 +149,9 @@ public final class HematicMicroscopeGameTests {
             tag.putString("test_marker", "preserve");
             syringe.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
             var profile = BloodSampleData.profile(syringe, false);
-            h.assertTrue(profile.tendencies().contains(saint.getPrimaryTendency())
-                    && profile.tendencies().contains(saint.getSecondaryTendency()),
-                    "Saint profile lost its canonical tendencies: " + saint);
+            h.assertTrue(profile.tempers().contains(saint.getPrimaryTemper())
+                    && profile.tempers().contains(saint.getSecondaryTemper()),
+                    "Saint profile lost its canonical tempers: " + saint);
             samples.add(syringe);
         }
         for (var sample : samples) {
@@ -223,7 +223,7 @@ public final class HematicMicroscopeGameTests {
         var player = examining(h, a);
         for (int i = 0; i < 45; i++) player.tick();
         h.assertTrue(ItemStack.matches(before, a), "Missing source lost identification or original custom data");
-        h.assertTrue(BloodSampleData.profile(a, false).tendencies().isEmpty(), "Missing source invented stale traits");
+        h.assertTrue(BloodSampleData.profile(a, false).tempers().isEmpty(), "Missing source invented stale traits");
         player.stopUsingItem();
         h.succeed();
     }

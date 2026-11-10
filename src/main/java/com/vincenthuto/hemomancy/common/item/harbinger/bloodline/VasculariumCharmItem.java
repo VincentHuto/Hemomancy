@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentType;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -46,7 +46,7 @@ public class VasculariumCharmItem extends Item implements IHarbingerEquipment {
 
 	}
 
-	public VasculariumCharmItem(Properties properties, EnumBloodTendency tendencyIn, float deepenAmount) {
+	public VasculariumCharmItem(Properties properties, EnumBloodTemper temperIn, float deepenAmount) {
 		super(properties.stacksTo(1));
 	}
 

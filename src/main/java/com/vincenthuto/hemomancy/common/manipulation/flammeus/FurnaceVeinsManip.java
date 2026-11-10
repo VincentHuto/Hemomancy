@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -19,8 +19,8 @@ import net.minecraft.world.level.block.Blocks;
 
 public class FurnaceVeinsManip extends BloodManipulation {
 	public FurnaceVeinsManip(String name, double cost, double alignment, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignment, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignment, xpCost, type, rank, temper, section);
 	}
 
 	@Override

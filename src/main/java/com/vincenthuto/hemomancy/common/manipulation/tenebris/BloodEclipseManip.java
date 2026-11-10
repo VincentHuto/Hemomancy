@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.tenebris;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -41,9 +41,9 @@ public class BloodEclipseManip extends BloodManipulation {
 	private static final float SHADOW_DAMAGE = 3.0f; // 1.5 hearts
 
 	public BloodEclipseManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class BloodEclipseManip extends BloodManipulation {
 					.add(perp2.scale(sinPhi * Math.sin(theta)));
 			double dist = 2.0 + random.nextDouble() * (range * 0.4);
 			Vec3 pPos = ManipulationCombatHelper.clipToGeometry(player, player.getEyePosition(1.0F).add(dir.scale(dist)));
-            ManipulationParticles.accent(sLevel, EnumBloodTendency.TENEBRIS, pPos, dir.scale(.02));
+            ManipulationParticles.accent(sLevel, EnumBloodTemper.TENEBRIS, pPos, dir.scale(.02));
 		}
 	        }
     }

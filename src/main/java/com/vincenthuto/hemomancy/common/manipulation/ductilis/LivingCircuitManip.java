@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
@@ -31,8 +31,8 @@ public class LivingCircuitManip extends BloodManipulation {
 	public static final float ARC_DAMAGE = 2.0F;
 
 	public LivingCircuitManip(String name, double cost, double alignment, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignment, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignment, xpCost, type, rank, temper, section);
 	}
 
 	/** The nearest three allies; with no teammate in reach the circuit closes through the caster alone. */

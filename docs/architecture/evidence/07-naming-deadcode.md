@@ -27,7 +27,7 @@ The largest third-level packages are:
 - **Testing:** `common/testing/DevTestHooks` is a reflective bridge into `src/gameTest`. It registers 14 classes by name, and all 14 exist. Another 115 gameTest classes use `@GameTestHolder`.
 - **Client code in common:** 78 files under `common/` import `net.minecraft.client`. Examples are `common/init/RenderTypeInit` (extends `RenderType`), `ShaderInit`, `FluidInit` and `capability/.../bloodvolume/RenderBloodLaser`. HYPOTHESIS: some of these are class-loaded only on the client. A dedicated-server smoke run is the proof.
 
-**Path splits.** `harbinger/unstained/shared` splits exist in `block`, `item`, `tile`, `capability/player`, `entity/npc`, `rite` (no shared), `mission` (no harbinger), `network/capa` (no shared), `client/render/{tile,item}` and `client/screen/skilltree`. They are absent from `manipulation`, `entity/mob`, `event`, `effect`, `recipe`, `worldgen` and `menu`, which use tendency or topic packages instead. The splits are uneven: item 238/25/34, block 116/10/11, tile 80/4/2.
+**Path splits.** `harbinger/unstained/shared` splits exist in `block`, `item`, `tile`, `capability/player`, `entity/npc`, `rite` (no shared), `mission` (no harbinger), `network/capa` (no shared), `client/render/{tile,item}` and `client/screen/skilltree`. They are absent from `manipulation`, `entity/mob`, `event`, `effect`, `recipe`, `worldgen` and `menu`, which use temper or topic packages instead. The splits are uneven: item 238/25/34, block 116/10/11, tile 80/4/2.
 
 **One-file packages** (about 45, mostly boss subfolders): `client/util`, `common/testing`, `common/particle` (and `/data`, `/type`), `common/loot/modifier`, `common/worldgen/carver`, `common/network/{discovery,will}`, `common/mission/{hermit,mnemonist,cicatrix_anchorite}`, `common/entity/boss/saint/{hemorath,putriciel,velorum}`, `client/render/{geometry,scar}`, `client/screen/{discovery,inventory,summon,unstained}`, `compat/curios`.
 
@@ -195,7 +195,7 @@ The `build.gradle` excludes (` - Copy`, `bbmodel/imports`, `.mp3`, `OLD*.ogg`, `
 
 That puts the unreferenced share at about 11%, or 4 of 35. HYPOTHESIS: about 200 non-archive PNGs plus the 237 archives repo-wide.
 
-**Lang orphans (HYPOTHESIS; dynamic registration can hide matches):** comparing `item/block/entity.hemomancy.*` keys with `register*("id")` literals leaves 57 item, 11 entity and 7 block keys without a match. Examples: `abyssal_siphon`, `cruor_fiend`, `frozen_clot`, `void_drinker`, `synapse_hound`, `blood_tendency_gauge`, `bloodline_pool_monitor`, `field_notes`, `verdigris_censer`, and the MnA items.
+**Lang orphans (HYPOTHESIS; dynamic registration can hide matches):** comparing `item/block/entity.hemomancy.*` keys with `register*("id")` literals leaves 57 item, 11 entity and 7 block keys without a match. Examples: `abyssal_siphon`, `cruor_fiend`, `frozen_clot`, `void_drinker`, `synapse_hound`, `blood_temperament_gauge`, `bloodline_pool_monitor`, `field_notes`, `verdigris_censer`, and the MnA items.
 
 ## 5. Codec vs manual JSON (VERIFIED)
 
@@ -305,7 +305,7 @@ Every other value is read directly or through a getter (`enablePelagicWorldgen`,
 
 - Editor backups in source: `common/block/harbinger/functional/CardinalFocusBlock.java~`, `common/item/harbinger/tool/living/LivingSickleItem.java~`, `common/menu/tile/crafting/StillwaterCondenserMenu.java~`, `common/network/PlaceStructurePacket.java~`. All are git-tracked.
 - `mixin/core/MixinScreenRenderState.java` (0 bytes).
-- Empty classes: `common/init/TerraBiomeInit`, `common/capability/player/unstained/white_humor/WhiteHumorVolumeEvents`, `common/recipe/RecipeSacrificialBloodCrafting`, `common/event/TendencyWeaponCombatEvents` (comment only).
+- Empty classes: `common/init/TerraBiomeInit`, `common/capability/player/unstained/white_humor/WhiteHumorVolumeEvents`, `common/recipe/RecipeSacrificialBloodCrafting`, `common/event/TemperWeaponCombatEvents` (comment only).
 - Unreferenced and unregistered:
   - client: `client/particle/HitGlowParticle`, `client/render/layer/player/BloodArmorLayer`, `client/render/layer/mob/RenderChitiniteLayer`, `client/render/item/harbinger/CellHandBakedModel`, `client/screen/radial/IRadialMenuItem` and `RadialTextLines`
   - `compat/jei/ScreenArea`
@@ -319,7 +319,7 @@ Every other value is read directly or through a getter (`enablePelagicWorldgen`,
 
 - **Orphaned content, where the class, model and texture exist but there is no registry entry:**
   - Mobs: `AbyssalSiphon`, `CruorFiend`, `FrozenClot`, `SynapseHound` and `VoidDrinker`, each with Entity, Model and Renderer (15 classes). Their `SoundInit` `ENTITY_*` sounds are still registered, and their lang keys exist.
-  - Items: `LivingPistolItem` (+ renderer), `LivingGraspItem`, `DSDItem`, `BloodTendencyGaugeItem`, `BloodlinePoolMonitorItem`, `WitnessOrganItem` (the `witness_organ` block is registered), `VerdigrisCenserItem`, `FieldNotesItem`, `FieldNotesBookItem`, `{Chitinite,Pests,Tick,Urchin}MorphlingItem`.
+  - Items: `LivingPistolItem` (+ renderer), `LivingGraspItem`, `DSDItem`, `BloodTemperamentGaugeItem`, `BloodlinePoolMonitorItem`, `WitnessOrganItem` (the `witness_organ` block is registered), `VerdigrisCenserItem`, `FieldNotesItem`, `FieldNotesBookItem`, `{Chitinite,Pests,Tick,Urchin}MorphlingItem`.
   - `ScreenScarPattern`: only `ScreenScarBinderViewer` references it.
 
   Confirm these are retired rather than planned work.
@@ -332,7 +332,7 @@ Every other value is read directly or through a getter (`enablePelagicWorldgen`,
   - `RecipeMapQuery`
   - `VesperEveningStarMotion`
   - `VesperWeaponAnimationRules` (loaded by `Class.forName` in a test)
-  - `ManipulationTraceLayerCache` → `TendencyTraceStyle`
+  - `ManipulationTraceLayerCache` → `TemperTraceStyle`
 
   Either the call site was lost or the class is dead. Check before trusting those tests as coverage.
 - **Datagen providers that are not registered:** `HemoRecipeProvider`, `HemoBlockTagProvider`, `HemoBlockLootTableProvider`, `HemoEntityLootProvider`, `HemoEntityTagProvider`, `HemoFeatureUtils`, `HemoPlacementUtils`, `DataGenParsers` (`@Deprecated` `genCrosslBlockModel`).

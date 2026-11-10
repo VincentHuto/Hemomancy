@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.weave;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
@@ -18,7 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
-/** Each tendency's way of moving and striking. */
+/** Each temper's way of moving and striking. */
 public final class ThreadAttacks {
 	private static final BloodAccounting.Source ANIMUS_THREAD = BloodAccounting.Source.of("intruding_memory", Category.HAZARD, false, false);
 	/** Preferred distance and height from the weaver, orbit speed (radians/tick) and steering speed. */
@@ -27,8 +27,8 @@ public final class ThreadAttacks {
 	private ThreadAttacks() {
 	}
 
-	public static Profile profile(EnumBloodTendency tendency) {
-		return switch (tendency) {
+	public static Profile profile(EnumBloodTemper temper) {
+		return switch (temper) {
 			case ANIMUS -> new Profile(4.5, 1.6, 0.03, 0.09);
 			case FLAMMEUS -> new Profile(3.0, 1.2, 0.08, 0.16);
 			case CONGEATIO -> new Profile(5.0, 1.4, 0.015, 0.05);
@@ -43,26 +43,26 @@ public final class ThreadAttacks {
 	public static void perform(FrayedThreadEntity thread, Player target) {
 		if (!(thread.level() instanceof ServerLevel server)) return;
 		float power = SomaticWeaveRules.attackPower(thread.rank());
-		EnumBloodTendency tendency = thread.tendency();
-		switch (tendency) {
-			case ANIMUS -> fire(server, thread, target, tendency, power, 1, 0F, 1.2F);
+		EnumBloodTemper temper = thread.temper();
+		switch (temper) {
+			case ANIMUS -> fire(server, thread, target, temper, power, 1, 0F, 1.2F);
 			case FLAMMEUS -> {
 				thread.setDeltaMovement(target.getEyePosition().subtract(thread.position()).normalize().scale(0.6D));
-				fire(server, thread, target, tendency, power, 1, 0F, 1.1F);
+				fire(server, thread, target, temper, power, 1, 0F, 1.1F);
 			}
-			case CONGEATIO -> fire(server, thread, target, tendency, power, 3, 12F, 0.8F);
+			case CONGEATIO -> fire(server, thread, target, temper, power, 3, 12F, 0.8F);
 			case LUX -> {
 				target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20, 0));
-				fire(server, thread, target, tendency, power, 2, 5F, 1.6F);
+				fire(server, thread, target, temper, power, 2, 5F, 1.6F);
 			}
-			case MORTEM -> ThreadHazardEntity.spawn(server, thread, target.position(), tendency, 2.5F, 80, power);
+			case MORTEM -> ThreadHazardEntity.spawn(server, thread, target.position(), temper, 2.5F, 80, power);
 			case TENEBRIS -> {
 				if (thread.distanceToSqr(target) < 100) {
 					target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0));
 					target.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 100, 0));
 				}
 				thread.fade(40);
-				server.sendParticles(HemoParticleData.darkGlow(tendency.getColor()), thread.getX(), thread.getY(), thread.getZ(),
+				server.sendParticles(HemoParticleData.darkGlow(temper.getColor()), thread.getX(), thread.getY(), thread.getZ(),
 						24, 0.6D, 0.6D, 0.6D, 0.04D);
 			}
 			case FERRIC -> spikes(thread, target, power);
@@ -70,11 +70,11 @@ public final class ThreadAttacks {
 		}
 	}
 
-	private static void fire(ServerLevel server, FrayedThreadEntity thread, LivingEntity target, EnumBloodTendency tendency,
+	private static void fire(ServerLevel server, FrayedThreadEntity thread, LivingEntity target, EnumBloodTemper temper,
 			float power, int count, float spread, float speed) {
 		Vec3 aim = target.getEyePosition().subtract(thread.position());
 		for (int i = 0; i < count; i++) {
-			ThreadBoltEntity bolt = new ThreadBoltEntity(server, thread, tendency, power);
+			ThreadBoltEntity bolt = new ThreadBoltEntity(server, thread, temper, power);
 			bolt.setPos(thread.getX(), thread.getY(), thread.getZ());
 			float yaw = count == 1 ? 0F : (i - (count - 1) / 2F) * spread;
 			Vec3 dir = aim.yRot((float) Math.toRadians(yaw));
@@ -83,9 +83,9 @@ public final class ThreadAttacks {
 		}
 	}
 
-	public static void onBoltHit(EnumBloodTendency tendency, FrayedThreadEntity thread, LivingEntity target, float power) {
+	public static void onBoltHit(EnumBloodTemper temper, FrayedThreadEntity thread, LivingEntity target, float power) {
 		target.hurt(thread.damageSources().mobAttack(thread), 2.0F * power);
-		switch (tendency) {
+		switch (temper) {
 			case ANIMUS -> {
 				if (target instanceof ServerPlayer player) {
 					var volume = HemoCapabilityAccess.getBloodVolume(player);
@@ -139,7 +139,7 @@ public final class ThreadAttacks {
 		Vec3 from = thread.position(), to = target.getEyePosition();
 		for (int i = 0; i <= 10; i++) {
 			Vec3 p = from.lerp(to, i / 10.0D);
-			server.sendParticles(HemoParticleData.glow(thread.tendency().getColor()), p.x, p.y, p.z, 1, 0.05D, 0.05D, 0.05D, 0D);
+			server.sendParticles(HemoParticleData.glow(thread.temper().getColor()), p.x, p.y, p.z, 1, 0.05D, 0.05D, 0.05D, 0D);
 		}
 	}
 

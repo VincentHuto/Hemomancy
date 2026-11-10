@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,7 +11,7 @@ import net.minecraft.world.phys.Vec3;
 public class LivingBaghnakhItem extends LivingToolItem {
 
 	public LivingBaghnakhItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -1.8f, EnumBloodTendency.TENEBRIS, tier, builderIn);
+		super(speedIn, attackDamageIn, -1.8f, EnumBloodTemper.TENEBRIS, tier, builderIn);
 	}
 
 	@Override

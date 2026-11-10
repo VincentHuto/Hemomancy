@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.weave;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
@@ -27,13 +27,13 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * An intrusion's bite: the memory of a failed Harbinger torn loose when a Perfectus weaver threads a false fragment
- * home. It rises from the fragment's tip, winds up once in plain sight, strikes its weaver with its tendency's harm
+ * home. It rises from the fragment's tip, winds up once in plain sight, strikes its weaver with its temper's harm
  * and unravels. It cannot be hurt and never hunts anyone else; the blackout floor keeps it from killing.
  * <p>
  * Threads saved by the witnessed weave, which fought until struck slack, unravel as soon as they load.
  */
 public class FrayedThreadEntity extends PathfinderMob {
-	private static final EntityDataAccessor<Byte> TENDENCY = SynchedEntityData.defineId(FrayedThreadEntity.class, EntityDataSerializers.BYTE);
+	private static final EntityDataAccessor<Byte> TEMPER = SynchedEntityData.defineId(FrayedThreadEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Byte> RANK = SynchedEntityData.defineId(FrayedThreadEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Integer> WINDUP = SynchedEntityData.defineId(FrayedThreadEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> FADED = SynchedEntityData.defineId(FrayedThreadEntity.class, EntityDataSerializers.INT);
@@ -55,17 +55,17 @@ public class FrayedThreadEntity extends PathfinderMob {
 	}
 
 	/** Raises a false fragment's bite over its tip, `at` being the tip on the engram's floor. */
-	public static FrayedThreadEntity spawnIntrusion(ServerLevel level, SomaticLoomBlockEntity loom, EnumBloodTendency tendency,
+	public static FrayedThreadEntity spawnIntrusion(ServerLevel level, SomaticLoomBlockEntity loom, EnumBloodTemper temper,
 			Vec3 at, EnumManipulationRank rank) {
 		FrayedThreadEntity thread = new FrayedThreadEntity(EntityInit.intruding_memory.get(), level);
 		thread.intrusion = true;
-		thread.entityData.set(TENDENCY, (byte) tendency.ordinal());
+		thread.entityData.set(TEMPER, (byte) temper.ordinal());
 		thread.entityData.set(RANK, (byte) rank.ordinal());
 		thread.entityData.set(LOOM, loom.getBlockPos());
 		thread.entityData.set(WINDUP, SomaticWeaveRules.WINDUP_TICKS);
 		thread.moveTo(at.x, at.y + 1.1D, at.z, level.random.nextFloat() * 360F, 0F);
 		level.addFreshEntity(thread);
-		level.sendParticles(HemoParticleData.darkGlow(tendency.getColor()), at.x, at.y + 0.6D, at.z, 18, 0.25D, 0.4D, 0.25D, 0.03D);
+		level.sendParticles(HemoParticleData.darkGlow(temper.getColor()), at.x, at.y + 0.6D, at.z, 18, 0.25D, 0.4D, 0.25D, 0.03D);
 		level.playSound(null, at.x, at.y, at.z, SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.HOSTILE, 0.7F, 0.6F);
 		return thread;
 	}
@@ -73,7 +73,7 @@ public class FrayedThreadEntity extends PathfinderMob {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
-		builder.define(TENDENCY, (byte) 0);
+		builder.define(TEMPER, (byte) 0);
 		builder.define(RANK, (byte) 0);
 		builder.define(WINDUP, 0);
 		builder.define(FADED, 0);
@@ -81,7 +81,7 @@ public class FrayedThreadEntity extends PathfinderMob {
 		builder.define(LOOM, BlockPos.ZERO);
 	}
 
-	public EnumBloodTendency tendency() { return EnumBloodTendency.values()[entityData.get(TENDENCY)]; }
+	public EnumBloodTemper temper() { return EnumBloodTemper.values()[entityData.get(TEMPER)]; }
 	public EnumManipulationRank rank() { return EnumManipulationRank.values()[entityData.get(RANK)]; }
 	public BlockPos loomPos() { return entityData.get(LOOM); }
 	public int windup() { return entityData.get(WINDUP); }
@@ -141,7 +141,7 @@ public class FrayedThreadEntity extends PathfinderMob {
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 		tag.putBoolean("Intrusion", intrusion);
-		tag.putByte("Tendency", entityData.get(TENDENCY));
+		tag.putByte("Temper", entityData.get(TEMPER));
 		tag.putByte("Rank", entityData.get(RANK));
 		tag.putInt("Windup", windup());
 		tag.putInt("Unravel", unravelling());
@@ -152,7 +152,7 @@ public class FrayedThreadEntity extends PathfinderMob {
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 		intrusion = tag.getBoolean("Intrusion");
-		entityData.set(TENDENCY, tag.getByte("Tendency"));
+		entityData.set(TEMPER, tag.getByte("Temper"));
 		entityData.set(RANK, tag.getByte("Rank"));
 		entityData.set(WINDUP, tag.getInt("Windup"));
 		entityData.set(UNRAVEL, tag.getInt("Unravel"));

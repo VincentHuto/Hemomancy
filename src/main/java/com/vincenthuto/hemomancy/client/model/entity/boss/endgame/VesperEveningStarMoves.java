@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
@@ -37,12 +37,12 @@ final class VesperEveningStarMoves {
 	 * soft, turns the weapon side back, and breathes: nothing here moves faster than a breath, so it reads as tense
 	 * rather than twitchy. A fresh stance flourishes the new weapon up into view.
 	 */
-	static float[] stance(EnumBloodTendency tendency, boolean raging, float age, float stanceTime) {
+	static float[] stance(EnumBloodTemper temper, boolean raging, float age, float stanceTime) {
 		float[] p = new float[CHANNELS];
 		if (raging) {
 			set(p, -0.8F, 0.3F, 0.5F, -1.15F, -0.8F, -0.3F, -0.5F, -1.15F, 0.3F, 0.0F, 0.0F, 0.2F, 0.55F);
 		} else {
-			switch (tendency) {
+			switch (temper) {
 				case ANIMUS -> grip(set(p, -0.85F, -0.2F, 0.08F, -0.75F, 0, 0, 0, 0, 0.1F, 0.3F, 0.0F, 0.35F, 0.25F));
 				case MORTEM -> grip(set(p, -0.5F, -0.25F, 0.12F, -1.05F, 0, 0, 0, 0, 0.16F, 0.35F, 0.0F, 0.3F, 0.35F));
 				case LUX -> set(p, -0.45F, 0.15F, 0.18F, -1.05F, -1.0F, 0.25F, -0.05F, -0.55F, 0.08F, 0.4F, 0.0F, 0.4F, 0.25F);

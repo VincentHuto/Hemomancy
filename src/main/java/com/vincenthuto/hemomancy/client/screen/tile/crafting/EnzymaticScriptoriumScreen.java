@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.EnzymaticScriptoriumMenu;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
@@ -28,7 +28,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
     private static final int RECESS = 0xFF1A0808;
     private static final int PALE = 0xFFE7B8B8;
     private static final int MUTED = 0xFF9B6969;
-    private static final ResourceLocation[] TENDENCY_ICONS = {
+    private static final ResourceLocation[] TEMPER_ICONS = {
             iconTexture("animus"), iconTexture("flammeus"), iconTexture("ductilis"), iconTexture("lux"),
             iconTexture("mortem"), iconTexture("congeatio"), iconTexture("ferric"), iconTexture("tenebris")
     };
@@ -68,10 +68,10 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
         for (int i = 0; i < 8; i++) {
             var slot = menu.slots.get(i);
             int sx = x + slot.x, sy = y + slot.y;
-            int color = 0xFF000000 | EnumBloodTendency.values()[i].getColor().getColor();
+            int color = 0xFF000000 | EnumBloodTemper.values()[i].getColor().getColor();
             drawSlot(g, sx, sy, color);
             if (slot.getItem().isEmpty())
-                icon(g, TENDENCY_ICONS[i], sx, sy, 16);
+                icon(g, TEMPER_ICONS[i], sx, sy, 16);
             int selected = menu.selected(i);
             int stored = slot.getItem().getCount();
             int controlY = sy + 18;
@@ -120,7 +120,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
         smallText(g, title, 8, 7, 0xFFE8A6A6, 0.75F);
         smallText(g, Component.literal("D" + menu.tier()), 176, 8, 0xFFCC7777, 0.65F);
-        label(g, "screen.hemomancy.scriptorium.tendencies", 10, 18);
+        label(g, "screen.hemomancy.scriptorium.tempers", 10, 18);
         label(g, "screen.hemomancy.scriptorium.inscription", 108, 18);
 
         for (int i = 0; i < 3; i++) {
@@ -158,7 +158,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
     }
 
     private static void icon(GuiGraphics g, ResourceLocation texture, int x, int y, int size) {
-        int sourceSize = texture.equals(TENDENCY_ICONS[3]) ? 18 : 16;
+        int sourceSize = texture.equals(TEMPER_ICONS[3]) ? 18 : 16;
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         g.blit(texture, x, y, size, size, 0.0F, 0.0F, sourceSize, sourceSize, sourceSize, sourceSize);
@@ -231,7 +231,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
             var slot = menu.slots.get(i);
             if (!slot.getItem().isEmpty() || !inside(mouseX, mouseY, leftPos + slot.x, topPos + slot.y, 16, 16))
                 continue;
-            Component hint = i < 8 ? EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[i]).getDescription()
+            Component hint = i < 8 ? EnumBloodTemper.getRepEnzyme(EnumBloodTemper.values()[i]).getDescription()
                     : Component.translatable("screen.hemomancy.scriptorium." + (i == 8 ? "item" : i == 9 ? "lapis" : "shard"));
             g.renderTooltip(font, hint, mouseX, mouseY);
             return;
@@ -240,7 +240,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
             var slot = menu.slots.get(i);
             if (inside(mouseX, mouseY, leftPos + slot.x, topPos + slot.y + 18, 16, 6)) {
                 g.renderTooltip(font, List.of(
-                        EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[i]).getDescription(),
+                        EnumBloodTemper.getRepEnzyme(EnumBloodTemper.values()[i]).getDescription(),
                         Component.translatable("screen.hemomancy.scriptorium.selection",
                                 menu.selected(i), slot.getItem().getCount())), Optional.empty(), mouseX, mouseY);
                 return;
@@ -255,12 +255,12 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
                         menu.offerCost(i), i + 1, EnzymaticScriptoriumBlockEntity.inscriptionBlood(i)));
             if (menu.offerCost(i) > 0) {
                 tooltip.add(Component.translatable("screen.hemomancy.scriptorium.enzymes"));
-                for (int tendency = 0; tendency < 8; tendency++) {
-                    int required = menu.enzymeCost(i, tendency);
+                for (int temper = 0; temper < 8; temper++) {
+                    int required = menu.enzymeCost(i, temper);
                     if (required == 0) continue;
-                    int stored = menu.slots.get(tendency).getItem().getCount();
+                    int stored = menu.slots.get(temper).getItem().getCount();
                     tooltip.add(Component.translatable("screen.hemomancy.scriptorium.enzyme_cost",
-                                    required, EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[tendency]).getDescription(), stored)
+                                    required, EnumBloodTemper.getRepEnzyme(EnumBloodTemper.values()[temper]).getDescription(), stored)
                             .withStyle(stored >= required ? net.minecraft.ChatFormatting.GRAY : net.minecraft.ChatFormatting.RED));
                 }
             }

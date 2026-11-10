@@ -10,8 +10,8 @@ pirns stand on shelves off the side frames, each over a glass vial: the enzyme s
 liquid and a filament rises from it to the pirn, where it is spun into thread for a weave.
 
 Emits the cutout block model and its translucent `somatic_loom_glass` layer (one facing multipart
-applies both), the item model (pirns wound, vials full), the eight dyed `somatic_loom_cop_<tendency>`
-parts SomaticLoomRenderer winds onto the pirns for a weave, the eight `somatic_loom_vial_<tendency>`
+applies both), the item model (pirns wound, vials full), the eight dyed `somatic_loom_cop_<temper>`
+parts SomaticLoomRenderer winds onto the pirns for a weave, the eight `somatic_loom_vial_<temper>`
 liquid parts it fills by stored enzyme, an editable Blockbench project and SomaticLoomGeometry.java,
 the anchors the renderer and the weave's server logic follow. `--preview` writes
 build/somatic_loom_preview.png.
@@ -44,7 +44,7 @@ TEXTURES = {
     'hyphae': 'hemomancy:block/calcified_hyphae',
     'vein': 'hemomancy:block/hemorrhagic_crust',
     'scab': 'hemomancy:block/blood_scorched_scab',
-    # Pirns in EnumBloodTendency order.
+    # Pirns in EnumBloodTemper order.
     'animus': 'minecraft:block/red_wool',
     'flammeus': 'minecraft:block/orange_wool',
     'ductilis': 'minecraft:block/yellow_wool',
@@ -54,7 +54,7 @@ TEXTURES = {
     'ferric': 'minecraft:block/gray_wool',
     'tenebris': 'minecraft:block/purple_wool',
     'vialglass': 'hemomancy:block/vial_glass',
-    # Enzyme liquid, tinted glass in EnumBloodTendency order.
+    # Enzyme liquid, tinted glass in EnumBloodTemper order.
     'liq_animus': 'minecraft:block/red_stained_glass',
     'liq_flammeus': 'minecraft:block/orange_stained_glass',
     'liq_ductilis': 'minecraft:block/yellow_stained_glass',
@@ -66,8 +66,8 @@ TEXTURES = {
 }
 CAPS = {'bone': 'bonecap', 'pillar': 'pillartop', 'log': 'logtop', 'nerve': 'nervetop'}
 NAME = 'somatic_loom'
-TENDENCIES = ('animus', 'flammeus', 'ductilis', 'lux', 'mortem', 'congeatio', 'ferric', 'tenebris')
-TRANSLUCENT = {'vialglass'} | {'liq_' + t for t in TENDENCIES}
+TEMPERS = ('animus', 'flammeus', 'ductilis', 'lux', 'mortem', 'congeatio', 'ferric', 'tenebris')
+TRANSLUCENT = {'vialglass'} | {'liq_' + t for t in TEMPERS}
 
 # Side frames (x spans) and the stations along the warp (z), front to back.
 FRAMES = ((-4.5, -1.5), (17.5, 20.5))
@@ -97,7 +97,7 @@ FEELERS = ((1.5, 16.6), (4.2, 17.6), (11.8, 17.2), (14.5, 16.2))
 FEELER_Z = 14.3
 CROWN_LOBES = ((6.3, 16.1), (9.7, 16.1), (8.0, 14.4), (8.0, 17.8))
 MYELIN_Z = ((9.5, 10.2), (12.8, 13.6), (18.0, 18.8))
-# Pirn (x, z) in EnumBloodTendency order: four on the -x shelf, four on the +x shelf.
+# Pirn (x, z) in EnumBloodTemper order: four on the -x shelf, four on the +x shelf.
 PIRNS = tuple((xc, z) for xc in (FRAMES[0][0] - 1.8, FRAMES[1][1] + 1.8) for z in (0.0, 3.3, 6.6, 9.9))
 PIRN_FLOOR, PIRN_HEIGHT, PIRN_RADIUS = 8.1, 3.3, .85
 # Enzyme vials hang under the pirn shelf: the stock stands as liquid, a filament rises from it to the pirn.
@@ -302,7 +302,7 @@ def treadles(m):
         m.box('treadle_pad', (x - 1.2, 2.4, -6.2), (x + 1.2, 2.8, -3.8), 'bone')
 
 
-def vial(m, x, z, tendency, stage):
+def vial(m, x, z, temper, stage):
     """The vial beneath a pirn: square glass on an iron foot, capped and hung from the shelf."""
     g = VIAL_RADIUS + .15
     for s in (-1, 1):
@@ -314,7 +314,7 @@ def vial(m, x, z, tendency, stage):
     m.box('vial_foot', (x - g - .15, VIAL_FLOOR - .5, z - g - .15), (x + g + .15, VIAL_FLOOR, z + g + .15), 'iron')
     m.box('vial_cap', (x - g - .15, VIAL_TOP, z - g - .15), (x + g + .15, VIAL_TOP + .4, z + g + .15), 'iron')
     m.box('vial_hanger', (x - .15, VIAL_TOP + .4, z - .15), (x + .15, 7.0, z + .15), 'iron')
-    m.box('filament', (x - .1, VIAL_FLOOR + .2, z - .1), (x + .1, VIAL_TOP, z + .1), tendency)
+    m.box('filament', (x - .1, VIAL_FLOOR + .2, z - .1), (x + .1, VIAL_TOP, z + .1), temper)
     if stage >= 1:
         # Ganglionic: a nerve band grips each vial and a cord climbs to the shelf.
         m.box('vial_nerve', (x - g - .2, VIAL_FLOOR + 1.0, z - g - .2), (x + g + .2, VIAL_FLOOR + 1.5, z + g + .2), 'nerve')
@@ -322,7 +322,7 @@ def vial(m, x, z, tendency, stage):
 
 
 def pirns(m, stage=0):
-    """Eight dyed pirns on bone shelves outside the frames: the Loom's tendency enzyme reservoirs."""
+    """Eight dyed pirns on bone shelves outside the frames: the Loom's temper enzyme reservoirs."""
     for n, (x0, x1) in enumerate(FRAMES):
         out = -1 if n == 0 else 1
         face = x0 if n == 0 else x1
@@ -332,27 +332,27 @@ def pirns(m, stage=0):
             m.box('shelf_bracket', (min(shelf) + (1.2 if n == 0 else 0), 4.6, z - .3), (max(shelf) - (0 if n == 0 else 1.2), 7.0, z + .3), 'iron')
         for k in range(4):
             x, z = PIRNS[n * 4 + k]
-            tendency = TENDENCIES[n * 4 + k]
+            temper = TEMPERS[n * 4 + k]
             m.box('pirn_flange', (x - 1.05, 7.6, z - 1.05), (x + 1.05, PIRN_FLOOR, z + 1.05), 'bone', caps={'up': 'bonecap', 'down': 'bonecap'})
             m.octo('pirn_spindle', 'y', (x, 0, z), .3, PIRN_FLOOR, PIRN_FLOOR + PIRN_HEIGHT + 1.0, 'bonecap')
-            vial(m, x, z, tendency, stage)
+            vial(m, x, z, temper, stage)
 
 
-def cop(tendency, height=1.0):
+def cop(temper, height=1.0):
     """Thread spun onto one pirn for a weave; the part is one pixel tall and the renderer stretches it."""
     m = Model(TRANSLUCENT, CAPS)
-    x, z = PIRNS[TENDENCIES.index(tendency)]
-    m.octo('cop_' + tendency, 'y', (x, 0, z), PIRN_RADIUS, PIRN_FLOOR, PIRN_FLOOR + height, tendency,
+    x, z = PIRNS[TEMPERS.index(temper)]
+    m.octo('cop_' + temper, 'y', (x, 0, z), PIRN_RADIUS, PIRN_FLOOR, PIRN_FLOOR + height, temper,
            faces=('north', 'south', 'east', 'west', 'up'))
     return m
 
 
-def vial_liquid(tendency, height=1.0):
+def vial_liquid(temper, height=1.0):
     """Enzyme liquid in one vial, one pixel deep; the renderer stretches it by stored stock."""
     m = Model(TRANSLUCENT, CAPS)
-    x, z = PIRNS[TENDENCIES.index(tendency)]
-    m.box('vial_' + tendency, (x - VIAL_RADIUS, VIAL_FLOOR, z - VIAL_RADIUS), (x + VIAL_RADIUS, VIAL_FLOOR + height, z + VIAL_RADIUS),
-          'liq_' + tendency)
+    x, z = PIRNS[TEMPERS.index(temper)]
+    m.box('vial_' + temper, (x - VIAL_RADIUS, VIAL_FLOOR, z - VIAL_RADIUS), (x + VIAL_RADIUS, VIAL_FLOOR + height, z + VIAL_RADIUS),
+          'liq_' + temper)
     return m
 
 
@@ -430,7 +430,7 @@ public final class SomaticLoomGeometry {{
     public static final float[][] FEELER_TIPS = {{
             {feelers}
     }};
-    /** Pirn (x, z) in EnumBloodTendency order, wound from PIRN_FLOOR up to PIRN_HEIGHT pixels of thread. */
+    /** Pirn (x, z) in EnumBloodTemper order, wound from PIRN_FLOOR up to PIRN_HEIGHT pixels of thread. */
     public static final float[][] PIRNS = {{
             {pirns}
     }};
@@ -452,8 +452,8 @@ public final class SomaticLoomGeometry {{
 def export():
     bodies = [loom(stage) for stage in range(len(STAGES))]
     body = bodies[0]
-    cops = [cop(t) for t in TENDENCIES]
-    vials = [vial_liquid(t) for t in TENDENCIES]
+    cops = [cop(t) for t in TEMPERS]
+    vials = [vial_liquid(t) for t in TEMPERS]
     kit.separate(bodies, TEXTURES, TRANSLUCENT, 'Somatic Loom')
     # Body and vial glass bake into separate layers (see station_kit.split_glass); the item keeps both.
     # Every stage shares the base glass: upgrades grow nerve and cortex, never new glass.
@@ -464,20 +464,20 @@ def export():
         staged_solid, staged_glass = kit.split_glass(staged)
         assert len(staged_glass.elements) == len(glass.elements), suffix + ' grew glass'
         kit.write_json(kit.MODELS / (NAME + suffix + '.json'), kit.to_json(staged_solid, TEXTURES, 'log'))
-    for tendency, part in zip(TENDENCIES, cops):
-        kit.write_json(kit.MODELS / (NAME + '_cop_' + tendency + '.json'), kit.to_json(part, TEXTURES, tendency))
-    for tendency, part in zip(TENDENCIES, vials):
-        kit.write_json(kit.MODELS / (NAME + '_vial_' + tendency + '.json'),
-                       kit.to_json(part, TEXTURES, 'liq_' + tendency))
+    for temper, part in zip(TEMPERS, cops):
+        kit.write_json(kit.MODELS / (NAME + '_cop_' + temper + '.json'), kit.to_json(part, TEXTURES, temper))
+    for temper, part in zip(TEMPERS, vials):
+        kit.write_json(kit.MODELS / (NAME + '_vial_' + temper + '.json'),
+                       kit.to_json(part, TEXTURES, 'liq_' + temper))
     # The inventory loom shows every pirn wound and every vial full.
     item = Model(TRANSLUCENT, CAPS)
-    item.elements = body.elements + [e for t in TENDENCIES for e in cop(t, PIRN_HEIGHT).elements] \
-        + [e for t in TENDENCIES for e in vial_liquid(t, VIAL_DEPTH).elements]
+    item.elements = body.elements + [e for t in TEMPERS for e in cop(t, PIRN_HEIGHT).elements] \
+        + [e for t in TEMPERS for e in vial_liquid(t, VIAL_DEPTH).elements]
     kit.write_json(kit.ASSETS / 'models/item' / (NAME + '.json'), kit.to_json(item, TEXTURES, 'log', DISPLAY))
     kit.write_json(kit.ASSETS / 'blockstates' / (NAME + '.json'), staged_blockstate(), indent=2)
     kit.BBMODEL.mkdir(parents=True, exist_ok=True)
-    groups = [('loom' + suffix, staged) for suffix, staged in zip(STAGES, bodies)] + [('cop_' + t, part) for t, part in zip(TENDENCIES, cops)] \
-        + [('vial_' + t, part) for t, part in zip(TENDENCIES, vials)]
+    groups = [('loom' + suffix, staged) for suffix, staged in zip(STAGES, bodies)] + [('cop_' + t, part) for t, part in zip(TEMPERS, cops)] \
+        + [('vial_' + t, part) for t, part in zip(TEMPERS, vials)]
     project = kit.bbmodel(NAME, groups, TEXTURES, DISPLAY)
     (kit.BBMODEL / (NAME + '.bbmodel')).write_text(json.dumps(project), encoding='utf-8')
     GEOMETRY.write_text(geometry_java(), encoding='utf-8')
@@ -488,8 +488,8 @@ def export():
 
 
 def preview(stage=0):
-    parts = [(loom(stage), kit.identity)] + [(cop(t, PIRN_HEIGHT * (k + 1) / 8), kit.identity) for k, t in enumerate(TENDENCIES)] \
-        + [(vial_liquid(t, VIAL_DEPTH * (8 - k) / 8), kit.identity) for k, t in enumerate(TENDENCIES)]
+    parts = [(loom(stage), kit.identity)] + [(cop(t, PIRN_HEIGHT * (k + 1) / 8), kit.identity) for k, t in enumerate(TEMPERS)] \
+        + [(vial_liquid(t, VIAL_DEPTH * (8 - k) / 8), kit.identity) for k, t in enumerate(TEMPERS)]
     panels = [('Weaver side', 200, 20, parts), ('Three quarter', 235, 30, parts),
               ('Behind', 30, 22, parts), ('Side', 270, 12, parts), ('Above', 210, 62, parts),
               ('Pirns', 120, 20, parts)]

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -28,27 +28,27 @@ final class VesperCombatRulesTest {
 	}
 
 	@Test
-	void aTendencyTourUsesEveryTendencyExactlyOnceBeforeRepeating() {
-		List<EnumBloodTendency> first = VesperCombatRules.tendencyTour(918273L);
-		List<EnumBloodTendency> sameSeed = VesperCombatRules.tendencyTour(918273L);
-		List<EnumBloodTendency> differentSeed = VesperCombatRules.tendencyTour(918274L);
+	void aTemperTourUsesEveryTemperExactlyOnceBeforeRepeating() {
+		List<EnumBloodTemper> first = VesperCombatRules.temperTour(918273L);
+		List<EnumBloodTemper> sameSeed = VesperCombatRules.temperTour(918273L);
+		List<EnumBloodTemper> differentSeed = VesperCombatRules.temperTour(918274L);
 
-		assertEquals(EnumBloodTendency.values().length, first.size());
-		assertEquals(EnumBloodTendency.values().length, new HashSet<>(first).size());
+		assertEquals(EnumBloodTemper.values().length, first.size());
+		assertEquals(EnumBloodTemper.values().length, new HashSet<>(first).size());
 		assertEquals(first, sameSeed);
 		assertNotEquals(first, differentSeed);
 	}
 
 	@Test
-	void everyTendencyHasTheApprovedWeaponAndManipulationProfile() {
-		assertProfile(EnumBloodTendency.ANIMUS, "blade", "blood_rush", "blood_aneurysm");
-		assertProfile(EnumBloodTendency.MORTEM, "axe", "exsanguinate", "grave_debt");
-		assertProfile(EnumBloodTendency.LUX, "spear", "prismatic_reproof", "hematic_flare");
-		assertProfile(EnumBloodTendency.TENEBRIS, "claws", "umbral_step", "gloam_laceration");
-		assertProfile(EnumBloodTendency.DUCTILIS, "crossbow", "conductive_mark", "synaptic_jolt");
-		assertProfile(EnumBloodTendency.FLAMMEUS, "torch", "sanguine_ignition", "scalding_updraft");
-		assertProfile(EnumBloodTendency.CONGEATIO, "flail", "glacial_grasp", "glacial_rampart");
-		assertProfile(EnumBloodTendency.FERRIC, "staff", "sanguine_magnetism", "iron_retort");
+	void everyTemperHasTheApprovedWeaponAndManipulationProfile() {
+		assertProfile(EnumBloodTemper.ANIMUS, "blade", "blood_rush", "blood_aneurysm");
+		assertProfile(EnumBloodTemper.MORTEM, "axe", "exsanguinate", "grave_debt");
+		assertProfile(EnumBloodTemper.LUX, "spear", "prismatic_reproof", "hematic_flare");
+		assertProfile(EnumBloodTemper.TENEBRIS, "claws", "umbral_step", "gloam_laceration");
+		assertProfile(EnumBloodTemper.DUCTILIS, "crossbow", "conductive_mark", "synaptic_jolt");
+		assertProfile(EnumBloodTemper.FLAMMEUS, "torch", "sanguine_ignition", "scalding_updraft");
+		assertProfile(EnumBloodTemper.CONGEATIO, "flail", "glacial_grasp", "glacial_rampart");
+		assertProfile(EnumBloodTemper.FERRIC, "staff", "sanguine_magnetism", "iron_retort");
 	}
 
 	@Test
@@ -89,8 +89,8 @@ final class VesperCombatRulesTest {
 	void phaseTwoUsesAThirtyTickMorphThenPrimaryAndSecondaryBeats() {
 		assertEquals(40, VesperCombatRules.primaryAttackTick());
 		assertEquals(118, VesperCombatRules.secondaryAttackTick());
-		assertEquals(VesperCombatRules.tendencyTour(77L).get(0), VesperCombatRules.tendencyAt(77L, 0));
-		assertEquals(VesperCombatRules.tendencyTour(77L).get(0), VesperCombatRules.tendencyAt(77L, 8));
+		assertEquals(VesperCombatRules.temperTour(77L).get(0), VesperCombatRules.temperAt(77L, 0));
+		assertEquals(VesperCombatRules.temperTour(77L).get(0), VesperCombatRules.temperAt(77L, 8));
 	}
 
 	@Test
@@ -163,23 +163,23 @@ final class VesperCombatRulesTest {
 	}
 
 	@Test
-	void everyTendencyOwnsAWeaponSpecificCoreAndAdvancedAction() {
-		assertEquals(ICHIMONJI, VesperWeaponCombatRules.coreAction(EnumBloodTendency.ANIMUS));
-		assertEquals(CROSSCUT, VesperWeaponCombatRules.advancedAction(EnumBloodTendency.ANIMUS));
-		assertEquals(LEAPING_CLEAVE, VesperWeaponCombatRules.coreAction(EnumBloodTendency.MORTEM));
-		assertEquals(REAPER_SWEEP, VesperWeaponCombatRules.advancedAction(EnumBloodTendency.MORTEM));
-		assertEquals(SKY_LANCE, VesperWeaponCombatRules.coreAction(EnumBloodTendency.LUX));
-		assertEquals(LANCE_FLURRY, VesperWeaponCombatRules.advancedAction(EnumBloodTendency.LUX));
-		assertEquals(TWIN_REND, VesperWeaponCombatRules.coreAction(EnumBloodTendency.TENEBRIS));
-		assertEquals(PREDATOR_POUNCE, VesperWeaponCombatRules.advancedAction(EnumBloodTendency.TENEBRIS));
-		assertEquals(CONDUCTIVE_VOLLEY, VesperWeaponCombatRules.coreAction(EnumBloodTendency.DUCTILIS));
-		assertEquals(STORM_LOCK, VesperWeaponCombatRules.advancedAction(EnumBloodTendency.DUCTILIS));
-		assertEquals(BRANDING_THRUSTS, VesperWeaponCombatRules.coreAction(EnumBloodTendency.FLAMMEUS));
-		assertEquals(FLAMMEUS_CONCENTRATION, VesperWeaponCombatRules.advancedAction(EnumBloodTendency.FLAMMEUS));
-		assertEquals(CHAIN_SWEEP, VesperWeaponCombatRules.coreAction(EnumBloodTendency.CONGEATIO));
-		assertEquals(HOOK_AND_CRUSH, VesperWeaponCombatRules.advancedAction(EnumBloodTendency.CONGEATIO));
-		assertEquals(MAGNETIC_AXIS, VesperWeaponCombatRules.coreAction(EnumBloodTendency.FERRIC));
-		assertEquals(IRON_RETORT, VesperWeaponCombatRules.advancedAction(EnumBloodTendency.FERRIC));
+	void everyTemperOwnsAWeaponSpecificCoreAndAdvancedAction() {
+		assertEquals(ICHIMONJI, VesperWeaponCombatRules.coreAction(EnumBloodTemper.ANIMUS));
+		assertEquals(CROSSCUT, VesperWeaponCombatRules.advancedAction(EnumBloodTemper.ANIMUS));
+		assertEquals(LEAPING_CLEAVE, VesperWeaponCombatRules.coreAction(EnumBloodTemper.MORTEM));
+		assertEquals(REAPER_SWEEP, VesperWeaponCombatRules.advancedAction(EnumBloodTemper.MORTEM));
+		assertEquals(SKY_LANCE, VesperWeaponCombatRules.coreAction(EnumBloodTemper.LUX));
+		assertEquals(LANCE_FLURRY, VesperWeaponCombatRules.advancedAction(EnumBloodTemper.LUX));
+		assertEquals(TWIN_REND, VesperWeaponCombatRules.coreAction(EnumBloodTemper.TENEBRIS));
+		assertEquals(PREDATOR_POUNCE, VesperWeaponCombatRules.advancedAction(EnumBloodTemper.TENEBRIS));
+		assertEquals(CONDUCTIVE_VOLLEY, VesperWeaponCombatRules.coreAction(EnumBloodTemper.DUCTILIS));
+		assertEquals(STORM_LOCK, VesperWeaponCombatRules.advancedAction(EnumBloodTemper.DUCTILIS));
+		assertEquals(BRANDING_THRUSTS, VesperWeaponCombatRules.coreAction(EnumBloodTemper.FLAMMEUS));
+		assertEquals(FLAMMEUS_CONCENTRATION, VesperWeaponCombatRules.advancedAction(EnumBloodTemper.FLAMMEUS));
+		assertEquals(CHAIN_SWEEP, VesperWeaponCombatRules.coreAction(EnumBloodTemper.CONGEATIO));
+		assertEquals(HOOK_AND_CRUSH, VesperWeaponCombatRules.advancedAction(EnumBloodTemper.CONGEATIO));
+		assertEquals(MAGNETIC_AXIS, VesperWeaponCombatRules.coreAction(EnumBloodTemper.FERRIC));
+		assertEquals(IRON_RETORT, VesperWeaponCombatRules.advancedAction(EnumBloodTemper.FERRIC));
 	}
 
 	@Test
@@ -196,31 +196,31 @@ final class VesperCombatRulesTest {
 			}
 		}
 		assertEquals(STORM_LOCK, VesperWeaponCombatRules.selectAction(
-				EnumBloodTendency.DUCTILIS, true, CONDUCTIVE_VOLLEY, 5.0D));
+				EnumBloodTemper.DUCTILIS, true, CONDUCTIVE_VOLLEY, 5.0D));
 		assertEquals(CONDUCTIVE_VOLLEY, VesperWeaponCombatRules.selectAction(
-				EnumBloodTendency.DUCTILIS, true, STORM_LOCK, 18.0D));
+				EnumBloodTemper.DUCTILIS, true, STORM_LOCK, 18.0D));
 		assertNotEquals(REAPER_SWEEP, VesperWeaponCombatRules.selectAction(
-				EnumBloodTendency.MORTEM, true, REAPER_SWEEP, 4.0D));
+				EnumBloodTemper.MORTEM, true, REAPER_SWEEP, 4.0D));
 	}
 
 	@Test
 	void eachFormDefinesItsOwnPreferredRangeAndLowHealthRecovery() {
 		assertEquals(new VesperWeaponCombatRules.RangeBand(3.0D, 6.0D),
-				VesperWeaponCombatRules.rangeBand(EnumBloodTendency.ANIMUS));
+				VesperWeaponCombatRules.rangeBand(EnumBloodTemper.ANIMUS));
 		assertEquals(new VesperWeaponCombatRules.RangeBand(3.0D, 7.0D),
-				VesperWeaponCombatRules.rangeBand(EnumBloodTendency.MORTEM));
+				VesperWeaponCombatRules.rangeBand(EnumBloodTemper.MORTEM));
 		assertEquals(new VesperWeaponCombatRules.RangeBand(7.0D, 14.0D),
-				VesperWeaponCombatRules.rangeBand(EnumBloodTendency.LUX));
+				VesperWeaponCombatRules.rangeBand(EnumBloodTemper.LUX));
 		assertEquals(new VesperWeaponCombatRules.RangeBand(2.0D, 5.0D),
-				VesperWeaponCombatRules.rangeBand(EnumBloodTendency.TENEBRIS));
+				VesperWeaponCombatRules.rangeBand(EnumBloodTemper.TENEBRIS));
 		assertEquals(new VesperWeaponCombatRules.RangeBand(12.0D, 20.0D),
-				VesperWeaponCombatRules.rangeBand(EnumBloodTendency.DUCTILIS));
+				VesperWeaponCombatRules.rangeBand(EnumBloodTemper.DUCTILIS));
 		assertEquals(new VesperWeaponCombatRules.RangeBand(2.0D, 5.0D),
-				VesperWeaponCombatRules.rangeBand(EnumBloodTendency.FLAMMEUS));
+				VesperWeaponCombatRules.rangeBand(EnumBloodTemper.FLAMMEUS));
 		assertEquals(new VesperWeaponCombatRules.RangeBand(5.0D, 9.0D),
-				VesperWeaponCombatRules.rangeBand(EnumBloodTendency.CONGEATIO));
+				VesperWeaponCombatRules.rangeBand(EnumBloodTemper.CONGEATIO));
 		assertEquals(new VesperWeaponCombatRules.RangeBand(8.0D, 14.0D),
-				VesperWeaponCombatRules.rangeBand(EnumBloodTendency.FERRIC));
+				VesperWeaponCombatRules.rangeBand(EnumBloodTemper.FERRIC));
 		assertEquals(8, VesperWeaponCombatRules.recoveryTicks(10, 0.24F));
 		assertEquals(8, VesperWeaponCombatRules.recoveryTicks(10, 0.25F));
 	}
@@ -244,11 +244,11 @@ final class VesperCombatRulesTest {
 	@Test
 	void selectionAccountsForVisibilityElevationAndAttackAngle() {
 		assertEquals(NONE, VesperWeaponCombatRules.selectAction(
-				EnumBloodTendency.LUX, true, NONE, 10.0D, 0.0D, 0.0D, false));
+				EnumBloodTemper.LUX, true, NONE, 10.0D, 0.0D, 0.0D, false));
 		assertEquals(SKY_LANCE, VesperWeaponCombatRules.selectAction(
-				EnumBloodTendency.LUX, true, NONE, 10.0D, 20.0D, 4.0D, true));
+				EnumBloodTemper.LUX, true, NONE, 10.0D, 20.0D, 4.0D, true));
 		assertEquals(TWIN_REND, VesperWeaponCombatRules.selectAction(
-				EnumBloodTendency.TENEBRIS, true, NONE, 4.0D, 110.0D, 0.0D, true));
+				EnumBloodTemper.TENEBRIS, true, NONE, 4.0D, 110.0D, 0.0D, true));
 	}
 
 	@Test
@@ -260,8 +260,8 @@ final class VesperCombatRulesTest {
 		assertTrue(!VesperWeaponCombatRules.withinArc(4.0D, 70.0D, 5.0D, 130.0D));
 	}
 
-	private static void assertProfile(EnumBloodTendency tendency, String weapon, String primary, String secondary) {
-		VesperCombatRules.StanceProfile profile = VesperCombatRules.profile(tendency);
+	private static void assertProfile(EnumBloodTemper temper, String weapon, String primary, String secondary) {
+		VesperCombatRules.StanceProfile profile = VesperCombatRules.profile(temper);
 		assertEquals(weapon, profile.weapon());
 		assertEquals(primary, profile.primaryManipulation());
 		assertEquals(secondary, profile.secondaryManipulation());

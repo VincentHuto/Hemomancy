@@ -20,7 +20,7 @@ class OsteophageResourcesTest {
         assertEquals("hemomancy:venous_pinion", entry.get("name").getAsString());
         assertTrue(json("data/hemomancy/tags/entity_type/specimen_jar_capturable.json").getAsJsonArray("values").asList().stream()
                 .anyMatch(v -> v.getAsString().equals("hemomancy:osteophage")));
-        assertEquals("mortem", json("data/hemomancy/blood_profiles/osteophage.json").getAsJsonArray("tendencies").get(0).getAsString());
+        assertEquals("mortem", json("data/hemomancy/blood_profiles/osteophage.json").getAsJsonArray("tempers").get(0).getAsString());
         var lang = json("assets/hemomancy/lang/en_us.json");
         assertEquals("Osteophage Vulture", lang.get("entity.hemomancy.osteophage").getAsString());
         for (String key : List.of("title", "description", "source")) assertTrue(lang.has("bestiary.hemomancy.specimen.osteophage." + key));

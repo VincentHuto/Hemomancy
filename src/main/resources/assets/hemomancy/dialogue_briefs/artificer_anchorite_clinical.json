@@ -64,7 +64,7 @@
   "tone": "quiet, approving"
  },
  "hemomancy.anchorite.d6.first_route": {
-  "about": "the Vein-Mason telling the player to keep a cerebral scar aligned with a Noetic Memory's primary tendency and cast that memory, noting mechanical projections do not count",
+  "about": "the Vein-Mason telling the player to keep a cerebral scar aligned with a Noetic Memory's primary temper and cast that memory, noting mechanical projections do not count",
   "tone": "terse, exacting"
  },
  "hemomancy.anchorite.d6.referral": {
@@ -108,7 +108,7 @@
   "tone": "austere, solemn"
  },
  "hemomancy.anchorite.first_lesson.line2": {
-  "about": "the Vein-Mason saying the player's strongest tendency has chosen the first cut, and telling them to take its old Scar Pattern and carve it at the Cerebral Scarring Station",
+  "about": "the Vein-Mason saying the player's strongest temper has chosen the first cut, and telling them to take its old Scar Pattern and carve it at the Cerebral Scarring Station",
   "tone": "terse, directive"
  },
  "hemomancy.anchorite.first_lesson.line3": {
@@ -116,7 +116,7 @@
   "tone": "clipped, instructive"
  },
  "hemomancy.anchorite.first_lesson.prompt": {
-  "about": "the Vein-Mason telling the player that their strongest tendency sets the first cut, and to accept the pattern and carve it at the Scarring Station",
+  "about": "the Vein-Mason telling the player that their strongest temper sets the first cut, and to accept the pattern and carve it at the Scarring Station",
   "tone": "spare, directive"
  },
  "hemomancy.anchorite.inquiry.blank_memory.line1": {
@@ -144,7 +144,7 @@
   "tone": "flat, exacting"
  },
  "hemomancy.anchorite.inquiry.conductive_mark.line1": {
-  "about": "the Vein-Mason describing Conductive Mark as Noetic, a projected instruction led by its primary tendency",
+  "about": "the Vein-Mason describing Conductive Mark as Noetic, a projected instruction led by its primary temper",
   "tone": "flat, informative"
  },
  "hemomancy.anchorite.inquiry.conductive_mark.line2": {
@@ -192,7 +192,7 @@
   "tone": "terse, directive"
  },
  "hemomancy.anchorite.inquiry.tier_one.line1": {
-  "about": "the Vein-Mason explaining that a first-tier pattern deepens one tendency while active and can route a matching Noetic Memory",
+  "about": "the Vein-Mason explaining that a first-tier pattern deepens one temper while active and can route a matching Noetic Memory",
   "tone": "flat, informative"
  },
  "hemomancy.anchorite.inquiry.tier_one.line2": {
@@ -784,7 +784,7 @@
   "tone": "plain label"
  },
  "hemomancy.clinical.inquiry.alembic": {
-  "about": "the Alchemist explaining that at Degree 2 the Ghastly Alembic opens reagent distillation and broader tendency work, contrasting microscopy that describes a specimen with distillation and centrifugation that extract useful material",
+  "about": "the Alchemist explaining that at Degree 2 the Ghastly Alembic opens reagent distillation and broader temper work, contrasting microscopy that describes a specimen with distillation and centrifugation that extract useful material",
   "tone": "dry, informative"
  },
  "hemomancy.clinical.inquiry.artificer_cabinet": {
@@ -824,7 +824,7 @@
   "tone": "dry, practical"
  },
  "hemomancy.clinical.inquiry.identified_vial": {
-  "about": "the Alchemist explaining an identified vial records tendencies and properties, that after the Borrowed Physiology lesson holding Use for 0.8 seconds injects it, the tooltip shows temporary responses and drawbacks, the empty vial is kept, and Transfusion Saturation prevents immediate re-injection",
+  "about": "the Alchemist explaining an identified vial records tempers and properties, that after the Borrowed Physiology lesson holding Use for 0.8 seconds injects it, the tooltip shows temporary responses and drawbacks, the empty vial is kept, and Transfusion Saturation prevents immediate re-injection",
   "tone": "dry, informative"
  },
  "hemomancy.clinical.inquiry.later": {
@@ -952,7 +952,7 @@
   "tone": "plain label"
  },
  "hemomancy.clinical.microscope.lesson": {
-  "about": "the Alchemist asking to see the player's filled creature vial and teaching microscopy: the recipe is added to their notes, hold the microscope in the main hand and a filled vial in the offhand, hold Use for two seconds, read tendencies and properties, and return after a successful examination",
+  "about": "the Alchemist asking to see the player's filled creature vial and teaching microscopy: the recipe is added to their notes, hold the microscope in the main hand and a filled vial in the offhand, hold Use for two seconds, read tempers and properties, and return after a successful examination",
   "tone": "dry, procedural"
  },
  "hemomancy.clinical.microscope.prompt": {

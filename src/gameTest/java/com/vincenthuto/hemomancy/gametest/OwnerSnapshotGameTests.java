@@ -6,11 +6,11 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
 import com.vincenthuto.hemomancy.common.capability.PlayerStateSync;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTendencyServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTemperamentServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.VascularSystemServerPacket;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.gametest.framework.GameTest;
@@ -95,7 +95,7 @@ public final class OwnerSnapshotGameTests {
             }
         };
         try {
-            var tendency = HemoCapabilityAccess.getBloodTendency(player);
+            var temper = HemoCapabilityAccess.getBloodTemperament(player);
             var vascular = HemoCapabilityAccess.getVascularSystem(player);
             HemoCapabilityRegistrar.onLogin(new PlayerEvent.PlayerLoggedInEvent(player));
             assertOrderedPair(helper, packets, "login");
@@ -106,9 +106,9 @@ public final class OwnerSnapshotGameTests {
             HemoCapabilityRegistrar.onRespawn(new PlayerEvent.PlayerRespawnEvent(player, false));
             assertOrderedPair(helper, packets, "respawn");
             packets.clear();
-            tendency.addTendencyAlignment(EnumBloodTendency.ANIMUS, 2f);
+            temper.addTemperAlignment(EnumBloodTemper.ANIMUS, 2f);
             vascular.setVascularSectionHealth(EnumVeinSections.ARMS, -3f);
-            BloodTendencyEvents.syncTendency(player, tendency);
+            BloodTemperamentEvents.syncTemperament(player, temper);
             VascularSystemEvents.syncVascular(player, vascular);
             assertPair(helper, packets, "direct change-path sends");
             helper.succeed();
@@ -118,10 +118,10 @@ public final class OwnerSnapshotGameTests {
         }
     }
 
-    /** The lifecycle sends the whole sync table; tendency and vascular each go once, tendency first. */
+    /** The lifecycle sends the whole sync table; temper and vascular each go once, temper first. */
     private static void assertOrderedPair(GameTestHelper helper, List<CustomPacketPayload> packets, String phase) {
         var owner = packets.stream()
-                .filter(p -> p instanceof BloodTendencyServerPacket || p instanceof VascularSystemServerPacket).toList();
+                .filter(p -> p instanceof BloodTemperamentServerPacket || p instanceof VascularSystemServerPacket).toList();
         assertPair(helper, owner, phase);
     }
 
@@ -159,7 +159,7 @@ public final class OwnerSnapshotGameTests {
 
     private static void assertPair(GameTestHelper helper, List<CustomPacketPayload> packets, String phase) {
         helper.assertTrue(packets.size() == 2, phase + " sent " + packets.size() + " owner packets");
-        helper.assertTrue(packets.get(0) instanceof BloodTendencyServerPacket, phase + " missed tendency first");
+        helper.assertTrue(packets.get(0) instanceof BloodTemperamentServerPacket, phase + " missed temper first");
         helper.assertTrue(packets.get(1) instanceof VascularSystemServerPacket, phase + " missed vascular second");
     }
 }

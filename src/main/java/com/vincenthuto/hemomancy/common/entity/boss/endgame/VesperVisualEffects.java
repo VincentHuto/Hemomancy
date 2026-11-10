@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
@@ -37,8 +37,8 @@ final class VesperVisualEffects {
 
 	private VesperVisualEffects() { }
 
-	static ParticleColor tendencyColor(EnumBloodTendency tendency) {
-		return color(VesperVisualRules.tendencyColorRgb(tendency));
+	static ParticleColor temperColor(EnumBloodTemper temper) {
+		return color(VesperVisualRules.temperColorRgb(temper));
 	}
 
 	static void glow(ServerLevel level, Vec3 center, ParticleColor color, int count,
@@ -77,8 +77,8 @@ final class VesperVisualEffects {
 	}
 
 	static void ambient(Level level, Vec3 center, double width, double height, boolean crowned,
-			EnumBloodTendency tendency) {
-		ParticleColor color = crowned ? BLOOD : tendencyColor(tendency);
+			EnumBloodTemper temper) {
+		ParticleColor color = crowned ? BLOOD : temperColor(temper);
 		for (int i = 0; i < 3; i++) {
 			double x = center.x + (level.random.nextDouble() - 0.5D) * width;
 			double y = center.y + level.random.nextDouble() * height;

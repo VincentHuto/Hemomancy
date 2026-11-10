@@ -117,7 +117,7 @@ public final class ManipulationRemoteAcceptance {
             var power=ManipulationInit.getByName(POWERS[scene]);
             if(scene!=1)known.getKnownManips().put(power,new ManipLevel(0,0));
             known.setEquippedManipNames(List.of(power.getName()));known.setSelectedManip(power);
-            HemoCapabilityAccess.getBloodTendency(caster).setTendencyAlignment(power.getTend(),(float)power.getAlignLevel());
+            HemoCapabilityAccess.getBloodTemperament(caster).setTemperAlignment(power.getTend(),(float)power.getAlignLevel());
         }
         if(scene!=0 && scene!=3) {
             enemy=EntityType.HUSK.create(level);enemy.setPos(x+.5,100,7.5);enemy.setNoAi(true);level.addFreshEntity(enemy);

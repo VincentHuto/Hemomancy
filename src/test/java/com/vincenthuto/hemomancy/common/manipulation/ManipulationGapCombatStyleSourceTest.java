@@ -38,14 +38,14 @@ public final class ManipulationGapCombatStyleSourceTest {
 
 		assertContains("synaptic jolt registration", manipInit,
 				"new SynapticJoltManip(\"synaptic_jolt\", 150");
-		assertContains("synaptic jolt rank/tendency", manipInit,
-				"EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD");
+		assertContains("synaptic jolt rank/temper", manipInit,
+				"EnumManipulationRank.HUMILIS, EnumBloodTemper.DUCTILIS, EnumVeinSections.HEAD");
 		assertContains("synaptic jolt cooldown", manipInit, ".setCooldownTicks(25)");
 
 		assertContains("conductive mark registration", manipInit,
 				"new ConductiveMarkManip(\"conductive_mark\", 150");
 		assertContains("conductive mark secondary", manipInit,
-				".setSecondaryTend(EnumBloodTendency.FERRIC)");
+				".setSecondaryTend(EnumBloodTemper.FERRIC)");
 		assertContains("conductive mark cooldown", manipInit, ".setCooldownTicks(50)");
 
 		assertContains("insatiable hunger registration", manipInit,
@@ -59,13 +59,13 @@ public final class ManipulationGapCombatStyleSourceTest {
 		assertContains("iron retort registration", manipInit,
 				"new IronRetortManip(\"iron_retort\", 250");
 		assertContains("iron retort secondary", manipInit,
-				".setSecondaryTend(EnumBloodTendency.DUCTILIS)");
+				".setSecondaryTend(EnumBloodTemper.DUCTILIS)");
 		assertContains("iron retort cooldown", manipInit, ".setCooldownTicks(80)");
 
 		assertContains("sanguine magnetism registration", manipInit,
 				"new SanguineMagnetismManip(\"sanguine_magnetism\", 450");
-		assertContains("sanguine magnetism rank/tendency", manipInit,
-				"EnumManipulationRank.SUMMA, EnumBloodTendency.FERRIC, EnumVeinSections.BODY");
+		assertContains("sanguine magnetism rank/temper", manipInit,
+				"EnumManipulationRank.SUMMA, EnumBloodTemper.FERRIC, EnumVeinSections.BODY");
 		assertContains("sanguine magnetism cooldown", manipInit, ".setCooldownTicks(140)");
 	}
 

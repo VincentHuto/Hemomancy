@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.damage.*;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -32,7 +32,7 @@ public final class SchoolCombatGameTests {
         return mob;
     }
 
-    private static SchoolHitContext hit(LivingEntity owner, String ability, EnumBloodTendency school) {
+    private static SchoolHitContext hit(LivingEntity owner, String ability, EnumBloodTemper school) {
         return SchoolHitContext.direct(Hemomancy.rloc(ability), school, null, owner);
     }
 
@@ -47,14 +47,14 @@ public final class SchoolCombatGameTests {
         var target = body(h, EntityType.COW, 6);
         SchoolStates.apply(caster, target, SchoolState.LODESTONE, 160);
         target.setDeltaMovement(0, 0, 0);
-        strike(target, caster, hit(caster, "ferric_probe", EnumBloodTendency.FERRIC), 1);
+        strike(target, caster, hit(caster, "ferric_probe", EnumBloodTemper.FERRIC), 1);
         h.assertTrue(Math.abs(target.getDeltaMovement().horizontalDistance() - .5) < .001, "Ferric hit did not add 25 percent knockback");
         target.setDeltaMovement(0, 0, 0);
-        strike(target, caster, hit(caster, "lux_probe", EnumBloodTendency.LUX), 1);
+        strike(target, caster, hit(caster, "lux_probe", EnumBloodTemper.LUX), 1);
         h.assertTrue(Math.abs(target.getDeltaMovement().horizontalDistance() - .4) < .001, "Ferric knockback leaked into a different same-tick hit");
         target.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(.5);
         target.setDeltaMovement(0, 0, 0);
-        strike(target, caster, hit(caster, "ferric_probe", EnumBloodTendency.FERRIC), 1);
+        strike(target, caster, hit(caster, "ferric_probe", EnumBloodTemper.FERRIC), 1);
         h.assertTrue(Math.abs(target.getDeltaMovement().horizontalDistance() - .25) < .001, "Lodestone bypassed knockback resistance");
         caster.discard(); target.discard(); h.succeed();
     }
@@ -78,7 +78,7 @@ public final class SchoolCombatGameTests {
         pillar.tick();
         h.assertTrue(Math.abs(target.getDeltaMovement().length() / ordinary - 1.5) < .001, "Marked pull was not 1.5 times stronger");
         target.setDeltaMovement(0, 0, 0);
-        strike(target, caster, hit(caster, "ferric_probe", EnumBloodTendency.FERRIC), 1);
+        strike(target, caster, hit(caster, "ferric_probe", EnumBloodTemper.FERRIC), 1);
         h.assertTrue(target.getDeltaMovement().x < 0, "Ferric displacement did not point toward the owned pillar");
         target.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(1);
         target.setDeltaMovement(0, 0, 0);
@@ -121,13 +121,13 @@ public final class SchoolCombatGameTests {
         var caster = body(h, EntityType.COW, 2);
         var target = body(h, EntityType.HUSK, 6);
         SchoolStates.apply(caster, caster, SchoolState.VEILED, 120);
-        var cast = hit(caster, "hemorrhage", EnumBloodTendency.MORTEM);
+        var cast = hit(caster, "hemorrhage", EnumBloodTemper.MORTEM);
         try (var scope = SchoolDamage.scope(cast, caster)) {
             SchoolStates.apply(caster, target, SchoolState.NECROSIS, 120);
         }
         h.assertTrue(!SchoolStates.has(caster, SchoolState.VEILED), "Offensive non-damaging cast retained concealment");
         SchoolStates.apply(caster, caster, SchoolState.VEILED, 120);
-        SchoolStates.apply(hit(caster, "eclipse_well", EnumBloodTendency.TENEBRIS), caster, target, SchoolState.OBSCURED, 25, 1);
+        SchoolStates.apply(hit(caster, "eclipse_well", EnumBloodTemper.TENEBRIS), caster, target, SchoolState.OBSCURED, 25, 1);
         h.assertTrue(SchoolStates.has(caster, SchoolState.VEILED), "Existing darkness zone repeatedly broke concealment");
         caster.discard(); target.discard(); h.succeed();
     }
@@ -172,8 +172,8 @@ public final class SchoolCombatGameTests {
         var caster = body(h, EntityType.COW, 2);
         var target = body(h, EntityType.HUSK, 6);
         var relay = body(h, EntityType.HUSK, 8);
-        var context = SchoolHitContext.direct(Hemomancy.rloc("necrosis_arc_probe"), EnumBloodTendency.MORTEM,
-                EnumBloodTendency.DUCTILIS, caster).withApplication(10, 1);
+        var context = SchoolHitContext.direct(Hemomancy.rloc("necrosis_arc_probe"), EnumBloodTemper.MORTEM,
+                EnumBloodTemper.DUCTILIS, caster).withApplication(10, 1);
         SchoolStates.apply(caster, target, SchoolState.LODESTONE, 160);
         strike(target, caster, context, 2);
         h.assertTrue(SchoolStates.data(target).hasPaid(context.rootAttack()), "Fixture did not fire the conductive payoff");
@@ -212,12 +212,12 @@ public final class SchoolCombatGameTests {
         h.runAfterDelay(6, () -> {
             try {
                 float health = player.getHealth(), attackerHealth = attacker.getHealth();
-                strike(player, attacker, hit(attacker, "blood_aneurysm", EnumBloodTendency.ANIMUS), 2);
+                strike(player, attacker, hit(attacker, "blood_aneurysm", EnumBloodTemper.ANIMUS), 2);
                 h.assertTrue(player.getHealth() == health && SchoolStates.levels(player, SchoolState.PRESSURE) == 1,
                         "Shielded rupture consumed pressure or damaged health");
                 h.assertTrue(player.hasEffect(EffectInit.iron_retort) && attacker.getHealth() == attackerHealth,
                         "Shielded hit consumed or fired Iron Retort");
-                strike(player, attacker, hit(attacker, "cold_probe", EnumBloodTendency.CONGEATIO), 2);
+                strike(player, attacker, hit(attacker, "cold_probe", EnumBloodTemper.CONGEATIO), 2);
                 h.assertTrue(!player.hasEffect(EffectInit.rime), "Shielded hit built Rime");
                 h.assertTrue(h.getLevel().getEntitiesOfClass(
                         com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity.class,
@@ -256,16 +256,16 @@ public final class SchoolCombatGameTests {
     public static void mixedAffinityIsAppliedOnceAndHeldWeaponsDoNotReschoolSpells(GameTestHelper h) {
         var player = DuctilisGameTests.player(h);
         var target = body(h, com.vincenthuto.hemomancy.common.init.EntityInit.will.get(), 6);
-        target.setSchool(EnumBloodTendency.MORTEM);
+        target.setSchool(EnumBloodTemper.MORTEM);
         target.getAttribute(Attributes.ARMOR).setBaseValue(0);
         try {
-            com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player)
-                    .setTendencyAlignment(EnumBloodTendency.ANIMUS, 100);
+            com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTemperament(player)
+                    .setTemperAlignment(EnumBloodTemper.ANIMUS, 100);
             player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
                     new net.minecraft.world.item.ItemStack(com.vincenthuto.hemomancy.common.init.ItemInit.living_torch.get()));
-            var context = SchoolHitContext.direct(Hemomancy.rloc("affinity_probe"), EnumBloodTendency.ANIMUS,
-                    EnumBloodTendency.LUX, player);
-            float multiplier = com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules.damageMultiplier(
+            var context = SchoolHitContext.direct(Hemomancy.rloc("affinity_probe"), EnumBloodTemper.ANIMUS,
+                    EnumBloodTemper.LUX, player);
+            float multiplier = com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules.damageMultiplier(
                     player, target, context.primary(), context.secondary());
             h.assertTrue(multiplier > 1, "Fixture did not exercise a non-neutral affinity");
             target.hurt(SchoolDamage.attributed(h.getLevel().damageSources().magic(), context, player), 4);
@@ -281,13 +281,13 @@ public final class SchoolCombatGameTests {
     public static void authoredCounterattacksGetAffinityButFixedStateDamageDoesNot(GameTestHelper h) {
         var player = DuctilisGameTests.player(h);
         var target = body(h, com.vincenthuto.hemomancy.common.init.EntityInit.will.get(), 6);
-        target.setSchool(EnumBloodTendency.MORTEM);
+        target.setSchool(EnumBloodTemper.MORTEM);
         target.getAttribute(Attributes.ARMOR).setBaseValue(0);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player)
-                .setTendencyAlignment(EnumBloodTendency.ANIMUS, 100);
-        var context = SchoolHitContext.direct(Hemomancy.rloc("crimson_coronation"), EnumBloodTendency.ANIMUS,
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTemperament(player)
+                .setTemperAlignment(EnumBloodTemper.ANIMUS, 100);
+        var context = SchoolHitContext.direct(Hemomancy.rloc("crimson_coronation"), EnumBloodTemper.ANIMUS,
                 null, player).child(SchoolHitContext.Kind.REACTION);
-        float multiplier = com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules.damageMultiplier(player, target, context.primary(), context.secondary());
+        float multiplier = com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules.damageMultiplier(player, target, context.primary(), context.secondary());
         h.assertTrue(multiplier > 1, "Fixture did not exercise affinity");
         strike(target, player, context, 4);
         h.assertTrue(Math.abs(100 - target.getHealth() - 4 * multiplier) < .001, "Authored counterattack lost or doubled affinity");
@@ -317,7 +317,7 @@ public final class SchoolCombatGameTests {
         player.hurt(h.getLevel().damageSources().magic(), 10);
         h.assertTrue(player.getHealth() == 10 && blood.getBloodVolume() == 950, "Nonlethal hit spent Ink Mantle early: health=" + player.getHealth() + " blood=" + blood.getBloodVolume());
         player.invulnerableTime = 0;
-        var periodic = hit(null, "searing_probe", EnumBloodTendency.FLAMMEUS).child(SchoolHitContext.Kind.PERIODIC);
+        var periodic = hit(null, "searing_probe", EnumBloodTemper.FLAMMEUS).child(SchoolHitContext.Kind.PERIODIC);
         player.hurt(SchoolDamage.attributed(h.getLevel().damageSources().magic(), periodic, null), 10);
         h.assertTrue(player.isAlive() && player.getHealth() == 8 && blood.getBloodVolume() == 400,
                 "Lethal periodic damage bypassed Ink Mantle or changed its payment: health=" + player.getHealth() + " blood=" + blood.getBloodVolume());
@@ -332,7 +332,7 @@ public final class SchoolCombatGameTests {
         SchoolStates.apply(owner, target, SchoolState.RIME, 120);
         SchoolStates.apply(owner, target, SchoolState.RIME, 120);
         h.assertTrue(SchoolStates.levels(target, SchoolState.RIME) == 1, "Rime ignored its ten-tick build window");
-        strike(target, owner, hit(owner, "rimebound_sentence", EnumBloodTendency.CONGEATIO).withApplication(120, 3), 2);
+        strike(target, owner, hit(owner, "rimebound_sentence", EnumBloodTemper.CONGEATIO).withApplication(120, 3), 2);
         h.assertTrue(SchoolStates.levels(target, SchoolState.RIME) == 3, "Full Sentence failed to establish maximum Rime");
         h.runAfterDelay(2, () -> {
             h.assertTrue(Math.abs(target.getAttributeValue(Attributes.MOVEMENT_SPEED) - movement * .55) < .0001,
@@ -381,13 +381,13 @@ public final class SchoolCombatGameTests {
         SchoolStates.apply(owner, target, SchoolState.SEARING, 80);
         h.runAfterDelay(25, () -> {
             float before = target.getHealth();
-            strike(target, owner, hit(owner, "vitric_combustion", EnumBloodTendency.FLAMMEUS), 2);
+            strike(target, owner, hit(owner, "vitric_combustion", EnumBloodTemper.FLAMMEUS), 2);
             h.assertTrue(before - target.getHealth() == 5 && !target.hasEffect(EffectInit.searing),
                     "Combustion did not spend the remaining three ticks");
             SchoolStates.apply(owner, target, SchoolState.VEILED, 120);
             SchoolStates.apply(owner, target, SchoolState.ILLUMINATED, 120);
             before = target.getHealth();
-            strike(target, owner, hit(owner, "white_verdict", EnumBloodTendency.LUX), 4);
+            strike(target, owner, hit(owner, "white_verdict", EnumBloodTemper.LUX), 4);
             h.assertTrue(before - target.getHealth() == 6 && !target.hasEffect(EffectInit.illuminated),
                     "Verdict applied both bonuses or reapplied exposure");
             target.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 100));
@@ -401,7 +401,7 @@ public final class SchoolCombatGameTests {
         var caster = body(h, EntityType.COW, 2);
         var summon = body(h, EntityType.COW, 4);
         var target = body(h, EntityType.COW, 6);
-        SchoolDamage.capture(summon, hit(caster, "conjuration", EnumBloodTendency.ANIMUS));
+        SchoolDamage.capture(summon, hit(caster, "conjuration", EnumBloodTemper.ANIMUS));
         target.hurt(summon.damageSources().mobAttack(summon), 2);
         h.runAfterDelay(12, () -> {
             target.invulnerableTime = 0;
@@ -434,18 +434,18 @@ public final class SchoolCombatGameTests {
     public static void confirmedDamageBuildsOncePerRootAndRupturesOnlyPreexistingPressure(GameTestHelper h) {
         var owner = body(h, EntityType.COW, 2);
         var victim = body(h, EntityType.COW, 5);
-        var root = hit(owner, "blood_needle", EnumBloodTendency.ANIMUS);
+        var root = hit(owner, "blood_needle", EnumBloodTemper.ANIMUS);
         strike(victim, owner, root, 1);
         strike(victim, owner, root, 1);
         h.assertTrue(SchoolStates.levels(victim, SchoolState.PRESSURE) == 1, "One root built pressure twice");
-        strike(victim, owner, hit(owner, "blood_shot", EnumBloodTendency.ANIMUS), 1);
-        strike(victim, owner, hit(owner, "blood_shot", EnumBloodTendency.ANIMUS), 1);
+        strike(victim, owner, hit(owner, "blood_shot", EnumBloodTemper.ANIMUS), 1);
+        strike(victim, owner, hit(owner, "blood_shot", EnumBloodTemper.ANIMUS), 1);
         float health = victim.getHealth();
-        strike(victim, owner, hit(owner, "blood_aneurysm", EnumBloodTendency.ANIMUS), 2);
+        strike(victim, owner, hit(owner, "blood_aneurysm", EnumBloodTemper.ANIMUS), 2);
         h.assertTrue(Math.abs(health - victim.getHealth() - 8) < .001, "Aneurysm did not add six rupture damage");
         h.assertTrue(!victim.hasEffect(EffectInit.sanguine_pressure), "Rupture reapplied pressure");
         var skeleton = body(h, EntityType.SKELETON, 8);
-        strike(skeleton, owner, hit(owner, "blood_shot", EnumBloodTendency.ANIMUS), 2);
+        strike(skeleton, owner, hit(owner, "blood_shot", EnumBloodTemper.ANIMUS), 2);
         h.assertTrue(skeleton.getHealth() < 100 && !skeleton.hasEffect(EffectInit.sanguine_pressure), "Bloodless immunity erased damage or admitted pressure");
         h.succeed();
     }
@@ -455,14 +455,14 @@ public final class SchoolCombatGameTests {
         var owner = body(h, EntityType.COW, 2);
         var victim = body(h, EntityType.COW, 5);
         victim.setAbsorptionAmount(5);
-        strike(victim, owner, hit(owner, "blood_needle", EnumBloodTendency.ANIMUS), 1);
+        strike(victim, owner, hit(owner, "blood_needle", EnumBloodTemper.ANIMUS), 1);
         h.assertTrue(victim.getHealth() == 100 && SchoolStates.levels(victim, SchoolState.PRESSURE) == 1,
                 "Absorption damage did not confirm state application");
         victim.setInvulnerable(true);
-        strike(victim, owner, hit(owner, "blood_aneurysm", EnumBloodTendency.ANIMUS), 2);
+        strike(victim, owner, hit(owner, "blood_aneurysm", EnumBloodTemper.ANIMUS), 2);
         h.assertTrue(SchoolStates.levels(victim, SchoolState.PRESSURE) == 1, "Immune hit consumed pressure");
         victim.setInvulnerable(false);
-        var periodic = hit(owner, "blood_cloud", EnumBloodTendency.ANIMUS).child(SchoolHitContext.Kind.PERIODIC);
+        var periodic = hit(owner, "blood_cloud", EnumBloodTemper.ANIMUS).child(SchoolHitContext.Kind.PERIODIC);
         strike(victim, owner, periodic, 1);
         h.assertTrue(SchoolStates.levels(victim, SchoolState.PRESSURE) == 1, "Periodic damage built pressure");
         h.succeed();
@@ -475,7 +475,7 @@ public final class SchoolCombatGameTests {
         var attributed = body(h, EntityType.COW, 8);
         plain.getAttribute(Attributes.ARMOR).setBaseValue(12);
         attributed.getAttribute(Attributes.ARMOR).setBaseValue(12);
-        var context = hit(owner, "contract_probe", EnumBloodTendency.LUX).child(SchoolHitContext.Kind.REACTION);
+        var context = hit(owner, "contract_probe", EnumBloodTemper.LUX).child(SchoolHitContext.Kind.REACTION);
         var nativeSource = h.getLevel().damageSources().mobAttack(owner);
         var source = HemoDamageTypes.attributed(nativeSource, context, owner);
         h.assertTrue(source.typeHolder().equals(nativeSource.typeHolder()) && source.getEntity() == owner
@@ -491,14 +491,14 @@ public final class SchoolCombatGameTests {
         var owner = body(h, EntityType.COW, 2);
         var target = body(h, EntityType.COW, 5);
         target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 200));
-        strike(target, owner, hit(owner, "prismatic_reproof", EnumBloodTendency.LUX), 2);
+        strike(target, owner, hit(owner, "prismatic_reproof", EnumBloodTemper.LUX), 2);
         h.assertTrue(target.getHealth() == 98, "Vanilla glow qualified for Lux payoff");
         SchoolStates.apply(owner, target, SchoolState.ILLUMINATED, 120);
-        strike(target, owner, hit(owner, "prismatic_reproof", EnumBloodTendency.LUX), 2);
+        strike(target, owner, hit(owner, "prismatic_reproof", EnumBloodTemper.LUX), 2);
         h.assertTrue(target.getHealth() == 94 && !target.hasEffect(EffectInit.illuminated), "Reproof did not consume exposure for four damage");
         h.assertTrue(target.hasEffect(MobEffects.GLOWING), "School consumption removed vanilla glow");
         SchoolStates.apply(owner, target, SchoolState.RIME, 120, 3);
-        var ferric = hit(owner, "ferric_probe", EnumBloodTendency.FERRIC);
+        var ferric = hit(owner, "ferric_probe", EnumBloodTemper.FERRIC);
         strike(target, owner, ferric, 1);
         h.assertTrue(target.getHealth() == 89 && !target.hasEffect(EffectInit.rime), "Ferric shatter did not add four damage");
         strike(target, owner, ferric, 1);
@@ -512,7 +512,7 @@ public final class SchoolCombatGameTests {
         var target = body(h, EntityType.COW, 5);
         SchoolStates.apply(owner, target, SchoolState.NECROSIS, 15);
         target.setAbsorptionAmount(4);
-        strike(target, owner, hit(owner, "test", EnumBloodTendency.LUX), 12);
+        strike(target, owner, hit(owner, "test", EnumBloodTemper.LUX), 12);
         h.assertTrue(SchoolStates.data(target).get(SchoolState.NECROSIS).stored == 2, "Debt counted absorption");
         target.heal(4);
         h.assertTrue(target.getHealth() == 95, "Necrosis healing suppression was not 25 percent");
@@ -529,7 +529,7 @@ public final class SchoolCombatGameTests {
         var owner = body(h, EntityType.COW, 2);
         var target = body(h, EntityType.COW, 5);
         SchoolStates.apply(owner, target, SchoolState.NECROSIS, 25);
-        strike(target, owner, hit(owner, "test", EnumBloodTendency.LUX), 8);
+        strike(target, owner, hit(owner, "test", EnumBloodTemper.LUX), 8);
         h.runAfterDelay(30, () -> {
             h.assertTrue(target.getHealth() == 90, "Natural expiry did not release the two damage bank");
             h.assertTrue(!target.hasEffect(EffectInit.necrosis), "Natural expiry retained state");

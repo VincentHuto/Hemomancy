@@ -4,11 +4,11 @@ Status (2026-11-01): 123 registered manipulations (108 active, 15 retired) acros
 
 ## What it is
 
-Blood manipulations are the abilities a Harbinger fuels with blood. Each registered entry has a tendency (school), a secondary tendency, a rank, a cast type (Quick, Charged, Continuous, Passive), a cost and a vascular section it draws from (`HEMOMANCY_REFERENCE.md` §8.1). The eight tendencies are Animus, Flammeus, Ductilis, Lux, Mortem, Congeatio, Ferric and Tenebris (§9). Ranks run Humilis (D0), Mediocritas (D1), Summa (D3), Magister (D5), Perfectus (D6).
+Blood manipulations are the abilities a Harbinger fuels with blood. Each registered entry has a temper (school), a secondary temper, a rank, a cast type (Quick, Charged, Continuous, Passive), a cost and a vascular section it draws from (`HEMOMANCY_REFERENCE.md` §8.1). The eight tempers are Animus, Flammeus, Ductilis, Lux, Mortem, Congeatio, Ferric and Tenebris (§9). Ranks run Humilis (D0), Mediocritas (D1), Summa (D3), Magister (D5), Perfectus (D6).
 
-**Roster after pass 2** (`docs/archive/audits/MANIPULATION_BALANCE_PLAN.md` §11.2, primary tendency by rank):
+**Roster after pass 2** (`docs/archive/audits/MANIPULATION_BALANCE_PLAN.md` §11.2, primary temper by rank):
 
-| Tendency | Total | H | M | S | Ma | P |
+| Temper | Total | H | M | S | Ma | P |
 |---|---|---|---|---|---|---|
 | Animus | 23 | 7 | 7 | 6 | 2 | 1 |
 | Ductilis | 15 | 4 | 5 | 2 | 2 | 2 |
@@ -42,7 +42,7 @@ The visual bar is [`MANIPULATION_VISUALS.md`](MANIPULATION_VISUALS.md): a focal 
 | Piece | Path |
 |---|---|
 | Registry, tree | `common/init/ManipulationInit`, `ManipulationTreeInit` |
-| Implementations | `common/manipulation/<tendency>/` (`animus`, `congeatio`, `ductilis`, `ferric`, `flammeus`, `lux`, `mortem`, `tenebris`), plus `saint/`, `stillarts/`, `family/` |
+| Implementations | `common/manipulation/<temper>/` (`animus`, `congeatio`, `ductilis`, `ferric`, `flammeus`, `lux`, `mortem`, `tenebris`), plus `saint/`, `stillarts/`, `family/` |
 | Cast pipeline | `common/manipulation/ManipulationCastingRules`, `ManipulationChargeClock`, `ManipulationRankGates`, `ManipulationReactiveEvents` |
 | Targeting | `common/manipulation/ManipulationCombatHelper` (`canHarm`, `Reach`, `canHarmFor`, `isHostileTarget`) |
 | Drudge, entity casts | `common/manipulation/DrudgeActions`, `EntityCasts`, `EntityManipulationEffects` |
@@ -76,7 +76,7 @@ User rulings:
 Architecture rules (`AGENTS.md`):
 
 - "A caster chooses targets through `ManipulationCombatHelper`: `canHarm(player, target)` is the strict rule, `canHarm(caster, target, Reach.X)` keeps an older filter's verdicts with a named preset (moving a site to `Reach.STRICT` is a pending decision, G-2b or F-16), and `canHarmFor(source, target)` serves constructs, summons, projectiles and effect holders. A `Monster.class` gather passes `canHarm` in its own arguments (`CombatTargetingGuardrailTest`)."
-- "Manipulation implementations live under `common/manipulation/<tendency>/`; many also define Drudge AI helpers with `setDrudgeAction(...)`, and what an entity (a Will, Vesper) does when it casts one is attached the same way with `setEntityCast(EntityCasts::x)`; `EntityManipulationEffects.cast` only applies the shared rules (`EntityCastGuardrailTest`)."
+- "Manipulation implementations live under `common/manipulation/<temper>/`; many also define Drudge AI helpers with `setDrudgeAction(...)`, and what an entity (a Will, Vesper) does when it casts one is attached the same way with `setEntityCast(EntityCasts::x)`; `EntityManipulationEffects.cast` only applies the shared rules (`EntityCastGuardrailTest`)."
 - "Particle data is built through `common/particle/HemoParticleData`. A particle that carries only a colour uses `ColorParticleOptions`... `ParticleDataGuardrailTest` lists the other data classes and rejects per-factory `createData` helpers."
 - "Render types are built once: a static constant, a school material from `SchoolRenderTypes`..., or a `SeededRenderTypes` holder keyed by seed... Never build a `RenderType` per call or per frame; `RenderTypeCachingGuardrailTest` rejects it."
 - "School and rite material vertices (U = shape tile, V = seed tile, alpha × 255) are written through `client/render/world/MaterialQuads`; wrap a seed with `MaterialQuads.seedTile`, never `floorMod(seed, 127)` (`MaterialQuadGuardrailTest`). Ferric keeps its own 128-tile constant until decision V-3b."
@@ -90,7 +90,7 @@ Architecture rules (`AGENTS.md`):
 ## Calls made without the user
 
 - **Balance pass 1 deviations** (plan §10): Endless Hour kept overflow-only deferral and lost its stacked buffs instead of the two options proposed; Sanguine Marionette stayed a Blood Binding form; Blood Cloud was not moved and Fruiting Contagion filled Mortem's Summa; Living Circuit falls back to the caster (reversing an earlier GameTest-pinned decision); the six new memory icons are placeholder 8x8 glyphs.
-- **Balance pass 2 rulings** (plan §11.3): Gloam ambush is `isInvisible() || dark`; the charge clamp tolerance is `elapsed + max(2, ceil(0.15 × elapsed))`, so a player can shave about 13% off long charges; kill alignment splits across blood-profile tendencies and unprofiled mobs give nothing; Thread Ripper never unravels tamed animals or mounts and returns a Drudge's memory; stale key-downs expire; Endless Hour settles through a dedicated `endless_hour_debt` damage type that Lethe Silver Ward, Still Waters and the Sheolic Bastion no longer catch; the Eclipse Well pulse is PERIODIC. The Tempest weaving recipe gained a Neurotic enzyme (+1) rather than a swap; the owner removed it on 2026-11-06 (D-19).
+- **Balance pass 2 rulings** (plan §11.3): Gloam ambush is `isInvisible() || dark`; the charge clamp tolerance is `elapsed + max(2, ceil(0.15 × elapsed))`, so a player can shave about 13% off long charges; kill alignment splits across blood-profile tempers and unprofiled mobs give nothing; Thread Ripper never unravels tamed animals or mounts and returns a Drudge's memory; stale key-downs expire; Endless Hour settles through a dedicated `endless_hour_debt` damage type that Lethe Silver Ward, Still Waters and the Sheolic Bastion no longer catch; the Eclipse Well pulse is PERIODIC. The Tempest weaving recipe gained a Neurotic enzyme (+1) rather than a swap; the owner removed it on 2026-11-06 (D-19).
 - **Casting v2 builder's calls** (spec §16): Java-authored tracks, a waist pivot capped at ±14°, purpose as a full-weight aim layer, Still Arts as a lane on the existing packet, the `StillArtInit` vanilla-particle sweep, and the Tier A bespoke set. The local quick-cast flick was dropped during the build (memory ledger). The five "(user)" decisions in §16 were never answered in writing.
 - **Outpouring** (spec "Timeline"): quick casts peak on arrival with a 1 to 2 tick swell; continuous channels ramp over 10 to 20 ticks; passive and staff-form toggles get a reduced outpouring; cancel draws the blood back. The user did review the first build live (Revision 1), so the per-school direction there is the user's.
 - **Cast impacts** (spec header: "Every call below is mine"): the delivery order, the 5-tick per-target throttle, the 10-tick timeline, the per-school flourishes, Congeatio's flash on the LUX material, and the post-capture position and size fixes.

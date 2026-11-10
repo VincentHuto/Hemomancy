@@ -13,8 +13,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumA
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.BloodTemperamentEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
@@ -455,16 +455,16 @@ public final class CardinalRiteCompletionEffects {
 
 	/**
 	 * Rite of Sanguine Attunement (Degree 2, Minor):
-	 * Resets all blood tendency alignment axes to zero.
+	 * Resets all blood temper alignment axes to zero.
 	 */
 	private static void completeSanguineAttunement(ServerPlayer caster) {
-		var tendency = HemoCapabilityAccess.getBloodTendency(caster);
-		for (EnumBloodTendency bt : EnumBloodTendency.values()) {
-			tendency.setTendencyAlignment(bt, 0f);
+		var temper = HemoCapabilityAccess.getBloodTemperament(caster);
+		for (EnumBloodTemper bt : EnumBloodTemper.values()) {
+			temper.setTemperAlignment(bt, 0f);
 		}
-		BloodTendencyEvents.syncTendency(caster, tendency);
+		BloodTemperamentEvents.syncTemperament(caster, temper);
 		caster.displayClientMessage(
-				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.your_blood_tendencies_have_been_purged").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC),
+				Component.translatable("message.hemomancy.cardinal_rite_completion_effects.your_blood_tempers_have_been_purged").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC),
 				false);
 	}
 

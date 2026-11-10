@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
@@ -126,14 +126,14 @@ public final class ManipulationBalancePass2TargetingGameTests {
             var vesper = com.vincenthuto.hemomancy.common.init.EntityInit.vesper_evening_star.get().create(h.getLevel());
             // An Animus stance opposes Mortem, so the school pipeline multiplies the drain by the caster's affinity.
             var tag = vesper.saveWithoutId(new net.minecraft.nbt.CompoundTag());
-            tag.putInt("ActiveTendency", com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS.ordinal());
+            tag.putInt("ActiveTemper", com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.ANIMUS.ordinal());
             vesper.load(tag);
             vesper.setNoAi(true);
             vesper.setPos(p.position().add(0, 0, 3));
             vesper.setHealth(vesper.getMaxHealth() * 0.2F);
             h.getLevel().addFreshEntity(vesper);
             try {
-                float affinity = com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules
+                float affinity = com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules
                         .manipulationDamageMultiplier(p, vesper, exsanguinate);
                 h.assertTrue(affinity > 1.0F, "Fixture does not raise Exsanguinate's affinity: " + affinity);
                 float before = vesper.getHealth();
@@ -623,8 +623,8 @@ public final class ManipulationBalancePass2TargetingGameTests {
         var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
+        for (var temper : EnumBloodTemper.values())
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper, 100);
         return p;
     }
 }

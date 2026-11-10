@@ -14,7 +14,7 @@ The Somatic Loom now matches the other redesigned Harbinger stations. A script a
 - **Cloth.**
   - The woven tapestry runs from the fell over the breast beam and down onto a cloth roll, which is held by a bone ratchet and turned by a bone-handled crank.
   - Recent weft picks and the fell glow (full-bright hemorrhagic crust). Darker glyphs are woven further toward the weaver.
-- **Pirns.** Eight wool pirns, dyed in `EnumBloodTendency` order, stand on bone shelves outside the side frames. They are the loom's enzyme reservoirs.
+- **Pirns.** Eight wool pirns, dyed in `EnumBloodTemper` order, stand on bone shelves outside the side frames. They are the loom's enzyme reservoirs.
 - **Materials.** Hematic iron, bone, blood-wood, nerve bundle, calcified hyphae, puppeteer's wool and hemorrhagic crust, plus vanilla wool for the pirn colours. There is no copper, brass or silver.
 - **Placement.** The weaver stands at the front filler and the warp roll sits in the back filler. The castle rises into the filler above. The memory floats over the fell at the block centre, clear of the reed and the catalyst orbit.
 
@@ -23,8 +23,8 @@ The Somatic Loom now matches the other redesigned Harbinger stations. A script a
 - `SomaticLoomRenderer.ORB_THREAD_CENTER_Y` moved from 0.58 to 0.86 blocks, so the ritual orb strands converge on the fell.
 - `SomaticLoomBlock`'s outline and collision cells are retraced from the new model, through `ModelShapes.cells`.
 - `SomaticLoomBlockEntity` no longer uses vanilla particles:
-  - The drag trail is a tendency-coloured HutosLib glow with periodic embers.
-  - The absorption burst is dark-glow soot, tendency embers and glow.
+  - The drag trail is a temper-coloured HutosLib glow with periodic embers.
+  - The absorption burst is dark-glow soot, temper embers and glow.
   - `DustParticleOptions`, `REVERSE_PORTAL` and `POOF` were removed.
 - Retired: the converted `model_somatic_loom.png` atlas and the old Blockbench-exported element list.
 
@@ -51,22 +51,22 @@ Run it with `--preview` to write `build/somatic_loom_preview.png`.
   - Run `gradlew.bat -I build/loom-world.init.gradle runLoomReviewClient`.
   - `LoomClientReview` places an empty loom, a stocked north-facing loom and a stocked east-facing loom (memory, ganglion catalyst and enzymes) in a disposable world. It captures `build/loom-client-review/screenshots/loom-0..10.png` by day and night.
   - The models load with no loom model errors, and both facings render.
-  - The memory floats above the fell and the catalyst orbits clear of the castle. The tendency star sits above the frame (since removed; see the follow-up).
+  - The memory floats above the fell and the catalyst orbits clear of the castle. The temper star sits above the frame (since removed; see the follow-up).
   - The weft, fell and veins glow at night. The item renders in the hotbar.
   - The first-person and third-person scales were reduced after the first capture, then re-captured.
 - **Not run.** The full `test` task, the GameTest suite and `alphaCheck`. The ritual orb drag (and its new particles) was not exercised natively.
 
 ## Follow-up (2026-10-11): ritual effects on the loom
 
-The floating ritual displays were replaced with effects drawn on the loom's own parts. The tendency star, enzyme rings, blood-volume ring, progress ring and awaiting-blood ring are gone. Weaving mechanics are unchanged.
+The floating ritual displays were replaced with effects drawn on the loom's own parts. The temper star, enzyme rings, blood-volume ring, progress ring and awaiting-blood ring are gone. Weaving mechanics are unchanged.
 
 | State | Where it now shows |
 |---|---|
-| Stored enzymes | Dyed thread wound on each bone pirn. The `somatic_loom_cop_<tendency>` parts are stretched to the square root of stock/64, so a weave's 1–8 enzymes still show. Empty pirns are bare spindles. |
+| Stored enzymes | Dyed thread wound on each bone pirn. The `somatic_loom_cop_<temper>` parts are stretched to the square root of stock/64, so a weave's 1–8 enzymes still show. Empty pirns are bare spindles. |
 | Loom reservoir | The upright veins, now dark scab in the model, fill from the sill. |
-| Chosen weave | Its tendencies take contiguous shares of the 15 warp threads, sized by requirement, and glow faintly in their colours. A share whose enzyme is short gutters dark toward clot red. |
+| Chosen weave | Its tempers take contiguous shares of the 15 warp threads, sized by requirement, and glow faintly in their colours. A share whose enzyme is short gutters dark toward clot red. |
 | Projected blood | A hot pulse climbs the veins and runs along the crossbar into the ganglion. The ganglion beats and swells, quickening with the charge, and the crossbar vein fills. |
-| Weaving | Each absorbed orb lights its tendency's threads and lays a shimmering band at the fell; earlier bands sit further toward the breast beam. Orb strands converge on the fell. |
+| Weaving | Each absorbed orb lights its temper's threads and lays a shimmering band at the fell; earlier bands sit further toward the breast beam. Orb strands converge on the fell. |
 | Items | The memory floats over the fell and the result hovers above the ganglion. Catalysts lie in a row on the fresh cloth: the shuttle race sits under the warp, so they could not rest there. |
 
 - **Anchors.** `SomaticLoomGeometry` is generated by `somatic_loom.py`, so the renderer and the baked model share coordinates.
@@ -105,7 +105,7 @@ The floating ritual displays were replaced with effects drawn on the loom's own 
 
 Plan: `docs/superpowers/plans/2026-10-11-somatic-loom-witnessed-weave-core.md`; spec: `docs/superpowers/specs/2026-10-11-somatic-loom-weave-design.md`.
 
-The orb-dragging ritual is replaced. Payment spins the enzymes from new vials under the pirns onto the pirns. A translucent echo of a past Harbinger (the Mnemonist model, posed by the real casting clip for the memory's school and rank) casts on the warp. One hostile `FrayedThreadEntity` tears loose per loop and attacks by tendency, through `ThreadAttacks`, `ThreadBoltEntity` and `ThreadHazardEntity`. Survive or strike threads slack, then hook them home with a Living Staff. A 60-tick climax grows the echo, turns it to the weaver, casts again, and carries the vessel into the fell.
+The orb-dragging ritual is replaced. Payment spins the enzymes from new vials under the pirns onto the pirns. A translucent echo of a past Harbinger (the Mnemonist model, posed by the real casting clip for the memory's school and rank) casts on the warp. One hostile `FrayedThreadEntity` tears loose per loop and attacks by temper, through `ThreadAttacks`, `ThreadBoltEntity` and `ThreadHazardEntity`. Survive or strike threads slack, then hook them home with a Living Staff. A 60-tick climax grows the echo, turns it to the weaver, casts again, and carries the vessel into the fell.
 
 - **Rules.** `SomaticWeaveRules` owns the numbers: an 80-tick loop with the fray at 46, rank caps (2 below SUMMA, 3 from SUMMA), strain per attack and per hit, power, intervals, the 4-health non-lethal floor, the 200-tick harm window and the 12-block area.
 - **Pausing.** Death, logout, leaving the area and blackout all pause the weave and recall loose threads; nothing fails. Pre-witnessed saves migrate their orbs to threads.
@@ -116,7 +116,7 @@ The orb-dragging ritual is replaced. Payment spins the enzymes from new vials un
 ### Results
 
 - **JVM.** Passing: `SomaticWeaveRulesTest` 6/6, `SomaticLoomFrameTest` 2/2, `SomaticLoomEffectRulesTest` 13/13, `EchoCastCoverageTest`. Contracts exit 0: `ModelFirstTileRendererResourceTest` and `MemoryWeavingRedesignSourceTest`.
-- **GameTests.** `somatic_loom_validation` 14/14. It covers spin-up, the fray cadence and cap, the hook lifecycle and climax, taut refusal, the area pause and resume, mid-weave save, orb migration, orphan unravel, tendency hits, Animus drain, Mortem miasma and Ferric spikes, the low-rank blackout, zombies still being lethal, and helpers straining and hooking.
+- **GameTests.** `somatic_loom_validation` 14/14. It covers spin-up, the fray cadence and cap, the hook lifecycle and climax, taut refusal, the area pause and resume, mid-weave save, orb migration, orphan unravel, temper hits, Animus drain, Mortem miasma and Ferric spikes, the low-rank blackout, zombies still being lethal, and helpers straining and hooking.
 - **Other suites.** The main `hemomancy` suite passes 900/901. The failure, `blockItemExceptionsKeepTheirOwners`, comes from another session's `BlockInit` edit. The clinical suite passes 129/131; the two journey-snapshot failures (Fungal projection, Silent victory) are unrelated to the loom.
 - **Native captures.** `LoomClientReview` stages a live weave with the spectating player as weaver. Captures `loom-0..9` show:
   - threads fraying and hunting the weaver, tethered back to the echo;

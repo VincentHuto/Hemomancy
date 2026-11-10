@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeProgression;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.AntecedentResearch;
 import com.vincenthuto.hemomancy.common.entity.npc.court.CourtRole;
@@ -1636,9 +1636,9 @@ public final class PlaythroughIlluminatusGameTests {
 		EnzymaticScriptoriumBlockEntity station = (EnzymaticScriptoriumBlockEntity) p.player().serverLevel().getBlockEntity(pos);
 		MachineAccessEvents.awardMachineCrafted(p.player(), BlockInit.enzymatic_scriptorium.get()); // ARRANGE: built it
 		station.receiveBlood(1000.0D); // ARRANGE
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			if (tendency.ordinal() >= 8) break;
-			station.setItem(tendency.ordinal(), new ItemStack(EnumBloodTendency.getRepEnzyme(tendency), 3)); // ARRANGE
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			if (temper.ordinal() >= 8) break;
+			station.setItem(temper.ordinal(), new ItemStack(EnumBloodTemper.getRepEnzyme(temper), 3)); // ARRANGE
 		}
 		station.setItem(EnzymaticScriptoriumBlockEntity.ITEM, new ItemStack(Items.DIAMOND_PICKAXE)); // ARRANGE
 		station.setItem(EnzymaticScriptoriumBlockEntity.LAPIS, new ItemStack(Items.LAPIS_LAZULI, 3)); // ARRANGE
@@ -1654,7 +1654,7 @@ public final class PlaythroughIlluminatusGameTests {
 					+ "); the menu is built as the server builds it");
 			menu = new EnzymaticScriptoriumMenu(1, p.player().getInventory(), station);
 		}
-		for (int i = 0; i < 3; i++) p.clickButton(menu, EnumBloodTendency.DUCTILIS.ordinal());
+		for (int i = 0; i < 3; i++) p.clickButton(menu, EnumBloodTemper.DUCTILIS.ordinal());
 		int row = -1;
 		for (int i = 0; i < 3; i++) if (menu.offerCost(i) > 0) { row = i; break; }
 		helper.assertTrue(row >= 0, "the stocked Scriptorium offers an inscription");

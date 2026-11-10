@@ -25,14 +25,14 @@ public final class ThelemicMemoryUiIntegrationSourceTest {
         require(!radialItem.contains("left - 2, y"), "radial reserve meter must not use vertical side bars");
         require(reliquary.contains("drawVascularSectionSlots"), "Reliquary must render fixed vascular section targets");
         require(reliquary.contains("cycleVascularSection"), "vascular section targets must select Thelemic memories");
-        require(reliquary.contains("preparedThelemicIcons"), "Reliquary must show prepared tinctures in tendency groups");
+        require(reliquary.contains("preparedThelemicIcons"), "Reliquary must show prepared tinctures in temper groups");
         require(reliquary.contains("reserveTicks(memory) > 0"), "Reliquary must hide tinctures without reserve");
         require(reliquary.contains("MemoryEquipRules.nextPreparedInSection(preparedThelemicMemories, current, section)"),
                 "vascular sections must cycle only prepared tinctures");
         require(reliquary.contains("tinctureStackFor(assigned)"),
                 "vascular sections must display the selected tincture icon");
         require(reliquary.contains("equippedNames.contains(MemorySlotRef.thelemicMemory(icon.memory).storageKey())"),
-                "selected tinctures must be highlighted in their tendency groups");
+                "selected tinctures must be highlighted in their temper groups");
         require(!reliquary.contains("vascularSectionStack"), "Reliquary must not use the debug vascular gauge");
         require(reliquary.contains("draggingThelemicMemory"),
                 "prepared tinctures must drag into the mnemonic wheel");

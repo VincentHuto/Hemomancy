@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.saint;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Endless Hour — Canon Memory of Saint Velorum.
- * Tendencies: Congeatio / Tenebris
+ * Tempers: Congeatio / Tenebris
  *
  * HP cannot drop below 1 temporarily. Damage that would have been lethal
  * is held as debt and returns at once when the hour expires. The hour grants
@@ -40,9 +40,9 @@ public class EndlessHourManip extends BloodManipulation {
 	private static DamageSource settling;
 
 	public EndlessHourManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	@Override

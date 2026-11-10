@@ -24,7 +24,7 @@ public final class ActiveManipulationMemorySourceTest {
 		}
 	}
 
-	private static void assertReachableMemory(String manipulation, String primaryTendency) throws IOException {
+	private static void assertReachableMemory(String manipulation, String primaryTemper) throws IOException {
 		Path path = RECIPES.resolve("memory_" + manipulation + ".json");
 		if (!Files.isRegularFile(path)) {
 			throw new AssertionError("active manipulation has no memory source: " + manipulation);
@@ -32,9 +32,9 @@ public final class ActiveManipulationMemorySourceTest {
 		JsonObject recipe = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
 		assertEquals(manipulation + " output", "hemomancy:memory_" + manipulation,
 				recipe.get("result").getAsString());
-		int tendencyAmount = recipe.getAsJsonObject("enzymes").get(primaryTendency).getAsInt();
-		if (tendencyAmount <= 0) {
-			throw new AssertionError(manipulation + " must require its " + primaryTendency + " enzyme identity");
+		int temperAmount = recipe.getAsJsonObject("enzymes").get(primaryTemper).getAsInt();
+		if (temperAmount <= 0) {
+			throw new AssertionError(manipulation + " must require its " + primaryTemper + " enzyme identity");
 		}
 		if (recipe.getAsJsonArray("catalysts").isEmpty()) {
 			throw new AssertionError(manipulation + " must have an authored catalyst");

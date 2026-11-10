@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -31,9 +31,9 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	public double yPower;
 	public double zPower;
 	@Nullable
-	private EnumBloodTendency damageTendency;
+	private EnumBloodTemper damageTemper;
 	@Nullable
-	private EnumBloodTendency secondaryDamageTendency;
+	private EnumBloodTemper secondaryDamageTemper;
 	private double cloudRadius = 1.25D;
 	private int cloudDuration = 100;
 	private CloudEntityBlood.Mode cloudMode = CloudEntityBlood.Mode.STATIC;
@@ -57,9 +57,9 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
 		compound.put("power", this.newDoubleList(new double[] { this.xPower, this.yPower, this.zPower }));
-		if (damageTendency != null) compound.putString("DamageTendency", damageTendency.name());
-		if (secondaryDamageTendency != null) {
-			compound.putString("SecondaryDamageTendency", secondaryDamageTendency.name());
+		if (damageTemper != null) compound.putString("DamageTemper", damageTemper.name());
+		if (secondaryDamageTemper != null) {
+			compound.putString("SecondaryDamageTemper", secondaryDamageTemper.name());
 		}
 		compound.putDouble("CloudRadius", cloudRadius);
 		compound.putInt("CloudDuration", cloudDuration);
@@ -168,8 +168,8 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 				this.zPower = listnbt.getDouble(2);
 			}
 		}
-		damageTendency = readTendency(compound, "DamageTendency");
-		secondaryDamageTendency = readTendency(compound, "SecondaryDamageTendency");
+		damageTemper = readTemper(compound, "DamageTemper");
+		secondaryDamageTemper = readTemper(compound, "SecondaryDamageTemper");
 		if (compound.contains("CloudRadius")) cloudRadius = compound.getDouble("CloudRadius");
 		if (compound.contains("CloudDuration")) cloudDuration = compound.getInt("CloudDuration");
 		damageMultiplier = CloudEntityBlood.readDamageMultiplier(compound);
@@ -183,10 +183,10 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 
 	}
 
-	public void setDamageTendencies(@Nullable EnumBloodTendency damageTendency,
-			@Nullable EnumBloodTendency secondaryDamageTendency) {
-		this.damageTendency = damageTendency;
-		this.secondaryDamageTendency = secondaryDamageTendency;
+	public void setDamageTempers(@Nullable EnumBloodTemper damageTemper,
+			@Nullable EnumBloodTemper secondaryDamageTemper) {
+		this.damageTemper = damageTemper;
+		this.secondaryDamageTemper = secondaryDamageTemper;
 	}
 
 	public void setDamageMultiplier(float multiplier) {
@@ -203,7 +203,7 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		LivingEntity source = shooter;
 		if (source == null && getOwner() instanceof LivingEntity living) source = living;
 		CloudEntityBlood cloud = new CloudEntityBlood(EntityInit.blood_cloud.get(), level(), source);
-		cloud.setDamageTendencies(damageTendency, secondaryDamageTendency);
+		cloud.setDamageTempers(damageTemper, secondaryDamageTemper);
 		cloud.configure(cloudRadius, cloudDuration, cloudMode);
 		cloud.setDamageMultiplier(damageMultiplier);
         com.vincenthuto.hemomancy.common.damage.SchoolDamage.capture(cloud,
@@ -212,9 +212,9 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	}
 
 	@Nullable
-	private static EnumBloodTendency readTendency(CompoundTag compound, String key) {
+	private static EnumBloodTemper readTemper(CompoundTag compound, String key) {
 		try {
-			return compound.contains(key) ? EnumBloodTendency.valueOf(compound.getString(key)) : null;
+			return compound.contains(key) ? EnumBloodTemper.valueOf(compound.getString(key)) : null;
 		} catch (IllegalArgumentException ignored) {
 			return null;
 		}

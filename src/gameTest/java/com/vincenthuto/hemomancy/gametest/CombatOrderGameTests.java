@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.SchoolCombatEvents;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.damage.SchoolHitContext;
@@ -47,7 +47,7 @@ public final class CombatOrderGameTests {
     }
 
     private static SchoolHitContext hit(Cow owner) {
-        return SchoolHitContext.direct(Hemomancy.rloc("blood_needle"), EnumBloodTendency.ANIMUS, null, owner);
+        return SchoolHitContext.direct(Hemomancy.rloc("blood_needle"), EnumBloodTemper.ANIMUS, null, owner);
     }
 
     @GameTest(templateNamespace="combat_order_validation", template=ARENA, timeoutTicks=40)

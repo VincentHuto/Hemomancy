@@ -28,7 +28,7 @@ public final class SomaticLoomGeometry {
             {11.8f, 17.4f, 13.3f},
             {14.5f, 16.4f, 13.3f}
     };
-    /** Pirn (x, z) in EnumBloodTendency order, wound from PIRN_FLOOR up to PIRN_HEIGHT pixels of thread. */
+    /** Pirn (x, z) in EnumBloodTemper order, wound from PIRN_FLOOR up to PIRN_HEIGHT pixels of thread. */
     public static final float[][] PIRNS = {
             {-6.3f, 0.0f},
             {-6.3f, 3.3f},

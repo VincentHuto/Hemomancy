@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringSim.Blocks;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringSim.Contact;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringSim.Kind;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringSim.Mote;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class OutpouringSimTest {
         };
     }
 
-    private OutpouringSim sim(EnumBloodTendency school) {
+    private OutpouringSim sim(EnumBloodTemper school) {
         var sim = new OutpouringSim(school, null, 42);
         sims.add(sim);
         return sim;
@@ -46,7 +46,7 @@ class OutpouringSimTest {
     }
 
     @Test void animusFeedsAWhirlwind() {
-        var sim = sim(EnumBloodTendency.ANIMUS);
+        var sim = sim(EnumBloodTemper.ANIMUS);
         burst(sim, .5, 65.5, .8, 0, 0, 1);
         var contacts = run(sim, FLOOR, 30);
         assertTrue(contacts.stream().anyMatch(c -> c.face() == OutpouringSim.UP), "landing blood pools on the floor");
@@ -58,7 +58,7 @@ class OutpouringSimTest {
     }
 
     @Test void flammeusRises() {
-        var sim = sim(EnumBloodTendency.FLAMMEUS);
+        var sim = sim(EnumBloodTemper.FLAMMEUS);
         burst(sim, .5, 65, .5, 0, 0, 1);
         run(sim, FLOOR, 6);
         double mean = sim.motes().stream().filter(m -> m.kind == Kind.FLAME).mapToDouble(m -> m.y).average().orElseThrow();
@@ -66,7 +66,7 @@ class OutpouringSimTest {
     }
 
     @Test void congeatioFreezesOnContact() {
-        var sim = sim(EnumBloodTendency.CONGEATIO);
+        var sim = sim(EnumBloodTemper.CONGEATIO);
         var walled = blocks((x, y, z) -> y < 64 || x >= 2);
         burst(sim, 1.2, 66.5, .5, 1, 0, 0);
         var contacts = run(sim, walled, 20);
@@ -75,14 +75,14 @@ class OutpouringSimTest {
     }
 
     @Test void ductilisSnapsAndSparks() {
-        var sim = sim(EnumBloodTendency.DUCTILIS);
+        var sim = sim(EnumBloodTemper.DUCTILIS);
         var box = blocks((x, y, z) -> Math.abs(x) >= 2 || Math.abs(z) >= 2 || y < 64 || y >= 68);
         burst(sim, .5, 65.5, .5, 0, 0, 1);
         assertTrue(run(sim, box, 15).stream().anyMatch(Contact::spark));
     }
 
     @Test void luxOrbsNeverContact() {
-        var sim = sim(EnumBloodTendency.LUX);
+        var sim = sim(EnumBloodTemper.LUX);
         var box = blocks((x, y, z) -> Math.abs(x) >= 2 || Math.abs(z) >= 2 || y < 64 || y >= 68);
         List<Contact> contacts = new ArrayList<>();
         for (int i = 0; i < 60; i++) {
@@ -94,7 +94,7 @@ class OutpouringSimTest {
     }
 
     @Test void tenebrisSinksAndSpreads() {
-        var sim = sim(EnumBloodTendency.TENEBRIS);
+        var sim = sim(EnumBloodTemper.TENEBRIS);
         burst(sim, .5, 65.5, .5, 0, 0, 1);
         run(sim, FLOOR, 5);
         double early = meanRadius(sim);
@@ -107,7 +107,7 @@ class OutpouringSimTest {
     }
 
     @Test void withdrawReturnsToExit() {
-        var sim = sim(EnumBloodTendency.ANIMUS);
+        var sim = sim(EnumBloodTemper.ANIMUS);
         burst(sim, .5, 65.5, .8, 0, 0, 1);
         run(sim, FLOOR, 3);
         for (int i = 0; i < 20; i++) sim.step(FLOOR, .5, 64, .5, true, 64);
@@ -118,7 +118,7 @@ class OutpouringSimTest {
     @Test void enclosedCasterKeepsMotesInsideAndBounded() {
         Solid tunnel = (x, y, z) -> x != 0 || y < 64 || y > 65;
         var blocks = blocks(tunnel);
-        for (var school : EnumBloodTendency.values()) {
+        for (var school : EnumBloodTemper.values()) {
             var sim = sim(school);
             for (int i = 0; i < 8; i++) burst(sim, .5, 65.5, .7, 0, 0, 1);
             for (int i = 0; i < 30; i++) {
@@ -134,7 +134,7 @@ class OutpouringSimTest {
     @Test void globalMoteCapHolds() {
         List<OutpouringSim> many = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            var sim = sim(EnumBloodTendency.MORTEM);
+            var sim = sim(EnumBloodTemper.MORTEM);
             for (int b = 0; b < 10; b++) burst(sim, .5, 65.5, .5, 0, 0, 1);
             many.add(sim);
         }
@@ -142,14 +142,14 @@ class OutpouringSimTest {
     }
 
     @Test void contactsRespectBudget() {
-        var sim = sim(EnumBloodTendency.CONGEATIO);
+        var sim = sim(EnumBloodTemper.CONGEATIO);
         for (int b = 0; b < 4; b++) burst(sim, .5, 64.4, .5, 0, -1, 0);
         for (int i = 0; i < 10; i++) assertTrue(sim.step(FLOOR, .5, 64, .5, false, 1).size() <= 1);
     }
 
     @Test void woundOnlyIsATrickle() {
-        var full = sim(EnumBloodTendency.ANIMUS);
-        var wound = sim(EnumBloodTendency.ANIMUS);
+        var full = sim(EnumBloodTemper.ANIMUS);
+        var wound = sim(EnumBloodTemper.ANIMUS);
         full.emit(new double[]{.5, 65.5, .7}, 1, new double[]{0, 0, 1}, 1, PERFECTUS, TOP, true, false);
         wound.emit(new double[]{.5, 65.5, .7}, 1, new double[]{0, 0, 1}, 1, PERFECTUS, TOP, true, true);
         assertTrue(wound.size() < full.size() / 4, "the spell's own blood carries the effect");
@@ -157,16 +157,16 @@ class OutpouringSimTest {
 
     @Test void luxAndUmbraUseManySmallMotes() {
         assertTrue(OutpouringSim.orbCap(TOP) >= 16, "many small orbs at Perfectus");
-        var lux = sim(EnumBloodTendency.LUX);
+        var lux = sim(EnumBloodTemper.LUX);
         burst(lux, .5, 65.5, .5, 0, 0, 1);
         assertTrue(lux.motes().stream().allMatch(m -> m.size <= .12f), "orbs stay small");
-        var umbra = sim(EnumBloodTendency.TENEBRIS);
+        var umbra = sim(EnumBloodTemper.TENEBRIS);
         burst(umbra, .5, 65.5, .5, 0, 0, 1);
         assertTrue(umbra.motes().stream().allMatch(m -> m.size <= .2f), "fog starts as small puffs");
     }
 
     @Test void umbralFogFallsHeavyAndRollsSlowly() {
-        var sim = sim(EnumBloodTendency.TENEBRIS);
+        var sim = sim(EnumBloodTemper.TENEBRIS);
         burst(sim, .5, 66.5, .5, 0, 0, 1);
         double startY = sim.motes().stream().mapToDouble(m -> m.y).average().orElseThrow();
         double startR = meanRadius(sim);

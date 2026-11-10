@@ -12,7 +12,7 @@ small and can ship early.
   `25 × max(1, maxHealth / 20)`.
 - **Cooked Hemomancy foods** exist and do nothing beyond hunger.
 - **Blood Moon** is a 1-in-7 roll each night. Moon phase is never read.
-- **Will ambushes** (`WillAmbushDirector`) pick a school from the player's tendency and are not tied to blood spent.
+- **Will ambushes** (`WillAmbushDirector`) pick a school from the player's Temperament and are not tied to blood spent.
 - **Vampire bats** live in the Nether since 2026-11-02 and hunt (`isHunting`).
 - **Barometer and Ossuary Clock** are isolated: built, modelled, connected to nothing.
 - **`BloodFlowLedger`** already records every payment by source and category.
@@ -61,7 +61,7 @@ kills. It decays over days. One pure `WorldAnswerRules` reads it.
   pressure; the Ossuary Clock shows the phase and the nights until the next likely Moon. Both instruments finally
   read something.
 - **Wills.** `WillAmbushDirector` weighs the region's total and the player's recent spend, so heavy working draws
-  attention where it happened. The school still comes from tendency.
+  attention where it happened. The school still comes from Temperament.
 - **Scavengers.** Wet stains (Track 6) and chum pools (Track 7) attract: vampire bats underground and at night, and
   the sea's hunters to strong pools. Small, local, and a reason to clean up with Absorption.
 - **The ground remembers.** In a region with a high total for long enough, grass near old stains turns to the mod's

@@ -44,11 +44,11 @@ Benefits last 200 ticks at amplifier zero except the 40-tick reveal pulse. Selec
 
 Earth/stone membership is controlled by the `hemomancy:blood_injection_mineable` block tag; ores, wood, and machinery are excluded by default. Resistance, healing, mining, armor, and knockback values live together in `BloodInjectionRules`. Durations, amplifiers, and reveal radius live in the response JSON. Poison removal reuses `VenomousResilienceEffect` under a separate registration. Undead healing reduction uses `LivingHealEvent`; Hemolysis blood drain and purity behavior remain untouched. The reveal reuses `SchoolStates` illumination and its targeting rules, without invoking a manipulation cast. No custom effect adds morphling healing, speed, flight, or teleportation.
 
-These values are implementation defaults, not established combat balance. Pig remains Animus and polar bear remains Congeatio; the shipped tendency memberships were not changed.
+These values are implementation defaults, not established combat balance. Pig remains Animus and polar bear remains Congeatio; the shipped temper memberships were not changed.
 
 ## Datapacks and synchronization
 
-Files live at `data/<namespace>/blood_injection/<name>.json`. Each file defines exactly one uppercase `tendency` or namespaced `property` ID. Add property memberships to the entity files described in [Blood Profiles](Blood-Profiles.md); add a response definition when that property should grant an injection effect. Fungal directly uses `hemomancy:fungal`.
+Files live at `data/<namespace>/blood_injection/<name>.json`. Each file defines exactly one uppercase `temper` or namespaced `property` ID. Add property memberships to the entity files described in [Blood Profiles](Blood-Profiles.md); add a response definition when that property should grant an injection effect. Fungal directly uses `hemomancy:fungal`.
 
 ```json
 {
@@ -74,7 +74,7 @@ Normal pack priority replaces a file with the same resource ID. Different files 
 
 The player raises the vial, draws the arm back, and drives its pointed end into the same-side upper thigh at the existing 16-tick completion point. The pose mirrors by physical arm, including the left-handed setting. First-person hands and third-person body/held-item rendering share the timing; the needle is aimed at the posed receiving thigh. A two-tick contact hold and six-tick withdrawal are cosmetic and yield to another action or item change. Successful survival use shows the emptied vial during withdrawal; creative retains the sample.
 
-Only server-confirmed completion triggers the compact crimson blood-cell burst, tendency accent, and original puncture/compression/glass cue (`item.blood_vial.inject`). Presentation start, impact and cancellation synchronize to the user and tracking clients. Interrupted and rejected injections produce no impact. Cardinal Rite planting retains priority, and death/world changes clear transient poses. The original mono sound is reproducibly authored by `tools/audio/author_blood_vial_injection.py`. Effect icons reuse authored Hemomancy status textures. Alchemist vial inquiry retains the centrifuge lesson.
+Only server-confirmed completion triggers the compact crimson blood-cell burst, temper accent, and original puncture/compression/glass cue (`item.blood_vial.inject`). Presentation start, impact and cancellation synchronize to the user and tracking clients. Interrupted and rejected injections produce no impact. Cardinal Rite planting retains priority, and death/world changes clear transient poses. The original mono sound is reproducibly authored by `tools/audio/author_blood_vial_injection.py`. Effect icons reuse authored Hemomancy status textures. Alchemist vial inquiry retains the centrifuge lesson.
 
 Focused commands:
 
@@ -88,7 +88,7 @@ Dedicated fixtures live under `blood_injection_validation`, in their own build-d
 ### Verification recorded 2026-09-15
 
 - Package assembly and all six focused JVM tests passed.
-- All 15 dedicated GameTests passed: legacy/malformed data, identification persistence/equality, both hands with full inventories, interruption/saturation, creative handling, item changes/death/spectators, packet round trip, pack replacement and refreshed identified answers, custom resistance/mobility/healing/mining, two-tendency selection, syringe preservation, centrifuge startup, and machine interaction before offhand fallback.
+- All 15 dedicated GameTests passed: legacy/malformed data, identification persistence/equality, both hands with full inventories, interruption/saturation, creative handling, item changes/death/spectators, packet round trip, pack replacement and refreshed identified answers, custom resistance/mobility/healing/mining, two-temper selection, syringe preservation, centrifuge startup, and machine interaction before offhand fallback.
 - The full JVM suite ran 2,035 tests; 2,033 passed. Two failures remain outside this feature: `MorphlingLumenlaceRenameResourceTest` encounters invalid UTF-8 in the untouched ignored `docs/archive/done/phlegethontic-nether-worldgen/orcadian-horseman/README.md`; `LegacyMainTestSuiteContractTest` expects 361 legacy main-method tests while 360 exist. The full `build` task therefore fails its test phase, despite successful assembly.
 - A focused read-only code review found no actionable correctness issues. No live-client visual, remote multiplayer, or survival balance result is claimed.
 

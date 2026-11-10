@@ -10,7 +10,7 @@ Hold use with a loose filled Blood Vial for 0.8 seconds to inject it. Most respo
 
 Blood can be injected before identification. Unknown samples show their source, but hide their exact responses. The shared identification support is ready for the companion Hematic Microscope; that block is a separate implementation. Identified tooltips show the selected benefits and drawbacks. Up to three benefits apply, with duplicate effects counted once and Lux's reveal counting separately.
 
-This is an optional use for a field sample. It does not refill blood or permanently change tendencies. The rack carries samples, and centrifuging them still produces enzymes. Missing-mod and malformed samples stay filled and cannot be overwritten. See the [implementation and balance notes](Injectable-Blood-Vials.md) for all mappings.
+This is an optional use for a field sample. It does not refill blood or permanently change tempers. The rack carries samples, and centrifuging them still produces enzymes. Missing-mod and malformed samples stay filled and cannot be overwritten. See the [implementation and balance notes](Injectable-Blood-Vials.md) for all mappings.
 
 Lux manipulations form flowing white light, including a luminous Beacon, thin beams and the Unclosing Eye. White Verdict leaves a slightly thicker beam that fades over two seconds after release; the lingering light causes no additional hits. Tenebris forms black liquid that stretches into smoke. Umbral Step's smoke surrounds its departure and arrival positions. Charged manipulations keep their buildup visible through the gauge's full charge duration. Their costs, targeting, damage and gameplay durations are unchanged. [Visual implementation and verification](../docs/archive/done/manipulation_work_plan/08-lux-umbra-flow.md).
 
@@ -20,7 +20,7 @@ Memory and progression tooltips distinguish **base cast**, **upkeep per second**
 
 Family mastery is shared at 10, 35, 85 and 185 cumulative credits. Absorb each chosen form's memory after reaching its threshold; intermediate forms are optional. Sustained channels earn a credit after five seconds, rather than on every one-second upkeep pulse. Learning degree and casting alignment are separate gates.
 
-Use this page as the mechanics reference: blood volume, manipulations, tendencies, vascular state, skills, and routing.
+Use this page as the mechanics reference: blood volume, manipulations, tempers, vascular state, skills, and routing.
 
 ---
 
@@ -71,7 +71,7 @@ Player/body sources such as base regeneration, **Sanguine Surge**, **Last Wind**
 
 **Manipulations** are the abilities you trigger, charge, toggle, or keep active with blood.
 
-Manipulation effects share material and movement within each tendency: circulating blood, drained residue, nerve impulses, blood-derived iron, heated glass, arrested frost, luminous fibers and inward shadow. Readiness counts and field boundaries continue to follow gameplay state. Brief blood-cell and school-colored glow accents accompany successful activation and hits, with sparse motes around sustained forms. Reducing particles removes decoration while retaining the main spell subjects. [Visual pass and evidence](../docs/archive/done/manipulation_work_plan/07-visceral-visuals.md).
+Manipulation effects share material and movement within each temper: circulating blood, drained residue, nerve impulses, blood-derived iron, heated glass, arrested frost, luminous fibers and inward shadow. Readiness counts and field boundaries continue to follow gameplay state. Brief blood-cell and school-colored glow accents accompany successful activation and hits, with sparse motes around sustained forms. Reducing particles removes decoration while retaining the main spell subjects. [Visual pass and evidence](../docs/archive/done/manipulation_work_plan/07-visceral-visuals.md).
 
 Flammeus now uses red-orange flame, thin smoke, boiling blood and tumbling sanguine glass. Congeatio forms dark frozen blood beneath pale frost, with powder, heavy cruor fragments and cracks that follow affected bodies and surfaces. These effects retain the existing spell timing, range and combat behavior. [Fire and Cold materials](Flammeus-Congeatio-Visuals.md).
 
@@ -133,7 +133,7 @@ Manipulations are organized into four power tiers:
 
 **Method 1: Somatic Loom (Memory Weaving)**
 1. Craft **Blank Hematic Memory**
-2. Gather tendency-specific **Enzyme** (Vivacious, Fervent, Neurotic, etc.)
+2. Gather temper-specific **Enzyme** (Vivacious, Fervent, Neurotic, etc.)
 3. Collect **Catalyst** materials for the manipulation
 4. Place items in **Somatic Loom** following pattern
 5. Project blood into the Loom
@@ -143,7 +143,7 @@ Manipulations are organized into four power tiers:
 
 **Method 2: Field Notes Discovery**
 - Some manipulations can be discovered through gameplay
-- Experimentation with blood tendencies
+- Experimentation with blood tempers
 - NPC teachings
 - Rare drops from infected creatures
 
@@ -172,7 +172,7 @@ Conjuring Blood Absorption, Blood Projection, or Living Staff does not produce t
 
 **Management:**
 - Check Field Notes (`B`) for known manipulations
-- Organize by tendency or frequency of use
+- Organize by temper or frequency of use
 - Monitor cooldowns via HUD
 
 ### Targeting and failed casts
@@ -189,7 +189,7 @@ See the [casting implementation report](../docs/archive/done/manipulation_work_p
 
 The **Scrying Podium** **Manipulations** tab is synced from the server. It shows how many manipulations you know, how many are currently equipped, the current equipped-slot cap, and the selected manipulation's base blood cost versus effective blood cost.
 
-Hover the equipped-slot modifier row to see the active slot formula: `min(9, 3 + degree / 2 + Manip Slots skill)`. Hover the selected manipulation's cost modifier row to see each active discount or surcharge, including skills, manipulation mastery, tendency-match bonuses, purity penalties, potion effects, world effects, rite effects, and equipped tools.
+Hover the equipped-slot modifier row to see the active slot formula: `min(9, 3 + degree / 2 + Manip Slots skill)`. Hover the selected manipulation's cost modifier row to see each active discount or surcharge, including skills, manipulation mastery, temper-match bonuses, purity penalties, potion effects, world effects, rite effects, and equipped tools.
 
 ### Synaptic Loadouts
 
@@ -207,11 +207,11 @@ The station has seven dendrites, one per pattern slot, each ending in an ambergr
 
 ---
 
-## The Eight Tendencies
+## The Eight Tempers
 
-**Tendency** (also called **Kinship**) represents the quality or affinity of your blood. Each tendency unlocks different manipulations and playstyles.
+**Temper** (also called **Kinship**) represents the quality or affinity of your blood. Each temper unlocks different manipulations and playstyles.
 
-The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencies, a full tendency-value profile, and rite readiness.
+The **Scrying Podium** **Temper** tab shows your dominant and latent tempers, a full temper-value profile, and rite readiness.
 
 ### Animus (Life/Vitality)
 
@@ -234,7 +234,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Synergies:**
 - Pairs well with tank builds
 - Essential for group play
-- Countered by Mortem tendency
+- Countered by Mortem temper
 
 ---
 
@@ -259,7 +259,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Synergies:**
 - High damage output
 - Environmental destruction
-- Countered by Congeatio tendency
+- Countered by Congeatio temper
 
 ---
 
@@ -283,7 +283,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 
 **Synergies:**
 - Balanced combat approach
-- Works with Ferric tendency
+- Works with Ferric temper
 - Material-based crafting synergy
 
 ---
@@ -309,7 +309,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Synergies:**
 - Strong against undead and corrupted
 - Vision control
-- Countered by Tenebris tendency
+- Countered by Tenebris temper
 
 **Current implemented combat notes:** Lux now has `hematic_flare` as a Humilis true-offense ray: it deals magic damage and applies Illuminated, which exposes concealed enemies. `prismatic_reproof` remains the larger cone follow-up: 4 magic damage, doubled against Illuminated targets. `radiant_wake` is the Lux Magister: a channelled glide that mends nearby allies and Illuminates enemies. Lux attacks dynamically oppose Tenebris-school Rogue Wills by their synced Will school.
 
@@ -336,7 +336,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Synergies:**
 - Strong against living creatures
 - Combos with damage builds
-- Countered by Animus tendency
+- Countered by Animus temper
 
 ---
 
@@ -361,7 +361,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Synergies:**
 - Excellent crowd control
 - Defensive builds
-- Countered by Flammeus tendency
+- Countered by Flammeus temper
 
 ---
 
@@ -371,7 +371,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 
 **Color:** Dark metallic red with magnetic distortion
 
-**Associated Enzyme:** Ferric Enzyme (same name as tendency)
+**Associated Enzyme:** Ferric Enzyme (same name as temper)
 
 **Philosophy:** Blood iron responds to magnetic force. Command it.
 
@@ -411,38 +411,38 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 **Synergies:**
 - Rogue/stealth builds
 - Escape and infiltration
-- Countered by Lux tendency
+- Countered by Lux temper
 
 **Current implemented combat notes:** Tenebris now has `gloam_laceration` as a Humilis ambush slash: it deals magic damage, applies Blood Loss to harmable targets it actually hits, hits harder while the caster is invisible (an un-Illuminated Veil counts) or standing in natural/synthetic darkness, and uses a thin liquid-dark slash with dissolving smoky edges. `void_shroud`, `black_veil_covenant`, `umbral_step`, and `blood_eclipse` remain the core stealth/darkness chain. Tenebris attacks dynamically oppose Lux-school Rogue Wills by their synced Will school.
 
 ---
 
-## Tendency Alignment
+## Temperament
 
-**Alignment** measures how attuned your blood is to each tendency. Higher alignment = more powerful manipulations of that tendency.
+**Alignment** measures how attuned your blood is to each temper. Higher alignment = more powerful manipulations of that temper.
 
 ### Building Alignment
 
 **Method 1: Use Manipulations**
-- Using a manipulation increases alignment with its tendency
+- Using a manipulation increases alignment with its temper
 - More powerful manipulations give more alignment
 - Passive gain over time with frequent use
 
 **Method 2: Consume Enzymes**
-- Each enzyme corresponds to a tendency
+- Each enzyme corresponds to a temper
 - Drinking/using enzyme directly boosts alignment
 - Quick but resource-intensive
 
 **Method 3: Environmental Exposure**
-- Certain biomes/areas boost specific tendencies
+- Certain biomes/areas boost specific tempers
 - Fungal areas boost Mortem and Tenebris
 - Bright areas boost Lux
 - Cold areas boost Congeatio
 
 **Method 4: Equipment**
-- Armor and items can boost tendency alignment
-- Scars provide passive tendency bonuses
-- Founding Fane can be tuned to specific tendencies
+- Armor and items can boost temper alignment
+- Scars provide passive temper bonuses
+- Founding Fane can be tuned to specific tempers
 
 ### Alignment Levels
 
@@ -455,18 +455,18 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 ### Specialization vs Generalization
 
 **Specialist Build:**
-- Focus on 1-2 tendencies
-- Max alignment in chosen tendencies
+- Focus on 1-2 tempers
+- Max alignment in chosen tempers
 - Very powerful in niche
 - Limited versatility
 
 **Generalist Build:**
-- Spread across 3-4 tendencies
+- Spread across 3-4 tempers
 - Medium alignment in all
 - Versatile toolkit
 - Less specialized power
 
-**Recommendation:** Start as a generalist. Specialize after you know which tendencies and manipulations you actually use.
+**Recommendation:** Start as a generalist. Specialize after you know which tempers and manipulations you actually use.
 
 ---
 
@@ -508,10 +508,10 @@ The **Skill Tree** provides passive bonuses and unlocks. See the full tree in Fi
 - Increase blood regeneration
 - Increase volume capacity
 
-**Tendency Mastery Branch**
-- Boost specific tendency alignments
+**Temper Mastery Branch**
+- Boost specific temper alignments
 - Unlock advanced manipulation variants
-- Cross-tendency synergies
+- Cross-temper synergies
 
 **Combat Branch**
 - Increase damage of offensive manipulations
@@ -686,7 +686,7 @@ Teach your Drudges specific manipulations:
 
 4. **Regeneration Stacking**: Combine multiple regen sources for fast recovery.
 
-5. **Tendency Focus**: Pick 2-3 tendencies and master them. Spreading thin weakens you.
+5. **Temper Focus**: Pick 2-3 tempers and master them. Spreading thin weakens you.
 
 6. **Manipulation Loadouts**: Customize which manipulations you have quick access to.
 
@@ -738,7 +738,7 @@ See [area 4 comparisons and verification](../docs/archive/done/manipulation_work
 
 Charged manipulations now fizzle before payment below a quarter charge ("Not enough charge"); a release still pays only its charged share, and alignment and skill points follow the released charge. Spells with nothing to act on, such as Hemorrhage, Blood Aneurysm or Rimebound Sentence with no target, refuse without spending blood or cooldown. Every boss cap uses one shared boss list, which now includes the Warden and Elder Guardian.
 
-Sanguine Surge regenerates 5 mL/s per level and Last Wind 10 mL/s per level below 10% blood. A secondary tendency can lift a manipulation's affinity but never weakens it. Applying a Synaptic pattern locks further applies for ten seconds. Vein sections now matter: higher-rank casts strain harder, a clotted section makes its manipulations 25% dearer, and a dead section refuses them. Kills of mobs with no blood profile no longer feed Animus.
+Sanguine Surge regenerates 5 mL/s per level and Last Wind 10 mL/s per level below 10% blood. A secondary temper can lift a manipulation's affinity but never weakens it. Applying a Synaptic pattern locks further applies for ten seconds. Vein sections now matter: higher-rank casts strain harder, a clotted section makes its manipulations 25% dearer, and a dead section refuses them. Kills of mobs with no blood profile no longer feed Animus.
 
 Several Animus forms were re-ranked (Mortar, Halo, Lattice, Summon Avatar and Avatar Arms are learnable from Degree I; Tempest and Avatar Complete need Degree V), and Sanguine Marionette and Sovereign Instinct moved to Ductilis. Every school received tuning; the [developer reference](../docs/HEMOMANCY_REFERENCE.md) §8.2 lists current values, and the [balance plan](../docs/archive/audits/MANIPULATION_BALANCE_PLAN.md#11-pass-2) records what changed and why. Osseous Bloom is now called **Crystalline Bloom**.
 

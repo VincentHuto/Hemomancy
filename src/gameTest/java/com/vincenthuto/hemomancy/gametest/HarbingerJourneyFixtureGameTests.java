@@ -1052,11 +1052,11 @@ public final class HarbingerJourneyFixtureGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		try {
 			HemoCapabilityAccess.getInitiatoryDegree(player).setHematicFortification(true);
-			HemoCapabilityAccess.getBloodTendency(player)
-					.setTendencyAlignment(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS, 4.25F);
+			HemoCapabilityAccess.getBloodTemperament(player)
+					.setTemperAlignment(com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.ANIMUS, 4.25F);
 			var originalDegree = HemoCapabilityAccess.getInitiatoryDegree(player)
 					.serializeNBT(player.registryAccess()).copy();
-			var originalTendency = HemoCapabilityAccess.getBloodTendency(player)
+			var originalTemper = HemoCapabilityAccess.getBloodTemperament(player)
 					.serializeNBT(player.registryAccess()).copy();
 			helper.assertTrue(HemoJourneySnapshot.capture(player).passed(), "Degree-six snapshot capture must succeed");
 			helper.assertTrue(HemoJourneySnapshot.resetForJourney(player).passed(), "Degree-six journey reset must succeed");
@@ -1119,9 +1119,9 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(player)
 					.serializeNBT(player.registryAccess()).equals(originalDegree),
 					"The exact Initiatory Degree attachment must be restored");
-			helper.assertTrue(HemoCapabilityAccess.getBloodTendency(player)
-					.serializeNBT(player.registryAccess()).equals(originalTendency),
-					"The exact base Blood Tendency map must be restored");
+			helper.assertTrue(HemoCapabilityAccess.getBloodTemperament(player)
+					.serializeNBT(player.registryAccess()).equals(originalTemper),
+					"The exact base Blood Temperament map must be restored");
 			helper.succeed();
 		} catch (Throwable error) {
 			throw new AssertionError("Vein-Mason degree-six fixture failed", error);

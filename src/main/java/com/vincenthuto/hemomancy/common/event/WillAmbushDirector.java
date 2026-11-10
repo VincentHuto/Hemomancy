@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.*;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
@@ -140,12 +140,12 @@ public final class WillAmbushDirector {
 		return Math.max(0.0D, Math.min(1.0D, chance));
 	}
 
-	private static EnumBloodTendency schoolFor(ServerPlayer target) {
-		return HemoCapabilityAccess.getBloodTendency(target).getTendency().entrySet().stream()
+	private static EnumBloodTemper schoolFor(ServerPlayer target) {
+		return HemoCapabilityAccess.getBloodTemperament(target).getTemper().entrySet().stream()
 				.max(Map.Entry.comparingByValue())
 				.map(Map.Entry::getKey)
 				.map(WillCombatRules::counterSchool)
-				.orElse(EnumBloodTendency.ANIMUS);
+				.orElse(EnumBloodTemper.ANIMUS);
 	}
 
 	private static boolean qliphothDone(ServerPlayer player) {

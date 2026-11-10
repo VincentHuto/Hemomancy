@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PlayerAnimationKind;
@@ -32,7 +32,7 @@ import java.util.Set;
 public class LivingTorchItem extends LivingToolItem {
 	private static final BloodAccounting.Source BREATH = BloodAccounting.Source.of("living_torch_breath", Category.TOOL, true, false);
 	public LivingTorchItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -2.1f, EnumBloodTendency.FLAMMEUS, tier, builderIn);
+		super(speedIn, attackDamageIn, -2.1f, EnumBloodTemper.FLAMMEUS, tier, builderIn);
 	}
 
 	@Override

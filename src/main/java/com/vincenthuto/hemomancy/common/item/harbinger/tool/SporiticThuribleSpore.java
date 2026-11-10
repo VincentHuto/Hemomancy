@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -15,49 +15,49 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum SporiticThuribleSpore {
-	VIVACIOUS("vivacious_spores", EnumBloodTendency.ANIMUS, 0xB83A4B) {
+	VIVACIOUS("vivacious_spores", EnumBloodTemper.ANIMUS, 0xB83A4B) {
 		@Override
 		public void applySecondary(LivingEntity target) {
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, true, true, true));
 		}
 	},
-	FERVENT("fervent_spores", EnumBloodTendency.FLAMMEUS, 0xD86A2C) {
+	FERVENT("fervent_spores", EnumBloodTemper.FLAMMEUS, 0xD86A2C) {
 		@Override
 		public void applySecondary(LivingEntity target) {
 			CrimsonFireHelper.igniteCrimson(target, 2);
 		}
 	},
-	NEUROTIC("neurotic_spores", EnumBloodTendency.DUCTILIS, 0x68D6D7) {
+	NEUROTIC("neurotic_spores", EnumBloodTemper.DUCTILIS, 0x68D6D7) {
 		@Override
 		public void applySecondary(LivingEntity target) {
 			target.addEffect(new MobEffectInstance(EffectInit.neural_overload, 60, 0, true, true, true));
 		}
 	},
-	INCANDESCENT("incandescent_spores", EnumBloodTendency.LUX, 0xF4D66E) {
+	INCANDESCENT("incandescent_spores", EnumBloodTemper.LUX, 0xF4D66E) {
 		@Override
 		public void applySecondary(LivingEntity target) {
 			target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 60, 0, true, true, true));
 		}
 	},
-	RUINOUS("ruinous_spores", EnumBloodTendency.MORTEM, 0x5C3A77) {
+	RUINOUS("ruinous_spores", EnumBloodTemper.MORTEM, 0x5C3A77) {
 		@Override
 		public void applySecondary(LivingEntity target) {
 			target.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 0, true, true, true));
 		}
 	},
-	FRIGID("frigid_spores", EnumBloodTendency.CONGEATIO, 0x74A9C8) {
+	FRIGID("frigid_spores", EnumBloodTemper.CONGEATIO, 0x74A9C8) {
 		@Override
 		public void applySecondary(LivingEntity target) {
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, true, true, true));
 		}
 	},
-	FERRIC("ferric_spores", EnumBloodTendency.FERRIC, 0xA76A37) {
+	FERRIC("ferric_spores", EnumBloodTemper.FERRIC, 0xA76A37) {
 		@Override
 		public void applySecondary(LivingEntity target) {
 			target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 60, 0, true, true, true));
 		}
 	},
-	UMBRAL("umbral_spores", EnumBloodTendency.TENEBRIS, 0x3A254A) {
+	UMBRAL("umbral_spores", EnumBloodTemper.TENEBRIS, 0x3A254A) {
 		@Override
 		public void applySecondary(LivingEntity target) {
 			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 45, 0, true, true, true));
@@ -65,12 +65,12 @@ public enum SporiticThuribleSpore {
 	};
 
 	private final String itemPath;
-	private final EnumBloodTendency tendency;
+	private final EnumBloodTemper temper;
 	private final int color;
 
-	SporiticThuribleSpore(String itemPath, EnumBloodTendency tendency, int color) {
+	SporiticThuribleSpore(String itemPath, EnumBloodTemper temper, int color) {
 		this.itemPath = itemPath;
-		this.tendency = tendency;
+		this.temper = temper;
 		this.color = color;
 	}
 
@@ -82,8 +82,8 @@ public enum SporiticThuribleSpore {
 		return Hemomancy.rloc(itemPath);
 	}
 
-	public EnumBloodTendency tendency() {
-		return tendency;
+	public EnumBloodTemper temper() {
+		return temper;
 	}
 
 	public int color() {

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
@@ -17,8 +17,8 @@ public class SynapticStormManip extends BloodManipulation {
 	private static final int CHARGE_TICKS = 60;
 
 	public SynapticStormManip(String name, double cost, double alignment, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignment, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignment, xpCost, type, rank, temper, section);
 	}
 
 	@Override public int getRequiredChargeTicks() { return CHARGE_TICKS; }

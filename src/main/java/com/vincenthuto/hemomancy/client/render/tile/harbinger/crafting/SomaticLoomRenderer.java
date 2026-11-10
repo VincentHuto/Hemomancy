@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.ThreadKnotGeometry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticWeaveRules;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
@@ -63,12 +63,12 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		this.echo = new SomaticLoomEcho(ctx);
 	}
 
-	/** Spun-thread cops then enzyme-vial liquids, each in EnumBloodTendency order. */
+	/** Spun-thread cops then enzyme-vial liquids, each in EnumBloodTemper order. */
 	private static List<String> parts() {
 		List<String> parts = new ArrayList<>();
 		for (String kind : new String[]{"cop_", "vial_"})
-			for (EnumBloodTendency tendency : EnumBloodTendency.values())
-				parts.add(kind + tendency.name().toLowerCase(Locale.ROOT));
+			for (EnumBloodTemper temper : EnumBloodTemper.values())
+				parts.add(kind + temper.name().toLowerCase(Locale.ROOT));
 		return List.copyOf(parts);
 	}
 
@@ -191,9 +191,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	private static void renderCops(SomaticLoomBlockEntity te, PoseStack stack, MultiBufferSource buffer,
 			int light, int overlay) {
 		Minecraft mc = Minecraft.getInstance();
-		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
-		for (int t = 0; t < tendencies.length; t++) {
-			float fill = SomaticLoomEffectRules.spunFill(te.displayedSpun(tendencies[t]));
+		EnumBloodTemper[] tempers = EnumBloodTemper.values();
+		for (int t = 0; t < tempers.length; t++) {
+			float fill = SomaticLoomEffectRules.spunFill(te.displayedSpun(tempers[t]));
 			if (fill <= 0.01f) continue;
 			stack.pushPose();
 			// The part is one pixel tall on the pirn floor; stretch it to the wound height.
@@ -210,9 +210,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	private static void renderVials(SomaticLoomBlockEntity te, PoseStack stack, MultiBufferSource buffer,
 			int light, int overlay) {
 		Minecraft mc = Minecraft.getInstance();
-		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
-		for (int t = 0; t < tendencies.length; t++) {
-			float fill = SomaticLoomEffectRules.vialFill(te.displayedStock(tendencies[t]), SomaticLoomBlockEntity.ENZYME_CAPACITY);
+		EnumBloodTemper[] tempers = EnumBloodTemper.values();
+		for (int t = 0; t < tempers.length; t++) {
+			float fill = SomaticLoomEffectRules.vialFill(te.displayedStock(tempers[t]), SomaticLoomBlockEntity.ENZYME_CAPACITY);
 			if (fill <= 0.01f) continue;
 			stack.pushPose();
 			// One pixel of liquid on the vial floor, stretched to the stock it holds.
@@ -221,7 +221,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			stack.translate(0, -VIAL_FLOOR / 16f, 0);
 			mc.getBlockRenderer().getModelRenderer().renderModel(stack.last(),
 					buffer.getBuffer(RenderType.entityTranslucentCull(TextureAtlas.LOCATION_BLOCKS)), null,
-					mc.getModelManager().getModel(part(PART_MODELS.get(tendencies.length + t))), 1, 1, 1, light, overlay);
+					mc.getModelManager().getModel(part(PART_MODELS.get(tempers.length + t))), 1, 1, 1, light, overlay);
 			stack.popPose();
 		}
 	}
@@ -360,16 +360,16 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	//  Warp and cloth: the selected weave's tendencies, and the strands already woven home
+	//  Warp and cloth: the selected weave's tempers, and the strands already woven home
 
 	private static void drawWarp(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float time) {
 		boolean weaving = te.isWeaving();
 		MemoryWeavingRecipe recipe = weaving ? te.getWeaveRecipe() : te.getPreviewRecipe();
 		if (recipe == null) return;
-		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
-		int[] required = new int[tendencies.length];
-		int[] orbs = new int[tendencies.length], done = new int[tendencies.length];
-		for (int t = 0; t < tendencies.length; t++) required[t] = recipe.getEnzymeRequirement(tendencies[t]);
+		EnumBloodTemper[] tempers = EnumBloodTemper.values();
+		int[] required = new int[tempers.length];
+		int[] orbs = new int[tempers.length], done = new int[tempers.length];
+		for (int t = 0; t < tempers.length; t++) required[t] = recipe.getEnzymeRequirement(tempers[t]);
 		var board = te.getEngram();
 		if (weaving && board != null) {
 			for (int i = 0; i < board.fragmentCount(); i++) {
@@ -380,16 +380,16 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 				if (te.isInClimax() || com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules.connected(board, i)) done[t]++;
 			}
 		}
-		int[] threads = SomaticLoomEffectRules.threadTendencies(required, WARP_X.length);
+		int[] threads = SomaticLoomEffectRules.threadTempers(required, WARP_X.length);
 		for (int k = 0; k < threads.length; k++) {
 			int t = threads[k];
 			if (t < 0) continue;
-			int stored = te.getStoredEnzyme(tendencies[t]);
+			int stored = te.getStoredEnzyme(tempers[t]);
 			// A paid weave has reserved its thread, so a weave in progress never shows as short.
 			boolean shortStock = !weaving && stored < required[t] * com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules.SPANS_PER_ENZYME;
 			float completed = weaving && orbs[t] > 0 ? done[t] / (float) orbs[t] : 0f;
 			float alpha = SomaticLoomEffectRules.threadGlow(completed, shortStock, time, k);
-			float[] colour = ThreadKnotGeometry.vivid(tendencies[t].getColor());
+			float[] colour = ThreadKnotGeometry.vivid(tempers[t].getColor());
 			if (shortStock) colour = ThreadKnotGeometry.mix(colour, CLOT, 0.7f);
 			float x = WARP_X[k], top = k % 2 == 0 ? UPPER_TOP : LOWER_TOP;
 			// A core over the thread's top and sides, then a faint halo either side of it.
@@ -403,13 +403,13 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		var snapshot = dissolving ? com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramDissolve.snapshot(te.getBlockPos()) : null;
 		var board = dissolving ? snapshot == null ? null : snapshot.board() : te.getEngram();
 		if (!te.isWeaving() && !dissolving || board == null) return;
-		List<EnumBloodTendency> woven = new ArrayList<>();
+		List<EnumBloodTemper> woven = new ArrayList<>();
 		int total = 0;
 		for (int i = 0; i < board.fragmentCount(); i++) {
 			if (board.fragment(i).intrusion()) continue;
 			total++;
 			if (te.isInClimax() || com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules.connected(board, i))
-				woven.add(EnumBloodTendency.values()[board.fragment(i).trueColour()]);
+				woven.add(EnumBloodTemper.values()[board.fragment(i).trueColour()]);
 		}
 		float step = SomaticLoomEffectRules.bandStep(total, FELL_Z - CLOTH_FRONT_Z - 1f);
 		// The newest pick lies at the fell; earlier ones have been beaten toward the breast beam.

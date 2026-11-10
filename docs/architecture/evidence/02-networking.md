@@ -24,14 +24,14 @@ Of the 33 bidirectional registrations, only `AntecedentEffectPacket` actually tr
 
 | Purpose | # | Direction | Examples / state carried | Rough size |
 |---|---|---|---|---|
-| Player/attachment state sync | 43 | 40 S2C, 3 bidirectional | `BloodVolumeServerPacket`, `KnownManipulationServerPacket` (whole known/equipped lists), `PacketSyncIchorianKnowledge`, `PacketSyncUnstainedProgress`, `PacketSyncLiberKnowledge`, `PacketSyncScarsState`, `PacketEquipmentSync` (slot + ItemStack). 9 of these ship whole `CompoundTag`s (`PacketSyncSkills`, `BloodTendencyServerPacket`, `VascularSystemServerPacket`, `PacketSyncStationUpgrades`, `PacketSyncThelemicMemory`…) | 10 B to several KB |
+| Player/attachment state sync | 43 | 40 S2C, 3 bidirectional | `BloodVolumeServerPacket`, `KnownManipulationServerPacket` (whole known/equipped lists), `PacketSyncIchorianKnowledge`, `PacketSyncUnstainedProgress`, `PacketSyncLiberKnowledge`, `PacketSyncScarsState`, `PacketEquipmentSync` (slot + ItemStack). 9 of these ship whole `CompoundTag`s (`PacketSyncSkills`, `BloodTemperamentServerPacket`, `VascularSystemServerPacket`, `PacketSyncStationUpgrades`, `PacketSyncThelemicMemory`…) | 10 B to several KB |
 | World/data sync | 12 | S2C | `PacketSyncActiveRites` (per-rite entries + position arrays), `RiteZoneSyncPacket`, `RiteSpaceSyncPacket`, `CardinalRiteFloorSyncPacket`, `BloodProfileSyncPacket`, `BloodInjectionSyncPacket`, `PacketSyncFaneBoundaries`, `PacketSyncBloodMoon`, `PacketSyncSutureLinks`, `ResidentsSnapshotPacket` | 0.1 to 10+ KB |
 | Screen open / BE-menu state | 12 | S2C | `OpenSSCScreenPacket`, `OpenHarbingerAssignmentLedgerPacket` (306 lines), `OpenVisceralMirrorPacket`, `VisceralMirrorUpdatePacket`, `ClairaudiographChoicesPacket` | 0.1 to 2 KB |
 | VFX / sound / animation | 36 | 34 S2C, 2 bidirectional | All 20 in `particle/`, plus `Sync{MonolithicDislocation,CrimsonFire}Visual`, `SyncBloodBindingTendril`, `CastingAnimationPacket`, `PacketBloodCraftRing`, `EarthenVeinTravelVisualPacket`… | 8 to 100 B |
 | Boss/encounter scenes | 4 | S2C | `PacketSyncVesperFightScene`, `PacketSyncMycophantFightScene`, `PacketMycophantIntro`, `PacketSyncChamberOfWill` | small |
 | Casting/keybind input | 24 | 13 C2S, 11 bidirectional | `UseManipKeyPacket`, `CastingChargePacket`, `ManipulationChargeVisualPacket`, `GroundBloodDrawPacket`, `BloodCraftingKeyPressPacket`, `EquipManipulationPacket`, `SynapticLoadoutActionPacket` | 1 B to an ItemStack |
 | GUI/menu actions | 24 | 18 C2S, 5 bidirectional, 1 unregistered | Scar station ×4, `StartCentrifugeButtonPacket`, `ClairaudiographActionPacket`, `PacketLedgerAction`, `PacketKickBloodlinePlayer`, `PacketLumpDonate`, `PacketBloodlineMessage`, skills ×2, `SelectEarthenVeinDestinationPacket` | small |
-| Screen-open requests | 9 | all registered bidirectional, used C2S | `PacketOpenScarsInv`, `OpenMorphlingJarPacket`, `PacketOpenTendencyView`… | 0 to 8 B |
+| Screen-open requests | 9 | all registered bidirectional, used C2S | `PacketOpenScarsInv`, `OpenMorphlingJarPacket`, `PacketOpenTemperamentView`… | 0 to 8 B |
 | Pull/resync requests | 8 | 7 C2S, 1 bidirectional | `BloodVolumeClientPacket`, `KnownManipulationClientPacket`, `KnownSummonsRequestPacket`, `PacketRequestPoolData`, `ResidentsRequestPacket` | 0 B |
 | Dialogue | 7 | 4 C2S, 3 S2C | `DialogueOptionPacket`, `DialogueRewardChoicePacket`, `DialogueTopicOpenedPacket`, `OpenDialoguePacket` (full tree) | up to KB |
 | Debug | 1 | C2S | `PlaceStructurePacket` (441 lines) | small |
@@ -198,7 +198,7 @@ Direct `PacketDistributor.sendToPlayer` calls skip the `player.connection == nul
 - `PacketBloodlineMessage` caps messages at 256 characters.
 
 ### Duplicated validation [V]
-- **Cast eligibility** (equipped, available, `isActive()`, `blocksKnownBloodPowerUse`, tendency alignment, cooldown, alive) is re-implemented in:
+- **Cast eligibility** (equipped, available, `isActive()`, `blocksKnownBloodPowerUse`, temper alignment, cooldown, alive) is re-implemented in:
   - `ManipulationChargeVisualPacket.java:25-38`
   - `CastingAnimationManager.canPresent` (L78–89)
   - `UseManipKeyPacket.java:63-65,218`
@@ -234,7 +234,7 @@ Direct `PacketDistributor.sendToPlayer` calls skip the `player.connection == nul
 |---|---|---|
 | `UseQuickManipKeyPacket`, `UseContManipKeyPacket` | Verified | Superseded; see `UseManipKeyPacket.java:39-40`. Source tests still read `UseQuickManipKeyPacket`. |
 | `PacketOpenNormalInv`, `PacketOpenSporeInv`, `PacketOpenScarBinder`, `PacketLoadScarPattern` | Verified | |
-| `BloodTendencyClientPacket`, `VascularSystemClientPacket` | Verified | Their server-to-client replies are live via other paths. |
+| `BloodTemperamentClientPacket`, `VascularSystemClientPacket` | Verified | Their server-to-client replies are live via other paths. |
 | `ClearLoomStatePacket`, `DisplayKnownManipsPacket`, `UpdateCurrentVeinPacket` | Verified | |
 | `ChangeMorphKeyPacket`, `JarTogglePickupPacket` | Verified | |
 | `PacketToggleBinderMessage`, `ToggleMorphlingJarMessagePacket` | Verified | Bidirectional with `Minecraft.getInstance`. |

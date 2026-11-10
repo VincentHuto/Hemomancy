@@ -4,7 +4,7 @@ A hemomancer forces the blood to remember an instruction, and the body performs 
 
 Presentation never touches gameplay. Costs, cooldowns, charge clocks, targeting, hit windows and movement stay where they are; quick casts execute before their animation starts, and charged and continuous timing is the server's. Presentation metadata is resolved from registry identity and is never written into saved manipulation data.
 
-The design contract is [the v2 spec](../docs/superpowers/specs/2026-10-19-casting-animations-v2-design.md). This page describes what was built, including the rulings made during the build where they differ from the spec. The [concept package](../docs/archive/done/HEMOMANCY_CASTING_ANIMATION_CONCEPTS/README.md) remains the material and silhouette reference for each tendency.
+The design contract is [the v2 spec](../docs/superpowers/specs/2026-10-19-casting-animations-v2-design.md). This page describes what was built, including the rulings made during the build where they differ from the spec. The [concept package](../docs/archive/done/HEMOMANCY_CASTING_ANIMATION_CONCEPTS/README.md) remains the material and silhouette reference for each temper.
 
 ## The grammar
 
@@ -17,7 +17,7 @@ Six layers, applied in order. Each owns specific parts so they never fight.
 | 3 | Rank or stage scope | How much of the body takes part | Humilis and Awakened move the lead arm only; Summa and above add the waist and stance |
 | 4 | Aim layer | Lead arm and head from RELEASE through RECOVERY | Purpose (Harbinger) or ending (Unstained) |
 | 5 | Bespoke override | The whole track, both views | A named manipulation (31 styles) |
-| 6 | Secondary accent | Material colour at the hands, no movement | Secondary tendency |
+| 6 | Secondary accent | Material colour at the hands, no movement | Secondary temper |
 
 The lead arm is the main arm; the support arm is the other one. Tracks are authored right-handed and mirrored for left-handed players, first-person hands included.
 
@@ -228,7 +228,7 @@ Harbinger casts put nothing beside or behind the caster. The spectacle is the ca
 
 - **Where it leaves.** Blood exits at the manipulation's vascular section. HEAD exits at the eyes, plus the nose and ears from Summa. HEART exits at the left chest, BODY at the flanks, abdomen and back, ARMS at the casting hand (both hands from Mediocritas), and LEGS at the thighs and calves. Third person captures the exits from the posed model each frame (`OutpouringAnchors`); first person estimates them from body yaw and look direction.
 - **Veins.** `CastVeinsLayer` re-renders the posed player with the `cast_veins` shader. A body atlas (`SkinBodyAtlas`) maps every skin texel to a point on a standing body and records which body axes its u and v run along. The shader rebuilds the exact point inside each texel, so veins resolve at screen resolution and stay continuous across UV seams. The vessels are the Cardinal floor membrane's arteries and capillaries (warped Voronoi walls that swell and pinch), lifted into body space. Armoured parts get the same veins on a shell baked with the skin's UVs just outside the armour. The first-person arm gets them too. A manifested blood avatar hides them.
-- **The blood.** `OutpouringSim` moves the blood as motes with a per-tendency behaviour, colliding with blocks one axis at a time. `OutpouringRenderer` draws it through the manipulation toolkit (`client/render/world/OutpouringBrushes`), so it is the mod's own art:
+- **The blood.** `OutpouringSim` moves the blood as motes with a per-temper behaviour, colliding with blocks one axis at a time. `OutpouringRenderer` draws it through the manipulation toolkit (`client/render/world/OutpouringBrushes`), so it is the mod's own art:
   - **Animus:** living-blood drops land in small, lobed brazier-blood pools that merge, grow and stay where they land. Their spray rises in a whirlwind of the Riposte's wisp mist.
   - **Flammeus:** flammeus flame tongues lick off the exits, flame cards burn to soot, and Thermal licks and flames accent them.
   - **Ductilis:** nerve strands, plus HutosLib Ductilis lightning that branches from the exit to whatever the strands struck (one tree every 4 ticks: a trunk to the farthest hit, a fork to each other hit, twigs off every branch and, from Magister, twigs off the twigs). Showers of ember sparks burst where each branch ends.

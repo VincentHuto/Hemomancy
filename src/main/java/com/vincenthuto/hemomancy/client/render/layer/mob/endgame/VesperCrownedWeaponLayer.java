@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.layer.mob.endgame;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountModel;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.client.Minecraft;
@@ -41,7 +41,7 @@ public final class VesperCrownedWeaponLayer
 		rider.rider().translateToRiderWeapon(poseStack);
 		poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
 		poseStack.mulPose(Axis.YP.rotationDegrees(
-				VesperWeaponGripRules.yawDegrees(EnumBloodTendency.FERRIC, false)));
+				VesperWeaponGripRules.yawDegrees(EnumBloodTemper.FERRIC, false)));
 		poseStack.scale(STAFF_SCALE, STAFF_SCALE, STAFF_SCALE);
 		Minecraft.getInstance().getItemRenderer().renderStatic(staff,
 				ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, packedLight, OverlayTexture.NO_OVERLAY,

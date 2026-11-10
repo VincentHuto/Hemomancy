@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.outpouring;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 
@@ -17,7 +17,7 @@ public final class VeinEncoding {
 
     private VeinEncoding() {}
 
-    public static Packed pack(EnumBloodTendency school, EnumBloodTendency secondary, EnumVeinSections section,
+    public static Packed pack(EnumBloodTemper school, EnumBloodTemper secondary, EnumVeinSections section,
                               EnumManipulationRank rank, float strength, float contact, float fade, boolean offHand, boolean leftMain, int seed) {
         int a = unit(fade), r = unit(strength), g = school.ordinal() * 8 + section.ordinal();
         int b = (secondary == null ? 8 : secondary.ordinal()) * 8 + rank.ordinal();

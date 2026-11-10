@@ -1,42 +1,42 @@
 {
   "hemomancy:blood_lantern_jelly": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "hemomancy:brined_votary": {
-    "tendencies": [
+    "tempers": [
       "mortem"
     ],
     "properties": []
   },
   "hemomancy:chalybeate_snail": {
-    "tendencies": [
+    "tempers": [
       "ferric"
     ],
     "properties": []
   },
   "hemomancy:crimson_doe": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "hemomancy:fungling": {
-    "tendencies": [],
+    "tempers": [],
     "properties": [
       "hemomancy:fungal"
     ]
   },
   "hemomancy:hematic_burrower": {
-    "tendencies": [
+    "tempers": [
       "ferric"
     ],
     "properties": []
   },
   "hemomancy:hemojelly": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": [
@@ -44,38 +44,38 @@
     ]
   },
   "hemomancy:phlegethontic_bombardier": {
-    "tendencies": [
+    "tempers": [
       "flammeus"
     ],
     "properties": []
   },
   "hemomancy:prism_cuttle": {
-    "tendencies": [
+    "tempers": [
       "ductilis"
     ],
     "properties": []
   },
   "hemomancy:scarlet_serpent": {
-    "tendencies": [
+    "tempers": [
       "ductilis",
       "flammeus"
     ],
     "properties": []
   },
   "hemomancy:venom_rib_centipede": {
-    "tendencies": [
+    "tempers": [
       "ferric"
     ],
     "properties": []
   },
   "hemomancy:venous_strider": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:allay": {
-    "tendencies": [
+    "tempers": [
       "animus",
       "lux"
     ],
@@ -84,7 +84,7 @@
     ]
   },
   "minecraft:axolotl": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": [
@@ -92,7 +92,7 @@
     ]
   },
   "minecraft:bat": {
-    "tendencies": [
+    "tempers": [
       "tenebris"
     ],
     "properties": [
@@ -100,7 +100,7 @@
     ]
   },
   "minecraft:bee": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": [
@@ -110,7 +110,7 @@
     ]
   },
   "minecraft:blaze": {
-    "tendencies": [
+    "tempers": [
       "flammeus",
       "lux"
     ],
@@ -120,39 +120,39 @@
     ]
   },
   "minecraft:bogged": {
-    "tendencies": [],
+    "tempers": [],
     "properties": [
       "hemomancy:blood_properties/undead"
     ]
   },
   "minecraft:camel": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:cat": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:cave_spider": {
-    "tendencies": [],
+    "tempers": [],
     "properties": [
       "hemomancy:blood_properties/arthropod",
       "hemomancy:blood_properties/venomous"
     ]
   },
   "minecraft:chicken": {
-    "tendencies": [
+    "tempers": [
       "animus",
       "ductilis"
     ],
     "properties": []
   },
   "minecraft:cod": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -160,13 +160,13 @@
     ]
   },
   "minecraft:cow": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:creeper": {
-    "tendencies": [
+    "tempers": [
       "ductilis"
     ],
     "properties": [
@@ -174,7 +174,7 @@
     ]
   },
   "minecraft:dolphin": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": [
@@ -182,13 +182,13 @@
     ]
   },
   "minecraft:donkey": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:drowned": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -197,7 +197,7 @@
     ]
   },
   "minecraft:elder_guardian": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -205,14 +205,14 @@
     ]
   },
   "minecraft:ender_dragon": {
-    "tendencies": [],
+    "tempers": [],
     "properties": [
       "hemomancy:blood_properties/ender",
       "hemomancy:blood_properties/flying"
     ]
   },
   "minecraft:enderman": {
-    "tendencies": [
+    "tempers": [
       "tenebris"
     ],
     "properties": [
@@ -220,7 +220,7 @@
     ]
   },
   "minecraft:endermite": {
-    "tendencies": [
+    "tempers": [
       "tenebris"
     ],
     "properties": [
@@ -230,25 +230,25 @@
     ]
   },
   "minecraft:evoker": {
-    "tendencies": [
+    "tempers": [
       "ferric"
     ],
     "properties": []
   },
   "minecraft:fox": {
-    "tendencies": [
+    "tempers": [
       "ductilis"
     ],
     "properties": []
   },
   "minecraft:frog": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:ghast": {
-    "tendencies": [
+    "tempers": [
       "flammeus"
     ],
     "properties": [
@@ -257,7 +257,7 @@
     ]
   },
   "minecraft:glow_squid": {
-    "tendencies": [
+    "tempers": [
       "congeatio",
       "lux"
     ],
@@ -266,13 +266,13 @@
     ]
   },
   "minecraft:goat": {
-    "tendencies": [
+    "tempers": [
       "ductilis"
     ],
     "properties": []
   },
   "minecraft:guardian": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -280,7 +280,7 @@
     ]
   },
   "minecraft:hoglin": {
-    "tendencies": [
+    "tempers": [
       "flammeus"
     ],
     "properties": [
@@ -288,13 +288,13 @@
     ]
   },
   "minecraft:horse": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:husk": {
-    "tendencies": [
+    "tempers": [
       "mortem"
     ],
     "properties": [
@@ -302,25 +302,25 @@
     ]
   },
   "minecraft:illusioner": {
-    "tendencies": [
+    "tempers": [
       "ductilis"
     ],
     "properties": []
   },
   "minecraft:iron_golem": {
-    "tendencies": [
+    "tempers": [
       "ferric"
     ],
     "properties": []
   },
   "minecraft:llama": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:magma_cube": {
-    "tendencies": [
+    "tempers": [
       "flammeus"
     ],
     "properties": [
@@ -328,31 +328,31 @@
     ]
   },
   "minecraft:mooshroom": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:mule": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:ocelot": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:panda": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:parrot": {
-    "tendencies": [
+    "tempers": [
       "animus",
       "lux"
     ],
@@ -361,7 +361,7 @@
     ]
   },
   "minecraft:phantom": {
-    "tendencies": [
+    "tempers": [
       "lux",
       "mortem",
       "tenebris"
@@ -372,13 +372,13 @@
     ]
   },
   "minecraft:pig": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:piglin": {
-    "tendencies": [
+    "tempers": [
       "flammeus"
     ],
     "properties": [
@@ -386,7 +386,7 @@
     ]
   },
   "minecraft:piglin_brute": {
-    "tendencies": [
+    "tempers": [
       "flammeus"
     ],
     "properties": [
@@ -394,13 +394,13 @@
     ]
   },
   "minecraft:pillager": {
-    "tendencies": [
+    "tempers": [
       "ferric"
     ],
     "properties": []
   },
   "minecraft:polar_bear": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -408,26 +408,26 @@
     ]
   },
   "minecraft:pufferfish": {
-    "tendencies": [],
+    "tempers": [],
     "properties": [
       "hemomancy:blood_properties/venomous"
     ]
   },
   "minecraft:rabbit": {
-    "tendencies": [
+    "tempers": [
       "animus",
       "ductilis"
     ],
     "properties": []
   },
   "minecraft:ravager": {
-    "tendencies": [
+    "tempers": [
       "ferric"
     ],
     "properties": []
   },
   "minecraft:salmon": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -435,13 +435,13 @@
     ]
   },
   "minecraft:sheep": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:shulker": {
-    "tendencies": [
+    "tempers": [
       "ferric",
       "lux"
     ],
@@ -450,7 +450,7 @@
     ]
   },
   "minecraft:silverfish": {
-    "tendencies": [
+    "tempers": [
       "ductilis"
     ],
     "properties": [
@@ -459,7 +459,7 @@
     ]
   },
   "minecraft:skeleton": {
-    "tendencies": [
+    "tempers": [
       "mortem"
     ],
     "properties": [
@@ -467,7 +467,7 @@
     ]
   },
   "minecraft:skeleton_horse": {
-    "tendencies": [
+    "tempers": [
       "mortem"
     ],
     "properties": [
@@ -475,7 +475,7 @@
     ]
   },
   "minecraft:snow_golem": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -483,13 +483,13 @@
     ]
   },
   "minecraft:spider": {
-    "tendencies": [],
+    "tempers": [],
     "properties": [
       "hemomancy:blood_properties/arthropod"
     ]
   },
   "minecraft:squid": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -497,7 +497,7 @@
     ]
   },
   "minecraft:stray": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -506,7 +506,7 @@
     ]
   },
   "minecraft:strider": {
-    "tendencies": [
+    "tempers": [
       "flammeus"
     ],
     "properties": [
@@ -514,7 +514,7 @@
     ]
   },
   "minecraft:tadpole": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -522,13 +522,13 @@
     ]
   },
   "minecraft:trader_llama": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:tropical_fish": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -536,7 +536,7 @@
     ]
   },
   "minecraft:turtle": {
-    "tendencies": [
+    "tempers": [
       "congeatio"
     ],
     "properties": [
@@ -544,7 +544,7 @@
     ]
   },
   "minecraft:vex": {
-    "tendencies": [
+    "tempers": [
       "ductilis",
       "mortem",
       "tenebris"
@@ -554,31 +554,31 @@
     ]
   },
   "minecraft:villager": {
-    "tendencies": [
+    "tempers": [
       "animus"
     ],
     "properties": []
   },
   "minecraft:vindicator": {
-    "tendencies": [
+    "tempers": [
       "ferric"
     ],
     "properties": []
   },
   "minecraft:warden": {
-    "tendencies": [
+    "tempers": [
       "ferric"
     ],
     "properties": []
   },
   "minecraft:witch": {
-    "tendencies": [
+    "tempers": [
       "tenebris"
     ],
     "properties": []
   },
   "minecraft:wither": {
-    "tendencies": [
+    "tempers": [
       "flammeus",
       "mortem",
       "tenebris"
@@ -588,7 +588,7 @@
     ]
   },
   "minecraft:wither_skeleton": {
-    "tendencies": [
+    "tempers": [
       "mortem"
     ],
     "properties": [
@@ -597,7 +597,7 @@
     ]
   },
   "minecraft:zoglin": {
-    "tendencies": [
+    "tempers": [
       "flammeus",
       "mortem"
     ],
@@ -606,7 +606,7 @@
     ]
   },
   "minecraft:zombie": {
-    "tendencies": [
+    "tempers": [
       "mortem"
     ],
     "properties": [
@@ -614,7 +614,7 @@
     ]
   },
   "minecraft:zombie_horse": {
-    "tendencies": [
+    "tempers": [
       "mortem"
     ],
     "properties": [
@@ -622,7 +622,7 @@
     ]
   },
   "minecraft:zombie_villager": {
-    "tendencies": [
+    "tempers": [
       "mortem"
     ],
     "properties": [
@@ -630,7 +630,7 @@
     ]
   },
   "minecraft:zombified_piglin": {
-    "tendencies": [
+    "tempers": [
       "mortem"
     ],
     "properties": [

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.trade;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData;
 import net.minecraft.nbt.CompoundTag;
@@ -24,10 +24,10 @@ public final class NpcTradeAppraisals {
 	public static final String NONE = "none";
 	public static final String DURABILITY = "durability";
 	public static final String RARITY = "rarity";
-	public static final String TENDENCY = "tendency";
+	public static final String TEMPER = "temper";
 	public static final String SPECIMEN = "specimen";
-	/** The {@code appraisal_tendency} field: which tendency a {@link #TENDENCY} want reads for. */
-	public static final String TENDENCY_PARAM = "tendency";
+	/** The {@code appraisal_temper} field: which temper a {@link #TEMPER} want reads for. */
+	public static final String TEMPER_PARAM = "temper";
 
 	/** Below this share of durability left, worn gear is refused. */
 	static final float DURABILITY_POOR_BELOW = 0.25F;
@@ -71,8 +71,8 @@ public final class NpcTradeAppraisals {
 			NONE, new Spec((stack, appraisal, clientSide) -> Grade.FAIR, Set.of(), false),
 			DURABILITY, new Spec((stack, appraisal, clientSide) -> durability(stack), Set.of(), true),
 			RARITY, new Spec((stack, appraisal, clientSide) -> rarityGrade(stack.getRarity()), Set.of(), true),
-			TENDENCY, new Spec(NpcTradeAppraisals::tendency, Set.of(TENDENCY_PARAM), true,
-					NpcTradeAppraisals::checkTendency),
+			TEMPER, new Spec(NpcTradeAppraisals::temper, Set.of(TEMPER_PARAM), true,
+					NpcTradeAppraisals::checkTemper),
 			SPECIMEN, new Spec((stack, appraisal, clientSide) -> specimen(stack), Set.of(), true));
 
 	private NpcTradeAppraisals() {}
@@ -114,33 +114,33 @@ public final class NpcTradeAppraisals {
 	}
 
 	/**
-	 * A blood draw graded by its tendencies: a Bloody Vial (or other sample vessel) whose source's blood profile carries
-	 * {@code appraisal_tendency}. An empty vessel or the wrong blood is poor; a sample already identified under the
+	 * A blood draw graded by its tempers: a Bloody Vial (or other sample vessel) whose source's blood profile carries
+	 * {@code appraisal_temper}. An empty vessel or the wrong blood is poor; a sample already identified under the
 	 * microscope is fine, since the bench can use it without running the assay again.
 	 */
-	static Grade tendency(ItemStack stack, NpcTradeAppraisal appraisal, boolean clientSide) {
-		Optional<EnumBloodTendency> wanted = appraisal.param(TENDENCY_PARAM).flatMap(NpcTradeAppraisals::tendencyNamed);
+	static Grade temper(ItemStack stack, NpcTradeAppraisal appraisal, boolean clientSide) {
+		Optional<EnumBloodTemper> wanted = appraisal.param(TEMPER_PARAM).flatMap(NpcTradeAppraisals::temperNamed);
 		if (wanted.isEmpty() || !BloodSampleData.isSpecimenVessel(stack) || !BloodSampleData.isFilled(stack)) return Grade.POOR;
 		BloodSampleData.Profile profile = BloodSampleData.profile(stack, clientSide);
-		return tendencyGrade(profile.tendencies(), profile.identified(), wanted.get());
+		return temperGrade(profile.tempers(), profile.identified(), wanted.get());
 	}
 
-	static Grade tendencyGrade(Collection<EnumBloodTendency> tendencies, boolean identified, EnumBloodTendency wanted) {
-		if (!tendencies.contains(wanted)) return Grade.POOR;
+	static Grade temperGrade(Collection<EnumBloodTemper> tempers, boolean identified, EnumBloodTemper wanted) {
+		if (!tempers.contains(wanted)) return Grade.POOR;
 		return identified ? Grade.FINE : Grade.FAIR;
 	}
 
-	static Optional<EnumBloodTendency> tendencyNamed(String name) {
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			if (tendency.name().equalsIgnoreCase(name)) return Optional.of(tendency);
+	static Optional<EnumBloodTemper> temperNamed(String name) {
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			if (temper.name().equalsIgnoreCase(name)) return Optional.of(temper);
 		}
 		return Optional.empty();
 	}
 
-	private static void checkTendency(Map<String, String> params) {
-		String name = params.get(TENDENCY_PARAM);
-		if (name == null) throw new IllegalArgumentException("A tendency appraisal needs 'appraisal_tendency'");
-		if (tendencyNamed(name).isEmpty()) throw new IllegalArgumentException("Unknown tendency '" + name + "'");
+	private static void checkTemper(Map<String, String> params) {
+		String name = params.get(TEMPER_PARAM);
+		if (name == null) throw new IllegalArgumentException("A temper appraisal needs 'appraisal_temper'");
+		if (temperNamed(name).isEmpty()) throw new IllegalArgumentException("Unknown temper '" + name + "'");
 	}
 
 	/**

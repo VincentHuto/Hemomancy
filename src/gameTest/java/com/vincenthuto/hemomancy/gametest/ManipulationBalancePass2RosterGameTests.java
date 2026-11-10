@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownM
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationUpkeep;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
@@ -72,10 +72,10 @@ public final class ManipulationBalancePass2RosterGameTests {
             BloodManipulation m = ManipulationInit.getByName(name);
             h.assertTrue(m.getRank() == rank, name + " is " + m.getRank() + ", expected " + rank);
         });
-        schools(h, "sanguine_marionette", EnumBloodTendency.DUCTILIS, EnumBloodTendency.ANIMUS);
-        schools(h, "sovereign_instinct", EnumBloodTendency.DUCTILIS, EnumBloodTendency.ANIMUS);
-        schools(h, "sanguine_tempest", EnumBloodTendency.ANIMUS, EnumBloodTendency.DUCTILIS);
-        schools(h, "crimson_tithe", EnumBloodTendency.ANIMUS, EnumBloodTendency.FERRIC);
+        schools(h, "sanguine_marionette", EnumBloodTemper.DUCTILIS, EnumBloodTemper.ANIMUS);
+        schools(h, "sovereign_instinct", EnumBloodTemper.DUCTILIS, EnumBloodTemper.ANIMUS);
+        schools(h, "sanguine_tempest", EnumBloodTemper.ANIMUS, EnumBloodTemper.DUCTILIS);
+        schools(h, "crimson_tithe", EnumBloodTemper.ANIMUS, EnumBloodTemper.FERRIC);
         h.assertTrue(BloodBindingManip.durationTicks(BloodBindingManip.Mode.CHAIN) == 80, "Chain Binding is not 80 ticks");
         h.assertTrue(BloodBindingManip.durationTicks(BloodBindingManip.Mode.LATTICE) == 160, "Blood Lattice changed");
         h.succeed();
@@ -88,7 +88,7 @@ public final class ManipulationBalancePass2RosterGameTests {
                 EnumSaintType.SERAPHAE, "unclosing_eye",
                 EnumSaintType.PUTRICIEL, "bloom_of_rot",
                 EnumSaintType.VELORUM, "endless_hour");
-        canon.forEach((saint, name) -> schools(h, name, saint.getPrimaryTendency(), saint.getSecondaryTendency()));
+        canon.forEach((saint, name) -> schools(h, name, saint.getPrimaryTemper(), saint.getSecondaryTemper()));
         h.succeed();
     }
 
@@ -151,7 +151,7 @@ public final class ManipulationBalancePass2RosterGameTests {
         h.getLevel().addFreshEntity(husk);
         var cloud = new CloudEntityBlood(EntityInit.blood_cloud.get(), h.getLevel(), p);
         BloodManipulation manip = ManipulationInit.blood_cloud.get();
-        cloud.setDamageTendencies(manip.getTend(), manip.getSecondaryTend());
+        cloud.setDamageTempers(manip.getTend(), manip.getSecondaryTend());
         cloud.configure(1.25D, 100, CloudEntityBlood.Mode.STATIC);
         cloud.setNoGravity(true);
         cloud.setPos(husk.position().add(0, 1.5, 0));
@@ -194,9 +194,9 @@ public final class ManipulationBalancePass2RosterGameTests {
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = BATCH)
     public static void anOldAnimusMarionetteAdoptsDuctilisAndStaysEquipped(GameTestHelper h) {
         BloodManipulation oldMarionette = new BloodManipulation("sanguine_marionette", 50, 0, 0,
-                EnumManipulationType.CONTINUOUS, EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS,
+                EnumManipulationType.CONTINUOUS, EnumManipulationRank.HUMILIS, EnumBloodTemper.ANIMUS,
                 EnumVeinSections.LEGS);
-        oldMarionette.setSecondaryTend(EnumBloodTendency.DUCTILIS);
+        oldMarionette.setSecondaryTend(EnumBloodTemper.DUCTILIS);
         KnownManipulations original = new KnownManipulations();
         LinkedHashMap<BloodManipulation, ManipLevel> map = new LinkedHashMap<>();
         map.put(BloodManipulation.deserialize(ManipulationInit.blood_binding.get().serialize()), new ManipLevel(3, 60));
@@ -216,12 +216,12 @@ public final class ManipulationBalancePass2RosterGameTests {
 
         BloodManipulation registered = ManipulationInit.sanguine_marionette.get();
         BloodManipulation marionette = named(restored, "sanguine_marionette");
-        h.assertTrue(marionette.getTend() == EnumBloodTendency.DUCTILIS, "Old Marionette kept school " + marionette.getTend());
-        h.assertTrue(marionette.getSecondaryTend() == EnumBloodTendency.ANIMUS,
+        h.assertTrue(marionette.getTend() == EnumBloodTemper.DUCTILIS, "Old Marionette kept school " + marionette.getTend());
+        h.assertTrue(marionette.getSecondaryTend() == EnumBloodTemper.ANIMUS,
                 "Old Marionette kept secondary " + marionette.getSecondaryTend());
         h.assertTrue(marionette.getRank() == registered.getRank() && marionette.getCost() == registered.getCost(),
                 "Old Marionette kept its saved rank or cost");
-        h.assertTrue(restored.getSelectedManip().getTend() == EnumBloodTendency.DUCTILIS, "The selected copy kept Animus");
+        h.assertTrue(restored.getSelectedManip().getTend() == EnumBloodTemper.DUCTILIS, "The selected copy kept Animus");
         h.assertTrue(restored.getEquippedManipNames().contains("sanguine_marionette"), "Old Marionette was unequipped");
         h.assertTrue(restored.isManipulationAvailable(marionette), "Old Marionette is no longer usable");
         h.assertTrue(restored.getManipLevel(named(restored, "blood_binding")).getCurrentLevel() == 3,
@@ -245,7 +245,7 @@ public final class ManipulationBalancePass2RosterGameTests {
         return known.getManipList().stream().filter(m -> name.equals(m.getName())).findFirst().orElseThrow();
     }
 
-    private static void schools(GameTestHelper h, String name, EnumBloodTendency primary, EnumBloodTendency secondary) {
+    private static void schools(GameTestHelper h, String name, EnumBloodTemper primary, EnumBloodTemper secondary) {
         BloodManipulation m = ManipulationInit.getByName(name);
         h.assertTrue(m.getTend() == primary && m.getSecondaryTend() == secondary,
                 name + " is " + m.getTend() + "/" + m.getSecondaryTend() + ", expected " + primary + "/" + secondary);

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.echo;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.CruorJavelinRules;
 import com.vincenthuto.hemomancy.common.manipulation.flammeus.SearingLashRules;
@@ -161,7 +161,7 @@ final class ThermalEchoCasts {
 		EchoFx.cue(Form.HOUR, ctx.feet(), ctx.feet(), ctx.scaled(2.0), 40, 1);
 		EchoScheduler.later(36, () -> {
 			EchoFx.burst(Form.HOUR_BREAK, ctx.feet(), ctx.scaled(2.0), 24);
-			EchoFx.accent(EnumBloodTendency.CONGEATIO, null, ctx.chest(), Vec3.ZERO, true);
+			EchoFx.accent(EnumBloodTemper.CONGEATIO, null, ctx.chest(), Vec3.ZERO, true);
 		});
 	}
 }

@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/** Balance pass 2, task 3b: preset swap lockout, vein strain and clotting, kill/cast tendency shifts. */
+/** Balance pass 2, task 3b: preset swap lockout, vein strain and clotting, kill/cast temper shifts. */
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class ManipulationBalancePass2EconomyGameTests {
@@ -151,30 +151,30 @@ public final class ManipulationBalancePass2EconomyGameTests {
     }
 
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = BATCH + "_kills")
-    public static void onlyProfiledKillsShiftTendency(GameTestHelper h) {
+    public static void onlyProfiledKillsShiftTemper(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {
-            float base = HemoServerConfig.TENDENCY_SHIFT_ON_KILL_ENABLED.get()
-                    ? HemoServerConfig.TENDENCY_SHIFT_AMOUNT.get().floatValue() : 0F;
+            float base = HemoServerConfig.TEMPER_SHIFT_ON_KILL_ENABLED.get()
+                    ? HemoServerConfig.TEMPER_SHIFT_AMOUNT.get().floatValue() : 0F;
             Mob giant = mob(h, EntityType.GIANT);
-            h.assertTrue(BloodProfileData.profile(EntityType.GIANT, false).tendencies().isEmpty(),
+            h.assertTrue(BloodProfileData.profile(EntityType.GIANT, false).tempers().isEmpty(),
                     "Fixture: the Giant gained a blood profile");
             h.assertTrue(!giant.isInvertedHealAndHarm(), "Fixture: the Giant is undead");
-            Map<EnumBloodTendency, Float> before = alignments(p);
+            Map<EnumBloodTemper, Float> before = alignments(p);
             giant.die(p.damageSources().playerAttack(p));
             giant.discard();
-            for (var tendency : EnumBloodTendency.values())
-                near(h, before.get(tendency), alignments(p).get(tendency), "Unprofiled Giant kill shifted " + tendency);
+            for (var temper : EnumBloodTemper.values())
+                near(h, before.get(temper), alignments(p).get(temper), "Unprofiled Giant kill shifted " + temper);
 
             // A profiled mob no predicate claims still teaches its profile (the Ravager's blood is Ferric).
-            h.assertTrue(BloodProfileData.profile(EntityType.RAVAGER, false).tendencies().equals(List.of(EnumBloodTendency.FERRIC)),
+            h.assertTrue(BloodProfileData.profile(EntityType.RAVAGER, false).tempers().equals(List.of(EnumBloodTemper.FERRIC)),
                     "Fixture: the Ravager's blood profile changed");
             Mob ravager = mob(h, EntityType.RAVAGER);
             before = alignments(p);
             ravager.die(p.damageSources().playerAttack(p));
             ravager.discard();
-            near(h, before.get(EnumBloodTendency.FERRIC) + base, alignments(p).get(EnumBloodTendency.FERRIC), "Ravager kill Ferric shift");
-            near(h, before.get(EnumBloodTendency.ANIMUS), alignments(p).get(EnumBloodTendency.ANIMUS), "Ravager kill shifted Animus");
+            near(h, before.get(EnumBloodTemper.FERRIC) + base, alignments(p).get(EnumBloodTemper.FERRIC), "Ravager kill Ferric shift");
+            near(h, before.get(EnumBloodTemper.ANIMUS), alignments(p).get(EnumBloodTemper.ANIMUS), "Ravager kill shifted Animus");
             h.succeed();
         } finally { clearProjectiles(h, p); p.discard(); }
     }
@@ -209,10 +209,10 @@ public final class ManipulationBalancePass2EconomyGameTests {
         return mob;
     }
 
-    private static Map<EnumBloodTendency, Float> alignments(ServerPlayer p) {
-        var tendency = HemoCapabilityAccess.getBloodTendency(p);
-        Map<EnumBloodTendency, Float> values = new EnumMap<>(EnumBloodTendency.class);
-        for (var t : EnumBloodTendency.values()) values.put(t, tendency.getAlignmentByTendency(t));
+    private static Map<EnumBloodTemper, Float> alignments(ServerPlayer p) {
+        var temper = HemoCapabilityAccess.getBloodTemperament(p);
+        Map<EnumBloodTemper, Float> values = new EnumMap<>(EnumBloodTemper.class);
+        for (var t : EnumBloodTemper.values()) values.put(t, temper.getAlignmentByTemper(t));
         return values;
     }
 
@@ -252,8 +252,8 @@ public final class ManipulationBalancePass2EconomyGameTests {
         var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
+        for (var temper : EnumBloodTemper.values())
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper, 100);
         return p;
     }
 }

@@ -59,8 +59,8 @@ public class PhlebotomistsCabinetScreen extends AbstractContainerScreen<Phleboto
             g.drawString(font, name, x + 2, y + 23, 0xFFCC8888, false);
             var profile = BloodSampleData.profile(stack, true);
             if (profile.identified()) {
-                for (int t = 0; t < profile.tendencies().size(); t++) {
-                    var color = profile.tendencies().get(t).getColor();
+                for (int t = 0; t < profile.tempers().size(); t++) {
+                    var color = profile.tempers().get(t).getColor();
                     int rgb = 0xFF000000 | color.getColor();
                     g.fill(x + 2 + t * 6, y + 19, x + 7 + t * 6, y + 21, rgb);
                 }

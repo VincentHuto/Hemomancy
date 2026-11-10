@@ -30,7 +30,7 @@ These require an interactive client and are not established by dedicated-server 
 
 1. Place cabinets facing north, east, south and west. Check the body/hinge alignment and smooth roughly 100-degree swing.
 2. Compare solid and glazed cabinets while open, closed, and closing. Samples must remain visible until an opaque door finishes closing. Inspect glass depth and a glint/custom-name vial from several angles.
-3. Use small GUI scales and long translated source names. Check counts, full hover tooltips, tendency colors and the question-mark treatment. A press/release must perform exactly one cell transaction even when a server cursor update arrives before release.
+3. Use small GUI scales and long translated source names. Check counts, full hover tooltips, temper colors and the question-mark treatment. A press/release must perform exactly one cell transaction even when a server cursor update arrives before release.
 4. Open the same cabinet from two real clients while a hopper transfers; disconnect/reconnect one player, walk out of range, die, replace the menu and unload/reload the chunk. Confirm server quantities and door closure.
 5. Attempt survival mining while occupied and inspect client prediction; empty it and recover a glazed cabinet item. Verify no mass item spill from creative removal or ordinary explosions.
 

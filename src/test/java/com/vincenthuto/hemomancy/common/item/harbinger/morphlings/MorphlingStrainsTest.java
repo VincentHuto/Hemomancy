@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** The Brined Court strain table (Track 1): eight rows, settled ids, tendencies, Cradle set and Last Rites. */
+/** The Brined Court strain table (Track 1): eight rows, settled ids, tempers, Cradle set and Last Rites. */
 final class MorphlingStrainsTest {
 	@Test
 	void eightRowsWithTheSettledIdsShallowToDeep() {
@@ -29,18 +29,18 @@ final class MorphlingStrainsTest {
 	}
 
 	@Test
-	void everyTendencyIsPreferredExactlyOnceAndSecondariesFollowTheGradient() {
-		Set<EnumBloodTendency> preferred = MorphlingStrains.ALL.stream().map(MorphlingStrain::preferred)
-				.collect(Collectors.toCollection(() -> EnumSet.noneOf(EnumBloodTendency.class)));
-		assertEquals(EnumSet.allOf(EnumBloodTendency.class), preferred);
-		assertTendencies(MorphlingStrains.SUNBURST, EnumBloodTendency.LUX, EnumBloodTendency.FERRIC);
-		assertTendencies(MorphlingStrains.HOLDFAST, EnumBloodTendency.FERRIC, EnumBloodTendency.ANIMUS);
-		assertTendencies(MorphlingStrains.MERMAIDS_PURSE, EnumBloodTendency.ANIMUS, EnumBloodTendency.DUCTILIS);
-		assertTendencies(MorphlingStrains.DEAD_MANS_ROPE, EnumBloodTendency.DUCTILIS, EnumBloodTendency.TENEBRIS);
-		assertTendencies(MorphlingStrains.INK_CAP, EnumBloodTendency.TENEBRIS, EnumBloodTendency.DUCTILIS);
-		assertTendencies(MorphlingStrains.HUSHBELL, EnumBloodTendency.CONGEATIO, EnumBloodTendency.TENEBRIS);
-		assertTendencies(MorphlingStrains.MARROWPLUME, EnumBloodTendency.MORTEM, EnumBloodTendency.CONGEATIO);
-		assertTendencies(MorphlingStrains.KINBUD, EnumBloodTendency.FLAMMEUS, EnumBloodTendency.MORTEM);
+	void everyTemperIsPreferredExactlyOnceAndSecondariesFollowTheGradient() {
+		Set<EnumBloodTemper> preferred = MorphlingStrains.ALL.stream().map(MorphlingStrain::preferred)
+				.collect(Collectors.toCollection(() -> EnumSet.noneOf(EnumBloodTemper.class)));
+		assertEquals(EnumSet.allOf(EnumBloodTemper.class), preferred);
+		assertTempers(MorphlingStrains.SUNBURST, EnumBloodTemper.LUX, EnumBloodTemper.FERRIC);
+		assertTempers(MorphlingStrains.HOLDFAST, EnumBloodTemper.FERRIC, EnumBloodTemper.ANIMUS);
+		assertTempers(MorphlingStrains.MERMAIDS_PURSE, EnumBloodTemper.ANIMUS, EnumBloodTemper.DUCTILIS);
+		assertTempers(MorphlingStrains.DEAD_MANS_ROPE, EnumBloodTemper.DUCTILIS, EnumBloodTemper.TENEBRIS);
+		assertTempers(MorphlingStrains.INK_CAP, EnumBloodTemper.TENEBRIS, EnumBloodTemper.DUCTILIS);
+		assertTempers(MorphlingStrains.HUSHBELL, EnumBloodTemper.CONGEATIO, EnumBloodTemper.TENEBRIS);
+		assertTempers(MorphlingStrains.MARROWPLUME, EnumBloodTemper.MORTEM, EnumBloodTemper.CONGEATIO);
+		assertTempers(MorphlingStrains.KINBUD, EnumBloodTemper.FLAMMEUS, EnumBloodTemper.MORTEM);
 	}
 
 	@Test
@@ -75,8 +75,8 @@ final class MorphlingStrainsTest {
 				"HUD accents must tell the strains apart");
 	}
 
-	private static void assertTendencies(MorphlingStrain strain, EnumBloodTendency preferred,
-			EnumBloodTendency secondary) {
+	private static void assertTempers(MorphlingStrain strain, EnumBloodTemper preferred,
+			EnumBloodTemper secondary) {
 		assertEquals(preferred, strain.preferred(), strain.id() + " preferred");
 		assertEquals(secondary, strain.secondary(), strain.id() + " secondary");
 	}

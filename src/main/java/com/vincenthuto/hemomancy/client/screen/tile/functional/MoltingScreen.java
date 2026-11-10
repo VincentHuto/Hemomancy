@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.MoltingRules;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.MoltingRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.heartnode.MoltRequestPacket;
 import com.vincenthuto.hemomancy.common.network.heartnode.PacketOpenHeartNodeScreen;
@@ -17,8 +17,8 @@ import net.minecraft.network.chat.Component;
 import java.util.Locale;
 
 /**
- * Molting at the heart-node: the grown tendency is added up, a tenth is shed, and the rest is placed by hand across
- * the eight tendencies before the molt is sent. The server checks every rule again ({@link MoltingRules}).
+ * Molting at the heart-node: the grown temper is added up, a tenth is shed, and the rest is placed by hand across
+ * the eight tempers before the molt is sent. The server checks every rule again ({@link MoltingRules}).
  */
 public final class MoltingScreen extends Screen {
 	private static final int WIDTH = 236;
@@ -69,7 +69,7 @@ public final class MoltingScreen extends Screen {
 	protected void init() {
 		left = (width - WIDTH) / 2;
 		top = (height - HEIGHT) / 2;
-		for (int i = 0; i < MoltingRules.TENDENCIES; i++) {
+		for (int i = 0; i < MoltingRules.TEMPERS; i++) {
 			int index = i;
 			int y = rowY(i) - 2;
 			addRenderableWidget(Button.builder(Component.translatable("screen.hemomancy.molting.less"), button -> step(index, -1))
@@ -100,7 +100,7 @@ public final class MoltingScreen extends Screen {
 		return top + ROWS_TOP + index * ROW_HEIGHT;
 	}
 
-	/** Moves points into or out of one tendency; shift moves ten at a time. Never below zero or past the pool. */
+	/** Moves points into or out of one temper; shift moves ten at a time. Never below zero or past the pool. */
 	public void step(int index, int direction) {
 		int amount = hasShiftDown() ? BIG_STEP : 1;
 		if (direction > 0) amount = Math.min(amount, remaining());
@@ -149,17 +149,17 @@ public final class MoltingScreen extends Screen {
 				left + 8, top + 22, remaining == 0 ? READY : TEXT, false);
 
 		int wellTop = top + ROWS_TOP - 4;
-		int wellHeight = MoltingRules.TENDENCIES * ROW_HEIGHT + 4;
+		int wellHeight = MoltingRules.TEMPERS * ROW_HEIGHT + 4;
 		graphics.fill(left + 6, wellTop, left + WIDTH - 6, wellTop + wellHeight, WELL);
 		ScreenDrawUtils.drawSimpleBorder(graphics, left + 6, wellTop, WIDTH - 12, wellHeight, WELL_EDGE);
-		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
-		for (int i = 0; i < tendencies.length; i++) {
+		EnumBloodTemper[] tempers = EnumBloodTemper.values();
+		for (int i = 0; i < tempers.length; i++) {
 			int y = rowY(i);
-			int swatch = 0xFF000000 | tendencies[i].getColor().getColor();
+			int swatch = 0xFF000000 | tempers[i].getColor().getColor();
 			graphics.fill(left + 11, y, left + 18, y + 7, WELL_EDGE);
 			graphics.fill(left + 12, y + 1, left + 17, y + 6, swatch);
-			graphics.drawString(font, Component.translatable("blood_tendency.hemomancy."
-					+ tendencies[i].name().toLowerCase(Locale.ROOT)), left + 22, y, TEXT, false);
+			graphics.drawString(font, Component.translatable("blood_temper.hemomancy."
+					+ tempers[i].name().toLowerCase(Locale.ROOT)), left + 22, y, TEXT, false);
 			graphics.drawString(font, Component.translatable("screen.hemomancy.molting.was",
 					String.format(Locale.ROOT, "%.1f", base[i])), left + 92, y, MUTED, false);
 			String value = Integer.toString(allocation[i]);

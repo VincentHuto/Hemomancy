@@ -20,8 +20,8 @@ class HematicRiposteSourceTest {
         assertTrue(start >= 0, "registration missing");
         String entry = init.substring(start, init.indexOf(");", start));
         assertTrue(entry.contains("new HematicRiposteManip(\"hematic_riposte\", 60, 10, 0, EnumManipulationType.QUICK"));
-        assertTrue(entry.contains("EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.ARMS"));
-        assertTrue(entry.contains(".setSecondaryTend(EnumBloodTendency.DUCTILIS)"));
+        assertTrue(entry.contains("EnumManipulationRank.MEDIOCRITAS, EnumBloodTemper.ANIMUS, EnumVeinSections.ARMS"));
+        assertTrue(entry.contains(".setSecondaryTend(EnumBloodTemper.DUCTILIS)"));
         assertTrue(entry.contains(".setCooldownTicks(" + HematicRiposteRules.COOLDOWN + ")"));
         assertTrue(entry.contains("DrudgeAction.DRUDGE_UNSUPPORTED"));
     }

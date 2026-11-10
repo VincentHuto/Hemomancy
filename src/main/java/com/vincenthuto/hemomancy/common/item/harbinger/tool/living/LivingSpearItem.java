@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -32,7 +32,7 @@ public class LivingSpearItem extends LivingToolItem {
 	public static final String TAG_LUX_CHARGE = "LuxChargeDamage";
 
 	public LivingSpearItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -2.3f, EnumBloodTendency.LUX, tier, builderIn);
+		super(speedIn, attackDamageIn, -2.3f, EnumBloodTemper.LUX, tier, builderIn);
 	}
 
 	@Override

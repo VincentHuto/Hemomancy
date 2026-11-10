@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.client.screen.tile.functional.SSCScreen;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.menu.ScryingDiagnosticsMenuProvider;
-import com.vincenthuto.hemomancy.common.menu.TendencyViewMenuProvider;
+import com.vincenthuto.hemomancy.common.menu.TemperamentViewMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.FungalImplantMenuProvider;
@@ -95,7 +95,7 @@ public final class ScreenChromeReview {
                     () -> new com.vincenthuto.hemomancy.client.screen.item.SuccessionResidentsScreen(null)),
             new Scene("synaptic_loadout", com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen.class,
                     () -> com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen.openScreen(BlockPos.ZERO), null, null),
-            Scene.server("tendency_view", "item.TendencyViewScreen", p -> p.openMenu(new TendencyViewMenuProvider())),
+            Scene.server("temperament_view", "item.TemperamentViewScreen", p -> p.openMenu(new TemperamentViewMenuProvider())),
             Scene.server("scrying_diagnostics", "item.ScryingDiagnosticsScreen", p -> p.openMenu(new ScryingDiagnosticsMenuProvider())),
             Scene.server("vascular_view", "item.VascularViewScreen", p -> p.openMenu(new VascularViewMenuProvider())),
             Scene.server("harbinger_equipment", "tile.functional.HarbingerEquipmentScreen", p -> p.openMenu(new ScarMenuProvider(true))),

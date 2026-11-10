@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import net.neoforged.api.distmarker.Dist;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArtEnding;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -66,7 +66,7 @@ public final class CastingClientAcceptance {
         // Older scenes keep their original numbers (and therefore shot names) after the bespoke block.
         int scene=raw<40?raw:raw-BESPOKE_SCENES;
         if(scene<40) {
-            var school=EnumBloodTendency.values()[scene/5];
+            var school=EnumBloodTemper.values()[scene/5];
             var rank=EnumManipulationRank.values()[scene%5];
             long now=caster.level().getGameTime();
             if(frame==0)started=now;
@@ -101,7 +101,7 @@ public final class CastingClientAcceptance {
         }
         if(scene<46) {
             // Pair of simultaneous animated players, then the same scene with reduced effects.
-            var school=EnumBloodTendency.FERRIC;
+            var school=EnumBloodTemper.FERRIC;
             for(var p:server.getPlayerList().getPlayers()) {
                 long now=p.level().getGameTime();
                 if(frame==0 || frame==16)send(p,CastingAnimationPacket.harbinger(p.getId(),p.getUUID(),"review-pair",
@@ -139,7 +139,7 @@ public final class CastingClientAcceptance {
             long now=caster.level().getGameTime();
             var phase=scene==52?CastPhase.CANCEL:scene==53?CastPhase.RELEASE:CastPhase.HOLD;
             if(frame==0 || frame==16 && phase.sustained())send(caster,CastingAnimationPacket.harbinger(caster.getId(),caster.getUUID(),"review-integration",
-                    30000+scene,EnumBloodTendency.LUX,null,EnumManipulationRank.SUMMA,CastPurpose.AREA,CastStyle.SCHOOL,
+                    30000+scene,EnumBloodTemper.LUX,null,EnumManipulationRank.SUMMA,CastPurpose.AREA,CastStyle.SCHOOL,
                     phase,now-frame,now,20,40,InteractionHand.MAIN_HAND));
             if(frame==(scene==52?5:20))shot(server,name,caster);
             return;
@@ -156,18 +156,18 @@ public final class CastingClientAcceptance {
      */
     private static void impacts(net.minecraft.server.MinecraftServer server,ServerPlayer caster,ServerPlayer observer,int age) {
         var deliveries=com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.Delivery.values();
-        int views=deliveries.length+1,scene=age/20,frame=age%20,total=EnumBloodTendency.values().length*views;
+        int views=deliveries.length+1,scene=age/20,frame=age%20,total=EnumBloodTemper.values().length*views;
         var level=caster.serverLevel();
         net.minecraft.world.phys.Vec3 at=caster.position().add(0,1.15,0);
         net.minecraft.world.phys.Vec3 view=caster.position().subtract(observer.position()).multiply(1,0,1).normalize();
         net.minecraft.world.phys.Vec3 across=new net.minecraft.world.phys.Vec3(-view.z,0,view.x);
         if(scene<total) {
-            var school=EnumBloodTendency.values()[scene/views];
+            var school=EnumBloodTemper.values()[scene/views];
             // The last view per school is the attacker's: a melee blow travelling away from the observer.
             boolean attacker=scene%views==deliveries.length;
             var delivery=attacker?com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.Delivery.MELEE:deliveries[scene%views];
             var dir=attacker?view:delivery==com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.Delivery.TETHER?across.scale(-1):across;
-            var secondary=school==EnumBloodTendency.ANIMUS?EnumBloodTendency.LUX:null;
+            var secondary=school==EnumBloodTemper.ANIMUS?EnumBloodTemper.LUX:null;
             String name="impact-"+school.name().toLowerCase()+"-"+(attacker?"attacker":delivery.name().toLowerCase());
             // As the server does: on the struck side of the body, just outside it (areas sit at the body centre).
             var contact=delivery==com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.Delivery.AREA?at:at.subtract(dir.scale(.38));
@@ -182,7 +182,7 @@ public final class CastingClientAcceptance {
         if(scene==total) {
             if(frame==0)com.vincenthuto.hemomancy.common.manipulation.impact.CastImpacts.landed(caster,
                     level.damageSources().playerAttack(observer),
-                    com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(Hemomancy.rloc("blood_shot"),EnumBloodTendency.FERRIC,null,observer),6);
+                    com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(Hemomancy.rloc("blood_shot"),EnumBloodTemper.FERRIC,null,observer),6);
             if(frame==4)shot(server,"impact-real-path",caster);
             return;
         }
@@ -354,7 +354,7 @@ public final class CastingClientAcceptance {
         var volume=HemoCapabilityAccess.getBloodVolume(p);volume.setActive(true);volume.fill(5000);
         var known=HemoCapabilityAccess.getKnownManipulations(p);known.getKnownManips().put(m,new ManipLevel(0,0));
         known.setSelectedManip(m);known.setEquippedManipNames(java.util.List.of(m.getName()));
-        HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(m.getTend(),100);
+        HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(m.getTend(),100);
         // Items such as the cell hands check the client's copy of the volume before they start being used.
         com.vincenthuto.hemomancy.common.network.PacketHandler.sendToPlayer(p,
                 new com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket(volume));

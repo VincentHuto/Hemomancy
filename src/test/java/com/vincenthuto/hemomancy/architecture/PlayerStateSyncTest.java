@@ -30,7 +30,7 @@ class PlayerStateSyncTest {
 			"static\\s+void\\s+(\\w+)\\s*\\([^)]*\\b(?:PlayerLoggedInEvent|PlayerRespawnEvent|PlayerChangedDimensionEvent"
 					+ "|EntityJoinLevelEvent)\\b[^)]*\\)\\s*\\{");
 	private static final Pattern TABLE_SENDER = Pattern.compile(
-			"\\b(?:syncTendency|syncVascular|syncVolume|syncSkills|syncDegree|syncPlayerEvent|syncOwnAvatar"
+			"\\b(?:syncTemperament|syncVascular|syncVolume|syncSkills|syncDegree|syncPlayerEvent|syncOwnAvatar"
 					+ "|syncLastDeathMemory|syncSlots|syncLayerVisibilityToClient)\\s*\\(");
 	private static final Pattern OWN_SYNC = Pattern.compile("(?<![\\w.])(?:sync|syncProgress|syncToClient)\\s*\\(");
 	private static final Pattern TABLE_PAYLOAD = Pattern.compile("\\b(\\w+)\\.class\\b");

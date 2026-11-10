@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -49,9 +49,9 @@ public class ExsanguinateManip extends BloodManipulation {
 	public static final float BOSS_DAMAGE_CAP = 12.0F;
 
 	public ExsanguinateManip(String name, double cost, double alignLevel, double xpCost,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	private Optional<LivingEntity> target(Player player) {
@@ -94,7 +94,7 @@ public class ExsanguinateManip extends BloodManipulation {
 		LivingEntity target = targetOpt.get();
 		float mastery = (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
 		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * mastery;
-		// SchoolCombatEvents applies the same cap again after tendency affinity.
+		// SchoolCombatEvents applies the same cap again after temper affinity.
 		if (ManipulationReactiveEvents.isBoss(target)) drainDamage = Math.min(BOSS_DAMAGE_CAP * mastery, drainDamage);
 		if (!ManipulationParticles.hurt(this, target, world.damageSources().magic(),
 				(drainDamage)) || target.isAlive()) return;

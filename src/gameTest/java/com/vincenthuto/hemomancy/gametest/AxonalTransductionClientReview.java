@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -101,7 +101,7 @@ public final class AxonalTransductionClientReview {
             level.setBlock(b,Blocks.AIR.defaultBlockState(),3);
         HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(6);
         HemoCapabilityAccess.getBloodVolume(p).setActive(true);HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(10000);
-        HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.DUCTILIS,100);
+        HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(EnumBloodTemper.DUCTILIS,100);
         var known=HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(ManipulationInit.axonal_transduction.get(),new ManipLevel(4,185));
         known.setEquippedManipNames(java.util.List.of("axonal_transduction"));

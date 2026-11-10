@@ -15,7 +15,7 @@ import com.vincenthuto.hemomancy.common.entity.projectile.CombatWeaponCarrierPro
 import com.vincenthuto.hemomancy.common.event.SilentArchonArmorRules;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.IDispellable;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ITendencyAlignedWeapon;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ITemperAlignedWeapon;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingToolItem;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
@@ -384,7 +384,7 @@ public final class SilentArchonArmorAbilityHandler {
 			return false;
 		}
 		Item item = stack.getItem();
-		return item instanceof ITendencyAlignedWeapon
+		return item instanceof ITemperAlignedWeapon
 				|| item instanceof IDispellable
 				|| item instanceof LivingToolItem
 				|| item instanceof LivingItem

@@ -13,7 +13,7 @@ import java.util.TreeSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Each Canon Memory is woven from its Saint's residuum and its Saint's tendency pair. The registered
+ * Each Canon Memory is woven from its Saint's residuum and its Saint's temper pair. The registered
  * manipulation's pair is checked over the live registry by canonMemoriesTakeTheirSaintsPair.
  */
 final class CanonMemoryRecipeResourceTest {
@@ -42,9 +42,9 @@ final class CanonMemoryRecipeResourceTest {
 				if (entry.getValue().getAsInt() > 0) enzymes.add(entry.getKey());
 			});
 			Set<String> pair = new TreeSet<>(Set.of(
-					saint.getPrimaryTendency().name().toLowerCase(Locale.ROOT),
-					saint.getSecondaryTendency().name().toLowerCase(Locale.ROOT)));
-			assertEquals(pair, enzymes, memory + " takes " + saintId + "'s tendency pair");
+					saint.getPrimaryTemper().name().toLowerCase(Locale.ROOT),
+					saint.getSecondaryTemper().name().toLowerCase(Locale.ROOT)));
+			assertEquals(pair, enzymes, memory + " takes " + saintId + "'s temper pair");
 		});
 	}
 }

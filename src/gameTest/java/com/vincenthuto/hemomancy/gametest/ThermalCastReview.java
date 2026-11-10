@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -89,7 +89,7 @@ public final class ThermalCastReview {
                 var blood=HemoCapabilityAccess.getBloodVolume(player);blood.setActive(!npcOnly);
                 if(!npcOnly) {
                     blood.setBloodVolume(10000);
-                    for(var tendency:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tendency,100);
+                    for(var temper:EnumBloodTemper.values())HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(temper,100);
                     var manipulation=ManipulationInit.getByName(name);var known=HemoCapabilityAccess.getKnownManipulations(player);
                     known.getKnownManips().put(manipulation,new ManipLevel(4,185));known.setSelectedManip(manipulation);known.setEquippedManipNames(List.of(name));
                     if(name.equals("phoenix_debt")) {

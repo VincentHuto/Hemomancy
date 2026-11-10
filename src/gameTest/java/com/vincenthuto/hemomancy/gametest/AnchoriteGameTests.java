@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import net.minecraft.gametest.framework.GameTest;
@@ -39,10 +39,10 @@ public final class AnchoriteGameTests {
     }
 
     @GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-    public static void strongestTendencyRewardsCarryTierTwoAndThreeTemplates(GameTestHelper helper) {
+    public static void strongestTemperRewardsCarryTierTwoAndThreeTemplates(GameTestHelper helper) {
         ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
                 new GameProfile(UUID.randomUUID(), "anchorite-test"), ClientInformation.createDefault());
-        HemoCapabilityAccess.getBloodTendency(player).setTendency(Map.of(EnumBloodTendency.LUX, 20F));
+        HemoCapabilityAccess.getBloodTemperament(player).setTemper(Map.of(EnumBloodTemper.LUX, 20F));
         ResourceLocation tierTwo = Hemomancy.rloc("scar_veil");
         ResourceLocation tierThree = Hemomancy.rloc("scar_transcendence");
         helper.assertTrue(ItemScarPattern.getScarIds(VeinMasonScarLesson.strongestForPlayer(player, 2).patternStack())

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
@@ -22,7 +22,7 @@ import java.util.List;
  *
  * <p>Custom-data keys:
  * <ul>
- *   <li>{@value #TAG_TENDENCY}         — tendency name string</li>
+ *   <li>{@value #TAG_TEMPER}         — temper name string</li>
  *   <li>{@value #TAG_MATURE_THRESHOLD} — enzyme-power units required</li>
  *   <li>{@value #TAG_MATURE_PROGRESS}  — enzyme-power units accumulated</li>
  *   <li>{@value #TAG_TARGET_SCAR_ID}   — registry ID of the finished scar</li>
@@ -36,22 +36,22 @@ public class ItemImmatureFungalScar extends Item {
 
     public static final String TAG_MATURE_PROGRESS  = "MatureProgress";
     public static final String TAG_MATURE_THRESHOLD = "MatureThreshold";
-    public static final String TAG_TENDENCY          = "Tendency";
+    public static final String TAG_TEMPER          = "Temper";
     public static final String TAG_TARGET_SCAR_ID    = "TargetScarId";
 
     public ItemImmatureFungalScar(Properties properties) {
         super(properties);
     }
 
-    // ── Tendency ──────────────────────────────────────────────────────────────
+    // ── Temper ──────────────────────────────────────────────────────────────
 
-    /** Reads the stored tendency from the stack's custom data, or {@code null} if unset. */
-    public static EnumBloodTendency getTendency(ItemStack stack) {
+    /** Reads the stored temper from the stack's custom data, or {@code null} if unset. */
+    public static EnumBloodTemper getTemper(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        String name = tag.getString(TAG_TENDENCY);
+        String name = tag.getString(TAG_TEMPER);
         if (name.isEmpty()) return null;
         try {
-            return EnumBloodTendency.valueOf(name);
+            return EnumBloodTemper.valueOf(name);
         } catch (IllegalArgumentException e) {
             return null;
         }
@@ -80,14 +80,14 @@ public class ItemImmatureFungalScar extends Item {
      * Phase 1 end.
      *
      * @param stack         the stack to initialise
-     * @param tendency      the scar's tendency alignment
+     * @param temper      the scar's temper alignment
      * @param threshold     total enzyme-power required for maturation
      * @param targetScarId  registry ID of the finished {@link ItemFungalScar} this will become
      */
-    public void initThreshold(ItemStack stack, EnumBloodTendency tendency, int threshold,
+    public void initThreshold(ItemStack stack, EnumBloodTemper temper, int threshold,
             ResourceLocation targetScarId) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        tag.putString(TAG_TENDENCY, tendency.name());
+        tag.putString(TAG_TEMPER, temper.name());
         tag.putInt(TAG_MATURE_THRESHOLD, threshold);
         tag.putString(TAG_TARGET_SCAR_ID, targetScarId.toString());
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -121,9 +121,9 @@ public class ItemImmatureFungalScar extends Item {
         super.appendHoverText(stack, context, tooltip, flag);
         int progress  = getMatureProgress(stack);
         int threshold = getMatureThreshold(stack);
-        EnumBloodTendency tendency = getTendency(stack);
-        if (tendency != null) {
-            tooltip.add(Component.translatable("tooltip.hemomancy.item_immature_fungal_scar.tendency_s", BloodManipulation.tendencyName(tendency))
+        EnumBloodTemper temper = getTemper(stack);
+        if (temper != null) {
+            tooltip.add(Component.translatable("tooltip.hemomancy.item_immature_fungal_scar.temper_s", BloodManipulation.temperName(temper))
                     .withStyle(ChatFormatting.DARK_PURPLE));
         }
         if (threshold > 0) {

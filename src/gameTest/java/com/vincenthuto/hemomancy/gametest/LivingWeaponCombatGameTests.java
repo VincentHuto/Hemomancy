@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.damage.SchoolHitContext;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
@@ -45,8 +45,8 @@ public final class LivingWeaponCombatGameTests {
         first.setPos(first.position().add(0, 3, 0));
         second.setPos(second.position().add(0, 3, 0));
         p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.living_axe.get()));
-        float pulse = com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules
-                .damageMultiplier(p, inside, EnumBloodTendency.FERRIC, null);
+        float pulse = com.vincenthuto.hemomancy.common.manipulation.TemperAffinityRules
+                .damageMultiplier(p, inside, EnumBloodTemper.FERRIC, null);
         var tick = new net.neoforged.neoforge.event.tick.ServerTickEvent.Post(() -> true, h.getLevel().getServer());
         try {
             axeHit(p, first, false);
@@ -81,7 +81,7 @@ public final class LivingWeaponCombatGameTests {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(
                 new net.neoforged.neoforge.event.entity.player.CriticalHitEvent(p, target, critical ? 1.5F : 1, critical));
         target.invulnerableTime = 0;
-        hit(p, target, "living_axe", EnumBloodTendency.FERRIC, 4, 1);
+        hit(p, target, "living_axe", EnumBloodTemper.FERRIC, 4, 1);
     }
 
     @GameTest(templateNamespace = "living_weapon_validation", template = "empty", batch = "living_weapons")
@@ -116,7 +116,7 @@ public final class LivingWeaponCombatGameTests {
             ItemStack spear = new ItemStack(ItemInit.living_spear.get());
             p.setItemInHand(InteractionHand.MAIN_HAND, spear);
             LivingSpearItem.setLuxCharge(spear, 30);
-            hit(p, primary, "living_spear", EnumBloodTendency.LUX, 4, 1);
+            hit(p, primary, "living_spear", EnumBloodTemper.LUX, 4, 1);
             h.assertTrue(ally.getHealth() == 100, "Lux burst damaged an ally");
             h.assertTrue(!SchoolStates.has(ally, SchoolState.ILLUMINATED), "Lux burst illuminated an excluded ally");
             h.succeed();
@@ -219,7 +219,7 @@ public final class LivingWeaponCombatGameTests {
             ItemStack spear = new ItemStack(ItemInit.living_spear.get());
             p.setItemInHand(InteractionHand.MAIN_HAND, spear);
             LivingSpearItem.setLuxCharge(spear, 30);
-            hit(p, primary, "living_spear", EnumBloodTendency.LUX, 4, 1);
+            hit(p, primary, "living_spear", EnumBloodTemper.LUX, 4, 1);
             h.assertTrue(Math.abs(primary.getHealth() - 88) < .01, "Primary missed some burst damage: " + primary.getHealth());
             h.assertTrue(Math.abs(nearby.getHealth() - 92) < .01, "Nearby target missed burst: " + nearby.getHealth());
             h.assertTrue(outside.getHealth() == 100, "Burst exceeded five blocks");
@@ -242,10 +242,10 @@ public final class LivingWeaponCombatGameTests {
             p.setItemInHand(InteractionHand.MAIN_HAND, spear);
             h.assertTrue(LivingSpearItem.getLuxCharge(spear) == 30, "Charge was lost when the item was saved");
             primary.setInvulnerable(true);
-            hit(p, primary, "living_spear", EnumBloodTendency.LUX, 4, 1);
+            hit(p, primary, "living_spear", EnumBloodTemper.LUX, 4, 1);
             h.assertTrue(LivingSpearItem.getLuxCharge(spear) == 30, "Failed hit consumed charge");
             primary.setInvulnerable(false);
-            hit(p, primary, "living_spear", EnumBloodTendency.LUX, 4, .5F);
+            hit(p, primary, "living_spear", EnumBloodTemper.LUX, 4, .5F);
             h.assertTrue(LivingSpearItem.getLuxCharge(spear) == 30, "Uncooled hit consumed charge");
             h.succeed();
         } finally { p.discard(); primary.discard(); }
@@ -271,7 +271,7 @@ public final class LivingWeaponCombatGameTests {
     }
 
     private static void hit(ServerPlayer player, LivingEntity target, String ability,
-            EnumBloodTendency school, float amount, float strength) {
+            EnumBloodTemper school, float amount, float strength) {
         SchoolHitContext context = SchoolHitContext.direct(Hemomancy.rloc(ability), school, null, player)
                 .withCharge(strength).withRole(SchoolHitContext.Role.DAMAGE_ONLY);
         target.hurt(SchoolDamage.attributed(player.damageSources().playerAttack(player), context, player), amount);

@@ -50,7 +50,7 @@ sub-packages.
 |---|---|---|
 | `common/init` | All registries (`*Init`) | It also hosts the client-only `ParticleInit`, `ShaderInit` and `RenderTypeInit`, which should move to `client/`. |
 | `common/capability` | Player, entity and block attachments and access to them | `HemoAttachmentTypes`, `HemoCapabilityKeys`, `HemoCapabilityRegistrar` and `HemoCapabilityAccess`. Each attachment family has one `*Events` class. |
-| `common/manipulation` | Blood manipulations, meaning active casting | `BloodManipulation` base class, per-tendency folders, combat helpers, and the channel, charge and reactive managers. |
+| `common/manipulation` | Blood manipulations, meaning active casting | `BloodManipulation` base class, per-temper folders, combat helpers, and the channel, charge and reactive managers. |
 | `common/rite` | Cardinal Rites, Working crafts, floors, sigils, rite spaces and zones, brazier rites, and the legacy Unstained rites | `HarbingerCardinalRiteEvents` drives the level tick for every rite kind. |
 | `common/tile` | Block entities: machines and stations | There is no shared base class. |
 | `common/block`, `common/item`, `common/entity` | Content classes | `entity` includes bosses, NPCs and dialogue (`entity/npc/dialogue`). |
@@ -259,7 +259,7 @@ Entities cast through a parallel path:
 | You are adding... | Put it here | Follow |
 |---|---|---|
 | A block, item, entity, effect, sound or particle type | The matching `common/init/*Init`, with a snake_case holder and `Hemomancy.rloc` | Standards §1 |
-| A manipulation | A class in `common/manipulation/<tendency>/` extending `BloodManipulation`, an entry in `ManipulationInit`, plus lang and model assets | AGENTS.md; standards §5 |
+| A manipulation | A class in `common/manipulation/<temper>/` extending `BloodManipulation`, an entry in `ManipulationInit`, plus lang and model assets | AGENTS.md; standards §5 |
 | A gameplay effect that hurts, heals, drains blood or targets mobs (armour, scar, morphling, Still Art, weapon) | Reuse `SchoolDamage`, `ManipulationCombatHelper.canHarm` and the blood-payment path | Standards §5 |
 | Durable player progress | A field on an existing attachment, or a new attachment in `HemoAttachmentTypes` with an accessor in `HemoCapabilityAccess` | Standards §6 |
 | Session-only server state, such as a cooldown map or an active channel | A static map cleared through `TransientServerStateEvents` and on logout | Standards §6 |

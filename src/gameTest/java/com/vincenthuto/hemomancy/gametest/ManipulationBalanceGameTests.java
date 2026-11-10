@@ -318,7 +318,7 @@ public class ManipulationBalanceGameTests {
     private static void ready(ServerPlayer p,BloodManipulation m){
         var known=HemoCapabilityAccess.getKnownManipulations(p);known.getKnownManips().put(m,new ManipLevel(0,0));
         known.setSelectedManip(m);known.setEquippedManipNames(List.of(m.getName()));
-        HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(m.getTend(),(float)m.getAlignLevel());
+        HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(m.getTend(),(float)m.getAlignLevel());
     }
 
     private static void near(GameTestHelper h,double expected,double actual,String message){h.assertTrue(Math.abs(expected-actual)<.002,message+": "+actual+" expected "+expected);}

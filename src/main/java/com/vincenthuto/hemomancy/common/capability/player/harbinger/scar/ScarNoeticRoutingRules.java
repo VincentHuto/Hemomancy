@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 
 public final class ScarNoeticRoutingRules {
@@ -13,10 +13,10 @@ public final class ScarNoeticRoutingRules {
 				&& !ManipulationEquipHelper.isFixedMechanicalManip(manipulationName);
 	}
 
-	public static int bestMatchingTier(EnumBloodTendency tendency, Iterable<ScarDefinition> activeScars) {
+	public static int bestMatchingTier(EnumBloodTemper temper, Iterable<ScarDefinition> activeScars) {
 		int best = 0;
 		for (ScarDefinition scar : activeScars) {
-			if (scar.getScarType() == ScarType.CEREBRAL && scar.getAssignedTendency() == tendency) {
+			if (scar.getScarType() == ScarType.CEREBRAL && scar.getAssignedTemper() == temper) {
 				best = Math.max(best, scar.getTier());
 			}
 		}

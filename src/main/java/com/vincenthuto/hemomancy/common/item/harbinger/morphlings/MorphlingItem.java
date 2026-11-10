@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Re
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
@@ -276,13 +276,13 @@ public class MorphlingItem extends Item implements IMorphling {
 	}
 
 	/**
-	 * Calculates the effective power contribution of an enzyme based on tendency
+	 * Calculates the effective power contribution of an enzyme based on temper
 	 * match. Preferred = 100%, Secondary = 75%, Other = 50%.
 	 */
-	public static float calculateEffectivePower(float rawPower, EnumBloodTendency enzymeTendency,
-			EnumBloodTendency preferred, EnumBloodTendency secondary) {
-		if (enzymeTendency == preferred) return rawPower;
-		return enzymeTendency == secondary ? rawPower * 0.75f : rawPower * 0.5f;
+	public static float calculateEffectivePower(float rawPower, EnumBloodTemper enzymeTemper,
+			EnumBloodTemper preferred, EnumBloodTemper secondary) {
+		if (enzymeTemper == preferred) return rawPower;
+		return enzymeTemper == secondary ? rawPower * 0.75f : rawPower * 0.5f;
 	}
 
 	@Override
@@ -298,11 +298,11 @@ public class MorphlingItem extends Item implements IMorphling {
 		appendStrainText(stack, tooltip);
 
 		// Show preferred enzyme info
-		EnumBloodTendency preferred = this.getPreferredTendency();
-		EnumBloodTendency secondary = this.getSecondaryTendency();
-		tooltip.add(Component.translatable("tooltip.hemomancy.morphling.preferred_s", formatTendencyName(preferred))
+		EnumBloodTemper preferred = this.getPreferredTemper();
+		EnumBloodTemper secondary = this.getSecondaryTemper();
+		tooltip.add(Component.translatable("tooltip.hemomancy.morphling.preferred_s", formatTemperName(preferred))
 				.withStyle(ChatFormatting.AQUA));
-		tooltip.add(Component.translatable("tooltip.hemomancy.morphling.secondary_s", formatTendencyName(secondary))
+		tooltip.add(Component.translatable("tooltip.hemomancy.morphling.secondary_s", formatTemperName(secondary))
 				.withStyle(ChatFormatting.DARK_AQUA));
 
 		{
@@ -365,8 +365,8 @@ public class MorphlingItem extends Item implements IMorphling {
 	protected void appendStrainText(ItemStack stack, List<Component> tooltip) {
 	}
 
-	private static String formatTendencyName(EnumBloodTendency tendency) {
-		String name = tendency.name();
+	private static String formatTemperName(EnumBloodTemper temper) {
+		String name = temper.name();
 		if (name.isEmpty()) return "Unknown";
 		return name.charAt(0) + name.substring(1).toLowerCase();
 	}

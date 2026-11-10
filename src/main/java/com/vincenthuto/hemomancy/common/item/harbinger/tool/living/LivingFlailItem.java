@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingFlailHeadProjectileEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.chat.Component;
@@ -24,7 +24,7 @@ public class LivingFlailItem extends LivingToolItem {
 	private static final ParticleColor ICE_BLUE = new ParticleColor(95, 205, 255);
 
 	public LivingFlailItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -2.9f, EnumBloodTendency.CONGEATIO, tier, builderIn);
+		super(speedIn, attackDamageIn, -2.9f, EnumBloodTemper.CONGEATIO, tier, builderIn);
 	}
 
 	@Override
@@ -83,8 +83,8 @@ public class LivingFlailItem extends LivingToolItem {
 		if (!LivingFlailRules.mayFire(usedTicks)) return;
 		float charge = LivingFlailRules.charge(usedTicks);
 		LivingFlailHeadProjectileEntity projectile = new LivingFlailHeadProjectileEntity(level, player);
-		projectile.configure(charge, hand, EnumBloodTendency.CONGEATIO,
-				TendencyWeaponHelper.getWeaponSecondaryTendency(stack).orElse(null));
+		projectile.configure(charge, hand, EnumBloodTemper.CONGEATIO,
+				TemperWeaponHelper.getWeaponSecondaryTemper(stack).orElse(null));
 		Vec3 look = player.getLookAngle().normalize();
 		double angle = LivingFlailRules.orbitAngle(usedTicks, 0.0F);
 		HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();

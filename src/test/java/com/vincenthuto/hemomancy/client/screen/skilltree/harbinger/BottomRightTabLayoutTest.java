@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 final class BottomRightTabLayoutTest {
 	@Test
 	void presentsPrimaryTabsInTheRequestedOrder() {
-		assertEquals(List.of("Skills", "Tendencies", "Rites & Crafts", "Materials"),
+		assertEquals(List.of("Skills", "Tempers", "Rites & Crafts", "Materials"),
 				HarbingerProgressScreen.topTabLabelKeys(4).stream().map(EnglishText::of).toList());
 	}
 

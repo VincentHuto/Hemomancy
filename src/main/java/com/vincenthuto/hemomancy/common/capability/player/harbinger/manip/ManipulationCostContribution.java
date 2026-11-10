@@ -5,7 +5,7 @@ public record ManipulationCostContribution(String sourceId, String label, Catego
 	public enum Category {
 		SKILL,
 		MASTERY,
-		TENDENCY,
+		TEMPER,
 		EFFECT,
 		RITE,
 		WORLD,

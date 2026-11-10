@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -95,8 +95,8 @@ public final class ManipulationBalancePass2CastGameTests {
         ServerPlayer full = player(h);
         try {
             var storm = ManipulationInit.synaptic_storm.get();
-            float amount = HemoServerConfig.TENDENCY_SHIFT_ON_CAST_ENABLED.get()
-                    ? HemoServerConfig.TENDENCY_SHIFT_ON_MANIP_USE.get().floatValue() : 0;
+            float amount = HemoServerConfig.TEMPER_SHIFT_ON_CAST_ENABLED.get()
+                    ? HemoServerConfig.TEMPER_SHIFT_ON_MANIP_USE.get().floatValue() : 0;
             Reward low = cast(h, partial, storm, 18);
             Reward high = cast(h, full, storm, 60);
             near(h, amount * 0.3, low.alignment, "A 0.3-charge Storm's Ductilis alignment gain");
@@ -213,16 +213,16 @@ public final class ManipulationBalancePass2CastGameTests {
 
     private static Reward cast(GameTestHelper h, ServerPlayer p, BloodManipulation m, float ticks) {
         select(p, m);
-        var tendency = HemoCapabilityAccess.getBloodTendency(p);
+        var temper = HemoCapabilityAccess.getBloodTemperament(p);
         var known = HemoCapabilityAccess.getKnownManipulations(p);
         var skills = HemoCapabilityAccess.getSkillProgress(p);
-        float alignment = tendency.getAlignmentByTendency(m.getTend());
+        float alignment = temper.getAlignmentByTemper(m.getTend());
         double xp = known.getManipLevel(m).getXp();
         int points = skills.getSkillPoints();
         int uses = skills.getTotalManipulationUses();
         h.assertTrue(m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), ticks),
                 m.getName() + " refused at " + ticks + " ticks");
-        return new Reward(tendency.getAlignmentByTendency(m.getTend()) - alignment,
+        return new Reward(temper.getAlignmentByTemper(m.getTend()) - alignment,
                 known.getManipLevel(m).getXp() - xp, skills.getSkillPoints() - points,
                 skills.getTotalManipulationUses() - uses);
     }
@@ -275,8 +275,8 @@ public final class ManipulationBalancePass2CastGameTests {
         var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
+        for (var temper : EnumBloodTemper.values())
+            HemoCapabilityAccess.getBloodTemperament(p).setTemperAlignment(temper, 100);
         return p;
     }
 }

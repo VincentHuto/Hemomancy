@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.client.render.world.FerricDuctilisEffects;
 import com.vincenthuto.hemomancy.client.render.world.LuxUmbraEffects;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationAmbientParticles;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.HemomancyTendrilEffects;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket;
@@ -88,7 +88,7 @@ final class EchoFx {
 
 	//  Accents (ManipulationAmbientParticles)
 
-	static void accent(EnumBloodTendency school, @Nullable EnumBloodTendency secondary, Vec3 at, Vec3 direction, boolean impact) {
+	static void accent(EnumBloodTemper school, @Nullable EnumBloodTemper secondary, Vec3 at, Vec3 direction, boolean impact) {
 		ManipulationAmbientParticles.accept(new ManipulationAccentPacket(school, secondary, at, direction, -1, impact));
 	}
 

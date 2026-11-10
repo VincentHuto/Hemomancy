@@ -1,48 +1,48 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 public enum VesperWeaponAction {
 	NONE(null, 0, 0, 0),
-	ICHIMONJI(EnumBloodTendency.ANIMUS, 18, 18, 30, 18),
-	CROSSCUT(EnumBloodTendency.ANIMUS, 12, 26, 38, 15, 26),
-	LEAPING_CLEAVE(EnumBloodTendency.MORTEM, 22, 22, 34, 22),
-	REAPER_SWEEP(EnumBloodTendency.MORTEM, 18, 18, 30, 18),
-	SKY_LANCE(EnumBloodTendency.LUX, 16, 25, 37, 17),
-	LANCE_FLURRY(EnumBloodTendency.LUX, 12, 28, 40, 12, 20, 28),
-	TWIN_REND(EnumBloodTendency.TENEBRIS, 12, 20, 34, 12, 20),
-	PREDATOR_POUNCE(EnumBloodTendency.TENEBRIS, 20, 20, 32, 20),
-	CONDUCTIVE_VOLLEY(EnumBloodTendency.DUCTILIS, 20, 20, 32, 20),
-	STORM_LOCK(EnumBloodTendency.DUCTILIS, 18, 44, 52, 28, 36, 44),
-	BRANDING_THRUSTS(EnumBloodTendency.FLAMMEUS, 12, 26, 38, 12, 19, 26),
-	UPDRAFT_IMPALEMENT(EnumBloodTendency.FLAMMEUS, 16, 24, 36, 16, 24),
-	CHAIN_SWEEP(EnumBloodTendency.CONGEATIO, 18, 18, 30, 18),
-	HOOK_AND_CRUSH(EnumBloodTendency.CONGEATIO, 14, 28, 40, 14, 28),
-	MAGNETIC_AXIS(EnumBloodTendency.FERRIC, 18, 18, 30, 18),
-	IRON_RETORT(EnumBloodTendency.FERRIC, 16, 32, 46, 16),
+	ICHIMONJI(EnumBloodTemper.ANIMUS, 18, 18, 30, 18),
+	CROSSCUT(EnumBloodTemper.ANIMUS, 12, 26, 38, 15, 26),
+	LEAPING_CLEAVE(EnumBloodTemper.MORTEM, 22, 22, 34, 22),
+	REAPER_SWEEP(EnumBloodTemper.MORTEM, 18, 18, 30, 18),
+	SKY_LANCE(EnumBloodTemper.LUX, 16, 25, 37, 17),
+	LANCE_FLURRY(EnumBloodTemper.LUX, 12, 28, 40, 12, 20, 28),
+	TWIN_REND(EnumBloodTemper.TENEBRIS, 12, 20, 34, 12, 20),
+	PREDATOR_POUNCE(EnumBloodTemper.TENEBRIS, 20, 20, 32, 20),
+	CONDUCTIVE_VOLLEY(EnumBloodTemper.DUCTILIS, 20, 20, 32, 20),
+	STORM_LOCK(EnumBloodTemper.DUCTILIS, 18, 44, 52, 28, 36, 44),
+	BRANDING_THRUSTS(EnumBloodTemper.FLAMMEUS, 12, 26, 38, 12, 19, 26),
+	UPDRAFT_IMPALEMENT(EnumBloodTemper.FLAMMEUS, 16, 24, 36, 16, 24),
+	CHAIN_SWEEP(EnumBloodTemper.CONGEATIO, 18, 18, 30, 18),
+	HOOK_AND_CRUSH(EnumBloodTemper.CONGEATIO, 14, 28, 40, 14, 28),
+	MAGNETIC_AXIS(EnumBloodTemper.FERRIC, 18, 18, 30, 18),
+	IRON_RETORT(EnumBloodTemper.FERRIC, 16, 32, 46, 16),
 	SICKLE_CYCLONE(null, 12, 24, 34, 12, 18, 24),
 	SICKLE_POUNCE(null, 14, 14, 24, 14),
 	SICKLE_CROSS_REND(null, 10, 18, 28, 10, 14, 18),
 	SICKLE_HOOK(null, 14, 14, 28, 14),
 	SANGUINE_CRESCENTS(null, 12, 22, 32, 12, 17, 22),
-	FLAMMEUS_CONCENTRATION(EnumBloodTendency.FLAMMEUS, 12, 48, 60,
+	FLAMMEUS_CONCENTRATION(EnumBloodTemper.FLAMMEUS, 12, 48, 60,
 			12, 16, 20, 24, 28, 32, 36, 40, 44, 48),
 	// Chained-moveset additions. Appended only: the ordinal is synced and saved.
-	BLADE_RISING_CUT(EnumBloodTendency.ANIMUS, 10, 10, 22, 10),
-	BLADE_DRAWING_STEP(EnumBloodTendency.ANIMUS, 16, 24, 36, 16, 24),
-	AXE_HAFT_SHOVE(EnumBloodTendency.MORTEM, 10, 10, 21, 10),
-	AXE_GRAVE_SPLITTER(EnumBloodTendency.MORTEM, 24, 30, 42, 24, 30),
-	SPEAR_VAULT_KICK(EnumBloodTendency.LUX, 12, 18, 30, 12, 18),
-	SPEAR_PINNING_THRUST(EnumBloodTendency.LUX, 18, 18, 30, 18),
-	CLAW_SHADOW_FEINT(EnumBloodTendency.TENEBRIS, 14, 14, 24, 14),
-	CLAW_EVISCERATE(EnumBloodTendency.TENEBRIS, 12, 24, 38, 12, 16, 20, 24),
-	CROSSBOW_SNAP_SHOT(EnumBloodTendency.DUCTILIS, 10, 10, 20, 10),
-	CROSSBOW_BOLT_RAIN(EnumBloodTendency.DUCTILIS, 20, 32, 44, 20, 26, 32),
-	TORCH_CINDER_SWEEP(EnumBloodTendency.FLAMMEUS, 14, 14, 26, 14),
-	FLAIL_ORBIT(EnumBloodTendency.CONGEATIO, 12, 28, 36, 12, 20, 28),
-	FLAIL_SHATTER_SLAM(EnumBloodTendency.CONGEATIO, 22, 22, 34, 22),
-	STAFF_LODESTONE_SWEEP(EnumBloodTendency.FERRIC, 14, 14, 28, 14),
-	STAFF_PILLAR_VAULT(EnumBloodTendency.FERRIC, 16, 22, 36, 16, 22),
+	BLADE_RISING_CUT(EnumBloodTemper.ANIMUS, 10, 10, 22, 10),
+	BLADE_DRAWING_STEP(EnumBloodTemper.ANIMUS, 16, 24, 36, 16, 24),
+	AXE_HAFT_SHOVE(EnumBloodTemper.MORTEM, 10, 10, 21, 10),
+	AXE_GRAVE_SPLITTER(EnumBloodTemper.MORTEM, 24, 30, 42, 24, 30),
+	SPEAR_VAULT_KICK(EnumBloodTemper.LUX, 12, 18, 30, 12, 18),
+	SPEAR_PINNING_THRUST(EnumBloodTemper.LUX, 18, 18, 30, 18),
+	CLAW_SHADOW_FEINT(EnumBloodTemper.TENEBRIS, 14, 14, 24, 14),
+	CLAW_EVISCERATE(EnumBloodTemper.TENEBRIS, 12, 24, 38, 12, 16, 20, 24),
+	CROSSBOW_SNAP_SHOT(EnumBloodTemper.DUCTILIS, 10, 10, 20, 10),
+	CROSSBOW_BOLT_RAIN(EnumBloodTemper.DUCTILIS, 20, 32, 44, 20, 26, 32),
+	TORCH_CINDER_SWEEP(EnumBloodTemper.FLAMMEUS, 14, 14, 26, 14),
+	FLAIL_ORBIT(EnumBloodTemper.CONGEATIO, 12, 28, 36, 12, 20, 28),
+	FLAIL_SHATTER_SLAM(EnumBloodTemper.CONGEATIO, 22, 22, 34, 22),
+	STAFF_LODESTONE_SWEEP(EnumBloodTemper.FERRIC, 14, 14, 28, 14),
+	STAFF_PILLAR_VAULT(EnumBloodTemper.FERRIC, 16, 22, 36, 16, 22),
 	// The expanded dual-sickle act (VesperSickleRules).
 	SICKLE_REAP_L(null, 10, 10, 18, 10),
 	SICKLE_REAP_R(null, 10, 10, 18, 10),
@@ -70,22 +70,22 @@ public enum VesperWeaponAction {
 	BORROWED_BELLOWS_BREATH(null, 14, 30, 40, 14, 18, 22, 26, 30),
 	BORROWED_MNEMONIC_LASH(null, 16, 16, 28, 16);
 
-	private final EnumBloodTendency tendency;
+	private final EnumBloodTemper temper;
 	private final int impactTick;
 	private final int lastImpactTick;
 	private final int durationTicks;
 	private final int[] contactTicks;
 
-	VesperWeaponAction(EnumBloodTendency tendency, int impactTick, int lastImpactTick, int durationTicks,
+	VesperWeaponAction(EnumBloodTemper temper, int impactTick, int lastImpactTick, int durationTicks,
 			int... contactTicks) {
-		this.tendency = tendency;
+		this.temper = temper;
 		this.impactTick = impactTick;
 		this.lastImpactTick = lastImpactTick;
 		this.durationTicks = durationTicks;
 		this.contactTicks = contactTicks;
 	}
 
-	public EnumBloodTendency tendency() { return tendency; }
+	public EnumBloodTemper temper() { return temper; }
 	public int impactTick() { return impactTick; }
 	public int lastImpactTick() { return lastImpactTick; }
 	public int durationTicks() { return durationTicks; }

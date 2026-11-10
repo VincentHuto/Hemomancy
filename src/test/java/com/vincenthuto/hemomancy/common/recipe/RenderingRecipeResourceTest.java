@@ -29,7 +29,7 @@ class RenderingRecipeResourceTest {
 		try (Stream<Path> stream = Files.list(RepoPaths.DATA.resolve("recipe/rendering"))) {
 			files = stream.filter(path -> path.toString().endsWith(".json")).sorted().toList();
 		}
-		assertEquals(9, files.size(), "one recipe per tendency enzyme, plus the spore sac");
+		assertEquals(9, files.size(), "one recipe per temper enzyme, plus the spore sac");
 		for (Path file : files) {
 			String name = file.getFileName().toString();
 			JsonObject recipe = ResourceReader.data("recipe/rendering/" + name);

@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EngramBoardGeneratorTest {
-	private static final String[] TENDENCIES = {"animus", "flammeus", "ductilis", "lux", "mortem", "congeatio", "ferric", "tenebris"};
+	private static final String[] TEMPERS = {"animus", "flammeus", "ductilis", "lux", "mortem", "congeatio", "ferric", "tenebris"};
 
 	/** Every distinct enzyme profile the authored weaving recipes ask for. */
 	private static List<int[]> profiles() throws IOException {
@@ -31,7 +31,7 @@ class EngramBoardGeneratorTest {
 				if (!json.has("enzymes")) continue;
 				JsonObject enzymes = json.getAsJsonObject("enzymes");
 				int[] counts = new int[8];
-				for (int t = 0; t < 8; t++) counts[t] = enzymes.has(TENDENCIES[t]) ? enzymes.get(TENDENCIES[t]).getAsInt() : 0;
+				for (int t = 0; t < 8; t++) counts[t] = enzymes.has(TEMPERS[t]) ? enzymes.get(TEMPERS[t]).getAsInt() : 0;
 				if (seen.add(java.util.Arrays.toString(counts))) out.add(counts);
 			}
 		}
@@ -87,7 +87,7 @@ class EngramBoardGeneratorTest {
 				EngramBoard board = EngramBoardGenerator.generate(seed, counts, EnumManipulationRank.HUMILIS);
 				for (int t = 0; t < 8; t++)
 					assertTrue(board.reference()[t] <= counts[t] * EngramWeaveRules.SPANS_PER_ENZYME,
-							java.util.Arrays.toString(counts) + " seed " + seed + " tendency " + t + " costs " + board.reference()[t]);
+							java.util.Arrays.toString(counts) + " seed " + seed + " temper " + t + " costs " + board.reference()[t]);
 			}
 	}
 

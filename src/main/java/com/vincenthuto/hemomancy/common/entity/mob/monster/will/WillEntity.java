@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonSync;
 import com.vincenthuto.hemomancy.common.entity.summon.SyncedBoundSummon;
@@ -124,7 +124,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
 		builder.define(DATA_ORIGIN, (byte) WillOrigin.BROKEN.ordinal());
-		builder.define(DATA_SCHOOL, (byte) EnumBloodTendency.ANIMUS.ordinal());
+		builder.define(DATA_SCHOOL, (byte) EnumBloodTemper.ANIMUS.ordinal());
 		builder.define(DATA_TIER, (byte) 1);
 		builder.define(DATA_PHASE, (byte) WillPhase.MATERIALIZED.ordinal());
 		builder.define(DATA_TARGET_UUID, Optional.empty());
@@ -146,7 +146,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 		return data;
 	}
 
-	public void configure(WillOrigin origin, EnumBloodTendency school, int tier, @Nullable Player target,
+	public void configure(WillOrigin origin, EnumBloodTemper school, int tier, @Nullable Player target,
 			boolean drifting) {
 		setOrigin(origin);
 		setSchool(school);
@@ -537,7 +537,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 		if (!canBloodUtilityBend()) {
 			return false;
 		}
-		HemoCapabilityAccess.getBloodTendency(player).addTendencyAlignment(getSchool(), -3.0F);
+		HemoCapabilityAccess.getBloodTemperament(player).addTemperAlignment(getSchool(), -3.0F);
 		spawnProjectedBanishmentBurst();
 		startDissolving(false);
 		return true;
@@ -553,7 +553,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 	}
 
 	private void completeAbsorption(ServerPlayer player) {
-		HemoCapabilityAccess.getBloodTendency(player).addTendencyAlignment(getSchool(), 3.0F);
+		HemoCapabilityAccess.getBloodTemperament(player).addTemperAlignment(getSchool(), 3.0F);
 		clearFalterBurst();
 		clearAbsorptionStruggle();
 		dropAbsorptionCompletionLoot();
@@ -593,7 +593,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 
 	private void dropDissolveLoot() {
 		WillCombatRules.LootProfile loot = WillCombatRules.lootFor(getSchool(), getTier(), getOrigin());
-		spawnAtLocation(EnumBloodTendency.getRepEnzyme(loot.school()));
+		spawnAtLocation(EnumBloodTemper.getRepEnzyme(loot.school()));
 		if (loot.canDropFadedMemory() && random.nextFloat() < 0.08F) {
 			spawnAtLocation(ItemInit.faded_memory.get());
 		}
@@ -606,7 +606,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 	}
 
 	private void dropAbsorptionCompletionLoot() {
-		if (random.nextFloat() < 0.5F) spawnAtLocation(EnumBloodTendency.getRepEnzyme(getSchool()));
+		if (random.nextFloat() < 0.5F) spawnAtLocation(EnumBloodTemper.getRepEnzyme(getSchool()));
 		if (random.nextFloat() < 0.15F) spawnAtLocation(ItemInit.faded_memory.get());
 	}
 
@@ -695,11 +695,11 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 		entityData.set(DATA_ORIGIN, (byte) origin.ordinal());
 	}
 
-	public EnumBloodTendency getSchool() {
-		return EnumBloodTendency.values()[Math.max(0, Math.min(EnumBloodTendency.values().length - 1, entityData.get(DATA_SCHOOL)))];
+	public EnumBloodTemper getSchool() {
+		return EnumBloodTemper.values()[Math.max(0, Math.min(EnumBloodTemper.values().length - 1, entityData.get(DATA_SCHOOL)))];
 	}
 
-	public void setSchool(EnumBloodTendency school) {
+	public void setSchool(EnumBloodTemper school) {
 		entityData.set(DATA_SCHOOL, (byte) school.ordinal());
 	}
 
@@ -746,7 +746,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 		if (tag.contains("WillOrigin")) setOrigin(WillOrigin.valueOf(tag.getString("WillOrigin")));
-		if (tag.contains("WillSchool")) setSchool(EnumBloodTendency.valueOf(tag.getString("WillSchool")));
+		if (tag.contains("WillSchool")) setSchool(EnumBloodTemper.valueOf(tag.getString("WillSchool")));
 		setTier(tag.getInt("WillTier"));
 		if (tag.contains("WillPhase")) setPhase(WillPhase.valueOf(tag.getString("WillPhase")));
 		falterTicks = tag.getInt("FalterTicks");

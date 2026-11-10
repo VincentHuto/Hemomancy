@@ -5,7 +5,7 @@ import static com.vincenthuto.hemomancy.client.render.world.LuxUmbraGeometry.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules;
 import com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.Delivery;
@@ -40,20 +40,20 @@ final class CastImpactGeometry {
         double s = Math.max(.6, packet.radius()) * CastImpactRules.scale(cue.weight()) * .9;
         int seed = Math.floorMod(packet.from().hashCode(), 113);
         // Mortem is sluggish: its whole impact plays at about two thirds speed.
-        float t = cue.primary() == EnumBloodTendency.MORTEM ? age * .65f : age;
+        float t = cue.primary() == EnumBloodTemper.MORTEM ? age * .65f : age;
         float presence = alpha * CastImpactRules.presence(t);
         if (presence <= .003f) return;
         var at = new Impact(p, camera, right, up, dir, dir.scale(-1), basis, s, seed, time, t, CastImpactRules.burst(t), presence,
-                cue.primary() == EnumBloodTendency.TENEBRIS);
+                cue.primary() == EnumBloodTemper.TENEBRIS);
         if (solids) {
-            if (cue.primary() == EnumBloodTendency.FERRIC) splinters(at, iron);
+            if (cue.primary() == EnumBloodTemper.FERRIC) splinters(at, iron);
             return;
         }
         VertexConsumer v = flows.vertices(material(cue.primary()));
-        int tint = cue.primary() == EnumBloodTendency.FERRIC ? BLOOD : TINT;
+        int tint = cue.primary() == EnumBloodTemper.FERRIC ? BLOOD : TINT;
         // Cruor glass has no soft card; Congeatio's flash is the pale cold light of the ice instead.
-        flash(at, cue.primary() == EnumBloodTendency.CONGEATIO ? flows.vertices(LuxUmbraBatch.Material.LUX) : v,
-                cue.primary() == EnumBloodTendency.LUX ? 1.5 : 1);
+        flash(at, cue.primary() == EnumBloodTemper.CONGEATIO ? flows.vertices(LuxUmbraBatch.Material.LUX) : v,
+                cue.primary() == EnumBloodTemper.LUX ? 1.5 : 1);
         switch (cue.delivery()) {
             case MELEE -> melee(at, v, tint);
             case PROJECTILE -> projectile(at, v, tint);
@@ -71,7 +71,7 @@ final class CastImpactGeometry {
     private record Impact(PoseStack p, Vec3 camera, Vec3 right, Vec3 up, Vec3 dir, Vec3 out, Vec3[] basis, double s, int seed,
                           double time, float age, float grow, float alpha, boolean implode) {}
 
-    static LuxUmbraBatch.Material material(EnumBloodTendency school) {
+    static LuxUmbraBatch.Material material(EnumBloodTemper school) {
         return switch (school) {
             case ANIMUS -> LuxUmbraBatch.Material.ANIMUS;
             case FLAMMEUS -> LuxUmbraBatch.Material.FLAME;
@@ -188,7 +188,7 @@ final class CastImpactGeometry {
 
     //  The school's flourish
 
-    private static void flourish(Impact at, EnumBloodTendency school, LuxUmbraBatch flows) {
+    private static void flourish(Impact at, EnumBloodTemper school, LuxUmbraBatch flows) {
         switch (school) {
             case ANIMUS -> clots(at, flows.vertices(LuxUmbraBatch.Material.ANIMUS));
             case FLAMMEUS -> flames(at, flows.vertices(LuxUmbraBatch.Material.FLAME));

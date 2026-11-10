@@ -21,8 +21,8 @@ public final class ScryingDiagnosticsTabsTest {
 		assertEquals("Blood", EnglishText.render(tabs.get(0).label()), "blood label");
 		assertEquals(ScryingDiagnosticsTabs.Tab.MANIPULATIONS, tabs.get(1), "second tab");
 		assertEquals("Manipulations", EnglishText.render(tabs.get(1).label()), "manipulations label");
-		assertEquals(ScryingDiagnosticsTabs.Tab.TENDENCY, tabs.get(2), "third tab");
-		assertEquals("Tendency", EnglishText.render(tabs.get(2).label()), "tendency label");
+		assertEquals(ScryingDiagnosticsTabs.Tab.TEMPER, tabs.get(2), "third tab");
+		assertEquals("Temper", EnglishText.render(tabs.get(2).label()), "temper label");
 	}
 
 	private static void tabDescriptorsMarkOnlyTheActiveTab() {
@@ -31,7 +31,7 @@ public final class ScryingDiagnosticsTabsTest {
 		assertEquals(3, descs.size(), "descriptor count");
 		assertEquals(false, descs.get(0).active(), "blood inactive");
 		assertEquals(true, descs.get(1).active(), "manipulations active");
-		assertEquals(false, descs.get(2).active(), "tendency inactive");
+		assertEquals(false, descs.get(2).active(), "temper inactive");
 		assertEquals("Manipulations", descs.get(1).label(), "active label");
 	}
 

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.boss.saint.velorum;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
 import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
@@ -496,7 +496,7 @@ public class VelorumEntity extends SaintTrialEntity {
 			VelorumMoves.sound(this, at, SoundEvents.GLASS_HIT, 0.6F, 0.6F);
 			VelorumEffects.guarded(this, at);
 		}
-		boolean searing = hit.fire() || hit.school() == EnumBloodTendency.FLAMMEUS;
+		boolean searing = hit.fire() || hit.school() == EnumBloodTemper.FLAMMEUS;
 		SaintOpening.Spec current = openings().current();
 		if (current != null) {
 			windowDamage += applied;

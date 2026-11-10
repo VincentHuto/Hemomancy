@@ -71,7 +71,7 @@ This file lists every decision made without you (**Ruling**) and every review fi
 - Final: fixed tier_required feedback flooding chat every channel tick (re-graded Important) — action bar; pinned by MemoryWeavingRedesignSourceTest contract written after the one-token fix (no RED observed)
 
 ### Deferred minors
-- Final: minor (deferred): ClearLoomStatePacket/clearTendency ignores riteLocked and paid weaves (no client sender; crafted packet only; rite fails safe).
+- Final: minor (deferred): ClearLoomStatePacket/clearTemper ignores riteLocked and paid weaves (no client sender; crafted packet only; rite fails safe).
 - Final: minor (deferred): staff ranged hook ignores block occlusion (can hook through walls within 8 blocks).
 - Final: minor (deferred): client/server hook disagreement at the edge of reach; hookLookedAtThread ignores tryHook's result.
 - Final: minor (deferred): kit-as-catalyst refusal is hard-coded English (no lang key).

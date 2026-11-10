@@ -29,7 +29,7 @@ is the model.
 - **Facts are exact.** Every item, block, rite, NPC and place name, number, cost, Degree and step order stays as it
   is. A rewrite never adds a mechanic, a fact or a piece of lore that isn't in the line or the lore reference.
 - **Canonical terms stay.** Hematic Order, Sanguine Brotherhood, Crimson Lodge, Lethean, Noetic and Thelemic Memory,
-  the tendency and enzyme names (which intentionally don't mirror each other).
+  the temper and enzyme names (which intentionally don't mirror each other).
 - **Dialogue formatting.** "the fifth Degree" or "Degree 5" in speech, never "D5". Millilitres as `mL` with a space.
   Straight quotes, no em or en dashes, no added `...`. Keep `§` colour codes, `%s` placeholders and bracketed stage
   directions working.
@@ -236,7 +236,7 @@ what was asked. What will be lost if a step is done wrong.
 
 **How they teach or refuse.** In the first person, as procedure, with the reason attached where it changes what the
 player does. Controls the game needs (Hold Use, sneak-use, left-click, named slots) are exact and said once. What a
-reagent does in the glass comes before any statement about what its tendency "is". Work that belongs to someone else
+reagent does in the glass comes before any statement about what its temper "is". Work that belongs to someone else
 gets one clause and a name. A refusal states what is missing.
 
 **Two encounter contrasts.**
@@ -1344,5 +1344,5 @@ These came up while measuring the voices. They're about canon, data or code, not
 12. **The Hermit's scar lines. Applied:** they point to the Vein-Mason's Brazier lesson instead of "wear the scar"
     and the Scarring Station.
 13. **Dead text.** The performer barks (`dialogue.circus_<role>.line1-3`) are only used by an uncalled method.
-14. **Alchemist slips.** `votary.tendency_lore` lists enzyme names as if they were tendencies, and the
+14. **Alchemist slips.** `votary.temper_lore` lists enzyme names as if they were tempers, and the
     `item_inquiry.clairaudiograph` lines 2 to 4 are identical.

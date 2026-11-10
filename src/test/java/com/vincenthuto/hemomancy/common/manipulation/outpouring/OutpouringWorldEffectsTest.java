@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.outpouring;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OutpouringWorldEffectsTest {
 
     @Test void allEffectsAreNoOps() {
-        for (var school : EnumBloodTendency.values()) assertSame(OutpouringWorldEffects.NONE, OutpouringWorldEffects.effect(school));
+        for (var school : EnumBloodTemper.values()) assertSame(OutpouringWorldEffects.NONE, OutpouringWorldEffects.effect(school));
     }
 
     @Test void configDefaultIsNever() throws IOException {

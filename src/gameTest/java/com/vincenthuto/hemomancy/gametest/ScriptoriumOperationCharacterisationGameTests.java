@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumProvenance;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
@@ -43,7 +43,7 @@ import java.util.function.Consumer;
 @PrefixGameTestTemplate(false)
 public final class ScriptoriumOperationCharacterisationGameTests {
 	private static final String GOLDEN = "/scriptorium/operation-fingerprints.txt";
-	private static final int DUCTILIS = EnumBloodTendency.DUCTILIS.ordinal();
+	private static final int DUCTILIS = EnumBloodTemper.DUCTILIS.ordinal();
 
 	private ScriptoriumOperationCharacterisationGameTests() {
 	}
@@ -90,11 +90,11 @@ public final class ScriptoriumOperationCharacterisationGameTests {
 		}
 		// A target needs an enchantment rolled at its maximum level, which depends on the loaded enzymes.
 		for (int mode = 1; mode <= 2; mode++) {
-			for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+			for (EnumBloodTemper temper : EnumBloodTemper.values()) {
 				int chosenMode = mode;
-				scenario(helper, lines, "targeted inscription 3 with " + tendency + " in mode " + mode,
+				scenario(helper, lines, "targeted inscription 3 with " + temper + " in mode " + mode,
 						new Setup(mode == 1 ? 1 : 2, mode == 1 ? 5 : 7, false, false, 1000.0D), (s) -> {
-							for (int i = 0; i < 3; i++) s.click(tendency.ordinal());
+							for (int i = 0; i < 3; i++) s.click(temper.ordinal());
 							s.click(20 + chosenMode);
 							s.click(10);
 						});
@@ -206,7 +206,7 @@ public final class ScriptoriumOperationCharacterisationGameTests {
 		var station = (EnzymaticScriptoriumBlockEntity) level.getBlockEntity(position);
 		station.receiveBlood(setup.blood());
 		for (int i = 0; i < 8; i++) {
-			station.setItem(i, new ItemStack(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[i]), 3));
+			station.setItem(i, new ItemStack(EnumBloodTemper.getRepEnzyme(EnumBloodTemper.values()[i]), 3));
 		}
 		ItemStack item = new ItemStack(Items.DIAMOND_PICKAXE);
 		if (setup.cursedItem()) {

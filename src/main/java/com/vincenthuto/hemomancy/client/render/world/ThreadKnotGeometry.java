@@ -23,7 +23,7 @@ public final class ThreadKnotGeometry {
 	private ThreadKnotGeometry() {
 	}
 
-	/** Tendency colour lifted so the darkest schools (Mortem, Ferric) still read as light. */
+	/** Temper colour lifted so the darkest schools (Mortem, Ferric) still read as light. */
 	public static float[] vivid(ParticleColor color) {
 		float r = color.getRed() / 255f, g = color.getGreen() / 255f, b = color.getBlue() / 255f;
 		float max = Math.max(r, Math.max(g, b));

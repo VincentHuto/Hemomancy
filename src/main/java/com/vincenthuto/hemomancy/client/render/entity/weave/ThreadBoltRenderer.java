@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-/** A small hot knot of its tendency streaking at the weaver, fibres trailing behind. */
+/** A small hot knot of its temper streaking at the weaver, fibres trailing behind. */
 public class ThreadBoltRenderer extends EntityRenderer<ThreadBoltEntity> {
 	public ThreadBoltRenderer(EntityRendererProvider.Context context) {
 		super(context);
@@ -31,7 +31,7 @@ public class ThreadBoltRenderer extends EntityRenderer<ThreadBoltEntity> {
 		Vector3f up = new Vector3f(camera.getUpVector());
 		float time = AnimationTime.age(bolt, partialTicks);
 		float seed = (bolt.getId() * 0.618f) % 1f;
-		float[] colour = ThreadKnotGeometry.hot(ThreadKnotGeometry.vivid(bolt.tendency().getColor()));
+		float[] colour = ThreadKnotGeometry.hot(ThreadKnotGeometry.vivid(bolt.temper().getColor()));
 		VertexConsumer vc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
 		Matrix4f mat = stack.last().pose();
 		Vector3f at = new Vector3f(0, bolt.getBbHeight() / 2, 0);

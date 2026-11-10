@@ -129,7 +129,7 @@ The pavilion is the old arena inside a 65x65 shell of six rooms. It holds 20 Hem
 - Acclimation thresholds, the 1/80-tick rate, milestone values and the 200-loaded-tick absent-owner grace were implementation selections (`02-...`, `03-...`).
 - Worldgen spacing, footprint and biome tag values were "implemented initial selection", to be revisited only on fresh-chunk evidence (`02-...`).
 - Luminal Cicada was chosen as the one candidate creature (WP-6) over snake and other candidates (`04-...`, `05-...`).
-- Trade catalogue: the Ringmaster's "finale's leavings" card was dropped (the topper is never sold); a D4 bell-for-thread card is the carrot; performers got one act-themed card each instead of a tendency-graded curiosity; spectacle became a new `act` want kind rather than a Circus reading of Court `custom` (`npc_trade/05-...`, `06-...`).
+- Trade catalogue: the Ringmaster's "finale's leavings" card was dropped (the topper is never sold); a D4 bell-for-thread card is the carrot; performers got one act-themed card each instead of a temper-graded curiosity; spectacle became a new `act` want kind rather than a Circus reading of Court `custom` (`npc_trade/05-...`, `06-...`).
 - The Circus trade box draws in the theme the Ringmaster's tree already uses and the default crest; no Circus `DialogueTheme` or crest exists (`npc_trade/04-trade-screen.md`).
 - Demonstration stage bodies now sync their teacher as owner (and so no longer despawn in Peaceful); performer threads are anchored from the rendered right hand (`08-crimson-troupe-implementation-report.md`).
 - Faculty, Juggler, Hulk, Bellows and camp visual rebuilds (2026-10-08/09) were authored from previews only; native appearance was not reviewed (`08-...`).

@@ -3,9 +3,9 @@ package com.vincenthuto.hemomancy.common.damage;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.CombatWeaponCarrierProjectile;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TemperWeaponHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyDamageCarrier;
+import com.vincenthuto.hemomancy.common.manipulation.TemperDamageCarrier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -74,12 +74,12 @@ public final class SchoolDamage {
         SchoolHitContext origin = projectileContext(owner);
         if (origin != null && !(owner instanceof Player)) return origin.newAttack();
         var primary = owner instanceof WillEntity will ? will.getSchool()
-                : TendencyWeaponHelper.getWeaponTendency(weapon).orElse(null);
+                : TemperWeaponHelper.getWeaponTemper(weapon).orElse(null);
         if (primary == null) return null;
         var ability = owner instanceof WillEntity ? Hemomancy.rloc("will_melee")
                 : BuiltInRegistries.ITEM.getKey(weapon.getItem());
         return SchoolHitContext.direct(ability, primary,
-                TendencyWeaponHelper.getWeaponSecondaryTendency(weapon).orElse(null), owner);
+                TemperWeaponHelper.getWeaponSecondaryTemper(weapon).orElse(null), owner);
     }
 
     /** Called at launch, while the paid cast's scope and the launch weapon still exist. */
@@ -87,9 +87,9 @@ public final class SchoolDamage {
         if (projectile.getPersistentData().contains(PROJECTILE_CONTEXT)) return;
         SchoolHitContext hit = current();
         LivingEntity owner = projectile.getOwner() instanceof LivingEntity living ? living : null;
-        if (hit == null && projectile instanceof TendencyDamageCarrier carrier && carrier.getDamageTendency() != null) {
+        if (hit == null && projectile instanceof TemperDamageCarrier carrier && carrier.getDamageTemper() != null) {
             hit = SchoolHitContext.direct(BuiltInRegistries.ENTITY_TYPE.getKey(projectile.getType()),
-                    carrier.getDamageTendency(), carrier.getSecondaryDamageTendency(), owner);
+                    carrier.getDamageTemper(), carrier.getSecondaryDamageTemper(), owner);
         }
         if (hit == null && owner != null) {
             ItemStack weapon = projectile instanceof CombatWeaponCarrierProjectile carrier ? carrier.getCombatWeaponItem()
@@ -180,7 +180,7 @@ public final class SchoolDamage {
     public static void clearRetort(LivingEntity entity) { entity.getPersistentData().remove(RETORT_CONTEXT); }
 
     public static DamageSource reaction(LivingEntity owner, String ability,
-            com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency school) {
+            com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper school) {
         return reaction(owner, SchoolHitContext.direct(Hemomancy.rloc(ability), school, null, owner));
     }
 

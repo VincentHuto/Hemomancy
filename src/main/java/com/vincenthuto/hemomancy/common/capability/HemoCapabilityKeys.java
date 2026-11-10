@@ -13,7 +13,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.Ichoria
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarItem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnownSummons;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.shared.trade.NpcTradeLedger;
@@ -30,8 +30,8 @@ public final class HemoCapabilityKeys {
     public static final EntityCapability<IBloodVolume, Void> BLOOD_VOLUME =
             EntityCapability.createVoid(Hemomancy.rloc("blood_volume"), IBloodVolume.class);
 
-    public static final EntityCapability<IBloodTendency, Void> BLOOD_TENDENCY =
-            EntityCapability.createVoid(Hemomancy.rloc("blood_tendency"), IBloodTendency.class);
+    public static final EntityCapability<IBloodTemperament, Void> BLOOD_TEMPERAMENT =
+            EntityCapability.createVoid(Hemomancy.rloc("blood_temperament"), IBloodTemperament.class);
 
     public static final EntityCapability<IVascularSystem, Void> VASCULAR_SYSTEM =
             EntityCapability.createVoid(Hemomancy.rloc("vascular_system"), IVascularSystem.class);

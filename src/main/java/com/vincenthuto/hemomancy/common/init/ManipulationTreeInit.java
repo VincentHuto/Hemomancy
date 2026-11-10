@@ -133,7 +133,7 @@ public class ManipulationTreeInit {
 		register("grave_debt",2210,-53, "hemorrhage", "exsanguinate");
 		register("blackhearted",2210,17, "grave_debt");
 
-		// Degree 4–5 tendency capstones
+		// Degree 4–5 temper capstones
 		register("crimson_coronation",480,134, "blood_cloud", "summon_avatar");
 		register("iron_choir",850,70, "iron_retort", "ironhearted");
 		register("living_circuit",1110,95, "conductive_mark");

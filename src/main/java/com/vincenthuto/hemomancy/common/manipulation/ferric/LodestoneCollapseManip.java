@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -39,8 +39,8 @@ public class LodestoneCollapseManip extends BloodManipulation {
 	private static final double PULL = 0.9D;
 
 	public LodestoneCollapseManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+			EnumManipulationRank rank, EnumBloodTemper temper, EnumVeinSections section) {
+		super(name, cost, alignLevel, xpCost, type, rank, temper, section);
 	}
 
 	/** Iron answers the lodestone only through open air: a wall between the point and a body shields it. */

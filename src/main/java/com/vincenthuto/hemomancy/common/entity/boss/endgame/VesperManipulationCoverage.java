@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 
 import javax.annotation.Nullable;
@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.*;
+import static com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper.*;
 
 /**
  * Every registered manipulation and how the Evening Star can use it. CASTABLE goes through the shared entity cast
@@ -26,7 +26,7 @@ public final class VesperManipulationCoverage {
 	public record Spec(Kind kind, Form form, float power) {
 	}
 
-	public record Entry(Coverage coverage, @Nullable EnumBloodTendency school, String reason, @Nullable Spec spec) {
+	public record Entry(Coverage coverage, @Nullable EnumBloodTemper school, String reason, @Nullable Spec spec) {
 	}
 
 	public static final Map<String, Entry> TABLE = new LinkedHashMap<>();
@@ -141,11 +141,11 @@ public final class VesperManipulationCoverage {
 	private VesperManipulationCoverage() {
 	}
 
-	private static void castable(String id, EnumBloodTendency school) {
+	private static void castable(String id, EnumBloodTemper school) {
 		TABLE.put(id, new Entry(Coverage.CASTABLE, school, "", null));
 	}
 
-	private static void variant(String id, EnumBloodTendency school, Kind kind, Form form, float power) {
+	private static void variant(String id, EnumBloodTemper school, Kind kind, Form form, float power) {
 		TABLE.put(id, new Entry(Coverage.BOSS_VARIANT, school, "", new Spec(kind, form, power)));
 	}
 
@@ -159,7 +159,7 @@ public final class VesperManipulationCoverage {
 	}
 
 	/** Every fight manipulation of a school, castable or boss variant. */
-	public static List<String> usable(EnumBloodTendency school) {
+	public static List<String> usable(EnumBloodTemper school) {
 		return TABLE.entrySet().stream()
 				.filter(e -> e.getValue().coverage() != Coverage.EXCLUDED && e.getValue().school() == school)
 				.map(Map.Entry::getKey).toList();

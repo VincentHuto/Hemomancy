@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
@@ -21,8 +21,8 @@ import java.util.Random;
 /** Direct GUI slide; all positions are in a square field beneath the brass mask. */
 public final class HematicMicroscopeOverlay {
     private static final ResourceLocation FRAME = texture("frame"), PLASMA = texture("plasma");
-    private static final ResourceLocation[] CELLS = Arrays.stream(EnumBloodTendency.values())
-            .map(tendency -> texture("tendencies/" + tendency.name().toLowerCase(Locale.ROOT)))
+    private static final ResourceLocation[] CELLS = Arrays.stream(EnumBloodTemper.values())
+            .map(temper -> texture("tempers/" + temper.name().toLowerCase(Locale.ROOT)))
             .toArray(ResourceLocation[]::new);
     private static final ResourceLocation[] MOTIFS = Arrays.stream(MicroscopeComposition.Motif.values())
             .map(motif -> texture("properties/" + motif.name().toLowerCase(Locale.ROOT)))
@@ -205,8 +205,8 @@ public final class HematicMicroscopeOverlay {
             sprite(gfx, BASE_CELL, 64, x, y, 11 + random.nextFloat() * 9, i * 41, 0.7F, 0.48F, 0.44F, murky ? 0.15F : 0.38F);
         }
         if (murky) return;
-        for (var tendency : composition.tendencies()) {
-            var color = tendency.getColor();
+        for (var temper : composition.tempers()) {
+            var color = temper.getColor();
             // A small neutral highlight makes Mortem/Ferric legible while retaining the enum palette.
             float r = color.getRed() / 255F * 0.8F + 0.2F, g = color.getGreen() / 255F * 0.8F + 0.2F, b = color.getBlue() / 255F * 0.8F + 0.2F;
             for (int i = 0; i < (sparse ? 6 : 12); i++) {
@@ -214,10 +214,10 @@ public final class HematicMicroscopeOverlay {
                 double phase = i * 1.73 + time * 0.035;
                 float dx = (float)Math.sin(phase) * 5, dy = (float)Math.cos(phase * 0.8) * 4;
                 float size = 19 + random.nextFloat() * 7, alpha = 0.9F, angle = i * 31;
-                switch (tendency) {
+                switch (temper) {
                     case ANIMUS -> {
                         float bud = (float)(Math.sin(phase) + 1) * 4;
-                        sprite(gfx, CELLS[EnumBloodTendency.ANIMUS.ordinal()], 32, x + bud, y - bud, size * 0.52F, angle, r, g, b, 0.65F);
+                        sprite(gfx, CELLS[EnumBloodTemper.ANIMUS.ordinal()], 32, x + bud, y - bud, size * 0.52F, angle, r, g, b, 0.65F);
                     }
                     case FLAMMEUS -> { dy = (float)(-((time * 0.3 + i * 13) % 22)); size *= 0.92F + 0.08F * (float)Math.sin(phase * 3); }
                     case DUCTILIS -> {
@@ -240,7 +240,7 @@ public final class HematicMicroscopeOverlay {
                         if (!reduced) { dx += (float)Math.floor(phase / (Math.PI * 2)) % 3 * 9; }
                     }
                 }
-                sprite(gfx, CELLS[tendency.ordinal()], 32, x + dx, y + dy, size, angle, r, g, b, Math.max(0.08F, alpha));
+                sprite(gfx, CELLS[temper.ordinal()], 32, x + dx, y + dy, size, angle, r, g, b, Math.max(0.08F, alpha));
             }
         }
         for (var property : composition.properties()) {
@@ -308,9 +308,9 @@ public final class HematicMicroscopeOverlay {
                 ? Component.translatable("message.hemomancy.microscope.provenance") : sample.getHoverName());
         if (!murky && profile.identified()) {
             lines.add(Component.translatable("gui.hemomancy.microscope.identified"));
-            lines.add(Component.translatable("gui.hemomancy.microscope.tendencies"));
-            if (profile.tendencies().isEmpty()) lines.add(Component.translatable("gui.hemomancy.microscope.none"));
-            for (var tendency : profile.tendencies()) lines.add(Component.translatable("blood_tendency.hemomancy." + tendency.name().toLowerCase(Locale.ROOT)));
+            lines.add(Component.translatable("gui.hemomancy.microscope.tempers"));
+            if (profile.tempers().isEmpty()) lines.add(Component.translatable("gui.hemomancy.microscope.none"));
+            for (var temper : profile.tempers()) lines.add(Component.translatable("blood_temper.hemomancy." + temper.name().toLowerCase(Locale.ROOT)));
             lines.add(Component.translatable("gui.hemomancy.microscope.properties"));
             if (profile.properties().isEmpty()) lines.add(Component.translatable("gui.hemomancy.microscope.none"));
             for (var property : profile.properties()) lines.add(Component.translatableWithFallback(

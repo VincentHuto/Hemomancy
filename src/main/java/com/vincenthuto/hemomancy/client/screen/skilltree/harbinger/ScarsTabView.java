@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeShape;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RecipeMapInspectorLayout;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.gui.GuiGraphics;
@@ -29,16 +29,16 @@ final class ScarsTabView {
 	private ScarsTabView() {}
 
 	static void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx, ScarsTabState state,
-	                     PanZoomState panZoom, int playerDegree, EnumBloodTendency family) {
+	                     PanZoomState panZoom, int playerDegree, EnumBloodTemper family) {
 		animationTime += 0.016f;
 		int halfNode = panZoom.halfNode(ScarsTabController.NODE_SIZE);
 		for (ScarTreeEntry entry : state.entries) {
-			if (family != null && entry.tendency() != family) continue;
+			if (family != null && entry.temper() != family) continue;
 			ScarTreeLayout.Point point = state.positions.get(entry.id().toString());
 			if (point == null) continue;
 			int x = panZoom.sx(ctx.guiLeft(), point.x());
 			int y = panZoom.sy(ctx.guiTop(), point.y());
-			int tendencyColor = tendencyColor(entry);
+			int temperColor = temperColor(entry);
 			boolean known = state.knownScarIds.contains(entry.id());
 			boolean active = state.activeScarIds.contains(entry.id());
 			ScarNodeVisualState visual = ScarNodeVisualState.resolve(
@@ -50,18 +50,18 @@ final class ScarsTabView {
 				float pulse = 0.5f + 0.5f * Mth.sin(animationTime * speed + entry.id().hashCode() * 0.1f);
 				NodeShapeRenderer.drawFill(gfx, NODE_SHAPE, x, y,
 						halfNode + (visual == ScarNodeVisualState.ACTIVE ? 5 : 3),
-						(withAlpha(tendencyColor, (int) (maxAlpha * pulse))));
+						(withAlpha(temperColor, (int) (maxAlpha * pulse))));
 			}
 			if (entry.id().toString().equals(state.selectedScarId())) {
 				float pulse = 0.5f + 0.5f * Mth.sin(animationTime * 3.0f);
 				NodeShapeRenderer.drawFill(gfx, NODE_SHAPE, x, y, halfNode + 7,
-						withAlpha(tendencyColor, (int) (65 * pulse)));
+						withAlpha(temperColor, (int) (65 * pulse)));
 			}
 
 			int border = switch (visual) {
 				case LOCKED -> LOCKED_BORDER;
-				case UNLEARNED -> dim(tendencyColor, 0.30f);
-				case KNOWN, ACTIVE -> tendencyColor;
+				case UNLEARNED -> dim(temperColor, 0.30f);
+				case KNOWN, ACTIVE -> temperColor;
 			};
 			NodeShapeRenderer.drawFill(gfx, NODE_SHAPE, x, y, halfNode,
 					visual == ScarNodeVisualState.LOCKED ? 0xCC0D0303 : NODE_BG);
@@ -77,10 +77,10 @@ final class ScarsTabView {
 			// this zoom the "+N" line and names of neighbouring tiers start to collide.
 			if (panZoom.zoom >= LABEL_ZOOM) {
 				String deepen = deepenAmountLabel(entry.definition().getDeepenAmount());
-				gfx.drawCenteredString(ctx.font(), deepen, x, y - halfNode - 8, dim(tendencyColor, 0.85f));
+				gfx.drawCenteredString(ctx.font(), deepen, x, y - halfNode - 8, dim(temperColor, 0.85f));
 			}
 			if (panZoom.zoom >= LABEL_ZOOM) {
-				int labelColor = visual == ScarNodeVisualState.UNLEARNED ? dim(tendencyColor, 0.42f) : tendencyColor;
+				int labelColor = visual == ScarNodeVisualState.UNLEARNED ? dim(temperColor, 0.42f) : temperColor;
 				int labelY = y + halfNode + 3;
 				for (String line : ScreenDrawUtils.wrapText(ctx.font(), entry.result().getHoverName().getString(),
 						Math.max(28, (int) (78 * panZoom.zoom)))) {
@@ -92,10 +92,10 @@ final class ScarsTabView {
 	}
 
 	static ScarTreeEntry nodeUnder(ProgressScreenContext ctx, ScarsTabState state, PanZoomState panZoom,
-	                              EnumBloodTendency family, double mouseX, double mouseY) {
+	                              EnumBloodTemper family, double mouseX, double mouseY) {
 		int halfNode = panZoom.halfNode(ScarsTabController.NODE_SIZE);
 		for (ScarTreeEntry entry : state.entries) {
-			if (family != null && entry.tendency() != family) continue;
+			if (family != null && entry.temper() != family) continue;
 			ScarTreeLayout.Point point = state.positions.get(entry.id().toString());
 			if (point == null) continue;
 			int x = panZoom.sx(ctx.guiLeft(), point.x());
@@ -106,7 +106,7 @@ final class ScarsTabView {
 	}
 
 	static void drawTooltip(GuiGraphics gfx, ProgressScreenContext ctx, ScarsTabState state,
-	                        PanZoomState panZoom, int playerDegree, EnumBloodTendency family,
+	                        PanZoomState panZoom, int playerDegree, EnumBloodTemper family,
 	                        int mouseX, int mouseY) {
 		if (mouseX < ctx.guiLeft() || mouseX >= ctx.guiLeft() + ctx.guiWidth()
 				|| mouseY < ctx.guiTop() || mouseY >= ctx.guiTop() + ctx.guiHeight()) return;
@@ -115,7 +115,7 @@ final class ScarsTabView {
 		boolean locked = ScarsTabController.isTierLocked(entry.tier(), playerDegree);
 		boolean known = state.knownScarIds.contains(entry.id());
 		boolean active = state.activeScarIds.contains(entry.id());
-		int color = tendencyColor(entry);
+		int color = temperColor(entry);
 		List<Component> lines = new ArrayList<>();
 		if (locked) {
 			lines.add(Component.literal("???").withStyle(s -> s.withColor(0x555555).withBold(true)));
@@ -125,7 +125,7 @@ final class ScarsTabView {
 			lines.add(entry.result().getHoverName().copy().withStyle(s -> s.withColor(color).withBold(true)));
 			lines.add((active ? Component.translatable("screen.hemomancy.scars_tab_view.active") : (known ? Component.translatable("screen.hemomancy.scars_tab_view.known") : Component.translatable("screen.hemomancy.scars_tab_view.unlearned"))).withStyle(s -> s.withColor(active ? 0x55DD88 : known ? 0x66BB66 : 0xAA6666)));
 			lines.add(HemoText.translatable("screen.hemomancy.scars_tab_view.tier", roman(entry.tier())).withStyle(s -> s.withColor(0xAAAAAA)));
-			lines.add(HemoText.translatable("screen.hemomancy.scars_tab_view.tendency", proper(entry.tendency().name())).withStyle(s -> s.withColor(color)));
+			lines.add(HemoText.translatable("screen.hemomancy.scars_tab_view.temper", proper(entry.temper().name())).withStyle(s -> s.withColor(color)));
 			lines.add(HemoText.translatable("screen.hemomancy.scars_tab_view.deepen",
 					deepenAmountLabel(entry.definition().getDeepenAmount())).withStyle(s -> s.withColor(dim(color, 0.85f))));
 		}
@@ -141,7 +141,7 @@ final class ScarsTabView {
 		int panelH = Math.min(250, Math.max(190, ctx.guiHeight() - 36));
 		int panelX = ctx.guiLeft() + ctx.guiWidth() - panelW - 8;
 		int panelY = ctx.guiTop() + 26;
-		int color = tendencyColor(entry);
+		int color = temperColor(entry);
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, DETAILS_Z);
 		gfx.fill(panelX - 2, panelY - 2, panelX + panelW + 2, panelY + panelH + 2, 0xAA000000);
@@ -179,7 +179,7 @@ final class ScarsTabView {
 		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.status", Component.translatable("screen.hemomancy.scars_tab_view." + status)),
 				textX, y, 0xFF77BB88, false);
 		y += 11;
-		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.tendency", proper(entry.tendency().name())), textX, y, color, false);
+		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.temper", proper(entry.temper().name())), textX, y, color, false);
 		y += 11;
 		gfx.drawString(ctx.font(), Component.translatable("screen.hemomancy.scars_tab_view.deepen", deepenAmountLabel(entry.definition().getDeepenAmount())),
 				textX, y, dim(color, 0.85f), false);
@@ -250,8 +250,8 @@ final class ScarsTabView {
 		return path.contains("/") ? path.substring(path.lastIndexOf('/') + 1) : path;
 	}
 
-	private static int tendencyColor(ScarTreeEntry entry) {
-		ParticleColor color = entry.tendency().getColor();
+	private static int temperColor(ScarTreeEntry entry) {
+		ParticleColor color = entry.temper().getColor();
 		return 0xFF000000 | ((int) color.getRed() << 16) | ((int) color.getGreen() << 8) | (int) color.getBlue();
 	}
 

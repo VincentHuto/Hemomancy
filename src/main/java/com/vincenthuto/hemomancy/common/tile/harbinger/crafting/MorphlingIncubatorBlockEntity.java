@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
@@ -280,8 +280,8 @@ public class MorphlingIncubatorBlockEntity extends HemoContainerBlockEntity impl
 	}
 
 	private void snapshotEnzymeContributions(IMorphling morphling) {
-		EnumBloodTendency preferred = morphling.getPreferredTendency();
-		EnumBloodTendency secondary = morphling.getSecondaryTendency();
+		EnumBloodTemper preferred = morphling.getPreferredTemper();
+		EnumBloodTemper secondary = morphling.getSecondaryTemper();
 		for (int slot = SLOT_CATALYST_START; slot <= SLOT_CATALYST_END; slot++) {
 			ItemStack stack = inventory.get(slot);
 			double contribution = 0.0D;

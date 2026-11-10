@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.outpouring;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -29,7 +29,7 @@ public final class OutpouringWorldEffects {
     private OutpouringWorldEffects() {}
 
 
-    public static Effect effect(EnumBloodTendency school) { return NONE; }
+    public static Effect effect(EnumBloodTemper school) { return NONE; }
 
     public static void release(ServerPlayer caster, BloodManipulation manipulation) {
         var effect = effect(manipulation.getTend());

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public class MycophantTendrilItem extends VasculariumCharmItem {
 	public MycophantTendrilItem(Properties properties) {
-		super(properties, EnumBloodTendency.ANIMUS, 0.0F);
+		super(properties, EnumBloodTemper.ANIMUS, 0.0F);
 	}
 
 	@Override

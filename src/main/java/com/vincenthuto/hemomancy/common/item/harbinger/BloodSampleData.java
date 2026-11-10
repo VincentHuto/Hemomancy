@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.item.unstained.CleansingHemolymphItem;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -21,10 +21,10 @@ public final class BloodSampleData {
                 || entityType(stack) != null;
     }
     private BloodSampleData() {}
-    public record Profile(ResourceLocation sourceEntityId, List<EnumBloodTendency> tendencies,
+    public record Profile(ResourceLocation sourceEntityId, List<EnumBloodTemper> tempers,
                           List<ResourceLocation> properties, boolean identified) {
         public Profile {
-            tendencies = tendencies.stream().distinct().sorted().toList();
+            tempers = tempers.stream().distinct().sorted().toList();
             properties = properties.stream().distinct().sorted(Comparator.comparing(ResourceLocation::toString)).toList();
         }
     }
@@ -91,10 +91,10 @@ public final class BloodSampleData {
     public static Profile profile(ItemStack stack, boolean clientSide) {
         var saint = ConsecratedSyringeItem.getSaintType(stack);
         if (saint != null) return new Profile(sourceId(stack),
-                List.of(saint.getPrimaryTendency(), saint.getSecondaryTendency()), List.of(), identified(stack));
+                List.of(saint.getPrimaryTemper(), saint.getSecondaryTemper()), List.of(), identified(stack));
         if (stack.getItem() instanceof CleansingHemolymphItem) return new Profile(sourceId(stack), List.of(),
                 List.of(Hemomancy.rloc("blood_properties/aquatic")), identified(stack));
         var definition = BloodProfileData.profile(entityType(stack), clientSide);
-        return new Profile(sourceId(stack), definition.tendencies(), definition.properties(), identified(stack));
+        return new Profile(sourceId(stack), definition.tempers(), definition.properties(), identified(stack));
     }
 }

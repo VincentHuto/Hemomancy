@@ -312,8 +312,8 @@ public final class VesperClientReview {
 		} else if (actor instanceof VesperTheEveningStarEntity vesper && name.equals("es_gallery")) {
 			VesperEveningStarGallery.drive(vesper, tick);
 		} else if (actor instanceof VesperTheEveningStarEntity vesper && tick % 20 == 0) {
-			LogUtils.getLogger().info("VESPER_LIVE {} t={} act={} tendency={} action={}", name, tick, vesper.getAct(),
-					vesper.getActiveTendency(), vesper.getWeaponAction());
+			LogUtils.getLogger().info("VESPER_LIVE {} t={} act={} temper={} action={}", name, tick, vesper.getAct(),
+					vesper.getActiveTemper(), vesper.getWeaponAction());
 		}
 	}
 

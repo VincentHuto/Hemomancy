@@ -26,7 +26,7 @@ final class LivingFlailReworkSourceTest {
 		contains("entity stores deployment UUID", persistence, "DeploymentId");
 		contains("entity stores charge", persistence, "FlailCharge");
 		contains("entity stores original hand", persistence, "OriginalHand");
-		contains("entity stores tendency", persistence, "Tendency");
+		contains("entity stores temper", persistence, "Temper");
 		contains("entity registers", registry, "living_flail_head");
 		contains("renderer registers", client, "LivingFlailHeadProjectileRenderer");
 		String freezingTag = read("src/main/resources/data/minecraft/tags/damage_type/is_freezing.json");

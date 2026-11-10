@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.damage.*;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
@@ -232,7 +232,7 @@ public final class ManipulationReactiveEvents {
 		if (crown != null && now < crown.until && crown.lances > 0 && attacker instanceof LivingEntity living
 				&& ManipulationCombatHelper.canHarm(player, living)) {
 			BloodNeedleEntity needle = new BloodNeedleEntity(player.level(), player);
-			needle.setDamageTendency(EnumBloodTendency.ANIMUS);
+			needle.setDamageTemper(EnumBloodTemper.ANIMUS);
             SchoolDamage.capture(needle, crown.hit.newAttack().child(SchoolHitContext.Kind.REACTION));
             needle.setCoronationSword(true);
             Vec3 launch = player.position().add(ManipulationVisuals.swordOffset(now, crown.lances - 1));
@@ -281,7 +281,7 @@ public final class ManipulationReactiveEvents {
 		player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 0, false, true));
 		if (player.level() instanceof ServerLevel level) {
                 var hit = com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(
-                        com.vincenthuto.hemomancy.Hemomancy.rloc("phoenix_debt"), EnumBloodTendency.FLAMMEUS,
+                        com.vincenthuto.hemomancy.Hemomancy.rloc("phoenix_debt"), EnumBloodTemper.FLAMMEUS,
                         ManipulationInit.phoenix_debt.get().getSecondaryTend(), player)
                         .child(com.vincenthuto.hemomancy.common.damage.SchoolHitContext.Kind.REACTION);
             float eruption = 8.0F * (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player);
@@ -486,7 +486,7 @@ public final class ManipulationReactiveEvents {
 				entity -> entity.isAlive() && ManipulationCombatHelper.canHarm(owner, entity))) {
 			SchoolStates.apply(beacon.hit, owner, target, SchoolState.ILLUMINATED, 30, 1);
 		}
-        ManipulationParticles.accent(level, EnumBloodTendency.LUX, beacon.center.add(0, 1.35, 0), Vec3.ZERO);
+        ManipulationParticles.accent(level, EnumBloodTemper.LUX, beacon.center.add(0, 1.35, 0), Vec3.ZERO);
 	}
 
 	/** Phoenix Debt only promises a rebirth the caster can pay for at its live price. */

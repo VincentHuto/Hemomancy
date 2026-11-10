@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamageSource;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
@@ -74,7 +74,7 @@ public final class LivingSpearCombatEvents {
 				lightCenter, lightCenter, LivingSpearLuxRules.BLAST_RADIUS, 24);
 		level.playSound(null, center.blockPosition(), SoundEvents.BEACON_POWER_SELECT,
 				SoundSource.PLAYERS, 1.2F, 1.35F);
-		var damage = SchoolDamage.reaction(attacker, "living_spear_lux_burst", EnumBloodTendency.LUX);
+		var damage = SchoolDamage.reaction(attacker, "living_spear_lux_burst", EnumBloodTemper.LUX);
 		for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class,
 				center.getBoundingBox().inflate(LivingSpearLuxRules.BLAST_RADIUS),
 				target -> ManipulationCombatHelper.canHarm(attacker, target)

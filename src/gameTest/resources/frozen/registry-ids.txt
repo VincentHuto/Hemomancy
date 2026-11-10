@@ -1602,7 +1602,7 @@ minecraft:menu hemomancy:scar_station
 minecraft:menu hemomancy:scrying_diagnostics
 minecraft:menu hemomancy:stillwater_condenser
 minecraft:menu hemomancy:structure_spawner
-minecraft:menu hemomancy:tendency_view
+minecraft:menu hemomancy:temperament_view
 minecraft:menu hemomancy:vascular_view
 minecraft:menu hemomancy:vial_centrifuge
 minecraft:mob_effect hemomancy:arachnid_anastomosis
@@ -2240,10 +2240,10 @@ moonlight:soft_fluid hemomancy:phlegethontic_ichor
 moonlight:soft_fluid hemomancy:rendering_bile
 moonlight:soft_fluid hemomancy:white_humor
 neoforge:attachment_types hemomancy:antecedent
-neoforge:attachment_types hemomancy:block_blood_tendency
+neoforge:attachment_types hemomancy:block_blood_temperament
 neoforge:attachment_types hemomancy:block_blood_volume
 neoforge:attachment_types hemomancy:block_white_humor_volume
-neoforge:attachment_types hemomancy:blood_tendency
+neoforge:attachment_types hemomancy:blood_temperament
 neoforge:attachment_types hemomancy:blood_volume
 neoforge:attachment_types hemomancy:chamber_access
 neoforge:attachment_types hemomancy:circus_progress

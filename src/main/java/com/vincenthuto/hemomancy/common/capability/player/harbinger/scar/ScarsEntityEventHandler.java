@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.ConserveStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.RootedStateHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.VeinMinerHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.SaprovittaVestigiumItem;
@@ -40,25 +40,25 @@ import java.util.List;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ScarsEntityEventHandler {
 
-	private static final EnumMap<EnumBloodTendency, SynergyBonus> SYNERGY_BONUSES = new EnumMap<>(
-			EnumBloodTendency.class);
+	private static final EnumMap<EnumBloodTemper, SynergyBonus> SYNERGY_BONUSES = new EnumMap<>(
+			EnumBloodTemper.class);
 
 	static {
-		SYNERGY_BONUSES.put(EnumBloodTendency.ANIMUS, new SynergyBonus(Attributes.MAX_HEALTH,
+		SYNERGY_BONUSES.put(EnumBloodTemper.ANIMUS, new SynergyBonus(Attributes.MAX_HEALTH,
 				Hemomancy.rloc("synergy_animus"), 2.0, AttributeModifier.Operation.ADD_VALUE));
-		SYNERGY_BONUSES.put(EnumBloodTendency.FLAMMEUS, new SynergyBonus(Attributes.ATTACK_DAMAGE,
+		SYNERGY_BONUSES.put(EnumBloodTemper.FLAMMEUS, new SynergyBonus(Attributes.ATTACK_DAMAGE,
 				Hemomancy.rloc("synergy_flammeus"), 1.0, AttributeModifier.Operation.ADD_VALUE));
-		SYNERGY_BONUSES.put(EnumBloodTendency.MORTEM, new SynergyBonus(Attributes.ATTACK_DAMAGE,
+		SYNERGY_BONUSES.put(EnumBloodTemper.MORTEM, new SynergyBonus(Attributes.ATTACK_DAMAGE,
 				Hemomancy.rloc("synergy_mortem"), 1.0, AttributeModifier.Operation.ADD_VALUE));
-		SYNERGY_BONUSES.put(EnumBloodTendency.CONGEATIO, new SynergyBonus(Attributes.MOVEMENT_SPEED,
+		SYNERGY_BONUSES.put(EnumBloodTemper.CONGEATIO, new SynergyBonus(Attributes.MOVEMENT_SPEED,
 				Hemomancy.rloc("synergy_congeatio"), 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-		SYNERGY_BONUSES.put(EnumBloodTendency.DUCTILIS, new SynergyBonus(Attributes.ATTACK_SPEED,
+		SYNERGY_BONUSES.put(EnumBloodTemper.DUCTILIS, new SynergyBonus(Attributes.ATTACK_SPEED,
 				Hemomancy.rloc("synergy_ductilis"), 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-		SYNERGY_BONUSES.put(EnumBloodTendency.LUX, new SynergyBonus(Attributes.ARMOR_TOUGHNESS,
+		SYNERGY_BONUSES.put(EnumBloodTemper.LUX, new SynergyBonus(Attributes.ARMOR_TOUGHNESS,
 				Hemomancy.rloc("synergy_lux"), 1.0, AttributeModifier.Operation.ADD_VALUE));
-		SYNERGY_BONUSES.put(EnumBloodTendency.FERRIC, new SynergyBonus(Attributes.ARMOR,
+		SYNERGY_BONUSES.put(EnumBloodTemper.FERRIC, new SynergyBonus(Attributes.ARMOR,
 				Hemomancy.rloc("synergy_ferric"), 1.0, AttributeModifier.Operation.ADD_VALUE));
-		SYNERGY_BONUSES.put(EnumBloodTendency.TENEBRIS, new SynergyBonus(Attributes.MOVEMENT_SPEED,
+		SYNERGY_BONUSES.put(EnumBloodTemper.TENEBRIS, new SynergyBonus(Attributes.MOVEMENT_SPEED,
 				Hemomancy.rloc("synergy_tenebris"), 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 	}
 
@@ -123,16 +123,16 @@ public class ScarsEntityEventHandler {
 
 	private static void checkScarSynergy(Player player) {
 		var scars = HemoCapabilityAccess.getScarState(player);
-		EnumMap<EnumBloodTendency, Integer> counts = new EnumMap<>(EnumBloodTendency.class);
-		scars.forEachActiveCerebralScar(scar -> counts.merge(scar.getAssignedTendency(), 1, Integer::sum));
+		EnumMap<EnumBloodTemper, Integer> counts = new EnumMap<>(EnumBloodTemper.class);
+		scars.forEachActiveCerebralScar(scar -> counts.merge(scar.getAssignedTemper(), 1, Integer::sum));
 
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			SynergyBonus bonus = SYNERGY_BONUSES.get(tendency);
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			SynergyBonus bonus = SYNERGY_BONUSES.get(temper);
 			if (bonus == null) {
 				continue;
 			}
 
-			boolean hasSynergy = counts.getOrDefault(tendency, 0) >= 2;
+			boolean hasSynergy = counts.getOrDefault(temper, 0) >= 2;
 			double scaledAmount = bonus.amount() * SkillPointHelper.getScarAffinityMultiplier(player);
 			AttributeModifiers.syncPermanent(player.getAttribute(bonus.attribute()), bonus.modifierId(), scaledAmount,
 					bonus.operation(), hasSynergy);

@@ -33,7 +33,7 @@ public final class VampireSquidGameTests {
         h.assertTrue(ItemInit.spawn_egg_vampire_squid.get().getType(new net.minecraft.world.item.ItemStack(ItemInit.spawn_egg_vampire_squid.get())) == type,
                 "Spawn egg points to the wrong creature");
         var profile = BloodProfileData.profile(type, false);
-        h.assertTrue(profile.tendencies().size() == 1 && profile.tendencies().getFirst().name().equals("TENEBRIS")
+        h.assertTrue(profile.tempers().size() == 1 && profile.tempers().getFirst().name().equals("TENEBRIS")
                 && profile.properties().contains(Hemomancy.rloc("blood_properties/aquatic")) && !profile.requiresLivingSyringe(), "Wrong squid blood profile");
         var origin = h.absolutePos(new BlockPos(2304, 0, 2304));
         for (var layer : PelagicLayer.values()) {

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 7,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Neurotic",
+  "subtitle": "Ductilis — lightning, speed, nerves",
+  "text": "Neurotic blood is Ductilis: nervous energy, conductive motion, and the fine responsiveness of living tissue. Blood charged this way becomes unstable and fast. It seeks discharge and cannot remain still for long without finding a direction to move in. Some practitioners call it exhilarating. Others call it exhausting. The Neurotic enzyme is the modern tool-name for this restless temper.",
+  "icon": "hemomancy:neurotic_enzyme"
+}

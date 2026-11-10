@@ -9,7 +9,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
- * Neural Overload — a harmful neurotic-tendency effect representing
+ * Neural Overload — a harmful neurotic-temper effect representing
  * escalating nervous system disruption. Stacks with repeated hits.
  * 
  * Amp 0: Movement slowdown (nerve signal delay)

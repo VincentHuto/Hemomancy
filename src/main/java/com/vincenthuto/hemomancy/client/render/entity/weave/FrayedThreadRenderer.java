@@ -25,7 +25,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 /**
- * An intrusion's bite: a failed Harbinger's memory as a knot of its tendency trailing fibres, tethered back to the
+ * An intrusion's bite: a failed Harbinger's memory as a knot of its temper trailing fibres, tethered back to the
  * loom's echo it tore from. Its windup swells it and flushes it hot; once it has struck it comes apart, widening and
  * fading as it rises; Tenebris ones nearly vanish while faded.
  */
@@ -51,7 +51,7 @@ public class FrayedThreadRenderer extends EntityRenderer<FrayedThreadEntity> {
 		Vector3f up = new Vector3f(camera.getUpVector());
 		float time = AnimationTime.age(thread, partialTicks);
 		float seed = (thread.getId() * 0.618f) % 1f;
-		float[] colour = ThreadKnotGeometry.vivid(thread.tendency().getColor());
+		float[] colour = ThreadKnotGeometry.vivid(thread.temper().getColor());
 		float unravel = thread.unravelling() <= 0 ? 0f
 				: Mth.clamp((thread.unravelling() + partialTicks) / FrayedThreadEntity.UNRAVEL_TICKS, 0f, 1f);
 		float alpha = (thread.isFaded() ? 0.15f : 1f) * (1f - unravel);

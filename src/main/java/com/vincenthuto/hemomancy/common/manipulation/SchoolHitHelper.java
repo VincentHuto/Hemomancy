@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlockEvents;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
@@ -41,7 +41,7 @@ public final class SchoolHitHelper {
 	}
 
 	public static boolean tryTriggerConductiveArc(LivingEntity attacker, LivingEntity markedTarget,
-			EnumBloodTendency primary, @Nullable EnumBloodTendency secondary, float sourceDamage) {
+			EnumBloodTemper primary, @Nullable EnumBloodTemper secondary, float sourceDamage) {
         Discharge discharge = Discharge.current();
         if (discharge == null) discharge = new Discharge();
         if (attacker instanceof Player player && player.level() instanceof ServerLevel)
@@ -51,7 +51,7 @@ public final class SchoolHitHelper {
     }
 
     public static boolean tryTriggerConductiveArc(LivingEntity attacker, LivingEntity markedTarget,
-            EnumBloodTendency primary, @Nullable EnumBloodTendency secondary, float sourceDamage, Discharge discharge) {
+            EnumBloodTemper primary, @Nullable EnumBloodTemper secondary, float sourceDamage, Discharge discharge) {
 		if (!discharge.allowsReactiveArcs() || markedTarget.level().isClientSide()
 				|| !(markedTarget.hasEffect(EffectInit.conductive_mark) || markedTarget.hasEffect(EffectInit.lodestone))
 				|| !ManipulationStatusRules.isConductiveSchool(primary, secondary)) {
@@ -76,7 +76,7 @@ public final class SchoolHitHelper {
 								&& ManipulationCombatHelper.canHarmFor(attacker,target)
 								&& ConductionManager.canClaimHit(attacker,target,discharge)
                                 && target.position().distanceTo(center) <= ManipulationStatusRules.CONDUCTIVE_ARC_RADIUS
-                                && (primary!=EnumBloodTendency.DUCTILIS && secondary!=EnumBloodTendency.DUCTILIS
+                                && (primary!=EnumBloodTemper.DUCTILIS && secondary!=EnumBloodTemper.DUCTILIS
                                     || ConductionManager.visible((ServerLevel)markedTarget.level(),
                                             markedTarget.getEyePosition(),target.getEyePosition(),attacker)))
 				.stream()
@@ -87,7 +87,7 @@ public final class SchoolHitHelper {
 					if (!ConductionManager.claimHit(attacker,target,discharge)) return;
                     DuctilisLightningEffects.conductiveArc(markedTarget, target, arcs[0]++);
 					target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.reaction(attacker, "conductive_arc",
-                            EnumBloodTendency.DUCTILIS), ManipulationStatusRules.CONDUCTIVE_ARC_DAMAGE);
+                            EnumBloodTemper.DUCTILIS), ManipulationStatusRules.CONDUCTIVE_ARC_DAMAGE);
 				});
 
 		if (arcs[0] > 0) {
@@ -146,7 +146,7 @@ public final class SchoolHitHelper {
 						victim -> victim != target && victim.isAlive()
 								&& (owner == null ? !data.hasUUID(GRAVE_DEBT_OWNER_KEY) : ManipulationCombatHelper.canHarm(owner, victim))
 								&& victim.position().distanceTo(center) <= ManipulationStatusRules.GRAVE_DEBT_RADIUS)
-				.forEach(victim -> victim.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.reaction(owner == null ? target : owner, "grave_debt", EnumBloodTendency.MORTEM),
+				.forEach(victim -> victim.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.reaction(owner == null ? target : owner, "grave_debt", EnumBloodTemper.MORTEM),
 						burst));
 		sendGraveBurst(target, center);
 		return true;

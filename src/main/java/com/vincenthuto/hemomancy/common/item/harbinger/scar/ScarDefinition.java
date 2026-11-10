@@ -8,12 +8,12 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.IBloodTemperament;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTendencyServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTemperamentServerPacket;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import net.minecraft.ChatFormatting;
@@ -41,7 +41,7 @@ public class ScarDefinition {
 	/** Not reserve-protected, as before; F-13 (pending) would protect it. */
 	private static final BloodAccounting.Source UPKEEP = BloodAccounting.Source.of("scar_upkeep", Category.SCAR, false, false);
 	private final ScarType scarType;
-	private EnumBloodTendency assignedTendency;
+	private EnumBloodTemper assignedTemper;
 	private float deepenAmount;
 	private final int tier;
 	private final List<ScarModifier> passiveModifiers = new ArrayList<>();
@@ -57,9 +57,9 @@ public class ScarDefinition {
 	public record ScarEffectEntry(Holder<MobEffect> effect, int amplifier) {
 	}
 
-	public ScarDefinition(ScarType scarType, EnumBloodTendency tendencyIn, float deepenAmountIn, int tier) {
+	public ScarDefinition(ScarType scarType, EnumBloodTemper temperIn, float deepenAmountIn, int tier) {
 		this.scarType = scarType;
-		this.assignedTendency = tendencyIn;
+		this.assignedTemper = temperIn;
 		this.deepenAmount = deepenAmountIn;
 		this.tier = tier;
 	}
@@ -92,11 +92,11 @@ public class ScarDefinition {
 
 	public void onEquipped(LivingEntity player, ItemStack stack) {
 		if (player instanceof Player && !player.getCommandSenderWorld().isClientSide) {
-			IBloodTendency coven = HemoCapabilityAccess.getBloodTendency(player)
+			IBloodTemperament coven = HemoCapabilityAccess.getBloodTemperament(player)
 					.orElseThrow(IllegalArgumentException::new);
 			if (coven != null) {
-				coven.addTransientAlignment(getAssignedTendency(), getDeepenAmount());
-				PacketHandler.sendToPlayer((ServerPlayer) player, new BloodTendencyServerPacket(coven.getTendency()));
+				coven.addTransientAlignment(getAssignedTemper(), getDeepenAmount());
+				PacketHandler.sendToPlayer((ServerPlayer) player, new BloodTemperamentServerPacket(coven.getTemper()));
 			}
 
 			for (ScarModifier mod : passiveModifiers) {
@@ -115,11 +115,11 @@ public class ScarDefinition {
 
 	public void onUnequipped(LivingEntity player, ItemStack stack) {
 		if (player instanceof Player && !player.getCommandSenderWorld().isClientSide) {
-			IBloodTendency coven = HemoCapabilityAccess.getBloodTendency(player)
+			IBloodTemperament coven = HemoCapabilityAccess.getBloodTemperament(player)
 					.orElseThrow(IllegalArgumentException::new);
 			if (coven != null) {
-				coven.addTransientAlignment(getAssignedTendency(), -getDeepenAmount());
-				PacketHandler.sendToPlayer((ServerPlayer) player, new BloodTendencyServerPacket(coven.getTendency()));
+				coven.addTransientAlignment(getAssignedTemper(), -getDeepenAmount());
+				PacketHandler.sendToPlayer((ServerPlayer) player, new BloodTemperamentServerPacket(coven.getTemper()));
 			}
 
 			for (ScarModifier mod : passiveModifiers) {
@@ -183,7 +183,7 @@ public class ScarDefinition {
 
 	protected void applyTierThreeTickEffect(LivingEntity entity) {
 		double masteryMult = entity instanceof Player player ? scarEffectDurationMultiplier(player) : 1.0;
-		switch (assignedTendency) {
+		switch (assignedTemper) {
 		case CONGEATIO:
 			if (tier >= 2 && entity.tickCount % 40 == 0) {
 				int dur = (int) (60 * masteryMult);
@@ -222,14 +222,14 @@ public class ScarDefinition {
 
 	public void onPlayerAttack(Player player, LivingEntity target) {
 		double masteryMult = scarEffectDurationMultiplier(player);
-		if (assignedTendency == EnumBloodTendency.MORTEM) {
+		if (assignedTemper == EnumBloodTemper.MORTEM) {
 			if (tier >= 3) {
 				target.addEffect(new MobEffectInstance(MobEffects.WITHER, (int) (80 * masteryMult), 1));
 			} else if (tier >= 2) {
 				target.addEffect(new MobEffectInstance(MobEffects.POISON, (int) (60 * masteryMult), 0));
 			}
 		}
-		if (assignedTendency == EnumBloodTendency.CONGEATIO) {
+		if (assignedTemper == EnumBloodTemper.CONGEATIO) {
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
 					(int) (30 * tier * masteryMult), 0));
 		}
@@ -237,20 +237,20 @@ public class ScarDefinition {
 
 	public void onPlayerDefend(Player player, LivingEntity attacker) {
 		double masteryMult = scarEffectDurationMultiplier(player);
-		if (assignedTendency == EnumBloodTendency.FLAMMEUS && tier >= 2) {
+		if (assignedTemper == EnumBloodTemper.FLAMMEUS && tier >= 2) {
 			CrimsonFireHelper.igniteCrimson(attacker, tier >= 3 ? 4.0F : 2.0F);
 		}
-		if (assignedTendency == EnumBloodTendency.FERRIC && tier >= 1) {
+		if (assignedTemper == EnumBloodTemper.FERRIC && tier >= 1) {
 			attacker.hurt(player.damageSources().thorns(player), tier);
 		}
-		if (assignedTendency == EnumBloodTendency.LUX) {
+		if (assignedTemper == EnumBloodTemper.LUX) {
 			int blindDur = (int) ((tier >= 2 ? 60 : 40) * masteryMult);
 			attacker.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, blindDur, 0));
 			if (tier >= 2) {
 				attacker.addEffect(new MobEffectInstance(MobEffects.GLOWING, (int) (200 * masteryMult), 0));
 			}
 		}
-		if (assignedTendency == EnumBloodTendency.TENEBRIS) {
+		if (assignedTemper == EnumBloodTemper.TENEBRIS) {
 			int light = player.level().getBrightness(LightLayer.BLOCK, player.blockPosition());
 			if (tier >= 3 || (tier >= 2 && light < 7)) {
 				int dur = (int) ((tier >= 3 ? 80 : 60) * masteryMult);
@@ -261,13 +261,13 @@ public class ScarDefinition {
 
 	public void onPlayerKill(Player player, LivingEntity killed) {
 		double masteryMult = scarEffectDurationMultiplier(player);
-		if (assignedTendency == EnumBloodTendency.ANIMUS && tier >= 2) {
+		if (assignedTemper == EnumBloodTemper.ANIMUS && tier >= 2) {
 			player.heal(tier);
 		}
-		if (assignedTendency == EnumBloodTendency.MORTEM && tier == 1) {
+		if (assignedTemper == EnumBloodTemper.MORTEM && tier == 1) {
 			player.addEffect(new MobEffectInstance(MobEffects.POISON, (int) (30 * masteryMult), 0));
 		}
-		if (assignedTendency == EnumBloodTendency.DUCTILIS && tier >= 2) {
+		if (assignedTemper == EnumBloodTemper.DUCTILIS && tier >= 2) {
 			int dur = (int) (80 * tier * masteryMult);
 			player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, dur, 0, true, true));
 			if (tier >= 3) {
@@ -285,9 +285,9 @@ public class ScarDefinition {
 			tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.tier_s", tierStr).withStyle(ChatFormatting.DARK_PURPLE));
 		}
 
-		tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.tendency",
-				BloodManipulation.tendencyName(assignedTendency)).withStyle(ChatFormatting.GOLD));
-		tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.tendency_amount", String.valueOf(deepenAmount))
+		tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.temper",
+				BloodManipulation.temperName(assignedTemper)).withStyle(ChatFormatting.GOLD));
+		tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.temper_amount", String.valueOf(deepenAmount))
 				.withStyle(ChatFormatting.GREEN));
 
 		for (ScarModifier mod : passiveModifiers) {
@@ -330,7 +330,7 @@ public class ScarDefinition {
 					String.format("%.1f", bloodUpkeep)).withStyle(ChatFormatting.RED));
 		}
 
-		if (assignedTendency == EnumBloodTendency.MORTEM && tier == 1) {
+		if (assignedTemper == EnumBloodTemper.MORTEM && tier == 1) {
 			tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.poison_backtracks_on_kill").withStyle(ChatFormatting.RED));
 		}
 	}
@@ -340,33 +340,33 @@ public class ScarDefinition {
 			tooltip.add(HemoText.translatable("message.hemomancy.scar_definition.iron_heart_capacity",
 					ironHeartCapacityBonus).withStyle(ChatFormatting.DARK_GREEN));
 		}
-		if (assignedTendency == EnumBloodTendency.ANIMUS && tier >= 2) {
+		if (assignedTemper == EnumBloodTemper.ANIMUS && tier >= 2) {
 			tooltip.add(HemoText.translatable("message.hemomancy.scar_definition.heals_on_kill", tier).withStyle(ChatFormatting.DARK_GREEN));
 		}
-		if (assignedTendency == EnumBloodTendency.MORTEM && tier >= 3) {
+		if (assignedTemper == EnumBloodTemper.MORTEM && tier >= 3) {
 			tooltip.add(Component.translatable("message.hemomancy.scar_definition.withers_struck_foes").withStyle(ChatFormatting.DARK_GREEN));
-		} else if (assignedTendency == EnumBloodTendency.MORTEM && tier >= 2) {
+		} else if (assignedTemper == EnumBloodTemper.MORTEM && tier >= 2) {
 			tooltip.add(Component.translatable("message.hemomancy.scar_definition.poisons_struck_foes").withStyle(ChatFormatting.DARK_GREEN));
 		}
-		if (assignedTendency == EnumBloodTendency.FLAMMEUS && tier >= 2) {
+		if (assignedTemper == EnumBloodTemper.FLAMMEUS && tier >= 2) {
 			tooltip.add((tier >= 3 ? Component.translatable("message.hemomancy.scar_definition.ignites_attackers") : Component.translatable("message.hemomancy.scar_definition.briefly_ignites_attackers")).withStyle(ChatFormatting.DARK_GREEN));
 		}
-		if (assignedTendency == EnumBloodTendency.FERRIC && tier >= 1) {
+		if (assignedTemper == EnumBloodTemper.FERRIC && tier >= 1) {
 			tooltip.add(HemoText.translatable("message.hemomancy.scar_definition.thorns_reflects_damage",
 					tier).withStyle(ChatFormatting.DARK_GREEN));
 		}
-		if (assignedTendency == EnumBloodTendency.LUX) {
+		if (assignedTemper == EnumBloodTemper.LUX) {
 			tooltip.add(Component.translatable("message.hemomancy.scar_definition.blinds_attackers").withStyle(ChatFormatting.DARK_GREEN));
 			if (tier >= 2) {
 				tooltip.add(Component.translatable("message.hemomancy.scar_definition.marks_attackers_with_glowing").withStyle(ChatFormatting.DARK_GREEN));
 			}
 		}
-		if (assignedTendency == EnumBloodTendency.CONGEATIO) {
+		if (assignedTemper == EnumBloodTemper.CONGEATIO) {
 			tooltip.add(Component.translatable("message.hemomancy.scar_definition.slows_struck_foes").withStyle(ChatFormatting.DARK_GREEN));
 			if (tier >= 2) tooltip.add(Component.translatable("message.hemomancy.scar_definition.slows_nearby_foes").withStyle(ChatFormatting.DARK_GREEN));
 			if (tier >= 3) tooltip.add(Component.translatable("message.hemomancy.scar_definition.slow_fall").withStyle(ChatFormatting.DARK_GREEN));
 		}
-		if (assignedTendency == EnumBloodTendency.TENEBRIS) {
+		if (assignedTemper == EnumBloodTemper.TENEBRIS) {
 			tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_invisibility_in_darkness").withStyle(ChatFormatting.DARK_GREEN));
 			if (tier >= 2) {
 				tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_invisibility_when_struck_in_darkness").withStyle(ChatFormatting.DARK_GREEN));
@@ -375,16 +375,16 @@ public class ScarDefinition {
 				tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_invisibility_when_struck").withStyle(ChatFormatting.DARK_GREEN));
 			}
 		}
-		if (assignedTendency == EnumBloodTendency.DUCTILIS && tier >= 2) {
+		if (assignedTemper == EnumBloodTemper.DUCTILIS && tier >= 2) {
 			tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_haste_on_kill").withStyle(ChatFormatting.DARK_GREEN));
 			if (tier >= 3) {
 				tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_speed_and_strength_on_kill").withStyle(ChatFormatting.DARK_GREEN));
 			}
 		}
-		if (assignedTendency == EnumBloodTendency.ANIMUS && tier >= 3) {
+		if (assignedTemper == EnumBloodTemper.ANIMUS && tier >= 3) {
 			tooltip.add(Component.translatable("message.hemomancy.scar_definition.regenerates_when_gravely_wounded").withStyle(ChatFormatting.DARK_GREEN));
 		}
-		if (assignedTendency == EnumBloodTendency.LUX && tier >= 3) {
+		if (assignedTemper == EnumBloodTemper.LUX && tier >= 3) {
 			tooltip.add(Component.translatable("message.hemomancy.scar_definition.grants_resistance_in_bright_light").withStyle(ChatFormatting.DARK_GREEN));
 		}
 	}
@@ -393,8 +393,8 @@ public class ScarDefinition {
 		return scarType;
 	}
 
-	public EnumBloodTendency getAssignedTendency() {
-		return assignedTendency;
+	public EnumBloodTemper getAssignedTemper() {
+		return assignedTemper;
 	}
 
 	public float getDeepenAmount() {

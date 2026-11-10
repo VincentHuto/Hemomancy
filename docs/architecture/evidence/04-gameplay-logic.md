@@ -9,7 +9,7 @@ Scope: manipulations, blood accounting, rites and multiblocks, tiles, recipes, s
 | Package | Files | Lines | Notes |
 |---|---|---|---|
 | `common/rite/` | 142 | 17,453 | Harbinger Cardinal Rites, the Unstained legacy path, sigils, floors, zones, brazier rites |
-| `common/manipulation/` | 179 | 16,494 | 91 classes `extends BloodManipulation`; no per-tendency base class exists |
+| `common/manipulation/` | 179 | 16,494 | 91 classes `extends BloodManipulation`; no per-temper base class exists |
 | `common/tile/` | 92 | 16,325 | 47 extend `BlockEntity` directly, 12 extend `BaseContainerBlockEntity`; no project base class |
 | `common/recipe/` | 39 | 5,535 | 18 serializers; 7 recipes extend vanilla `CustomRecipe` |
 | `common/mission/` | 44 | 3,502 | Ad-hoc static assignment classes; no shared interface |
@@ -30,7 +30,7 @@ Registry facts: `init/ManipulationInit.java` (1,296 lines) registers **123** man
 - **Duplicate pre-gates (VERIFIED):** `network/capa/harbinger/manips/UseManipKeyPacket.java:70,88,115-135,215-219` re-checks paralysis (`isParalyzed`, while the base uses `blocksActions`), retirement and `isActive` before calling `performAction`.
   - **Recommendation:** keep the base as the authority. The packet should only resolve input (charge clock, channel start/stop) and delegate gating.
   - Difficulty: Low. Gameplay risk: Low, though messages may differ.
-- **Recommendation for metadata:** keep `ManipulationInit` as the single source. Do not move cost/rank/tendency into the classes; the two outliers should follow the init style.
+- **Recommendation for metadata:** keep `ManipulationInit` as the single source. Do not move cost/rank/temper into the classes; the two outliers should follow the init style.
   - Move the 48 drudge lambdas into a `DrudgeActions` helper with a shared `nearestHostile(drudge, radius)` lookup. Expected reduction is about 150 lines in the init file.
   - Difficulty: Low. Gameplay risk: none, if the lambdas move verbatim.
 

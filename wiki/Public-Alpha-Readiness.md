@@ -20,7 +20,7 @@ This page lists what alpha testers can expect.
 The current alpha build is strongest in these loops:
 
 - **Opt-in start** - Mortal Display activation, Blood Volume, HUD, and first blood-magic state.
-- **Harbinger core** - degree progression spine, Cardinal Rites, blood manipulations, memories, tendencies, vascular state, scars, morphlings, living staff forms, puppeteer spindle, Blood Moon, direct blood routing, Qliphoth Communion, Chamber of Will, and Founding Fane core.
+- **Harbinger core** - degree progression spine, Cardinal Rites, blood manipulations, memories, tempers, vascular state, scars, morphlings, living staff forms, puppeteer spindle, Blood Moon, direct blood routing, Qliphoth Communion, Chamber of Will, and Founding Fane core.
 - **Unstained core** - purification progress, White Humor Purification, Still Arts, Unstained NPCs, Pale/Lethean theming, and mutual exclusion with Harbinger progress.
 - **World content** - Blood Temples, Harbinger Outposts, Unstained Churches, Broken Church/Annetta route, Chthonian termite mounds, Erythrocoral Reef, deep ocean vents, voyager wrecks, active voyager vessels, and Hemomancy mob ecology.
 - **Discovery support** - JEI categories, item inquiry dialogue, HutosLib book data, advancement hooks, and wiki/reference docs.

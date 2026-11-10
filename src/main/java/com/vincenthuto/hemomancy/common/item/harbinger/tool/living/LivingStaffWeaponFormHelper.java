@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -34,7 +34,7 @@ public final class LivingStaffWeaponFormHelper {
 	private static final BloodAccounting.Source HOT_SWAP = BloodAccounting.Source.of("living_staff_hot_swap", Category.TOOL, true, false);
 	public static final String STORED_STAFF_KEY = "HemomancyStoredLivingStaff";
 	public static final String FORM_KEY = "HemomancyStaffWeaponForm";
-	public static final String SECONDARY_TENDENCY_KEY = "HemomancyStaffWeaponSecondaryTendency";
+	public static final String SECONDARY_TEMPER_KEY = "HemomancyStaffWeaponSecondaryTemper";
 	private static final String CROSSBOW_LOAD_KEY = "HemomancyStoredCrossbowLoad";
 
 	private LivingStaffWeaponFormHelper() {
@@ -236,9 +236,9 @@ public final class LivingStaffWeaponFormHelper {
 		}
 		root.putString(FORM_KEY, formName);
 		BloodManipulation formManip = ManipulationInit.getByName(formName);
-		EnumBloodTendency secondaryTendency = formManip != null ? formManip.getSecondaryTend() : null;
-		if (secondaryTendency != null) {
-			root.putString(SECONDARY_TENDENCY_KEY, secondaryTendency.name());
+		EnumBloodTemper secondaryTemper = formManip != null ? formManip.getSecondaryTend() : null;
+		if (secondaryTemper != null) {
+			root.putString(SECONDARY_TEMPER_KEY, secondaryTemper.name());
 		}
 		weapon.set(DataComponents.CUSTOM_DATA, CustomData.of(root));
 		return weapon;

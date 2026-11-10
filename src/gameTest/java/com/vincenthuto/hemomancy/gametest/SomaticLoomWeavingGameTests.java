@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBloc
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity;
 import com.vincenthuto.hemomancy.common.entity.weave.ThreadAttacks;
 import com.vincenthuto.hemomancy.common.entity.weave.ThreadHazardEntity;
@@ -77,7 +77,7 @@ public final class SomaticLoomWeavingGameTests {
         for (var catalyst : weaving.getCatalysts()) te.addItem(null, catalyst.getItems()[0].copyWithCount(1), null);
         CompoundTag tag = te.saveWithoutMetadata(level.registryAccess());
         CompoundTag stock = new CompoundTag();
-        for (EnumBloodTendency tend : EnumBloodTendency.values())
+        for (EnumBloodTemper tend : EnumBloodTemper.values())
             if (weaving.getEnzymeRequirement(tend) > 0) stock.putInt(tend.name(), spans);
         tag.put("storedEnzymes", stock);
         te.loadWithComponents(tag, level.registryAccess());
@@ -102,7 +102,7 @@ public final class SomaticLoomWeavingGameTests {
 
     private static int[] stock(Setup s) {
         int[] out = new int[8];
-        for (EnumBloodTendency tend : EnumBloodTendency.values()) out[tend.ordinal()] = s.loom.getStoredEnzyme(tend);
+        for (EnumBloodTemper tend : EnumBloodTemper.values()) out[tend.ordinal()] = s.loom.getStoredEnzyme(tend);
         return out;
     }
 
@@ -133,7 +133,7 @@ public final class SomaticLoomWeavingGameTests {
         EngramBoard board = s.loom.getEngram();
         helper.assertTrue(board != null && trueFragments(board) == 4, "Axonal's four Ductilis units become four true fragments");
         helper.assertTrue(java.util.Arrays.equals(preview.reference(), board.reference()), "the paid engram is the one previewed");
-        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS) == 60 && s.loom.getSpun(EnumBloodTendency.DUCTILIS) == 0,
+        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS) == 60 && s.loom.getSpun(EnumBloodTemper.DUCTILIS) == 0,
                 "nothing is spent until the engram completes");
         helper.assertTrue(!LoomWeaveTestSupport.intrusions(board).isEmpty(), "a Perfectus engram recalls false fragments");
         helper.succeed();
@@ -142,7 +142,7 @@ public final class SomaticLoomWeavingGameTests {
     @GameTest(template = "empty")
     public static void aStockShortOfTheEngramsReferenceRefusesTheBlood(GameTestHelper helper) {
         Setup s = axonal(helper, 60);
-        int reference = s.loom.engramPreview(s.weaver).reference()[EnumBloodTendency.DUCTILIS.ordinal()];
+        int reference = s.loom.engramPreview(s.weaver).reference()[EnumBloodTemper.DUCTILIS.ordinal()];
         Setup tight = axonal(helper, reference - 1);
         double before = HemoCapabilityAccess.getBloodVolume(tight.weaver).getBloodVolume();
         helper.assertTrue(!tight.loom.tryChargeRitualBlood(tight.weaver, 10_000, false) && !tight.loom.isWeaving(),
@@ -160,11 +160,11 @@ public final class SomaticLoomWeavingGameTests {
         level.setBlock(pos, BlockInit.somatic_loom.get().defaultBlockState(), 3);
         var te = (SomaticLoomBlockEntity) level.getBlockEntity(pos);
         te.addItem(null, new ItemStack(ItemInit.vivacious_enzyme.get()), null);
-        helper.assertTrue(te.getStoredEnzyme(EnumBloodTendency.ANIMUS) == 3, "one enzyme spins three spans");
+        helper.assertTrue(te.getStoredEnzyme(EnumBloodTemper.ANIMUS) == 3, "one enzyme spins three spans");
         var crouching = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
         crouching.setShiftKeyDown(true);
         te.addItem(crouching, new ItemStack(ItemInit.vivacious_enzyme.get(), 64), null);
-        helper.assertTrue(te.getStoredEnzyme(EnumBloodTendency.ANIMUS) == SomaticLoomBlockEntity.ENZYME_CAPACITY,
+        helper.assertTrue(te.getStoredEnzyme(EnumBloodTemper.ANIMUS) == SomaticLoomBlockEntity.ENZYME_CAPACITY,
                 "a full vial holds sixty-four enzymes' thread");
         helper.succeed();
     }
@@ -175,10 +175,10 @@ public final class SomaticLoomWeavingGameTests {
     public static void threadingTheEngramCrystallizesTheMemoryAndSpendsItsLanes(GameTestHelper helper) {
         Setup s = axonal(helper, 60);
         pay(helper, s);
-        int reference = s.loom.getEngram().reference()[EnumBloodTendency.DUCTILIS.ordinal()];
+        int reference = s.loom.getEngram().reference()[EnumBloodTemper.DUCTILIS.ordinal()];
         helper.assertTrue(LoomWeaveTestSupport.weaveAll(helper.getLevel(), s.pos, s.loom, s.weaver), "The weave should finish");
-        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS) == 60 - reference,
-                "exactly the threaded lanes' spans are spent: " + s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS));
+        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS) == 60 - reference,
+                "exactly the threaded lanes' spans are spent: " + s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS));
         boolean delivered = helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(s.pos).inflate(3)).stream()
                 .anyMatch(item -> item.getItem().is(ItemInit.memory_axonal_transduction.get()));
         helper.assertTrue(delivered, "The finished memory should crystallize");
@@ -197,11 +197,11 @@ public final class SomaticLoomWeavingGameTests {
         s.loom.engramStep(s.weaver, path[0], false, true);
         s.loom.engramStep(s.weaver, path[1], false, false);
         s.loom.engramStep(s.weaver, path[2], false, false);
-        helper.assertTrue(s.loom.getSpun(EnumBloodTendency.DUCTILIS) == 2, "two steps hold two spans");
+        helper.assertTrue(s.loom.getSpun(EnumBloodTemper.DUCTILIS) == 2, "two steps hold two spans");
         s.loom.engramStep(s.weaver, path[1], true, true);
-        helper.assertTrue(s.loom.getSpun(EnumBloodTendency.DUCTILIS) == 1, "cutting back returns a span");
+        helper.assertTrue(s.loom.getSpun(EnumBloodTemper.DUCTILIS) == 1, "cutting back returns a span");
         s.loom.engramStep(s.weaver, path[0], true, true);
-        helper.assertTrue(s.loom.getSpun(EnumBloodTendency.DUCTILIS) == 0 && s.loom.getEngram().lane(fragment).length == 1,
+        helper.assertTrue(s.loom.getSpun(EnumBloodTemper.DUCTILIS) == 0 && s.loom.getEngram().lane(fragment).length == 1,
                 "a sneaking press on the fragment clears its lane");
         helper.succeed();
     }
@@ -257,8 +257,8 @@ public final class SomaticLoomWeavingGameTests {
             }
         };
         Setup s = axonal(helper, 3);
-        int reference = s.loom.engramPreview(player).reference()[EnumBloodTendency.DUCTILIS.ordinal()];
-        s.loom.provideTendencyFeedback(player);
+        int reference = s.loom.engramPreview(player).reference()[EnumBloodTemper.DUCTILIS.ordinal()];
+        s.loom.provideTemperFeedback(player);
         String said = String.join(" | ", feedback.stream().map(net.minecraft.network.chat.Component::getString).toList());
         helper.assertTrue(said.contains("your engram needs " + reference + " spans"),
                 "the selection names this weaver's own engram cost: " + said);
@@ -277,8 +277,8 @@ public final class SomaticLoomWeavingGameTests {
         ItemStack one = new ItemStack(ItemInit.neurotic_enzyme.get());
         s.weaver.setItemInHand(InteractionHand.MAIN_HAND, one);
         var result = s.weaver.gameMode.useItemOn(s.weaver, helper.getLevel(), one, InteractionHand.MAIN_HAND, hit);
-        helper.assertTrue(s.loom.isWeaving() && s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS) == 63,
-                "an enzyme added mid-weave tops up its vial: " + s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS) + " (" + result
+        helper.assertTrue(s.loom.isWeaving() && s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS) == 63,
+                "an enzyme added mid-weave tops up its vial: " + s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS) + " (" + result
                         + ", mode " + s.weaver.gameMode.getGameModeForPlayer() + ", block " + helper.getLevel().getBlockState(s.pos).getBlock() + ")");
         // A stack, with the sneaking bulk gesture: it must never fall through to the loom's cancel.
         ItemStack stack = new ItemStack(ItemInit.neurotic_enzyme.get(), 4);
@@ -288,7 +288,7 @@ public final class SomaticLoomWeavingGameTests {
         s.weaver.setShiftKeyDown(false);
         helper.assertTrue(s.loom.isWeaving() && s.loom.getRitualBloodCharged() == charged,
                 "a sneaking insert keeps the paid weave and its blood");
-        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS) == 75, "the stack tops the vial up in bulk");
+        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS) == 75, "the stack tops the vial up in bulk");
         helper.succeed();
     }
 
@@ -359,7 +359,7 @@ public final class SomaticLoomWeavingGameTests {
         s.loom.loadWithComponents(s.loom.saveWithoutMetadata(registries), registries);
         helper.assertTrue(s.loom.isWeaving() && s.loom.getEngram().save().equals(saved)
                 && s.loom.getWeaver().equals(s.weaver.getUUID()), "the engram, its lanes and the weaver survive a reload");
-        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS) == 60, "spans are not rescaled on reload");
+        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS) == 60, "spans are not rescaled on reload");
         helper.succeed();
     }
 
@@ -369,18 +369,18 @@ public final class SomaticLoomWeavingGameTests {
         CompoundTag tag = s.loom.saveWithoutMetadata(helper.getLevel().registryAccess());
         tag.putInt("weaveSaveVersion", 1);
         CompoundTag stock = new CompoundTag();
-        stock.putInt(EnumBloodTendency.DUCTILIS.name(), 2);
+        stock.putInt(EnumBloodTemper.DUCTILIS.name(), 2);
         tag.put("storedEnzymes", stock);
         ListTag threads = new ListTag();
         for (int i = 0; i < 4; i++) {
             CompoundTag thread = new CompoundTag();
-            thread.putString("tendency", EnumBloodTendency.DUCTILIS.name());
+            thread.putString("temper", EnumBloodTemper.DUCTILIS.name());
             thread.putString("state", i == 0 ? "WOVEN" : "HELD");
             threads.add(thread);
         }
         tag.put("weaveThreads", threads);
         CompoundTag spun = new CompoundTag();
-        spun.putInt(EnumBloodTendency.DUCTILIS.name(), 3);
+        spun.putInt(EnumBloodTemper.DUCTILIS.name(), 3);
         tag.put("spun", spun);
         tag.putInt("craftPhase", SomaticLoomBlockEntity.PHASE_WEAVING);
         tag.putDouble("ritualBloodCharged", 600);
@@ -388,7 +388,7 @@ public final class SomaticLoomWeavingGameTests {
         tag.remove("weaver");
         s.loom.loadWithComponents(tag, helper.getLevel().registryAccess());
         helper.assertTrue(s.loom.isWeaving() && s.loom.getEngram() == null, "a witnessed weave loads paid, awaiting its engram");
-        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS) == (2 + 3) * EngramWeaveRules.SPANS_PER_ENZYME,
+        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS) == (2 + 3) * EngramWeaveRules.SPANS_PER_ENZYME,
                 "stored enzymes and the thread still on the pirns return to the vials as spans");
         adoptAndRecall(helper, s);
         helper.succeed();
@@ -403,7 +403,7 @@ public final class SomaticLoomWeavingGameTests {
         ListTag orbs = new ListTag();
         for (int i = 0; i < 4; i++) {
             CompoundTag orb = new CompoundTag();
-            orb.putString("tendency", EnumBloodTendency.DUCTILIS.name());
+            orb.putString("temper", EnumBloodTemper.DUCTILIS.name());
             orb.putBoolean("completed", i == 0);
             orbs.add(orb);
         }
@@ -413,7 +413,7 @@ public final class SomaticLoomWeavingGameTests {
         tag.remove("engram");
         tag.remove("weaver");
         s.loom.loadWithComponents(tag, helper.getLevel().registryAccess());
-        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS) == 3 * EngramWeaveRules.SPANS_PER_ENZYME,
+        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS) == 3 * EngramWeaveRules.SPANS_PER_ENZYME,
                 "unwoven orbs return their enzyme as spans");
         adoptAndRecall(helper, s);
         helper.succeed();
@@ -428,7 +428,7 @@ public final class SomaticLoomWeavingGameTests {
             tick(helper, s, 3);
             EngramBoard board = s.loom.getEngram();
             helper.assertTrue(adopter.getUUID().equals(s.loom.getWeaver()) && board != null, "the adopter recalls a fresh engram");
-            helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS) >= board.reference()[EnumBloodTendency.DUCTILIS.ordinal()],
+            helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS) >= board.reference()[EnumBloodTemper.DUCTILIS.ordinal()],
                     "a migrated weave's vials are topped up to its reference");
             helper.assertTrue(LoomWeaveTestSupport.weaveAll(helper.getLevel(), s.pos, s.loom, adopter), "and it can be finished");
         } finally {
@@ -484,7 +484,7 @@ public final class SomaticLoomWeavingGameTests {
         Setup s = withReachableIntrusion(helper, recipeOfRank(helper, EnumManipulationRank.MEDIOCRITAS), 0);
         EngramBoard board = s.loom.getEngram();
         int lie = reachableIntrusion(s);
-        EnumBloodTendency tend = EnumBloodTendency.values()[board.fragment(lie).colour()];
+        EnumBloodTemper tend = EnumBloodTemper.values()[board.fragment(lie).colour()];
         int before = s.loom.getStoredEnzyme(tend);
         int spans = threadIntrusion(helper, s);
         helper.assertTrue(s.loom.getEngram().lane(lie).length == 1, "the false lane tears loose");
@@ -565,24 +565,24 @@ public final class SomaticLoomWeavingGameTests {
         helper.assertTrue(te.tryChargeRitualBlood(weaver, 50, false) && te.isWeaving(), "Blood Shot weave should begin");
         // Active blood makes the damage hooks treat the mock as a ServerPlayer; the weave no longer needs it.
         HemoCapabilityAccess.getBloodVolume(weaver).setActive(false);
-        return FrayedThreadEntity.spawnIntrusion(level, te, EnumBloodTendency.ANIMUS, te.nodeWorld(0), rank);
+        return FrayedThreadEntity.spawnIntrusion(level, te, EnumBloodTemper.ANIMUS, te.nodeWorld(0), rank);
     }
 
     @GameTest(template = "empty")
-    public static void tendencyHitsApplyTheirSchoolsHarm(GameTestHelper helper) {
+    public static void temperHitsApplyTheirSchoolsHarm(GameTestHelper helper) {
         var weaver = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
         FrayedThreadEntity thread = mortalIntrusion(helper, weaver, EnumManipulationRank.PERFECTUS);
         var victim = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
         victim.moveTo(thread.getX() + 1, thread.getY(), thread.getZ());
-        ThreadAttacks.onBoltHit(EnumBloodTendency.CONGEATIO, thread, victim, 1f);
+        ThreadAttacks.onBoltHit(EnumBloodTemper.CONGEATIO, thread, victim, 1f);
         helper.assertTrue(victim.hasEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN)
                 && victim.getTicksFrozen() > 0, "Congeatio slows and freezes");
         victim.invulnerableTime = 0;
         float before = victim.getHealth();
-        ThreadAttacks.onBoltHit(EnumBloodTendency.LUX, thread, victim, 1f);
+        ThreadAttacks.onBoltHit(EnumBloodTemper.LUX, thread, victim, 1f);
         helper.assertTrue(victim.getHealth() < before && victim.hasEffect(net.minecraft.world.effect.MobEffects.GLOWING),
                 "Lux lances burn and mark");
-        ThreadAttacks.onBoltHit(EnumBloodTendency.FLAMMEUS, thread, victim, 1f);
+        ThreadAttacks.onBoltHit(EnumBloodTemper.FLAMMEUS, thread, victim, 1f);
         helper.assertTrue(victim.getRemainingFireTicks() > 0, "Flammeus ignites");
         thread.discard();
         helper.succeed();
@@ -618,7 +618,7 @@ public final class SomaticLoomWeavingGameTests {
     public static void lavaStillKillsDuringAWeave(GameTestHelper helper) {
         var weaver = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
         FrayedThreadEntity thread = mortalIntrusion(helper, weaver, EnumManipulationRank.SUMMA);
-        ThreadAttacks.onBoltHit(EnumBloodTendency.FLAMMEUS, thread, weaver, 1f);
+        ThreadAttacks.onBoltHit(EnumBloodTemper.FLAMMEUS, thread, weaver, 1f);
         weaver.invulnerableTime = 0;
         weaver.setHealth(6.0F);
         weaver.hurt(helper.getLevel().damageSources().lava(), 20.0F);
@@ -631,7 +631,7 @@ public final class SomaticLoomWeavingGameTests {
     public static void theFireABiteLitIsFloored(GameTestHelper helper) {
         var weaver = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
         FrayedThreadEntity thread = mortalIntrusion(helper, weaver, EnumManipulationRank.PERFECTUS);
-        ThreadAttacks.onBoltHit(EnumBloodTendency.FLAMMEUS, thread, weaver, 1f);
+        ThreadAttacks.onBoltHit(EnumBloodTemper.FLAMMEUS, thread, weaver, 1f);
         weaver.invulnerableTime = 0;
         weaver.setHealth(6.0F);
         weaver.hurt(helper.getLevel().damageSources().onFire(), 20.0F);
@@ -683,9 +683,9 @@ public final class SomaticLoomWeavingGameTests {
         ally.moveTo(thread.getX() + 2, thread.getY() - 1, thread.getZ());
         level.addNewPlayer(ally);
         try {
-            var bolt = new com.vincenthuto.hemomancy.common.entity.weave.ThreadBoltEntity(level, thread, EnumBloodTendency.ANIMUS, 1f);
+            var bolt = new com.vincenthuto.hemomancy.common.entity.weave.ThreadBoltEntity(level, thread, EnumBloodTemper.ANIMUS, 1f);
             helper.assertTrue(bolt.mayStrike(weaver) && !bolt.mayStrike(ally), "Bolts strike only the weaver");
-            ThreadHazardEntity miasma = ThreadHazardEntity.spawn(level, thread, ally.position(), EnumBloodTendency.MORTEM, 2.5f, 80, 1f);
+            ThreadHazardEntity miasma = ThreadHazardEntity.spawn(level, thread, ally.position(), EnumBloodTemper.MORTEM, 2.5f, 80, 1f);
             for (int i = 0; i < 21; i++) miasma.tick();
             helper.assertTrue(!ally.hasEffect(net.minecraft.world.effect.MobEffects.POISON), "Hazards spare helpers");
             ThreadAttacks.markWeaveHarm(ally, thread);
@@ -733,7 +733,7 @@ public final class SomaticLoomWeavingGameTests {
         s.loom.cancelRitual(s.weaver);
         helper.assertTrue(!s.loom.isWeaving() && s.loom.getEngram() == null && s.loom.getRitualBloodCharged() == 0,
                 "the engram withdraws and the paid blood is gone");
-        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTendency.DUCTILIS) == 60, "no thread is lost");
+        helper.assertTrue(s.loom.getStoredEnzyme(EnumBloodTemper.DUCTILIS) == 60, "no thread is lost");
         helper.succeed();
     }
 
@@ -764,7 +764,7 @@ public final class SomaticLoomWeavingGameTests {
         // Any weaver at all: a Humilis engram's lanes are always the shortest, three spans per fragment.
         for (int i = 0; i < 6; i++) {
             var fake = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "first_weaver_" + i));
-            helper.assertTrue(te.engramPreview(fake).reference()[EnumBloodTendency.ANIMUS.ordinal()] == 3,
+            helper.assertTrue(te.engramPreview(fake).reference()[EnumBloodTemper.ANIMUS.ordinal()] == 3,
                     "Blood Shot's engram costs one enzyme for every weaver");
         }
         var fake = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "base_weaver"));
@@ -780,7 +780,7 @@ public final class SomaticLoomWeavingGameTests {
                 && !progress.hasUsed(com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.UpgradeStation.LOOM,
                 com.vincenthuto.hemomancy.common.tile.harbinger.crafting.upgrade.StationUpgradeCatalog.LOOM_WEAVE_GANGLIONIC),
                 "A Humilis weave proves only the first loom practice");
-        helper.assertTrue(te.getStoredEnzyme(EnumBloodTendency.ANIMUS) == 0, "its one enzyme is spent");
+        helper.assertTrue(te.getStoredEnzyme(EnumBloodTemper.ANIMUS) == 0, "its one enzyme is spent");
         helper.succeed();
     }
 

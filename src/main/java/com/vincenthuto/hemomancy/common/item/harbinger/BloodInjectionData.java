@@ -23,8 +23,8 @@ public final class BloodInjectionData extends SimplePreparableReloadListener<Blo
             return responses.stream().map(BloodInjectionRules.Response::property).filter(Objects::nonNull).toList();
         }
         public BloodInjectionRules.Result resolve(BloodSampleData.Profile profile) {
-            return BloodInjectionRules.select(responses.stream().filter(r -> r.tendency() != null
-                ? profile.tendencies().contains(r.tendency()) : profile.properties().contains(r.property())).toList());
+            return BloodInjectionRules.select(responses.stream().filter(r -> r.temper() != null
+                ? profile.tempers().contains(r.temper()) : profile.properties().contains(r.property())).toList());
         }
     }
     public static Snapshot snapshot(boolean clientSide) { return clientSide ? client : server; }
@@ -36,7 +36,7 @@ public final class BloodInjectionData extends SimplePreparableReloadListener<Blo
     }
     private static List<BloodInjectionRules.Response> decode(Map<ResourceLocation, String> json) {
         return json.values().stream().map(BloodInjectionData::parse)
-            .sorted(Comparator.comparingInt((BloodInjectionRules.Response r) -> r.tendency() == null ? 8 : r.tendency().ordinal())
+            .sorted(Comparator.comparingInt((BloodInjectionRules.Response r) -> r.temper() == null ? 8 : r.temper().ordinal())
                 .thenComparing(BloodInjectionRules.Response::origin)).toList();
     }
     @Override protected Snapshot prepare(ResourceManager manager, ProfilerFiller profiler) {

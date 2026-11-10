@@ -51,7 +51,7 @@ class MobDropConsolidationTest {
         assertFalse(biomes.contains("cold")); assertFalse(biomes.contains("frozen")); assertFalse(biomes.contains("river"));
         assertTrue(biomes.contains("pelagic_ocean"));
         assertFalse(json("data/hemomancy/worldgen/biome/mycelial_depths.json").getAsJsonObject("spawners").toString().contains("hemomancy:hemojelly"));
-        assertEquals("ductilis", json("data/hemomancy/blood_profiles/siphonophore.json").getAsJsonArray("tendencies").get(0).getAsString());
+        assertEquals("ductilis", json("data/hemomancy/blood_profiles/siphonophore.json").getAsJsonArray("tempers").get(0).getAsString());
     }
 
     @Test void spiderHusksRemainRareAndFoodsHaveNativeAssets() throws Exception {

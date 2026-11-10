@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.world;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.MycelialSynapseBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.MoltingService;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.MoltingService;
 import com.vincenthuto.hemomancy.common.event.HeartNodeEnvelopeSync;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;

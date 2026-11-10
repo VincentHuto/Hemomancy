@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.player;
 
 import com.vincenthuto.hemomancy.client.player.tracks.AimLayers;
 import com.vincenthuto.hemomancy.client.player.tracks.CastingTracks;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.animation.*;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ class CastingPoseIntegrationTest {
     }
     @Test void differentPurposesDoNotEraseSchoolIdentity() {
         var distinct=new java.util.HashSet<CastingPose>();
-        for(var school:EnumBloodTendency.values()) {
+        for(var school:EnumBloodTemper.values()) {
             var t=CastingTracks.base(school,EnumManipulationRank.MEDIOCRITAS);
             var layer=AimLayers.purpose(CastPurpose.PROJECTILE);
             distinct.add(AimLayerRules.apply(sample(t,CastPhase.RELEASE,2,0,false),layer.third().sample(2,CastingPose.ZERO),1));
@@ -27,7 +27,7 @@ class CastingPoseIntegrationTest {
         assertEquals(8,distinct.size());
     }
     @Test void newQuickCastReplacesRecoveryWithoutAccumulating() {
-        var t=CastingTracks.base(EnumBloodTendency.ANIMUS,EnumManipulationRank.HUMILIS);
+        var t=CastingTracks.base(EnumBloodTemper.ANIMUS,EnumManipulationRank.HUMILIS);
         int release=phaseDuration(t,CastPhase.RELEASE,false),recovery=phaseDuration(t,CastPhase.RECOVERY,false);
         var playback=new CastingPlayback(1,CastPhase.RELEASE,100,100,0,0,0,release,recovery,10);
         assertEquals(CastPhase.RECOVERY,playback.phase(100+release+2));

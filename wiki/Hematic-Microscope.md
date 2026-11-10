@@ -1,6 +1,6 @@
 # Hematic Microscope
 
-Warden and Sculk Catalyst specimens identify as the separate **Ahaematic Colloid** item, with an **Incertae** readout and a gritty black/cyan slide. They show no blood tendency or enzyme response. Nearby vibration and the Severed Record can produce distinct visible responses; these specimens never count as clinical blood-source evidence. See [Antecedent Inquiry](Antecedent-Inquiry.md).
+Warden and Sculk Catalyst specimens identify as the separate **Ahaematic Colloid** item, with an **Incertae** readout and a gritty black/cyan slide. They show no blood temper or enzyme response. Nearby vibration and the Severed Record can produce distinct visible responses; these specimens never count as clinical blood-source evidence. See [Antecedent Inquiry](Antecedent-Inquiry.md).
 
 The cellular field is slightly transparent, with a pale blue-green translucent glass backing around the brass lens. The world remains partially visible through both surfaces.
 
@@ -12,9 +12,9 @@ A quiet focusing loop starts once an unidentified, readable sample is inserted. 
 
 Craft it with two copper ingots, an iron ingot, a glass pane and leather. At Degree 1, show the Alchemist a filled creature vial to learn its recipe. Return after your first successful examination for the injection lesson. See [Clinical Blood Tools](Clinical-Blood-Tools.md). The vial rack is not an examination container.
 
-Identification reveals the vial's current tendencies, biological properties, and injection prediction in its tooltip. After learning Borrowed Physiology from the Alchemist, unexamined blood remains injectable; before that lesson, injection is unavailable. Identification changes neither potency nor other vials of the same species, and grants no bestiary surrender rewards.
+Identification reveals the vial's current tempers, biological properties, and injection prediction in its tooltip. After learning Borrowed Physiology from the Alchemist, unexamined blood remains injectable; before that lesson, injection is unavailable. Identification changes neither potency nor other vials of the same species, and grants no bestiary surrender rewards.
 
-The slide displays up to three tendencies and two biological motifs. Additional identified traits remain in the readout (which pages when necessary) and tooltip. Paired budding cells distinguish Animus; crystalline discs distinguish Congeatio. Ferric platelets form chains, Ductilis cells branch and pulse, Lux discs glow in waves, Flammeus coronas rise, Mortem membranes collapse, and Tenebris silhouettes fade and shift. Equivalent specimens share a deterministic composition.
+The slide displays up to three tempers and two biological motifs. Additional identified traits remain in the readout (which pages when necessary) and tooltip. Paired budding cells distinguish Animus; crystalline discs distinguish Congeatio. Ferric platelets form chains, Ductilis cells branch and pulse, Lux discs glow in waves, Flammeus coronas rise, Mortem membranes collapse, and Tenebris silhouettes fade and shift. Equivalent specimens share a deterministic composition.
 
 Client settings under `microscope` offer reduced motion and low density. They do not change examination time or traits. A filled vial with unreadable provenance shows a murky slide and retains its data. Switching either held stack, changing specimen components, interrupted use, death, spectator mode, or a data reload cancels examination. Hold use again after a reload.
 
@@ -22,9 +22,9 @@ Client settings under `microscope` offer reduced motion and low density. They do
 
 All screen decoration uses editable PNG sprites under `textures/gui/microscope/`: the lens frame, plasma field, readout panel and border, screen dimming, progress track/fill, cells, property motifs and Ductilis connections. PNG alpha controls static surface transparency. The game does not run the asset generator; Java handles dynamic text, cell movement, clipping, and progress. [Texture editing guide and icon filenames](../src/main/resources/assets/hemomancy/textures/gui/microscope/README.md).
 
-The eight tendency icons are separate 32 x 32 PNGs under `textures/gui/microscope/tendencies/`; the twelve property icons are under `textures/gui/microscope/properties/`. Edit those named files directly. The original two atlases remain as references and are no longer rendered.
+The eight temper icons are separate 32 x 32 PNGs under `textures/gui/microscope/tempers/`; the twelve property icons are under `textures/gui/microscope/properties/`. Edit those named files directly. The original two atlases remain as references and are no longer rendered.
 
-These textures reload through the ordinary resource manager; the overlay retains no composition cache. Tendency tint comes from the existing enum palette. Built-in biological motifs use `hemomancy:blood_properties/*` and `hemomancy:fungal`. Additional namespaced properties in entity blood profiles synchronize independently of injection definitions and display as stable IDs when no translation exists. Unrecognized motifs use neutral motes.
+These textures reload through the ordinary resource manager; the overlay retains no composition cache. Temper tint comes from the existing enum palette. Built-in biological motifs use `hemomancy:blood_properties/*` and `hemomancy:fungal`. Additional namespaced properties in entity blood profiles synchronize independently of injection definitions and display as stable IDs when no translation exists. Unrecognized motifs use neutral motes.
 
 Editable item source: `assets/hemomancy/models/item/bbmodel/hematic_microscope.bbmodel`. The model generator is `tools/oneoff/hematic_microscope.py`; use `--model-only` to rebuild the socket, editable Blockbench model, and mirrored viewing model without changing any item or GUI textures. Without that option it preserves existing GUI PNGs unless explicitly invoked with `--reset-gui-textures`. The original focusing loop can be regenerated with `tools/audio/author_microscope_loop.py`; its sound event is `hemomancy:item.microscope.examine_loop`.
 

@@ -1,15 +1,15 @@
 package com.vincenthuto.hemomancy.client.render.outpouring;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 /**
- * The caster's blood after it leaves the body: motes that fall, rise, whip, orbit or roll by tendency, collide with blocks
+ * The caster's blood after it leaves the body: motes that fall, rise, whip, orbit or roll by temper, collide with blocks
  * one axis at a time (so nothing tunnels into a wall), and report where they touched so the world can take a fading
- * mark. Pure apart from the tendency enum; the world comes in through {@link Blocks}. Client thread only.
+ * mark. Pure apart from the temper enum; the world comes in through {@link Blocks}. Client thread only.
  */
 public final class OutpouringSim {
     public static final int GLOBAL_CAP = 1200, PER_CAST_CAP = 220;
@@ -46,8 +46,8 @@ public final class OutpouringSim {
 
     public record Contact(int bx, int by, int bz, int face, double hx, double hy, double hz, float size, boolean spark) {}
 
-    private final EnumBloodTendency school;
-    private final EnumBloodTendency secondaryTendency;
+    private final EnumBloodTemper school;
+    private final EnumBloodTemper secondaryTemper;
     private final Random random;
     private final List<Mote> motes = new ArrayList<>();
     private double[] exits = new double[0];
@@ -56,17 +56,17 @@ public final class OutpouringSim {
     private float pending;
     private boolean discarded;
 
-    public OutpouringSim(EnumBloodTendency school, EnumBloodTendency secondary, long seed) {
+    public OutpouringSim(EnumBloodTemper school, EnumBloodTemper secondary, long seed) {
         this.school = school;
-        this.secondaryTendency = secondary;
+        this.secondaryTemper = secondary;
         this.random = new Random(seed);
     }
 
     /** Lux buds many small orbs rather than a few large ones. */
     static int orbCap(int rank) { return 4 + 4 * rank; }
 
-    public EnumBloodTendency school() { return school; }
-    public EnumBloodTendency secondary() { return secondaryTendency; }
+    public EnumBloodTemper school() { return school; }
+    public EnumBloodTemper secondary() { return secondaryTemper; }
     public List<Mote> motes() { return motes; }
     public int size() { return motes.size(); }
     public boolean finished() { return motes.isEmpty(); }
@@ -95,11 +95,11 @@ public final class OutpouringSim {
         float rate = (float) (profile.volume() * strength * FLOW);
         if (woundOnly) rate *= .15f;
         pending += rate;
-        if (burst && !woundOnly) pending += (float) profile.volume() * (school == EnumBloodTendency.DUCTILIS ? 16 : 40);
+        if (burst && !woundOnly) pending += (float) profile.volume() * (school == EnumBloodTemper.DUCTILIS ? 16 : 40);
         while (pending >= 1) {
             pending--;
             if (motes.size() >= PER_CAST_CAP || live >= GLOBAL_CAP) { pending = 0; break; }
-            if (school == EnumBloodTendency.LUX && count(Kind.ORB) >= orbCap(rank)) { pending = 0; break; }
+            if (school == EnumBloodTemper.LUX && count(Kind.ORB) >= orbCap(rank)) { pending = 0; break; }
             int i = random.nextInt(exitCount);
             spawn(exits[i * 3], exits[i * 3 + 1], exits[i * 3 + 2], outward[i * 3], outward[i * 3 + 1], outward[i * 3 + 2]);
         }
@@ -111,7 +111,7 @@ public final class OutpouringSim {
         Mote m = new Mote();
         m.x = m.prevX = x + jitter(.03); m.y = m.prevY = y + jitter(.03); m.z = m.prevZ = z + jitter(.03);
         m.seed = random.nextInt(1 << 16);
-        m.secondary = secondaryTendency != null && random.nextFloat() < .2f;
+        m.secondary = secondaryTemper != null && random.nextFloat() < .2f;
         double w = wildness, spread = .25 + .6 * w;
         double dx = ox + jitter(spread), dy = oy + jitter(spread), dz = oz + jitter(spread);
         double len = Math.max(1e-6, Math.sqrt(dx * dx + dy * dy + dz * dz));
@@ -180,7 +180,7 @@ public final class OutpouringSim {
         }
         double w = wildness;
         switch (m.kind) {
-            case DROP -> { m.vy -= GRAVITY; drag(m, school == EnumBloodTendency.CONGEATIO ? .92 : .96); }
+            case DROP -> { m.vy -= GRAVITY; drag(m, school == EnumBloodTemper.CONGEATIO ? .92 : .96); }
             case FLAME -> {
                 m.vy += .03; drag(m, .9);
                 m.vx += jitter(w * .02); m.vz += jitter(w * .02);
@@ -267,7 +267,7 @@ public final class OutpouringSim {
             }
             case DROP -> {
                 contact(contacts, budget, bx, by, bz, face, hx, hy, hz, m.size * 3, false);
-                if (school == EnumBloodTendency.CONGEATIO) { stick(m, face, hx, hy, hz, Kind.SHARD); }
+                if (school == EnumBloodTemper.CONGEATIO) { stick(m, face, hx, hy, hz, Kind.SHARD); }
                 else if (face == UP) {
                     // The drop feeds the pool and its spray is caught up in the whirlwind.
                     m.kind = Kind.WISP; m.y = hy + .05; m.vy = .02; m.size = .22f; m.life = m.age + life(30, 50);

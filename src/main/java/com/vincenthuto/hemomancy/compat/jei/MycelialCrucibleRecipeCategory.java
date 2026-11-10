@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -25,7 +25,7 @@ import java.util.Locale;
 
 /**
  * JEI category for the Mycelial Crucible's two-phase fungal scar cultivation: blood grows the seed into an
- * immature culture, then aligned enzymes mature it into the scar. Everything is tinted by the recipe's tendency.
+ * immature culture, then aligned enzymes mature it into the scar. Everything is tinted by the recipe's temper.
  */
 public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalScarCultivationRecipe> {
 
@@ -65,7 +65,7 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
                         "hemomancy.jei.crucible.immature.tip").withStyle(ChatFormatting.GRAY)));
         int power = recipe.getMaturationThreshold();
         builder.addSlot(RecipeIngredientRole.INPUT, ENZYME_X, ENZYME_Y)
-                .addItemStack(new ItemStack(EnumBloodTendency.getRepEnzyme(recipe.getTendency())))
+                .addItemStack(new ItemStack(EnumBloodTemper.getRepEnzyme(recipe.getTemper())))
                 .addRichTooltipCallback((view, tip) -> tip.add(Component.translatable(
                         "hemomancy.jei.crucible.enzyme.tip", power).withStyle(ChatFormatting.GRAY)));
         builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, SLOT_Y)
@@ -83,7 +83,7 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
     }
 
     private static int tendColor(FungalScarCultivationRecipe recipe) {
-        return JeiPanel.brighten(recipe.getTendency().getColor().getColor());
+        return JeiPanel.brighten(recipe.getTemper().getColor().getColor());
     }
 
     @Override
@@ -93,7 +93,7 @@ public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalSca
         JeiPanel.Theme t = JeiPanel.FUNGAL;
         float time = JeiPanel.time();
         int tend = tendColor(recipe);
-        String tendName = recipe.getTendency().name().toLowerCase(Locale.ROOT);
+        String tendName = recipe.getTemper().name().toLowerCase(Locale.ROOT);
 
         JeiPanel.panel(gfx, t, W, H, FOOTER_Y);
         JeiPanel.diamond(gfx, 9, 8, 3, JeiPanel.darken(tend, 0.5f));

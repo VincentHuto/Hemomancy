@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipulationChargeVisualPacket;
@@ -59,8 +59,8 @@ public final class ManipulationChargeVisualGameTests {
             var blood = HemoCapabilityAccess.getBloodVolume(player);
             blood.setActive(true);
             blood.setBloodVolume(2000);
-            for (var school : EnumBloodTendency.values())
-                HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(school, 100);
+            for (var school : EnumBloodTemper.values())
+                HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(school, 100);
             var known = HemoCapabilityAccess.getKnownManipulations(player);
             for (var entry : ManipulationInit.MANIPS.getEntries())
                 known.getKnownManips().put(entry.get(), new ManipLevel(4, 185));

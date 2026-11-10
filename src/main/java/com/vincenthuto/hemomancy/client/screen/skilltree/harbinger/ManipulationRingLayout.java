@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import java.util.List;
 
-/** Compact radial anchoring rules for the tendency manipulation families. */
+/** Compact radial anchoring rules for the temper manipulation families. */
 final class ManipulationRingLayout {
 	private ManipulationRingLayout() {
 	}

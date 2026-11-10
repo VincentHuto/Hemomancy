@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.google.common.base.Suppliers;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
@@ -21,8 +21,8 @@ public final class MorphlingStrain {
 	public static final String NO_LAST_RITE = "";
 
 	private final String id;
-	private final EnumBloodTendency preferred;
-	private final EnumBloodTendency secondary;
+	private final EnumBloodTemper preferred;
+	private final EnumBloodTemper secondary;
 	private final CourtHouse house;
 	private final MorphlingHomeCondition homeCondition;
 	private final boolean cradlePrimal;
@@ -42,7 +42,7 @@ public final class MorphlingStrain {
 	 * @param tintColor     ARGB body tint at Apex for the Unfed-Fledgling look (the spec's appearance tables); alpha is
 	 *                      the overlay's opacity
 	 */
-	MorphlingStrain(String id, EnumBloodTendency preferred, EnumBloodTendency secondary, CourtHouse house,
+	MorphlingStrain(String id, EnumBloodTemper preferred, EnumBloodTemper secondary, CourtHouse house,
 			MorphlingHomeCondition homeCondition, boolean cradlePrimal, String lastRiteId, int lastRiteStage, MorphlingPolypLayer polypFamily,
 			int accentColor, int creativeOrder, int tintColor) {
 		this.id = id;
@@ -66,11 +66,11 @@ public final class MorphlingStrain {
 		return this.id;
 	}
 
-	public EnumBloodTendency preferred() {
+	public EnumBloodTemper preferred() {
 		return this.preferred;
 	}
 
-	public EnumBloodTendency secondary() {
+	public EnumBloodTemper secondary() {
 		return this.secondary;
 	}
 

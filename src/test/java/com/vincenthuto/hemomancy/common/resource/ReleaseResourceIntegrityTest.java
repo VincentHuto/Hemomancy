@@ -19,7 +19,7 @@ class ReleaseResourceIntegrityTest {
 			"hemomancy:pale_field_ink",
 			"hemomancy:roasted_gourd_seeds",
 			"hemomancy:dicentra_sap",
-			"hemomancy:blood_tendency_gauge",
+			"hemomancy:blood_temperament_gauge",
 			"hemomancy:scar_binder",
 			"hemomancy:scar_binder_upgraded");
 

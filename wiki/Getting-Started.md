@@ -92,10 +92,10 @@ Blood is the resource used by Hemomancy. Most adult humans contain about **5000 
 - **Death:** Blood volume resets on death (configurable)
 - **Monitoring:** Use the HUD display or Field Notes to check your current blood level
 
-### Blood Tendency
-As you use blood magic, your blood develops **qualities** or **tendencies**. These are not moral alignments: they are physical properties of your blood.
+### Blood Temperament
+As you use blood magic, your blood develops **qualities** or **tempers**. These are not moral alignments: they are physical properties of your blood.
 
-The eight tendencies are:
+The eight tempers are:
 - **Animus** (Life/Vitality)
 - **Flammeus** (Fire/Heat)
 - **Ductilis** (Lightning/Nerves)
@@ -105,7 +105,7 @@ The eight tendencies are:
 - **Ferric** (Magnetic/Ferrous)
 - **Tenebris** (Shadow/Darkness)
 
-Your tendency alignment controls which manipulations are available and how effective they are.
+Your temper alignment controls which manipulations are available and how effective they are.
 
 ### Blood Manipulations
 Manipulations are active or passive abilities powered by blood. A manipulation can be a healing touch, a projectile, or something that stays active and drains blood.
@@ -115,7 +115,7 @@ Manipulations are active or passive abilities powered by blood. A manipulation c
 - **Type:** Quick-cast, charged, passive, or continuous
 - **Cost:** Blood amount required per use
 - **Cooldown:** Time before you can use the manipulation again
-- **Tendency:** Which blood quality the manipulation belongs to
+- **Temper:** Which blood quality the manipulation belongs to
 
 Learn manipulations by crafting **Hematic Memories** at the **Somatic Loom**.
 
@@ -188,7 +188,7 @@ Choose before you spend heavily on a path. Switching back and forth is not a sup
 **Field Notes (Book)**
 - Opens your journal and progression tracker
 - Keybind: `B` by default
-- Shows blood volume, tendency, known manipulations, and more
+- Shows blood volume, temper, known manipulations, and more
 
 **Vials and Containers**
 - **Blood Vial**: Stores 250 mL of your blood for later use
@@ -311,7 +311,7 @@ Check Options > Controls > Hemomancy for full keybind list.
 
 ### Field Notes Interface
 Your in-game journal with tabs for:
-- **Blood Status**: Current volume, tendency, alignment levels
+- **Blood Status**: Current volume, temper, alignment levels
 - **Manipulations**: Known abilities and their details
 - **Progression**: Degree/purity status, next steps
 - **Discoveries**: Lore entries, item codex, creatures
@@ -337,7 +337,7 @@ An entry's icon, chapter, title, and subtitle appear on its opening page only. C
 
 3. **Blood Management**: Don't drain yourself completely. Always keep a reserve for emergencies.
 
-4. **Tendency Matters**: Focus on 2-3 tendencies initially. Spreading too thin makes you weaker.
+4. **Temper Matters**: Focus on 2-3 tempers initially. Spreading too thin makes you weaker.
 
 5. **Explore Thoroughly**: Fungal biomes contain unique resources you can't get elsewhere.
 
@@ -384,7 +384,7 @@ Choose a path or read more about the underlying systems:
 
 - **[[Harbinger Path]]**: Learn about degrees, rituals, and blood manipulation mastery
 - **[[Unstained Path]]**: Understand purification, clarity, and guardian powers
-- **[[Blood Systems]]**: Manipulations, tendencies, and blood mechanics
+- **[[Blood Systems]]**: Manipulations, tempers, and blood mechanics
 - **[[World Content]]**: Explore biomes, structures, and creatures
 - **[[Lore and Story]]**: Read the setting and story
 

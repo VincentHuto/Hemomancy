@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -31,7 +31,7 @@ public class LivingBladeItem extends LivingToolItem {
 	public static String TAG_STATE = "state";
 
 	public LivingBladeItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -2.3f, EnumBloodTendency.ANIMUS, tier, builderIn);
+		super(speedIn, attackDamageIn, -2.3f, EnumBloodTemper.ANIMUS, tier, builderIn);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class LivingBladeItem extends LivingToolItem {
 		}
 		if (stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(TAG_STATE)) {
 			attacker.heal(this.getLivingAttackDamage() / 2);
-			target.hurt(TendencyWeaponHelper.createWeaponDamageSource(target, attacker), 20);
+			target.hurt(TemperWeaponHelper.createWeaponDamageSource(target, attacker), 20);
 			if (!attacker.level().isClientSide && attacker instanceof Player playerIn) {
 				IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
 						;
@@ -74,7 +74,7 @@ public class LivingBladeItem extends LivingToolItem {
 
 			}
 		} else {
-			target.hurt(TendencyWeaponHelper.createWeaponDamageSource(target, attacker), 5);
+			target.hurt(TemperWeaponHelper.createWeaponDamageSource(target, attacker), 5);
 
 		}
 		return true;

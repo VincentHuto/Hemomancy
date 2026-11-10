@@ -1,5 +1,5 @@
 {
-  "tendency": "FLAMMEUS",
+  "temper": "FLAMMEUS",
   "benefits": [
     {
       "effect": "minecraft:fire_resistance"

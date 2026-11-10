@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.outpouring;
 
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.Detail;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.Mode;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 import java.util.ArrayDeque;
@@ -21,7 +21,7 @@ public final class OutpouringMarks {
     static final OutpouringMarks CLIENT = new OutpouringMarks();
 
     /** {@code u, v} place the hit on the face (0..1 along {@link OutpouringGeometry#faceAxes}). */
-    public record Mark(int bx, int by, int bz, int face, double u, double v, EnumBloodTendency school, float size, long born,
+    public record Mark(int bx, int by, int bz, int face, double u, double v, EnumBloodTemper school, float size, long born,
                        int life, int seed, boolean pool, boolean spark) {}
 
     private final Deque<Mark> marks = new ArrayDeque<>();
@@ -136,7 +136,7 @@ public final class OutpouringMarks {
         var profile = OutpouringRules.profile(cast.rank);
         for (var c : kept) {
             double[] uv = faceUv(c);
-            boolean pool = cast.school == EnumBloodTendency.ANIMUS && c.face() == OutpouringSim.UP && !c.spark();
+            boolean pool = cast.school == EnumBloodTemper.ANIMUS && c.face() == OutpouringSim.UP && !c.spark();
             float size = (float) ((.25 + .35 * profile.wildness()) * (c.spark() ? .6 : 1));
             int seed = (int) ((c.bx() * 73856093L ^ c.by() * 19349663L ^ c.bz() * 83492791L ^ now) & 0xFFFF);
             CLIENT.add(new Mark(c.bx(), c.by(), c.bz(), c.face(), uv[0], uv[1], cast.school, size, now, profile.markLife(),

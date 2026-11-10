@@ -56,8 +56,8 @@ public class ContainerInit {
 	public static final DeferredHolder<MenuType<?>, MenuType<VascularViewMenu>> vascular_view =
 			CONTAINERS.register("vascular_view", () -> IMenuTypeExtension.create(VascularViewMenu::new));
 
-	public static final DeferredHolder<MenuType<?>, MenuType<TendencyViewMenu>> tendency_view =
-			CONTAINERS.register("tendency_view", () -> IMenuTypeExtension.create(TendencyViewMenu::new));
+	public static final DeferredHolder<MenuType<?>, MenuType<TemperamentViewMenu>> temperament_view =
+			CONTAINERS.register("temperament_view", () -> IMenuTypeExtension.create(TemperamentViewMenu::new));
 
 	public static final DeferredHolder<MenuType<?>, MenuType<ScryingDiagnosticsMenu>> scrying_diagnostics =
 			CONTAINERS.register("scrying_diagnostics", () -> IMenuTypeExtension.create(ScryingDiagnosticsMenu::new));

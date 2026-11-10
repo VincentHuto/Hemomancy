@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 
 public final class SporiticThuribleRulesTest {
 	private SporiticThuribleRulesTest() {
@@ -8,9 +8,9 @@ public final class SporiticThuribleRulesTest {
 
 	public static void main(String[] args) {
 		bootstrapMinecraftIfAvailable();
-		sporeIdsMapToTendencies();
-		matchingTendencyReceivesResonanceDiscounts();
-		nonMatchingTendencyDoesNotReceiveResonanceDiscounts();
+		sporeIdsMapToTempers();
+		matchingTemperReceivesResonanceDiscounts();
+		nonMatchingTemperDoesNotReceiveResonanceDiscounts();
 		swingIntensityScalesDrainAndRadius();
 		sporiticAttunementImprovesAuraAndUpkeep();
 		burnFractionIsClamped();
@@ -27,39 +27,39 @@ public final class SporiticThuribleRulesTest {
 		}
 	}
 
-	private static void sporeIdsMapToTendencies() {
-		assertEquals("vivacious tendency", EnumBloodTendency.ANIMUS,
-				SporiticThuribleSpore.byItemPath("vivacious_spores").orElseThrow().tendency());
-		assertEquals("fervent tendency", EnumBloodTendency.FLAMMEUS,
-				SporiticThuribleSpore.byItemPath("fervent_spores").orElseThrow().tendency());
-		assertEquals("neurotic tendency", EnumBloodTendency.DUCTILIS,
-				SporiticThuribleSpore.byItemPath("neurotic_spores").orElseThrow().tendency());
-		assertEquals("incandescent tendency", EnumBloodTendency.LUX,
-				SporiticThuribleSpore.byItemPath("incandescent_spores").orElseThrow().tendency());
-		assertEquals("ruinous tendency", EnumBloodTendency.MORTEM,
-				SporiticThuribleSpore.byItemPath("ruinous_spores").orElseThrow().tendency());
-		assertEquals("frigid tendency", EnumBloodTendency.CONGEATIO,
-				SporiticThuribleSpore.byItemPath("frigid_spores").orElseThrow().tendency());
-		assertEquals("ferric tendency", EnumBloodTendency.FERRIC,
-				SporiticThuribleSpore.byItemPath("ferric_spores").orElseThrow().tendency());
-		assertEquals("umbral tendency", EnumBloodTendency.TENEBRIS,
-				SporiticThuribleSpore.byItemPath("umbral_spores").orElseThrow().tendency());
+	private static void sporeIdsMapToTempers() {
+		assertEquals("vivacious temper", EnumBloodTemper.ANIMUS,
+				SporiticThuribleSpore.byItemPath("vivacious_spores").orElseThrow().temper());
+		assertEquals("fervent temper", EnumBloodTemper.FLAMMEUS,
+				SporiticThuribleSpore.byItemPath("fervent_spores").orElseThrow().temper());
+		assertEquals("neurotic temper", EnumBloodTemper.DUCTILIS,
+				SporiticThuribleSpore.byItemPath("neurotic_spores").orElseThrow().temper());
+		assertEquals("incandescent temper", EnumBloodTemper.LUX,
+				SporiticThuribleSpore.byItemPath("incandescent_spores").orElseThrow().temper());
+		assertEquals("ruinous temper", EnumBloodTemper.MORTEM,
+				SporiticThuribleSpore.byItemPath("ruinous_spores").orElseThrow().temper());
+		assertEquals("frigid temper", EnumBloodTemper.CONGEATIO,
+				SporiticThuribleSpore.byItemPath("frigid_spores").orElseThrow().temper());
+		assertEquals("ferric temper", EnumBloodTemper.FERRIC,
+				SporiticThuribleSpore.byItemPath("ferric_spores").orElseThrow().temper());
+		assertEquals("umbral temper", EnumBloodTemper.TENEBRIS,
+				SporiticThuribleSpore.byItemPath("umbral_spores").orElseThrow().temper());
 		assertTrue("unknown item path is not a valid catalyst",
 				SporiticThuribleSpore.byItemPath("spore_sac").isEmpty());
 	}
 
-	private static void matchingTendencyReceivesResonanceDiscounts() {
+	private static void matchingTemperReceivesResonanceDiscounts() {
 		assertDouble("matching cost multiplier", 0.85,
-				SporiticThuribleResonanceRules.costMultiplier(EnumBloodTendency.MORTEM, EnumBloodTendency.MORTEM));
+				SporiticThuribleResonanceRules.costMultiplier(EnumBloodTemper.MORTEM, EnumBloodTemper.MORTEM));
 		assertDouble("matching cooldown multiplier", 0.9,
-				SporiticThuribleResonanceRules.cooldownMultiplier(EnumBloodTendency.MORTEM, EnumBloodTendency.MORTEM));
+				SporiticThuribleResonanceRules.cooldownMultiplier(EnumBloodTemper.MORTEM, EnumBloodTemper.MORTEM));
 	}
 
-	private static void nonMatchingTendencyDoesNotReceiveResonanceDiscounts() {
+	private static void nonMatchingTemperDoesNotReceiveResonanceDiscounts() {
 		assertDouble("nonmatching cost multiplier", 1.0,
-				SporiticThuribleResonanceRules.costMultiplier(EnumBloodTendency.MORTEM, EnumBloodTendency.LUX));
+				SporiticThuribleResonanceRules.costMultiplier(EnumBloodTemper.MORTEM, EnumBloodTemper.LUX));
 		assertDouble("nonmatching cooldown multiplier", 1.0,
-				SporiticThuribleResonanceRules.cooldownMultiplier(EnumBloodTendency.MORTEM, EnumBloodTendency.LUX));
+				SporiticThuribleResonanceRules.cooldownMultiplier(EnumBloodTemper.MORTEM, EnumBloodTemper.LUX));
 	}
 
 	private static void swingIntensityScalesDrainAndRadius() {

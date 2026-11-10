@@ -23,8 +23,8 @@ class BookResourceBindingTest {
                 "alembic/pages/first_condensation", "alembic/pages/refined_and_compound",
                 "alembic/pages/sanguine_athanor", "alembic/pages/bound_potion",
                 "centrifuge/pages/steady_separation", "centrifuge/pages/second_fraction",
-                "resonant_forge/pages/upgrades", "tendency/pages/enzymatic_scriptorium",
-                "tendency/pages/eightfold_script", "tendency/pages/palimpsest",
+                "resonant_forge/pages/upgrades", "temperament/pages/enzymatic_scriptorium",
+                "temperament/pages/eightfold_script", "temperament/pages/palimpsest",
                 "manipulations/pages/ganglionic_weave", "manipulations/pages/cortical_weave",
                 "the_hematic_order/pages/scar_practice"}) {
             JsonObject source = JsonParser.parseString(Files.readString(Path.of(

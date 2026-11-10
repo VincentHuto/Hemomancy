@@ -5,7 +5,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAnchorEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillCompositionRules;
@@ -35,54 +35,54 @@ final class WillSubcommand {
 				.then(Commands.literal("ambush")
 						.then(Commands.literal("anchor")
 								.then(Commands.argument("school", StringArgumentType.word())
-										.suggests((ctx, builder) -> suggestBloodTendencies(builder))
+										.suggests((ctx, builder) -> suggestBloodTempers(builder))
 										.then(Commands.argument("tier", IntegerArgumentType.integer(1, 4))
 												.then(Commands.argument("broken_count", IntegerArgumentType.integer(0, 8))
 														.then(Commands.argument("sent_present", BoolArgumentType.bool())
 																.executes(ctx -> summonWillAmbushAnchor(ctx.getSource(),
 																		ctx.getSource().getPlayerOrException(),
-																		TendencySubcommand.parseBloodTendency(StringArgumentType.getString(ctx, "school")),
+																		TemperSubcommand.parseBloodTemper(StringArgumentType.getString(ctx, "school")),
 																		IntegerArgumentType.getInteger(ctx, "tier"),
 																		IntegerArgumentType.getInteger(ctx, "broken_count"),
 																		BoolArgumentType.getBool(ctx, "sent_present")))
 																.then(Commands.argument("player", EntityArgument.player())
 																		.executes(ctx -> summonWillAmbushAnchor(ctx.getSource(),
 																				EntityArgument.getPlayer(ctx, "player"),
-																				TendencySubcommand.parseBloodTendency(StringArgumentType.getString(ctx, "school")),
+																				TemperSubcommand.parseBloodTemper(StringArgumentType.getString(ctx, "school")),
 																				IntegerArgumentType.getInteger(ctx, "tier"),
 																				IntegerArgumentType.getInteger(ctx, "broken_count"),
 																				BoolArgumentType.getBool(ctx, "sent_present")))))))))
 						.then(Commands.literal("immediate")
 								.then(Commands.argument("school", StringArgumentType.word())
-										.suggests((ctx, builder) -> suggestBloodTendencies(builder))
+										.suggests((ctx, builder) -> suggestBloodTempers(builder))
 										.then(Commands.argument("tier", IntegerArgumentType.integer(1, 4))
 												.then(Commands.argument("origin", StringArgumentType.word())
 														.suggests((ctx, builder) -> suggestWillOrigins(builder))
 														.executes(ctx -> summonWillAmbushImmediate(ctx.getSource(),
 																ctx.getSource().getPlayerOrException(),
-																TendencySubcommand.parseBloodTendency(StringArgumentType.getString(ctx, "school")),
+																TemperSubcommand.parseBloodTemper(StringArgumentType.getString(ctx, "school")),
 																IntegerArgumentType.getInteger(ctx, "tier"),
 																parseWillOrigin(StringArgumentType.getString(ctx, "origin")),
 																1))
 														.then(Commands.argument("count", IntegerArgumentType.integer(1, 8))
 																.executes(ctx -> summonWillAmbushImmediate(ctx.getSource(),
 																		ctx.getSource().getPlayerOrException(),
-																		TendencySubcommand.parseBloodTendency(StringArgumentType.getString(ctx, "school")),
+																		TemperSubcommand.parseBloodTemper(StringArgumentType.getString(ctx, "school")),
 																		IntegerArgumentType.getInteger(ctx, "tier"),
 																		parseWillOrigin(StringArgumentType.getString(ctx, "origin")),
 																		IntegerArgumentType.getInteger(ctx, "count")))
 																.then(Commands.argument("player", EntityArgument.player())
 																		.executes(ctx -> summonWillAmbushImmediate(ctx.getSource(),
 																				EntityArgument.getPlayer(ctx, "player"),
-																				TendencySubcommand.parseBloodTendency(StringArgumentType.getString(ctx, "school")),
+																				TemperSubcommand.parseBloodTemper(StringArgumentType.getString(ctx, "school")),
 																				IntegerArgumentType.getInteger(ctx, "tier"),
 																				parseWillOrigin(StringArgumentType.getString(ctx, "origin")),
 																				IntegerArgumentType.getInteger(ctx, "count"))))))))));
 	}
 
-	private static CompletableFuture<Suggestions> suggestBloodTendencies(SuggestionsBuilder builder) {
-		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-			builder.suggest(tendency.name().toLowerCase(Locale.ROOT));
+	private static CompletableFuture<Suggestions> suggestBloodTempers(SuggestionsBuilder builder) {
+		for (EnumBloodTemper temper : EnumBloodTemper.values()) {
+			builder.suggest(temper.name().toLowerCase(Locale.ROOT));
 		}
 		return builder.buildFuture();
 	}
@@ -103,9 +103,9 @@ final class WillSubcommand {
 	}
 
 	private static int summonWillAmbushAnchor(CommandSourceStack source, ServerPlayer player,
-			EnumBloodTendency school, int tier, int brokenCount, boolean sentPresent) {
+			EnumBloodTemper school, int tier, int brokenCount, boolean sentPresent) {
 		if (school == null) {
-			source.sendFailure(HemoText.translatable("commands.hemomancy.will.unknown_will_school_valid", TendencySubcommand.getValidTendencyNames()));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.will.unknown_will_school_valid", TemperSubcommand.getValidTemperNames()));
 			return 0;
 		}
 		ServerLevel level = source.getLevel();
@@ -131,9 +131,9 @@ final class WillSubcommand {
 	}
 
 	private static int summonWillAmbushImmediate(CommandSourceStack source, ServerPlayer player,
-			EnumBloodTendency school, int tier, WillOrigin origin, int count) {
+			EnumBloodTemper school, int tier, WillOrigin origin, int count) {
 		if (school == null) {
-			source.sendFailure(HemoText.translatable("commands.hemomancy.will.unknown_will_school_valid", TendencySubcommand.getValidTendencyNames()));
+			source.sendFailure(HemoText.translatable("commands.hemomancy.will.unknown_will_school_valid", TemperSubcommand.getValidTemperNames()));
 			return 0;
 		}
 		if (origin == null) {

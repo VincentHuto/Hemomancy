@@ -6,19 +6,19 @@ Blood composition and collection requirements are authored per entity at
 
 ```json
 {
-  "tendencies": ["congeatio"],
+  "tempers": ["congeatio"],
   "properties": ["hemomancy:blood_properties/aquatic"],
   "requires_living_syringe": true
 }
 ```
 
-`tendencies` accepts `animus`, `flammeus`, `ductilis`, `lux`, `mortem`, `congeatio`,
+`tempers` accepts `animus`, `flammeus`, `ductilis`, `lux`, `mortem`, `congeatio`,
 `ferric`, and `tenebris`. `properties` accepts namespaced identifiers, including
 custom addon properties. `hemomancy:fungal` retains the infected-fungus centrifuge
 output. Memberships are deduplicated and ordered consistently.
 
 Missing lists default to empty; a missing boolean defaults to false. A missing
-profile has those same defaults. Invalid field types, unknown tendencies, and
+profile has those same defaults. Invalid field types, unknown tempers, and
 invalid property IDs reject that file with an error identifying its resource.
 Unknown entity IDs are allowed so addon definitions can remain dormant when the
 addon is absent. An unresolved source in an existing vial remains unreadable.
@@ -26,14 +26,14 @@ addon is absent. An unresolved source in an existing vial remains unreadable.
 ## Overrides and migration
 
 A higher-priority datapack replaces the complete file at the same path. Arrays
-do not merge. Include all desired tendencies and properties in an override;
+do not merge. Include all desired tempers and properties in an override;
 an empty object explicitly clears a profile. `/reload` replaces the full server
 snapshot, including removal of deleted definitions, and synchronizes it to players.
 Login sends the current definitions; disconnect clears only the client snapshot.
 Profiles are limited to 4,096 definitions, 4,096 JSON characters per definition,
 and a 900,000-byte sync budget; excess definitions are rejected with an error.
 
-The former tendency tags (`vivacious`, `fervent`, `neurotic`, `incandescent`,
+The former temper tags (`vivacious`, `fervent`, `neurotic`, `incandescent`,
 `ruinous`, `frigid`, `ferric`, `umbral`), `fungal`, and `blood_properties/*`
 entity membership tags no longer supply blood traits. Move addon memberships
 into entity profiles. Existing property IDs and `blood_injection` response files
@@ -44,7 +44,7 @@ Existing vials retain their source ID, identification, and other components.
 Their composition is resolved from the current profile; no save migration is
 needed. Centrifuge amounts and selection behavior remain unchanged. Sample
 tooltips, microscopy, cabinet previews, injections, centrifuges, and target
-tendency affinity all use the profile lookup. Will school-specific affinity
+temper affinity all use the profile lookup. Will school-specific affinity
 continues to use the Will's actual school.
 
 ## Living Syringe
@@ -70,7 +70,7 @@ Pelagic Herring Ductilis, Siphonophore Congeatio, Bloody-Belly Comb Jelly Tenebr
 Hagfish Mortem, and Vampire Squid Tenebris with the aquatic property. Only Chiton requires a Living Syringe. Existing ocean
 creatures retain their established profiles when their home habitats change. Osteophage Vultures add a Mortem profile and allow ordinary sampling; their skeletal appearance does not impose the Living Syringe gate.
 
-Ice Fish have no blood tendency, retain the aquatic property and permit ordinary sampling. Their haemoglobin-free circulation is regarded as naturally pure in Unstained lore; their death drop shares the existing Cleansing Hemolymph item with Hemolymphopoda.
+Ice Fish have no blood temper, retain the aquatic property and permit ordinary sampling. Their haemoglobin-free circulation is regarded as naturally pure in Unstained lore; their death drop shares the existing Cleansing Hemolymph item with Hemolymphopoda.
 
 Piglin, Piglin Brute, and Zombified Piglin are included; the illager set includes
 Pillager, Vindicator, Evoker, and Illusioner. Camel Husk has no registered entity
@@ -106,8 +106,8 @@ two-client login/reload and feedback review.
 
 ### Java entry points
 
-`EntityBloodProfile` contains immutable tendency/property lists and `requiresLivingSyringe()`.
+`EntityBloodProfile` contains immutable temper/property lists and `requiresLivingSyringe()`.
 Use `BloodProfileData.profile(entityType, clientSide)` for entity composition and
 `BloodSampleData.profile(vial, clientSide)` for a specimen's current traits and identification.
 The latter replaces the old supported-properties argument with an explicit side selection.
-The removed tendency tag constants and `getEntityTagForTendency` are no longer API entry points.
+The removed temper tag constants and `getEntityTagForTemper` are no longer API entry points.

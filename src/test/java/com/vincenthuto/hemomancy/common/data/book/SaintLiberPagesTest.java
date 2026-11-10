@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** The Liber's Saint pages and title cards follow the reconciled Saint canon (tendencies, titles, endings). */
+/** The Liber's Saint pages and title cards follow the reconciled Saint canon (tempers, titles, endings). */
 class SaintLiberPagesTest {
 	private static final String PAGES = "books/libersanguinium/cosmic_forces/pages/";
 
@@ -25,7 +25,7 @@ class SaintLiberPagesTest {
 			new Saint("velorum", "Saint of the Endless Hour", "Congeatio", "Tenebris", "Endless Hour"));
 
 	@Test
-	void eachSaintHasAPageWithItsTitleAndTendencies() {
+	void eachSaintHasAPageWithItsTitleAndTempers() {
 		JsonObject lang = ResourceReader.asset("lang/en_us.json");
 		for (Saint saint : SAINTS) {
 			JsonObject page = ResourceReader.data(PAGES + saint.id() + ".json");
@@ -34,7 +34,7 @@ class SaintLiberPagesTest {
 			assertEquals(saint.title(), page.get("subtitle").getAsString(), saint.id());
 			assertEquals(saint.title(), lang.get("boss.hemomancy." + saint.id() + ".epithet").getAsString(), saint.id());
 			assertTrue(text.contains(saint.primary()) && text.contains(saint.secondary()),
-					saint.id() + " names its tendency pair");
+					saint.id() + " names its temper pair");
 			assertFalse(text.toLowerCase(Locale.ROOT).contains("archon"), saint.id() + " carries no Archon framing");
 			assertFalse(text.toLowerCase(Locale.ROOT).contains("martyr"), saint.id() + " carries no martyr framing");
 		}

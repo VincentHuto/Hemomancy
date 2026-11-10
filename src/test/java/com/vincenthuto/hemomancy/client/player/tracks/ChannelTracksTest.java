@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.player.tracks;
 
 import com.vincenthuto.hemomancy.client.player.*;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastPhase;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastStyle;
@@ -13,10 +13,10 @@ import static com.vincenthuto.hemomancy.client.player.tracks.GameplayTracksTest.
 import static org.junit.jupiter.api.Assertions.*;
 
 class ChannelTracksTest {
-    private static final Map<CastStyle,EnumBloodTendency> MAGISTER_CHANNELS=Map.of(CastStyle.FURNACE_VEINS,EnumBloodTendency.FLAMMEUS,
-            CastStyle.LIVING_CIRCUIT,EnumBloodTendency.DUCTILIS,CastStyle.IRON_CHOIR,EnumBloodTendency.FERRIC,
-            CastStyle.CARRION_COMMUNION,EnumBloodTendency.MORTEM,CastStyle.PENUMBRAL_DRIFT,EnumBloodTendency.TENEBRIS,
-            CastStyle.RADIANT_WAKE,EnumBloodTendency.LUX);
+    private static final Map<CastStyle,EnumBloodTemper> MAGISTER_CHANNELS=Map.of(CastStyle.FURNACE_VEINS,EnumBloodTemper.FLAMMEUS,
+            CastStyle.LIVING_CIRCUIT,EnumBloodTemper.DUCTILIS,CastStyle.IRON_CHOIR,EnumBloodTemper.FERRIC,
+            CastStyle.CARRION_COMMUNION,EnumBloodTemper.MORTEM,CastStyle.PENUMBRAL_DRIFT,EnumBloodTemper.TENEBRIS,
+            CastStyle.RADIANT_WAKE,EnumBloodTemper.LUX);
     private static final List<CastStyle> CONTINUOUS=List.of(CastStyle.GROUND_TOUCH,CastStyle.DOWSING,CastStyle.FURNACE_VEINS,
             CastStyle.LIVING_CIRCUIT,CastStyle.IRON_CHOIR,CastStyle.CARRION_COMMUNION,CastStyle.PENUMBRAL_DRIFT,CastStyle.RADIANT_WAKE);
     private static final List<CastStyle> PASSIVE=List.of(CastStyle.BLACKHEARTED,CastStyle.SOVEREIGN_INSTINCT);

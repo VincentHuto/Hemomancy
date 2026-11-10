@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -49,16 +49,16 @@ final class VesperVisualRulesTest {
 	}
 
 	@Test
-	void stanceColorsRemainDistinctAcrossAllEightTendencies() throws Exception {
-		Method color = rules().getMethod("tendencyColorRgb", EnumBloodTendency.class);
-		assertEquals(0xE00018, color.invoke(null, EnumBloodTendency.ANIMUS));
-		assertEquals(0xFF6508, color.invoke(null, EnumBloodTendency.FLAMMEUS));
-		assertEquals(0xF2E85C, color.invoke(null, EnumBloodTendency.DUCTILIS));
-		assertEquals(0xF4F7FF, color.invoke(null, EnumBloodTendency.LUX));
-		assertEquals(0x15522A, color.invoke(null, EnumBloodTendency.MORTEM));
-		assertEquals(0x52BFE8, color.invoke(null, EnumBloodTendency.CONGEATIO));
-		assertEquals(0x68646A, color.invoke(null, EnumBloodTendency.FERRIC));
-		assertEquals(0x63108A, color.invoke(null, EnumBloodTendency.TENEBRIS));
+	void stanceColorsRemainDistinctAcrossAllEightTempers() throws Exception {
+		Method color = rules().getMethod("temperColorRgb", EnumBloodTemper.class);
+		assertEquals(0xE00018, color.invoke(null, EnumBloodTemper.ANIMUS));
+		assertEquals(0xFF6508, color.invoke(null, EnumBloodTemper.FLAMMEUS));
+		assertEquals(0xF2E85C, color.invoke(null, EnumBloodTemper.DUCTILIS));
+		assertEquals(0xF4F7FF, color.invoke(null, EnumBloodTemper.LUX));
+		assertEquals(0x15522A, color.invoke(null, EnumBloodTemper.MORTEM));
+		assertEquals(0x52BFE8, color.invoke(null, EnumBloodTemper.CONGEATIO));
+		assertEquals(0x68646A, color.invoke(null, EnumBloodTemper.FERRIC));
+		assertEquals(0x63108A, color.invoke(null, EnumBloodTemper.TENEBRIS));
 	}
 
 	private static void assertFamilies(Method method, String scene, String... expected) throws Exception {

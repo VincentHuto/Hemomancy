@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamageSource;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
@@ -147,7 +147,7 @@ public final class LivingAxeLodestoneFields {
 					LivingAxeLodestoneRules.RADIUS);
 			for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, bounds,
 					this::canHarm)) {
-				var damage = SchoolDamage.reaction(attacker, "living_axe_lodestone_field", EnumBloodTendency.FERRIC);
+				var damage = SchoolDamage.reaction(attacker, "living_axe_lodestone_field", EnumBloodTemper.FERRIC);
 				target.hurt(damage, LivingAxeLodestoneRules.DAMAGE_PER_PULSE);
 				SchoolStates.apply(attacker, target, SchoolState.LODESTONE, LivingAxeLodestoneRules.LODESTONE_TICKS);
 				double[] pull = LivingAxeLodestoneRules.pull(center.x, center.z, target.getX(), target.getZ(),

@@ -51,7 +51,7 @@ The full JVM run completed 2,368 tests with 20 failures before the final focused
 - `BodyIdiomWiringSourceTest > bodyIdiomsAreWiredThroughCastingDamageHudAndMemoryWeaving()`
 - `HematicCommandWiringSourceTest > rebukeAndImpressmentAreWiredThroughProgressionAndMemoryWeaving()`
 - `LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.block.WaterloggableDecorativeBlocksTest`
-- `LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.entity.mob.monster.TendencyMobSpawnRulesSourceTest`
+- `LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.entity.mob.monster.TemperMobSpawnRulesSourceTest`
 - `LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.init.CreativeTabTechnicalBlockGuardTest`
 - `LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.init.RegistryCreativeOrderSourceTest`
 - `LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.item.harbinger.memories.ConjureLivingStaffMemoryResourceTest`

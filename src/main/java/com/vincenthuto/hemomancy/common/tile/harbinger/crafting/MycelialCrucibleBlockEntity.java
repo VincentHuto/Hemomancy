@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 import com.vincenthuto.hemomancy.common.tile.HemoContainerBlockEntity;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
@@ -258,7 +258,7 @@ public class MycelialCrucibleBlockEntity extends HemoContainerBlockEntity implem
             FungalScarCultivationRecipe recipe = holder.value();
             // The center slot must hold this recipe's explicit seed ingredient, not the finished scar.
             if (center.getItem() == recipe.getSeedItemStack().getItem()
-                    && hasAlignedEnzyme(recipe.getTendency())) {
+                    && hasAlignedEnzyme(recipe.getTemper())) {
                 return recipe;
             }
         }
@@ -277,12 +277,12 @@ public class MycelialCrucibleBlockEntity extends HemoContainerBlockEntity implem
         craftingProgress = recipe.getPhase1Duration();
         craftingTotalTime = recipe.getPhase1Duration();
         mode = 1;
-        // Store recipe tendency in the center slot NBT so we know what to produce
+        // Store recipe temper in the center slot NBT so we know what to produce
         storePendingRecipe(recipe);
         return true;
     }
 
-    /** Stores the recipe id + tendency into the center stack's custom data. */
+    /** Stores the recipe id + temper into the center stack's custom data. */
     private void storePendingRecipe(FungalScarCultivationRecipe recipe) {
         ItemStack center = inventory.get(SLOT_CENTER);
         if (center.isEmpty()) return;
@@ -299,13 +299,13 @@ public class MycelialCrucibleBlockEntity extends HemoContainerBlockEntity implem
             return false;
         if (!inventory.get(SLOT_OUTPUT).isEmpty()) return false;
 
-        EnumBloodTendency scarTendency = ItemImmatureFungalScar.getTendency(center);
-        if (scarTendency == null) return false;
+        EnumBloodTemper scarTemper = ItemImmatureFungalScar.getTemper(center);
+        if (scarTemper == null) return false;
 
         // Collect aligned enzymes
         int enzymeCount = 0;
         for (int i = SLOT_ENZYME_START; i <= SLOT_ENZYME_END; i++) {
-            if (isAlignedEnzyme(inventory.get(i), scarTendency)) enzymeCount++;
+            if (isAlignedEnzyme(inventory.get(i), scarTemper)) enzymeCount++;
         }
         if (enzymeCount == 0) return false;
 
@@ -364,7 +364,7 @@ public class MycelialCrucibleBlockEntity extends HemoContainerBlockEntity implem
             net.minecraft.resources.ResourceLocation targetId =
                     BuiltInRegistries.ITEM.getKey(
                             recipe.getResultItemStack().getItem());
-            immatureScarItem.initThreshold(immature, recipe.getTendency(),
+            immatureScarItem.initThreshold(immature, recipe.getTemper(),
                     recipe.getMaturationThreshold(), targetId);
         }
         inventory.set(SLOT_OUTPUT, immature);
@@ -374,13 +374,13 @@ public class MycelialCrucibleBlockEntity extends HemoContainerBlockEntity implem
         ItemStack center = inventory.get(SLOT_CENTER);
         if (center.isEmpty() || !(center.getItem() instanceof ItemImmatureFungalScar immatureScar)) return;
 
-        EnumBloodTendency scarTendency = ItemImmatureFungalScar.getTendency(center);
-        if (scarTendency == null) return;
+        EnumBloodTemper scarTemper = ItemImmatureFungalScar.getTemper(center);
+        if (scarTemper == null) return;
         float totalEnzymePower = 0f;
 
         for (int i = SLOT_ENZYME_START; i <= SLOT_ENZYME_END; i++) {
             ItemStack stack = inventory.get(i);
-            if (isAlignedEnzyme(stack, scarTendency)) {
+            if (isAlignedEnzyme(stack, scarTemper)) {
                 totalEnzymePower += getEnzymePower(stack);
                 stack.shrink(1);
             }
@@ -424,18 +424,18 @@ public class MycelialCrucibleBlockEntity extends HemoContainerBlockEntity implem
 
     // ── Enzyme helpers ────────────────────────────────────────────────────────
 
-    private boolean hasAlignedEnzyme(EnumBloodTendency tendency) {
+    private boolean hasAlignedEnzyme(EnumBloodTemper temper) {
         for (int i = SLOT_ENZYME_START; i <= SLOT_ENZYME_END; i++) {
-            if (isAlignedEnzyme(inventory.get(i), tendency)) return true;
+            if (isAlignedEnzyme(inventory.get(i), temper)) return true;
         }
         return false;
     }
 
-    private static boolean isAlignedEnzyme(ItemStack stack, EnumBloodTendency tendency) {
+    private static boolean isAlignedEnzyme(ItemStack stack, EnumBloodTemper temper) {
         if (stack.getItem() instanceof EnzymeItem enzyme)
-            return enzyme.getTend() == tendency;
+            return enzyme.getTend() == temper;
         if (stack.getItem() instanceof RecycledEnzymeItem recycled)
-            return recycled.getTend(stack) == tendency;
+            return recycled.getTend(stack) == temper;
         return false;
     }
 

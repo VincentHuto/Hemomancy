@@ -136,7 +136,7 @@ public final class HarbingerHermitDialogueTrees {
 				.build();
 	}
 
-	/** Degree 2 — Votary. Deeper guidance on blood rites and tendencies. */
+	/** Degree 2 — Votary. Deeper guidance on blood rites and tempers. */
 	public static DialogueTree votary(int entityId) {
 		return DialogueTree.builder(SPEAKER, HERMIT_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
@@ -144,7 +144,7 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.votary.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null).withQuest(),
-						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_tendencies", "tendency_lore", null).withLore(),
+						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_tempers", "temper_lore", null).withLore(),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hint", List.of(
@@ -152,8 +152,8 @@ public final class HarbingerHermitDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
-				.addNode(new DialogueNode("tendency_lore", List.of(
-						"hemomancy.hermit.tendency_lore"
+				.addNode(new DialogueNode("temper_lore", List.of(
+						"hemomancy.hermit.temper_lore"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))

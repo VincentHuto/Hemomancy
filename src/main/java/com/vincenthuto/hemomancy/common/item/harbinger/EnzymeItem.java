@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.util.HemoText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -15,10 +15,10 @@ import java.util.List;
 
 public class EnzymeItem extends Item {
 
-	EnumBloodTendency tend;
+	EnumBloodTemper tend;
 	float amount;
 
-	public EnzymeItem(EnumBloodTendency tend, float amount) {
+	public EnzymeItem(EnumBloodTemper tend, float amount) {
 		super(new Item.Properties());
 		this.tend = tend;
 		this.amount = amount;
@@ -27,7 +27,7 @@ public class EnzymeItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(HemoText.translatable("tooltip.hemomancy.enzyme.tendency_s", tend).withStyle(ChatFormatting.DARK_GREEN));
+		tooltip.add(HemoText.translatable("tooltip.hemomancy.enzyme.temper_s", tend).withStyle(ChatFormatting.DARK_GREEN));
 		tooltip.add(Component.translatable("tooltip.hemomancy.enzyme.amount_s", amount).withStyle(ChatFormatting.GOLD));
 
 	}
@@ -36,7 +36,7 @@ public class EnzymeItem extends Item {
 		return amount;
 	}
 
-	public EnumBloodTendency getTend() {
+	public EnumBloodTemper getTend() {
 		return tend;
 	}
 

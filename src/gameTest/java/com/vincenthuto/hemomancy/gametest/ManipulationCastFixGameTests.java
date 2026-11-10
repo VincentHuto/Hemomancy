@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
@@ -486,7 +486,7 @@ public final class ManipulationCastFixGameTests {
 	public static void phoenixDebtUsesSharedLastRiteArming(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "phoenix-last-rite-test");
 		HemoCapabilityAccess.getBloodVolume(player).setActive(true);
-		HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(EnumBloodTendency.FLAMMEUS, 75);
+		HemoCapabilityAccess.getBloodTemperament(player).setTemperAlignment(EnumBloodTemper.FLAMMEUS, 75);
 		try {
 			var known = HemoCapabilityAccess.getKnownManipulations(player);
 			known.setEquippedManipNames(java.util.List.of("phoenix_debt"));
@@ -521,33 +521,33 @@ public final class ManipulationCastFixGameTests {
 		assertImplementation(helper, "penumbral_drift", "PenumbralDriftManip");
 		assertImplementation(helper, "eclipse_well", "EclipseWellManip");
 		assertMeta(helper, "crimson_coronation", 600, 70, EnumManipulationType.CHARGED,
-				EnumManipulationRank.PERFECTUS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD, 80, 120);
+				EnumManipulationRank.PERFECTUS, EnumBloodTemper.ANIMUS, EnumVeinSections.HEAD, 80, 120);
 		assertMeta(helper, "sovereign_instinct", 450, 60, EnumManipulationType.PASSIVE,
-				EnumManipulationRank.MAGISTER, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD, 0, 0);
+				EnumManipulationRank.MAGISTER, EnumBloodTemper.DUCTILIS, EnumVeinSections.HEAD, 0, 0);
 		assertMeta(helper, "synaptic_storm", 900, 65, EnumManipulationType.CHARGED,
-				EnumManipulationRank.PERFECTUS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD, 60, 100);
+				EnumManipulationRank.PERFECTUS, EnumBloodTemper.DUCTILIS, EnumVeinSections.HEAD, 60, 100);
 		assertMeta(helper, "living_circuit", 100, 55, EnumManipulationType.CONTINUOUS,
-				EnumManipulationRank.MAGISTER, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY, 0, 80);
+				EnumManipulationRank.MAGISTER, EnumBloodTemper.DUCTILIS, EnumVeinSections.BODY, 0, 80);
 		assertMeta(helper, "white_verdict", 800, 65, EnumManipulationType.CHARGED,
-				EnumManipulationRank.PERFECTUS, EnumBloodTendency.LUX, EnumVeinSections.HEAD, 60, 100);
+				EnumManipulationRank.PERFECTUS, EnumBloodTemper.LUX, EnumVeinSections.HEAD, 60, 100);
 		assertMeta(helper, "furnace_veins", 150, 55, EnumManipulationType.CONTINUOUS,
-				EnumManipulationRank.MAGISTER, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY, 0, 100);
+				EnumManipulationRank.MAGISTER, EnumBloodTemper.FLAMMEUS, EnumVeinSections.BODY, 0, 100);
 		assertMeta(helper, "phoenix_debt", 1200, 75, EnumManipulationType.PASSIVE,
-				EnumManipulationRank.PERFECTUS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.HEART, 0, 0);
+				EnumManipulationRank.PERFECTUS, EnumBloodTemper.FLAMMEUS, EnumVeinSections.HEART, 0, 0);
 		assertMeta(helper, "absolute_stillness", 300, 65, EnumManipulationType.CONTINUOUS,
-				EnumManipulationRank.PERFECTUS, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY, 0, 160);
+				EnumManipulationRank.PERFECTUS, EnumBloodTemper.CONGEATIO, EnumVeinSections.BODY, 0, 160);
 		assertMeta(helper, "rimebound_sentence", 750, 55, EnumManipulationType.CHARGED,
-				EnumManipulationRank.MAGISTER, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS, 70, 120);
+				EnumManipulationRank.MAGISTER, EnumBloodTemper.CONGEATIO, EnumVeinSections.ARMS, 70, 120);
 		assertMeta(helper, "iron_choir", 250, 60, EnumManipulationType.CONTINUOUS,
-				EnumManipulationRank.MAGISTER, EnumBloodTendency.FERRIC, EnumVeinSections.BODY, 0, 100);
+				EnumManipulationRank.MAGISTER, EnumBloodTemper.FERRIC, EnumVeinSections.BODY, 0, 100);
 		assertMeta(helper, "funeral_bell", 1000, 75, EnumManipulationType.CHARGED,
-				EnumManipulationRank.PERFECTUS, EnumBloodTendency.MORTEM, EnumVeinSections.HEART, 80, 160);
+				EnumManipulationRank.PERFECTUS, EnumBloodTemper.MORTEM, EnumVeinSections.HEART, 80, 160);
 		assertMeta(helper, "carrion_communion", 220, 60, EnumManipulationType.CONTINUOUS,
-				EnumManipulationRank.MAGISTER, EnumBloodTendency.MORTEM, EnumVeinSections.BODY, 0, 120);
+				EnumManipulationRank.MAGISTER, EnumBloodTemper.MORTEM, EnumVeinSections.BODY, 0, 120);
 		assertMeta(helper, "penumbral_drift", 75, 55, EnumManipulationType.CONTINUOUS,
-				EnumManipulationRank.MAGISTER, EnumBloodTendency.TENEBRIS, EnumVeinSections.LEGS, 0, 60);
+				EnumManipulationRank.MAGISTER, EnumBloodTemper.TENEBRIS, EnumVeinSections.LEGS, 0, 60);
 		assertMeta(helper, "eclipse_well", 900, 65, EnumManipulationType.CHARGED,
-				EnumManipulationRank.PERFECTUS, EnumBloodTendency.TENEBRIS, EnumVeinSections.HEAD, 80, 140);
+				EnumManipulationRank.PERFECTUS, EnumBloodTemper.TENEBRIS, EnumVeinSections.HEAD, 80, 140);
 		helper.succeed();
 	}
 
@@ -568,8 +568,8 @@ public final class ManipulationCastFixGameTests {
 			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(1_000.0D);
-			var tendency = HemoCapabilityAccess.getBloodTendency(player);
-			tendency.setTendencyAlignment(ManipulationInit.ironhearted.get().getTend(), 45.0F);
+			var temper = HemoCapabilityAccess.getBloodTemperament(player);
+			temper.setTemperAlignment(ManipulationInit.ironhearted.get().getTend(), 45.0F);
 			var known = HemoCapabilityAccess.getKnownManipulations(player);
 			known.getKnownManips().put(ManipulationInit.ironhearted.get(), new ManipLevel(0, 0));
 
@@ -781,8 +781,8 @@ public final class ManipulationCastFixGameTests {
 		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(300.0D);
-		HemoCapabilityAccess.getBloodTendency(player)
-				.setTendencyAlignment(ManipulationInit.sanguine_ward.get().getTend(), 10.0F);
+		HemoCapabilityAccess.getBloodTemperament(player)
+				.setTemperAlignment(ManipulationInit.sanguine_ward.get().getTend(), 10.0F);
 		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		ManipLevel mastery = new ManipLevel(0, 0);
 		known.getKnownManips().put(ManipulationInit.sanguine_ward.get(), mastery);
@@ -832,8 +832,8 @@ public final class ManipulationCastFixGameTests {
 		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(525.0D);
-		HemoCapabilityAccess.getBloodTendency(player)
-				.setTendencyAlignment(avatar.getTend(), 50.0F);
+		HemoCapabilityAccess.getBloodTemperament(player)
+				.setTemperAlignment(avatar.getTend(), 50.0F);
 		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		ManipLevel mastery = new ManipLevel(0, 0);
 		known.getKnownManips().put(avatar, mastery);
@@ -1044,7 +1044,7 @@ public final class ManipulationCastFixGameTests {
 	}
 
 	private static void assertMeta(GameTestHelper helper, String name, double cost, double alignment,
-			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTemper temper,
 			EnumVeinSections section, int chargeTicks, int cooldownTicks) {
 		BloodManipulation manipulation = ManipulationInit.getByName(name);
 		helper.assertTrue(manipulation != null, "Missing manipulation " + name);
@@ -1052,7 +1052,7 @@ public final class ManipulationCastFixGameTests {
 		helper.assertTrue(manipulation.getAlignLevel() == alignment, name + " alignment changed");
 		helper.assertTrue(manipulation.getType() == type, name + " casting type changed");
 		helper.assertTrue(manipulation.getRank() == rank, name + " rank changed");
-		helper.assertTrue(manipulation.getTend() == tendency, name + " tendency changed");
+		helper.assertTrue(manipulation.getTend() == temper, name + " temper changed");
 		helper.assertTrue(manipulation.getSection() == section, name + " vein section changed");
 		helper.assertTrue(manipulation.getRequiredChargeTicks() == chargeTicks, name + " charge changed");
 		helper.assertTrue(manipulation.getCooldownTicks() == cooldownTicks, name + " cooldown changed");

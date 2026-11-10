@@ -90,11 +90,11 @@ public final class EngramBoardGenerator {
 		// A Humilis engram is a first lesson: its lanes are the shortest the board allows.
 		boolean shortest = rank == EnumManipulationRank.HUMILIS;
 		boolean[] used = new boolean[NODES];
-		int tendencies = 0;
-		for (int c : counts) if (c > 0) tendencies++;
-		// With six or more tendencies nearly every face is claimed and each needs its own notch: walking them in turn
+		int tempers = 0;
+		for (int c : counts) if (c > 0) tempers++;
+		// With six or more tempers nearly every face is claimed and each needs its own notch: walking them in turn
 		// around the ring, each clockwise, always leaves the next one a way out.
-		boolean tight = tendencies >= 6;
+		boolean tight = tempers >= 6;
 		used[VESSEL] = true;
 		List<Integer> order = new ArrayList<>();
 		for (int t = 0; t < 8; t++) if (counts[t] > 0) order.add(t);
@@ -117,7 +117,7 @@ public final class EngramBoardGenerator {
 			order.sort((a, b) -> Integer.compare(Math.floorMod(entries[a] - 16 - start, FACES), Math.floorMod(entries[b] - 16 - start, FACES)));
 		}
 
-		// A grey fragment is never the first of a tendency that has others: they ply into the coloured tree instead.
+		// A grey fragment is never the first of a temper that has others: they ply into the coloured tree instead.
 		boolean[][] grey = new boolean[8][];
 		List<int[]> greyCandidates = new ArrayList<>();
 		for (int t = 0; t < 8; t++) {
@@ -145,7 +145,7 @@ public final class EngramBoardGenerator {
 					intoVessel = true;
 					walk = walk(origin, used, random, notches, crowded || tight, tight, shortest, isGrey ? 2 : 1);
 				} else if (!keyed && !inners.isEmpty() && random.nextInt(3) == 0) {
-					// An open board lets a second lane of a tendency find its own face instead of plying.
+					// An open board lets a second lane of a temper find its own face instead of plying.
 					origin = inners.removeFirst();
 					used[origin] = true;
 					intoVessel = true;

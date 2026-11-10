@@ -17,7 +17,7 @@ The seven Pelagic biomes support eight ecological communities. Exposed coastal s
 
 All seven new creatures support Specimen Jar capture, placement, pickup, release and repeated capture. Stored creature NBT preserves names, health and behavior timers. Captured creatures retain persistence; releasing an older filled jar also protects its occupant from natural distance despawning. Ordinary natural populations use native mob caps and despawning. The Living Bestiary records and accepts all seven through its existing specimen surrender reward. Vampire Squids drop 1–2 shared Barbed Splinters on player kills, with the existing Looting bonus; the other six new animals retain their empty kill tables. No extra processing chain is added.
 
-| Creature | Blood tendency | Sampling |
+| Creature | Blood temper | Sampling |
 |---|---|---|
 | Chiton | Ferric | Living Syringe required |
 | Pyrosome | Animus | Ordinary |
@@ -27,7 +27,7 @@ All seven new creatures support Specimen Jar capture, placement, pickup, release
 | Hagfish | Mortem | Ordinary |
 | Vampire Squid | Tenebris, aquatic property | Ordinary |
 
-Existing creatures keep their existing blood profiles. Environmental affiliation does not replace biological tendencies.
+Existing creatures keep their existing blood profiles. Environmental affiliation does not replace biological tempers.
 
 Shears collect the four growths as placeable specimens. Bone Worm and Giant Tube Worm colonies have a `worms=2..5` blockstate. One placed colony item starts with two worms; using another colony item on it adds one worm, up to five. Sneaking bypasses stacking. Shearing returns one through four colony items, matching the items used to build that size, and restores the source water. Generated fossil and vent colonies choose a coordinate-deterministic count from two through five. Existing colonies without the new property load at the default of two; there is no retrogen. Bone Worms require bone support. Giant Tube Worms require two source-water cells over mineral support near magma; their halves share the count, and adding to either half preserves retraction and the two-block height. Shearing either half returns the invested items once for the whole colony and restores both water cells. Placing or harvesting growths preserves support blocks.
 

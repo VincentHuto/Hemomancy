@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.animus;
 import static com.vincenthuto.hemomancy.common.manipulation.animus.HematicRiposteRules.*;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamageSource;
 import com.vincenthuto.hemomancy.common.damage.SchoolHitContext;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -153,7 +153,7 @@ public final class HematicRiposteEvents {
 			// Paralysis would mark bosses Conductive instead; a parry only staggers them.
 			if (!ManipulationReactiveEvents.isBoss(attacker))
 				Paralysis.apply(attacker, attacker instanceof Player ? STUN_PLAYER : STUN_MOB);
-			ManipulationParticles.impact(attacker, EnumBloodTendency.ANIMUS, EnumBloodTendency.DUCTILIS,
+			ManipulationParticles.impact(attacker, EnumBloodTemper.ANIMUS, EnumBloodTemper.DUCTILIS,
 					attacker.position().subtract(player.position()));
 		}
 		Vec3 toward = attacker.getEyePosition().subtract(player.getEyePosition());

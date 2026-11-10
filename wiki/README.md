@@ -12,7 +12,7 @@ These files are the GitHub Wiki pages for Hemomancy.
 - **Getting-Started.md**: Installation and first steps guide
 - **Harbinger-Path.md**: Blood-magic progression path
 - **Unstained-Path.md**: Purification path
-- **Blood-Systems.md**: Manipulations, tendencies, and blood mechanics
+- **Blood-Systems.md**: Manipulations, tempers, and blood mechanics
 - **Phlebotomists-Field-Case.md**: Portable specimen storage with safe placement and packing
 - **Phlebotomists-Cabinet.md**: Store and display exact blood specimens
 - **Hematic-Microscope.md**: Examine individual blood specimens and read their traits
@@ -121,10 +121,10 @@ Complete Unstained guide:
 ### Blood Systems (Blood-Systems.md)
 Mechanics reference:
 - Blood Volume management
-- Eight tendencies explained
+- Eight tempers explained
 - Manipulation types and ranks
 - Learning manipulations
-- Tendency alignment
+- Temper alignment
 - Vascular system
 - Skill tree
 - Status effects

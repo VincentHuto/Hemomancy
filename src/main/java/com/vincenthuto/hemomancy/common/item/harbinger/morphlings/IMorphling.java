@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -28,20 +28,20 @@ public interface IMorphling {
 
 
 	/**
-	 * Returns the primary blood tendency this morphling prefers when being fed
+	 * Returns the primary blood temper this morphling prefers when being fed
 	 * enzymes. Feeding a preferred enzyme grants full power contribution.
 	 */
-	default EnumBloodTendency getPreferredTendency() {
-		return EnumBloodTendency.ANIMUS;
+	default EnumBloodTemper getPreferredTemper() {
+		return EnumBloodTemper.ANIMUS;
 	}
 
 	/**
-	 * Returns a secondary blood tendency this morphling benefits from.
+	 * Returns a secondary blood temper this morphling benefits from.
 	 * Feeding a secondary enzyme grants 75% power contribution.
 	 * Non-preferred enzymes grant 50% power contribution.
 	 */
-	default EnumBloodTendency getSecondaryTendency() {
-		return EnumBloodTendency.MORTEM;
+	default EnumBloodTemper getSecondaryTemper() {
+		return EnumBloodTemper.MORTEM;
 	}
 
 	/**

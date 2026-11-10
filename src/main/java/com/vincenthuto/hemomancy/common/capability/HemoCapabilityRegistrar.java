@@ -55,8 +55,8 @@ public final class HemoCapabilityRegistrar {
         // ── Player capabilities via attachment types ──
         event.registerEntity(HemoCapabilityKeys.BLOOD_VOLUME, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.BLOOD_VOLUME));
-        event.registerEntity(HemoCapabilityKeys.BLOOD_TENDENCY, EntityType.PLAYER,
-                (player, ctx) -> player.getData(HemoAttachmentTypes.BLOOD_TENDENCY));
+        event.registerEntity(HemoCapabilityKeys.BLOOD_TEMPERAMENT, EntityType.PLAYER,
+                (player, ctx) -> player.getData(HemoAttachmentTypes.BLOOD_TEMPERAMENT));
         event.registerEntity(HemoCapabilityKeys.VASCULAR_SYSTEM, EntityType.PLAYER,
                 (player, ctx) -> player.getData(HemoAttachmentTypes.VASCULAR_SYSTEM));
         event.registerEntity(HemoCapabilityKeys.INITIATORY_DEGREE, EntityType.PLAYER,

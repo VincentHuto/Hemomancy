@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.damage;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
@@ -56,16 +56,16 @@ public final class SchoolStates {
         return apply(hit, caster, target, state, duration, levels);
     }
 
-    public static EnumBloodTendency school(SchoolState state) {
+    public static EnumBloodTemper school(SchoolState state) {
         return switch (state) {
-            case PRESSURE -> EnumBloodTendency.ANIMUS;
-            case NECROSIS -> EnumBloodTendency.MORTEM;
-            case LODESTONE -> EnumBloodTendency.FERRIC;
-            case SEARING -> EnumBloodTendency.FLAMMEUS;
-            case RIME -> EnumBloodTendency.CONGEATIO;
-            case DISRUPTED -> EnumBloodTendency.DUCTILIS;
-            case ILLUMINATED -> EnumBloodTendency.LUX;
-            case OBSCURED, VEILED -> EnumBloodTendency.TENEBRIS;
+            case PRESSURE -> EnumBloodTemper.ANIMUS;
+            case NECROSIS -> EnumBloodTemper.MORTEM;
+            case LODESTONE -> EnumBloodTemper.FERRIC;
+            case SEARING -> EnumBloodTemper.FLAMMEUS;
+            case RIME -> EnumBloodTemper.CONGEATIO;
+            case DISRUPTED -> EnumBloodTemper.DUCTILIS;
+            case ILLUMINATED -> EnumBloodTemper.LUX;
+            case OBSCURED, VEILED -> EnumBloodTemper.TENEBRIS;
         };
     }
 
@@ -131,7 +131,7 @@ public final class SchoolStates {
     }
 
     public static void applyPrimary(SchoolHitContext hit, @Nullable LivingEntity caster, LivingEntity target) {
-        if (hit.primary() == EnumBloodTendency.DUCTILIS && (hit.ability().getPath().startsWith("living_") || hit.ability().getPath().equals("will_melee"))) {
+        if (hit.primary() == EnumBloodTemper.DUCTILIS && (hit.ability().getPath().startsWith("living_") || hit.ability().getPath().equals("will_melee"))) {
             SchoolHitHelper.markConductive(target, 160);
             return;
         }
@@ -139,8 +139,8 @@ public final class SchoolStates {
         apply(hit, caster, target, state, hit.duration(), hit.levels());
     }
 
-    public static SchoolState primaryState(EnumBloodTendency tendency) {
-        return switch (tendency) {
+    public static SchoolState primaryState(EnumBloodTemper temper) {
+        return switch (temper) {
             case ANIMUS -> SchoolState.PRESSURE;
             case MORTEM -> SchoolState.NECROSIS;
             case FERRIC -> SchoolState.LODESTONE;

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.echo;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.animus.HematicRiposteRules;
 import com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket;
@@ -119,7 +119,7 @@ final class AnimusEchoCasts {
 		for (int i = 0; i < heights.length; i++) {
 			Vec3 at = feet.add(0, ctx.scaled(heights[i]), 0);
 			EchoScheduler.later(i * 3, () -> {
-				EchoFx.accent(EnumBloodTendency.ANIMUS, null, at, Vec3.ZERO, false);
+				EchoFx.accent(EnumBloodTemper.ANIMUS, null, at, Vec3.ZERO, false);
 				EchoFx.particles(HemoParticleData.bloodCell(ANIMUS_RED), at, 4, ctx.scaled(0.5), new Vec3(0, 0.01, 0));
 			});
 		}
@@ -136,7 +136,7 @@ final class AnimusEchoCasts {
 	private static void rush(EchoCast.EchoContext ctx) {
 		EchoFx.activate(ctx);
 		EchoFx.cue(Form.RUSH, ctx.feet(), ctx.feet(), ctx.scaled(1.0), 20, 1);
-		EchoFx.accent(EnumBloodTendency.ANIMUS, null, ctx.ahead(0.8), ctx.forward(), true);
+		EchoFx.accent(EnumBloodTemper.ANIMUS, null, ctx.ahead(0.8), ctx.forward(), true);
 	}
 
 	private static void aneurysm(EchoCast.EchoContext ctx) {

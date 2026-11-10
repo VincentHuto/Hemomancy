@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailRules;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TendencyWeaponHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.TemperWeaponHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.network.particle.LivingFlailImpactPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

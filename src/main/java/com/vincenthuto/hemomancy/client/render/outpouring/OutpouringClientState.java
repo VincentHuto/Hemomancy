@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +109,7 @@ public final class OutpouringClientState {
         List<double[]> lights = new ArrayList<>();
         long now = now();
         for (var cast : TRACKER.all()) {
-            if (cast.school != EnumBloodTendency.LUX || cast.sim == null || !lit(cast, camera)) continue;
+            if (cast.school != EnumBloodTemper.LUX || cast.sim == null || !lit(cast, camera)) continue;
             float strength = .6f + .4f * cast.pulse(now, partial).strength();
             for (var m : cast.sim.motes()) {
                 if (m.kind != OutpouringSim.Kind.ORB) continue;
@@ -130,7 +130,7 @@ public final class OutpouringClientState {
         long now = now();
         // One shade per caster: a recast replaces the darkness rather than stacking a second sphere.
         for (var cast : TRACKER.casts()) {
-            if (cast.school != EnumBloodTendency.TENEBRIS || !lit(cast, camera)) continue;
+            if (cast.school != EnumBloodTemper.TENEBRIS || !lit(cast, camera)) continue;
             float strength = cast.pulse(now, partial).strength();
             if (strength <= .01f) continue;
             double radius = .8 + OutpouringRules.profile(cast.rank).reach() * .9;
@@ -145,7 +145,7 @@ public final class OutpouringClientState {
      * Camera-relative feet of the casters whose own {@code school} pass is drawing, so each keeps their body readable in
      * their own light or shade. Another school's caster gets no clearance: a Lux caster inside an enemy's shade stays hidden.
      */
-    static List<double[]> casters(Vec3 camera, float partial, EnumBloodTendency school) {
+    static List<double[]> casters(Vec3 camera, float partial, EnumBloodTemper school) {
         List<double[]> feet = new ArrayList<>();
         var mc = Minecraft.getInstance();
         for (var cast : TRACKER.casts()) {

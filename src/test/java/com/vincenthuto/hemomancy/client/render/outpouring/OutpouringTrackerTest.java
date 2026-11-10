@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.outpouring;
 
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.Stage;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -31,7 +31,7 @@ class OutpouringTrackerTest {
     };
 
     private static CastingAnimationPacket packet(String id, long sequence, CastPhase phase, long at, int held, int required) {
-        return CastingAnimationPacket.harbinger(7, PLAYER, id, sequence, EnumBloodTendency.ANIMUS, null,
+        return CastingAnimationPacket.harbinger(7, PLAYER, id, sequence, EnumBloodTemper.ANIMUS, null,
                 EnumManipulationRank.SUMMA, CastPurpose.AREA, CastStyle.SCHOOL, phase, at, at, held, required,
                 InteractionHand.MAIN_HAND);
     }
@@ -118,7 +118,7 @@ class OutpouringTrackerTest {
         var tracker = new OutpouringTracker(RESOLVER);
         tracker.accept(packet("blood_shot", 1, CastPhase.RELEASE, 100, 0, 0), 100);
         var cast = tracker.current(PLAYER);
-        cast.sim = new OutpouringSim(EnumBloodTendency.MORTEM, null, 1);
+        cast.sim = new OutpouringSim(EnumBloodTemper.MORTEM, null, 1);
         cast.sim.emit(new double[]{0, 65, 0}, 1, new double[]{0, 0, 1}, 1,
                 OutpouringRules.profile(EnumManipulationRank.SUMMA), 2, true, false);
         assertFalse(cast.finished(100 + 8 + 40 + 1), "the pulse is over but sludge is still on the ground");
@@ -130,7 +130,7 @@ class OutpouringTrackerTest {
         var tracker = new OutpouringTracker(RESOLVER);
         tracker.accept(packet("blood_shot", 1, CastPhase.RELEASE, 100, 0, 0), 100);
         var cast = tracker.current(PLAYER);
-        cast.sim = new OutpouringSim(EnumBloodTendency.ANIMUS, null, 1);
+        cast.sim = new OutpouringSim(EnumBloodTemper.ANIMUS, null, 1);
         cast.sim.emit(new double[]{0, 65, 0}, 1, new double[]{0, 0, 1}, 1,
                 OutpouringRules.profile(EnumManipulationRank.PERFECTUS), 4, true, false);
         assertTrue(OutpouringSim.live() > before);
@@ -159,11 +159,11 @@ class OutpouringTrackerTest {
         var tracker = new OutpouringTracker(RESOLVER);
         tracker.accept(packet("preview", 0, CastPhase.OPENING, 100, 10, 40), 100);
         var first = tracker.current(PLAYER);
-        tracker.accept(CastingAnimationPacket.harbinger(7, PLAYER, "preview", 0, EnumBloodTendency.LUX, null,
+        tracker.accept(CastingAnimationPacket.harbinger(7, PLAYER, "preview", 0, EnumBloodTemper.LUX, null,
                 EnumManipulationRank.SUMMA, CastPurpose.AREA, CastStyle.SCHOOL, CastPhase.OPENING, 105, 105, 10, 40,
                 InteractionHand.MAIN_HAND), 105);
         assertNotSame(first, tracker.current(PLAYER));
-        assertEquals(EnumBloodTendency.LUX, tracker.current(PLAYER).school);
+        assertEquals(EnumBloodTemper.LUX, tracker.current(PLAYER).school);
     }
 
     @Test void everyCastGrowsItsOwnVeins() {

@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.phys.Vec3;
 
 /** Cosmetic activation or confirmed-hit accents; carries no gameplay state. */
-public record ManipulationAccentPacket(EnumBloodTendency primary, EnumBloodTendency secondary,
+public record ManipulationAccentPacket(EnumBloodTemper primary, EnumBloodTemper secondary,
         Vec3 position, Vec3 direction, int targetId, boolean impact) implements CustomPacketPayload {
     public static final Type<ManipulationAccentPacket> TYPE=new Type<>(
             Hemomancy.rloc("manipulation_accent"));
@@ -17,8 +17,8 @@ public record ManipulationAccentPacket(EnumBloodTendency primary, EnumBloodTende
                 buf.writeEnum(p.primary);buf.writeBoolean(p.secondary!=null);
                 if(p.secondary!=null)buf.writeEnum(p.secondary);
                 buf.writeVec3(p.position);buf.writeVec3(p.direction);buf.writeVarInt(p.targetId);buf.writeBoolean(p.impact);
-            },buf->new ManipulationAccentPacket(buf.readEnum(EnumBloodTendency.class),
-                    buf.readBoolean()?buf.readEnum(EnumBloodTendency.class):null,buf.readVec3(),buf.readVec3(),
+            },buf->new ManipulationAccentPacket(buf.readEnum(EnumBloodTemper.class),
+                    buf.readBoolean()?buf.readEnum(EnumBloodTemper.class):null,buf.readVec3(),buf.readVec3(),
                     buf.readVarInt(),buf.readBoolean()));
 
     @Override public Type<? extends CustomPacketPayload> type() {return TYPE;}

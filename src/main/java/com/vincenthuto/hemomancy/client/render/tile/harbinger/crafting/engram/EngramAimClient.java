@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.temperament.EnumBloodTemper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
@@ -93,7 +93,7 @@ public final class EngramAimClient {
 
 	private static int[] stock(SomaticLoomBlockEntity loom) {
 		int[] stock = new int[8];
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) stock[tend.ordinal()] = loom.getStoredEnzyme(tend);
+		for (EnumBloodTemper tend : EnumBloodTemper.values()) stock[tend.ordinal()] = loom.getStoredEnzyme(tend);
 		return stock;
 	}
 }
